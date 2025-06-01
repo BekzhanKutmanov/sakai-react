@@ -5,7 +5,7 @@ import { faCircle,
     faBookOpen,
     faShieldHeart,
 } from "@fortawesome/free-solid-svg-icons";
-import MyFontAwesome from './MyFontAwesome';
+import MyFontAwesome from '../../components/MyFontAwesome';
 import CountUp from 'react-countup';    
 
 export default function CounterBanner() {

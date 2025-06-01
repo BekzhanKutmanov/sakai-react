@@ -1,13 +1,14 @@
 'use client';
 
 import { faPlay} from "@fortawesome/free-solid-svg-icons";
-import MyFontAwesome from './MyFontAwesome';
+
 import Image from "next/image";
 import { useState } from "react";
 import { Dialog } from 'primereact/dialog';
 // import 'primereact/resources/themes/lara-light-blue/theme.css'; // или другая тема
 import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
+import MyFontAwesome from "./MyFontAwesome";
 
 export default function VideoPlay() {
     const [videoCall, setVideoCall] = useState(false);

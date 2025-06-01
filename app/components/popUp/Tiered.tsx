@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Button } from 'primereact/button';
 import { TieredMenu } from 'primereact/tieredmenu';
 import { faBars, faClose } from "@fortawesome/free-solid-svg-icons";
-import MyFontAwesome from '../MyFontAwesome';
+import MyFontAwesome from '../../../components/MyFontAwesome';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 
 export default function Tiered({title, items, insideColor}) {

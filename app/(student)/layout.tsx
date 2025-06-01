@@ -1,13 +1,15 @@
-import BaseLayout from "./components/BaseLayout";
+import Layout from "../../layout/layout";
 
-export default function Layout({
+export default function LayoutStudent({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  
   return (
       <div>
-          <BaseLayout>{children}</BaseLayout>
+          {/* <BaseLayout>{children}</BaseLayout> */}
+          <Layout>{children}</Layout>;
       </div>
   );
 }

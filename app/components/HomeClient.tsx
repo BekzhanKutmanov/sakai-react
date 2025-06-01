@@ -18,7 +18,7 @@ export default function HomeClient() {
   return (
     <div className="bg-[#F5F5F5] z-[1] py-[50px] relative">
       <div className="w-full">
-        <div className="flex flex-column md:flex-row items-center justify-center">
+        <div className="flex flex-column md:flex-row items-center justify-between">
           <div className="lg:w-1/2">
             <div className="text-[16px] text-[var(--mainColor)] block mb-[15px]">
               <div className="relative">
