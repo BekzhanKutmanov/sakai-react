@@ -1,6 +1,5 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'primeflex/primeflex.css';
+@import 'tailwindcss/index.css';
 
 :root {
   --bodyFonts: "Jost", sans-serif;

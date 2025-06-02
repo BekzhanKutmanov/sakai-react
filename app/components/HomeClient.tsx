@@ -8,7 +8,6 @@ import Link from "next/link";
 import { faClock, faVideo,} from "@fortawesome/free-solid-svg-icons";
 import MyFontAwesome from "./MyFontAwesome";
 import VideoPlay from "./VideoPlay";
-import Image from "next/image";
 
 export default function HomeClient() {
   useEffect(() => {
@@ -39,7 +38,7 @@ export default function HomeClient() {
                   ЫҢГАЙЛУУ ОКУУ ҮЧҮН ОНЛАЙН МЕЙКИНДИК
                 </span>
               </div>
-                <h1
+                <h2
                   data-aos="fade-down"
                   data-aos-delay="900"
                   data-aos-duration="1000"
@@ -47,17 +46,18 @@ export default function HomeClient() {
                   className="text-[30px] sm:text-[50px]"
                 >
                   Аралыктан окутуу порталына кош келиңиз!
-                </h1>
+                </h2>
               <div
                 data-aos="fade-up"
                 data-aos-delay="900"
                 data-aos-duration="1000"
                 data-aos-once="true"
+                className="text-[var(--bodyColor)]"
               >
                 {" "}
                 Университеттин онлайн билим берүү жаатындагы долбоорлорун
                 бириктирүүдөбүз:
-                <ul className="m-4">
+                <ul className="m-4 list-disc">
                   <li>ачык онлайн курстар</li>
                   <li>жогорку билим берүү программалары</li>
                 </ul>
@@ -112,15 +112,15 @@ export default function HomeClient() {
                 </div>
 
                 <div
-                  className="absolute animateFaster z-20"
+                  className="absolute bottom-[50%] animateFaster z-20"
                   data-aos="fade-up"
                   data-aos-delay="900"
                   data-aos-duration="1000"
                   data-aos-once="true"
                 >
-                  <div className="bg-red-500 p-2 sm:p-4">
+                  <div className="flex flex-col bg-white p-2 sm:p-4">
                     <span className="text-[var(--titleColor)] sm:text-[16px]">13000</span>
-                    <p className="text-[12px] sm:text-[16px]">lorem</p>
+                    <p className="text-[12px] sm:text-[16px]">Студент</p>
                   </div>
                 </div>
 
@@ -131,7 +131,7 @@ export default function HomeClient() {
                   data-aos-duration="1000"
                   data-aos-once="true"
                 >
-                  <div className="bg-white p-2 sm:p-4">
+                  <div className="flex flex-col bg-white p-2 sm:p-4">
                     <span className="text-[var(--titleColor)] sm:text-[16px]">Куттуктайбыз!</span>
                     <p className="text-[12px] sm:text-[16px]">Сиздин кабыл алуу ийгиликтүү аяктады</p>
                   </div>
@@ -144,7 +144,7 @@ export default function HomeClient() {
                   data-aos-duration="1000"
                   data-aos-once="true"
                 > 
-                  <div className="bg-white p-2 sm:p-4">
+                  <div className="flex flex-col bg-white p-2 sm:p-4">
                     <span className="text-[var(--titleColor)] sm:text-[16px]">User experience className</span>
                     <p className="text-[12px] sm:text-[16px]">Today at 12.00 PM</p>
                   </div>

@@ -17,7 +17,7 @@ export default function FancyLinkBtn({backround, effectBackround, title}) {
                 backgroundColor:`var(${backround})`,
             }}
         >
-           <Link href={'/login'}>{title}</Link>
+           <Link href={'/auth/login'} style={{color:'white'}}>{title}</Link>
             <span className={`${position ? 'fancyAfter' : 'fancyBefore'}`}
                 style={{position:'absolute',top:'0',bottom:'0', left:'50%', width: "550px", height: "550px", 
                     margin:'auto', borderRadius:'50%', zIndex:'-1', backgroundColor:`var(${effectBackround})`

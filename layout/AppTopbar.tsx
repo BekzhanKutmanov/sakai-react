@@ -164,20 +164,8 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                             </div>
                         }
 
-
-                        <div className={`hidden lg:block ${media ? 'order-1' : 'order-2'}`}><FancyLinkBtn backround={'--redColor'} effectBackround={'--mainColor'} title={'Кирүү'}/></div>
+                    <div className={`hidden lg:block ${media ? 'order-1' : 'order-2'}`}><FancyLinkBtn backround={'--redColor'} effectBackround={'--mainColor'} title={'Кирүү'}/></div>
              </div>
-                {/* <Tiered title={{name:'КАТАЛОГ', font:''}} insideColor={'--bodyColor'} items={items}/>
-                <button type="button" className="p-link layout-topbar-button">
-                    <i className="pi pi-user"></i>
-                    <span>Profile</span>
-                </button>
-                <Link href="/documentation">
-                    <button type="button" className="p-link layout-topbar-button">
-                        <i className="pi pi-cog"></i>
-                        <span>Settings</span>
-                    </button>
-                </Link> */}
             </div>
         </div>
     );

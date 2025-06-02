@@ -29,7 +29,8 @@ export default function Tiered({title, items, insideColor}) {
                   label={title.name && title.name}
                   icon={title.name && "pi pi-list"}
                   onClick={(e) => toggleMenu(e)}
-                  className={`gap-2 p-2 bg-inherit text-[16px] text-[var(${insideColor})] hover:text-[var(--mainColor)]`}
+                  style={{color:'var(--BodyColor)'}}
+                  className={`gap-2 p-2 bg-white text-[16px]`}
             />
             : <button onClick={(e) => toggleMenu(e)}>
                   <MyFontAwesome icon={faEllipsisVertical} className="text-[var(--mainColor)] text-2xl"/>
@@ -49,7 +50,7 @@ export default function Tiered({title, items, insideColor}) {
                         menuitem: { className: 'text-[var(--titleColor)] text-[14px] px-1 py-2 border-b hover:shadow-xl border-gray-200 hover:text-white hover:bg-[var(--mainColor)]' },
                         action: { className: 'flex gap-1' }, // для иконки + текста
                         icon: { className: 'text-[var(--titleColor)] mx-1 hover:text-white' },
-                        submenuIcon: { className: 'text-gray-400 ml-auto' }
+                        // submenuIcon: { className: 'text-gray-400 ml-auto' }
                   }}
             />
             
