@@ -5,20 +5,20 @@ import { faCircle,
     faBookOpen,
     faShieldHeart,
 } from "@fortawesome/free-solid-svg-icons";
-import MyFontAwesome from '../../components/MyFontAwesome';
+import MyFontAwesome from './MyFontAwesome';
 import CountUp from 'react-countup';    
 
 export default function CounterBanner() {
   return (
     <div>
-        <div className='grid sm:grid-cols-2 lg:grid-cols-4 gap-4 bg-[var(--titleColor)] -z-50 w-full p-[40px] lg:p-[80px] text-white'>
+        <div className='w-full grid sm:grid-cols-2 justify-between lg:grid-cols-4 gap-4 bg-[var(--titleColor)] -z-50 p-[40px] lg:p-[80px] text-white'>
             <div className='flex items-center gap-4'>
                 <div className='relative w-[55px] flex items-center'>
                     <MyFontAwesome icon={faChalkboard} className='text-[40px] lg:text-[55px] text-white z-10'/>
                     <MyFontAwesome icon={faCircle} className='absolute z-0 right-0 bottom-[-25%] lg:right-[-25%] text-[27px] lg:text-[43px] text-[var(--mainColor)]'/>
                 </div>
                 <div className='flex flex-col'>
-                    <div className='text-[22px] lg:text-[26px]'><CountUp start={14.000} end={15000} duration={2} /><span>+</span></div>
+                    <div className='text-[22px] sm:text-[30px]'><CountUp start={14.000} end={15000} duration={2} /><span>+</span></div>
                     <span className='text-[12px] lg:text-[14px]'>Курстар & видеосабактар</span>
                 </div>
             </div>
@@ -55,7 +55,7 @@ export default function CounterBanner() {
                     <span className='text-[12px] lg:text-[14px]'>Канааттануу деңгээли</span>
                 </div>
             </div>
-    </div>
+        </div>
     </div>
   )
 }

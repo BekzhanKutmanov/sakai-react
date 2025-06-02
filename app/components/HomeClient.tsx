@@ -16,21 +16,19 @@ export default function HomeClient() {
   }, []);
 
   return (
-    <div className="bg-[#F5F5F5] z-[1] py-[50px] relative">
+    <div className="relative mt-[98px] px-2 py-[50px] z-[1]">
       <div className="w-full">
         <div className="flex flex-column md:flex-row items-center justify-between">
           <div className="lg:w-1/2">
             <div className="text-[16px] text-[var(--mainColor)] block mb-[15px]">
               <div className="relative">
-                <Image 
-                  src={'/img/shape1.png'} 
-                  width={60} 
-                  height={60} 
+                <img
+                  src={'/layout/images/shape1.png'} 
                   data-aos="fade-up"
                   data-aos-delay="900"
                   data-aos-duration="1000"
                   data-aos-once="true"
-                  alt=""
+                  alt="Фото"
                   className="hidden lg:block absolute top-[-100px] left-[-10px] animateContent"/>
                 <span
                   data-aos="fade-up"
@@ -94,31 +92,31 @@ export default function HomeClient() {
                 />
 
                 <div
-                  className="hidden sm:block absolute top-4 left-[-20px] animateContent"
+                  className="hidden sm:block absolute top-0 left-[-20px] animateContent"
                   data-aos="fade-down"
                   data-aos-delay="900"
                   data-aos-duration="1000"
                   data-aos-once="true"
                 >
-                  <img src="/img/shape.png" className="z-[-10]" alt="Shape" />
+                  <img src="/layout/images/shape.png" className="z-[-10]" alt="Shape" />
                 </div>
 
                 <div
-                  className="hidden sm:block absolute top-4 right-0 animateContent"
+                  className="hidden sm:block absolute top-0 right-0 animateContent"
                   data-aos="fade-up"
                   data-aos-delay="900"
                   data-aos-duration="1000"
                   data-aos-once="true"
                 >
-                  <img src="/img/shape2.png" alt="Shape" />
+                  <img src="/layout/images/shape2.png" alt="Shape" />
                 </div>
 
                 <div
                   className="absolute animateFaster z-20"
-                  // data-aos="fade-up"
-                  // data-aos-delay="900"
-                  // data-aos-duration="1000"
-                  // data-aos-once="true"
+                  data-aos="fade-up"
+                  data-aos-delay="900"
+                  data-aos-duration="1000"
+                  data-aos-once="true"
                 >
                   <div className="bg-red-500 p-2 sm:p-4">
                     <span className="text-[var(--titleColor)] sm:text-[16px]">13000</span>
@@ -159,6 +157,15 @@ export default function HomeClient() {
           </div>
         </div>
       </div>
+
+      {/* Counter Statistics */}
+      <CounterBanner/>
+
+      {/* Oshgu Video */}
+      <div>
+        <h2 className="text-[22px] p-4 text-center">Видеоэкскурсия по главному зданию <span className="text-[var(--mainColor)]">ОшГУ</span></h2>
+      </div>
+      <VideoPlay/>
     </div>
   );
 }

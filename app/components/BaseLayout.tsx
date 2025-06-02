@@ -1,17 +1,18 @@
 "use client";
 
-// import Footer from "./Footer";
-// import Header from "./Header";
+import AppTopbar from "@/layout/AppTopbar";
+import HomeClient from "./HomeClient";
+import AppFooter from "@/layout/AppFooter";
 
-export default function BaseLayout({ children }: { children: React.ReactNode }) {
+export default function BaseLayout() {
   return (
     <>
       <div className="max-w-[1440px] m-auto flex flex-col min-h-screen">
-        {/* <Header /> */}
+        <AppTopbar/>
         <main className="flex-1 w-full flex justify-center">
-          {children}
+          <HomeClient/>
         </main>
-        {/* <Footer /> */}
+        <AppFooter/>
       </div>
     </>
   );
