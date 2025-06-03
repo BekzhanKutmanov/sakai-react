@@ -1,7 +1,6 @@
 'use client';
 
 export default function InfoBanner({title}:{title:string}) {
-    console.log(title);
     
   return (
     <div className="bg-[var(--titleColor)] flex flex-col justify-center items-center w-full text-white p-[50px] md:p-[100px]">

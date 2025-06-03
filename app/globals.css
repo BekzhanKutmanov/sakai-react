@@ -109,3 +109,8 @@ h1, h2, h3, h4, h5, h6 {
     border-radius: 46% 54% 50% 50%/35% 61% 39% 65%;
   }
 }
+
+.p-password .p-password-toggle-icon {
+  top: 50% !important;
+  transform: translateY(-50%);
+}

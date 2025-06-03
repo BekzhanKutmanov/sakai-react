@@ -18,8 +18,6 @@ export default function VideoPlay() {
             <Dialog header={''} className="w-[80%] h-[300px] md:h-[500px]" visible={videoCall} onHide={() => {if (!videoCall) return; setVideoCall(false); }}>
                 <div className="flex justify-center items-center">
                     <iframe
-                        // width="100%"
-                        // height="300px"
                         className="w-full h-[200px] md:h-[400px]"
                         src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1"
                         title="YouTube video player"
