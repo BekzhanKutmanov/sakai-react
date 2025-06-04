@@ -3,14 +3,12 @@
 import { useEffect, useRef, useState } from 'react';
 import { Button } from 'primereact/button';
 import { TieredMenu } from 'primereact/tieredmenu';
-import { faBars, faClose, faEllipsisVertical } from "@fortawesome/free-solid-svg-icons";
-import MyFontAwesome from '../MyFontAwesome';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 
 export default function Tiered({title, items, insideColor}) {
     const [mobile, setMobile] = useState(false);
 
-      const menu = useRef(null);
+    const menu = useRef(null);
     const media = useMediaQuery('(max-width: 1000px)');
 
     const menuItems = items.map(item => ({
@@ -25,18 +23,18 @@ export default function Tiered({title, items, insideColor}) {
     // Общий фонт который закрывает кнопку бургер меню, Close
     return (
         <div className='relative'>
-            {title.name ? <Button
-                  label={title.name && title.name}
-                  icon={title.name && "pi pi-list"}
+            <Button
+                  label={title.name ? title.name : ''}
+                  // icon={title.font}
                   onClick={(e) => toggleMenu(e)}
-                  style={{color:'var(--BodyColor)'}}
-                  className={`gap-2 p-2 bg-white text-[16px]`}
+                  style={{color: 'black', fontSize: title.name ? '16px' : '20px'}}
+                  className={`${ title.font } ${
+                    title.name ?
+                      'flex gap-2 items-center pb-3 px-0' 
+                    : 'text-blue-300'
+                  } bg-white p-2`}
             />
-            : <button onClick={(e) => toggleMenu(e)}>
-                  <MyFontAwesome icon={faEllipsisVertical} className="text-[var(--mainColor)] text-2xl"/>
-             </button>
-            }
-            
+
             <TieredMenu
                   model={menuItems}
                   popup
@@ -48,7 +46,7 @@ export default function Tiered({title, items, insideColor}) {
                         root: { className: `bg-white border border-gray-300 rounded-md shadow-md`},
                         menu: { className: 'transition-all' },
                         menuitem: { className: 'text-[var(--titleColor)] text-[14px] px-1 py-2 border-b hover:shadow-xl border-gray-200 hover:text-white hover:bg-[var(--mainColor)]' },
-                        action: { className: 'flex gap-1' }, // для иконки + текста
+                        action: { className: 'flex items-center gap-2' }, // для иконки + текста не работает :)
                         icon: { className: 'text-[var(--titleColor)] mx-1 hover:text-white' },
                         // submenuIcon: { className: 'text-gray-400 ml-auto' }
                   }}

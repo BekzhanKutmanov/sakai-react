@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 import { useRouter } from 'next/navigation';
-import React, { useContext, useState } from 'react';
+import React, { use, useContext, useState } from 'react';
 import { Checkbox } from 'primereact/checkbox';
 import { Button } from 'primereact/button';
 import { Password } from 'primereact/password';
@@ -14,10 +14,11 @@ import { useForm } from 'react-hook-form';
 import { schema } from '@/schemas/schema';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Controller } from 'react-hook-form';
+import { json } from 'stream/consumers';
+import { login } from '@/services/auth';
+import FancyLinkBtn from '@/app/components/buttons/FancyLinkBtn';
 
 const LoginPage = () => {
-    const [password, setPassword] = useState('');
-    const [checked, setChecked] = useState(false);
     const { layoutConfig } = useContext(LayoutContext);
 
     const router = useRouter();
@@ -27,26 +28,16 @@ const LoginPage = () => {
         resolver:yupResolver(schema), mode: 'onChange',
     });
 
-    const onSubmit = async (data) => {
-        console.log(data);
+    const onSubmit = async (value) => {
+        console.log('Данные пользователя: ',value);
         
-        // console.log("Данные формы:", data);
-        try {
-            const res = await fetch('https://mooc.oshsu.kg/api/v2/login', {
-                method:"POST",
-                headers: {
-                    'Content-Type': 'application/json',
-                    // 'mode':'no-cors',
-                },
-                credentials: "include",
-                body: JSON.stringify({
-                    email : "kalilov054720@oshsu.kg",
-                    password : "054720"
-                }),
-                // body: JSON.stringify(data),
-            })
-        } catch(err){
-            console.log("Ошибка ",err);
+        const user = await login(value);
+        console.log(user);
+        if(user && user.success){
+            window.location.href = '/';
+            document.cookie = `access_token=${user.token.access_token}; path=/; Secure; SameSite=Strict; expires=${user.token.expires_at}`;
+        } else {
+            console.log('Ошибка при авторизации');
         }
     };
 
@@ -93,7 +84,8 @@ const LoginPage = () => {
                                     </b>
                                     )}
                                 </div>
-                            <Button label="Кирүү" type='submit' className="w-full p-2 md:p-3 text-[14px] md:text-xl"></Button>
+                            {/* <Button label="Кирүү" type='submit' className="w-full p-2 md:p-3 text-[14px] md:text-xl"></Button> */}
+                                <FancyLinkBtn btnWidth={'90%'} backround={'--mainColor'} effectBg={'--titleColor'} title={'Кирүү'} />
                         </form>
                     </div>
                 </div>
