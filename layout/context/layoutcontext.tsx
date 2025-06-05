@@ -2,6 +2,7 @@
 import React, { useState, createContext, useEffect } from 'react';
 import { LayoutState, ChildContainerProps, LayoutConfig, LayoutContextProps } from '@/types';
 import SessionManager from '@/app/components/SessionManager';
+import GlobalLoading from '@/app/components/loading/GlobalLoading';
 
 export const LayoutContext = createContext({} as LayoutContextProps);
 
@@ -27,6 +28,9 @@ export const LayoutProvider = ({ children }: ChildContainerProps) => {
         // 👇 Добавляем пользователя
     const [user, setUser] = useState(null);
 
+        // Глобальная загрузка
+    const [globalLoading, setGlobalLoading] = useState<boolean>(true);
+
     const onMenuToggle = () => {
         if (isOverlay()) {
             setLayoutState((prevLayoutState) => ({ ...prevLayoutState, overlayMenuActive: !prevLayoutState.overlayMenuActive }));
@@ -51,8 +55,6 @@ export const LayoutProvider = ({ children }: ChildContainerProps) => {
         return window.innerWidth > 991;
     };
 
-    
-
     const value: LayoutContextProps = {
         layoutConfig,
         setLayoutConfig,
@@ -62,9 +64,12 @@ export const LayoutProvider = ({ children }: ChildContainerProps) => {
         showProfileSidebar,
         user,
         setUser,
+        globalLoading,
+        setGlobalLoading
     };
 
     return <LayoutContext.Provider value={value}>
         <SessionManager/>
+        <GlobalLoading/>
         {children}</LayoutContext.Provider>;
 };

@@ -1,13 +1,14 @@
 'use client';
 
-import { getToken, isTokenExpired } from '@/utils/auth';
+import { getToken } from '@/utils/auth';
 import { useContext, useEffect, useState } from 'react';
 import { LayoutContext } from '@/layout/context/layoutcontext';
-import { getUser, login } from '@/services/auth';
+import { getUser } from '@/services/auth';
 
 const SessionManager = () => {
     const [checkUser, setCheckUser] = useState(getToken('access_token'));
     const { user, setUser } = useContext(LayoutContext);
+    const { globalLoading, setGlobalLoading } = useContext(LayoutContext);
 
     useEffect(() => {
         console.log('Пользователь ', user);
@@ -20,22 +21,24 @@ const SessionManager = () => {
             const token = getToken('access_token');
             if (token) {
                 const res = await getUser(token);
-                // loading = true
-
+                setGlobalLoading(true);
                 if (res?.success) {
                     console.log('Данные успешно пришли ', res);
+                    setGlobalLoading(false);
                     const userVisit = localStorage.getItem('userVisit');
                     if(!userVisit){
-                        // messege - Успех! 
+                        // messege - Успех!
                         localStorage.setItem('userVisit', JSON.stringify(true));
                     }
                     setUser(res.user);
                 } else {
+                    setGlobalLoading(false)
                     // messege - Ошибка при авторизации
-                    // loading = false
                     localStorage.removeItem('userVisit');
                     console.log('Ошибка при получении пользователя');
                 }
+            } else {
+                setGlobalLoading(false);
             }
         };
         init();
@@ -49,11 +52,10 @@ const SessionManager = () => {
                 console.log('Токен отсутствует - завершаем сессию');
                // messege - Время сесси завершилось
                
+                setGlobalLoading(false)
                 setUser(null);
                 localStorage.removeItem('userVisit');
                 document.cookie = 'access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;';
-                // loading = false
-
                 return false; // сигнал для остановки интервала
             }
             return true;
