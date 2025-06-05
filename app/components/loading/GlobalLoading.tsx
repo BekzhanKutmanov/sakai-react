@@ -3,8 +3,7 @@ import { LayoutContext } from '@/layout/context/layoutcontext';
 
 export default function GlobalLoading() {
     const { globalLoading } = useContext(LayoutContext);
-
-    console.log(globalLoading);
+    
     if(globalLoading){
         return (
             <>

@@ -41,7 +41,6 @@ export const getUser = async (token) => {
         });
 
         const data = await res.json();
-        console.log(data);
         return data;
     } catch (err) {
         console.log('Ошибка при получении пользователя', err);

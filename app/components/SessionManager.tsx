@@ -1,14 +1,14 @@
 'use client';
 
 import { getToken } from '@/utils/auth';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect } from 'react';
 import { LayoutContext } from '@/layout/context/layoutcontext';
 import { getUser } from '@/services/auth';
+import { logout } from '@/utils/logout';
 
 const SessionManager = () => {
-    const [checkUser, setCheckUser] = useState(getToken('access_token'));
-    const { user, setUser } = useContext(LayoutContext);
-    const { globalLoading, setGlobalLoading } = useContext(LayoutContext);
+    const { user, setUser, setMessage } = useContext(LayoutContext);
+    const { setGlobalLoading } = useContext(LayoutContext);
 
     useEffect(() => {
         console.log('Пользователь ', user);
@@ -22,19 +22,35 @@ const SessionManager = () => {
             if (token) {
                 const res = await getUser(token);
                 setGlobalLoading(true);
-                if (res?.success) {
-                    console.log('Данные успешно пришли ', res);
-                    setGlobalLoading(false);
-                    const userVisit = localStorage.getItem('userVisit');
-                    if(!userVisit){
-                        // messege - Успех!
-                        localStorage.setItem('userVisit', JSON.stringify(true));
+                try {
+                    if (res?.success) {
+                        setGlobalLoading(false);
+                        const userVisit = localStorage.getItem('userVisit');
+                        console.log('Данные успешно пришли ', res);
+
+                        if (!userVisit) {
+                            localStorage.setItem('userVisit', JSON.stringify(true));
+
+                            setMessage({
+                                state: true,
+                                value: { severity: 'success', summary: 'Успешная авторизация!', detail: '' }
+                            }); // messege - Успех!
+                        }
+                        setUser(res.user);
+                    } else {
+                        logout({setUser, setGlobalLoading});
+                        setMessage({
+                            state: true,
+                            value: { severity: 'error', summary: 'Ошибка', detail: 'Ошибка при авторизации' }
+                        }); // messege - Ошибка при авторизации
+                        console.log('Ошибка при получении пользователя');
                     }
-                    setUser(res.user);
-                } else {
-                    setGlobalLoading(false)
-                    // messege - Ошибка при авторизации
-                    localStorage.removeItem('userVisit');
+                } catch (error) {
+                    logout({setUser, setGlobalLoading});
+                    setMessage({
+                        state: true,
+                        value: { severity: 'error', summary: 'Ошибка', detail: 'Ошибка при авторизации' }
+                    }); // messege - Ошибка при авторизации
                     console.log('Ошибка при получении пользователя');
                 }
             } else {
@@ -49,13 +65,15 @@ const SessionManager = () => {
             const token = getToken('access_token');
 
             if (!token) {
+                const userVisit = localStorage.getItem('userVisit');
+                if(userVisit){
+                    setMessage({
+                        state: true,
+                        value: { severity: 'error', summary: 'Сессия завершилось', detail: 'Войдите заново' }
+                    }); // messege - Время сесси завершилось
+                }
+                logout({setUser, setGlobalLoading});
                 console.log('Токен отсутствует - завершаем сессию');
-               // messege - Время сесси завершилось
-               
-                setGlobalLoading(false)
-                setUser(null);
-                localStorage.removeItem('userVisit');
-                document.cookie = 'access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;';
                 return false; // сигнал для остановки интервала
             }
             return true;

@@ -10,9 +10,18 @@ import { LayoutContext } from './context/layoutcontext';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { usePathname } from 'next/navigation';
 import { TieredMenu } from 'primereact/tieredmenu';
+import { logout } from '@/utils/logout';
 
 const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
-    const { layoutConfig, layoutState, onMenuToggle, showProfileSidebar, user } = useContext(LayoutContext);
+    const { layoutConfig, 
+        layoutState, 
+        onMenuToggle, 
+        showProfileSidebar, 
+        user, 
+        setUser,
+        setGlobalLoading
+    } = useContext(LayoutContext);
+
     const menubuttonRef = useRef(null);
     const topbarmenuRef = useRef(null);
     const topbarmenubuttonRef = useRef(null);
@@ -22,10 +31,6 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
         topbarmenu: topbarmenuRef.current,
         topbarmenubutton: topbarmenubuttonRef.current
     }));
-
-    useEffect(() => {
-        console.log(user);
-    }, [user]);
 
     const pathName = usePathname();
     const media = useMediaQuery('(max-width: 1000px)');
@@ -71,7 +76,7 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                           icon: 'pi pi-sign-out',
                           items: [],
                           command: () => {
-                              alert('Чыгуу...');
+                            logout({setUser, setGlobalLoading});
                           }
                       }
                   ]
@@ -170,7 +175,9 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
             label: 'Чыгуу',
             icon: 'pi pi-sign-out',
             items: [],
-            link: '#'
+            command: () => {
+                logout({setUser, setGlobalLoading});
+            }
         }
     ];
 
