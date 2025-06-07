@@ -14,7 +14,7 @@ export default function VideoPlay() {
     const [videoCall, setVideoCall] = useState(false);
 
     return (
-        <div className="relative">
+        <div className="relative my-4">
             <Dialog header={''} className="w-[80%] h-[300px] md:h-[500px]" visible={videoCall} onHide={() => {if (!videoCall) return; setVideoCall(false); }}>
                 <div className="flex justify-center items-center">
                     <iframe
