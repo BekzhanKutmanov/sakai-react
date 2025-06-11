@@ -48,7 +48,6 @@ const AppFooter = () => {
                 </div>
             </div>
         </div>
-        
         <p 
             style={{color:'white'}} 
             className="p-1 sm:p-5 text-[12px] sm:text=[14px] sm:w-[400px] m-auto text-center "

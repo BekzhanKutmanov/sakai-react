@@ -7,7 +7,7 @@ let url = '';
 // });
 
 export const login = async (value) => {
-    url = process.env.NEXT_PUBLIC_AUTH + '/login?';
+    url = process.env.NEXT_PUBLIC_BASE_URL + '/login?';
     console.log(url);
 
     try {
@@ -27,7 +27,7 @@ export const login = async (value) => {
 };
 
 export const getUser = async (token) => {
-    url = process.env.NEXT_PUBLIC_AUTH + '/v1/user';
+    url = process.env.NEXT_PUBLIC_BASE_URL + '/v1/user';
     
     const headers: HeadersInit = token
         ? {
