@@ -296,3 +296,25 @@ h1, h2, h3, h4, h5, h6 {
     transform: rotateZ(-360deg);
   }
 }
+
+.my-custom-table {
+  /* border-collapse: collapse; 
+  border: 1px solid #ccc;  */
+  /* width: 90%; */
+  /* margin: auto; */
+}
+
+.my-custom-table td,
+.my-custom-table th {
+  border: 1px solid #ccc;
+  padding: 8px;
+}
+
+.my-custom-table thead {
+  /* background-color: #f5f5f5; */
+}
+
+.my-custom-table .p-datatable-tbody > tr:nth-child(even) {
+  /* background-color: rgb(255, 239, 239); */
+  background-color: #f5f5f5;
+}

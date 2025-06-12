@@ -9,8 +9,11 @@ import { InputText } from 'primereact/inputtext';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { LayoutContext } from '@/layout/context/layoutcontext';
 import { InputTextarea } from 'primereact/inputtextarea';
-import { useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
+import { DataTable } from 'primereact/datatable';
+import { Column } from 'primereact/column';
+import ConfirmModal from '@/app/components/popUp/ConfirmModal';
+import GroupSkeleton from '@/app/components/skeleton/GroupSkeleton';
+import Link from 'next/link';
 
 export default function Course() {
     const [courses, setCourses] = useState([]);
@@ -24,6 +27,7 @@ export default function Course() {
     const [formVisible, setFormVisible] = useState(false);
     const [image, setImage] = useState(null);
     const [forStart, setForStart] = useState(false);
+    const [skeleton, setSkeleton] = useState(false);
 
     const { setMessage } = useContext(LayoutContext);
 
@@ -36,15 +40,14 @@ export default function Course() {
     };
 
     const handleAddCourse = async () => {
-        console.log(courseValue);
         if (courseValue.title.length < 1) {
             alert('hi');
             return null;
         }
         const token = getToken('access_token');
         const data = await addCourse(token, courseValue);
-        console.log(data);
         if (data.success) {
+            toggleSkeleton();
             handleFetchCourses();
             setMessage({
                 state: true,
@@ -62,9 +65,8 @@ export default function Course() {
         const token = getToken('access_token');
 
         const data = await deleteCourse(token, id);
-        console.log(data);
-
         if (data.success) {
+            toggleSkeleton();
             handleFetchCourses();
             setMessage({
                 state: true,
@@ -79,13 +81,11 @@ export default function Course() {
     };
 
     const handleUpdateCourse = async () => {
-        console.log(courseValue);
-
         const token = getToken('access_token');
 
         const data = await updateCourse(token, selectedCourse.id, courseValue);
-        console.log(data);
         if (data.success) {
+            toggleSkeleton();
             handleFetchCourses();
             clearValues();
             setEditMode(false);
@@ -114,11 +114,46 @@ export default function Course() {
 
     const onSelect = (e) => {
         setImage(e.files[0]); // сохраняешь файл
+        console.log(e.files[0]);
+
         setCourseValue((prev) => ({
             ...prev,
             image: e.files[0]
         }));
     };
+
+    const imageBodyTemplate = (product) => {
+        const image = product.image;
+
+        if (typeof image === 'string') {
+            return <div className='flex justify-center'>
+                <img src={image} alt="Course image" className="w-4rem shadow-2 border-round" />
+            </div>
+        }
+
+        return <div className='flex justify-center'>
+            <img src={'/layout/images/no-image.jpg'} alt="Course image" className="w-4rem shadow-2 border-round" />
+        </div>
+    };
+
+    const getConfirmOptions = (id) => ({
+        message: 'Сиз чын эле өчүрүүнү каалайсызбы??',
+        header: 'Өчүрүү',
+        icon: 'pi pi-info-circle',
+        defaultFocus: 'reject',
+        acceptClassName: 'p-button-danger',
+        acceptLabel: 'Кийинки кадам',     // кастомная надпись для "Yes"
+        rejectLabel: 'Артка', 
+        accept: () => handleDeleteCourse(id),
+        reject: () => console.log('Удаление отменено')
+    });
+
+    const toggleSkeleton = () => {
+        setSkeleton(true);
+        setTimeout(() => {
+            setSkeleton(false);
+        }, 1000);
+    }
 
     useEffect(() => {
         handleFetchCourses();
@@ -130,7 +165,6 @@ export default function Course() {
 
     return (
         <div>
-            <div>
                 <FormModal title={editMode ? 'Курсту жаңылоо' : 'Кошуу'} fetchValue={editMode ? handleUpdateCourse : handleAddCourse} clearValues={clearValues} visible={formVisible} setVisible={setFormVisible} start={forStart}>
                     <div className="flex flex-col gap-1">
                         <div className="flex flex-col lg:flex-row gap-1 justify-around items-center">
@@ -198,6 +232,10 @@ export default function Course() {
                         </div>
                     </div>
                 </FormModal>
+            <div className='flex justify-between items-center my-4 py-2 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]'>
+                <div>
+                    <h3 className='text-[36px] m-0'>Курстар</h3>
+                </div>
 
                 <Button
                     label="Кошуу"
@@ -210,35 +248,47 @@ export default function Course() {
                 />
             </div>
 
-            <div className="flex flex-col gap-2">
-                {courses.map((item) => (
-                    <div key={item?.id} className="flex justify-between items-center gap-1 border-2">
-                        <div className="flex justify-between items-center gap-1 border-2">
-                            <span>{item.id}</span>
-                            <h3>{item.title}</h3>
-                            <p>{item.description}</p>
-                        </div>
-                        <button onClick={() => handleDeleteCourse(item.id)}>delete</button>
-                        <Button
-                            label="Редактировать"
-                            icon="pi pi-pencil"
-                            onClick={() => {
-                                setEditMode(true);
-                                setSelectedCourse(item);
-                                setCourseValue({
-                                    title: item.title || '',
-                                    description: item.description || '',
-                                    video_url: item.video_url || '',
-                                    image: item.image || ''
-                                });
-                                setCourseTitle(item.title);
-                                setVideo_url(item.video_url);
-                                setDesciption(item.description);
-                                setFormVisible(true); // этот флаг надо добавить
-                            }}
-                        />
-                    </div>
-                ))}
+            <div className="py-4">
+                { skeleton ? <GroupSkeleton count={courses.length} size={{width:'100%', height:'4rem'}}/>
+                : <DataTable value={courses} breakpoint="960px" responsiveLayout="stack" className="my-custom-table">
+                    <Column field="id" header="Номер" sortable style={{ width: '30px', textAlign: 'center' }}></Column>
+                    <Column field="title" header="Аталышы" className='w-2/3' sortable body={(rowData)=> (
+                        <Link href={'/'}>{rowData.title}</Link>
+                    )}></Column>
+                    <Column header="" style={{ width:'80px' }} body={imageBodyTemplate}></Column>
+                    
+                    <Column
+                        header=""
+                        className="flex justify-center"
+                        body={(rowData) => (
+                            <div className="flex gap-2">
+                                <Button
+                                    icon="pi pi-pencil"
+                                    className="p-button-rounded bg-blue-400"
+                                    onClick={() => {
+                                        setEditMode(true);
+                                        setSelectedCourse(rowData);
+                                        setCourseValue({
+                                            title: rowData.title || '',
+                                            description: rowData.description || '',
+                                            video_url: rowData.video_url || '',
+                                            image: rowData.image || ''
+                                        });
+                                        setCourseTitle(rowData.title);
+                                        setVideo_url(rowData.video_url);
+                                        setDesciption(rowData.description);
+                                        setFormVisible(true);
+                                    }}
+                                />
+                                <ConfirmModal confirmVisible={getConfirmOptions(rowData.id) } />
+                                <Button className=" bg-blue-400" icon="pi pi-arrow-right">
+                                    <Link href={'#'}></Link>
+                                </Button>
+                            </div>
+                        )}
+                    />
+                </DataTable>
+                }
             </div>
         </div>
     );

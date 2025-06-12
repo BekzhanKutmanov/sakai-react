@@ -4,6 +4,7 @@ import { LayoutState, ChildContainerProps, LayoutConfig, LayoutContextProps } fr
 import SessionManager from '@/app/components/SessionManager';
 import GlobalLoading from '@/app/components/loading/GlobalLoading';
 import Message from '@/app/components/messages/message';
+import { ConfirmDialog } from 'primereact/confirmdialog';
 
 export const LayoutContext = createContext({} as LayoutContextProps);
 
@@ -77,6 +78,7 @@ export const LayoutProvider = ({ children }: ChildContainerProps) => {
     return <LayoutContext.Provider value={value}>
         <SessionManager/>
         <GlobalLoading/>
+        <ConfirmDialog />    
         {message.state && <Message/>}
         {children}</LayoutContext.Provider>;
 };
