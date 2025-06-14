@@ -3,7 +3,7 @@ import React, { useState, createContext, useEffect } from 'react';
 import { LayoutState, ChildContainerProps, LayoutConfig, LayoutContextProps } from '@/types';
 import SessionManager from '@/app/components/SessionManager';
 import GlobalLoading from '@/app/components/loading/GlobalLoading';
-import Message from '@/app/components/messages/message';
+import Message from '@/app/components/messages/Message';
 import { ConfirmDialog } from 'primereact/confirmdialog';
 
 export const LayoutContext = createContext({} as LayoutContextProps);

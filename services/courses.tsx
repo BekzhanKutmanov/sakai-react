@@ -107,3 +107,25 @@ export const updateCourse = async (token, id, value) => {
         return [];
     }
 };
+
+export const fetchTheme = async (token, id) => {
+    url = process.env.NEXT_PUBLIC_BASE_URL + `/v1/teacher/courses/show?course_id=${id}`;
+
+    const headers: HeadersInit = token
+        ? {
+              Authorization: `Bearer ${token}`
+          }
+        : {};
+
+    try {
+        const res = await fetch(url, {
+            headers
+        });
+
+        const data = await res.json();
+        return data;
+    } catch (err) {
+        console.log('Ошибка при получении списка тем', err);
+        return [];
+    }
+};

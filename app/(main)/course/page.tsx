@@ -6,7 +6,7 @@ import { getToken } from '@/utils/auth';
 import { Button } from 'primereact/button';
 import { FileUpload } from 'primereact/fileupload';
 import { InputText } from 'primereact/inputtext';
-import { useContext, useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { LayoutContext } from '@/layout/context/layoutcontext';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { DataTable } from 'primereact/datatable';
@@ -164,7 +164,12 @@ export default function Course() {
     }, []);
 
     useEffect(() => {
-        courseTitle.length > 0 ? setForStart(false) : setForStart(true);
+        const title = courseTitle.trim();
+        if(title.length > 0){
+            setForStart(false);
+        } else {
+            setForStart(true);
+        }
     }, [courseTitle]);
 
     return (
@@ -176,7 +181,6 @@ export default function Course() {
                             <label className="block text-900 font-medium text-[16px] md:text-xl mb-1 md:mb-2">Аталышы</label>
                             <InputText
                                 value={courseTitle}
-                                // classname?
                                 placeholder="Аталышы талап кылынат"
                                 onChange={(e) => {
                                     setCourseTitle(e.target.value);
@@ -236,6 +240,7 @@ export default function Course() {
                     </div>
                 </div>
             </FormModal>
+
             <div className="flex justify-between items-center my-4 py-2 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">
                 <div>
                     <h3 className="text-[36px] m-0">Курстар</h3>
@@ -258,7 +263,7 @@ export default function Course() {
                 ) : (
                     <DataTable value={courses} breakpoint="960px" responsiveLayout="stack" className="my-custom-table">
                         <Column field="id" header="Номер" sortable style={{ width: '30px', textAlign: 'center' }}></Column>
-                        <Column field="title" header="Аталышы" className="w-2/3" sortable body={(rowData) => <Link href={'/'}>{rowData.title}</Link>}></Column>
+                        <Column field="title" header="Аталышы" className="w-2/3" sortable body={(rowData) => <Link href={`/course/${rowData.id}`}>{rowData.title}</Link>}></Column>
                         <Column header="" style={{ width: '80px' }} body={imageBodyTemplate}></Column>
 
                         <Column
@@ -285,9 +290,9 @@ export default function Course() {
                                         }}
                                     />
                                     <ConfirmModal confirmVisible={getConfirmOptions(rowData.id)} />
-                                    <Button className=" bg-blue-400" icon="pi pi-arrow-right">
-                                        <Link href={'#'}></Link>
-                                    </Button>
+                                    <Link href={`/course/${rowData.id}`}>
+                                        <Button className="bg-blue-400" icon="pi pi-arrow-right"></Button>
+                                    </Link>
                                 </div>
                             )}
                         />
