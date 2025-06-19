@@ -80,8 +80,8 @@ export default function Course() {
             setCourseCash({});
             setHasCourses(true);
             setMessage({
-                    state: true,
-                    value: { severity: 'error', summary: 'Ошибка', detail: 'Повторите заново' }
+                state: true,
+                value: { severity: 'error', summary: 'Ошибка', detail: 'Повторите заново' }
             }); // messege - Ошибка загрузки курсов
         }
     };
@@ -157,15 +157,16 @@ export default function Course() {
         setCourseTitle('');
         setVideo_url('');
         setDesciption('');
-        // fileUploadRef.current = null;
+        setImage('');
         setEditMode(false);
         setSelectedCourse(null);
         setCourseCash({});
     };
 
     const onSelect = (e: FileUploadSelectEvent) => {
-        setImage(e.files[0]); // сохраняешь файл
-
+        setImage(e.files[0].name); // сохраняешь файл
+        console.log(e.files[0]);
+        
         setCourseValue((prev) => ({
             ...prev,
             image: e.files[0]
@@ -177,15 +178,15 @@ export default function Course() {
 
         if (typeof image === 'string') {
             return (
-                <div className="flex justify-center" key={product.id}>
-                    <img src={image} alt="Course image" className="w-4rem shadow-2 border-round" />
+                <div className="flex justify-center w-[50px] h-[50px]" key={product.id}>
+                    <img src={image} alt="Course image" className="w-full object-cover shadow-2 border-round" />
                 </div>
             );
         }
 
         return (
-            <div className="flex justify-center" key={product.id}>
-                <img src={'/layout/images/no-image.jpg'} alt="Course image" className="w-4rem shadow-2 border-round" />
+            <div className="flex justify-center w-[50px] h-[50px]" key={product.id}>
+                <img src={'/layout/images/no-image.png'} alt="Course image" className="w-full object-cover shadow-2 border-round" />
             </div>
         );
     };
@@ -236,13 +237,26 @@ export default function Course() {
 
     useEffect(() => {
         console.log('Курсы ', courses);
-        courses.length < 1 ? setHasCourses(true)
-            : setHasCourses(false);
+        courses.length < 1 ? setHasCourses(true) : setHasCourses(false);
     }, [courses]);
 
     useEffect(() => {
-        console.log('pagination ', pagination);
-    }, [pagination]);
+        console.log('edit mode ', editMode);
+        
+        const handleShow = async () => {
+            const token = getToken('access_token');
+            const data = await fetchCourseInfo(token, selectedCourse);
+            console.log(data);
+            setCourseTitle(data.course.title);
+            setVideo_url(data.course.video_url);
+            setDesciption(data.course.description);
+            setImage(data.course.image);
+        };
+
+        if (editMode) {
+            handleShow();
+        }
+    }, [editMode]);
 
     return (
         <div>
@@ -301,9 +315,9 @@ export default function Course() {
                         <div className="flex flex-col pag-1 items-center justify-center">
                             <label className="block text-900 font-medium text-[16px] md:text-xl mb-1 md:mb-2">Сүрөт кошуу</label>
                             <FileUpload mode="basic" customUpload name="demo[]" accept="image/*" maxFileSize={1000000} onSelect={onSelect} />
-                            {courseValue.image ? (
+                            {image ? (
                                 <div className="mt-2 text-sm text-gray-700">
-                                    Сүрөт: <b className="text-[12px]">{courseValue.image.name || courseValue.image}</b>
+                                    Сүрөт: <b className="text-[12px]">{image}</b>
                                 </div>
                             ) : (
                                 <b className="text-[12px] text-red-500">jpeg, png, jpg</b>
@@ -329,16 +343,28 @@ export default function Course() {
                 />
             </div>
 
-            {hasCourses ? <NotFoundPage bannerTitle={'Курстар жок'} titleMessege={'Курс кошуу үчүн кошуу баскычты басыныз'} />
-                : <div className="py-4">
+            {hasCourses ? (
+                <NotFoundPage titleMessege={'Курс кошуу үчүн кошуу баскычты басыныз'} />
+            ) : (
+                <div className="py-4">
                     {skeleton ? (
                         <GroupSkeleton count={courses.length} size={{ width: '100%', height: '4rem' }} />
                     ) : (
                         <>
                             <DataTable value={courses} breakpoint="960px" rows={5} responsiveLayout="stack" className="my-custom-table">
                                 <Column field="id" header="Номер" sortable style={{ width: '30px', textAlign: 'center' }}></Column>
-                                <Column field="title" header="Аталышы" className="w-2/3" sortable body={(rowData) => <Link href={`/course/${rowData.id}`} key={rowData.id}>{rowData.title}</Link>}></Column>
-                                <Column header="" style={{ width: '80px' }} body={imageBodyTemplate}></Column>
+                                <Column
+                                    field="title"
+                                    header="Аталышы"
+                                    className="w-2/3"
+                                    sortable
+                                    body={(rowData) => (
+                                        <Link href={`/course/${rowData.id}`} key={rowData.id}>
+                                            {rowData.title}
+                                        </Link>
+                                    )}
+                                ></Column>
+                                <Column header="" style={{ width: '50px' }} body={imageBodyTemplate}></Column>
                                 <Column
                                     header=""
                                     className="flex justify-center"
@@ -356,9 +382,6 @@ export default function Course() {
                                                         video_url: rowData.video_url || '',
                                                         image: rowData.image || ''
                                                     });
-                                                    setCourseTitle(rowData.title);
-                                                    setVideo_url(rowData.video_url);
-                                                    setDesciption(rowData.description);
                                                     setFormVisible(true);
                                                 }}
                                             />
@@ -380,7 +403,7 @@ export default function Course() {
                         </>
                     )}
                 </div>
-            }
+            )}
         </div>
     );
 }

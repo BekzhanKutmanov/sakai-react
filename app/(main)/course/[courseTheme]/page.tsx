@@ -12,7 +12,7 @@ import { LayoutContext } from '@/layout/context/layoutcontext';
 import React, { useContext, useEffect, useState } from 'react';
 import { getToken } from '@/utils/auth';
 import { useParams } from 'next/navigation';
-import { addThemes, deleteTheme, fetchCourseInfo, fetchThemes, updateThems } from '@/services/courses';
+import { addThemes, deleteTheme, fetchCourseInfo, fetchThemes, updateTheme } from '@/services/courses';
 import NotFoundPage from '@/app/(full-page)/pages/notfound/page';
 
 export default function CourseTheme() {
@@ -100,7 +100,7 @@ export default function CourseTheme() {
     const handleUpdateTheme = async () => {
         const token = getToken('access_token');
 
-        const data = await updateThems(token, courseTheme, selectedCourse.id, themeValue);
+        const data = await updateTheme(token, courseTheme, selectedCourse.id, themeValue);
         if (data.success) {
             toggleSkeleton();
             handleFetchThemes();
@@ -151,7 +151,8 @@ export default function CourseTheme() {
     }, []);
 
     useEffect(() => {
-        courseTitle.length > 0 ? setForStart(false) : setForStart(true);
+        const title = courseTitle.trim();
+        title.length > 0 ? setForStart(false) : setForStart(true);
     }, [courseTitle]);
 
     useEffect(() => {
@@ -179,7 +180,7 @@ export default function CourseTheme() {
                 </div>
 
                 <div className={`${titleImageClass}`}>
-                    <img src={themeInfo?.image} className="" alt="" />
+                    <img src={themeInfo?.image} />
                 </div>
             </div>
 

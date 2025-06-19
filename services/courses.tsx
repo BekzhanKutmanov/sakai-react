@@ -184,7 +184,7 @@ export const fetchThemes = async (token:string | null, id:number) => {
     }
 };
 
-export const updateThems = async (token: string | null, course_id:number | null, theme_id: number, value:CourseCreateType) => {
+export const updateTheme = async (token: string | null, course_id:number | null, theme_id: number, value:CourseCreateType) => {
     console.log(value);
     
     url = process.env.NEXT_PUBLIC_BASE_URL + `/v1/teacher/lessons/update?course_id=${course_id}&title=${value}&lesson_id=${theme_id}`;

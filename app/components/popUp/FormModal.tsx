@@ -1,10 +1,11 @@
 'use client';
+
 import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 
 export default function FormModal({children, title, fetchValue, clearValues, visible, setVisible, start}) {
 
-    const footerContent = ( 
+    const footerContent = (
         <div>
             <Button label="Чыгуу" icon="pi pi-times" onClick={() => {
                 setVisible(false);
