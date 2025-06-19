@@ -1,3 +1,5 @@
+import { LoginType } from "@/types/login";
+
 let url = '';
 
 //      const params = new URLSearchParams({
@@ -6,9 +8,8 @@ let url = '';
 //     ending: '' + param.ending,
 // });
 
-export const login = async (value) => {
+export const login = async (value:LoginType) => {
     url = process.env.NEXT_PUBLIC_BASE_URL + '/login?';
-    console.log(url);
 
     try {
         const res = await fetch(url, {
@@ -26,7 +27,7 @@ export const login = async (value) => {
     }
 };
 
-export const getUser = async (token) => {
+export const getUser = async (token:string) => {
     url = process.env.NEXT_PUBLIC_BASE_URL + '/v1/user';
     
     const headers: HeadersInit = token

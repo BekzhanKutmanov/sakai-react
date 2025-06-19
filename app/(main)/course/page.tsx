@@ -1,10 +1,10 @@
 'use client';
 
 import FormModal from '@/app/components/popUp/FormModal';
-import { addCourse, deleteCourse, fetchCourses, updateCourse } from '@/services/courses';
+import { addCourse, deleteCourse, fetchCourseInfo, fetchCourses, updateCourse } from '@/services/courses';
 import { getToken } from '@/utils/auth';
 import { Button } from 'primereact/button';
-import { FileUpload } from 'primereact/fileupload';
+import { FileUpload, FileUploadSelectEvent } from 'primereact/fileupload';
 import { InputText } from 'primereact/inputtext';
 import { useContext, useEffect, useState } from 'react';
 import { LayoutContext } from '@/layout/context/layoutcontext';
@@ -14,29 +14,68 @@ import { Column } from 'primereact/column';
 import ConfirmModal from '@/app/components/popUp/ConfirmModal';
 import GroupSkeleton from '@/app/components/skeleton/GroupSkeleton';
 import Link from 'next/link';
+import { CourseCreateType } from '@/types/courseCreateType';
+import { CourseType } from '@/types/courseType';
+import { Paginator } from 'primereact/paginator';
 
 export default function Course() {
     const [courses, setCourses] = useState([]);
-    const [courseValue, setCourseValue] = useState({ title: '', description: '', video_url: '', image: '' });
+    const [courseValue, setCourseValue] = useState<CourseCreateType>({ title: '', description: '', video_url: '', image: '' });
     const [courseTitle, setCourseTitle] = useState('');
     const [video_url, setVideo_url] = useState('');
     const [description, setDesciption] = useState('');
     // const fileUploadRef = useRef(null);
     const [editMode, setEditMode] = useState(false);
-    const [selectedCourse, setSelectedCourse] = useState(null);
+    const [selectedCourse, setSelectedCourse] = useState<number | null>(null);
     const [formVisible, setFormVisible] = useState(false);
-    const [image, setImage] = useState(null);
+    const [image, setImage] = useState<File | string>('');
     const [forStart, setForStart] = useState(false);
     const [skeleton, setSkeleton] = useState(false);
+    const [courseCash, setCourseCash] = useState<{ [key: number]: any[] }>({});
+    const [pagination, setPagination] = useState({
+        currentPage: 1,
+        total: 0,
+        perPage: 0
+    });
 
     const { setMessage } = useContext(LayoutContext);
 
-    const handleFetchCourses = async () => {
-        const token = getToken('access_token');
-        const data = await fetchCourses(token);
-        console.log(data);
+    const fetchData = async (page = 1) => {
+        console.log('Запрашиваем курсы...');
 
-        setCourses(data.courses);
+        const token = getToken('access_token');
+        const headers: HeadersInit = token ? { Authorization: `Bearer ${token}` } : {};
+
+        try {
+            console.log('Номер запрашиваемой страницы ', page);
+
+            const res = await fetch(`http://api.mooc.oshsu.kg/public/api/v1/teacher/courses?page=${Number(page)}&limit=3`, {
+                headers
+            });
+            const data = await res.json();
+
+            if (data.courses) {
+                setCourses(data.courses.data);
+                setPagination({
+                    currentPage: data.courses.current_page,
+                    total: data.courses.total,
+                    perPage: data.courses.per_page
+                });
+                localStorage.setItem('lastPage', JSON.stringify(page));
+                setCourseCash((prev) => ({ ...prev, [page]: data.courses.data }));
+            } else {
+                localStorage.removeItem('lastPage');
+                setCourseCash({});
+                setMessage({
+                state: true,
+                value: { severity: 'error', summary: 'Ошибка', detail: 'Ошибка при при добавлении' }
+            }); // messege - Ошибка при добавлении
+            }
+        } catch (error) {
+            console.error('Ошибка загрузки:', error);
+            localStorage.removeItem('lastPage');
+            setCourseCash({});
+        }
     };
 
     const handleAddCourse = async () => {
@@ -48,7 +87,8 @@ export default function Course() {
         const data = await addCourse(token, courseValue);
         if (data.success) {
             toggleSkeleton();
-            handleFetchCourses();
+            fetchData();
+            setCourseCash({});
             setMessage({
                 state: true,
                 value: { severity: 'success', summary: 'Ийгиликтүү кошулду!', detail: '' }
@@ -61,13 +101,14 @@ export default function Course() {
         }
     };
 
-    const handleDeleteCourse = async (id) => {
+    const handleDeleteCourse = async (id: number) => {
         const token = getToken('access_token');
 
         const data = await deleteCourse(token, id);
         if (data.success) {
             toggleSkeleton();
-            handleFetchCourses();
+            fetchData();
+            setCourseCash({});
             setMessage({
                 state: true,
                 value: { severity: 'success', summary: 'Ийгиликтүү өчүрүлдү!', detail: '' }
@@ -83,13 +124,14 @@ export default function Course() {
     const handleUpdateCourse = async () => {
         const token = getToken('access_token');
 
-        const data = await updateCourse(token, selectedCourse.id, courseValue);
+        const data = await updateCourse(token, selectedCourse, courseValue);
         if (data.success) {
             toggleSkeleton();
-            handleFetchCourses();
+            fetchData();
             clearValues();
             setEditMode(false);
             setSelectedCourse(null);
+            setCourseCash({});
             setMessage({
                 state: true,
                 value: { severity: 'success', summary: 'Ийгиликтүү өзгөртүлдү!', detail: '' }
@@ -110,11 +152,11 @@ export default function Course() {
         // fileUploadRef.current = null;
         setEditMode(false);
         setSelectedCourse(null);
+        setCourseCash({});
     };
 
-    const onSelect = (e) => {
+    const onSelect = (e: FileUploadSelectEvent) => {
         setImage(e.files[0]); // сохраняешь файл
-        console.log(e.files[0]);
 
         setCourseValue((prev) => ({
             ...prev,
@@ -122,25 +164,25 @@ export default function Course() {
         }));
     };
 
-    const imageBodyTemplate = (product) => {
+    const imageBodyTemplate = (product: CourseType) => {
         const image = product.image;
 
         if (typeof image === 'string') {
             return (
-                <div className="flex justify-center">
+                <div className="flex justify-center" key={product.id}>
                     <img src={image} alt="Course image" className="w-4rem shadow-2 border-round" />
                 </div>
             );
         }
 
         return (
-            <div className="flex justify-center">
+            <div className="flex justify-center" key={product.id}>
                 <img src={'/layout/images/no-image.jpg'} alt="Course image" className="w-4rem shadow-2 border-round" />
             </div>
         );
     };
 
-    const getConfirmOptions = (id) => ({
+    const getConfirmOptions = (id: number) => ({
         message: 'Сиз чын эле өчүрүүнү каалайсызбы??',
         header: 'Өчүрүү',
         icon: 'pi pi-info-circle',
@@ -159,18 +201,38 @@ export default function Course() {
         }, 1000);
     };
 
-    useEffect(() => {
-        handleFetchCourses();
-    }, []);
+    // Ручное управление пагинацией
+    const handlePageChange = (page: number) => {
+        console.log(courseCash, courseCash[page]);
+
+        if (page in courseCash) {
+            setCourses(courseCash[page]);
+            setPagination((prev) => ({ ...prev, currentPage: page }));
+        } else {
+            fetchData(page);
+        }
+    };
 
     useEffect(() => {
         const title = courseTitle.trim();
-        if(title.length > 0){
+        if (title.length > 0) {
             setForStart(false);
         } else {
             setForStart(true);
         }
     }, [courseTitle]);
+
+    useEffect(() => {
+        fetchData();
+    }, []);
+
+    useEffect(() => {
+        console.log('Курсы ', courses);
+    }, [courses]);
+
+    useEffect(() => {
+        console.log('pagination ', pagination);
+    }, [pagination]);
 
     return (
         <div>
@@ -261,42 +323,50 @@ export default function Course() {
                 {skeleton ? (
                     <GroupSkeleton count={courses.length} size={{ width: '100%', height: '4rem' }} />
                 ) : (
-                    <DataTable value={courses} breakpoint="960px" responsiveLayout="stack" className="my-custom-table">
-                        <Column field="id" header="Номер" sortable style={{ width: '30px', textAlign: 'center' }}></Column>
-                        <Column field="title" header="Аталышы" className="w-2/3" sortable body={(rowData) => <Link href={`/course/${rowData.id}`}>{rowData.title}</Link>}></Column>
-                        <Column header="" style={{ width: '80px' }} body={imageBodyTemplate}></Column>
-
-                        <Column
-                            header=""
-                            className="flex justify-center"
-                            body={(rowData) => (
-                                <div className="flex gap-2">
-                                    <Button
-                                        icon="pi pi-pencil"
-                                        className="p-button-rounded bg-blue-400"
-                                        onClick={() => {
-                                            setEditMode(true);
-                                            setSelectedCourse(rowData);
-                                            setCourseValue({
-                                                title: rowData.title || '',
-                                                description: rowData.description || '',
-                                                video_url: rowData.video_url || '',
-                                                image: rowData.image || ''
-                                            });
-                                            setCourseTitle(rowData.title);
-                                            setVideo_url(rowData.video_url);
-                                            setDesciption(rowData.description);
-                                            setFormVisible(true);
-                                        }}
-                                    />
-                                    <ConfirmModal confirmVisible={getConfirmOptions(rowData.id)} />
-                                    <Link href={`/course/${rowData.id}`}>
-                                        <Button className="bg-blue-400" icon="pi pi-arrow-right"></Button>
-                                    </Link>
-                                </div>
-                            )}
+                    <>
+                        <DataTable value={courses} breakpoint="960px" rows={5} responsiveLayout="stack" className="my-custom-table">
+                            <Column field="id" header="Номер" sortable style={{ width: '30px', textAlign: 'center' }}></Column>
+                            <Column field="title" header="Аталышы" className="w-2/3" sortable body={(rowData) => <Link href={`/course/${rowData.id}`} key={rowData.id}>{rowData.title}</Link>}></Column>
+                            <Column header="" style={{ width: '80px' }} body={imageBodyTemplate}></Column>
+                            <Column
+                                header=""
+                                className="flex justify-center"
+                                body={(rowData) => (
+                                    <div className="flex gap-2" key={rowData.id}>
+                                        <Button
+                                            icon="pi pi-pencil"
+                                            className="p-button-rounded bg-blue-400"
+                                            onClick={() => {
+                                                setEditMode(true);
+                                                setSelectedCourse(rowData.id);
+                                                setCourseValue({
+                                                    title: rowData.title || '',
+                                                    description: rowData.description || '',
+                                                    video_url: rowData.video_url || '',
+                                                    image: rowData.image || ''
+                                                });
+                                                setCourseTitle(rowData.title);
+                                                setVideo_url(rowData.video_url);
+                                                setDesciption(rowData.description);
+                                                setFormVisible(true);
+                                            }}
+                                        />
+                                        <ConfirmModal confirmVisible={getConfirmOptions(rowData.id)} />
+                                        <Link href={`/course/${rowData.id}`}>
+                                            <Button className="bg-blue-400" icon="pi pi-arrow-right"></Button>
+                                        </Link>
+                                    </div>
+                                )}
+                            />
+                        </DataTable>
+                        <Paginator
+                            first={(pagination.currentPage - 1) * pagination.perPage}
+                            rows={pagination.perPage}
+                            totalRecords={pagination.total}
+                            onPageChange={(e) => handlePageChange(e.page + 1)}
+                            template="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
                         />
-                    </DataTable>
+                    </>
                 )}
             </div>
         </div>

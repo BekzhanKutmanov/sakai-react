@@ -5,6 +5,8 @@ import SessionManager from '@/app/components/SessionManager';
 import GlobalLoading from '@/app/components/loading/GlobalLoading';
 import Message from '@/app/components/messages/Message';
 import { ConfirmDialog } from 'primereact/confirmdialog';
+import { User } from '@/types/user';
+import { MessageType } from '@/types/messageType';
 
 export const LayoutContext = createContext({} as LayoutContextProps);
 
@@ -28,13 +30,13 @@ export const LayoutProvider = ({ children }: ChildContainerProps) => {
     });
 
         // 👇 Добавляем пользователя
-    const [user, setUser] = useState(null);
+    const [user, setUser] = useState<User | null>(null);
 
         // Глобальная загрузка
     const [globalLoading, setGlobalLoading] = useState<boolean>(true);
 
         // Сообщение об ошибке/успехе
-    const [message, setMessage] = useState({state:false, value:{}});
+    const [message, setMessage] = useState<MessageType>({state:false, value:{}});
     
     const onMenuToggle = () => {
         if (isOverlay()) {
@@ -76,9 +78,10 @@ export const LayoutProvider = ({ children }: ChildContainerProps) => {
     };
 
     return <LayoutContext.Provider value={value}>
-        <SessionManager/>
-        <GlobalLoading/>
-        <ConfirmDialog />    
-        {message.state && <Message/>}
-        {children}</LayoutContext.Provider>;
+            <SessionManager/>
+            <GlobalLoading/>
+            <ConfirmDialog />    
+            {message.state && <Message/>}
+            {children}
+        </LayoutContext.Provider>;
 };

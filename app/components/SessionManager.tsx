@@ -7,7 +7,8 @@ import { getUser } from '@/services/auth';
 import { logout } from '@/utils/logout';
 
 const SessionManager = () => {
-    const { user, setUser, setMessage } = useContext(LayoutContext);
+    const { setMessage } = useContext(LayoutContext);
+    const { user, setUser } = useContext(LayoutContext);
     const { setGlobalLoading } = useContext(LayoutContext);
 
     useEffect(() => {

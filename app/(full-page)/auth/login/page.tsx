@@ -19,6 +19,7 @@ import { getUser, login } from '@/services/auth';
 import FancyLinkBtn from '@/app/components/buttons/FancyLinkBtn';
 import { getToken } from '@/utils/auth';
 import { logout } from '@/utils/logout';
+import { LoginType } from '@/types/login';
 
 const LoginPage = () => {
     const { layoutConfig, setUser, setMessage, setGlobalLoading} = useContext(LayoutContext);
@@ -36,7 +37,7 @@ const LoginPage = () => {
         mode: 'onChange'
     });
 
-    const onSubmit = async (value) => {
+    const onSubmit = async (value:LoginType) => {
         console.log('Данные пользователя: ', value);
 
         const user = await login(value);
