@@ -13,8 +13,10 @@ import React, { useContext, useEffect, useState } from 'react';
 import { getToken } from '@/utils/auth';
 import { useParams } from 'next/navigation';
 import { addThemes, deleteTheme, fetchCourseInfo, fetchThemes, updateThems } from '@/services/courses';
+import NotFoundPage from '@/app/(full-page)/pages/notfound/page';
 
 export default function CourseTheme() {
+    const [hasThemes, setHasThemes] = useState(false);
     const [themes, setThemes] = useState([]);
     const [themeValue, setThemeValue] = useState({ title: '' });
     const [themeInfo, setThemeInfo] = useState();
@@ -31,8 +33,17 @@ export default function CourseTheme() {
     const handleFetchThemes = async () => {
         const token = getToken('access_token');
         const data = await fetchThemes(token, courseTheme);
-
-        setThemes(data.lessons.data);
+        
+        if (data.lessons) {
+            setThemes(data.lessons.data);
+            setHasThemes(false);
+        } else {
+            setHasThemes(true);
+            setMessage({
+                state: true,
+                value: { severity: 'error', summary: 'Ошибка', detail: 'Проблема с соединением. Повторите заново' }
+            }); // messege - Ошибка загрузки курсов
+        }
     };
 
     const handleFetchInfo = async () => {
@@ -41,11 +52,6 @@ export default function CourseTheme() {
 
         setThemeInfo(data.course);
     };
-
-    useEffect(() => {
-        handleFetchInfo();
-        handleFetchThemes();
-    }, []);
 
     const handleAddTheme = async () => {
         if (themeValue.title.length < 1) {
@@ -72,7 +78,7 @@ export default function CourseTheme() {
         }
     };
 
-    const handleDeleteCourse = async (id:number) => {
+    const handleDeleteCourse = async (id: number) => {
         const token = getToken('access_token');
 
         const data = await deleteTheme(token, id);
@@ -140,18 +146,18 @@ export default function CourseTheme() {
     };
 
     useEffect(() => {
+        handleFetchInfo();
+        handleFetchThemes();
+    }, []);
+
+    useEffect(() => {
         courseTitle.length > 0 ? setForStart(false) : setForStart(true);
     }, [courseTitle]);
 
     useEffect(() => {
-        console.log(themeValue);
-    }, [themeValue]);
-
-    useEffect(() => {
-        console.log(themeInfo);
-    }, [themeInfo]);
-
-    const hasImage = !!themeInfo?.image;
+        themes.length < 1 ? setHasThemes(true)
+            : setHasThemes(false);
+    }, [themes]);
 
     const titleInfoClass = `${!themeInfo?.image ? 'items-center' : 'w-full'} ${themeInfo?.image ? 'w-1/2' : 'w-full'}`;
     const titleImageClass = `${themeInfo?.image ? 'md:w-1/3' : ''}`;
@@ -210,40 +216,44 @@ export default function CourseTheme() {
             </FormModal>
 
             {/* table section */}
-            <div className="py-4">
-                {skeleton ? (
-                    <GroupSkeleton count={themes.length} size={{ width: '100%', height: '4rem' }} />
-                ) : (
-                    <DataTable value={themes} breakpoint="960px" responsiveLayout="stack" className="my-custom-table">
-                        <Column field="id" header="Номер" sortable style={{ width: '30px', textAlign: 'center' }}></Column>
-                        <Column field="title" header="Темалар" className="w-2/3" sortable body={(rowData) => <Link href={'/'}>{rowData.title}</Link>}></Column>
+            {hasThemes ? (
+                <NotFoundPage titleMessege={'Тема кошуу үчүн кошуу баскычты басыныз'} />
+            ) : (
+                <div className="py-4">
+                    {skeleton ? (
+                        <GroupSkeleton count={themes.length} size={{ width: '100%', height: '4rem' }} />
+                    ) : (
+                        <DataTable value={themes} breakpoint="960px" responsiveLayout="stack" className="my-custom-table">
+                            <Column field="id" header="Номер" sortable style={{ width: '30px', textAlign: 'center' }}></Column>
+                            <Column field="title" header="Темалар" className="w-2/3" sortable body={(rowData) => <Link href={'/'}>{rowData.title}</Link>}></Column>
 
-                        <Column
-                            header=""
-                            className="flex justify-center"
-                            body={(rowData) => (
-                                <div className="flex gap-2">
-                                    <Button
-                                        icon="pi pi-pencil"
-                                        className="p-button-rounded bg-blue-400"
-                                        onClick={() => {
-                                            setEditMode(true);
-                                            setSelectedCourse(rowData);
-                                            setThemeValue({ title: rowData.title || '' });
-                                            setCourseTitle(rowData.title);
-                                            setFormVisible(true);
-                                        }}
-                                    />
-                                    <ConfirmModal confirmVisible={getConfirmOptions(rowData.id)} />
-                                    <Button className=" bg-blue-400" icon="pi pi-arrow-right">
-                                        <Link href={`/course/${rowData.id}`}></Link>
-                                    </Button>
-                                </div>
-                            )}
-                        />
-                    </DataTable>
-                )} 
-            </div>
+                            <Column
+                                header=""
+                                className="flex justify-center"
+                                body={(rowData) => (
+                                    <div className="flex gap-2">
+                                        <Button
+                                            icon="pi pi-pencil"
+                                            className="p-button-rounded bg-blue-400"
+                                            onClick={() => {
+                                                setEditMode(true);
+                                                setSelectedCourse(rowData);
+                                                setThemeValue({ title: rowData.title || '' });
+                                                setCourseTitle(rowData.title);
+                                                setFormVisible(true);
+                                            }}
+                                        />
+                                        <ConfirmModal confirmVisible={getConfirmOptions(rowData.id)} />
+                                        <Button className=" bg-blue-400" icon="pi pi-arrow-right">
+                                            <Link href={`/course/${rowData.id}`}></Link>
+                                        </Button>
+                                    </div>
+                                )}
+                            />
+                        </DataTable>
+                    )}
+                </div>
+            )}
         </div>
     );
 }

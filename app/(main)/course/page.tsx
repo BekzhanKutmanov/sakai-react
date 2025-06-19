@@ -17,14 +17,15 @@ import Link from 'next/link';
 import { CourseCreateType } from '@/types/courseCreateType';
 import { CourseType } from '@/types/courseType';
 import { Paginator } from 'primereact/paginator';
+import NotFoundPage from '@/app/(full-page)/pages/notfound/page';
 
 export default function Course() {
     const [courses, setCourses] = useState([]);
+    const [hasCourses, setHasCourses] = useState(false);
     const [courseValue, setCourseValue] = useState<CourseCreateType>({ title: '', description: '', video_url: '', image: '' });
     const [courseTitle, setCourseTitle] = useState('');
     const [video_url, setVideo_url] = useState('');
     const [description, setDesciption] = useState('');
-    // const fileUploadRef = useRef(null);
     const [editMode, setEditMode] = useState(false);
     const [selectedCourse, setSelectedCourse] = useState<number | null>(null);
     const [formVisible, setFormVisible] = useState(false);
@@ -55,26 +56,33 @@ export default function Course() {
             const data = await res.json();
 
             if (data.courses) {
+                setHasCourses(false);
                 setCourses(data.courses.data);
                 setPagination({
                     currentPage: data.courses.current_page,
                     total: data.courses.total,
                     perPage: data.courses.per_page
                 });
-                localStorage.setItem('lastPage', JSON.stringify(page));
                 setCourseCash((prev) => ({ ...prev, [page]: data.courses.data }));
+                localStorage.setItem('lastPage', JSON.stringify(page));
             } else {
-                localStorage.removeItem('lastPage');
+                setHasCourses(true);
                 setCourseCash({});
+                localStorage.removeItem('lastPage');
                 setMessage({
-                state: true,
-                value: { severity: 'error', summary: 'Ошибка', detail: 'Ошибка при при добавлении' }
-            }); // messege - Ошибка при добавлении
+                    state: true,
+                    value: { severity: 'error', summary: 'Ошибка', detail: 'Проблема с соединением. Повторите заново' }
+                }); // messege - Ошибка загрузки курсов
             }
         } catch (error) {
             console.error('Ошибка загрузки:', error);
             localStorage.removeItem('lastPage');
             setCourseCash({});
+            setHasCourses(true);
+            setMessage({
+                    state: true,
+                    value: { severity: 'error', summary: 'Ошибка', detail: 'Повторите заново' }
+            }); // messege - Ошибка загрузки курсов
         }
     };
 
@@ -228,6 +236,8 @@ export default function Course() {
 
     useEffect(() => {
         console.log('Курсы ', courses);
+        courses.length < 1 ? setHasCourses(true)
+            : setHasCourses(false);
     }, [courses]);
 
     useEffect(() => {
@@ -319,56 +329,58 @@ export default function Course() {
                 />
             </div>
 
-            <div className="py-4">
-                {skeleton ? (
-                    <GroupSkeleton count={courses.length} size={{ width: '100%', height: '4rem' }} />
-                ) : (
-                    <>
-                        <DataTable value={courses} breakpoint="960px" rows={5} responsiveLayout="stack" className="my-custom-table">
-                            <Column field="id" header="Номер" sortable style={{ width: '30px', textAlign: 'center' }}></Column>
-                            <Column field="title" header="Аталышы" className="w-2/3" sortable body={(rowData) => <Link href={`/course/${rowData.id}`} key={rowData.id}>{rowData.title}</Link>}></Column>
-                            <Column header="" style={{ width: '80px' }} body={imageBodyTemplate}></Column>
-                            <Column
-                                header=""
-                                className="flex justify-center"
-                                body={(rowData) => (
-                                    <div className="flex gap-2" key={rowData.id}>
-                                        <Button
-                                            icon="pi pi-pencil"
-                                            className="p-button-rounded bg-blue-400"
-                                            onClick={() => {
-                                                setEditMode(true);
-                                                setSelectedCourse(rowData.id);
-                                                setCourseValue({
-                                                    title: rowData.title || '',
-                                                    description: rowData.description || '',
-                                                    video_url: rowData.video_url || '',
-                                                    image: rowData.image || ''
-                                                });
-                                                setCourseTitle(rowData.title);
-                                                setVideo_url(rowData.video_url);
-                                                setDesciption(rowData.description);
-                                                setFormVisible(true);
-                                            }}
-                                        />
-                                        <ConfirmModal confirmVisible={getConfirmOptions(rowData.id)} />
-                                        <Link href={`/course/${rowData.id}`}>
-                                            <Button className="bg-blue-400" icon="pi pi-arrow-right"></Button>
-                                        </Link>
-                                    </div>
-                                )}
+            {hasCourses ? <NotFoundPage bannerTitle={'Курстар жок'} titleMessege={'Курс кошуу үчүн кошуу баскычты басыныз'} />
+                : <div className="py-4">
+                    {skeleton ? (
+                        <GroupSkeleton count={courses.length} size={{ width: '100%', height: '4rem' }} />
+                    ) : (
+                        <>
+                            <DataTable value={courses} breakpoint="960px" rows={5} responsiveLayout="stack" className="my-custom-table">
+                                <Column field="id" header="Номер" sortable style={{ width: '30px', textAlign: 'center' }}></Column>
+                                <Column field="title" header="Аталышы" className="w-2/3" sortable body={(rowData) => <Link href={`/course/${rowData.id}`} key={rowData.id}>{rowData.title}</Link>}></Column>
+                                <Column header="" style={{ width: '80px' }} body={imageBodyTemplate}></Column>
+                                <Column
+                                    header=""
+                                    className="flex justify-center"
+                                    body={(rowData) => (
+                                        <div className="flex gap-2" key={rowData.id}>
+                                            <Button
+                                                icon="pi pi-pencil"
+                                                className="p-button-rounded bg-blue-400"
+                                                onClick={() => {
+                                                    setEditMode(true);
+                                                    setSelectedCourse(rowData.id);
+                                                    setCourseValue({
+                                                        title: rowData.title || '',
+                                                        description: rowData.description || '',
+                                                        video_url: rowData.video_url || '',
+                                                        image: rowData.image || ''
+                                                    });
+                                                    setCourseTitle(rowData.title);
+                                                    setVideo_url(rowData.video_url);
+                                                    setDesciption(rowData.description);
+                                                    setFormVisible(true);
+                                                }}
+                                            />
+                                            <ConfirmModal confirmVisible={getConfirmOptions(rowData.id)} />
+                                            <Link href={`/course/${rowData.id}`}>
+                                                <Button className="bg-blue-400" icon="pi pi-arrow-right"></Button>
+                                            </Link>
+                                        </div>
+                                    )}
+                                />
+                            </DataTable>
+                            <Paginator
+                                first={(pagination.currentPage - 1) * pagination.perPage}
+                                rows={pagination.perPage}
+                                totalRecords={pagination.total}
+                                onPageChange={(e) => handlePageChange(e.page + 1)}
+                                template="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
                             />
-                        </DataTable>
-                        <Paginator
-                            first={(pagination.currentPage - 1) * pagination.perPage}
-                            rows={pagination.perPage}
-                            totalRecords={pagination.total}
-                            onPageChange={(e) => handlePageChange(e.page + 1)}
-                            template="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
-                        />
-                    </>
-                )}
-            </div>
+                        </>
+                    )}
+                </div>
+            }
         </div>
     );
 }

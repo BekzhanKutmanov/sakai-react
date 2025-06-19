@@ -18,9 +18,9 @@ export default function FancyLinkBtn({ btnWidth, backround, effectBg, title }) {
                     width: `${ btnWidth }`,
                 }}
             >
-                <Link href={'/auth/login'} style={{ color: 'white' }} className='text-[14px] sm:text-[16px]'>
+                {/* <Link href={'/auth/login'} style={{ color: 'white' }} className='text-[14px] sm:text-[16px]'> */}
                     {title}
-                </Link>
+                {/* </Link> */}
                 <span
                     className={`${position ? 'fancyAfter' : 'fancyBefore'}`}
                     style={{ position: 'absolute', top: '0', bottom: '0', left: '50%', width: '550px', height: '550px', margin: 'auto', borderRadius: '50%', zIndex: '-1', backgroundColor: `var(${effectBg})` }}
