@@ -328,9 +328,7 @@ export default function Course() {
             </FormModal>
 
             <div className="flex justify-between items-center my-4 py-2 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">
-                <div>
-                    <h3 className="text-[36px] m-0">Курстар</h3>
-                </div>
+                <h3 className="text-[36px] m-0">Курстар</h3>
 
                 <Button
                     label="Кошуу"
@@ -372,7 +370,8 @@ export default function Course() {
                                         <div className="flex gap-2" key={rowData.id}>
                                             <Button
                                                 icon="pi pi-pencil"
-                                                className="p-button-rounded bg-blue-400"
+                                                label=''
+                                                className="p-button-rounded bg-blue-[var(--titleColor)]"
                                                 onClick={() => {
                                                     setEditMode(true);
                                                     setSelectedCourse(rowData.id);
@@ -387,7 +386,7 @@ export default function Course() {
                                             />
                                             <ConfirmModal confirmVisible={getConfirmOptions(rowData.id)} />
                                             <Link href={`/course/${rowData.id}`}>
-                                                <Button className="bg-blue-400" icon="pi pi-arrow-right"></Button>
+                                                <Button className="bg-[var(--titleColor)] p-button-rounded" icon="pi pi-arrow-right"></Button>
                                             </Link>
                                         </div>
                                     )}
