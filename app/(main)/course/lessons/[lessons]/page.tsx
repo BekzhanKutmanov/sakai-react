@@ -1,70 +1,47 @@
 'use client';
 
 import { useRef, useState } from 'react';
-import { Stepper } from 'primereact/stepper';
-import { StepperPanel } from 'primereact/stepperpanel';
-import { Button } from 'primereact/button';
-
+import { TabView, TabPanel } from 'primereact/tabview';
 export default function Lesson() {
     const stepperRef = useRef(null);
 
-    const [activeStep, setActiveStep] = useState(0);
+    const [activeIndex, setActiveIndex] = useState(0);
 
-    const handleStepChange = (e) => {
-        setActiveStep(e.index);
-        // 👉 Здесь можешь загружать данные
-        console.log('Переход на шаг:', e);
-        // fetchDataForStep(e.index);
+    const handleTabChange = (e) => {
+        // console.log('Переход на шаг:', e);
+    //     // fetchDataForStep(e.index);
+        setActiveIndex(e.index) 
     };
 
     return (
-        <div className="flex justify-center">
-            <Stepper ref={stepperRef} activeStep={activeStep} onChangeStep={handleStepChange} style={{ flexBasis: '50rem' }}>
-                <StepperPanel header="Header I" key='step1'>
-                    <div className="flex flex-column h-12rem">
-                        <div className="flex justify-center items-center border-2 rounded bg-gray-100 border-gray-300 flex-auto font-medium">Content I</div>
-                    </div>
-                    <div className="flex pt-4 justify-content-end">
-                        <Button label="" icon="pi pi-arrow-right" iconPos="right" onClick={() => stepperRef.current.nextCallback()} />
-                    </div>
-                </StepperPanel>
-                <StepperPanel header="Header II" key='step2'>
-                    lreo
-                    {/* <div className="flex flex-column h-12rem">
-                        <div className="flex justify-center items-center border-2 rounded bg-gray-100 border-gray-300 flex-auto font-medium">Content II</div>
-                    </div> */}
-                    <div className="flex pt-4 justify-between">
-                        <Button label="" severity="secondary" icon="pi pi-arrow-left" onClick={() => stepperRef.current.prevCallback()} />
-                        <Button label="" icon="pi pi-arrow-right" iconPos="right" onClick={() => stepperRef.current.nextCallback()} />
-                    </div>
-                </StepperPanel>
-                <StepperPanel header="Header III" key='step3'>
-                    <div className="flex flex-column h-12rem">
-                        <div className="flex justify-center items-center border-2 rounded bg-gray-100 border-gray-300 flex-auto font-medium">Content II</div>
-                    </div>
-                    <div className="flex pt-4 justify-between">
-                        <Button label="" severity="secondary" icon="pi pi-arrow-left" onClick={() => stepperRef.current.prevCallback()} />
-                        <Button label="" icon="pi pi-arrow-right" iconPos="right" onClick={() => stepperRef.current.nextCallback()} />
-                    </div>
-                </StepperPanel>
-                <StepperPanel header="Header IV" key='step4'>
-                    <div className="flex flex-column h-12rem">
-                        <div className="flex justify-center items-center border-2 rounded bg-gray-100 border-gray-300 flex-auto font-medium">Content II</div>
-                    </div>
-                    <div className="flex pt-4 justify-between">
-                        <Button label="" severity="secondary" icon="pi pi-arrow-left" onClick={() => stepperRef.current.prevCallback()} />
-                        <Button label="" icon="pi pi-arrow-right" iconPos="right" onClick={() => stepperRef.current.nextCallback()} />
-                    </div>
-                </StepperPanel>
-                <StepperPanel header="Header v" key='step5'>
-                    <div className="flex flex-column h-12rem">
-                        <div className="flex justify-center items-center border-2 rounded bg-gray-100 border-gray-300 flex-auto font-medium">Content III</div>
-                    </div>
-                    <div className="flex pt-4 justify-start">
-                        <Button label="" severity="secondary" icon="pi pi-arrow-left" onClick={() => stepperRef.current.prevCallback()} />
-                    </div>
-                </StepperPanel>
-            </Stepper>
+        <div>
+            <TabView
+                onTabChange={(e) => handleTabChange(e) }
+                activeIndex={activeIndex}
+                pt={{
+                    nav: { className: 'flex flex-wrap justify-around' },
+                    panelContainer: { className: 'flex-1 pl-4 '}
+                }}
+            >
+                <TabPanel header="Header I" className="border p-tabview p-tabview-nav p-tabview-selected p-tabview-panels p-tabview-panel">
+                    <p className="m-0">
+                        laborum.
+                    </p>
+                </TabPanel>
+                <TabPanel header="Header II" className="p-tabview p-tabview-nav p-tabview-selected p-tabview-panels p-tabview-panel">
+                    <p className="m-0">
+                        Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim
+                        ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Consectetur, adipisci velit, sed quia non numquam eius modi.
+                    </p>
+                </TabPanel>
+                <TabPanel header="Header III" className="p-tabview p-tabview-nav p-tabview-selected p-tabview-panels p-tabview-panel">
+                    <p className="m-0">
+                        At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa
+                        qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus.
+                    </p>
+                </TabPanel>
+                
+            </TabView>
         </div>
     );
 }
