@@ -5,6 +5,7 @@
   --bodyFonts: "Jost", sans-serif;
   --mainColor: #08A9E6;
   --redColor: #EC272F;
+  --redBgColor: #EC272F1A;
   --titleColor: #21225F;
   --bodyColor: #555555;
   --whiteColor: #ffffff;
@@ -317,4 +318,25 @@ h1, h2, h3, h4, h5, h6 {
 .my-custom-table .p-datatable-tbody > tr:nth-child(even) {
   /* background-color: rgb(255, 239, 239); */
   background-color: #f5f5f5;
+}
+
+/* удаление встроенного underline при активаности для таб (TabView) */
+.p-tabview-ink-bar {
+  display: none !important;
+}
+
+.tab-custom-text{
+  color: rgb(245, 206, 77) !important; 
+}
+
+.tab-custom-text-2{
+  color: blueviolet !important; 
+}
+
+.tab-custom-text-3{
+  color: green !important; 
+}
+
+.tab-custom-text-4{
+  color: var(--redColor) !important; 
 }
