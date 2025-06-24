@@ -2,7 +2,11 @@
 
 import { useRef, useState } from 'react';
 import { TabView, TabPanel } from 'primereact/tabview';
+import CKEditorWrapper from '@/app/components/CKEditorWrapper.tsx';
+import { Button } from 'primereact/button';
+
 export default function Lesson() {
+
     const stepperRef = useRef(null);
 
     const [activeIndex, setActiveIndex] = useState(0);
@@ -19,6 +23,7 @@ export default function Lesson() {
             <TabView
                 onTabChange={(e) => handleTabChange(e)}
                 activeIndex={activeIndex}
+                className=''
                 pt={{
                     nav: { className: 'flex flex-wrap justify-around' },
                     panelContainer: { className: 'flex-1 pl-4' }
@@ -30,9 +35,14 @@ export default function Lesson() {
                     }}
                     header="Тексттер"
                     leftIcon={'pi pi-pen-to-square mr-1'}
-                    className="p-tabview p-tabview-nav p-tabview-selected p-tabview-panels p-tabview-panel"
+                    className=" p-tabview p-tabview-nav p-tabview-selected p-tabview-panels p-tabview-panel"
                 >
-                    {contentShow && <p className=" m-0">laborum.</p>}
+                    {contentShow && (
+                        <div className="flex flex-col gap-16 items-center m-0">
+                            <CKEditorWrapper />
+                            <Button label='Сактоо'/>
+                        </div>
+                    )}
                 </TabPanel>
                 <TabPanel
                     pt={{

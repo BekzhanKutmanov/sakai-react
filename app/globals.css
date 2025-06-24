@@ -325,6 +325,10 @@ h1, h2, h3, h4, h5, h6 {
   display: none !important;
 }
 
+.p-tabview-panels{
+  /* height: ; */
+}
+
 .tab-custom-text{
   color: rgb(245, 206, 77) !important; 
 }
