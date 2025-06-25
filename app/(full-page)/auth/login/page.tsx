@@ -107,15 +107,15 @@ const LoginPage = () => {
                             <Controller
                                 name="password"
                                 control={control}
-                                defaultValue=""
+                                defaultValue="" 
                                 render={({ field }) => <Password {...field} toggleMask className="w-[100%]" inputClassName="w-[90%] p-2 sm:p-3" inputStyle={{ marginRight: '30px' }} feedback={false} />}
                             />
                             {errors.password && <b className="text-red-500 text-[12px] ml-2">{errors.password.message}</b>}
                         </div>
-                        {/* <button type="submit" className=" border w-[90%] p-2 md:p-3 text-[14px] md:text-xl">
+                        <button type="submit" className=" border w-[90%] p-2 md:p-3 text-[14px] md:text-xl">
                             lorem
-                        </button> */}
-                        <FancyLinkBtn btnWidth={'90%'} backround={'--mainColor'} effectBg={'--titleColor'} title={'Кирүү'} />
+                        </button>
+                        {/* <FancyLinkBtn btnWidth={'90%'} backround={'--mainColor'} effectBg={'--titleColor'} title={'Кирүү'} /> */}
                     </form>
                 </div>
             </div>
