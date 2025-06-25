@@ -24,6 +24,7 @@ export default function Lesson() {
     // for typing effects
     const [videoTyping, setVideoTyping] = useState(true);
     const [linkTyping, setLinkTyping] = useState(true);
+    const [docTyping, setDocTyping] = useState(true);
 
     const handleTabChange = (e) => {
         // console.log('Переход на шаг:', e);
@@ -55,6 +56,7 @@ export default function Lesson() {
 
     const videoTyped = useTypingEffect('lreomlroemlfjslj sdlfkjlksdjk ksjdf l', videoTyping);
     const linkTyped = useTypingEffect('lreomlroemlfjslj sdlfkjlksdjk ksjdf lldfd', linkTyping);
+    const docTyped = useTypingEffect('lreo lfjs djf lks sdjf lsdfk sdjfks ', docTyping);
 
     useEffect(() => {
         switch (activeIndex) {
@@ -64,8 +66,13 @@ export default function Lesson() {
             case 2:
                 setLinkTyping(true);
                 break;
+            case 1:
+                console.log(activeIndex);
+                setDocTyping(true);
+                break;
             default:
                 setLinkTyping(false);
+                setDocTyping(false);
                 setVideoTyping(false); // выключить при уходе
         }
     }, [activeIndex]);
@@ -109,26 +116,14 @@ export default function Lesson() {
                 >
                     {contentShow &&
                         <div className='py-4'>
-                            <div className='bg-white shadow'>
-                                <FileUpload className='bg-white text-black poka' style={{backgroundColor:'white'}} mode="basic" name="demo[]" url="/api/upload" accept="document/*" />
+                                <div className='flex gap-2 items-center'>
+                                    <FileUpload chooseLabel="Загрузить документ" mode="basic" name="demo[]" url="/api/upload" accept="document/*" />
+                                    <span>{docTyping ? docTyped : ''}</span>
+                                </div>
+                            <div className='py-4 flex flex-col items-center gap-2'>
                                 <InputText placeholder="Мазмун" className="w-full" />
+                                <Button type="submit" onClick={addVideo} label="Сактоо" className="" disabled={!!errors.videoReq} />
                             </div>
-                            <div className="flex flex-col w-full">
-                                <InputText
-                                    {...register('usefulLink')}
-                                    type="text"
-                                    value={linkTyping ? linkTyped : videoLink}
-                                    onClick={() => setLinkTyping(false)}
-                                    onChange={(e) => {
-                                        setVideoLink(e.target.value);
-                                        setValue('usefulLink', e.target.value, { shouldValidate: true });
-                                    }}
-                                    placeholder="https://..."
-                                    className="w-full p-2 sm:p-3"
-                                />
-                                {errors.usefulLink && <b className="text-[red] text-[12px] ml-2">{errors.usefulLink.message}</b>}
-                            </div>
-                            <Button type="submit" onClick={addVideo} label="Сактоо" className="" disabled={!!errors.videoReq} />
                         </div>
                     }
                 </TabPanel>
@@ -160,7 +155,7 @@ export default function Lesson() {
                                 {errors.usefulLink && <b className="text-[red] text-[12px] ml-2">{errors.usefulLink.message}</b>}
                             </div>
                             <InputText placeholder="Мазмун" className="w-full" />
-                            <Button type="submit" onClick={addVideo} label="Сактоо" className="" disabled={!!errors.videoReq} />
+                            <Button type="submit" onClick={addVideo} label="Сактоо" disabled={!!errors.videoReq} />
                         </div>
                     )}
                 </TabPanel>
@@ -192,7 +187,7 @@ export default function Lesson() {
                                 {errors.videoReq && <b className="text-[red] text-[12px] ml-2">{errors.videoReq.message}</b>}
                             </div>
                             <InputText placeholder="Мазмун" className="w-full" />
-                            <Button type="submit" onClick={addVideo} label="Сактоо" className="" disabled={!!errors.videoReq} />
+                            <Button type="submit" onClick={addVideo} label="Сактоо" disabled={!!errors.videoReq} />
                         </div>
                     )}
                 </TabPanel>

@@ -17,6 +17,7 @@ export default function FancyLinkBtn({ btnWidth, backround, effectBg, title }) {
                     backgroundColor: `var(${backround})`,
                     width: `${ btnWidth }`,
                 }}
+                type='submit'
             >
                 {/* <Link href={'/auth/login'} style={{ color: 'white' }} className='text-[14px] sm:text-[16px]'> */}
                     {title}

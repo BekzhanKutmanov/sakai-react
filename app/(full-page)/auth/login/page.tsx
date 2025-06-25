@@ -90,10 +90,7 @@ const LoginPage = () => {
 
                 <div className="w-[90%] sm:w-[500px] shadow-2xl py-6 px-3 md:py-8 sm:px-4 md:px-8 rounded">
                     <form
-                        onSubmit={(e) => {
-                            e.preventDefault();
-                            handleSubmit(onSubmit);
-                        }}
+                        onSubmit={handleSubmit(onSubmit)}
                         className="flex flex-col gap-4 md:gap-6"
                     >
                         <div className="flex flex-col">
@@ -103,25 +100,23 @@ const LoginPage = () => {
                             <InputText {...register('email')} id="email1" type="text" placeholder="email@oshsu.kg" className="w-[90%] p-2 sm:p-3" />
                             {errors.email && <b className="text-red-500 text-[12px] ml-2">{errors.email.message}</b>}
                         </div>
-                        <button type="submit" className="w-[90%] p-2 md:p-3 text-[14px] md:text-xl">
+                        <div className="flex flex-col">
+                            <label htmlFor="password1" className="block text-900 font-medium text-[16px] md:text-xl mb-1 md:mb-2">
+                                Сыр сөз
+                            </label>
+                            <Controller
+                                name="password"
+                                control={control}
+                                defaultValue=""
+                                render={({ field }) => <Password {...field} toggleMask className="w-[100%]" inputClassName="w-[90%] p-2 sm:p-3" inputStyle={{ marginRight: '30px' }} feedback={false} />}
+                            />
+                            {errors.password && <b className="text-red-500 text-[12px] ml-2">{errors.password.message}</b>}
+                        </div>
+                        {/* <button type="submit" className=" border w-[90%] p-2 md:p-3 text-[14px] md:text-xl">
                             lorem
-                        </button>
-
+                        </button> */}
+                        <FancyLinkBtn btnWidth={'90%'} backround={'--mainColor'} effectBg={'--titleColor'} title={'Кирүү'} />
                     </form>
-                    {/* <div className="flex flex-col">
-                                <label htmlFor="password1" className="block text-900 font-medium text-[16px] md:text-xl mb-1 md:mb-2">
-                                    Сыр сөз
-                                </label>
-                                <Controller
-                                    name="password"
-                                    control={control}
-                                    defaultValue=""
-                                    render={({ field }) => <Password {...field} toggleMask className="w-[100%]" inputClassName="w-[90%] p-2 sm:p-3" inputStyle={{ marginRight: '30px' }} feedback={false} />}
-                                />
-                                {errors.password && <b className="text-red-500 text-[12px] ml-2">{errors.password.message}</b>}
-                            </div> */}
-                    {/* <FancyLinkBtn btnWidth={'90%'} backround={'--mainColor'} effectBg={'--titleColor'} title={'Кирүү'} /> */}
-                    {/* <Button label="Кирүү" type='submit' className="w-full p-2 md:p-3 text-[14px] md:text-xl"></Button> */}
                 </div>
             </div>
         </div>
