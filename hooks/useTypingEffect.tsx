@@ -37,7 +37,7 @@ export default function useTypingEffect(word: string, stop: boolean) {
 
                 return nextText;
             });
-        }, 100);
+        }, 50);
 
         return () => clearInterval(intervalRef.current!);
     }, [stop, word]);
