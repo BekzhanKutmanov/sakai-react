@@ -30,6 +30,7 @@ const LoginPage = () => {
     const {
         register,
         handleSubmit,
+        setValue,
         formState: { errors },
         control
     } = useForm({
@@ -76,10 +77,6 @@ const LoginPage = () => {
         }
     };
 
-    const x = () => {
-        console.log('hi');
-    };
-
     return (
         <div className={'flex flex-col gap-4'}>
             <InfoBanner title="Кирүү" />
@@ -90,7 +87,7 @@ const LoginPage = () => {
 
                 <div className="w-[90%] sm:w-[500px] shadow-2xl py-6 px-3 md:py-8 sm:px-4 md:px-8 rounded">
                     <form
-                        onSubmit={handleSubmit(onSubmit)}
+                        onSubmit={handleSubmit((data) => console.log(data))}
                         className="flex flex-col gap-4 md:gap-6"
                     >
                         <div className="flex flex-col">
@@ -100,7 +97,24 @@ const LoginPage = () => {
                             <InputText {...register('email')} id="email1" type="text" placeholder="email@oshsu.kg" className="w-[90%] p-2 sm:p-3" />
                             {errors.email && <b className="text-red-500 text-[12px] ml-2">{errors.email.message}</b>}
                         </div>
+                        <button type="submit" className=" border w-[90%] p-2 md:p-3 text-[14px] md:text-xl">
+                            lorem
+                        </button>
+                    </form>
+                        {/* <FancyLinkBtn btnWidth={'90%'} backround={'--mainColor'} effectBg={'--titleColor'} title={'Кирүү'} /> */}
+
+                    {/* <form
+                        onSubmit={handleSubmit(()=> console.log('submit'))}
+                        className="flex flex-col gap-4 md:gap-6"
+                    >
                         <div className="flex flex-col">
+                            <label htmlFor="email1" className="block text-900 text-[16px] md:text-xl font-medium mb-1 md:mb-2">
+                                MyEdu email
+                            </label>
+                            <InputText {...register('email')} id="email1" type="text" placeholder="email@oshsu.kg" className="w-[90%] p-2 sm:p-3" />
+                            {errors.email && <b className="text-red-500 text-[12px] ml-2">{errors.email.message}</b>}
+                        </div> */}
+                        {/* <div className="flex flex-col">
                             <label htmlFor="password1" className="block text-900 font-medium text-[16px] md:text-xl mb-1 md:mb-2">
                                 Сыр сөз
                             </label>
@@ -111,12 +125,12 @@ const LoginPage = () => {
                                 render={({ field }) => <Password {...field} toggleMask className="w-[100%]" inputClassName="w-[90%] p-2 sm:p-3" inputStyle={{ marginRight: '30px' }} feedback={false} />}
                             />
                             {errors.password && <b className="text-red-500 text-[12px] ml-2">{errors.password.message}</b>}
-                        </div>
-                        <button type="submit" className=" border w-[90%] p-2 md:p-3 text-[14px] md:text-xl">
+                        </div> */}
+                        {/* <button type="submit" className=" border w-[90%] p-2 md:p-3 text-[14px] md:text-xl">
                             lorem
-                        </button>
+                        </button> */}
                         {/* <FancyLinkBtn btnWidth={'90%'} backround={'--mainColor'} effectBg={'--titleColor'} title={'Кирүү'} /> */}
-                    </form>
+                    {/* </form> */}
                 </div>
             </div>
         </div>
