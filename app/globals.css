@@ -9,6 +9,7 @@
   --titleColor: #21225F;
   --bodyColor: #555555;
   --whiteColor: #ffffff;
+  --borderBottomColor: #e5e7eb;
   --fontSize: 16px;
   --transition: 0.5s;
 }
@@ -298,6 +299,16 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
+/* primeReact components */
+.popup_menu_left{
+  width: 300px;
+  display: none;
+}
+
+.p-menuitem-icon{
+  margin: 0;
+}
+
 /* prototype effect */
 .shadowAnimate {
   box-shadow: 1px 1px 6px 1px ;
@@ -347,6 +358,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .tab-custom-text-2{
   color: blueviolet !important; 
+  /* color: rgb(221, 196, 245) !important;  */
 }
 
 .tab-custom-text-3{
@@ -358,5 +370,6 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .poka{
-  background-color: rgb(204, 228, 194) !important;
+  background-color: rgb(211, 232, 202) !important;
+  /* background-color: rgb(243, 145, 145) !important; */
 }
