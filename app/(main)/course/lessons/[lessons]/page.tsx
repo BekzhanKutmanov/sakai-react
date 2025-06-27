@@ -6,20 +6,22 @@ import CKEditorWrapper from '@/app/components/CKEditorWrapper.tsx';
 import { Button } from 'primereact/button';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { schema } from '@/schemas/schema';
+import { lessonSchema } from '@/schemas/lessonSchema';
 import { InputText } from 'primereact/inputtext';
 import FancyLinkBtn from '@/app/components/buttons/FancyLinkBtn';
 import { LoginType } from '@/types/login';
 import useTypingEffect from '@/hooks/useTypingEffect';
 import Test from '@/app/components/Test';
 import { FileUpload } from 'primereact/fileupload';
+import PrototypeCard from '@/app/components/cards/PrototypeCard';
 
 export default function Lesson() {
     const stepperRef = useRef(null);
 
-    const [activeIndex, setActiveIndex] = useState<number>(0);
+    const [activeIndex, setActiveIndex] = useState<number>(2);
     const [contentShow, setContentShow] = useState<boolean>(true);
     const [videoLink, setVideoLink] = useState<string>('');
+    const [usefulLink, setUsefullLink] = useState<string>('');
 
     // for typing effects
     const [videoTyping, setVideoTyping] = useState(true);
@@ -39,7 +41,7 @@ export default function Lesson() {
         trigger,
         formState: { errors }
     } = useForm({
-        resolver: yupResolver(schema),
+        resolver: yupResolver(lessonSchema),
         mode: 'onChange'
     });
 
@@ -114,18 +116,18 @@ export default function Lesson() {
                     leftIcon={'pi pi-folder mr-1'}
                     className="p-tabview p-tabview-nav p-tabview-selected p-tabview-panels p-tabview-panel"
                 >
-                    {contentShow &&
-                        <div className='py-4'>
-                                <div className='flex gap-2 items-center'>
-                                    <FileUpload chooseLabel="Загрузить документ" mode="basic" name="demo[]" url="/api/upload" accept="document/*" />
-                                    <span>{docTyping ? docTyped : ''}</span>
-                                </div>
-                            <div className='py-4 flex flex-col items-center gap-2'>
+                    {contentShow && (
+                        <div className="py-4">
+                            <div className="flex gap-2 items-center">
+                                <FileUpload chooseLabel="Загрузить документ" mode="basic" name="demo[]" url="/api/upload" accept="document/*" />
+                                <span>{docTyping ? docTyped : ''}</span>
+                            </div>
+                            <div className="py-4 flex flex-col items-center gap-2">
                                 <InputText placeholder="Мазмун" className="w-full" />
                                 <Button type="submit" onClick={addVideo} label="Сактоо" className="" disabled={!!errors.videoReq} />
                             </div>
                         </div>
-                    }
+                    )}
                 </TabPanel>
 
                 {/* USEFUL LINKS */}
@@ -138,24 +140,29 @@ export default function Lesson() {
                     className="p-tabview p-tabview-nav p-tabview-selected p-tabview-panels p-tabview-panel"
                 >
                     {contentShow && (
-                        <div className="w-full py-4 flex flex-col items-center gap-2">
-                            <div className="flex flex-col w-full">
-                                <InputText
-                                    {...register('usefulLink')}
-                                    type="text"
-                                    value={linkTyping ? linkTyped : videoLink}
-                                    onClick={() => setLinkTyping(false)}
-                                    onChange={(e) => {
-                                        setVideoLink(e.target.value);
-                                        setValue('usefulLink', e.target.value, { shouldValidate: true });
-                                    }}
-                                    placeholder="https://..."
-                                    className="w-full p-2 sm:p-3"
-                                />
-                                {errors.usefulLink && <b className="text-[red] text-[12px] ml-2">{errors.usefulLink.message}</b>}
+                        <div className='flex flex-col items-center gap-4 py-4'>
+                            <div className="w-full flex flex-col items-center gap-2">
+                                <div className="flex flex-col w-full">
+                                    <InputText
+                                        {...register('usefulLink')}
+                                        type="text"
+                                        value={linkTyping ? linkTyped : usefulLink}
+                                        onClick={() => setLinkTyping(false)}
+                                        onChange={(e) => {
+                                            setUsefullLink(e.target.value);
+                                            setValue('usefulLink', e.target.value, { shouldValidate: true });
+                                        }}
+                                        placeholder="https://..."
+                                        className="w-full p-2 sm:p-3"
+                                    />
+                                    {errors.usefulLink && <b className="text-[red] text-[12px] ml-2">{errors.usefulLink.message}</b>}
+                                </div>
+                                <InputText placeholder="Мазмун" className="w-full" />
+                                <Button type="submit" onClick={addVideo} label="Сактоо" disabled={!!errors.videoReq} />
                             </div>
-                            <InputText placeholder="Мазмун" className="w-full" />
-                            <Button type="submit" onClick={addVideo} label="Сактоо" disabled={!!errors.videoReq} />
+                            <div className='flex justify-center'>
+                                <PrototypeCard value={linkTyping ? linkTyped : usefulLink}/>
+                            </div>
                         </div>
                     )}
                 </TabPanel>
