@@ -23,9 +23,6 @@ export default function Lesson() {
     const [activeIndex, setActiveIndex] = useState<number>(0);
     const [contentShow, setContentShow] = useState<boolean>(true);
     const [textShow, setTextShow] = useState<boolean>(false);
-    const [textValue, setTextValue] = useState<string>('');
-    const [videoLink, setVideoLink] = useState<string>('');
-    const [usefulLink, setUsefullLink] = useState<string>('');
 
     // for typing effects
     const [videoTyping, setVideoTyping] = useState(true);
@@ -57,31 +54,35 @@ export default function Lesson() {
 
     const handleVideoChange = (value: string) => {
         console.log(value);
-
-        setVideoLink(value);
-        setValue('videoReq', value, { shouldValidate: true }); // ✅ обновляем форму и запускаем валидацию
+        setValue('videoReq', value, { shouldValidate: true });
     };
 
-    const videoTyped = useTypingEffect('lreomlroemlfjslj sdlfkjlksdjk ksjdf l', videoTyping);
-    const linkTyped = useTypingEffect('lreomlroemlfjslj sdlfkjlksdjk ksjdf lldfd', linkTyping);
-    const docTyped = useTypingEffect('lreo lfjs djf lks sdjf lsdfk sdjfks ', docTyping);
+    const videoTyped = useTypingEffect('this is video', videoTyping);
+    const linkTyped = useTypingEffect('ёп тыгыдык дыгыдык', linkTyping);
+    const docTyped = useTypingEffect('this is document ', docTyping);
+
+    const [sentValues, setSentValues] = useState({
+        text: { typingId: '', text: '', register: '' },
+        doc: { typingId: 'docTyping', doc: '', register: '' },
+        link: { typingId: 'linkTyping', link: '', register: 'usefulLink' },
+        video: { typingId: 'videoTyping', video: '', register: 'videoReq' }
+    });
 
     useEffect(() => {
         switch (activeIndex) {
             case 3:
-                setVideoTyping(true); // включить эффект
+                setVideoTyping((prev) => !prev); // включить эффект
                 break;
             case 2:
-                setLinkTyping(true);
+                setLinkTyping((prev) => !prev);
                 break;
             case 1:
-                console.log(activeIndex);
-                setDocTyping(true);
+                setDocTyping((prev) => !prev);
                 break;
             default:
-                setLinkTyping(false);
-                setDocTyping(false);
-                setVideoTyping(false); // выключить при уходе
+                setLinkTyping((prev) => !prev);
+                setDocTyping((prev) => !prev);
+                setVideoTyping((prev) => !prev); // выключить при уходе
         }
     }, [activeIndex]);
 
@@ -102,33 +103,65 @@ export default function Lesson() {
         }
     ];
 
-    const typedJsx = (registrName, ) => (
-        <div className="flex flex-col items-center gap-4 py-4">
+    useEffect(() => {
+        console.log(sentValues['video'].register);
+    }, [sentValues]);
+
+    const typedJsx = (type: string) => {
+        const typingMap: Record<string, string | false> = {
+            videoTyping: videoTyping && videoTyped,
+            linkTyping: linkTyping && linkTyped,
+            docTyping: docTyping && docTyped
+        };
+        const value = sentValues[type]?.[type] ?? '';
+
+        const currentTypingId = sentValues[type].typingId;
+        const placeholder = typingMap[currentTypingId] || '';
+        return (
             <div className="w-full py-4 flex flex-col items-center gap-2">
                 <div className="flex flex-col w-full">
-                    <InputText
-                        {...register('videoReq')}
-                        type="text"
-                        value={videoTyping ? videoTyped : videoLink}
-                        onClick={() => setVideoTyping(false)}
-                        onChange={(e) => {
-                            setVideoLink(e.target.value);
-                            setValue('videoReq', e.target.value, { shouldValidate: true });
-                        }}
-                        placeholder="https://..."
-                        className="w-full p-2 sm:p-3"
-                    />
-                    {errors.videoReq && <b className="text-[red] text-[12px] ml-2">{errors.videoReq.message}</b>}
+                    {type === 'doc' ? (
+                        <>
+                            <FileUpload chooseLabel="Загрузить документ" mode="basic" name="demo[]" url="/api/upload" accept="document/*" />
+                            <span>{sentValues[type].typingId === 'docTyping' && docTyping ? docTyped : ''}</span>
+                        </>
+                    ) : (
+                        <>
+                            <InputText
+                                {...register(sentValues[type].register)}
+                                type="text"
+                                placeholder={placeholder}
+                                value={value}
+                                onClick={() => {
+                                    if (type === 'video') setVideoTyping(false);
+                                    if (type === 'link') setLinkTyping(false);
+                                }}
+                                onChange={(e) => {
+                                    const val = e.target.value;
+                                    setSentValues((prev) => ({
+                                        ...prev,
+                                        [type]: {
+                                            ...prev[type],
+                                            [type]: val
+                                        }
+                                    }));
+
+                                    if (type === 'video') setVideoLink(val);
+                                    if (type === 'link') setUsefullLink(val);
+
+                                    setValue(sentValues[type].register, val, { shouldValidate: true });
+                                }}
+                                className="w-full p-2 sm:p-3"
+                            />
+                            {errors[sentValues[type].register] && <b className="text-[red] text-[12px] ml-2">{errors[sentValues[type].register].message}</b>}
+                        </>
+                    )}
                 </div>
                 <InputText placeholder="Мазмун" className="w-full" />
                 <Button type="submit" onClick={addVideo} label="Сактоо" disabled={!!errors.videoReq} />
             </div>
-            <div className="flex justify-center">
-                {/* <PrototypeCard value={linkTyping ? linkTyped : usefulLink}/> */}
-                <LessonCard cardValue={'vremenno'} cardBg={'#f1b1b31a'} type={{ typeValue: 'Видео', icon: 'pi pi-video' }} typeColor={'var(--mainColor)'} lessonDate={'xx-xx-xx'} />
-            </div>
-        </div>
-    );
+        );
+    };
 
     return (
         <div>
@@ -171,27 +204,7 @@ export default function Lesson() {
                                         </div>
                                     </div>
                                     <div className="w-full h-[80%] break-words whitespace-normal overflow-scroll">
-                                        Lorem ipsum dolor, sit amet consectetur adipisicing elit. Debitis porro dolore alias. Dignissimos, quis labore officiis aliquam consectetur ipsa quae. Voluptas a veniam sit quibusdam asperiores labore neque id
-                                        maxime? Lorem ipsum dolor, sit amet consectetur adipisicing elit. Debitis porro dolore alias. Dignissimos, quis labore officiis aliquam consectetur ipsa quae. Voluptas a veniam sit quibusdam asperiores labore
-                                        neque id maxime? Lorem ipsum dolor, sit amet consectetur adipisicing elit. Debitis porro dolore alias. Dignissimos, quis labore officiis aliquam consectetur ipsa quae. Voluptas a veniam sit quibusdam asperiores
-                                        labore neque id maxime? Lorem ipsum dolor, sit amet consectetur adipisicing elit. Debitis porro dolore alias. Dignissimos, quis labore officiis aliquam consectetur ipsa quae. Voluptas a veniam sit quibusdam
-                                        asperiores labore neque id maxime? Lorem ipsum dolor, sit amet consectetur adipisicing elit. Debitis porro dolore alias. Dignissimos, quis labore officiis aliquam consectetur ipsa quae. Voluptas a veniam sit
-                                        quibusdam asperiores labore neque id maxime? Lorem ipsum dolor, sit amet consectetur adipisicing elit. Debitis porro dolore alias. Dignissimos, quis labore officiis aliquam consectetur ipsa quae. Voluptas a
-                                        veniam sit quibusdam asperiores labore neque id maxime? Lorem ipsum dolor, sit amet consectetur adipisicing elit. Debitis porro dolore alias. Dignissimos, quis labore officiis aliquam consectetur ipsa quae.
-                                        Voluptas a veniam sit quibusdam asperiores labore neque id maxime? Lorem ipsum dolor, sit amet consectetur adipisicing elit. Debitis porro dolore alias. Dignissimos, quis labore officiis aliquam consectetur
-                                        ipsa quae. Voluptas a veniam sit quibusdam asperiores labore neque id maxime?
                                     </div>
-                                    {/* <div className="px-2 py-4 w-full h-[100%] overflow-x-scroll  text-[16px] break-words whitespace-normal">
-                                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Molestias, at molestiae quam repellendus sapiente perferendis? Eius ducimus, quaerat neque illo quo dolorum repellat, culpa ratione est in nesciunt tempora quia.
-                                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Molestias, at molestiae quam repellendus sapiente perferendis? Eius ducimus, quaerat neque illo quo dolorum repellat, culpa ratione est in nesciunt tempora quia.
-                                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Molestias, at molestiae quam repellendus sapiente perferendis? Eius ducimus, quaerat neque illo quo dolorum repellat, culpa ratione est in nesciunt tempora quia.
-                                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Molestias, at molestiae quam repellendus sapiente perferendis? Eius ducimus, quaerat neque illo quo dolorum repellat, culpa ratione est in nesciunt tempora quia.
-                                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Molestias, at molestiae quam repellendus sapiente perferendis? Eius ducimus, quaerat neque illo quo dolorum repellat, culpa ratione est in nesciunt tempora quia.
-                                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Molestias, at molestiae quam repellendus sapiente perferendis? Eius ducimus, quaerat neque illo quo dolorum repellat, culpa ratione est in nesciunt tempora quia.
-                                    {
-                                        // <div dangerouslySetInnerHTML={{__html: textValue}}/>
-                                    }
-                                </div> */}
                                 </div>
                             ) : (
                                 <div className="py-4 flex flex-col gap-16 items-center m-0">
@@ -214,18 +227,8 @@ export default function Lesson() {
                 >
                     {contentShow && (
                         <div className="flex flex-col items-center gap-4 py-4">
-                            <div className="w-full">
-                                <div className="flex gap-2 items-center">
-                                    <FileUpload chooseLabel="Загрузить документ" mode="basic" name="demo[]" url="/api/upload" accept="document/*" />
-                                    <span>{docTyping ? docTyped : ''}</span>
-                                </div>
-                                <div className="py-4 flex flex-col items-center gap-2">
-                                    <InputText placeholder="Мазмун" className="w-full" />
-                                    <Button type="submit" onClick={addVideo} label="Сактоо" className="" disabled={!!errors.videoReq} />
-                                </div>
-                            </div>
+                            {typedJsx('doc')}
                             <div className="flex justify-center">
-                                {/* <PrototypeCard value={linkTyping ? linkTyped : usefulLink}/> */}
                                 <LessonCard cardValue={'vremenno'} cardBg={'#ddc4f51a'} type={{ typeValue: 'Документтер', icon: 'pi pi-folder' }} typeColor={'var(--mainColor)'} lessonDate={'xx-xx-xx'} />
                             </div>
                         </div>
@@ -243,27 +246,8 @@ export default function Lesson() {
                 >
                     {contentShow && (
                         <div className="flex flex-col items-center gap-4 py-4">
-                            <div className="w-full flex flex-col items-center gap-2">
-                                <div className="flex flex-col w-full">
-                                    <InputText
-                                        {...register('usefulLink')}
-                                        type="text"
-                                        value={linkTyping ? linkTyped : usefulLink}
-                                        onClick={() => setLinkTyping(false)}
-                                        onChange={(e) => {
-                                            setUsefullLink(e.target.value);
-                                            setValue('usefulLink', e.target.value, { shouldValidate: true });
-                                        }}
-                                        placeholder="https://..."
-                                        className="w-full p-2 sm:p-3"
-                                    />
-                                    {errors.usefulLink && <b className="text-[red] text-[12px] ml-2">{errors.usefulLink.message}</b>}
-                                </div>
-                                <InputText placeholder="Мазмун" className="w-full" />
-                                <Button type="submit" onClick={addVideo} label="Сактоо" disabled={!!errors.videoReq} />
-                            </div>
+                            {typedJsx('link')}
                             <div className="flex justify-center">
-                                {/* <PrototypeCard value={linkTyping ? linkTyped : usefulLink}/> */}
                                 <LessonCard cardValue={'vremenno'} cardBg={'#7bb78112'} type={{ typeValue: 'Шилтеме', icon: 'pi pi-link' }} typeColor={'var(--mainColor)'} lessonDate={'xx-xx-xx'} />
                             </div>
                         </div>
@@ -281,27 +265,8 @@ export default function Lesson() {
                 >
                     {contentShow && (
                         <div className="flex flex-col items-center gap-4 py-4">
-                            <div className="w-full py-4 flex flex-col items-center gap-2">
-                                <div className="flex flex-col w-full">
-                                    <InputText
-                                        {...register('videoReq')}
-                                        type="text"
-                                        value={videoTyping ? videoTyped : videoLink}
-                                        onClick={() => setVideoTyping(false)}
-                                        onChange={(e) => {
-                                            setVideoLink(e.target.value);
-                                            setValue('videoReq', e.target.value, { shouldValidate: true });
-                                        }}
-                                        placeholder="https://..."
-                                        className="w-full p-2 sm:p-3"
-                                    />
-                                    {errors.videoReq && <b className="text-[red] text-[12px] ml-2">{errors.videoReq.message}</b>}
-                                </div>
-                                <InputText placeholder="Мазмун" className="w-full" />
-                                <Button type="submit" onClick={addVideo} label="Сактоо" disabled={!!errors.videoReq} />
-                            </div>
+                            {typedJsx('video')}
                             <div className="flex justify-center">
-                                {/* <PrototypeCard value={linkTyping ? linkTyped : usefulLink}/> */}
                                 <LessonCard cardValue={'vremenno'} cardBg={'#f1b1b31a'} type={{ typeValue: 'Видео', icon: 'pi pi-video' }} typeColor={'var(--mainColor)'} lessonDate={'xx-xx-xx'} />
                             </div>
                         </div>

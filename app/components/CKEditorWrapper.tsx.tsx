@@ -15,7 +15,6 @@ export default function CKEditorWrapper({textValue}) {
     useEffect(()=> {
         // console.log(text);
         // textValue(text);
-        console.log(text);
         
     },[typedText,text]);
 
