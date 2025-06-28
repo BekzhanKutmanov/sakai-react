@@ -3,7 +3,7 @@ import useTypingEffect from '@/hooks/useTypingEffect';
 import { Editor } from 'primereact/editor';
 import { useEffect, useState } from 'react';
 
-export default function CKEditorWrapper() {
+export default function CKEditorWrapper({textValue}) {
     const [text, setText] = useState('');
     const [toggleTyping, setToggleTyping] = useState(true);
     
@@ -13,8 +13,11 @@ export default function CKEditorWrapper() {
     );
 
     useEffect(()=> {
-        // console.log(typedText, typedText.length);
-    },[typedText]);
+        // console.log(text);
+        // textValue(text);
+        console.log(text);
+        
+    },[typedText,text]);
 
     return (
         <div className="flex justify-center">
