@@ -166,7 +166,7 @@ export default function Course() {
     const onSelect = (e: FileUploadSelectEvent) => {
         setImage(e.files[0].name); // сохраняешь файл
         console.log(e.files[0]);
-        
+
         setCourseValue((prev) => ({
             ...prev,
             image: e.files[0]
@@ -242,7 +242,7 @@ export default function Course() {
 
     useEffect(() => {
         console.log('edit mode ', editMode);
-        
+
         const handleShow = async () => {
             const token = getToken('access_token');
             const data = await fetchCourseInfo(token, selectedCourse);
@@ -257,6 +257,13 @@ export default function Course() {
             handleShow();
         }
     }, [editMode]);
+
+    const x = [
+        {id:'1', title: 'lorem'},
+        {id:'2', title: 'jkl'},
+        {id:'3', title: 'lkljlkj'},
+        {id:'4', title: 'lorem'}
+    ]
 
     return (
         <div>
@@ -327,11 +334,28 @@ export default function Course() {
                 </div>
             </FormModal>
 
+            <DataTable value={x} breakpoint="960px" rows={5} responsiveLayout="stack" className="">
+                <Column field="id" header="Номер" sortable style={{ width: '30px', textAlign: 'center' }}></Column>
+                <Column
+                    field="title"
+                    header="Аталышы"
+                    className="w-2/3"
+                    sortable
+                    body={(rowData) => (
+                        <Link href={`/course/${rowData.id}`} key={rowData.id}>
+                            {rowData.title}
+                        </Link>
+                    )}
+                ></Column>
+            </DataTable>
+
             <div className="flex justify-between items-center my-4 py-2 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">
                 <h3 className="text-[36px] m-0">Курстар</h3>
 
                 <Button
                     label="Кошуу"
+                    className="px-3 py-2"
+                    style={{ fontWeight: 'bold',  }}
                     icon="pi pi-plus"
                     onClick={() => {
                         setEditMode(false);
@@ -370,7 +394,7 @@ export default function Course() {
                                         <div className="flex gap-2" key={rowData.id}>
                                             <Button
                                                 icon="pi pi-pencil"
-                                                label=''
+                                                label=""
                                                 className="p-button-rounded bg-blue-[var(--titleColor)]"
                                                 onClick={() => {
                                                     setEditMode(true);
