@@ -11,13 +11,14 @@ import { LayoutContext } from '@/layout/context/layoutcontext';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
-import ConfirmModal from '@/app/components/popUp/ConfirmModal';
 import GroupSkeleton from '@/app/components/skeleton/GroupSkeleton';
 import Link from 'next/link';
 import { CourseCreateType } from '@/types/courseCreateType';
 import { CourseType } from '@/types/courseType';
 import { Paginator } from 'primereact/paginator';
 import NotFoundPage from '@/app/(full-page)/pages/notfound/page';
+import Redacting from '@/app/components/popUp/Redacting';
+import { confirmDialog } from 'primereact/confirmdialog';
 
 export default function Course() {
     const [courses, setCourses] = useState([]);
@@ -192,15 +193,15 @@ export default function Course() {
     };
 
     const getConfirmOptions = (id: number) => ({
-        message: 'Сиз чын эле өчүрүүнү каалайсызбы??',
+        message: 'Сиз чын эле өчүрүүнү каалайсызбы?',
         header: 'Өчүрүү',
         icon: 'pi pi-info-circle',
         defaultFocus: 'reject',
         acceptClassName: 'p-button-danger',
         acceptLabel: 'Кийинки кадам', // кастомная надпись для "Yes"
         rejectLabel: 'Артка',
+        rejectClassName: 'p-button-secondary reject-button',
         accept: () => handleDeleteCourse(id),
-        reject: () => console.log('Удаление отменено')
     });
 
     const toggleSkeleton = () => {
@@ -245,11 +246,12 @@ export default function Course() {
 
         const handleShow = async () => {
             const token = getToken('access_token');
+            console.log('this is id baby', selectedCourse);
             const data = await fetchCourseInfo(token, selectedCourse);
             console.log(data);
-            setCourseTitle(data.course.title);
-            setVideo_url(data.course.video_url);
-            setDesciption(data.course.description);
+            setCourseTitle(data.course.title || '');
+            setVideo_url(data.course.video_url || '');
+            setDesciption(data.course.description || '');
             setImage(data.course.image);
         };
 
@@ -258,12 +260,30 @@ export default function Course() {
         }
     }, [editMode]);
 
-    const x = [
-        {id:'1', title: 'lorem'},
-        {id:'2', title: 'jkl'},
-        {id:'3', title: 'lkljlkj'},
-        {id:'4', title: 'lorem'}
-    ]
+    const getRedactor = (rowData) => [
+        {
+            label: '',
+            icon: 'pi pi-pencil',
+            command: () => {
+                setEditMode(true);
+                setSelectedCourse(rowData.id);
+                setCourseValue({
+                    title: rowData.title || '',
+                    description: rowData.description || '',
+                    video_url: rowData.video_url || '',
+                    image: rowData.image || ''
+                });
+                setFormVisible(true);
+            }
+        },
+        {
+            label: '',
+            icon: 'pi pi-trash',
+            command: () => {
+                confirmDialog(getConfirmOptions(rowData.id));
+            }
+        }
+    ];
 
     return (
         <div>
@@ -334,28 +354,11 @@ export default function Course() {
                 </div>
             </FormModal>
 
-            <DataTable value={x} breakpoint="960px" rows={5} responsiveLayout="stack" className="">
-                <Column field="id" header="Номер" sortable style={{ width: '30px', textAlign: 'center' }}></Column>
-                <Column
-                    field="title"
-                    header="Аталышы"
-                    className="w-2/3"
-                    sortable
-                    body={(rowData) => (
-                        <Link href={`/course/${rowData.id}`} key={rowData.id}>
-                            {rowData.title}
-                        </Link>
-                    )}
-                ></Column>
-            </DataTable>
-
             <div className="flex justify-between items-center my-4 py-2 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">
                 <h3 className="text-[36px] m-0">Курстар</h3>
 
                 <Button
                     label="Кошуу"
-                    className="px-3 py-2"
-                    style={{ fontWeight: 'bold',  }}
                     icon="pi pi-plus"
                     onClick={() => {
                         setEditMode(false);
@@ -374,11 +377,11 @@ export default function Course() {
                     ) : (
                         <>
                             <DataTable value={courses} breakpoint="960px" rows={5} responsiveLayout="stack" className="my-custom-table">
-                                <Column field="id" header="Номер" sortable style={{ width: '30px', textAlign: 'center' }}></Column>
+                                <Column field="id" header="Номер" style={{ width: '20px' }} sortable></Column>
                                 <Column
                                     field="title"
                                     header="Аталышы"
-                                    className="w-2/3"
+                                    style={{ width: '80%' }}
                                     sortable
                                     body={(rowData) => (
                                         <Link href={`/course/${rowData.id}`} key={rowData.id}>
@@ -386,32 +389,13 @@ export default function Course() {
                                         </Link>
                                     )}
                                 ></Column>
-                                <Column header="" style={{ width: '50px' }} body={imageBodyTemplate}></Column>
+                                <Column header="" body={imageBodyTemplate}></Column>
                                 <Column
                                     header=""
-                                    className="flex justify-center"
+                                    className="flex items-center justify-center h-[60px] border-b-0"
                                     body={(rowData) => (
-                                        <div className="flex gap-2" key={rowData.id}>
-                                            <Button
-                                                icon="pi pi-pencil"
-                                                label=""
-                                                className="p-button-rounded bg-blue-[var(--titleColor)]"
-                                                onClick={() => {
-                                                    setEditMode(true);
-                                                    setSelectedCourse(rowData.id);
-                                                    setCourseValue({
-                                                        title: rowData.title || '',
-                                                        description: rowData.description || '',
-                                                        video_url: rowData.video_url || '',
-                                                        image: rowData.image || ''
-                                                    });
-                                                    setFormVisible(true);
-                                                }}
-                                            />
-                                            <ConfirmModal confirmVisible={getConfirmOptions(rowData.id)} />
-                                            <Link href={`/course/${rowData.id}`}>
-                                                <Button className="bg-[var(--titleColor)] p-button-rounded" icon="pi pi-arrow-right"></Button>
-                                            </Link>
+                                        <div className="flex items-center gap-2" key={rowData.id}>
+                                            <Redacting redactor={getRedactor(rowData)} textSize={'14px'} />
                                         </div>
                                     )}
                                 />

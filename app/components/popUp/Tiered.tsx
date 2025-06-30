@@ -45,7 +45,7 @@ export default function Tiered({title, items, insideColor}) {
                   pt={{
                         root: { className: `bg-white border border-gray-300 rounded-md shadow-md`},
                         menu: { className: 'transition-all' },
-                        menuitem: { className: 'text-[var(--titleColor)] text-[14px] py-1 border-b hover:shadow-xl border-gray-200 hover:text-white hover:bg-[var(--mainColor)]' },
+                        menuitem: { className: 'text-[var(--titleColor)] text-[14px] py-1 hover:shadow-xl border-gray-200 hover:text-white hover:bg-[var(--mainColor)]' },
                         action: { className: `flex justify-center items-center gap-2` }, // для иконки + текста не работает :)
                         icon: { className: 'text-[var(--titleColor)] mx-1 hover:text-white' },
                         // submenuIcon: { className: 'text-gray-400 ml-auto' }

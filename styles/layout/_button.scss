@@ -48,3 +48,20 @@ button {
   transform: translateX(-45%) translateY(0) scale(1);
   transform-origin: bottom center;
 }
+
+.p-button{
+  background-color: var(--mainColor);
+  padding: 7px 14px;
+  font-weight: bold;
+}
+
+@media screen and (max-width: '640px') {
+  .p-button {
+    padding: 5px 10px;
+  }
+}
+
+.reject-button {
+  background-color: transparent;
+  color: var(--bodyColor);
+}

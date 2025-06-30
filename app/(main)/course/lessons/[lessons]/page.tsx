@@ -158,7 +158,7 @@ export default function Lesson() {
                     )}
                 </div>
                 <InputText placeholder="Мазмун" className="w-full" />
-                <Button type="submit" onClick={addVideo} label="Сактоо" disabled={!!errors.videoReq} />
+                <Button type="submit" label="Сактоо" onClick={addVideo} disabled={!!errors.videoReq} />
             </div>
         );
     };

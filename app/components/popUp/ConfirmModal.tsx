@@ -4,12 +4,14 @@ import { Button } from 'primereact/button';
 
 export default function ConfirmModal({confirmVisible}) {
     const handleClick = () => {
+        console.log('hi');
+        
         confirmDialog(confirmVisible);
     };
 
     return (
         <div>
-            <Button onClick={handleClick} className="p-button-rounded p-button-danger" icon="pi pi-trash" />
+            <i onClick={handleClick} className="pi pi-trash" />
         </div>
     );
 }

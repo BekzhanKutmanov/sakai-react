@@ -7,10 +7,10 @@ export default function FormModal({children, title, fetchValue, clearValues, vis
 
     const footerContent = (
         <div>
-            <Button label="Чыгуу" icon="pi pi-times" onClick={() => {
+            <Button label="Чыгуу" className="reject-button" icon="pi pi-times" onClick={() => {
                 setVisible(false);
                 clearValues();
-            }} className="p-button-text" />
+            }}/>
             {<Button label="Кийинки кадам" disabled={start} icon="pi pi-check" onClick={() => {
                 setVisible(false);
                 fetchValue();
