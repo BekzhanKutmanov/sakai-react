@@ -19,6 +19,8 @@ import { Paginator } from 'primereact/paginator';
 import NotFoundPage from '@/app/(full-page)/pages/notfound/page';
 import Redacting from '@/app/components/popUp/Redacting';
 import { confirmDialog } from 'primereact/confirmdialog';
+import { getRedactor } from '@/utils/getRedactor';
+import { getConfirmOptions } from '@/utils/getConfirmOptions';
 
 export default function Course() {
     const [courses, setCourses] = useState([]);
@@ -192,18 +194,6 @@ export default function Course() {
         );
     };
 
-    const getConfirmOptions = (id: number) => ({
-        message: 'Сиз чын эле өчүрүүнү каалайсызбы?',
-        header: 'Өчүрүү',
-        icon: 'pi pi-info-circle',
-        defaultFocus: 'reject',
-        acceptClassName: 'p-button-danger',
-        acceptLabel: 'Кийинки кадам', // кастомная надпись для "Yes"
-        rejectLabel: 'Артка',
-        rejectClassName: 'p-button-secondary reject-button',
-        accept: () => handleDeleteCourse(id),
-    });
-
     const toggleSkeleton = () => {
         setSkeleton(true);
         setTimeout(() => {
@@ -242,8 +232,6 @@ export default function Course() {
     }, [courses]);
 
     useEffect(() => {
-        console.log('edit mode ', editMode);
-
         const handleShow = async () => {
             const token = getToken('access_token');
             console.log('this is id baby', selectedCourse);
@@ -260,30 +248,17 @@ export default function Course() {
         }
     }, [editMode]);
 
-    const getRedactor = (rowData) => [
-        {
-            label: '',
-            icon: 'pi pi-pencil',
-            command: () => {
-                setEditMode(true);
-                setSelectedCourse(rowData.id);
-                setCourseValue({
-                    title: rowData.title || '',
-                    description: rowData.description || '',
-                    video_url: rowData.video_url || '',
-                    image: rowData.image || ''
-                });
-                setFormVisible(true);
-            }
-        },
-        {
-            label: '',
-            icon: 'pi pi-trash',
-            command: () => {
-                confirmDialog(getConfirmOptions(rowData.id));
-            }
-        }
-    ];
+    const edit = (rowData) => {
+        setEditMode(true);
+        setSelectedCourse(rowData.id);
+        setCourseValue({
+            title: rowData.title || '',
+            description: rowData.description || '',
+            video_url: rowData.video_url || '',
+            image: rowData.image || ''
+        });
+        setFormVisible(true);
+    };
 
     return (
         <div>
@@ -395,7 +370,7 @@ export default function Course() {
                                     className="flex items-center justify-center h-[60px] border-b-0"
                                     body={(rowData) => (
                                         <div className="flex items-center gap-2" key={rowData.id}>
-                                            <Redacting redactor={getRedactor(rowData)} textSize={'14px'} />
+                                            <Redacting redactor={getRedactor( rowData, {onEdit: edit, getConfirmOptions, onDelete: handleDeleteCourse  } )} textSize={'14px'} />
                                         </div>
                                     )}
                                 />
