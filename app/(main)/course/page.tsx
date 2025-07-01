@@ -66,12 +66,8 @@ export default function Course() {
                     total: data.courses.total,
                     perPage: data.courses.per_page
                 });
-                setCourseCash((prev) => ({ ...prev, [page]: data.courses.data }));
-                localStorage.setItem('lastPage', JSON.stringify(page));
             } else {
                 setHasCourses(true);
-                setCourseCash({});
-                localStorage.removeItem('lastPage');
                 setMessage({
                     state: true,
                     value: { severity: 'error', summary: 'Ошибка', detail: 'Проблема с соединением. Повторите заново' }
@@ -79,8 +75,6 @@ export default function Course() {
             }
         } catch (error) {
             console.error('Ошибка загрузки:', error);
-            localStorage.removeItem('lastPage');
-            setCourseCash({});
             setHasCourses(true);
             setMessage({
                 state: true,
@@ -99,7 +93,6 @@ export default function Course() {
         if (data.success) {
             toggleSkeleton();
             fetchData();
-            setCourseCash({});
             setMessage({
                 state: true,
                 value: { severity: 'success', summary: 'Ийгиликтүү кошулду!', detail: '' }
@@ -119,7 +112,6 @@ export default function Course() {
         if (data.success) {
             toggleSkeleton();
             fetchData();
-            setCourseCash({});
             setMessage({
                 state: true,
                 value: { severity: 'success', summary: 'Ийгиликтүү өчүрүлдү!', detail: '' }
@@ -142,7 +134,6 @@ export default function Course() {
             clearValues();
             setEditMode(false);
             setSelectedCourse(null);
-            setCourseCash({});
             setMessage({
                 state: true,
                 value: { severity: 'success', summary: 'Ийгиликтүү өзгөртүлдү!', detail: '' }
@@ -163,7 +154,6 @@ export default function Course() {
         setImage('');
         setEditMode(false);
         setSelectedCourse(null);
-        setCourseCash({});
     };
 
     const onSelect = (e: FileUploadSelectEvent) => {
@@ -203,15 +193,12 @@ export default function Course() {
 
     // Ручное управление пагинацией
     const handlePageChange = (page: number) => {
-        console.log(courseCash, courseCash[page]);
-
-        if (page in courseCash) {
-            setCourses(courseCash[page]);
-            setPagination((prev) => ({ ...prev, currentPage: page }));
-        } else {
-            fetchData(page);
-        }
+        fetchData(page);
     };
+    
+    useEffect(() => {
+        fetchData();
+    }, []);
 
     useEffect(() => {
         const title = courseTitle.trim();
@@ -223,10 +210,6 @@ export default function Course() {
     }, [courseTitle]);
 
     useEffect(() => {
-        fetchData();
-    }, []);
-
-    useEffect(() => {
         console.log('Курсы ', courses);
         courses.length < 1 ? setHasCourses(true) : setHasCourses(false);
     }, [courses]);
@@ -234,7 +217,6 @@ export default function Course() {
     useEffect(() => {
         const handleShow = async () => {
             const token = getToken('access_token');
-            console.log('this is id baby', selectedCourse);
             const data = await fetchCourseInfo(token, selectedCourse);
             console.log(data);
             setCourseTitle(data.course.title || '');
@@ -262,6 +244,7 @@ export default function Course() {
 
     return (
         <div>
+            {/* modal window */}
             <FormModal title={editMode ? 'Курсту жаңылоо' : 'Кошуу'} fetchValue={editMode ? handleUpdateCourse : handleAddCourse} clearValues={clearValues} visible={formVisible} setVisible={setFormVisible} start={forStart}>
                 <div className="flex flex-col gap-1">
                     <div className="flex flex-col lg:flex-row gap-1 justify-around items-center">
@@ -329,6 +312,7 @@ export default function Course() {
                 </div>
             </FormModal>
 
+            {/* info section */}
             <div className="flex justify-between items-center my-4 py-2 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">
                 <h3 className="text-[36px] m-0">Курстар</h3>
 
@@ -343,7 +327,8 @@ export default function Course() {
                 />
             </div>
 
-            {hasCourses ? (
+            {/* table section */}
+            {hasCourses ? ( 
                 <NotFoundPage titleMessege={'Курс кошуу үчүн кошуу баскычты басыныз'} />
             ) : (
                 <div className="py-4">
@@ -352,7 +337,7 @@ export default function Course() {
                     ) : (
                         <>
                             <DataTable value={courses} breakpoint="960px" rows={5} responsiveLayout="stack" className="my-custom-table">
-                                <Column field="id" header="Номер" style={{ width: '20px' }} sortable></Column>
+                                <Column body={(_, {rowIndex}) => rowIndex + 1} header="Номер" style={{ width: '20px' }}></Column>
                                 <Column
                                     field="title"
                                     header="Аталышы"
