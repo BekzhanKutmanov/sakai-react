@@ -66,7 +66,7 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                                   </div>
                                   <span className="text-gray-500 text-[12px]">{user?.email}</span>
                               </div>
-                          ),
+                          )
                       },
                       {
                           label: 'Чыгуу',
@@ -85,78 +85,15 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                   link: '/auth/login'
               },
         {
-            label: 'Каталог',
-            icon: 'pi pi-list',
-            items: [
-                {
-                    label: 'Ачык онлайн курстар',
-                    icon: 'pi pi-file',
-                    items: [],
-                    link: '/login'
-                },
-                {
-                    label: 'Бакалавриат',
-                    icon: 'pi pi-file',
-                    items: []
-                },
-                {
-                    label: 'Магистратура',
-                    icon: 'pi pi-file',
-                    items: []
-                },
-                {
-                    label: 'Кошумча билим берүү',
-                    icon: 'pi pi-file',
-                    items: []
-                }
-            ]
+            label: 'ОшМУнун сайты',
+            icon: '',
+            items: [],
+            link: 'https://oshsu.kg'
         },
         {
-            label: 'Бакалавриат',
-            icon: 'pi pi-file',
+            label: 'Байланыш',
+            icon: '',
             items: []
-        },
-        {
-            label: 'Магистратура',
-            icon: 'pi pi-file',
-            items: []
-        },
-        {
-            label: 'Кошумча билим берүү',
-            icon: 'pi pi-file',
-            items: []
-        },
-        {
-            label: 'Кошумча билим берүү',
-            icon: 'pi pi-file',
-            items: []
-        },
-        {
-            label: 'КАТАЛОГ',
-            icon: 'pi pi-list',
-            items: [
-                {
-                    label: 'Ачык онлайн курстар',
-                    icon: 'pi pi-file',
-                    items: [],
-                    link: '/login'
-                },
-                {
-                    label: 'Бакалавриат',
-                    icon: 'pi pi-file',
-                    items: []
-                },
-                {
-                    label: 'Магистратура',
-                    icon: 'pi pi-file',
-                    items: []
-                },
-                {
-                    label: 'Кошумча билим берүү',
-                    icon: 'pi pi-file',
-                    items: []
-                }
-            ]
         }
     ];
 
@@ -205,7 +142,7 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                         <Tiered title={{ name: '', font: 'pi pi-ellipsis-v' }} insideColor={'--bodyColor'} items={mobileMenu} />
                     ) : (
                         <div className={`flex items-center gap-3 ${!media ? 'order-2' : 'order-3'} `}>
-                            <Tiered title={{ name: 'Каталог', font: 'pi pi-list' }} insideColor={'--titleColor'} items={items} />
+                            {/* <Tiered title={{ name: 'Каталог', font: 'pi pi-list' }} insideColor={'--titleColor'} items={items} />
                             <Tiered
                                 title={{ name: 'Окуялар', font: 'pi pi-calendar' }}
                                 insideColor={'--titleColor'}
@@ -221,7 +158,7 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                                         link: '/login'
                                     }
                                 ]}
-                            />
+                            /> */}
                             <Link className="text-[var(--titleColor)] hover:text-[var(--mainColor)]" href={'https://www.oshsu.kg/ru'}>
                                 ОшМУнун сайты
                             </Link>
@@ -237,7 +174,9 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                         </div>
                     ) : (
                         <div className={`hidden lg:block ${media ? 'order-1' : 'order-2'}`}>
-                            <Link href={'/auth/login'}><FancyLinkBtn btnWidth={'100px'} backround={'--redColor'} effectBg={'--mainColor'} title={'Кирүү'} /></Link>
+                            <Link href={'/auth/login'}>
+                                <FancyLinkBtn btnWidth={'100px'} backround={'--redColor'} effectBg={'--mainColor'} title={'Кирүү'} />
+                            </Link>
                         </div>
                     )}
                 </div>
