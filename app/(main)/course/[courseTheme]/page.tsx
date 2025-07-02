@@ -226,7 +226,7 @@ export default function CourseTheme() {
                     ) : (
                         <DataTable value={themes} breakpoint="960px" responsiveLayout="stack" className="my-custom-table">
                             <Column field="id" header="Номер" sortable style={{ width: '30px', textAlign: 'center' }}></Column>
-                            <Column field="title" header="Темалар" className="w-2/3" sortable body={(rowData) => <Link href={`/course/lessons/${rowData.id}`}>{rowData.title}</Link>}></Column>
+                            <Column field="title" header="Темалар" className="w-2/3" sortable body={(rowData) => <Link href={`/course/lessons/${courseTheme}-${rowData.id}`}>{rowData.title}</Link>}></Column>
 
                             <Column
                                 header=""
@@ -246,7 +246,7 @@ export default function CourseTheme() {
                                         />
                                         <ConfirmModal confirmVisible={getConfirmOptions(rowData.id)} />
                                         <Button className=" bg-blue-400" icon="pi pi-arrow-right">
-                                            <Link href={`/course/${rowData.id}`}></Link>
+                                            <Link href={`/course/${rowData.id}`}></Link>    
                                         </Button>
                                     </div>
                                 )}

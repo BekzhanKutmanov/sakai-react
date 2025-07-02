@@ -14,9 +14,9 @@ export default function CKEditorWrapper({textValue}) {
 
     useEffect(()=> {
         // console.log(text);
-        // textValue(text);
+        textValue(text);
         
-    },[typedText,text]);
+    },[text]);
 
     return (    
         <div className="flex justify-center">

@@ -232,3 +232,56 @@ export const deleteTheme = async (token:string | null, id:number) => {
         return [];
     }
 };
+
+// Lessons
+
+export const addLessonText = async (token:string | null, courseId:number | null, lessonId:number | null, value:string) => {
+    url = process.env.NEXT_PUBLIC_BASE_URL + `/v1/teacher/textcontent/store?course_id=${courseId}&lesson_id=${lessonId}&content=${value}`;
+    console.log(value);
+
+    const headers: HeadersInit = token
+        ? { Authorization: `Bearer ${token}` }
+        : {};
+        
+    // const formData = new FormData();
+    // formData.append('title', value);
+    
+    try {
+        const res = await fetch(url, {
+            method: 'POST',
+            headers,
+            body: value
+        });
+
+        const data = await res.json();
+        console.log('Урок ', data);
+        return data;
+    } catch (err) {
+        console.log('Ошибка при добавлении урока', err);
+        return [];
+    }
+};
+
+export const fetchLesson = async (token:string | null, courseId:number | null, lessonId:number | null) => {
+    url = process.env.NEXT_PUBLIC_BASE_URL + `/v1/teacher/textcontent?course_id=${courseId}&lesson_id=${lessonId}`;
+    
+    const headers: HeadersInit = token
+        ? {
+              Authorization: `Bearer ${token}`
+          }
+        : {};
+
+    try {
+        const res = await fetch(url, {
+            headers
+        });
+
+        const data = await res.json();
+        console.log('Урок: ',data);
+        
+        return data;
+    } catch (err) {
+        console.log('Ошибка при получении урока', err);
+        return [];
+    }
+};

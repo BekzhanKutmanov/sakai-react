@@ -18,6 +18,9 @@ import LessonCard from '@/app/components/cards/LessonCard';
 import Tiered from '@/app/components/popUp/Tiered';
 import { Menu } from 'primereact/menu';
 import Redacting from '@/app/components/popUp/Redacting';
+import { addLesson, addLessonText, fetchLesson } from '@/services/courses';
+import { getToken } from '@/utils/auth';
+import { useParams, useSearchParams } from 'next/navigation';
 
 export default function Lesson() {
     const [activeIndex, setActiveIndex] = useState<number>(0);
@@ -29,14 +32,29 @@ export default function Lesson() {
     const [linkTyping, setLinkTyping] = useState(true);
     const [docTyping, setDocTyping] = useState(true);
 
+    const params = useParams().lessons;
+    const [ courseId, topicId ] = params.split('-');
+    // console.log(courseId, topicId);
+    
     const handleTabChange = (e) => {
         // console.log('Переход на шаг:', e);
         //     // fetchDataForStep(e.index);
+        console.log(activeIndex);
+        
+        if(activeIndex === 0){
+            handleFetchLesson();
+        }
         setActiveIndex(e.index);
     };
 
     const handleText = (e: string) => {
-        setTextValue(e);
+        setSentValues((prev) => ({
+            ...prev,
+            text: {
+                ...prev.text,
+                text: e
+            }
+        }));
     };
 
     const addVideo = () => {};
@@ -67,6 +85,10 @@ export default function Lesson() {
         link: { typingId: 'linkTyping', link: '', register: 'usefulLink' },
         video: { typingId: 'videoTyping', video: '', register: 'videoReq' }
     });
+
+    useEffect(() => {
+        handleFetchLesson();
+    },[]);
 
     useEffect(() => {
         switch (activeIndex) {
@@ -104,8 +126,37 @@ export default function Lesson() {
     ];
 
     useEffect(() => {
-        console.log(sentValues['video'].register);
+        console.log(sentValues);
     }, [sentValues]);
+
+    const handleAddLesson = async () => {
+        const token = getToken('access_token');
+        console.log(sentValues);
+
+        const data = await addLessonText(token, courseId ? Number(courseId) : null, courseId ? Number(topicId) : null, sentValues.text.text);
+        if(data.success){ 
+            handleFetchLesson();
+        } 
+        // console.log(data);
+    };
+
+    const handleFetchLesson = async () => {
+        const token = getToken('access_token');
+
+        console.log("запрос...");
+        const data = await fetchLesson(token, courseId ? Number(courseId) : null, courseId ? Number(topicId) : null);
+        if(data.success){
+            // skeleton = false
+            setTextShow(true);
+        } else {
+            // skeleton = false
+            // location = course?
+        }
+    };
+
+    const handleDeleteLesson = async () => {};
+
+    const handleUpdateLesson = async () => {};
 
     const typedJsx = (type: string) => {
         const typingMap: Record<string, string | false> = {
@@ -122,7 +173,22 @@ export default function Lesson() {
                 <div className="flex flex-col w-full">
                     {type === 'doc' ? (
                         <>
-                            <FileUpload chooseLabel="Загрузить документ" mode="basic" name="demo[]" url="/api/upload" accept="document/*" />
+                            <FileUpload
+                                chooseLabel="Загрузить документ"
+                                mode="basic"
+                                name="demo[]"
+                                url="/api/upload"
+                                accept="document/*"
+                                onSelect={(e) =>
+                                    setSentValues((prev) => ({
+                                        ...prev,
+                                        doc: {
+                                            ...prev[type],
+                                            doc: e.files[0].name
+                                        }
+                                    }))
+                                }
+                            />
                             <span>{sentValues[type].typingId === 'docTyping' && docTyping ? docTyped : ''}</span>
                         </>
                     ) : (
@@ -146,8 +212,8 @@ export default function Lesson() {
                                         }
                                     }));
 
-                                    if (type === 'video') setVideoLink(val);
-                                    if (type === 'link') setUsefullLink(val);
+                                    // if (type === 'video') setVideoLink(val);
+                                    // if (type === 'link') setUsefullLink(val);
 
                                     setValue(sentValues[type].register, val, { shouldValidate: true });
                                 }}
@@ -165,6 +231,7 @@ export default function Lesson() {
 
     return (
         <div>
+            <button onClick={handleFetchLesson}>click</button>
             <TabView
                 onTabChange={(e) => handleTabChange(e)}
                 activeIndex={activeIndex}
@@ -203,13 +270,12 @@ export default function Lesson() {
                                             <span>xx-xx-xx</span>
                                         </div>
                                     </div>
-                                    <div className="w-full h-[80%] break-words whitespace-normal overflow-scroll">
-                                    </div>
+                                    <div className="w-full h-[80%] break-words whitespace-normal overflow-scroll"></div>
                                 </div>
                             ) : (
                                 <div className="py-4 flex flex-col gap-16 items-center m-0">
                                     <CKEditorWrapper textValue={handleText} />
-                                    <Button label="Сактоо" />
+                                    <Button label="Сактоо" onClick={handleAddLesson} />
                                 </div>
                             )}
                         </div>
