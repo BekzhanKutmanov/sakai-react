@@ -267,10 +267,10 @@ export const fetchLesson = async (token:string | null, courseId:number | null, l
     
     const headers: HeadersInit = token
         ? {
-              Authorization: `Bearer ${token}`
+            Authorization: `Bearer ${token}`
           }
         : {};
-
+          
     try {
         const res = await fetch(url, {
             headers

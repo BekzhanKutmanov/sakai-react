@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { TabView, TabPanel } from 'primereact/tabview';
 import CKEditorWrapper from '@/app/components/CKEditorWrapper.tsx';
 import { Button } from 'primereact/button';
@@ -21,11 +21,13 @@ import Redacting from '@/app/components/popUp/Redacting';
 import { addLesson, addLessonText, fetchLesson } from '@/services/courses';
 import { getToken } from '@/utils/auth';
 import { useParams, useSearchParams } from 'next/navigation';
+import { LayoutContext } from '@/layout/context/layoutcontext';
 
 export default function Lesson() {
     const [activeIndex, setActiveIndex] = useState<number>(0);
     const [contentShow, setContentShow] = useState<boolean>(true);
     const [textShow, setTextShow] = useState<boolean>(false);
+    const { setMessage } = useContext(LayoutContext);
 
     // for typing effects
     const [videoTyping, setVideoTyping] = useState(true);
@@ -33,19 +35,8 @@ export default function Lesson() {
     const [docTyping, setDocTyping] = useState(true);
 
     const params = useParams();
-    const courseId = params.courseTheme
-    const lessonId = params.lessons
-    
-    const handleTabChange = (e) => {
-        // console.log('Переход на шаг:', e);
-        //     // fetchDataForStep(e.index);
-        console.log(activeIndex);
-        
-        if(activeIndex === 0){
-            handleFetchLesson();
-        }
-        setActiveIndex(e.index);
-    };
+    const courseId = params.courseTheme;
+    const lessonId = params.lessons;
 
     const handleText = (e: string) => {
         setSentValues((prev) => ({
@@ -85,10 +76,6 @@ export default function Lesson() {
         link: { typingId: 'linkTyping', link: '', register: 'usefulLink' },
         video: { typingId: 'videoTyping', video: '', register: 'videoReq' }
     });
-
-    useEffect(() => {
-        handleFetchLesson();
-    },[]);
 
     useEffect(() => {
         switch (activeIndex) {
@@ -131,27 +118,55 @@ export default function Lesson() {
 
     const handleAddLesson = async () => {
         const token = getToken('access_token');
-        console.log(sentValues);
 
         const data = await addLessonText(token, courseId ? Number(courseId) : null, courseId ? Number(lessonId) : null, sentValues.text.text);
-        if(data.success){ 
+        console.log(data);
+        if (data.success) {
             handleFetchLesson();
-        } 
+        }
         // console.log(data);
     };
 
     const handleFetchLesson = async () => {
         const token = getToken('access_token');
-
-        console.log("запрос...");
+        console.log('запрос...');
         const data = await fetchLesson(token, courseId ? Number(courseId) : null, courseId ? Number(lessonId) : null);
-        if(data.success){
+        console.log(data);
+
+        if (data.success) {
+            const textcontent = data.content.content;
+            if(textcontent && textcontent.length > 0) {
+                setSentValues((prev) => ({
+                    ...prev,
+                    text: {
+                        ...prev.text,
+                        text: data.content.content
+                    }
+                }));
+                setTextShow(true);
+            } else {
+                setTextShow(false);
+            }
             // skeleton = false
-            setTextShow(true);
         } else {
+            setTextShow(false);
+            setMessage({
+                state: true,
+                value: { severity: 'error', summary: 'Ошибка', detail: 'Проблема с соединением. Повторите заново' }
+            }); // messege - Ошибка загрузки курсов
             // skeleton = false
-            // location = course?
         }
+    };
+
+    const handleTabChange = (e) => {
+        // console.log('Переход на шаг:', e);
+        //     // fetchDataForStep(e.index);
+
+        if (e.index === 0) {
+            handleFetchLesson();
+        }
+        setActiveIndex(e.index);
+        console.log(e.index);
     };
 
     const handleDeleteLesson = async () => {};
@@ -231,7 +246,6 @@ export default function Lesson() {
 
     return (
         <div>
-            <button onClick={handleFetchLesson}>click</button>
             <TabView
                 onTabChange={(e) => handleTabChange(e)}
                 activeIndex={activeIndex}
@@ -252,9 +266,8 @@ export default function Lesson() {
                 >
                     {contentShow && (
                         <div>
-                            <button onClick={() => setTextShow((prev) => !prev)}>click</button>
                             {textShow ? (
-                                <div className="w-[800px] h-[340px] m-auto p-2 rounded" style={{ boxShadow: '2px 2px 21px -8px rgba(34, 60, 80, 0.2) inset' }}>
+                                <div className="w-[800px] h-[340px] m-auto p-2 rounded" style={{ boxShadow: '2px 2px 21px -8px rgba(34, 60, 80, 0.2)' }}>
                                     <div className="flex flex-col gap-2 border-b p-1 border-[var(--borderBottomColor)]">
                                         <div className="flex items-center justify-between">
                                             <div className={`flex gap-1 items-center font-bold text-[var(--mainColor)]`}>
@@ -270,7 +283,10 @@ export default function Lesson() {
                                             <span>xx-xx-xx</span>
                                         </div>
                                     </div>
-                                    <div className="w-full h-[80%] break-words whitespace-normal overflow-scroll"></div>
+                                    <div className="w-full h-[80%] break-words whitespace-normal overflow-scroll">
+                                        <div dangerouslySetInnerHTML={{ __html: sentValues.text.text && sentValues.text.text }} />
+                                        {/* {sentValues.text} */}
+                                    </div>
                                 </div>
                             ) : (
                                 <div className="py-4 flex flex-col gap-16 items-center m-0">
