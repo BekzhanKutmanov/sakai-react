@@ -32,9 +32,9 @@ export default function Lesson() {
     const [linkTyping, setLinkTyping] = useState(true);
     const [docTyping, setDocTyping] = useState(true);
 
-    const params = useParams().lessons;
-    const [ courseId, topicId ] = params.split('-');
-    // console.log(courseId, topicId);
+    const params = useParams();
+    const courseId = params.courseTheme
+    const lessonId = params.lessons
     
     const handleTabChange = (e) => {
         // console.log('Переход на шаг:', e);
@@ -133,7 +133,7 @@ export default function Lesson() {
         const token = getToken('access_token');
         console.log(sentValues);
 
-        const data = await addLessonText(token, courseId ? Number(courseId) : null, courseId ? Number(topicId) : null, sentValues.text.text);
+        const data = await addLessonText(token, courseId ? Number(courseId) : null, courseId ? Number(lessonId) : null, sentValues.text.text);
         if(data.success){ 
             handleFetchLesson();
         } 
@@ -144,7 +144,7 @@ export default function Lesson() {
         const token = getToken('access_token');
 
         console.log("запрос...");
-        const data = await fetchLesson(token, courseId ? Number(courseId) : null, courseId ? Number(topicId) : null);
+        const data = await fetchLesson(token, courseId ? Number(courseId) : null, courseId ? Number(lessonId) : null);
         if(data.success){
             // skeleton = false
             setTextShow(true);
