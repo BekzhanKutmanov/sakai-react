@@ -18,16 +18,21 @@ import LessonCard from '@/app/components/cards/LessonCard';
 import Tiered from '@/app/components/popUp/Tiered';
 import { Menu } from 'primereact/menu';
 import Redacting from '@/app/components/popUp/Redacting';
-import { addLesson, fetchLesson } from '@/services/courses';
+import { addLesson, deleteLesson, fetchLesson, updateLesson } from '@/services/courses';
 import { getToken } from '@/utils/auth';
 import { useParams, useSearchParams } from 'next/navigation';
 import { LayoutContext } from '@/layout/context/layoutcontext';
 import useErrorMessage from '@/hooks/useErrorMessage';
+import { getRedactor } from '@/utils/getRedactor';
+import FormModal from '@/app/components/popUp/FormModal';
+import { getConfirmOptions } from '@/utils/getConfirmOptions';
 
 export default function Lesson() {
     const [activeIndex, setActiveIndex] = useState<number>(0);
     const [contentShow, setContentShow] = useState<boolean>(true);
     const [textShow, setTextShow] = useState<boolean>(false);
+    const [editMode, setEditMode] = useState<boolean>(false);
+    const [textValue, setTextValue] = useState({});
     const { setMessage } = useContext(LayoutContext);
 
     const showError = useErrorMessage();
@@ -97,62 +102,46 @@ export default function Lesson() {
         }
     }, [activeIndex]);
 
-    const redactor = [
-        {
-            label: '',
-            icon: 'pi pi-pencil',
-            command: () => {
-                alert('redactor');
-            }
-        },
-        {
-            label: '',
-            icon: 'pi pi-user',
-            command: () => {
-                alert('delete');
-            }
-        }
-    ];
-
     useEffect(() => {
         console.log(sentValues);
     }, [sentValues]);
 
     const handleFetchLesson = async (type: string) => {
-            // skeleton = false
-            const token = getToken('access_token');
-            const data = await fetchLesson(type, token, courseId ? Number(courseId) : null, lessonId ? Number(lessonId) : null);
-            console.log(data);
-            console.log('type: ',type);
-        
-            if (data.success) {
-                console.log(data.content, ' *');
-                const textcontent = data.content && data?.content.content;
-                if (textcontent && textcontent.length > 0) {
-                    setSentValues((prev) => ({
-                        ...prev,
-                        [type]: {
-                            ...prev[type],
-                            [type]: data.content.content
-                        }
-                    }));
-                    setTextShow(true);
-                } else {
-                    setTextShow(false);
-                }
+        // skeleton = false
+        const token = getToken('access_token');
+        const data = await fetchLesson(type, token, courseId ? Number(courseId) : null, lessonId ? Number(lessonId) : null);
+        console.log(data);
+        console.log('type: ', type);
+
+        if (data.success) {
+            console.log(data.content, ' *');
+            const textcontent = data.content && data?.content.content;
+            if (textcontent && textcontent.length > 0) {
+                setTextValue({ id: data.content.id });
+                setSentValues((prev) => ({
+                    ...prev,
+                    [type]: {
+                        ...prev[type],
+                        [type]: data.content.content
+                    }
+                }));
+                setTextShow(true);
+            } else {
+                setTextShow(false);
+            }
         } else {
             setTextShow(false);
-            if(data.response.status){
+            if (data.response.status) {
                 showError(data.response.status);
             }
             // skeleton = false
-        };
+        }
     };
 
     const handleAddText = async (type: string) => {
         const token = getToken('access_token');
 
-        const data = await addLesson(type, token, courseId ? Number(courseId) : null, courseId ? Number(lessonId) : null, sentValues.text.text);
+        const data = await addLesson(type, token, courseId ? Number(courseId) : null, lessonId ? Number(lessonId) : null, sentValues.text.text);
         console.log(data);
         if (data.success) {
             handleFetchLesson(type);
@@ -165,28 +154,75 @@ export default function Lesson() {
                 state: true,
                 value: { severity: 'error', summary: 'Ошибка', detail: 'Ошибка при при добавлении' }
             }); // messege - Ошибка при добавлении
-            if(data.response.status){
+            if (data.response.status) {
                 showError(data.response.status);
             }
         }
         // console.log(data);
     };
-    
+
     const handleDeleteLesson = async () => {
-        
+        const token = getToken('access_token');
+
+        const data = await deleteLesson(token, courseId, lessonId, textValue.id);
+        if (data.success) {
+            handleFetchLesson('text');
+            setMessage({
+                state: true,
+                value: { severity: 'success', summary: 'Ийгиликтүү өчүрүлдү!', detail: '' }
+            }); // messege - Успех!
+        } else {
+            setMessage({
+                state: true,
+                value: { severity: 'error', summary: 'Ошибка', detail: 'Ошибка при при удалении' }
+            }); // messege - Ошибка при добавлении
+            if (data.response.status) {
+                showError(data.response.status);
+            }
+        }
+        console.log(data);
     };
 
-    const handleUpdateLesson = async () => {};
+    const edit = () => {
+        console.log('edit mode', editMode);
+
+        setTextShow(false);
+        setEditMode(true);
+    };
+
+    const handleUpdateLesson = async (type: string) => {
+        const token = getToken('access_token');
+
+        const data = await updateLesson(type, token, courseId ? Number(courseId) : null, lessonId ? Number(lessonId) : null, textValue.id, sentValues.text.text);
+        console.log(data);
+
+        if (data.success) {
+            setEditMode(false);
+            setTextShow(true);
+            setMessage({
+                state: true,
+                value: { severity: 'success', summary: 'Ийгиликтүү өзгөртүлдү!', detail: '' }
+            }); // messege - Успех!
+        } else {
+            setMessage({
+                state: true,
+                value: { severity: 'error', summary: 'Ошибка', detail: 'Ошибка при при изменении темы' }
+            }); // messege - Ошибка при изменении курса
+            if (data.response.status) {
+                showError(data.response.status);
+            }
+        }
+    };
 
     const handleTabChange = (e) => {
         // console.log('Переход на шаг:', e);
         if (e.index === 0) {
             handleFetchLesson('text');
-        } else if(e.index === 1){
+        } else if (e.index === 1) {
             handleFetchLesson('doc');
-        } else if(e.index === 2){
+        } else if (e.index === 2) {
             handleFetchLesson('link');
-        } else if(e.index === 3){
+        } else if (e.index === 3) {
             handleFetchLesson('video');
         }
         setActiveIndex(e.index);
@@ -266,6 +302,7 @@ export default function Lesson() {
 
     return (
         <div>
+            {/* header section */}
             <TabView
                 onTabChange={(e) => handleTabChange(e)}
                 activeIndex={activeIndex}
@@ -295,7 +332,7 @@ export default function Lesson() {
                                                 <span>Текст</span>
                                             </div>
 
-                                            <Redacting redactor={redactor} textSize={'14px'} />
+                                            <Redacting redactor={getRedactor(textValue.id, { onEdit: edit, getConfirmOptions, onDelete: handleDeleteLesson })} textSize={'14px'} />
                                             {/* <MySkeleton size={{ width: '12px', height: '15px' }} /> */}
                                         </div>
                                         <div className={`flex gap-1 items-center`}>
@@ -310,8 +347,18 @@ export default function Lesson() {
                                 </div>
                             ) : (
                                 <div className="py-4 flex flex-col gap-16 items-center m-0">
-                                    <CKEditorWrapper textValue={handleText} />
-                                    <Button label="Сактоо" onClick={handleAddText} />
+                                    {editMode ? (
+                                        <div>
+                                            <h3>Озгортуу</h3>
+                                            <CKEditorWrapper textValue={(e) => handleText(e)} />
+                                            <Button label="Өзгөртүү" onClick={handleUpdateLesson} />
+                                        </div>
+                                    ) : (
+                                        <div>
+                                            <CKEditorWrapper textValue={handleText} />
+                                            <Button label="Сактоо" onClick={() => handleAddText('text')} />
+                                        </div>
+                                    )}
                                 </div>
                             )}
                         </div>
