@@ -22,6 +22,7 @@ import { addLesson, addLessonText, fetchLesson } from '@/services/courses';
 import { getToken } from '@/utils/auth';
 import { useParams, useSearchParams } from 'next/navigation';
 import { LayoutContext } from '@/layout/context/layoutcontext';
+import useErrorMessage from '@/hooks/useErrorMessage';
 
 export default function Lesson() {
     const [activeIndex, setActiveIndex] = useState<number>(0);
@@ -29,6 +30,7 @@ export default function Lesson() {
     const [textShow, setTextShow] = useState<boolean>(false);
     const { setMessage } = useContext(LayoutContext);
 
+    const showError = useErrorMessage();
     // for typing effects
     const [videoTyping, setVideoTyping] = useState(true);
     const [linkTyping, setLinkTyping] = useState(true);
@@ -134,8 +136,8 @@ export default function Lesson() {
         console.log(data);
 
         if (data.success) {
-            const textcontent = data.content.content;
-            if(textcontent && textcontent.length > 0) {
+            const textcontent = data?.content;
+            if (textcontent && textcontent.length > 0) {
                 setSentValues((prev) => ({
                     ...prev,
                     text: {
@@ -150,10 +152,11 @@ export default function Lesson() {
             // skeleton = false
         } else {
             setTextShow(false);
-            setMessage({
-                state: true,
-                value: { severity: 'error', summary: 'Ошибка', detail: 'Проблема с соединением. Повторите заново' }
-            }); // messege - Ошибка загрузки курсов
+            console.log(data.response.status);
+            if(data.response.status){
+                showError(data.response.status);
+            }
+
             // skeleton = false
         }
     };
