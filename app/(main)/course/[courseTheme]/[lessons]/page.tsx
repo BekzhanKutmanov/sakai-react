@@ -127,7 +127,7 @@ export default function Lesson() {
         
             if (data.success) {
                 console.log(data.content, ' *');
-                const textcontent = data?.content.content;
+                const textcontent = data.content && data?.content.content;
                 if (textcontent && textcontent.length > 0) {
                     setSentValues((prev) => ({
                         ...prev,
@@ -171,6 +171,12 @@ export default function Lesson() {
         }
         // console.log(data);
     };
+    
+    const handleDeleteLesson = async () => {
+        
+    };
+
+    const handleUpdateLesson = async () => {};
 
     const handleTabChange = (e) => {
         // console.log('Переход на шаг:', e);
@@ -186,10 +192,6 @@ export default function Lesson() {
         setActiveIndex(e.index);
         console.log(e.index);
     };
-
-    const handleDeleteLesson = async () => {};
-
-    const handleUpdateLesson = async () => {};
 
     const typedJsx = (type: string) => {
         const typingMap: Record<string, string | false> = {
