@@ -6,25 +6,18 @@ let url = '';
 
 type OnlyTitle = Pick<CourseCreateType, 'title'>;
 
-export const fetchCourses = async (token: string | null) => {
-    url = process.env.NEXT_PUBLIC_BASE_URL + '/v1/teacher/courses';
-
-    const headers: HeadersInit = token
-        ? {
-              Authorization: `Bearer ${token}`
-          }
-        : {};
-
+export const fetchCourses = async (token, page, limit) => {
     try {
-        const res = await fetch(url, {
-            headers
-        });
+        console.log('Номер запрашиваемой страницы ', page);
 
-        const data = await res.json();
+        const res = await axiosInstance.get(`/v1/teacher/courses?page=${Number(page)}&limit=${limit}`, {
+            headers: token ? { Authorization: `Bearer ${token}` } : {}
+        });
+        const data = await res.data;
+
         return data;
-    } catch (err) {
-        console.log('Ошибка при получении курсов', err);
-        return [];
+    } catch (error) {
+        console.error('Ошибка загрузки:', error);
     }
 };
 
@@ -36,12 +29,12 @@ export const addCourse = async (token: string | null, value: CourseCreateType) =
     formData.append('video_url', value.video_url);
 
     try {
-        const res = await axiosInstance.post(`/v1/teacher/courses/store`, 
-            formData, {
+        const res = await axiosInstance.post(`/v1/teacher/courses/store`, formData, {
             headers: {
-                      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-                    'Content-Type': 'multipart/form-data'
-            }});
+                ...(token ? { Authorization: `Bearer ${token}` } : {}),
+                'Content-Type': 'multipart/form-data'
+            }
+        });
 
         console.log('Урок: ', res.data);
 
@@ -54,21 +47,20 @@ export const addCourse = async (token: string | null, value: CourseCreateType) =
 
 export const deleteCourse = async (token: string | null, id: number) => {
     url = process.env.NEXT_PUBLIC_BASE_URL + `/v1/teacher/courses/delete?course_id=${id}`;
-    console.log(id);
-
-    const headers: HeadersInit = token ? { Authorization: `Bearer ${token}` } : {};
 
     try {
-        const res = await fetch(url, {
-            method: 'DELETE',
-            headers
+        const res = await axiosInstance.delete(`/v1/teacher/courses/delete?course_id=${id}`, {
+            headers: {
+                ...(token ? { Authorization: `Bearer ${token}` } : {}),
+                'Content-Type': 'multipart/form-data'
+            }
         });
 
-        const data = await res.json();
-        return data;
+        console.log(res.data);
+        return res.data;
     } catch (err) {
         console.log('Ошибка при удалении курса', err);
-        return [];
+        return err;
     }
 };
 
@@ -85,168 +77,145 @@ export const updateCourse = async (token: string | null, id: number | null, valu
     }
     formData.append('video_url', value.video_url);
 
-    const headers: HeadersInit = token ? { Authorization: `Bearer ${token}` } : {};
-
     try {
-        const res = await fetch(url, {
-            method: 'POST',
-            headers,
-            body: formData
+        const res = await axiosInstance.post(`/v1/teacher/courses/update?course_id=${id}`, formData, {
+            headers: {
+                ...(token ? { Authorization: `Bearer ${token}` } : {}),
+                'Content-Type': 'multipart/form-data'
+            }
         });
 
-        const data = await res.json();
+        const data = await res.data;
         return data;
     } catch (err) {
         console.log('Ошибка при обновлении курса', err);
-        return [];
+        return err;
     }
 };
 
 // Themes
 
 export const fetchCourseInfo = async (token: AuthBaseType, id: AuthBaseType) => {
-    url = process.env.NEXT_PUBLIC_BASE_URL + `/v1/teacher/courses/show?course_id=${id}`;
-
-    const headers: HeadersInit = token
-        ? {
-              Authorization: `Bearer ${token}`
-          }
-        : {};
-
     try {
-        const res = await fetch(url, {
-            headers
+        const res = await axiosInstance.get(`/v1/teacher/courses/show?course_id=${id}`, {
+            headers: token ? { Authorization: `Bearer ${token}` } : {}
         });
 
-        const data = await res.json();
+        const data = await res.data;
         return data;
     } catch (err) {
         console.log('Ошибка при получении темы', err);
-        return [];
+        return err;
     }
 };
 
 export const addThemes = async (token: string | null, id: number, value: OnlyTitle) => {
-    url = process.env.NEXT_PUBLIC_BASE_URL + `/v1/teacher/lessons/store?course_id=${id}&title=${value}`;
-    console.log(value);
-
-    const headers: HeadersInit = token ? { Authorization: `Bearer ${token}` } : {};
-
     const formData = new FormData();
     formData.append('title', value);
 
     try {
-        const res = await fetch(url, {
-            method: 'POST',
-            headers,
-            body: formData
+        const res = await axiosInstance.post(`/v1/teacher/lessons/store?course_id=${id}&title=${value}`,
+        formData, 
+        {
+            headers: {
+                ...(token ? { Authorization: `Bearer ${token}` } : {}),
+                'Content-Type': 'multipart/form-data'
+            }
         });
 
-        const data = await res.json();
+        const data = await res.data;
         return data;
     } catch (err) {
         console.log('Ошибка при добавлении темы', err);
-        return [];
+        return err;
     }
 };
 
 export const fetchThemes = async (token: string | null, id: number) => {
-    url = process.env.NEXT_PUBLIC_BASE_URL + `/v1/teacher/lessons?course_id=${id}`;
-
-    const headers: HeadersInit = token
-        ? {
-              Authorization: `Bearer ${token}`
-          }
-        : {};
-
     try {
-        const res = await fetch(url, {
-            headers
+        const res = await axiosInstance(`/v1/teacher/lessons?course_id=${id}`, {
+            headers: token ? { Authorization: `Bearer ${token}` } : {}
         });
 
-        const data = await res.json();
+        const data = await res.data;
         return data;
     } catch (err) {
         console.log('Ошибка при получении темы', err);
-        return [];
+        return err;
     }
 };
 
 export const updateTheme = async (token: string | null, course_id: number | null, theme_id: number, value: CourseCreateType) => {
-    console.log(value);
-
-    url = process.env.NEXT_PUBLIC_BASE_URL + `/v1/teacher/lessons/update?course_id=${course_id}&title=${value}&lesson_id=${theme_id}`;
-
     const formData = new FormData();
     formData.append('title', value.title);
 
-    const headers: HeadersInit = token ? { Authorization: `Bearer ${token}` } : {};
-
     try {
-        const res = await fetch(url, {
-            method: 'POST',
-            headers,
-            body: formData
+        const res = await axiosInstance.post(`/v1/teacher/lessons/update?course_id=${course_id}&title=${value}&lesson_id=${theme_id}`,
+        formData,
+        {
+            headers: {
+                ...(token ? { Authorization: `Bearer ${token}` } : {}),
+                'Content-Type': 'multipart/form-data'
+            }
         });
 
-        const data = await res.json();
+        const data = await res.data;
         return data;
     } catch (err) {
         console.log('Ошибка при обновлении темы', err);
-        return [];
+        return err;
     }
 };
 
 export const deleteTheme = async (token: string | null, id: number) => {
-    url = process.env.NEXT_PUBLIC_BASE_URL + `/v1/teacher/lessons/delete?lesson_id=${id}`;
-    console.log(id);
-
-    const headers: HeadersInit = token ? { Authorization: `Bearer ${token}` } : {};
 
     try {
-        const res = await fetch(url, {
-            method: 'DELETE',
-            headers
+        const res = await axiosInstance.delete(`/v1/teacher/lessons/delete?lesson_id=${id}`, {
+            headers : token ? { Authorization: `Bearer ${token}` } : {}
         });
 
-        const data = await res.json();
+        const data = await res.data;
         return data;
     } catch (err) {
         console.log('Ошибка при удалении темы', err);
-        return [];
+        return err;
     }
 };
 
 // Lessons
 
-export const addLessonText = async (token: string | null, courseId: number | null, lessonId: number | null, value: string) => {
-    url = process.env.NEXT_PUBLIC_BASE_URL + `/v1/teacher/textcontent/store?course_id=${courseId}&lesson_id=${lessonId}&content=${value}`;
-    console.log(value);
-
-    const headers: HeadersInit = token ? { Authorization: `Bearer ${token}` } : {};
-
+export const addLesson = async (type: string, token: string | null, courseId: number | null, lessonId: number | null, value: string) => {
     // const formData = new FormData();
     // formData.append('title', value);
 
+    if(type === 'text'){
+        url = `/v1/teacher/textcontent/store?course_id=${courseId}&lesson_id=${lessonId}&content=${value}`
+    }
+
     try {
-        const res = await fetch(url, {
-            method: 'POST',
-            headers,
-            body: value
+        const res = await axiosInstance.post(url,
+        value, 
+        {
+            headers: token ? { Authorization: `Bearer ${token}` } : {}
         });
 
-        const data = await res.json();
-        console.log('Урок ', data);
+        const data = await res.data;
         return data;
     } catch (err) {
         console.log('Ошибка при добавлении урока', err);
-        return [];
+        return err;
     }
 };
 
-export const fetchLesson = async (token: string | null, courseId: number | null, lessonId: number | null) => {
+export const fetchLesson = async (type: string, token: string | null, courseId: number | null, lessonId: number | null) => {
+    let url = '';
+
+    // if(type === 'text'){
+        url = `/v1/teacher/textcontent?course_id=${courseId}&lesson_id=${lessonId}`
+    // }
+
     try {
-        const res = await axiosInstance.get(`/v1/teacher/textcontent?course_id=${courseId}&lesson_id=${lessonId}`, {
+        const res = await axiosInstance.get(url, {
             headers: token ? { Authorization: `Bearer ${token}` } : {}
         });
 
@@ -260,26 +229,3 @@ export const fetchLesson = async (token: string | null, courseId: number | null,
     }
 };
 
-// export const fetchLesson = async (token:string | null, courseId:number | null, lessonId:number | null) => {
-//     url = process.env.NEXT_PUBLIC_BASE_URL + `/v1/teacher/textcontent?course_id=${courseId}&lesson_id=${lessonId}`;
-
-//     const headers: HeadersInit = token
-//         ? {
-//             Authorization: `Bearer ${token}`
-//           }
-//         : {};
-
-//     try {
-//         const res = await fetch(url, {
-//             headers
-//         });
-
-//         const data = await res.json();
-//         console.log('Урок: ',data);
-
-//         return data;
-//     } catch (err) {
-//         console.log('Ошибка при получении урока', err);
-//         return [];
-//     }
-// };

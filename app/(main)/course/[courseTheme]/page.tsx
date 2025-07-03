@@ -14,6 +14,7 @@ import { getToken } from '@/utils/auth';
 import { useParams } from 'next/navigation';
 import { addThemes, deleteTheme, fetchCourseInfo, fetchThemes, updateTheme } from '@/services/courses';
 import NotFoundPage from '@/app/(full-page)/pages/notfound/page';
+import useErrorMessage from '@/hooks/useErrorMessage';
 
 export default function CourseTheme() {
     const [hasThemes, setHasThemes] = useState(false);
@@ -29,6 +30,7 @@ export default function CourseTheme() {
     const { setMessage } = useContext(LayoutContext);
 
     const { courseTheme } = useParams() as { courseTheme: string };
+    const showError = useErrorMessage();
 
     const handleFetchThemes = async () => {
         const token = getToken('access_token');
@@ -43,6 +45,9 @@ export default function CourseTheme() {
                 state: true,
                 value: { severity: 'error', summary: 'Ошибка', detail: 'Проблема с соединением. Повторите заново' }
             }); // messege - Ошибка загрузки курсов
+            if(data.response.status){
+                showError(data.response.status);
+            }
         }
     };
 
@@ -50,7 +55,9 @@ export default function CourseTheme() {
         const token = getToken('access_token');
         const data = await fetchCourseInfo(token, courseTheme);
 
-        setThemeInfo(data.course);
+        if(data.success) {
+            setThemeInfo(data.course);
+        }
     };
 
     const handleAddTheme = async () => {
@@ -75,6 +82,9 @@ export default function CourseTheme() {
                 state: true,
                 value: { severity: 'error', summary: 'Ошибка', detail: 'Ошибка при при добавлении' }
             }); // messege - Ошибка при добавлении
+            if(data.response.status){
+                showError(data.response.status);
+            }
         }
     };
 
@@ -94,6 +104,9 @@ export default function CourseTheme() {
                 state: true,
                 value: { severity: 'error', summary: 'Ошибка', detail: 'Ошибка при при удалении' }
             }); // messege - Ошибка при добавлении
+            if(data.response.status){
+                showError(data.response.status);
+            }
         }
     };
 
@@ -116,6 +129,9 @@ export default function CourseTheme() {
                 state: true,
                 value: { severity: 'error', summary: 'Ошибка при при изменении темы', detail: 'Заполняйте поля правильно' }
             }); // messege - Ошибка при изменении курса
+            if(data.response.status){
+                showError(data.response.status);
+            }
         }
     };
 

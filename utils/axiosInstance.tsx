@@ -10,8 +10,9 @@ axiosInstance.interceptors.response.use(
         return response;
     },
     (error) => {
-
+        
         const status = error.response?.status;
+        console.log(error);
 
         if (status === 401) {
             console.warn('Неавторизован. Удаляю токен...');

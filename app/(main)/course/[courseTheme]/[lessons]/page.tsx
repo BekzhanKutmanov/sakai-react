@@ -18,7 +18,7 @@ import LessonCard from '@/app/components/cards/LessonCard';
 import Tiered from '@/app/components/popUp/Tiered';
 import { Menu } from 'primereact/menu';
 import Redacting from '@/app/components/popUp/Redacting';
-import { addLesson, addLessonText, fetchLesson } from '@/services/courses';
+import { addLesson, fetchLesson } from '@/services/courses';
 import { getToken } from '@/utils/auth';
 import { useParams, useSearchParams } from 'next/navigation';
 import { LayoutContext } from '@/layout/context/layoutcontext';
@@ -118,55 +118,70 @@ export default function Lesson() {
         console.log(sentValues);
     }, [sentValues]);
 
-    const handleAddLesson = async () => {
+    const handleFetchLesson = async (type: string) => {
+            // skeleton = false
+            const token = getToken('access_token');
+            const data = await fetchLesson(type, token, courseId ? Number(courseId) : null, lessonId ? Number(lessonId) : null);
+            console.log(data);
+            console.log('type: ',type);
+        
+            if (data.success) {
+                console.log(data.content, ' *');
+                const textcontent = data?.content.content;
+                if (textcontent && textcontent.length > 0) {
+                    setSentValues((prev) => ({
+                        ...prev,
+                        [type]: {
+                            ...prev[type],
+                            [type]: data.content.content
+                        }
+                    }));
+                    setTextShow(true);
+                } else {
+                    setTextShow(false);
+                }
+        } else {
+            setTextShow(false);
+            if(data.response.status){
+                showError(data.response.status);
+            }
+            // skeleton = false
+        };
+    };
+
+    const handleAddText = async (type: string) => {
         const token = getToken('access_token');
 
-        const data = await addLessonText(token, courseId ? Number(courseId) : null, courseId ? Number(lessonId) : null, sentValues.text.text);
+        const data = await addLesson(type, token, courseId ? Number(courseId) : null, courseId ? Number(lessonId) : null, sentValues.text.text);
         console.log(data);
         if (data.success) {
-            handleFetchLesson();
+            handleFetchLesson(type);
+            setMessage({
+                state: true,
+                value: { severity: 'success', summary: 'Ийгиликтүү Кошулдуу!', detail: 'Ошибка при при добавлении' }
+            });
+        } else {
+            setMessage({
+                state: true,
+                value: { severity: 'error', summary: 'Ошибка', detail: 'Ошибка при при добавлении' }
+            }); // messege - Ошибка при добавлении
+            if(data.response.status){
+                showError(data.response.status);
+            }
         }
         // console.log(data);
     };
 
-    const handleFetchLesson = async () => {
-        const token = getToken('access_token');
-        console.log('запрос...');
-        const data = await fetchLesson(token, courseId ? Number(courseId) : null, courseId ? Number(lessonId) : null);
-        console.log(data);
-
-        if (data.success) {
-            const textcontent = data?.content;
-            if (textcontent && textcontent.length > 0) {
-                setSentValues((prev) => ({
-                    ...prev,
-                    text: {
-                        ...prev.text,
-                        text: data.content.content
-                    }
-                }));
-                setTextShow(true);
-            } else {
-                setTextShow(false);
-            }
-            // skeleton = false
-        } else {
-            setTextShow(false);
-            console.log(data.response.status);
-            if(data.response.status){
-                showError(data.response.status);
-            }
-
-            // skeleton = false
-        }
-    };
-
     const handleTabChange = (e) => {
         // console.log('Переход на шаг:', e);
-        //     // fetchDataForStep(e.index);
-
         if (e.index === 0) {
-            handleFetchLesson();
+            handleFetchLesson('text');
+        } else if(e.index === 1){
+            handleFetchLesson('doc');
+        } else if(e.index === 2){
+            handleFetchLesson('link');
+        } else if(e.index === 3){
+            handleFetchLesson('video');
         }
         setActiveIndex(e.index);
         console.log(e.index);
@@ -294,7 +309,7 @@ export default function Lesson() {
                             ) : (
                                 <div className="py-4 flex flex-col gap-16 items-center m-0">
                                     <CKEditorWrapper textValue={handleText} />
-                                    <Button label="Сактоо" onClick={handleAddLesson} />
+                                    <Button label="Сактоо" onClick={handleAddText} />
                                 </div>
                             )}
                         </div>

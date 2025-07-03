@@ -21,6 +21,7 @@ import Redacting from '@/app/components/popUp/Redacting';
 import { confirmDialog } from 'primereact/confirmdialog';
 import { getRedactor } from '@/utils/getRedactor';
 import { getConfirmOptions } from '@/utils/getConfirmOptions';
+import useErrorMessage from '@/hooks/useErrorMessage';
 
 export default function Course() {
     const [courses, setCourses] = useState([]);
@@ -35,7 +36,6 @@ export default function Course() {
     const [image, setImage] = useState<File | string>('');
     const [forStart, setForStart] = useState(false);
     const [skeleton, setSkeleton] = useState(false);
-    const [courseCash, setCourseCash] = useState<{ [key: number]: any[] }>({});
     const [pagination, setPagination] = useState({
         currentPage: 1,
         total: 0,
@@ -43,43 +43,26 @@ export default function Course() {
     });
 
     const { setMessage } = useContext(LayoutContext);
+    const showError = useErrorMessage();
 
-    const fetchData = async (page = 1) => {
-        console.log('Запрашиваем курсы...');
-
+    const handleFetchCourse = async (page = 1) => {
         const token = getToken('access_token');
-        const headers: HeadersInit = token ? { Authorization: `Bearer ${token}` } : {};
-
-        try {
-            console.log('Номер запрашиваемой страницы ', page);
-
-            const res = await fetch(`http://api.mooc.oshsu.kg/public/api/v1/teacher/courses?page=${Number(page)}&limit=3`, {
-                headers
+        const data = await fetchCourses(token, page, 3);
+        console.log(data);
+        
+        if (data.courses) {
+            setHasCourses(false);
+            setCourses(data.courses.data);
+            setPagination({
+                currentPage: data.courses.current_page,
+                total: data.courses.total,
+                perPage: data.courses.per_page
             });
-            const data = await res.json();
-
-            if (data.courses) {
-                setHasCourses(false);
-                setCourses(data.courses.data);
-                setPagination({
-                    currentPage: data.courses.current_page,
-                    total: data.courses.total,
-                    perPage: data.courses.per_page
-                });
-            } else {
-                setHasCourses(true);
-                setMessage({
-                    state: true,
-                    value: { severity: 'error', summary: 'Ошибка', detail: 'Проблема с соединением. Повторите заново' }
-                }); // messege - Ошибка загрузки курсов
-            }
-        } catch (error) {
-            console.error('Ошибка загрузки:', error);
+        } else {
             setHasCourses(true);
-            setMessage({
-                state: true,
-                value: { severity: 'error', summary: 'Ошибка', detail: 'Повторите заново' }
-            }); // messege - Ошибка загрузки курсов
+            if(data.response.status){
+                showError(data.response.status);
+            }
         }
     };
 
@@ -92,7 +75,7 @@ export default function Course() {
         const data = await addCourse(token, courseValue);
         if (data.success) {
             toggleSkeleton();
-            fetchData();
+            handleFetchCourse();
             setMessage({
                 state: true,
                 value: { severity: 'success', summary: 'Ийгиликтүү кошулду!', detail: '' }
@@ -102,6 +85,9 @@ export default function Course() {
                 state: true,
                 value: { severity: 'error', summary: 'Ошибка', detail: 'Ошибка при при добавлении' }
             }); // messege - Ошибка при добавлении
+            if(data.response.status){
+                showError(data.response.status);
+            }
         }
     };
 
@@ -111,7 +97,7 @@ export default function Course() {
         const data = await deleteCourse(token, id);
         if (data.success) {
             toggleSkeleton();
-            fetchData();
+            handleFetchCourse();
             setMessage({
                 state: true,
                 value: { severity: 'success', summary: 'Ийгиликтүү өчүрүлдү!', detail: '' }
@@ -121,6 +107,9 @@ export default function Course() {
                 state: true,
                 value: { severity: 'error', summary: 'Ошибка', detail: 'Ошибка при при удалении' }
             }); // messege - Ошибка при добавлении
+            if(data.response.status){
+                showError(data.response.status);
+            }
         }
     };
 
@@ -130,7 +119,7 @@ export default function Course() {
         const data = await updateCourse(token, selectedCourse, courseValue);
         if (data.success) {
             toggleSkeleton();
-            fetchData();
+            handleFetchCourse();
             clearValues();
             setEditMode(false);
             setSelectedCourse(null);
@@ -143,6 +132,9 @@ export default function Course() {
                 state: true,
                 value: { severity: 'error', summary: 'Ошибка при при изменении курса', detail: 'Заполняйте поля правильно' }
             }); // messege - Ошибка при изменении курса
+            if(data.response.status){
+                showError(data.response.status);
+            }
         }
     };
 
@@ -193,11 +185,12 @@ export default function Course() {
 
     // Ручное управление пагинацией
     const handlePageChange = (page: number) => {
-        fetchData(page);
+        // fetchData(page);
+        handleFetchCourse(page);
     };
-    
+
     useEffect(() => {
-        fetchData();
+        handleFetchCourse();
     }, []);
 
     useEffect(() => {
@@ -328,7 +321,7 @@ export default function Course() {
             </div>
 
             {/* table section */}
-            {hasCourses ? ( 
+            {hasCourses ? (
                 <NotFoundPage titleMessege={'Курс кошуу үчүн кошуу баскычты басыныз'} />
             ) : (
                 <div className="py-4">
@@ -337,7 +330,7 @@ export default function Course() {
                     ) : (
                         <>
                             <DataTable value={courses} breakpoint="960px" rows={5} responsiveLayout="stack" className="my-custom-table">
-                                <Column body={(_, {rowIndex}) => rowIndex + 1} header="Номер" style={{ width: '20px' }}></Column>
+                                <Column body={(_, { rowIndex }) => rowIndex + 1} header="Номер" style={{ width: '20px' }}></Column>
                                 <Column
                                     field="title"
                                     header="Аталышы"
@@ -355,7 +348,7 @@ export default function Course() {
                                     className="flex items-center justify-center h-[60px] border-b-0"
                                     body={(rowData) => (
                                         <div className="flex items-center gap-2" key={rowData.id}>
-                                            <Redacting redactor={getRedactor( rowData, {onEdit: edit, getConfirmOptions, onDelete: handleDeleteCourse  } )} textSize={'14px'} />
+                                            <Redacting redactor={getRedactor(rowData, { onEdit: edit, getConfirmOptions, onDelete: handleDeleteCourse })} textSize={'14px'} />
                                         </div>
                                     )}
                                 />
