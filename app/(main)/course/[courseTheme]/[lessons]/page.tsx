@@ -33,6 +33,7 @@ export default function Lesson() {
     const [textShow, setTextShow] = useState<boolean>(false);
     const [editMode, setEditMode] = useState<boolean>(false);
     const [textValue, setTextValue] = useState({});
+    const [docValue, setDocValue] = useState([]);
     const { setMessage } = useContext(LayoutContext);
 
     const showError = useErrorMessage();
@@ -54,8 +55,6 @@ export default function Lesson() {
             }
         }));
     };
-
-    const addVideo = () => {};
 
     const {
         register,
@@ -79,7 +78,7 @@ export default function Lesson() {
 
     const [sentValues, setSentValues] = useState({
         text: { typingId: '', text: '', register: '' },
-        doc: { typingId: 'docTyping', doc: '', register: '' },
+        doc: { typingId: 'docTyping', doc: File, title: '', register: '' },
         link: { typingId: 'linkTyping', link: '', register: 'usefulLink' },
         video: { typingId: 'videoTyping', video: '', register: 'videoReq' }
     });
@@ -114,21 +113,33 @@ export default function Lesson() {
         console.log('type: ', type);
 
         if (data.success) {
-            console.log(data.content, ' *');
-            const textcontent = data.content && data?.content.content;
-            if (textcontent) {
-                setTextValue({ id: data.content.id }); 
+            // ключи! через них буду работать
+            const content = data['content'] ? 'content'
+                : data['documents'] ? 'documents' 
+                : ''
+            ;
+
+            console.log(content, data);    
+            
+            if (data[content]) {
+                // Присваиваю себе. Для отображения
+                data[content] === 'content' ? setTextValue({ id: data.content.id })
+                    : data['documents'] ? setDocValue(data[content]) : ''
+
+                // собираю все данные то что для отправки
                 setSentValues((prev) => ({
                     ...prev,
                     [type]: {
                         ...prev[type],
-                        [type]: data.content.content
+                        [type]: data[content]['content'] ? data[content].content
+                            : data['documents'] ? data[content] : ''
                     }
                 }));
                 setTextShow(true);
             } else {
                 setTextShow(false);
-            }
+                alert('content null!!');
+            };
         } else {
             setTextShow(false);
             if (data.response.status) {
@@ -138,16 +149,16 @@ export default function Lesson() {
         }
     };
 
-    const handleAddText = async (type: string) => {
+    const handleAddLesson = async (type: string) => {
         const token = getToken('access_token');
 
-        const data = await addLesson(type, token, courseId ? Number(courseId) : null, lessonId ? Number(lessonId) : null, sentValues.text.text);
+        const data = await addLesson(type, token, courseId ? Number(courseId) : null, lessonId ? Number(lessonId) : null, sentValues[type][type], sentValues[type].title);
         console.log(data);
         if (data.success) {
             handleFetchLesson(type);
             setMessage({
                 state: true,
-                value: { severity: 'success', summary: 'Ийгиликтүү Кошулдуу!', detail: 'Ошибка при при добавлении' }
+                value: { severity: 'success', summary: 'Ийгиликтүү Кошулдуу!', detail: '' }
             });
         } else {
             setMessage({
@@ -255,12 +266,26 @@ export default function Lesson() {
                                         ...prev,
                                         doc: {
                                             ...prev[type],
-                                            doc: e.files[0].name
+                                            doc: e.files[0]
                                         }
                                     }))
                                 }
                             />
                             <span>{sentValues[type].typingId === 'docTyping' && docTyping ? docTyped : ''}</span>
+                            <InputText 
+                                type='text' 
+                                placeholder={'Аталышы'} 
+                                value={sentValues.doc.title}
+                                onChange={(e)=> {
+                                    setSentValues((prev) => ({
+                                        ...prev,
+                                        doc: {
+                                            ...prev[type],
+                                            title: e.target.value
+                                        }
+                                    }))
+                                }}
+                            />
                         </>
                     ) : (
                         <>
@@ -295,7 +320,7 @@ export default function Lesson() {
                     )}
                 </div>
                 <InputText placeholder="Мазмун" className="w-full" />
-                <Button type="submit" label="Сактоо" onClick={addVideo} disabled={!!errors.videoReq} />
+                <Button type="submit" label="Сактоо" onClick={()=> handleAddLesson(type)} disabled={!!errors.videoReq} />
             </div>
         );
     };
@@ -356,7 +381,7 @@ export default function Lesson() {
                                     ) : (
                                         <div>
                                             <CKEditorWrapper textValue={handleText} />
-                                            <Button label="Сактоо" onClick={() => handleAddText('text')} />
+                                            <Button label="Сактоо" onClick={() => handleAddLesson('text')} />
                                         </div>
                                     )}
                                 </div>
@@ -378,7 +403,11 @@ export default function Lesson() {
                         <div className="flex flex-col items-center gap-4 py-4">
                             {typedJsx('doc')}
                             <div className="flex justify-center">
-                                <LessonCard cardValue={'vremenno'} cardBg={'#ddc4f51a'} type={{ typeValue: 'Документтер', icon: 'pi pi-folder' }} typeColor={'var(--mainColor)'} lessonDate={'xx-xx-xx'} />
+                                {docValue.map((item)=> (
+                                    <div key={item?.id}>
+                                        <LessonCard cardValue={'vremenno'} cardBg={'#ddc4f51a'} type={{ typeValue: 'Документтер', icon: 'pi pi-folder' }} typeColor={'var(--mainColor)'} lessonDate={'xx-xx-xx'} />
+                                    </div>
+                                ))}
                             </div>
                         </div>
                     )}

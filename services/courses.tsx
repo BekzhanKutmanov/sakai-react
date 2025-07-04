@@ -114,9 +114,7 @@ export const addThemes = async (token: string | null, id: number, value: OnlyTit
     formData.append('title', value);
 
     try {
-        const res = await axiosInstance.post(`/v1/teacher/lessons/store?course_id=${id}&title=${value}`,
-        formData, 
-        {
+        const res = await axiosInstance.post(`/v1/teacher/lessons/store?course_id=${id}&title=${value}`, formData, {
             headers: {
                 ...(token ? { Authorization: `Bearer ${token}` } : {}),
                 'Content-Type': 'multipart/form-data'
@@ -150,9 +148,7 @@ export const updateTheme = async (token: string | null, course_id: number | null
     formData.append('title', value.title);
 
     try {
-        const res = await axiosInstance.post(`/v1/teacher/lessons/update?course_id=${course_id}&title=${value}&lesson_id=${theme_id}`,
-        formData,
-        {
+        const res = await axiosInstance.post(`/v1/teacher/lessons/update?course_id=${course_id}&title=${value}&lesson_id=${theme_id}`, formData, {
             headers: {
                 ...(token ? { Authorization: `Bearer ${token}` } : {}),
                 'Content-Type': 'multipart/form-data'
@@ -168,10 +164,9 @@ export const updateTheme = async (token: string | null, course_id: number | null
 };
 
 export const deleteTheme = async (token: string | null, id: number) => {
-
     try {
         const res = await axiosInstance.delete(`/v1/teacher/lessons/delete?lesson_id=${id}`, {
-            headers : token ? { Authorization: `Bearer ${token}` } : {}
+            headers: token ? { Authorization: `Bearer ${token}` } : {}
         });
 
         const data = await res.data;
@@ -184,20 +179,29 @@ export const deleteTheme = async (token: string | null, id: number) => {
 
 // Lessons
 
-export const addLesson = async (type: string, token: string | null, courseId: number | null, lessonId: number | null, value: string) => {
-    // const formData = new FormData();
-    // formData.append('title', value);
-    console.log(type);
-    
-    if(type === 'text'){
-        url = `/v1/teacher/textcontent/store?course_id=${courseId}&lesson_id=${lessonId}&content=${value}`
+export const addLesson = async (type: string, token: string | null, courseId: number | null, lessonId: number | null, value: string | File, title: string | null) => {
+    let formData = new FormData();
+    console.log(value,title);
+    let headers = token ? { Authorization: `Bearer ${token}` } : {};
+    let url = '';
+    let body = value;
+
+    if (type === 'text') {
+        url = `/v1/teacher/textcontent/store?course_id=${courseId}&lesson_id=${lessonId}&content=${value}`;
+        headers['Content-Type'] = 'application/json';
+    } else if(type === 'doc'){
+        url = `/v1/teacher/document/store?lesson_id=${lessonId}`;
+        formData.append('lesson_id', String(lessonId));
+        formData.append('document', value); 
+        formData.append('title', String(title)); 
+        formData.append('description', ''); 
+        body = formData;
+        console.log(body);
     }
 
     try {
-        const res = await axiosInstance.post(url,
-        value, 
-        {
-            headers: token ? { Authorization: `Bearer ${token}` } : {}
+        const res = await axiosInstance.post(url, body, {
+            headers
         });
 
         const data = await res.data;
@@ -210,15 +214,24 @@ export const addLesson = async (type: string, token: string | null, courseId: nu
 
 export const fetchLesson = async (type: string, token: string | null, courseId: number | null, lessonId: number | null) => {
     let url = '';
+    let formData = new FormData();
 
-    // if(type === 'text'){
-        url = `/v1/teacher/textcontent?course_id=${courseId}&lesson_id=${lessonId}`
-    // }
+    if (type === 'text') {
+        url = `/v1/teacher/textcontent?course_id=${courseId}&lesson_id=${lessonId}`;
+    } else if (type === 'doc') {
+        url = `/v1/teacher/document?lesson_id=${lessonId}`
+        // formData.append('title', value.title);
+        // formData.append('description', value.description);
+    }
 
     try {
-        const res = await axiosInstance.get(url, {
-            headers: token ? { Authorization: `Bearer ${token}` } : {}
-        });
+        const res = await axiosInstance.get(
+            url,
+
+            {
+                headers: token ? { Authorization: `Bearer ${token}` } : {}
+            }
+        );
 
         // const data = await res();
         console.log('Урок: ', res.data);
@@ -231,16 +244,14 @@ export const fetchLesson = async (type: string, token: string | null, courseId: 
 };
 
 export const updateLesson = async (type: string, token: string | null, course_id: number | null, lesson_id: number | null, contentId: number, value: CourseCreateType) => {
-    console.log(contentId ,value);
-    
+    console.log(contentId, value);
+
     // if(type === 'text'){
-        url = `/v1/teacher/textcontent/update?course_id=${course_id}&lesson_id=${lesson_id}&content_id=${contentId}&content=${value}`
+    url = `/v1/teacher/textcontent/update?course_id=${course_id}&lesson_id=${lesson_id}&content_id=${contentId}&content=${value}`;
     // }
 
     try {
-        const res = await axiosInstance.post(url,
-        value,
-        {
+        const res = await axiosInstance.post(url, value, {
             headers: token ? { Authorization: `Bearer ${token}` } : {}
         });
 
@@ -252,11 +263,10 @@ export const updateLesson = async (type: string, token: string | null, course_id
     }
 };
 
-export const deleteLesson = async (token: string | null, courseId: number | null, lesson_id: number | null, content_id : number | null) => {
-
+export const deleteLesson = async (token: string | null, courseId: number | null, lesson_id: number | null, content_id: number | null) => {
     try {
         const res = await axiosInstance.delete(`/v1/teacher/textcontent/delete?course_id=${courseId}&lesson_id=${lesson_id}&content_id=${content_id}`, {
-            headers : token ? { Authorization: `Bearer ${token}` } : {}
+            headers: token ? { Authorization: `Bearer ${token}` } : {}
         });
 
         const data = await res.data;
