@@ -5,7 +5,6 @@ import { useContext } from 'react';
 
 export default function useErrorMessage() {
     const { setMessage } = useContext(LayoutContext);
-    console.log('reabotato');
 
     return (code: number | null) => {
         console.log('Код ошибки ', code);

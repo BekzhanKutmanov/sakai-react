@@ -116,8 +116,8 @@ export default function Lesson() {
         if (data.success) {
             console.log(data.content, ' *');
             const textcontent = data.content && data?.content.content;
-            if (textcontent && textcontent.length > 0) {
-                setTextValue({ id: data.content.id });
+            if (textcontent) {
+                setTextValue({ id: data.content.id }); 
                 setSentValues((prev) => ({
                     ...prev,
                     [type]: {

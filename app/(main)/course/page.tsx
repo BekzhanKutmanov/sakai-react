@@ -322,7 +322,7 @@ export default function Course() {
 
             {/* table section */}
             {hasCourses ? (
-                <NotFoundPage titleMessege={'Курс кошуу үчүн кошуу баскычты басыныз'} />
+                <NotFoundPage titleMessage={'Курс кошуу үчүн кошуу баскычты басыныз'} />
             ) : (
                 <div className="py-4">
                     {skeleton ? (
