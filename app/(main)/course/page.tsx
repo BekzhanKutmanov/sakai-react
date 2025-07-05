@@ -348,7 +348,7 @@ export default function Course() {
                                     className="flex items-center justify-center h-[60px] border-b-0"
                                     body={(rowData) => (
                                         <div className="flex items-center gap-2" key={rowData.id}>
-                                            <Redacting redactor={getRedactor(rowData, { onEdit: edit, getConfirmOptions, onDelete: handleDeleteCourse })} textSize={'14px'} />
+                                            <Redacting redactor={getRedactor(rowData, {onType: ()=> {}, onEdit: edit, getConfirmOptions, onDelete: handleDeleteCourse })} textSize={'14px'} />
                                         </div>
                                     )}
                                 />

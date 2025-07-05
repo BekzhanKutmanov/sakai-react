@@ -29,6 +29,7 @@ export const login = async (value:LoginType) => {
 
 export const getUser = async (token:string) => {
     url = process.env.NEXT_PUBLIC_BASE_URL + '/v1/user';
+    console.log(token);
     
     const headers: HeadersInit = token
         ? {

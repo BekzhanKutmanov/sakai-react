@@ -4,8 +4,9 @@ export const getRedactor = (rowData: any, handlers ) => [
     {
         label: '',
         icon: 'pi pi-pencil',
-        command: () => {
-            handlers.onEdit(rowData)
+        command: () => {            
+            handlers.onEdit(rowData);
+            handlers.onType();
         }
     },
     {

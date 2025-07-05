@@ -245,14 +245,28 @@ export const fetchLesson = async (type: string, token: string | null, courseId: 
 
 export const updateLesson = async (type: string, token: string | null, course_id: number | null, lesson_id: number | null, contentId: number, value: CourseCreateType) => {
     console.log(contentId, value);
+    let headers = token ? { Authorization: `Bearer ${token}` } : {};
+    let formData = new FormData();
 
-    // if(type === 'text'){
-    url = `/v1/teacher/textcontent/update?course_id=${course_id}&lesson_id=${lesson_id}&content_id=${contentId}&content=${value}`;
-    // }
+    let body = value
+    if (type === 'text') {
+        url = `/v1/teacher/textcontent/update?course_id=${course_id}&lesson_id=${lesson_id}&content_id=${contentId}&content=${value}`;
+        headers['Content-Type'] = 'application/json';
+    } else if(type === 'doc'){
+        value = null;
+        // url = `/v1/teacher/document/update?course_id=${course_id}&lesson_id=${lesson_id}&document_id=${contentId}&document=${value}`;
+        // formData.append('lesson_id', String(lesson_id));
+        // formData.append('document', value);
+        // formData.append('document_id', String(contentId)); 
+        // formData.append('title', String('ioio')); 
+        // formData.append('description', 'iooio'); 
+        // body = formData;
+    }
 
     try {
         const res = await axiosInstance.post(url, value, {
-            headers: token ? { Authorization: `Bearer ${token}` } : {}
+            // headers: token ? { Authorization: `Bearer ${token}` } : {}
+            headers
         });
 
         const data = await res.data;

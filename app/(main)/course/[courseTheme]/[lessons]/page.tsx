@@ -3,6 +3,7 @@
 import { useContext, useEffect, useRef, useState } from 'react';
 import { TabView, TabPanel } from 'primereact/tabview';
 import CKEditorWrapper from '@/app/components/CKEditorWrapper.tsx';
+
 import { Button } from 'primereact/button';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -26,14 +27,18 @@ import useErrorMessage from '@/hooks/useErrorMessage';
 import { getRedactor } from '@/utils/getRedactor';
 import FormModal from '@/app/components/popUp/FormModal';
 import { getConfirmOptions } from '@/utils/getConfirmOptions';
+import Uploader from 'quill/modules/uploader';
 
 export default function Lesson() {
     const [activeIndex, setActiveIndex] = useState<number>(0);
     const [contentShow, setContentShow] = useState<boolean>(true);
     const [textShow, setTextShow] = useState<boolean>(false);
     const [editMode, setEditMode] = useState<boolean>(false);
+    const [visible, setVisible] = useState<boolean>(false);
     const [textValue, setTextValue] = useState({});
     const [docValue, setDocValue] = useState([]);
+    const [docSentId, setDocSentId] = useState(null);
+    const [baseType, setBaseType] = useState('');
     const { setMessage } = useContext(LayoutContext);
 
     const showError = useErrorMessage();
@@ -102,8 +107,8 @@ export default function Lesson() {
     }, [activeIndex]);
 
     useEffect(() => {
-        console.log(sentValues);
-    }, [sentValues]);
+        console.log(docValue);
+    }, [docValue]);
 
     const handleFetchLesson = async (type: string) => {
         // skeleton = false
@@ -114,32 +119,27 @@ export default function Lesson() {
 
         if (data.success) {
             // ключи! через них буду работать
-            const content = data['content'] ? 'content'
-                : data['documents'] ? 'documents' 
-                : ''
-            ;
+            const content = data['content'] ? 'content' : data['documents'] ? 'documents' : '';
+            console.log(data[content]);
+            console.log(content, data);
 
-            console.log(content, data);    
-            
             if (data[content]) {
                 // Присваиваю себе. Для отображения
-                data[content] === 'content' ? setTextValue({ id: data.content.id })
-                    : data['documents'] ? setDocValue(data[content]) : ''
+                data['content'] ? setTextValue({ id: data?.content.id }) : data['documents'] ? setDocValue(data[content]) : '';
 
                 // собираю все данные то что для отправки
                 setSentValues((prev) => ({
                     ...prev,
                     [type]: {
                         ...prev[type],
-                        [type]: data[content]['content'] ? data[content].content
-                            : data['documents'] ? data[content] : ''
+                        [type]: data[content]['content'] ? data[content].content : data['documents'] ? data[content] : ''
                     }
                 }));
                 setTextShow(true);
             } else {
                 setTextShow(false);
                 alert('content null!!');
-            };
+            }
         } else {
             setTextShow(false);
             if (data.response.status) {
@@ -201,28 +201,37 @@ export default function Lesson() {
         setEditMode(true);
     };
 
+    const x = (id) => {
+        console.log(id);
+        setDocSentId(id);
+        setVisible(true);
+    };
+
     const handleUpdateLesson = async (type: string) => {
         const token = getToken('access_token');
+        console.log(type);
+        console.log(sentValues[type][type]);
+        const contentId = sentValues['doc'] ? docSentId : ''
+        
+        const data = await updateLesson(type, token, courseId ? Number(courseId) : null, lessonId ? Number(lessonId) : null, contentId, sentValues[type][type]);
+        // console.log(data);
 
-        const data = await updateLesson(type, token, courseId ? Number(courseId) : null, lessonId ? Number(lessonId) : null, textValue.id, sentValues.text.text);
-        console.log(data);
-
-        if (data.success) {
-            setEditMode(false);
-            setTextShow(true);
-            setMessage({
-                state: true,
-                value: { severity: 'success', summary: 'Ийгиликтүү өзгөртүлдү!', detail: '' }
-            }); // messege - Успех!
-        } else {
-            setMessage({
-                state: true,
-                value: { severity: 'error', summary: 'Ошибка', detail: 'Ошибка при при изменении темы' }
-            }); // messege - Ошибка при изменении курса
-            if (data.response.status) {
-                showError(data.response.status);
-            }
-        }
+        // if (data.success) {
+        //     setEditMode(false);
+        //     setTextShow(true);
+        //     setMessage({
+        //         state: true,
+        //         value: { severity: 'success', summary: 'Ийгиликтүү өзгөртүлдү!', detail: '' }
+        //     }); // messege - Успех!
+        // } else {
+        //     setMessage({
+        //         state: true,
+        //         value: { severity: 'error', summary: 'Ошибка', detail: 'Ошибка при при изменении темы' }
+        //     }); // messege - Ошибка при изменении курса
+        //     if (data.response.status) {
+        //         showError(data.response.status);
+        //     }
+        // }
     };
 
     const handleTabChange = (e) => {
@@ -272,18 +281,18 @@ export default function Lesson() {
                                 }
                             />
                             <span>{sentValues[type].typingId === 'docTyping' && docTyping ? docTyped : ''}</span>
-                            <InputText 
-                                type='text' 
-                                placeholder={'Аталышы'} 
+                            <InputText
+                                type="text"
+                                placeholder={'Аталышы'}
                                 value={sentValues.doc.title}
-                                onChange={(e)=> {
+                                onChange={(e) => {
                                     setSentValues((prev) => ({
                                         ...prev,
                                         doc: {
                                             ...prev[type],
                                             title: e.target.value
                                         }
-                                    }))
+                                    }));
                                 }}
                             />
                         </>
@@ -320,13 +329,50 @@ export default function Lesson() {
                     )}
                 </div>
                 <InputText placeholder="Мазмун" className="w-full" />
-                <Button type="submit" label="Сактоо" onClick={()=> handleAddLesson(type)} disabled={!!errors.videoReq} />
+                <Button type="submit" label="Сактоо" onClick={() => handleAddLesson(type)} disabled={!!errors.videoReq} />
             </div>
         );
     };
 
+    useEffect(() => {
+        console.log('Базовый тип ', baseType);
+        console.log(sentValues[baseType]?.doc);
+    }, [baseType]);
+
     return (
         <div>
+            {/* modal window section */}
+            <FormModal title={'Сабакты жанылоо'} fetchValue={() => handleUpdateLesson(baseType)} clearValues={''} visible={visible} setVisible={setVisible} start={''}>
+                <div className="flex flex-col gap-1">
+                    <div className="flex flex-col gap-1 items-center justify-center">
+                        <label className="block text-900 font-medium text-[16px] md:text-xl mb-1 md:mb-2">Аталышы</label>
+                        <FileUpload
+                                chooseLabel="Загрузить документ"
+                                mode="basic"
+                                name="demo[]"
+                                url="/api/upload"
+                                accept="document/*"
+                                onSelect={(e) =>
+                                    setSentValues((prev) => ({
+                                        ...prev,
+                                        doc: {
+                                            ...prev[baseType],
+                                            doc: e.files[0]
+                                        }
+                                    }))
+                                }
+                            />
+                        {/* <InputText
+                            // value={''}
+                            placeholder="Аталышы талап кылынат"
+                            onChange={(e) => {
+                                
+                            }}
+                        /> */}
+                    </div>
+                </div>
+            </FormModal>
+
             {/* header section */}
             <TabView
                 onTabChange={(e) => handleTabChange(e)}
@@ -376,7 +422,7 @@ export default function Lesson() {
                                         <div>
                                             <h3>Озгортуу</h3>
                                             <CKEditorWrapper textValue={(e) => handleText(e)} />
-                                            <Button label="Өзгөртүү" onClick={handleUpdateLesson} />
+                                            <Button label="Өзгөртүү" onClick={() => handleUpdateLesson('text')} />
                                         </div>
                                     ) : (
                                         <div>
@@ -403,9 +449,17 @@ export default function Lesson() {
                         <div className="flex flex-col items-center gap-4 py-4">
                             {typedJsx('doc')}
                             <div className="flex justify-center">
-                                {docValue.map((item)=> (
+                                {docValue.map((item) => (
                                     <div key={item?.id}>
-                                        <LessonCard cardValue={'vremenno'} cardBg={'#ddc4f51a'} type={{ typeValue: 'Документтер', icon: 'pi pi-folder' }} typeColor={'var(--mainColor)'} lessonDate={'xx-xx-xx'} />
+                                        <LessonCard
+                                            typing={() => setBaseType('doc')}
+                                            on={x}
+                                            cardValue={{ title: item.title, id: item?.id }}
+                                            cardBg={'#ddc4f51a'}
+                                            type={{ typeValue: 'Документтер', icon: 'pi pi-folder' }}
+                                            typeColor={'var(--mainColor)'}
+                                            lessonDate={'xx-xx-xx'}
+                                        />
                                     </div>
                                 ))}
                             </div>

@@ -2,6 +2,7 @@
 
 import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
+import { useEffect } from 'react';
 
 export default function FormModal({children, title, fetchValue, clearValues, visible, setVisible, start}) {
 
@@ -9,7 +10,8 @@ export default function FormModal({children, title, fetchValue, clearValues, vis
         <div>
             <Button label="Чыгуу" className="reject-button" icon="pi pi-times" onClick={() => {
                 setVisible(false);
-                clearValues();
+                // clearValues();
+                console.log('eyemae');
             }}/>
             {<Button label="Кийинки кадам" disabled={start} icon="pi pi-check" onClick={() => {
                 setVisible(false);
@@ -18,12 +20,17 @@ export default function FormModal({children, title, fetchValue, clearValues, vis
         </div>
     );
 
+    useEffect(()=>{
+        console.log('visible', visible);
+        
+    },[visible]);
+
     return (
         <div>
             <Dialog
                 header={title}
                 visible={visible}
-                // style={{ width: '50vw' }}
+                // style={{ width: '50vw' }}    
                 onHide={() => {
                     if (!visible) return;
                     setVisible(false);
