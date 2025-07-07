@@ -17,6 +17,7 @@ import useErrorMessage from '@/hooks/useErrorMessage';
 import { getRedactor } from '@/utils/getRedactor';
 import { getConfirmOptions } from '@/utils/getConfirmOptions';
 import LessonTyping from '@/app/components/lessons/LessonTyping';
+import { TabViewChange } from '@/types/tabViewChange';
 
 export default function Lesson() {
     const [activeIndex, setActiveIndex] = useState<number>(0);
@@ -158,7 +159,9 @@ export default function Lesson() {
         }
     };
 
-    const handleTabChange = (e) => {
+    const handleTabChange = (e: TabViewChange) => {
+        console.log(e);
+
         if (e.index === 0) handleFetchLesson();
         setActiveIndex(e.index);
     };
@@ -211,9 +214,9 @@ export default function Lesson() {
                             ) : (
                                 <div className="flex flex-col gap-16 items-center m-0">
                                     {editMode ? (
-                                        <>  
-                                            <CKEditorWrapper insideValue={editingLesson} textValue={handleText} />
-                                            <div className='flex items-center gap-4'>
+                                        <>
+                                            <CKEditorWrapper insideValue={editingLesson} textValue={(e)=> handleText(e)} />
+                                            <div className="flex items-center gap-4">
                                                 <Button label="Өзгөртүү" disabled={!sentValues?.length} onClick={handleUpdateLesson} />
                                                 <Button label="Артка кайтуу" className="reject-button" onClick={cencalEdit} />
                                             </div>
@@ -254,7 +257,7 @@ export default function Lesson() {
                     {contentShow && (
                         <div className="flex flex-col items-center gap-4 py-4">
                             <div className="flex justify-center">
-                                <LessonCard cardValue={'vremenno'} cardBg={'#7bb78112'} type={{ typeValue: 'Шилтеме', icon: 'pi pi-link' }} typeColor={'var(--mainColor)'} lessonDate={'xx-xx-xx'} />
+                                {/* <LessonCard cardValue={'vremenno'} cardBg={'#7bb78112'} type={{ typeValue: 'Шилтеме', icon: 'pi pi-link' }} typeColor={'var(--mainColor)'} lessonDate={'xx-xx-xx'} /> */}
                             </div>
                         </div>
                     )}
@@ -272,7 +275,7 @@ export default function Lesson() {
                     {contentShow && (
                         <div className="flex flex-col items-center gap-4 py-4">
                             <div className="flex justify-center">
-                                <LessonCard cardValue={'vremenno'} cardBg={'#f1b1b31a'} type={{ typeValue: 'Видео', icon: 'pi pi-video' }} typeColor={'var(--mainColor)'} lessonDate={'xx-xx-xx'} />
+                                {/* <LessonCard cardValue={'vremenno'} cardBg={'#f1b1b31a'} type={{ typeValue: 'Видео', icon: 'pi pi-video' }} typeColor={'var(--mainColor)'} lessonDate={'xx-xx-xx'} /> */}
                             </div>
                         </div>
                     )}

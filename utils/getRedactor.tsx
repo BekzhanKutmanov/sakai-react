@@ -1,6 +1,6 @@
 import { confirmDialog } from 'primereact/confirmdialog';
 
-export const getRedactor = (rowData: any, handlers ) => [
+export const getRedactor = (rowData: any, handlers) => [
     {
         label: '',
         icon: 'pi pi-pencil',

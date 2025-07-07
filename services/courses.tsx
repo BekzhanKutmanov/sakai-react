@@ -10,7 +10,7 @@ export const fetchCourses = async (token, page, limit) => {
     try {
         console.log('Номер запрашиваемой страницы ', page);
 
-        const res = await axiosInstance.get(`/v1/teacher/courses?page=${Number(page)}&limit=${limit}`, {
+        const res = await axiosInstance.get(`/v1/teacher/courses?page=${Number(page)}&limit=${''}`, {
             headers: token ? { Authorization: `Bearer ${token}` } : {}
         });
         const data = await res.data;
@@ -272,7 +272,7 @@ export const deleteLesson = async (type:string, token: string | null, courseId: 
     }
 };
 
-export const updateLesson = async (type: string, token: string | null, course_id: number | null, lesson_id: number | null, contentId: number, value: any) => {
+export const updateLesson = async (type: string, token: string | null, course_id: number | null, lesson_id: number | null, contentId: number | null, value: any) => {
     console.log(contentId, value);
     let headers = token ? { Authorization: `Bearer ${token}` } : {};
     let formData = new FormData();

@@ -10,7 +10,6 @@ import useErrorMessage from '@/hooks/useErrorMessage';
 import FormModal from '../popUp/FormModal';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { lessonSchema } from '@/schemas/lessonSchema';
 import { baseSchema } from '@/schemas/baseSchema';
 
 export default function LessonTyping({ mainType, courseId, lessonId }: { mainType: string; courseId: string | null; lessonId: string | null }) {
