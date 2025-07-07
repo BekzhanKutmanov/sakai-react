@@ -1,6 +1,6 @@
 'use client';
 
-export function getToken(name:string) {
+export function getToken(name:string) : string | null{
     if (typeof document === 'undefined') {
       return null;
     }

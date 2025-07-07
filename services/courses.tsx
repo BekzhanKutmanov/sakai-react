@@ -95,7 +95,7 @@ export const updateCourse = async (token: string | null, id: number | null, valu
 
 // Themes
 
-export const fetchCourseInfo = async (token: AuthBaseType, id: AuthBaseType) => {
+export const fetchCourseInfo = async (token: string | null, id: number | null) => {
     try {
         const res = await axiosInstance.get(`/v1/teacher/courses/show?course_id=${id}`, {
             headers: token ? { Authorization: `Bearer ${token}` } : {}

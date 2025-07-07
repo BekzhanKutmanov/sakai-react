@@ -5,7 +5,7 @@ export const getRedactor = (rowData: any, handlers ) => [
         label: '',
         icon: 'pi pi-pencil',
         command: () => {            
-            handlers.onEdit(rowData.id, rowData.type);
+            handlers.onEdit(rowData.id, rowData?.type);
         }
     },
     {

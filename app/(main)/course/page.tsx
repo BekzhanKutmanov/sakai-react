@@ -18,7 +18,6 @@ import { CourseType } from '@/types/courseType';
 import { Paginator } from 'primereact/paginator';
 import NotFoundPage from '@/app/(full-page)/pages/notfound/page';
 import Redacting from '@/app/components/popUp/Redacting';
-import { confirmDialog } from 'primereact/confirmdialog';
 import { getRedactor } from '@/utils/getRedactor';
 import { getConfirmOptions } from '@/utils/getConfirmOptions';
 import useErrorMessage from '@/hooks/useErrorMessage';
@@ -223,15 +222,9 @@ export default function Course() {
         }
     }, [editMode]);
 
-    const edit = (rowData) => {
+    const edit = (rowData: number | null) => {
         setEditMode(true);
-        setSelectedCourse(rowData.id);
-        setCourseValue({
-            title: rowData.title || '',
-            description: rowData.description || '',
-            video_url: rowData.video_url || '',
-            image: rowData.image || ''
-        });
+        setSelectedCourse(rowData);
         setFormVisible(true);
     };
 
@@ -348,7 +341,7 @@ export default function Course() {
                                     className="flex items-center justify-center h-[60px] border-b-0"
                                     body={(rowData) => (
                                         <div className="flex items-center gap-2" key={rowData.id}>
-                                            <Redacting redactor={getRedactor(rowData, {onType: ()=> {}, onEdit: edit, getConfirmOptions, onDelete: handleDeleteCourse })} textSize={'14px'} />
+                                            <Redacting redactor={getRedactor(rowData, {onEdit: edit, getConfirmOptions, onDelete: handleDeleteCourse })} textSize={'14px'} />
                                         </div>
                                     )}
                                 />
