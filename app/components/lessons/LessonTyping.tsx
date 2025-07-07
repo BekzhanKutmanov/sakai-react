@@ -8,6 +8,10 @@ import { getToken } from '@/utils/auth';
 import { addLesson, deleteLesson, fetchLesson, updateLesson } from '@/services/courses';
 import useErrorMessage from '@/hooks/useErrorMessage';
 import FormModal from '../popUp/FormModal';
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { lessonSchema } from '@/schemas/lessonSchema';
+import { baseSchema } from '@/schemas/baseSchema';
 
 export default function LessonTyping({ mainType, courseId, lessonId }: { mainType: string; courseId: string | null; lessonId: string | null }) {
     // type
@@ -23,6 +27,16 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
 
         document?: File | null;
     }
+
+    // validate
+    const {
+        register,
+        setValue,
+        formState: { errors }
+    } = useForm({
+        resolver: yupResolver(baseSchema),
+        mode: 'onChange'
+    });
 
     // doc
     const [documents, setDocuments] = useState([]);
@@ -69,8 +83,8 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
     };
 
     const cencalEdit = () => {
-        setDocValue({title: '', description: ''});
-    }
+        setDocValue({ title: '', description: '' });
+    };
 
     useEffect(() => {
         console.log('selected id ', selectId);
@@ -86,8 +100,9 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                         chooseLabel="Документ жүктөө"
                         mode="basic"
                         name="demo[]"
-                        url="/api/upload"
-                        accept="document/*"
+                        customUpload
+                        uploadHandler={() => {}}
+                        accept="application/pdf"
                         onSelect={(e) =>
                             setDocValue((prev) => ({
                                 ...prev,
@@ -97,17 +112,21 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                     />
 
                     <InputText
+                        id="title"
                         type="text"
                         placeholder={'Аталышы'}
                         value={docValue.title}
                         onChange={(e) => {
                             setDocValue((prev) => ({ ...prev, title: e.target.value }));
+                            setValue('title', e.target.value, { shouldValidate: true });
                         }}
                     />
+                    <b style={{ color: 'red', fontSize: '12px' }}>{errors.title?.message}</b>
 
                     <InputText placeholder="Мазмун" value={docValue.description} onChange={(e) => setDocValue((prev) => ({ ...prev, description: e.target.value }))} className="w-full" />
                     <div className="flex justify-center">
-                        <Button type="submit" label="Сактоо" onClick={handleAddDoc} />
+                        {/* <Button disabled={!!errors.title || !docValue.file} label="Сактоо" onClick={handleAddDoc} /> */}
+                        <Button label="Сактоо" disabled={!docValue.title.length || !!errors.title || !docValue.file} onClick={handleAddDoc} />
                     </div>
                 </div>
 
@@ -213,7 +232,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
     // delete document
     const handleDeleteDoc = async (id) => {
         console.log(id);
-        
+
         const token = getToken('access_token');
 
         const data = await deleteLesson('doc', token, Number(courseId), Number(lessonId), id);
@@ -227,7 +246,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
             setMessage({
                 state: true,
                 value: { severity: 'error', summary: 'Ошибка', detail: 'Ошибка при при удалении' }
-            }); 
+            });
             if (data.response.status) {
                 showError(data.response.status);
             }
@@ -252,8 +271,9 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                                     chooseLabel="Жаңылоо"
                                     mode="basic"
                                     name="demo[]"
-                                    url="/api/upload"
-                                    accept="document/*"
+                                    customUpload
+                                    uploadHandler={() => {}}
+                                    accept="application/pdf"
                                     onSelect={(e) =>
                                         setDocValue((prev) => ({
                                             ...prev,
@@ -268,9 +288,12 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                                     value={docValue.title}
                                     onChange={(e) => {
                                         setDocValue((prev) => ({ ...prev, title: e.target.value }));
+                                        setValue('title', e.target.value, { shouldValidate: true });
                                         // setEditingLesson((prev)=> ({...prev, title: e.target.value}));
                                     }}
                                 />
+                                <b style={{ color: 'red', fontSize: '12px' }}>{errors.title?.message}</b>
+
                                 <InputText placeholder="Мазмун" value={docValue.description} onChange={(e) => setDocValue((prev) => ({ ...prev, description: e.target.value }))} className="w-full" />
                             </>
                         )}

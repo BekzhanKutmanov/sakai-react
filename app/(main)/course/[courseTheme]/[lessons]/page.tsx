@@ -214,14 +214,14 @@ export default function Lesson() {
                                         <>  
                                             <CKEditorWrapper insideValue={editingLesson} textValue={handleText} />
                                             <div className='flex items-center gap-4'>
-                                                <Button label="Өзгөртүү" onClick={handleUpdateLesson} />
+                                                <Button label="Өзгөртүү" disabled={!sentValues?.length} onClick={handleUpdateLesson} />
                                                 <Button label="Артка кайтуу" className="reject-button" onClick={cencalEdit} />
                                             </div>
                                         </>
                                     ) : (
                                         <>
                                             <CKEditorWrapper insideValue={null} textValue={handleText} />
-                                            <Button label="Сактоо" onClick={handleAddLesson} />
+                                            <Button label="Сактоо" disabled={!sentValues?.length} onClick={handleAddLesson} />
                                         </>
                                     )}
                                 </div>
