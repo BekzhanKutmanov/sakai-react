@@ -24,7 +24,7 @@ export default function Lesson() {
     const [textShow, setTextShow] = useState<boolean>(false);
     const [editMode, setEditMode] = useState<boolean>(false);
     const [editingLesson, setEditingLesson] = useState<string | null>(null);
-    const [textValue, setTextValue] = useState<{id: number | null}>({id: null});
+    const [textValue, setTextValue] = useState<{ id: number | null }>({ id: null });
     const { setMessage } = useContext(LayoutContext);
 
     const showError = useErrorMessage();
@@ -38,9 +38,9 @@ export default function Lesson() {
         setSentValues(e);
     };
 
-    useEffect(()=> {
+    useEffect(() => {
         console.log(sentValues);
-    },[sentValues]);
+    }, [sentValues]);
 
     const {
         register,
@@ -120,19 +120,20 @@ export default function Lesson() {
     const edit = async () => {
         setTextShow(false);
         setEditMode(true);
-        
+
         const token = getToken('access_token');
         const data = await fetchLesson('text', token, courseId ? Number(courseId) : null, lessonId ? Number(lessonId) : null);
-        if(data.success){
+        if (data.success) {
             setEditingLesson(data.content.content);
         }
     };
 
     const cencalEdit = () => {
+        handleFetchLesson();
         setEditingLesson('');
         setTextShow(true);
         setEditMode(false);
-    }
+    };
 
     const handleUpdateLesson = async () => {
         const token = getToken('access_token');
@@ -162,88 +163,6 @@ export default function Lesson() {
         setActiveIndex(e.index);
     };
 
-    const typedJsx = (type: string) => {
-        // const typingMap: Record<string, string | false> = {
-        //     videoTyping: videoTyping && videoTyped,
-        //     linkTyping: linkTyping && linkTyped,
-        //     docTyping: docTyping && docTyped
-        // };
-        // const value = sentValues[type]?.[type] ?? '';
-        // const currentTypingId = sentValues[type].typingId;
-        // const placeholder = typingMap[currentTypingId] || '';
-        // return (
-        //     <div className="w-full py-4 flex flex-col items-center gap-2">
-        //         <div className="flex flex-col w-full">
-        //             {type === 'doc' ? (
-        //                 <>
-        //                     <FileUpload
-        //                         chooseLabel="Загрузить документ"
-        //                         mode="basic"
-        //                         name="demo[]"
-        //                         url="/api/upload"
-        //                         accept="document/*"
-        //                         onSelect={(e) =>
-        //                             setSentValues((prev) => ({
-        //                                 ...prev,
-        //                                 doc: {
-        //                                     ...prev[type],
-        //                                     doc: e.files[0]
-        //                                 }
-        //                             }))
-        //                         }
-        //                     />
-        //                     <span>{sentValues[type].typingId === 'docTyping' && docTyping ? docTyped : ''}</span>
-        //                     <InputText
-        //                         type="text"
-        //                         placeholder={'Аталышы'}
-        //                         value={sentValues.doc.title}
-        //                         onChange={(e) => {
-        //                             setSentValues((prev) => ({
-        //                                 ...prev,
-        //                                 doc: {
-        //                                     ...prev[type],
-        //                                     title: e.target.value
-        //                                 }
-        //                             }));
-        //                         }}
-        //                     />
-        //                 </>
-        //             ) : (
-        //                 <>
-        //                     <InputText
-        //                         {...register(sentValues[type].register)}
-        //                         type="text"
-        //                         placeholder={placeholder}
-        //                         value={value}
-        //                         onClick={() => {
-        //                             if (type === 'video') setVideoTyping(false);
-        //                             if (type === 'link') setLinkTyping(false);
-        //                         }}
-        //                         onChange={(e) => {
-        //                             const val = e.target.value;
-        //                             setSentValues((prev) => ({
-        //                                 ...prev,
-        //                                 [type]: {
-        //                                     ...prev[type],
-        //                                     [type]: val
-        //                                 }
-        //                             }));
-        //                             // if (type === 'video') setVideoLink(val);
-        //                             // if (type === 'link') setUsefullLink(val);
-        //                             setValue(sentValues[type].register, val, { shouldValidate: true });
-        //                         }}
-        //                         className="w-full p-2 sm:p-3"
-        //                     />
-        //                     {errors[sentValues[type].register] && <b className="text-[red] text-[12px] ml-2">{errors[sentValues[type].register].message}</b>}
-        //                 </>
-        //             )}
-        //         </div>
-        //         <InputText placeholder="Мазмун" className="w-full" />
-        //         <Button type="submit" label="Сактоо" onClick={() => handleAddLesson(type)} disabled={!!errors.videoReq} />
-        //     </div>
-        // );
-    };
-
     return (
         <div>
             {/* header section */}
@@ -268,7 +187,7 @@ export default function Lesson() {
                     {contentShow && (
                         <div>
                             {textShow ? (
-                                <div className="w-[800px] h-[340px] m-auto p-2 rounded" style={{ boxShadow: '2px 2px 21px -8px rgba(34, 60, 80, 0.2)' }}>
+                                <div className="py-4 w-[800px] h-[340px] m-auto p-2 rounded" style={{ boxShadow: '2px 2px 21px -8px rgba(34, 60, 80, 0.2)' }}>
                                     <div className="flex flex-col gap-2 border-b p-1 border-[var(--borderBottomColor)]">
                                         <div className="flex items-center justify-between">
                                             <div className={`flex gap-1 items-center font-bold text-[var(--mainColor)]`}>
@@ -290,19 +209,20 @@ export default function Lesson() {
                                     </div>
                                 </div>
                             ) : (
-                                <div className="py-4 flex flex-col gap-16 items-center m-0">
+                                <div className="flex flex-col gap-16 items-center m-0">
                                     {editMode ? (
-                                        <div>
-                                            <h3>Озгортуу</h3>
+                                        <>  
                                             <CKEditorWrapper insideValue={editingLesson} textValue={handleText} />
-                                            <Button label='Өзгөртүү' onClick={handleUpdateLesson}/>
-                                            <Button label='Артка кайтуу' onClick={cencalEdit}/>
-                                        </div>
+                                            <div className='flex items-center gap-4'>
+                                                <Button label="Өзгөртүү" onClick={handleUpdateLesson} />
+                                                <Button label="Артка кайтуу" className="reject-button" onClick={cencalEdit} />
+                                            </div>
+                                        </>
                                     ) : (
-                                        <div>
+                                        <>
                                             <CKEditorWrapper insideValue={null} textValue={handleText} />
                                             <Button label="Сактоо" onClick={handleAddLesson} />
-                                        </div>
+                                        </>
                                     )}
                                 </div>
                             )}
@@ -333,7 +253,6 @@ export default function Lesson() {
                 >
                     {contentShow && (
                         <div className="flex flex-col items-center gap-4 py-4">
-                            {typedJsx('link')}
                             <div className="flex justify-center">
                                 <LessonCard cardValue={'vremenno'} cardBg={'#7bb78112'} type={{ typeValue: 'Шилтеме', icon: 'pi pi-link' }} typeColor={'var(--mainColor)'} lessonDate={'xx-xx-xx'} />
                             </div>
@@ -352,7 +271,6 @@ export default function Lesson() {
                 >
                     {contentShow && (
                         <div className="flex flex-col items-center gap-4 py-4">
-                            {typedJsx('video')}
                             <div className="flex justify-center">
                                 <LessonCard cardValue={'vremenno'} cardBg={'#f1b1b31a'} type={{ typeValue: 'Видео', icon: 'pi pi-video' }} typeColor={'var(--mainColor)'} lessonDate={'xx-xx-xx'} />
                             </div>
