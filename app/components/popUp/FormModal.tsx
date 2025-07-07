@@ -10,9 +10,8 @@ export default function FormModal({children, title, fetchValue, clearValues, vis
         <div>
             <Button label="Чыгуу" className="reject-button" icon="pi pi-times" onClick={() => {
                 setVisible(false);
-                // clearValues();
-                console.log('eyemae');
-            }}/>
+                clearValues();
+            }}/>    
             {<Button label="Кийинки кадам" disabled={start} icon="pi pi-check" onClick={() => {
                 setVisible(false);
                 fetchValue();
@@ -20,7 +19,7 @@ export default function FormModal({children, title, fetchValue, clearValues, vis
         </div>
     );
 
-    useEffect(()=>{
+    useEffect(()=> {
         console.log('visible', visible);
         
     },[visible]);
@@ -30,10 +29,11 @@ export default function FormModal({children, title, fetchValue, clearValues, vis
             <Dialog
                 header={title}
                 visible={visible}
-                // style={{ width: '50vw' }}    
+                // style={{ width: '50vw' }}
                 onHide={() => {
                     if (!visible) return;
                     setVisible(false);
+                    clearValues();
                 }}
                 footer={footerContent}
             >

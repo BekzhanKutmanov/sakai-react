@@ -2,9 +2,10 @@
 import useTypingEffect from '@/hooks/useTypingEffect';
 import { Editor } from 'primereact/editor';
 import { useEffect, useState } from 'react';
+import { EditorTextChangeEvent } from 'primereact/editor';
 
-export default function CKEditorWrapper({textValue}) {
-    const [text, setText] = useState('');
+export default function CKEditorWrapper({textValue, insideValue}: {textValue: (e: string)=> string, insideValue: string | null}) {
+    const [text, setText] = useState<string>('');
     const [toggleTyping, setToggleTyping] = useState(true);
     
     const typedText = useTypingEffect(
@@ -13,16 +14,15 @@ export default function CKEditorWrapper({textValue}) {
     );
 
     useEffect(()=> {
-        // console.log(text);
         textValue(text);
-        
     },[text]);
 
     return (    
         <div className="flex justify-center">
-            {/* {typedText.length > 0 ? <Editor key={typedText.length === 0 ? 'reset' : 'typing'} value={`<strong>${typedText}</strong>`} onClick={()=> setToggleTyping(false)} className='w-[800px] h-[300px]' /> */}
-                <Editor value={text} onTextChange={(  e) => setText(e.htmlValue)} className='w-[800px] h-[300px]'/>
-            {/* } */}
+            {insideValue ? 
+                <Editor value={insideValue} onTextChange={(e:EditorTextChangeEvent) => setText(e.htmlValue)} className='w-[800px] h-[300px]'/>
+                : <Editor value={text} onTextChange={(e: EditorTextChangeEvent) => setText(e.htmlValue)} className='w-[800px] h-[300px]'/>
+            }
         </div>
     );
 }

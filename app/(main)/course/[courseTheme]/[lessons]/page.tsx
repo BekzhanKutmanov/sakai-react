@@ -1,144 +1,70 @@
 'use client';
 
-import { useContext, useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { TabView, TabPanel } from 'primereact/tabview';
 import CKEditorWrapper from '@/app/components/CKEditorWrapper.tsx';
-
 import { Button } from 'primereact/button';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { lessonSchema } from '@/schemas/lessonSchema';
-import { InputText } from 'primereact/inputtext';
-import FancyLinkBtn from '@/app/components/buttons/FancyLinkBtn';
-import { LoginType } from '@/types/login';
-import useTypingEffect from '@/hooks/useTypingEffect';
-import Test from '@/app/components/Test';
-import { FileUpload } from 'primereact/fileupload';
-import PrototypeCard from '@/app/components/cards/PrototypeCard';
 import LessonCard from '@/app/components/cards/LessonCard';
-import Tiered from '@/app/components/popUp/Tiered';
-import { Menu } from 'primereact/menu';
 import Redacting from '@/app/components/popUp/Redacting';
 import { addLesson, deleteLesson, fetchLesson, updateLesson } from '@/services/courses';
 import { getToken } from '@/utils/auth';
-import { useParams, useSearchParams } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import { LayoutContext } from '@/layout/context/layoutcontext';
 import useErrorMessage from '@/hooks/useErrorMessage';
 import { getRedactor } from '@/utils/getRedactor';
-import FormModal from '@/app/components/popUp/FormModal';
 import { getConfirmOptions } from '@/utils/getConfirmOptions';
-import Uploader from 'quill/modules/uploader';
+import LessonTyping from '@/app/components/lessons/LessonTyping';
 
 export default function Lesson() {
     const [activeIndex, setActiveIndex] = useState<number>(0);
     const [contentShow, setContentShow] = useState<boolean>(true);
     const [textShow, setTextShow] = useState<boolean>(false);
     const [editMode, setEditMode] = useState<boolean>(false);
-    const [visible, setVisible] = useState<boolean>(false);
-    const [textValue, setTextValue] = useState({});
-    const [docValue, setDocValue] = useState([]);
-    const [docSentId, setDocSentId] = useState(null);
-    const [baseType, setBaseType] = useState('');
+    const [editingLesson, setEditingLesson] = useState<string | null>(null);
+    const [textValue, setTextValue] = useState<{id: number | null}>({id: null});
     const { setMessage } = useContext(LayoutContext);
 
     const showError = useErrorMessage();
-    // for typing effects
-    const [videoTyping, setVideoTyping] = useState(true);
-    const [linkTyping, setLinkTyping] = useState(true);
-    const [docTyping, setDocTyping] = useState(true);
+    const [sentValues, setSentValues] = useState<string>('');
 
     const params = useParams();
     const courseId = params.courseTheme;
     const lessonId = params.lessons;
 
     const handleText = (e: string) => {
-        setSentValues((prev) => ({
-            ...prev,
-            text: {
-                ...prev.text,
-                text: e
-            }
-        }));
+        setSentValues(e);
     };
+
+    useEffect(()=> {
+        console.log(sentValues);
+    },[sentValues]);
 
     const {
         register,
-        handleSubmit,
         setValue,
-        trigger,
         formState: { errors }
     } = useForm({
         resolver: yupResolver(lessonSchema),
         mode: 'onChange'
     });
 
-    const handleVideoChange = (value: string) => {
-        console.log(value);
-        setValue('videoReq', value, { shouldValidate: true });
-    };
-
-    const videoTyped = useTypingEffect('this is video', videoTyping);
-    const linkTyped = useTypingEffect('ёп тыгыдык дыгыдык', linkTyping);
-    const docTyped = useTypingEffect('this is document ', docTyping);
-
-    const [sentValues, setSentValues] = useState({
-        text: { typingId: '', text: '', register: '' },
-        doc: { typingId: 'docTyping', doc: File, title: '', register: '' },
-        link: { typingId: 'linkTyping', link: '', register: 'usefulLink' },
-        video: { typingId: 'videoTyping', video: '', register: 'videoReq' }
-    });
-
-    useEffect(() => {
-        switch (activeIndex) {
-            case 3:
-                setVideoTyping((prev) => !prev); // включить эффект
-                break;
-            case 2:
-                setLinkTyping((prev) => !prev);
-                break;
-            case 1:
-                setDocTyping((prev) => !prev);
-                break;
-            default:
-                setLinkTyping((prev) => !prev);
-                setDocTyping((prev) => !prev);
-                setVideoTyping((prev) => !prev); // выключить при уходе
-        }
-    }, [activeIndex]);
-
-    useEffect(() => {
-        console.log(docValue);
-    }, [docValue]);
-
-    const handleFetchLesson = async (type: string) => {
+    const handleFetchLesson = async () => {
         // skeleton = false
+
         const token = getToken('access_token');
-        const data = await fetchLesson(type, token, courseId ? Number(courseId) : null, lessonId ? Number(lessonId) : null);
+        const data = await fetchLesson('text', token, courseId ? Number(courseId) : null, lessonId ? Number(lessonId) : null);
         console.log(data);
-        console.log('type: ', type);
 
         if (data.success) {
-            // ключи! через них буду работать
-            const content = data['content'] ? 'content' : data['documents'] ? 'documents' : '';
-            console.log(data[content]);
-            console.log(content, data);
-
-            if (data[content]) {
-                // Присваиваю себе. Для отображения
-                data['content'] ? setTextValue({ id: data?.content.id }) : data['documents'] ? setDocValue(data[content]) : '';
-
-                // собираю все данные то что для отправки
-                setSentValues((prev) => ({
-                    ...prev,
-                    [type]: {
-                        ...prev[type],
-                        [type]: data[content]['content'] ? data[content].content : data['documents'] ? data[content] : ''
-                    }
-                }));
+            if (data?.content?.content) {
+                setTextValue({ id: data?.content.id });
+                setSentValues(data.content.content);
                 setTextShow(true);
             } else {
                 setTextShow(false);
-                alert('content null!!');
             }
         } else {
             setTextShow(false);
@@ -149,13 +75,12 @@ export default function Lesson() {
         }
     };
 
-    const handleAddLesson = async (type: string) => {
+    const handleAddLesson = async () => {
         const token = getToken('access_token');
 
-        const data = await addLesson(type, token, courseId ? Number(courseId) : null, lessonId ? Number(lessonId) : null, sentValues[type][type], sentValues[type].title);
-        console.log(data);
+        const data = await addLesson('text', token, courseId ? Number(courseId) : null, lessonId ? Number(lessonId) : null, sentValues, 'the title');
         if (data.success) {
-            handleFetchLesson(type);
+            handleFetchLesson();
             setMessage({
                 state: true,
                 value: { severity: 'success', summary: 'Ийгиликтүү Кошулдуу!', detail: '' }
@@ -164,215 +89,163 @@ export default function Lesson() {
             setMessage({
                 state: true,
                 value: { severity: 'error', summary: 'Ошибка', detail: 'Ошибка при при добавлении' }
-            }); // messege - Ошибка при добавлении
+            });
             if (data.response.status) {
                 showError(data.response.status);
             }
         }
-        // console.log(data);
     };
 
     const handleDeleteLesson = async () => {
         const token = getToken('access_token');
 
-        const data = await deleteLesson(token, courseId, lessonId, textValue.id);
+        const data = await deleteLesson('text', token, Number(courseId), Number(lessonId), textValue.id);
         if (data.success) {
-            handleFetchLesson('text');
+            handleFetchLesson();
             setMessage({
                 state: true,
                 value: { severity: 'success', summary: 'Ийгиликтүү өчүрүлдү!', detail: '' }
-            }); // messege - Успех!
+            });
         } else {
             setMessage({
                 state: true,
                 value: { severity: 'error', summary: 'Ошибка', detail: 'Ошибка при при удалении' }
-            }); // messege - Ошибка при добавлении
+            });
             if (data.response.status) {
                 showError(data.response.status);
             }
         }
-        console.log(data);
     };
 
-    const edit = () => {
-        console.log('edit mode', editMode);
-
+    const edit = async () => {
         setTextShow(false);
         setEditMode(true);
-    };
-
-    const x = (id) => {
-        console.log(id);
-        setDocSentId(id);
-        setVisible(true);
-    };
-
-    const handleUpdateLesson = async (type: string) => {
-        const token = getToken('access_token');
-        console.log(type);
-        console.log(sentValues[type][type]);
-        const contentId = sentValues['doc'] ? docSentId : ''
         
-        const data = await updateLesson(type, token, courseId ? Number(courseId) : null, lessonId ? Number(lessonId) : null, contentId, sentValues[type][type]);
-        // console.log(data);
+        const token = getToken('access_token');
+        const data = await fetchLesson('text', token, courseId ? Number(courseId) : null, lessonId ? Number(lessonId) : null);
+        if(data.success){
+            setEditingLesson(data.content.content);
+        }
+    };
 
-        // if (data.success) {
-        //     setEditMode(false);
-        //     setTextShow(true);
-        //     setMessage({
-        //         state: true,
-        //         value: { severity: 'success', summary: 'Ийгиликтүү өзгөртүлдү!', detail: '' }
-        //     }); // messege - Успех!
-        // } else {
-        //     setMessage({
-        //         state: true,
-        //         value: { severity: 'error', summary: 'Ошибка', detail: 'Ошибка при при изменении темы' }
-        //     }); // messege - Ошибка при изменении курса
-        //     if (data.response.status) {
-        //         showError(data.response.status);
-        //     }
-        // }
+    const cencalEdit = () => {
+        setEditingLesson('');
+        setTextShow(true);
+        setEditMode(false);
+    }
+
+    const handleUpdateLesson = async () => {
+        const token = getToken('access_token');
+        const data = await updateLesson('text', token, courseId ? Number(courseId) : null, lessonId ? Number(lessonId) : null, textValue.id, sentValues);
+        console.log(data);
+
+        if (data.success) {
+            setEditMode(false);
+            setTextShow(true);
+            setMessage({
+                state: true,
+                value: { severity: 'success', summary: 'Ийгиликтүү өзгөртүлдү!', detail: '' }
+            });
+        } else {
+            setMessage({
+                state: true,
+                value: { severity: 'error', summary: 'Ошибка', detail: 'Ошибка при при изменении темы' }
+            });
+            if (data.response.status) {
+                showError(data.response.status);
+            }
+        }
     };
 
     const handleTabChange = (e) => {
-        // console.log('Переход на шаг:', e);
-        if (e.index === 0) {
-            handleFetchLesson('text');
-        } else if (e.index === 1) {
-            handleFetchLesson('doc');
-        } else if (e.index === 2) {
-            handleFetchLesson('link');
-        } else if (e.index === 3) {
-            handleFetchLesson('video');
-        }
+        if (e.index === 0) handleFetchLesson();
         setActiveIndex(e.index);
-        console.log(e.index);
     };
 
     const typedJsx = (type: string) => {
-        const typingMap: Record<string, string | false> = {
-            videoTyping: videoTyping && videoTyped,
-            linkTyping: linkTyping && linkTyped,
-            docTyping: docTyping && docTyped
-        };
-        const value = sentValues[type]?.[type] ?? '';
-
-        const currentTypingId = sentValues[type].typingId;
-        const placeholder = typingMap[currentTypingId] || '';
-        return (
-            <div className="w-full py-4 flex flex-col items-center gap-2">
-                <div className="flex flex-col w-full">
-                    {type === 'doc' ? (
-                        <>
-                            <FileUpload
-                                chooseLabel="Загрузить документ"
-                                mode="basic"
-                                name="demo[]"
-                                url="/api/upload"
-                                accept="document/*"
-                                onSelect={(e) =>
-                                    setSentValues((prev) => ({
-                                        ...prev,
-                                        doc: {
-                                            ...prev[type],
-                                            doc: e.files[0]
-                                        }
-                                    }))
-                                }
-                            />
-                            <span>{sentValues[type].typingId === 'docTyping' && docTyping ? docTyped : ''}</span>
-                            <InputText
-                                type="text"
-                                placeholder={'Аталышы'}
-                                value={sentValues.doc.title}
-                                onChange={(e) => {
-                                    setSentValues((prev) => ({
-                                        ...prev,
-                                        doc: {
-                                            ...prev[type],
-                                            title: e.target.value
-                                        }
-                                    }));
-                                }}
-                            />
-                        </>
-                    ) : (
-                        <>
-                            <InputText
-                                {...register(sentValues[type].register)}
-                                type="text"
-                                placeholder={placeholder}
-                                value={value}
-                                onClick={() => {
-                                    if (type === 'video') setVideoTyping(false);
-                                    if (type === 'link') setLinkTyping(false);
-                                }}
-                                onChange={(e) => {
-                                    const val = e.target.value;
-                                    setSentValues((prev) => ({
-                                        ...prev,
-                                        [type]: {
-                                            ...prev[type],
-                                            [type]: val
-                                        }
-                                    }));
-
-                                    // if (type === 'video') setVideoLink(val);
-                                    // if (type === 'link') setUsefullLink(val);
-
-                                    setValue(sentValues[type].register, val, { shouldValidate: true });
-                                }}
-                                className="w-full p-2 sm:p-3"
-                            />
-                            {errors[sentValues[type].register] && <b className="text-[red] text-[12px] ml-2">{errors[sentValues[type].register].message}</b>}
-                        </>
-                    )}
-                </div>
-                <InputText placeholder="Мазмун" className="w-full" />
-                <Button type="submit" label="Сактоо" onClick={() => handleAddLesson(type)} disabled={!!errors.videoReq} />
-            </div>
-        );
+        // const typingMap: Record<string, string | false> = {
+        //     videoTyping: videoTyping && videoTyped,
+        //     linkTyping: linkTyping && linkTyped,
+        //     docTyping: docTyping && docTyped
+        // };
+        // const value = sentValues[type]?.[type] ?? '';
+        // const currentTypingId = sentValues[type].typingId;
+        // const placeholder = typingMap[currentTypingId] || '';
+        // return (
+        //     <div className="w-full py-4 flex flex-col items-center gap-2">
+        //         <div className="flex flex-col w-full">
+        //             {type === 'doc' ? (
+        //                 <>
+        //                     <FileUpload
+        //                         chooseLabel="Загрузить документ"
+        //                         mode="basic"
+        //                         name="demo[]"
+        //                         url="/api/upload"
+        //                         accept="document/*"
+        //                         onSelect={(e) =>
+        //                             setSentValues((prev) => ({
+        //                                 ...prev,
+        //                                 doc: {
+        //                                     ...prev[type],
+        //                                     doc: e.files[0]
+        //                                 }
+        //                             }))
+        //                         }
+        //                     />
+        //                     <span>{sentValues[type].typingId === 'docTyping' && docTyping ? docTyped : ''}</span>
+        //                     <InputText
+        //                         type="text"
+        //                         placeholder={'Аталышы'}
+        //                         value={sentValues.doc.title}
+        //                         onChange={(e) => {
+        //                             setSentValues((prev) => ({
+        //                                 ...prev,
+        //                                 doc: {
+        //                                     ...prev[type],
+        //                                     title: e.target.value
+        //                                 }
+        //                             }));
+        //                         }}
+        //                     />
+        //                 </>
+        //             ) : (
+        //                 <>
+        //                     <InputText
+        //                         {...register(sentValues[type].register)}
+        //                         type="text"
+        //                         placeholder={placeholder}
+        //                         value={value}
+        //                         onClick={() => {
+        //                             if (type === 'video') setVideoTyping(false);
+        //                             if (type === 'link') setLinkTyping(false);
+        //                         }}
+        //                         onChange={(e) => {
+        //                             const val = e.target.value;
+        //                             setSentValues((prev) => ({
+        //                                 ...prev,
+        //                                 [type]: {
+        //                                     ...prev[type],
+        //                                     [type]: val
+        //                                 }
+        //                             }));
+        //                             // if (type === 'video') setVideoLink(val);
+        //                             // if (type === 'link') setUsefullLink(val);
+        //                             setValue(sentValues[type].register, val, { shouldValidate: true });
+        //                         }}
+        //                         className="w-full p-2 sm:p-3"
+        //                     />
+        //                     {errors[sentValues[type].register] && <b className="text-[red] text-[12px] ml-2">{errors[sentValues[type].register].message}</b>}
+        //                 </>
+        //             )}
+        //         </div>
+        //         <InputText placeholder="Мазмун" className="w-full" />
+        //         <Button type="submit" label="Сактоо" onClick={() => handleAddLesson(type)} disabled={!!errors.videoReq} />
+        //     </div>
+        // );
     };
-
-    useEffect(() => {
-        console.log('Базовый тип ', baseType);
-        console.log(sentValues[baseType]?.doc);
-    }, [baseType]);
 
     return (
         <div>
-            {/* modal window section */}
-            <FormModal title={'Сабакты жанылоо'} fetchValue={() => handleUpdateLesson(baseType)} clearValues={''} visible={visible} setVisible={setVisible} start={''}>
-                <div className="flex flex-col gap-1">
-                    <div className="flex flex-col gap-1 items-center justify-center">
-                        <label className="block text-900 font-medium text-[16px] md:text-xl mb-1 md:mb-2">Аталышы</label>
-                        <FileUpload
-                                chooseLabel="Загрузить документ"
-                                mode="basic"
-                                name="demo[]"
-                                url="/api/upload"
-                                accept="document/*"
-                                onSelect={(e) =>
-                                    setSentValues((prev) => ({
-                                        ...prev,
-                                        doc: {
-                                            ...prev[baseType],
-                                            doc: e.files[0]
-                                        }
-                                    }))
-                                }
-                            />
-                        {/* <InputText
-                            // value={''}
-                            placeholder="Аталышы талап кылынат"
-                            onChange={(e) => {
-                                
-                            }}
-                        /> */}
-                    </div>
-                </div>
-            </FormModal>
-
             {/* header section */}
             <TabView
                 onTabChange={(e) => handleTabChange(e)}
@@ -412,7 +285,7 @@ export default function Lesson() {
                                         </div>
                                     </div>
                                     <div className="w-full h-[80%] break-words whitespace-normal overflow-scroll">
-                                        <div dangerouslySetInnerHTML={{ __html: sentValues.text.text && sentValues.text.text }} />
+                                        <div dangerouslySetInnerHTML={{ __html: sentValues && sentValues }} />
                                         {/* {sentValues.text} */}
                                     </div>
                                 </div>
@@ -421,13 +294,14 @@ export default function Lesson() {
                                     {editMode ? (
                                         <div>
                                             <h3>Озгортуу</h3>
-                                            <CKEditorWrapper textValue={(e) => handleText(e)} />
-                                            <Button label="Өзгөртүү" onClick={() => handleUpdateLesson('text')} />
+                                            <CKEditorWrapper insideValue={editingLesson} textValue={handleText} />
+                                            <Button label='Өзгөртүү' onClick={handleUpdateLesson}/>
+                                            <Button label='Артка кайтуу' onClick={cencalEdit}/>
                                         </div>
                                     ) : (
                                         <div>
-                                            <CKEditorWrapper textValue={handleText} />
-                                            <Button label="Сактоо" onClick={() => handleAddLesson('text')} />
+                                            <CKEditorWrapper insideValue={null} textValue={handleText} />
+                                            <Button label="Сактоо" onClick={handleAddLesson} />
                                         </div>
                                     )}
                                 </div>
@@ -445,26 +319,7 @@ export default function Lesson() {
                     leftIcon={'pi pi-folder mr-1'}
                     className="p-tabview p-tabview-nav p-tabview-selected p-tabview-panels p-tabview-panel"
                 >
-                    {contentShow && (
-                        <div className="flex flex-col items-center gap-4 py-4">
-                            {typedJsx('doc')}
-                            <div className="flex justify-center">
-                                {docValue.map((item) => (
-                                    <div key={item?.id}>
-                                        <LessonCard
-                                            typing={() => setBaseType('doc')}
-                                            on={x}
-                                            cardValue={{ title: item.title, id: item?.id }}
-                                            cardBg={'#ddc4f51a'}
-                                            type={{ typeValue: 'Документтер', icon: 'pi pi-folder' }}
-                                            typeColor={'var(--mainColor)'}
-                                            lessonDate={'xx-xx-xx'}
-                                        />
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    )}
+                    {contentShow && <LessonTyping mainType="doc" courseId={courseId} lessonId={lessonId} />}
                 </TabPanel>
 
                 {/* USEFUL LINKS */}
