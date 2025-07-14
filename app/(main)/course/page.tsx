@@ -229,7 +229,7 @@ export default function Course() {
     };
 
     return (
-        <div>
+        <div className='main-bg'>
             {/* modal window */}
             <FormModal title={editMode ? 'Курсту жаңылоо' : 'Кошуу'} fetchValue={editMode ? handleUpdateCourse : handleAddCourse} clearValues={clearValues} visible={formVisible} setVisible={setFormVisible} start={forStart}>
                 <div className="flex flex-col gap-1">
@@ -299,7 +299,7 @@ export default function Course() {
             </FormModal>
 
             {/* info section */}
-            <div className="flex justify-between items-center my-4 py-2 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">
+            <div className="flex justify-between items-center mb-4 py-2 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">
                 <h3 className="text-[36px] m-0">Курстар</h3>
 
                 <Button

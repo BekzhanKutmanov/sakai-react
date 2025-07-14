@@ -180,9 +180,9 @@ export default function CourseTheme() {
     const titleImageClass = `${themeInfo?.image ? 'md:w-1/3' : ''}`;
 
     return (
-        <div>
+        <div className='main-bg'>
             {/* title section */}
-            <div className={`bg-[var(--titleColor)] flex flex-col gap-3 md:flex-row items-center p-10 my-10 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]`}>
+            <div className={`bg-[var(--titleColor)] flex flex-col gap-3 md:flex-row items-center p-10 mt-2 mb-10 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]`}>
                 <div className={`${titleInfoClass} flex flex-col justify-center gap-2 text-white`}>
                     <h3 className="text-[36px] font-bold m-0" style={{ color: 'white' }}>
                         {themeInfo?.title}

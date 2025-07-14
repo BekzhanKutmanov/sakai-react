@@ -1,5 +1,6 @@
 import { AuthBaseType } from '@/types/authBaseType';
 import { CourseCreateType } from '@/types/courseCreateType';
+import { lessonType } from '@/types/lessonType';
 import axiosInstance from '@/utils/axiosInstance';
 
 let url = '';
@@ -184,7 +185,8 @@ export const addLesson = async (
     token: string | null, 
     courseId: number | null, 
     lessonId: number | null, 
-    value: string | File | null, title: string | null) => {
+    value: lessonType, 
+    title: lessonType) => {
 
     let formData = new FormData();
     console.log(value, title);
@@ -199,11 +201,18 @@ export const addLesson = async (
     } else if(type === 'doc'){
         url = `/v1/teacher/document/store?lesson_id=${lessonId}`;
         formData.append('lesson_id', String(lessonId));
-        formData.append('document', value); 
+        formData.append('document', value?.file); 
         formData.append('title', String(title)); 
-        formData.append('description', value.description); 
+        formData.append('description', String(value?.description)); 
         body = formData;
-    }
+    } else if(type === 'url'){
+        url = `v1/teacher/usefullinks/store?lesson_id=${lessonId}&title=${title}&description=${value.description}&url=${value.url}`;
+        formData.append('lesson_id', String(lessonId));
+        formData.append('document', String(value?.url)); 
+        formData.append('title', String(title)); 
+        formData.append('description', String(value?.description)); 
+        body = formData;
+    } 
 
     try {
         const res = await axiosInstance.post(url, body, {
@@ -257,7 +266,9 @@ export const deleteLesson = async (type:string, token: string | null, courseId: 
         url = `/v1/teacher/textcontent/delete?course_id=${courseId}&lesson_id=${lesson_id}&content_id=${content_id}`;
     } else if(type === 'doc'){
         url = `/v1/teacher/document/delete?lesson_id=${lesson_id}&document_id=${content_id}`;
-    }
+    } else if(type === 'url'){
+        url = `/v1/teacher/document/delete?lesson_id=${lesson_id}&document_id=${content_id}`;
+    } 
     
     try {
         const res = await axiosInstance.delete(url, {
@@ -287,6 +298,14 @@ export const updateLesson = async (type: string, token: string | null, course_id
         formData.append('lesson_id', String(lesson_id));
         formData.append('document', value.file);
         formData.append('document_id', String(contentId));
+        formData.append('title', String(value.title)); 
+        formData.append('description', String(value.description)); 
+        body = formData;
+    } else if(type === 'url'){
+        url = `/v1/teacher/document/update?lesson_id=${lesson_id}&document_id=${contentId}&document=${value.file}`;
+        formData.append('lesson_id', String(lesson_id));
+        formData.append('url?', value.file);
+        formData.append('url_id?', String(contentId));
         formData.append('title', String(value.title)); 
         formData.append('description', String(value.description)); 
         body = formData;

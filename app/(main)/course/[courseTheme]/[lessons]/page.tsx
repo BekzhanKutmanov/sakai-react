@@ -7,7 +7,6 @@ import { Button } from 'primereact/button';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { lessonSchema } from '@/schemas/lessonSchema';
-import LessonCard from '@/app/components/cards/LessonCard';
 import Redacting from '@/app/components/popUp/Redacting';
 import { addLesson, deleteLesson, fetchLesson, updateLesson } from '@/services/courses';
 import { getToken } from '@/utils/auth';
@@ -172,7 +171,7 @@ export default function Lesson() {
             <TabView
                 onTabChange={(e) => handleTabChange(e)}
                 activeIndex={activeIndex}
-                className=""
+                className="main-bg"
                 pt={{
                     nav: { className: 'flex flex-wrap justify-around' },
                     panelContainer: { className: 'flex-1 pl-4' }
@@ -254,13 +253,7 @@ export default function Lesson() {
                     leftIcon={'pi pi-link mr-1'}
                     className="p-tabview p-tabview-nav p-tabview-selected p-tabview-panels p-tabview-panel"
                 >
-                    {contentShow && (
-                        <div className="flex flex-col items-center gap-4 py-4">
-                            <div className="flex justify-center">
-                                {/* <LessonCard cardValue={'vremenno'} cardBg={'#7bb78112'} type={{ typeValue: 'Шилтеме', icon: 'pi pi-link' }} typeColor={'var(--mainColor)'} lessonDate={'xx-xx-xx'} /> */}
-                            </div>
-                        </div>
-                    )}
+                    {contentShow && <LessonTyping mainType="link" courseId={courseId} lessonId={lessonId} />}
                 </TabPanel>
 
                 {/* VIDEO */}
