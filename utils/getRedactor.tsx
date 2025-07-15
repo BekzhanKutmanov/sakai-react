@@ -23,7 +23,7 @@ export const getRedactor = (rowData: any, handlers: RedactorType) => [
     {
         label: '',
         icon: 'pi pi-pencil',
-        command: () => {            
+        command: () => {
             handlers.onEdit(rowData.id, rowData?.type);
         }
     },

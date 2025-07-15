@@ -1,6 +1,8 @@
 'use client';
 
-export const logout = ({setGlobalLoading, setUser}) => {
+import { User } from "@/types/user";
+
+export const logout = ({setGlobalLoading, setUser}: {setGlobalLoading: (params: boolean)=> void, setUser: React.Dispatch<React.SetStateAction<User | null>>}) => {
     console.log('logout');
     setGlobalLoading(true);
 

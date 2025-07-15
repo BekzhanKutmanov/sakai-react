@@ -261,7 +261,7 @@ export default function CourseTheme() {
                                                 setFormVisible(true);
                                             }}
                                         />
-                                        <ConfirmModal confirmVisible={getConfirmOptions(rowData.id)} />
+                                        {/* <ConfirmModal confirmVisible={getConfirmOptions(rowData.id)} /> */}
                                         <Button className=" bg-blue-400" icon="pi pi-arrow-right">
                                             <Link href={`/course/${rowData.id}`}></Link>    
                                         </Button>

@@ -32,7 +32,7 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
             label: 'Ачык онлайн курстар',
             icon: 'pi pi-file',
             items: [],
-            link: '/login'
+            url: '/login'
         },
         {
             label: 'Бакалавриат',
@@ -58,8 +58,9 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                   icon: 'pi pi-user',
                   items: [
                       {
-                          label: (
-                              <div className="flex justify-center m-auto items-center flex-col gap-1 text-sm">
+                          label: '',
+                          template: (
+                            <div className="flex justify-center m-auto items-center flex-col gap-1 text-sm">
                                   <div className="flex gap-1">
                                       <span className="text-[var(--titleColor)]">{user?.last_name}</span>
                                       <span className="text-[var(--titleColor)]">{user?.name}</span>
@@ -82,13 +83,13 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                   label: 'Кирүү',
                   icon: 'pi pi-sign-in',
                   items: [],
-                  link: '/auth/login'
+                  url: '/auth/login'
               },
         {
             label: 'ОшМУнун сайты',
             icon: '',
             items: [],
-            link: 'https://oshsu.kg'
+            url: 'https://oshsu.kg'
         },
         {
             label: 'Байланыш',
@@ -100,7 +101,8 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
     // profile
     const profileItems = [
         {
-            label: (
+            label: '',
+            template: (
                 <div className="flex items-center flex-col gap-1 text-sm">
                     <div className="flex gap-1">
                         <span className="text-[var(--titleColor)]">{user?.last_name}</span>
@@ -109,6 +111,7 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                     <span className="text-gray-500 text-[12px]">{user?.email}</span>
                 </div>
             )
+
         },
         {
             label: 'Чыгуу',

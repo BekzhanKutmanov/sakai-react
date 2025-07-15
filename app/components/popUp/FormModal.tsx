@@ -2,9 +2,19 @@
 
 import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
-import { useEffect } from 'react';
+import { ReactNode, useEffect } from 'react';
 
-export default function FormModal({children, title, fetchValue, clearValues, visible, setVisible, start}) {
+export default function FormModal({children, title, fetchValue, clearValues, visible, setVisible, start}:
+    {
+        children: ReactNode, 
+        title: string,
+        fetchValue: ()=> void,
+        clearValues: ()=> void,
+        visible: boolean,
+        setVisible: (params: boolean)=> void,
+        start: boolean
+    }
+    ){
 
     const footerContent = (
         <div>

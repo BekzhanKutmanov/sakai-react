@@ -1,4 +1,3 @@
-import { Skeleton } from 'primereact/skeleton';
 import React from 'react';
 import MySkeleton from '../skeleton/MySkeleton';
 

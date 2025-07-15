@@ -428,7 +428,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
 
     return (
         <div>
-            <FormModal title={'Сабакты жанылоо'} fetchValue={handleUpdate} clearValues={cencalEdit} visible={visible} setVisible={setVisisble} start={''}>
+            <FormModal title={'Сабакты жанылоо'} fetchValue={handleUpdate} clearValues={cencalEdit} visible={visible} setVisible={setVisisble} start={false}>
                 <div className="flex flex-col gap-1">
                     <div className="flex flex-col gap-1 items-center justify-center">
                         {selectType === 'doc' && (
