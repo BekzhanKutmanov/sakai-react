@@ -13,16 +13,17 @@ import React, { useContext, useEffect, useState } from 'react';
 import { getToken } from '@/utils/auth';
 import { useParams } from 'next/navigation';
 import { addThemes, deleteTheme, fetchCourseInfo, fetchThemes, updateTheme } from '@/services/courses';
-import NotFoundPage from '@/app/(full-page)/pages/notfound/page';
 import useErrorMessage from '@/hooks/useErrorMessage';
+import { CourseCreateType } from '@/types/courseCreateType';
+import { NotFound } from '@/app/components/NotFound';
 
 export default function CourseTheme() {
     const [hasThemes, setHasThemes] = useState(false);
     const [themes, setThemes] = useState([]);
-    const [themeValue, setThemeValue] = useState({ title: '' });
-    const [themeInfo, setThemeInfo] = useState();
+    const [themeValue, setThemeValue] = useState({ title: '', description: '', video_url: ''});
+    const [themeInfo, setThemeInfo] = useState<CourseCreateType>();
     const [courseTitle, setCourseTitle] = useState('');
-    const [selectedCourse, setSelectedCourse] = useState(null);
+    const [selectedCourse, setSelectedCourse] = useState<{id: number | null}>({id: null});
     const [formVisible, setFormVisible] = useState(false);
     const [editMode, setEditMode] = useState(false);
     const [forStart, setForStart] = useState(false);
@@ -34,7 +35,7 @@ export default function CourseTheme() {
 
     const handleFetchThemes = async () => {
         const token = getToken('access_token');
-        const data = await fetchThemes(token, courseTheme);
+        const data = await fetchThemes(token, Number(courseTheme));
         
         if (data.lessons) {
             setThemes(data.lessons.data);
@@ -53,7 +54,7 @@ export default function CourseTheme() {
 
     const handleFetchInfo = async () => {
         const token = getToken('access_token');
-        const data = await fetchCourseInfo(token, courseTheme);
+        const data = await fetchCourseInfo(token, Number(courseTheme));
 
         if(data.success) {
             setThemeInfo(data.course);
@@ -67,7 +68,7 @@ export default function CourseTheme() {
         }
 
         const token = getToken('access_token');
-        const data = await addThemes(token, courseTheme, themeValue.title);
+        const data = await addThemes(token, Number(courseTheme), themeValue.title);
         console.log(data);
 
         if (data.success) {
@@ -113,13 +114,13 @@ export default function CourseTheme() {
     const handleUpdateTheme = async () => {
         const token = getToken('access_token');
 
-        const data = await updateTheme(token, courseTheme, selectedCourse.id, themeValue);
+        const data = await updateTheme(token, Number(courseTheme), selectedCourse.id, themeValue);
         if (data.success) {
             toggleSkeleton();
             handleFetchThemes();
             clearValues();
             setEditMode(false);
-            setSelectedCourse(null);
+            setSelectedCourse({id: null});
             setMessage({
                 state: true,
                 value: { severity: 'success', summary: 'Ийгиликтүү өзгөртүлдү!', detail: '' }
@@ -136,13 +137,13 @@ export default function CourseTheme() {
     };
 
     const clearValues = () => {
-        setThemeValue({ title: '' });
+        setThemeValue({ title: '', description: '', video_url: ''});
         setCourseTitle('');
         setEditMode(false);
-        setSelectedCourse(null);
+        setSelectedCourse({id: null});
     };
 
-    const getConfirmOptions = (id) => ({
+    const getConfirmOptions = (id: number) => ({
         message: 'Сиз чын эле өчүрүүнү каалайсызбы??',
         header: 'Өчүрүү',
         icon: 'pi pi-info-circle',
@@ -196,7 +197,7 @@ export default function CourseTheme() {
                 </div>
 
                 <div className={`${titleImageClass}`}>
-                    <img src={themeInfo?.image} />
+                    <img src={String(themeInfo?.image)}/>
                 </div>
             </div>
 
@@ -234,7 +235,7 @@ export default function CourseTheme() {
 
             {/* table section */}
             {hasThemes ? (
-                <NotFoundPage titleMessege={'Тема кошуу үчүн кошуу баскычты басыныз'} />
+                <NotFound titleMessage={'Тема кошуу үчүн кошуу баскычты басыныз'} />
             ) : (
                 <div className="py-4">
                     {skeleton ? (
@@ -254,8 +255,8 @@ export default function CourseTheme() {
                                             className="p-button-rounded bg-blue-400"
                                             onClick={() => {
                                                 setEditMode(true);
-                                                setSelectedCourse(rowData);
-                                                setThemeValue({ title: rowData.title || '' });
+                                                setSelectedCourse(rowData.id);
+                                                // setThemeValue({ title: rowData.title || '' });
                                                 setCourseTitle(rowData.title);
                                                 setFormVisible(true);
                                             }}

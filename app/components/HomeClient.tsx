@@ -2,13 +2,10 @@
 
 import AOS from 'aos';
 import 'aos/dist/aos.css';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect } from 'react';
 import CounterBanner from './CounterBanner';
 import Link from 'next/link';
-import { faClock, faVideo } from '@fortawesome/free-solid-svg-icons';
-import MyFontAwesome from './MyFontAwesome';
 import VideoPlay from './VideoPlay';
-import { Button } from 'primereact/button';
 import FancyLinkBtn from './buttons/FancyLinkBtn';
 import { LayoutContext } from '@/layout/context/layoutcontext';
 

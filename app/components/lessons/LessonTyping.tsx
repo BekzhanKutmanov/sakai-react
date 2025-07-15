@@ -10,8 +10,9 @@ import useErrorMessage from '@/hooks/useErrorMessage';
 import FormModal from '../popUp/FormModal';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { lessonType } from '@/types/lessonType';
+import { lessonStateType } from '@/types/lessonStateType';
 import { lessonSchema } from '@/schemas/lessonSchema';
+import { lessonType } from '@/types/lessonType';
 
 export default function LessonTyping({ mainType, courseId, lessonId }: { mainType: string; courseId: string | null; lessonId: string | null }) {
     // type
@@ -34,17 +35,21 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
 
     // doc
     const [documents, setDocuments] = useState([]);
-    const [docValue, setDocValue] = useState<lessonType>({
+    const [docValue, setDocValue] = useState<lessonStateType>({
         title: '',
-        description: ''
+        description: '',
+        file: null,
+        url: ''
     });
     const [docShow, setDocShow] = useState<boolean>(false);
 
     // links
     const [links, setLinks] = useState([]);
-    const [linksValue, setLinksValue] = useState<lessonType>({
+    const [linksValue, setLinksValue] = useState<lessonStateType>({
         title: '',
-        description: ''
+        description: '',
+        file: null,
+        url: ''
     });
     const [linksShow, setLinksShow] = useState<boolean>(false);
 
@@ -73,19 +78,25 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
         setVisisble(true);
     };
 
-    const editing = async (type: string, id: number) => {
+    const editing = async (type: string, selected: number) => {
         console.log(type);
         
         const token = getToken('access_token');
         const data = await fetchLesson(type, token, courseId ? Number(courseId) : null, lessonId ? Number(lessonId) : null);
-        const lesson = type === 'doc' ? { key: 'documents', file: 'document' } 
-            : type === 'link' ? { key: 'url', file: 'url' } : '';
 
-        console.log(lesson.key);
+        interface test {
+            key: string;
+            file: string;
+            url: string;
+        }
+        const lesson: test = type === 'doc' ? { key: 'documents', file: 'document', url: '' } 
+            : type === 'link' ? { key: 'url', file: 'url', url: '' } : {key: '', file: '', url: ''};
+
+        console.log(lesson.key, data[lesson.key][0]);
 
         if (data.success) {
             if (data[lesson.key]) {
-                const arr = data[lesson.key].find((el) => el.id == id);
+                const arr = data[lesson.key][0].id === selected ? data[lesson.key][0] : {};
                 setEditingLesson({
                     title: arr.title,
                     description: arr?.description,
@@ -97,12 +108,8 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
     };
 
     const cencalEdit = () => {
-        setDocValue({ title: '', description: '' });
+        setDocValue({ title: '', description: '', file: null, url: ''});
     };
-
-    useEffect(() => {
-        console.log('selected id ', selectId);
-    }, [selectId]);
 
     // DOC SECTION
 
@@ -147,7 +154,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                     <div className="flex flex-col items-center gap-4 py-4">
                         <div className="flex flex-wrap justify-center">
                             {docShow
-                                ? documents.map((item) => (
+                                ? documents.map((item: lessonType) => (
                                     <div key={item?.id}>
                                         <LessonCard
                                             onSelected={(id: number, type: string) => selectedForModal(id, type)}
@@ -177,7 +184,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
             if (data.success) {
                 if (data.documents) {
                     // Присваиваю себе. Для отображения
-                    setDocValue({ title: '', description: '' });
+                    setDocValue({ title: '', description: '', file: null, url: '' });
                     setDocuments(data.documents);
                     setDocShow(true);
                 } else {
@@ -233,7 +240,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                     value: { severity: 'success', summary: 'Ийгиликтүү өзгөртүлдү!', detail: '' }
                 });
             } else {
-                setDocValue({ title: '', description: '' });
+                setDocValue({ title: '', description: '', file: null, url: '' });
                 setMessage({
                     state: true,
                     value: { severity: 'error', summary: 'Ошибка', detail: 'Ошибка при при изменении урока' }
@@ -301,7 +308,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
 
                         <InputText placeholder="Мазмун" value={linksValue.description} onChange={(e) => setLinksValue((prev) => ({ ...prev, description: e.target.value }))} className="w-full" />
                         <div className="flex justify-center">
-                            <Button label="Сактоо" disabled={!linksValue.title.length || !linksValue?.url.length || !!errors.title || !!errors.usefulLink   } onClick={handleAddDoc} />
+                            <Button label="Сактоо" disabled={!linksValue.title.length || !linksValue.url?.length || !!errors.title || !!errors.usefulLink } onClick={handleAddDoc} />
                         </div>
                     </div>
 
@@ -393,7 +400,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                     value: { severity: 'success', summary: 'Ийгиликтүү өзгөртүлдү!', detail: '' }
                 });
             } else {
-                setDocValue({ title: '', description: '' });
+                setDocValue({ title: '', description: '', file: null, url: '' });
                 setMessage({
                     state: true,
                     value: { severity: 'error', summary: 'Ошибка', detail: 'Ошибка при при изменении урока' }
@@ -412,8 +419,12 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
     }, []);
 
     useEffect(()=>{
-        console.log(docValue);
-    },[docValue])
+        console.log(documents);
+    },[documents])
+    
+    useEffect(() => {
+        console.log('selected id ', selectId);
+    }, [selectId]);
 
     return (
         <div>
@@ -436,7 +447,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                                         }))
                                     }
                                 />
-                                <span>{editingLesson?.document}</span>
+                                <span>{editingLesson?.document?.name}</span>
                                 <InputText
                                     type="text"
                                     placeholder={editingLesson?.title ? editingLesson?.title : 'Аталышы'}

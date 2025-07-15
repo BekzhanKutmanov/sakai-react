@@ -1,4 +1,17 @@
-export const getConfirmOptions = (id: number, handleDeleteCourse, ) => ({
+type ConfirmDialogOptions = {
+  message: string;
+  header?: string;
+  icon?: string;
+  defaultFocus?: 'accept' | 'reject';
+  accept?: () => void;
+  reject?: () => void;
+  acceptLabel?: string;
+  rejectLabel?: string;
+  acceptClassName?: string;
+  rejectClassName?: string;
+};
+
+export const getConfirmOptions = (id: number, onDelete: (id: number)=> void ): ConfirmDialogOptions => ({
     message: 'Сиз чын эле өчүрүүнү каалайсызбы?',
     header: 'Өчүрүү',
     icon: 'pi pi-info-circle',
@@ -7,5 +20,5 @@ export const getConfirmOptions = (id: number, handleDeleteCourse, ) => ({
     acceptLabel: 'Өчүрүү',
     rejectLabel: 'Артка',
     rejectClassName: 'p-button-secondary reject-button',
-    accept: () => handleDeleteCourse(id)
+    accept: () => onDelete(id)
 });

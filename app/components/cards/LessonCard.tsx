@@ -1,4 +1,3 @@
-import React, { useState } from 'react';
 import Redacting from '../popUp/Redacting';
 import { getRedactor } from '@/utils/getRedactor';
 import { getConfirmOptions } from '@/utils/getConfirmOptions';
@@ -6,7 +5,12 @@ import { getConfirmOptions } from '@/utils/getConfirmOptions';
 export default function LessonCard({ onSelected, onDelete, cardValue, cardBg, typeColor, type, lessonDate }: 
     {
         onSelected: (id: number, type: string)=> void,
-        cardValue: {title: string, id: number, type: string}
+        onDelete: (id: number) => void,
+        cardValue: {title: string, id: number, type: string},
+        cardBg: string,
+        type: {typeValue: string, icon: string},
+        typeColor: string,
+        lessonDate: string
     }) 
     
     {

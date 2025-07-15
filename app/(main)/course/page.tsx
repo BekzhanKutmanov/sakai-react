@@ -16,7 +16,8 @@ import Link from 'next/link';
 import { CourseCreateType } from '@/types/courseCreateType';
 import { CourseType } from '@/types/courseType';
 import { Paginator } from 'primereact/paginator';
-import NotFoundPage from '@/app/(full-page)/pages/notfound/page';
+// import NotFoundPage from '@/app/(full-page)/pages/notfound/page';
+import { NotFound } from '@/app/components/NotFound';
 import Redacting from '@/app/components/popUp/Redacting';
 import { getRedactor } from '@/utils/getRedactor';
 import { getConfirmOptions } from '@/utils/getConfirmOptions';
@@ -48,7 +49,7 @@ export default function Course() {
         const token = getToken('access_token');
         const data = await fetchCourses(token, page, 3);
         console.log(data);
-        
+
         if (data.courses) {
             setHasCourses(false);
             setCourses(data.courses.data);
@@ -59,7 +60,7 @@ export default function Course() {
             });
         } else {
             setHasCourses(true);
-            if(data.response.status){
+            if (data.response.status) {
                 showError(data.response.status);
             }
         }
@@ -84,7 +85,7 @@ export default function Course() {
                 state: true,
                 value: { severity: 'error', summary: 'Ошибка', detail: 'Ошибка при при добавлении' }
             }); // messege - Ошибка при добавлении
-            if(data.response.status){
+            if (data.response.status) {
                 showError(data.response.status);
             }
         }
@@ -106,7 +107,7 @@ export default function Course() {
                 state: true,
                 value: { severity: 'error', summary: 'Ошибка', detail: 'Ошибка при при удалении' }
             }); // messege - Ошибка при добавлении
-            if(data.response.status){
+            if (data.response.status) {
                 showError(data.response.status);
             }
         }
@@ -131,7 +132,7 @@ export default function Course() {
                 state: true,
                 value: { severity: 'error', summary: 'Ошибка при при изменении курса', detail: 'Заполняйте поля правильно' }
             }); // messege - Ошибка при изменении курса
-            if(data.response.status){
+            if (data.response.status) {
                 showError(data.response.status);
             }
         }
@@ -148,7 +149,7 @@ export default function Course() {
     };
 
     const onSelect = (e: FileUploadSelectEvent) => {
-        setImage(e.files[0].name); // сохраняешь файл
+        setImage(e.files[0]); // сохраняешь файл
         console.log(e.files[0]);
 
         setCourseValue((prev) => ({
@@ -207,6 +208,10 @@ export default function Course() {
     }, [courses]);
 
     useEffect(() => {
+        console.log(image);
+    }, [image]);
+
+    useEffect(() => {
         const handleShow = async () => {
             const token = getToken('access_token');
             const data = await fetchCourseInfo(token, selectedCourse);
@@ -229,7 +234,7 @@ export default function Course() {
     };
 
     return (
-        <div className='main-bg'>
+        <div className="main-bg">
             {/* modal window */}
             <FormModal title={editMode ? 'Курсту жаңылоо' : 'Кошуу'} fetchValue={editMode ? handleUpdateCourse : handleAddCourse} clearValues={clearValues} visible={formVisible} setVisible={setFormVisible} start={forStart}>
                 <div className="flex flex-col gap-1">
@@ -288,7 +293,9 @@ export default function Course() {
                             <FileUpload mode="basic" customUpload name="demo[]" accept="image/*" maxFileSize={1000000} onSelect={onSelect} />
                             {image ? (
                                 <div className="mt-2 text-sm text-gray-700">
-                                    Сүрөт: <b className="text-[12px]">{image}</b>
+                                    {typeof image === 'string' && (
+                                        <>Сүрөт: <b className="text-[12px]">{image}</b></>
+                                    )}
                                 </div>
                             ) : (
                                 <b className="text-[12px] text-red-500">jpeg, png, jpg</b>
@@ -315,7 +322,7 @@ export default function Course() {
 
             {/* table section */}
             {hasCourses ? (
-                <NotFoundPage titleMessage={'Курс кошуу үчүн кошуу баскычты басыныз'} />
+                <NotFound titleMessage={'Курс кошуу үчүн кошуу баскычты басыныз'} />
             ) : (
                 <div className="py-4">
                     {skeleton ? (
@@ -341,7 +348,7 @@ export default function Course() {
                                     className="flex items-center justify-center h-[60px] border-b-0"
                                     body={(rowData) => (
                                         <div className="flex items-center gap-2" key={rowData.id}>
-                                            <Redacting redactor={getRedactor(rowData, {onEdit: edit, getConfirmOptions, onDelete: handleDeleteCourse })} textSize={'14px'} />
+                                            <Redacting redactor={getRedactor(rowData, { onEdit: edit, getConfirmOptions, onDelete: handleDeleteCourse })} textSize={'14px'} />
                                         </div>
                                     )}
                                 />

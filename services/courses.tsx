@@ -1,13 +1,10 @@
-import { AuthBaseType } from '@/types/authBaseType';
 import { CourseCreateType } from '@/types/courseCreateType';
-import { lessonType } from '@/types/lessonType';
+import { lessonStateType } from '@/types/lessonStateType';
 import axiosInstance from '@/utils/axiosInstance';
 
 let url = '';
 
-type OnlyTitle = Pick<CourseCreateType, 'title'>;
-
-export const fetchCourses = async (token, page, limit) => {
+export const fetchCourses = async (token: string | null, page: number | null, limit: number | null) => {
     try {
         console.log('Номер запрашиваемой страницы ', page);
 
@@ -26,7 +23,7 @@ export const addCourse = async (token: string | null, value: CourseCreateType) =
     const formData = new FormData();
     formData.append('title', value.title);
     formData.append('description', value.description);
-    formData.append('image', value.image);
+    formData.append('image', String(value.image));
     formData.append('video_url', value.video_url);
 
     try {
@@ -65,7 +62,7 @@ export const deleteCourse = async (token: string | null, id: number) => {
     }
 };
 
-export const updateCourse = async (token: string | null, id: number | null, value) => {
+export const updateCourse = async (token: string | null, id: number | null, value: CourseCreateType) => {
     console.log(value);
 
     url = process.env.NEXT_PUBLIC_BASE_URL + `/v1/teacher/courses/update?course_id=${id}`;
@@ -110,7 +107,7 @@ export const fetchCourseInfo = async (token: string | null, id: number | null) =
     }
 };
 
-export const addThemes = async (token: string | null, id: number, value: OnlyTitle) => {
+export const addThemes = async (token: string | null, id: number, value: string) => {
     const formData = new FormData();
     formData.append('title', value);
 
@@ -144,7 +141,7 @@ export const fetchThemes = async (token: string | null, id: number) => {
     }
 };
 
-export const updateTheme = async (token: string | null, course_id: number | null, theme_id: number, value: CourseCreateType) => {
+export const updateTheme = async (token: string | null, course_id: number | null, theme_id: number | null, value: CourseCreateType) => {
     const formData = new FormData();
     formData.append('title', value.title);
 
@@ -185,27 +182,29 @@ export const addLesson = async (
     token: string | null, 
     courseId: number | null, 
     lessonId: number | null, 
-    value: lessonType, 
-    title: lessonType) => {
+    value: lessonStateType | string, 
+    title: lessonStateType | string) => {
 
     let formData = new FormData();
     console.log(value, title);
-    let headers = token ? { Authorization: `Bearer ${token}` } : {};
+    let headers: Record<string, string> = token ? { Authorization: `Bearer ${token}` } : {};
     let url = '';
-    let body = value;
+    let body: lessonStateType | string | FormData = value;
 
     if (type === 'text') {
         url = `/v1/teacher/textcontent/store?course_id=${courseId}&lesson_id=${lessonId}&content=${value}`;
         headers['Content-Type'] = 'application/json';
         body = value;
-    } else if(type === 'doc'){
+    } else if(type === 'doc' && (typeof value === 'object') && value !== null){
         url = `/v1/teacher/document/store?lesson_id=${lessonId}`;
         formData.append('lesson_id', String(lessonId));
-        formData.append('document', value?.file); 
+        if(value.file){
+            formData.append('document', value.file && value.file);
+        }
         formData.append('title', String(title)); 
         formData.append('description', String(value?.description)); 
         body = formData;
-    } else if(type === 'url'){
+    } else if(type === 'url' && typeof value === 'object' && value !== null){
         url = `v1/teacher/usefullinks/store?lesson_id=${lessonId}&title=${title}&description=${value.description}&url=${value.url}`;
         formData.append('lesson_id', String(lessonId));
         formData.append('document', String(value?.url)); 
@@ -285,7 +284,7 @@ export const deleteLesson = async (type:string, token: string | null, courseId: 
 
 export const updateLesson = async (type: string, token: string | null, course_id: number | null, lesson_id: number | null, contentId: number | null, value: any) => {
     console.log(contentId, value);
-    let headers = token ? { Authorization: `Bearer ${token}` } : {};
+    let headers: Record<string, string> = token ? { Authorization: `Bearer ${token}` } : {};
     let formData = new FormData();
     let url = '';
 

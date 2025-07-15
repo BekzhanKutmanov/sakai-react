@@ -3,4 +3,5 @@ export interface CourseCreateType {
     description: string;
     video_url: string;
     image?: string | File;
+    created_at?: string | null;
 }

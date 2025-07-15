@@ -3,7 +3,9 @@
 import Link from 'next/link';
 import { useState } from 'react';
 
-export default function FancyLinkBtn({ btnWidth, backround, effectBg, title }) {
+export default function FancyLinkBtn({ btnWidth, backround, effectBg, title }
+    : {btnWidth: string, backround: string, effectBg: string, title: string}
+) {
     const [position, setPosition] = useState(false);
 
     return (

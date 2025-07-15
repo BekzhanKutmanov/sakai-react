@@ -1,12 +1,14 @@
 import { Menu } from 'primereact/menu';
-import React, { useRef } from 'react';
+import type { Menu as MenuRef } from 'primereact/menu';
+import { MenuItem } from 'primereact/menuitem';
+import { useRef } from 'react';
 
-export default function Redacting({ redactor, textSize }) {
-    const menuLeft = useRef(null);
-
+export default function Redacting({ redactor, textSize }: {redactor: MenuItem[], textSize: string}) {
+    const menuLeft = useRef<MenuRef>(null);
+    
     return (
         <div>
-            <i className="mr-2 pi pi-ellipsis-v cursor-pointer" onClick={(event) => menuLeft.current.toggle(event)} aria-controls="popup_menu_left" aria-haspopup />
+            <i className="mr-2 pi pi-ellipsis-v cursor-pointer" onClick={(event) => menuLeft.current?.toggle(event)} aria-controls="popup_menu_left" aria-haspopup />
             <Menu
                 model={redactor}
                 ref={menuLeft}

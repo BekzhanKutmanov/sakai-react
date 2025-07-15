@@ -28,13 +28,13 @@ export default function Lesson() {
     const { setMessage } = useContext(LayoutContext);
 
     const showError = useErrorMessage();
-    const [sentValues, setSentValues] = useState<string>('');
+    const [sentValues, setSentValues] = useState<string | null>('');
 
     const params = useParams();
     const courseId = params.courseTheme;
     const lessonId = params.lessons;
 
-    const handleText = (e: string) => {
+    const handleText = (e: string | null) => {
         setSentValues(e);
     };
 
@@ -78,7 +78,7 @@ export default function Lesson() {
     const handleAddLesson = async () => {
         const token = getToken('access_token');
 
-        const data = await addLesson('text', token, courseId ? Number(courseId) : null, lessonId ? Number(lessonId) : null, sentValues, 'the title');
+        const data = await addLesson('text', token, courseId ? Number(courseId) : null, lessonId ? Number(lessonId) : null, String(sentValues), 'the title');
         if (data.success) {
             handleFetchLesson();
             setMessage({
@@ -206,7 +206,7 @@ export default function Lesson() {
                                         </div>
                                     </div>
                                     <div className="w-full h-[80%] break-words whitespace-normal overflow-scroll">
-                                        <div dangerouslySetInnerHTML={{ __html: sentValues && sentValues }} />
+                                        <div dangerouslySetInnerHTML={{ __html: typeof sentValues === 'string' && sentValues }} />
                                         {/* {sentValues.text} */}
                                     </div>
                                 </div>
@@ -253,7 +253,7 @@ export default function Lesson() {
                     leftIcon={'pi pi-link mr-1'}
                     className="p-tabview p-tabview-nav p-tabview-selected p-tabview-panels p-tabview-panel"
                 >
-                    {contentShow && <LessonTyping mainType="link" courseId={courseId} lessonId={lessonId} />}
+                    {contentShow && <LessonTyping mainType="link" courseId={courseId} lessonId={lessonId} />}   
                 </TabPanel>
 
                 {/* VIDEO */}
