@@ -14,6 +14,7 @@ export default function LessonCard({ onSelected, onDelete, cardValue, cardBg, ty
     }) 
     
     {
+        
     return (
         <div className={`w-[180px] h-[110px] flex flex-col shadow-xl rounded-sm p-2`} style={{ backgroundColor: cardBg }}>
             <div className="flex items-center justify-between">
@@ -30,7 +31,7 @@ export default function LessonCard({ onSelected, onDelete, cardValue, cardBg, ty
                         <span>{lessonDate}</span>
                     </div>
                 </div>
-                <div className="flex items-center justify-center mt-1">{cardValue.title}<span>{cardValue.id}</span></div>
+                <div className="flex items-center justify-center mt-1">{cardValue.title}</div>
             </div>
         </div>
     );

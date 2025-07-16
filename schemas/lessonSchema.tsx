@@ -7,7 +7,7 @@ export const lessonSchema = yup.object().shape({
         .matches(/^https?:\/\/.+/, 'Видео шилтеме  "http://" "https://" форматында болуш керек'),
     usefulLink: yup
         .string()
-        .required('Талап кылынат!'),
-        // .matches(/^[^!@#$%^&*()_+={}[\]:;"'`<>,.?/\\|]*$/, 'Сырсөздө тыюу салынган символдор камтылбашы керек'),
+        .required('Талап кылынат!')
+        .matches(/^https?:\/\/.+/, 'Шилтеме "http://" "https://" форматында болуш керек'),
     title: yup.string().required('Талап кылынат!').max(20, 'Аталыштын узундугу макс 20 тамга')
 });
