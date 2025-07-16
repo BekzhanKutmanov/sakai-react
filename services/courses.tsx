@@ -186,7 +186,7 @@ export const addLesson = async (
     title: lessonStateType | string) => {
 
     let formData = new FormData();
-    console.log(value, title);
+    console.log(value, title, type);
     let headers: Record<string, string> = token ? { Authorization: `Bearer ${token}` } : {};
     let url = '';
     let body: lessonStateType | string | FormData = value;
@@ -228,15 +228,14 @@ export const addLesson = async (
 
 export const fetchLesson = async (type: string, token: string | null, courseId: number | null, lessonId: number | null) => {
     let url = '';
-    let formData = new FormData();
 
     if (type === 'text') {
         url = `/v1/teacher/textcontent?course_id=${courseId}&lesson_id=${lessonId}`;
     } else if (type === 'doc') {
         url = `/v1/teacher/document?lesson_id=${lessonId}`
-        // formData.append('title', value.title);   
-        // formData.append('description', value.description);
-    }
+    } else if (type === 'url') {
+        url = `/v1/teacher/usefullinks?lesson_id=${lessonId}`
+    } 
 
     try {
         const res = await axiosInstance.get(
@@ -247,7 +246,6 @@ export const fetchLesson = async (type: string, token: string | null, courseId: 
             }
         );
 
-        // const data = await res();
         console.log('Урок: ', res.data);
 
         return res.data;

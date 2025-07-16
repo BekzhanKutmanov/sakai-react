@@ -308,7 +308,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
 
                         <InputText placeholder="Мазмун" value={linksValue.description} onChange={(e) => setLinksValue((prev) => ({ ...prev, description: e.target.value }))} className="w-full" />
                         <div className="flex justify-center">
-                            <Button label="Сактоо" disabled={!linksValue.title.length || !linksValue.url?.length || !!errors.title || !!errors.usefulLink } onClick={handleAddDoc} />
+                            <Button label="Сактоо" disabled={!linksValue.title.length || !linksValue.url?.length || !!errors.title || !!errors.usefulLink } onClick={handleAddLink} />
                         </div>
                     </div>
 
@@ -335,15 +335,40 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
             );
         };
 
+        // fetch document
+        const handleFetchLink = async () => {
+            // skeleton = false
+            const token = getToken('access_token');
+            const data = await fetchLesson('url', token, courseId ? Number(courseId) : null, lessonId ? Number(lessonId) : null);
+            console.log(data);
+
+            if (data.success) {
+                if (data.links) {
+                    // Присваиваю себе. Для отображения
+                    setLinksValue({ title: '', description: '', file: null, url: '' });
+                    setDocuments(data.links);
+                    setLinksShow(true);
+                } else {
+                    setLinksShow(false);
+                }
+            } else {
+                setDocShow(false);
+                if (data.response.status) {
+                    showError(data.response.status);
+                }
+                // skeleton = false
+            }
+        };
+
         // add link
         const handleAddLink = async () => {
             const token = getToken('access_token');
             
-            const data = await addLesson('url', token, courseId ? Number(courseId) : null, lessonId ? Number(lessonId) : null, linksValue, linksValue);
+            const data = await addLesson('url', token, courseId ? Number(courseId) : null, lessonId ? Number(lessonId) : null, linksValue, linksValue.title);
             console.log(data);
 
             if (data.success) {
-                // handleFetchDoc();
+                handleFetchLink()
                 setMessage({
                     state: true,
                     value: { severity: 'success', summary: 'Ийгиликтүү Кошулдуу!', detail: '' }
@@ -384,7 +409,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
             console.log(data);
         };
 
-        // update document
+        // update link
         const handleUpdateLink = async () => {
             const token = getToken('access_token');
 
@@ -392,7 +417,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
             console.log(data);
 
             if (data.success) {
-                // handleFetchDoc();
+                handleFetchLink()
                 setSelectId(null);
                 setSelectType('');
                 setMessage({
@@ -415,7 +440,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
 
     useEffect(() => {
         if (mainType === 'doc') handleFetchDoc();
-        // if (mainType === 'link') handleFetchDoc();
+        if (mainType === 'link') handleFetchLink();
     }, []);
 
     useEffect(()=>{
