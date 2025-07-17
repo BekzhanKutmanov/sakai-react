@@ -159,8 +159,6 @@ export default function Lesson() {
     };
 
     const handleTabChange = (e: TabViewChange) => {
-        console.log(e);
-
         if (e.index === 0) handleFetchLesson();
         setActiveIndex(e.index);
     };

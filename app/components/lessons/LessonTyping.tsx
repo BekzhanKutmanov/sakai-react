@@ -30,11 +30,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
     }
 
     // validate
-    const {
-        register,
-        setValue,
-        formState: { errors }
-    } = useForm({
+    const { setValue, formState: { errors }} = useForm({
         resolver: yupResolver(lessonSchema),
         mode: 'onChange'
     });
@@ -67,8 +63,8 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
     const [visible, setVisisble] = useState(false);
     const [editingLesson, setEditingLesson] = useState<EditableLesson | null>(null);
 
+    // functions
     const handleUpdate = () => {
-        console.log(selectType);
         if (selectType === 'doc') {
             handleUpdateLesson();
         } else if (selectType === 'url') {
@@ -77,17 +73,17 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
     };
 
     const selectedForModal = (id: number, type: string) => {
-        console.log(id, type);
-        
+        console.log('Открытие окна... ', id, type);
+
         setSelectId(id);
         setSelectType(type);
-        //
         editing(type, id);
         setVisisble(true);
     };
 
+    // Предоставляю данные из сервера для изменения
     const editing = async (type: string, selected: number) => {
-        console.log(type);
+        console.log(type, selected);
 
         const token = getToken('access_token');
         const data = await fetchLesson(type, token, courseId ? Number(courseId) : null, lessonId ? Number(lessonId) : null);
@@ -95,12 +91,13 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
         console.log(data);
 
         const lesson: editingType = type === 'doc' ? { key: 'documents', file: 'document', url: '' } : type === 'url' ? { key: 'links', file: '', url: 'url' } : { key: '', file: '', url: '' };
-        console.log(lesson);
-        console.log(data[lesson.key]);
+        // console.log(lesson);
+        // console.log(data[lesson.key]);
 
         if (data.success) {
             if (data[lesson.key]) {
-                const arr = data[lesson.key].find((item: lessonType) => (item.id === selected ? data[lesson.key][0] : {}));
+                const arr = data[lesson.key].find((item: lessonType) => item.id === selected);
+                // console.log(arr);
 
                 setEditingLesson({
                     title: arr.title,
@@ -112,15 +109,11 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
         }
     };
 
-    useEffect(() => {
-        console.log('eidting ', editingLesson);
-    }, [editingLesson]);
-
-    const cencalEdit = () => {
-        setDocValue({ title: '', description: '', file: null, url: '' });
+    const cencalEdit = () => { // пока отдельная функция, если не будет расширения то сделаю без функции
+        setEditingLesson(null);
     };
 
-    // DOC SECTION
+                                            // DOC SECTION
 
     const docSection = () => {
         return (
@@ -168,7 +161,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                                       <LessonCard
                                           onSelected={(id: number, type: string) => selectedForModal(id, type)}
                                           onDelete={(id: number) => handleDeleteDoc(id)}
-                                          cardValue={{ title: item?.title, id: Number(selectId), type: 'doc' }}
+                                          cardValue={{ title: item?.title, id: item.id, type: 'doc' }}
                                           cardBg={'#ddc4f51a'}
                                           type={{ typeValue: 'Документтер', icon: 'pi pi-folder' }}
                                           typeColor={'var(--mainColor)'}
@@ -213,7 +206,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
     const handleAddDoc = async () => {
         const token = getToken('access_token');
 
-        const data = await addLesson('doc', token, courseId ? Number(courseId) : null, lessonId ? Number(lessonId) : null, docValue, docValue.title);
+        const data = await addLesson('doc', token, courseId ? Number(courseId) : null, lessonId ? Number(lessonId) : null, docValue);
         console.log(data);
 
         if (data.success) {
@@ -236,8 +229,9 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
     // update document
     const handleUpdateLesson = async () => {
         const token = getToken('access_token');
-
-        const data = await updateLesson('doc', token, courseId ? Number(courseId) : null, lessonId ? Number(lessonId) : null, Number(selectId), docValue);
+        console.log(editingLesson);
+        
+        const data = await updateLesson('doc', token, courseId ? Number(courseId) : null, lessonId ? Number(lessonId) : null, Number(selectId), editingLesson);
         console.log(data);
 
         if (data.success) {
@@ -262,11 +256,9 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
 
     // delete document
     const handleDeleteDoc = async (id: number) => {
-        console.log(id);
-
         const token = getToken('access_token');
-
         const data = await deleteLesson('doc', token, Number(courseId), Number(lessonId), id);
+
         if (data.success) {
             handleFetchDoc();
             setMessage({
@@ -282,10 +274,9 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                 showError(data.response.status);
             }
         }
-        console.log(data);
     };
 
-    // LINKS SECTION
+                                            // LINKS SECTION
 
     const linkSection = () => {
         return (
@@ -325,19 +316,20 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                     <div className="flex flex-wrap justify-center">
                         {linksShow
                             ? links.map((item: lessonType) => {
-                                console.log(item.id);
-                                return <div key={item?.id}>
-                                      <LessonCard
-                                          onSelected={(id: number, type: string) => selectedForModal(id, type)}
-                                          onDelete={(id: number) => handleDeleteLink(id)}
-                                          cardValue={{ title: item.title, id: Number(selectId), type: 'url' }}
-                                          cardBg={'#7bb78112'}
-                                          type={{ typeValue: 'Шилтемелер', icon: 'pi pi-link' }}
-                                          typeColor={'var(--mainColor)'}
-                                          lessonDate={'xx-xx-xx'}
-                                      />
-                                  </div>
-                                })
+                                  return (
+                                      <div key={item?.id}>
+                                          <LessonCard
+                                              onSelected={(id: number, type: string) => selectedForModal(id, type)}
+                                              onDelete={(id: number) => handleDeleteLink(id)}
+                                              cardValue={{ title: item.title, id: item.id, type: 'url' }}
+                                              cardBg={'#7bb78112'}
+                                              type={{ typeValue: 'Шилтемелер', icon: 'pi pi-link' }}
+                                              typeColor={'var(--mainColor)'}
+                                              lessonDate={'xx-xx-xx'}
+                                          />
+                                      </div>
+                                  );
+                              })
                             : 'Шаблон если данных нет'}
                     </div>
                 </div>
@@ -374,7 +366,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
     const handleAddLink = async () => {
         const token = getToken('access_token');
 
-        const data = await addLesson('url', token, courseId ? Number(courseId) : null, lessonId ? Number(lessonId) : null, linksValue, linksValue.title);
+        const data = await addLesson('url', token, courseId ? Number(courseId) : null, lessonId ? Number(lessonId) : null, linksValue);
         console.log(data);
 
         if (data.success) {
@@ -396,13 +388,11 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
 
     // delete link
     const handleDeleteLink = async (id: number) => {
-        console.log(id);
-
         const token = getToken('access_token');
-
-        const data = await deleteLesson('doc', token, Number(courseId), Number(lessonId), id);
+        const data = await deleteLesson('url', token, Number(courseId), Number(lessonId), id);
+        
         if (data.success) {
-            handleFetchDoc();
+            handleFetchLink();
             setMessage({
                 state: true,
                 value: { severity: 'success', summary: 'Ийгиликтүү өчүрүлдү!', detail: '' }
@@ -416,26 +406,26 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                 showError(data.response.status);
             }
         }
-        console.log(data);
     };
 
     // update link
     const handleUpdateLink = async () => {
         const token = getToken('access_token');
 
-        const data = await updateLesson('url', token, courseId ? Number(courseId) : null, lessonId ? Number(lessonId) : null, Number(selectId), editingLesson?.url);
+        const data = await updateLesson('url', token, courseId ? Number(courseId) : null, lessonId ? Number(lessonId) : null, Number(selectId), editingLesson);
         console.log(data);
 
         if (data.success) {
             handleFetchLink();
             setSelectId(null);
+            setEditingLesson(null);
             setSelectType('');
             setMessage({
                 state: true,
                 value: { severity: 'success', summary: 'Ийгиликтүү өзгөртүлдү!', detail: '' }
             });
         } else {
-            setDocValue({ title: '', description: '', file: null, url: '' });
+            setLinksValue({ title: '', description: '', file: null, url: '' });
             setMessage({
                 state: true,
                 value: { severity: 'error', summary: 'Ошибка', detail: 'Ошибка при при изменении урока' }
@@ -454,12 +444,12 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
     }, []);
 
     useEffect(() => {
-        console.log(documents);
-    }, [documents]);
-
-    useEffect(() => {
         console.log('selected id ', selectId);
     }, [selectId]);
+    
+    useEffect(() => {
+        console.log('eidting ', editingLesson);
+    }, [editingLesson]);
 
     return (
         <div>
@@ -476,53 +466,42 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                                     uploadHandler={() => {}}
                                     accept="application/pdf"
                                     onSelect={(e) =>
-                                        setDocValue((prev) => ({
-                                            ...prev,
-                                            file: e.files[0]
-                                        }))
+                                        setEditingLesson((prev)=> prev && { ...prev, file: e.files[0] })
                                     }
                                 />
                                 <span>{String(editingLesson?.document)}</span>
                                 <InputText
                                     type="text"
-                                    placeholder={editingLesson?.title ? editingLesson?.title : 'Аталышы'}
-                                    value={docValue.title}
+                                    value={editingLesson?.title}
                                     onChange={(e) => {
-                                        setDocValue((prev) => ({ ...prev, title: e.target.value }));
+                                        setEditingLesson((prev)=> prev && { ...prev, title: e.target.value});
                                         setValue('title', e.target.value, { shouldValidate: true });
-                                        // setEditingLesson((prev)=> ({...prev, title: e.target.value}));
                                     }}
                                 />
                                 <b style={{ color: 'red', fontSize: '12px' }}>{errors.title?.message}</b>
-
-                                <InputText placeholder="Мазмун" value={docValue.description} onChange={(e) => setDocValue((prev) => ({ ...prev, description: e.target.value }))} className="w-full" />
+                                <InputText placeholder="Мазмун" value={editingLesson?.description} onChange={(e) => setEditingLesson((prev) => prev && { ...prev, description: e.target.value })} className="w-full" />
                             </>
                         ) : selectType === 'url' ? (
                             <>
                                 <InputText
                                     type="url"
-                                    // placeholder={editingLesson?.url ? editingLesson?.url : 'Шилтеме жүктөө'}
                                     value={editingLesson?.url}
                                     onChange={(e) => {
-                                        // setLinksValue((prev) => ({ ...prev, url: e.target.value }));
-                                        setEditingLesson((prev) => prev && ({ ...prev, url: e.target.value}));
+                                        setEditingLesson((prev) => prev && { ...prev, url: e.target.value });
                                         setValue('usefulLink', e.target.value, { shouldValidate: true });
-                                        // setEditingLesson((prev)=> ({...prev, title: e.target.value}));
                                     }}
                                 />
                                 <InputText
                                     type="text"
                                     placeholder={editingLesson?.title ? editingLesson?.title : 'Аталышы'}
-                                    value={linksValue.title}
+                                    value={editingLesson?.title}
                                     onChange={(e) => {
-                                        setLinksValue((prev) => ({ ...prev, title: e.target.value }));
+                                        setEditingLesson((prev) => prev && { ...prev, title: e.target.value });
                                         setValue('title', e.target.value, { shouldValidate: true });
-                                        // setEditingLesson((prev)=> ({...prev, title: e.target.value}));
                                     }}
                                 />
                                 <b style={{ color: 'red', fontSize: '12px' }}>{errors.title?.message}</b>
-
-                                <InputText placeholder="Мазмун" value={docValue.description} onChange={(e) => setDocValue((prev) => ({ ...prev, description: e.target.value }))} className="w-full" />
+                                <InputText placeholder="Мазмун" value={editingLesson?.description} onChange={(e) => setEditingLesson((prev) => prev && { ...prev, description: e.target.value })} className="w-full" />
                             </>
                         ) : (
                             ''

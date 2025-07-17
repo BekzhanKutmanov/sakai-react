@@ -182,11 +182,10 @@ export const addLesson = async (
     token: string | null, 
     courseId: number | null, 
     lessonId: number | null, 
-    value: lessonStateType | string, 
-    title: lessonStateType | string) => {
+    value: lessonStateType | string) => {
 
     let formData = new FormData();
-    console.log(value, title, type);
+    console.log(value, type);
     let headers: Record<string, string> = token ? { Authorization: `Bearer ${token}` } : {};
     let url = '';
     let body: lessonStateType | string | FormData = value;
@@ -201,14 +200,14 @@ export const addLesson = async (
         if(value.file){
             formData.append('document', value.file && value.file);
         }
-        formData.append('title', String(title)); 
+        formData.append('title', String(value.title)); 
         formData.append('description', String(value?.description)); 
         body = formData;
     } else if(type === 'url' && typeof value === 'object' && value !== null){
-        url = `v1/teacher/usefullinks/store?lesson_id=${lessonId}&title=${title}&description=${value.description}&url=${value.url}`;
+        url = `v1/teacher/usefullinks/store?lesson_id=${lessonId}&title=${value.title}&description=${value.description}&url=${value.url}`;
         formData.append('lesson_id', String(lessonId));
         formData.append('document', String(value?.url)); 
-        formData.append('title', String(title)); 
+        formData.append('title', String(value.title)); 
         formData.append('description', String(value?.description)); 
         body = formData;
     } 
@@ -264,7 +263,7 @@ export const deleteLesson = async (type:string, token: string | null, courseId: 
     } else if(type === 'doc'){
         url = `/v1/teacher/document/delete?lesson_id=${lesson_id}&document_id=${content_id}`;
     } else if(type === 'url'){
-        url = `/v1/teacher/document/delete?lesson_id=${lesson_id}&document_id=${content_id}`;
+        url = `v1/teacher/usefullinks/delete?lesson_id=${lesson_id}&link_id=${content_id}`;
     } 
     
     try {
@@ -281,7 +280,7 @@ export const deleteLesson = async (type:string, token: string | null, courseId: 
 };
 
 export const updateLesson = async (type: string, token: string | null, course_id: number | null, lesson_id: number | null, contentId: number | null, value: any) => {
-    console.log(contentId, value);
+    console.log(type ,contentId, value);
     let headers: Record<string, string> = token ? { Authorization: `Bearer ${token}` } : {};
     let formData = new FormData();
     let url = '';
@@ -299,10 +298,10 @@ export const updateLesson = async (type: string, token: string | null, course_id
         formData.append('description', String(value.description)); 
         body = formData;
     } else if(type === 'url'){
-        url = `/v1/teacher/document/update?lesson_id=${lesson_id}&document_id=${contentId}&document=${value.file}`;
+        url = `/v1/teacher/usefullinks/update?lesson_id=${lesson_id}&title=${value.title}&description=${value.description}&url=${value.url}&link_id=${contentId}`;
         formData.append('lesson_id', String(lesson_id));
-        formData.append('url?', value.file);
-        formData.append('url_id?', String(contentId));
+        formData.append('url', value.url);
+        formData.append('link_id', String(contentId));
         formData.append('title', String(value.title)); 
         formData.append('description', String(value.description)); 
         body = formData;
