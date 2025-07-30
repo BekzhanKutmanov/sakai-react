@@ -20,10 +20,10 @@ import { NotFound } from '@/app/components/NotFound';
 export default function CourseTheme() {
     const [hasThemes, setHasThemes] = useState(false);
     const [themes, setThemes] = useState([]);
-    const [themeValue, setThemeValue] = useState({ title: '', description: '', video_url: ''});
+    const [themeValue, setThemeValue] = useState({ title: '', description: '', video_url: '' });
     const [themeInfo, setThemeInfo] = useState<CourseCreateType>();
     const [courseTitle, setCourseTitle] = useState('');
-    const [selectedCourse, setSelectedCourse] = useState<{id: number | null}>({id: null});
+    const [selectedCourse, setSelectedCourse] = useState<{ id: number | null }>({ id: null });
     const [formVisible, setFormVisible] = useState(false);
     const [editMode, setEditMode] = useState(false);
     const [forStart, setForStart] = useState(false);
@@ -36,17 +36,18 @@ export default function CourseTheme() {
     const handleFetchThemes = async () => {
         const token = getToken('access_token');
         const data = await fetchThemes(token, Number(courseTheme));
-        
-        if (data.lessons) {
-            setThemes(data.lessons.data);
+        console.log(data);
+
+        if (data?.lessons) {
             setHasThemes(false);
+            setThemes(data.lessons.data);
         } else {
             setHasThemes(true);
             setMessage({
                 state: true,
                 value: { severity: 'error', summary: 'Ошибка', detail: 'Проблема с соединением. Повторите заново' }
             }); // messege - Ошибка загрузки курсов
-            if(data.response.status){
+            if (data?.response?.status) {
                 showError(data.response.status);
             }
         }
@@ -56,7 +57,7 @@ export default function CourseTheme() {
         const token = getToken('access_token');
         const data = await fetchCourseInfo(token, Number(courseTheme));
 
-        if(data.success) {
+        if (data.success) {
             setThemeInfo(data.course);
         }
     };
@@ -83,7 +84,7 @@ export default function CourseTheme() {
                 state: true,
                 value: { severity: 'error', summary: 'Ошибка', detail: 'Ошибка при при добавлении' }
             }); // messege - Ошибка при добавлении
-            if(data.response.status){
+            if (data.response.status) {
                 showError(data.response.status);
             }
         }
@@ -105,7 +106,7 @@ export default function CourseTheme() {
                 state: true,
                 value: { severity: 'error', summary: 'Ошибка', detail: 'Ошибка при при удалении' }
             }); // messege - Ошибка при добавлении
-            if(data.response.status){
+            if (data.response.status) {
                 showError(data.response.status);
             }
         }
@@ -120,7 +121,7 @@ export default function CourseTheme() {
             handleFetchThemes();
             clearValues();
             setEditMode(false);
-            setSelectedCourse({id: null});
+            setSelectedCourse({ id: null });
             setMessage({
                 state: true,
                 value: { severity: 'success', summary: 'Ийгиликтүү өзгөртүлдү!', detail: '' }
@@ -130,17 +131,17 @@ export default function CourseTheme() {
                 state: true,
                 value: { severity: 'error', summary: 'Ошибка при при изменении темы', detail: 'Заполняйте поля правильно' }
             }); // messege - Ошибка при изменении курса
-            if(data.response.status){
+            if (data.response.status) {
                 showError(data.response.status);
             }
         }
     };
 
     const clearValues = () => {
-        setThemeValue({ title: '', description: '', video_url: ''});
+        setThemeValue({ title: '', description: '', video_url: '' });
         setCourseTitle('');
         setEditMode(false);
-        setSelectedCourse({id: null});
+        setSelectedCourse({ id: null });
     };
 
     const getConfirmOptions = (id: number) => ({
@@ -173,15 +174,14 @@ export default function CourseTheme() {
     }, [courseTitle]);
 
     useEffect(() => {
-        themes.length < 1 ? setHasThemes(true)
-            : setHasThemes(false);
+        themes.length < 1 ? setHasThemes(true) : setHasThemes(false);
     }, [themes]);
 
     const titleInfoClass = `${!themeInfo?.image ? 'items-center' : 'w-full'} ${themeInfo?.image ? 'w-1/2' : 'w-full'}`;
     const titleImageClass = `${themeInfo?.image ? 'md:w-1/3' : ''}`;
 
     return (
-        <div className='main-bg'>
+        <div className="main-bg">
             {/* title section */}
             <div className={`bg-[var(--titleColor)] flex flex-col gap-3 md:flex-row items-center p-10 mt-2 mb-10 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]`}>
                 <div className={`${titleInfoClass} flex flex-col justify-center gap-2 text-white`}>
@@ -197,7 +197,7 @@ export default function CourseTheme() {
                 </div>
 
                 <div className={`${titleImageClass}`}>
-                    <img src={String(themeInfo?.image)}/>
+                    <img src={String(themeInfo?.image)} />
                 </div>
             </div>
 
@@ -241,9 +241,9 @@ export default function CourseTheme() {
                     {skeleton ? (
                         <GroupSkeleton count={themes.length} size={{ width: '100%', height: '4rem' }} />
                     ) : (
-                        <DataTable value={themes} breakpoint="960px" responsiveLayout="stack" className="my-custom-table">
-                            <Column field="id" header="Номер" sortable style={{ width: '30px', textAlign: 'center' }}></Column>
-                            <Column field="title" header="Темалар" className="w-2/3" sortable body={(rowData) => <Link href={`/course/${courseTheme}/${rowData.id}`}>{rowData.title}</Link>}></Column>
+                        <DataTable value={themes} breakpoint="960px" className="my-custom-table">
+                            <Column body={(_, { rowIndex }) => rowIndex + 1} header="Номер" style={{ width: '20px' }}></Column>
+                            <Column field="title" header="Темалар" className="w-2/3" sortable body={(rowData) => <Link href={`/course/lessons/${rowData.id}`}>{rowData.title}</Link>}></Column>
 
                             <Column
                                 header=""
@@ -263,7 +263,7 @@ export default function CourseTheme() {
                                         />
                                         {/* <ConfirmModal confirmVisible={getConfirmOptions(rowData.id)} /> */}
                                         <Button className=" bg-blue-400" icon="pi pi-arrow-right">
-                                            <Link href={`/course/${rowData.id}`}></Link>    
+                                            <Link href={`/course/${rowData.id}`}></Link>
                                         </Button>
                                     </div>
                                 )}

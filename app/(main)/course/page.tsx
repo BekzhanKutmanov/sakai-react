@@ -16,7 +16,6 @@ import Link from 'next/link';
 import { CourseCreateType } from '@/types/courseCreateType';
 import { CourseType } from '@/types/courseType';
 import { Paginator } from 'primereact/paginator';
-// import NotFoundPage from '@/app/(full-page)/pages/notfound/page';
 import { NotFound } from '@/app/components/NotFound';
 import Redacting from '@/app/components/popUp/Redacting';
 import { getRedactor } from '@/utils/getRedactor';
@@ -50,7 +49,7 @@ export default function Course() {
         const data = await fetchCourses(token, page, 3);
         console.log(data);
 
-        if (data.courses) {
+        if (data?.courses) {
             setHasCourses(false);
             setCourses(data.courses.data);
             setPagination({
@@ -60,32 +59,32 @@ export default function Course() {
             });
         } else {
             setHasCourses(true);
-            if (data.response.status) {
+            setMessage({
+                state: true,
+                value: { severity: 'error', summary: 'Ошибка', detail: 'Проблема с соединением. Повторите заново' }
+            });
+            if (data?.response?.status) {
                 showError(data.response.status);
             }
         }
     };
 
     const handleAddCourse = async () => {
-        if (courseValue.title.length < 1) {
-            alert('hi');
-            return null;
-        }
         const token = getToken('access_token');
         const data = await addCourse(token, courseValue);
-        if (data.success) {
+        if (data?.success) {
             toggleSkeleton();
             handleFetchCourse();
             setMessage({
                 state: true,
                 value: { severity: 'success', summary: 'Ийгиликтүү кошулду!', detail: '' }
-            }); // messege - Успех!
+            });
         } else {
             setMessage({
                 state: true,
                 value: { severity: 'error', summary: 'Ошибка', detail: 'Ошибка при при добавлении' }
-            }); // messege - Ошибка при добавлении
-            if (data.response.status) {
+            });
+            if (data?.response?.status) {
                 showError(data.response.status);
             }
         }
@@ -95,7 +94,7 @@ export default function Course() {
         const token = getToken('access_token');
 
         const data = await deleteCourse(token, id);
-        if (data.success) {
+        if (data?.success) {
             toggleSkeleton();
             handleFetchCourse();
             setMessage({
@@ -107,7 +106,7 @@ export default function Course() {
                 state: true,
                 value: { severity: 'error', summary: 'Ошибка', detail: 'Ошибка при при удалении' }
             }); // messege - Ошибка при добавлении
-            if (data.response.status) {
+            if (data?.response?.status) {
                 showError(data.response.status);
             }
         }
@@ -117,7 +116,7 @@ export default function Course() {
         const token = getToken('access_token');
 
         const data = await updateCourse(token, selectedCourse, courseValue);
-        if (data.success) {
+        if (data?.success) {
             toggleSkeleton();
             handleFetchCourse();
             clearValues();
@@ -132,7 +131,7 @@ export default function Course() {
                 state: true,
                 value: { severity: 'error', summary: 'Ошибка при при изменении курса', detail: 'Заполняйте поля правильно' }
             }); // messege - Ошибка при изменении курса
-            if (data.response.status) {
+            if (data?.response?.status) {
                 showError(data.response.status);
             }
         }
@@ -150,7 +149,6 @@ export default function Course() {
 
     const onSelect = (e: FileUploadSelectEvent) => {
         setImage(e.files[0]); // сохраняешь файл
-        console.log(e.files[0]);
 
         setCourseValue((prev) => ({
             ...prev,
@@ -183,10 +181,15 @@ export default function Course() {
         }, 1000);
     };
 
-    // Ручное управление пагинацией
+        // Ручное управление пагинацией
     const handlePageChange = (page: number) => {
-        // fetchData(page);
         handleFetchCourse(page);
+    };
+
+    const edit = (rowData: number | null) => {
+        setEditMode(true);
+        setSelectedCourse(rowData);
+        setFormVisible(true);
     };
 
     useEffect(() => {
@@ -208,10 +211,6 @@ export default function Course() {
     }, [courses]);
 
     useEffect(() => {
-        console.log(image);
-    }, [image]);
-
-    useEffect(() => {
         const handleShow = async () => {
             const token = getToken('access_token');
             const data = await fetchCourseInfo(token, selectedCourse);
@@ -226,12 +225,6 @@ export default function Course() {
             handleShow();
         }
     }, [editMode]);
-
-    const edit = (rowData: number | null) => {
-        setEditMode(true);
-        setSelectedCourse(rowData);
-        setFormVisible(true);
-    };
 
     return (
         <div className="main-bg">
@@ -294,7 +287,9 @@ export default function Course() {
                             {image ? (
                                 <div className="mt-2 text-sm text-gray-700">
                                     {typeof image === 'string' && (
-                                        <>Сүрөт: <b className="text-[12px]">{image}</b></>
+                                        <>
+                                            Сүрөт: <b className="text-[12px]">{image}</b>
+                                        </>
                                     )}
                                 </div>
                             ) : (
@@ -329,18 +324,14 @@ export default function Course() {
                         <GroupSkeleton count={courses.length} size={{ width: '100%', height: '4rem' }} />
                     ) : (
                         <>
-                            <DataTable value={courses} breakpoint="960px" rows={5} responsiveLayout="stack" className="my-custom-table">
+                            <DataTable value={courses} breakpoint="960px" rows={5} className="my-custom-table">
                                 <Column body={(_, { rowIndex }) => rowIndex + 1} header="Номер" style={{ width: '20px' }}></Column>
                                 <Column
                                     field="title"
                                     header="Аталышы"
                                     style={{ width: '80%' }}
                                     sortable
-                                    body={(rowData) => (
-                                        <Link href={`/course/${rowData.id}`} key={rowData.id}>
-                                            {rowData.title}
-                                        </Link>
-                                    )}
+                                    body={(rowData) => <Link href={`/course/${rowData.id}`} key={rowData.id}>{rowData.title}</Link> }
                                 ></Column>
                                 <Column header="" body={imageBodyTemplate}></Column>
                                 <Column

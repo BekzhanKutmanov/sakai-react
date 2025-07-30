@@ -188,7 +188,7 @@ export const addLesson = async (
     console.log(value, type);
     let headers: Record<string, string> = token ? { Authorization: `Bearer ${token}` } : {};
     let url = '';
-    let body: lessonStateType | string | FormData = value;
+    let body: lessonStateType | string | FormData = value;    
 
     if (type === 'text') {
         url = `/v1/teacher/textcontent/store?course_id=${courseId}&lesson_id=${lessonId}&content=${value}`;

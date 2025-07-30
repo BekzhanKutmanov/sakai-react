@@ -4,9 +4,6 @@ import { useContext, useEffect, useState } from 'react';
 import { TabView, TabPanel } from 'primereact/tabview';
 import CKEditorWrapper from '@/app/components/CKEditorWrapper.tsx';
 import { Button } from 'primereact/button';
-import { useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import { lessonSchema } from '@/schemas/lessonSchema';
 import Redacting from '@/app/components/popUp/Redacting';
 import { addLesson, deleteLesson, fetchLesson, updateLesson } from '@/services/courses';
 import { getToken } from '@/utils/auth';
@@ -23,33 +20,20 @@ export default function Lesson() {
     const [contentShow, setContentShow] = useState<boolean>(true);
     const [textShow, setTextShow] = useState<boolean>(false);
     const [editMode, setEditMode] = useState<boolean>(false);
-    const [editingLesson, setEditingLesson] = useState<string | null>(null);
+    const [editingLesson, setEditingLesson] = useState<string>('');
     const [textValue, setTextValue] = useState<{ id: number | null }>({ id: null });
     const { setMessage } = useContext(LayoutContext);
 
     const showError = useErrorMessage();
-    const [sentValues, setSentValues] = useState<string | null>('');
+    const [sentValues, setSentValues] = useState<string>('');
 
     const params = useParams();
     const courseId = params.courseTheme;
     const lessonId = params.lessons;
 
-    const handleText = (e: string | null) => {
+    const handleText = (e: string) => {
         setSentValues(e);
     };
-
-    useEffect(() => {
-        console.log(sentValues);
-    }, [sentValues]);
-
-    const {
-        register,
-        setValue,
-        formState: { errors }
-    } = useForm({
-        resolver: yupResolver(lessonSchema),
-        mode: 'onChange'
-    });
 
     const handleFetchLesson = async () => {
         // skeleton = false
@@ -58,7 +42,7 @@ export default function Lesson() {
         const data = await fetchLesson('text', token, courseId ? Number(courseId) : null, lessonId ? Number(lessonId) : null);
         console.log(data);
 
-        if (data.success) {
+        if (data?.success) {
             if (data?.content?.content) {
                 setTextValue({ id: data?.content.id });
                 setSentValues(data.content.content);
@@ -68,7 +52,11 @@ export default function Lesson() {
             }
         } else {
             setTextShow(false);
-            if (data.response.status) {
+            setMessage({
+                state: true,
+                value: { severity: 'error', summary: 'Ошибка', detail: 'Проблема с соединением. Повторите заново' }
+            });
+            if (data?.response?.status) {
                 showError(data.response.status);
             }
             // skeleton = false
@@ -78,19 +66,20 @@ export default function Lesson() {
     const handleAddLesson = async () => {
         const token = getToken('access_token');
 
-        const data = await addLesson('text', token, courseId ? Number(courseId) : null, lessonId ? Number(lessonId) : null, String(sentValues), 'the title');
-        if (data.success) {
+        const data = await addLesson('text', token, courseId ? Number(courseId) : null, lessonId ? Number(lessonId) : null, String(sentValues));
+        if (data?.success) {
             handleFetchLesson();
             setMessage({
                 state: true,
                 value: { severity: 'success', summary: 'Ийгиликтүү Кошулдуу!', detail: '' }
             });
         } else {
+            setEditingLesson('');
             setMessage({
                 state: true,
                 value: { severity: 'error', summary: 'Ошибка', detail: 'Ошибка при при добавлении' }
             });
-            if (data.response.status) {
+            if (data?.response?.status) {
                 showError(data.response.status);
             }
         }
@@ -128,8 +117,8 @@ export default function Lesson() {
         }
     };
 
-    const cencalEdit = () => {
-        handleFetchLesson();
+    const clearValues = () => {
+        // handleFetchLesson(); пока стоит до полной реконструкции компонента
         setEditingLesson('');
         setTextShow(true);
         setEditMode(false);
@@ -141,8 +130,7 @@ export default function Lesson() {
         console.log(data);
 
         if (data.success) {
-            setEditMode(false);
-            setTextShow(true);
+            clearValues();
             setMessage({
                 state: true,
                 value: { severity: 'success', summary: 'Ийгиликтүү өзгөртүлдү!', detail: '' }
@@ -162,6 +150,11 @@ export default function Lesson() {
         if (e.index === 0) handleFetchLesson();
         setActiveIndex(e.index);
     };
+
+    // USE EFFECTS
+    useEffect(() => {
+        console.log(sentValues);
+    }, [sentValues]);
 
     return (
         <div>
@@ -214,13 +207,13 @@ export default function Lesson() {
                                         <>
                                             <CKEditorWrapper insideValue={editingLesson} textValue={(e)=> handleText(e)} />
                                             <div className="flex items-center gap-4">
+                                                <Button label="Артка кайтуу" className="reject-button" onClick={clearValues} />
                                                 <Button label="Өзгөртүү" disabled={!sentValues?.length} onClick={handleUpdateLesson} />
-                                                <Button label="Артка кайтуу" className="reject-button" onClick={cencalEdit} />
                                             </div>
                                         </>
                                     ) : (
                                         <>
-                                            <CKEditorWrapper insideValue={null} textValue={handleText} />
+                                            <CKEditorWrapper insideValue={''} textValue={handleText} />
                                             <Button label="Сактоо" disabled={!sentValues?.length} onClick={handleAddLesson} />
                                         </>
                                     )}
