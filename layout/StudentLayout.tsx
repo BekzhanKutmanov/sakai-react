@@ -14,12 +14,12 @@ import { PrimeReactContext } from 'primereact/api';
 import { ChildContainerProps, LayoutState, AppTopbarRef } from '@/types';
 import { usePathname, useSearchParams } from 'next/navigation';
 
-const Layout = ({ children }: ChildContainerProps) => {
+const StudentLayout = ({ children }: ChildContainerProps) => {
     const { layoutConfig, layoutState, setLayoutState, user } = useContext(LayoutContext);
     const { setRipple } = useContext(PrimeReactContext);
     const topbarRef = useRef<AppTopbarRef>(null);
     const sidebarRef = useRef<HTMLDivElement>(null);
-    const [permission, setPermission] = useState<boolean>(false);
+    const [permission, setPermission] = useState<boolean>(true);
     const [bindMenuOutsideClickListener, unbindMenuOutsideClickListener] = useEventListener({
         type: 'click',
         listener: (event) => {
@@ -124,7 +124,7 @@ const Layout = ({ children }: ChildContainerProps) => {
     });
 
     const requireRole = () => {
-        if(!user?.is_working){
+        if(!user?.is_student){
             console.log('Не имеете доступ!');
             setPermission(false);
             // window.location.href = '/auth/login';
@@ -136,7 +136,7 @@ const Layout = ({ children }: ChildContainerProps) => {
         requireRole();
     },[user]);
 
-    // if(permission) return null;
+    if(permission) return null;
 
     return (
         <React.Fragment>    
@@ -156,4 +156,4 @@ const Layout = ({ children }: ChildContainerProps) => {
     );
 };
 
-export default Layout;
+export default StudentLayout;

@@ -1,4 +1,4 @@
-import Layout from "../../layout/layout";
+import StudentLayout from "@/layout/StudentLayout";
 
 export default function LayoutStudent({
   children,
@@ -9,7 +9,7 @@ export default function LayoutStudent({
   return (
       <div>
           {/* <BaseLayout>{children}</BaseLayout> */}
-          <Layout>{children}</Layout>;
+          <StudentLayout>{children}</StudentLayout>;
       </div>
   );
 }

@@ -7,7 +7,7 @@ export const logout = ({setGlobalLoading, setUser}: {setGlobalLoading: (params: 
     setGlobalLoading(true);
 
     setTimeout(() => {
-        setGlobalLoading(false);    
+        setGlobalLoading(false);
     }, 1000);
 
     setUser(null);

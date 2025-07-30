@@ -34,6 +34,7 @@ export default function CourseTheme() {
     const showError = useErrorMessage();
 
     const handleFetchThemes = async () => {
+
         const token = getToken('access_token');
         const data = await fetchThemes(token, Number(courseTheme));
         console.log(data);
@@ -51,15 +52,18 @@ export default function CourseTheme() {
                 showError(data.response.status);
             }
         }
+
+        console.log('he he bay ');
+
     };
 
     const handleFetchInfo = async () => {
-        const token = getToken('access_token');
-        const data = await fetchCourseInfo(token, Number(courseTheme));
+        // const token = getToken('access_token');
+        // const data = await fetchCourseInfo(token, Number(courseTheme));
 
-        if (data.success) {
-            setThemeInfo(data.course);
-        }
+        // if (data.success) {
+        //     setThemeInfo(data.course);
+        // }
     };
 
     const handleAddTheme = async () => {

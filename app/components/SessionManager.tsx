@@ -26,9 +26,9 @@ const SessionManager = () => {
                 try {
                     if (res?.success) {
                         setGlobalLoading(false);
+                        console.log('Данные пользователя успешно пришли ', res);
+                        
                         const userVisit = localStorage.getItem('userVisit');
-                        console.log('Данные успешно пришли ', res);
-
                         if (!userVisit) {
                             localStorage.setItem('userVisit', JSON.stringify(true));
 
@@ -58,7 +58,7 @@ const SessionManager = () => {
                 setGlobalLoading(false);
             }
         };
-        init();
+        // init();
     }, []);
 
     useEffect(() => {
@@ -81,18 +81,18 @@ const SessionManager = () => {
         };
 
         // немедленная проверка
-        if (!checkToken()) return;
+        // if (!checkToken()) return;
 
-        const interval = setInterval(() => {
-            if (!checkToken()) {
-                clearInterval(interval);
-            }
-        }, 5000);
+        // const interval = setInterval(() => {
+        //     if (!checkToken()) {
+        //         clearInterval(interval);
+        //     }
+        // }, 5000);
 
-        return () => clearInterval(interval);
+        // return () => clearInterval(interval);
     }, []);
 
     return null;
-};
+};  
 
 export default SessionManager;
