@@ -139,7 +139,7 @@ const Layout = ({ children }: ChildContainerProps) => {
     // if(permission) return null;
 
     return (
-        <React.Fragment>    
+        <React.Fragment>
             <div className={containerClass}>
                 <AppTopbar ref={topbarRef} />
                 <div ref={sidebarRef} className="layout-sidebar">

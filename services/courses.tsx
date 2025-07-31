@@ -183,50 +183,52 @@ export const addLesson = async (
     courseId: number | null, 
     lessonId: number | null, 
     value: lessonStateType | string) => {
-
+    
     let formData = new FormData();
-    console.log(value, type);
-    let headers: Record<string, string> = token ? { Authorization: `Bearer ${token}` } : {};
-    let url = '';
-    let body: lessonStateType | string | FormData = value;    
+    console.log(value, type, courseId, lessonId);
+    // let headers: Record<string, string> = token ? { Authorization: `Bearer ${token}` } : {};
+    // let url = '';
+    // let body: lessonStateType | string | FormData = value;    
 
-    if (type === 'text') {
-        url = `/v1/teacher/textcontent/store?course_id=${courseId}&lesson_id=${lessonId}&content=${value}`;
-        headers['Content-Type'] = 'application/json';
-        body = value;
-    } else if(type === 'doc' && (typeof value === 'object') && value !== null){
-        url = `/v1/teacher/document/store?lesson_id=${lessonId}`;
-        formData.append('lesson_id', String(lessonId));
-        if(value.file){
-            formData.append('document', value.file && value.file);
-        }
-        formData.append('title', String(value.title)); 
-        formData.append('description', String(value?.description)); 
-        body = formData;
-    } else if(type === 'url' && typeof value === 'object' && value !== null){
-        url = `v1/teacher/usefullinks/store?lesson_id=${lessonId}&title=${value.title}&description=${value.description}&url=${value.url}`;
-        formData.append('lesson_id', String(lessonId));
-        formData.append('document', String(value?.url)); 
-        formData.append('title', String(value.title)); 
-        formData.append('description', String(value?.description)); 
-        body = formData;
-    } 
+    // if (type === 'text') {
+    //     url = `/v1/teacher/textcontent/store?course_id=${courseId}&lesson_id=${lessonId}&content=${value}`;
+    //     headers['Content-Type'] = 'application/json';
+    //     body = value;
+    // } else if(type === 'doc' && (typeof value === 'object') && value !== null){
+    //     url = `/v1/teacher/document/store?lesson_id=${lessonId}`;
+    //     formData.append('lesson_id', String(lessonId));
+    //     if(value.file){
+    //         formData.append('document', value.file && value.file);
+    //     }
+    //     formData.append('title', String(value.title)); 
+    //     formData.append('description', String(value?.description)); 
+    //     body = formData;
+    // } else if(type === 'url' && typeof value === 'object' && value !== null){
+    //     url = `v1/teacher/usefullinks/store?lesson_id=${lessonId}&title=${value.title}&description=${value.description}&url=${value.url}`;
+    //     formData.append('lesson_id', String(lessonId));
+    //     formData.append('document', String(value?.url)); 
+    //     formData.append('title', String(value.title)); 
+    //     formData.append('description', String(value?.description)); 
+    //     body = formData;
+    // } 
 
-    try {
-        const res = await axiosInstance.post(url, body, {
-            headers
-        });
+    // try {
+    //     const res = await axiosInstance.post(url, body, {
+    //         headers
+    //     });
 
-        const data = await res.data;
-        return data;
-    } catch (err) {
-        console.log('Ошибка при добавлении урока', err);
-        return err;
-    }
+    //     const data = await res.data;
+    //     return data;
+    // } catch (err) {
+    //     console.log('Ошибка при добавлении урока', err);
+    //     return err;
+    // }
 };
 
 export const fetchLesson = async (type: string, token: string | null, courseId: number | null, lessonId: number | null) => {
     let url = '';
+
+    console.log(type, courseId, lessonId);
 
     if (type === 'text') {
         url = `/v1/teacher/textcontent?course_id=${courseId}&lesson_id=${lessonId}`;

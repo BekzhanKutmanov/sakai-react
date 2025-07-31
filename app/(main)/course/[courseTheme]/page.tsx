@@ -31,6 +31,8 @@ export default function CourseTheme() {
     const { setMessage } = useContext(LayoutContext);
 
     const { courseTheme } = useParams() as { courseTheme: string };
+    console.log(courseTheme);
+    
     const showError = useErrorMessage();
 
     const handleFetchThemes = async () => {
@@ -58,12 +60,12 @@ export default function CourseTheme() {
     };
 
     const handleFetchInfo = async () => {
-        // const token = getToken('access_token');
-        // const data = await fetchCourseInfo(token, Number(courseTheme));
+        const token = getToken('access_token');
+        const data = await fetchCourseInfo(token, Number(courseTheme));
 
-        // if (data.success) {
-        //     setThemeInfo(data.course);
-        // }
+        if (data.success) {
+            setThemeInfo(data.course);
+        }
     };
 
     const handleAddTheme = async () => {
