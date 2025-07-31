@@ -149,7 +149,8 @@ export default function Course() {
 
     const onSelect = (e: FileUploadSelectEvent) => {
         setImage(e.files[0]); // сохраняешь файл
-
+        console.log(e.files[0]);
+        
         setCourseValue((prev) => ({
             ...prev,
             image: e.files[0]

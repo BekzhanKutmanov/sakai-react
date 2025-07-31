@@ -29,8 +29,7 @@ export default function Lesson() {
 
     const params = useParams();
     const courseId = params.courseTheme;
-    const lessonId = params.lessons;   
-    console.log('courseId ', params);
+    const lessonId = params.lessons;
 
     const handleText = (e: string) => {
         setSentValues(e);
