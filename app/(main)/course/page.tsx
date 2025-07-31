@@ -26,13 +26,9 @@ export default function Course() {
     const [courses, setCourses] = useState([]);
     const [hasCourses, setHasCourses] = useState(false);
     const [courseValue, setCourseValue] = useState<CourseCreateType>({ title: '', description: '', video_url: '', image: '' });
-    const [courseTitle, setCourseTitle] = useState('');
-    const [video_url, setVideo_url] = useState('');
-    const [description, setDesciption] = useState('');
     const [editMode, setEditMode] = useState(false);
     const [selectedCourse, setSelectedCourse] = useState<number | null>(null);
     const [formVisible, setFormVisible] = useState(false);
-    const [image, setImage] = useState<File | string>('');
     const [forStart, setForStart] = useState(false);
     const [skeleton, setSkeleton] = useState(false);
     const [pagination, setPagination] = useState({
@@ -40,7 +36,14 @@ export default function Course() {
         total: 0,
         perPage: 0
     });
-
+    const [editingLesson, setEditingLesson] = useState<CourseCreateType>({
+        title: '',
+        description: '',
+        video_url: '',
+        image: '',
+        created_at: '',
+    });
+    
     const { setMessage } = useContext(LayoutContext);
     const showError = useErrorMessage();
 
@@ -112,10 +115,17 @@ export default function Course() {
         }
     };
 
+    const clearValues = () => {
+        setCourseValue({ title: '', description: '', video_url: '', image: '' });
+        setEditingLesson({title: '', description: '', video_url: '', image: '', created_at: '' })
+        setEditMode(false);
+        setSelectedCourse(null);
+    };
+
     const handleUpdateCourse = async () => {
         const token = getToken('access_token');
 
-        const data = await updateCourse(token, selectedCourse, courseValue);
+        const data = await updateCourse(token, selectedCourse, editingLesson);
         if (data?.success) {
             toggleSkeleton();
             handleFetchCourse();
@@ -137,21 +147,12 @@ export default function Course() {
         }
     };
 
-    const clearValues = () => {
-        setCourseValue({ title: '', description: '', video_url: '', image: '' });
-        setCourseTitle('');
-        setVideo_url('');
-        setDesciption('');
-        setImage('');
-        setEditMode(false);
-        setSelectedCourse(null);
-    };
-
     const onSelect = (e: FileUploadSelectEvent) => {
-        setImage(e.files[0]); // сохраняешь файл
         console.log(e.files[0]);
-        
-        setCourseValue((prev) => ({
+        editMode ? setEditingLesson((prev) => ({
+            ...prev,
+            image: e.files[0]
+        })) : setCourseValue((prev) => ({
             ...prev,
             image: e.files[0]
         }));
@@ -198,13 +199,13 @@ export default function Course() {
     }, []);
 
     useEffect(() => {
-        const title = courseTitle.trim();
+        const title = editMode ? editingLesson.title.trim() : courseValue.title.trim();
         if (title.length > 0) {
             setForStart(false);
         } else {
             setForStart(true);
         }
-    }, [courseTitle]);
+    }, [courseValue.title, editingLesson.title]);
 
     useEffect(() => {
         console.log('Курсы ', courses);
@@ -215,11 +216,15 @@ export default function Course() {
         const handleShow = async () => {
             const token = getToken('access_token');
             const data = await fetchCourseInfo(token, selectedCourse);
-            console.log(data);
-            setCourseTitle(data.course.title || '');
-            setVideo_url(data.course.video_url || '');
-            setDesciption(data.course.description || '');
-            setImage(data.course.image);
+            
+            if(data?.success){
+                setEditingLesson({
+                    title: data.course.title || '', 
+                    video_url: data.course.video_url || '',
+                    description: data.course.description || '',
+                    image: data.course.image
+                })
+            }
         };
 
         if (editMode) {
@@ -236,11 +241,13 @@ export default function Course() {
                         <div className="flex flex-col gap-1 items-center justify-center">
                             <label className="block text-900 font-medium text-[16px] md:text-xl mb-1 md:mb-2">Аталышы</label>
                             <InputText
-                                value={courseTitle}
+                                value={editMode ? editingLesson.title : courseValue.title}
                                 placeholder="Аталышы талап кылынат"
                                 onChange={(e) => {
-                                    setCourseTitle(e.target.value);
-                                    setCourseValue((prev) => ({
+                                    editMode ? setEditingLesson((prev) => ({
+                                        ...prev,
+                                        title: e.target.value
+                                    })) : setCourseValue((prev) => ({
                                         ...prev,
                                         title: e.target.value
                                     }));
@@ -250,12 +257,14 @@ export default function Course() {
                         <div className="flex flex-col gap-1 items-center justify-center">
                             <label className="block text-900 font-medium text-[16px] md:text-xl mb-1 md:mb-2">Видео шилтеме</label>
                             <InputText
-                                value={video_url}
+                                value={editMode ? editingLesson.video_url : courseValue.video_url}
                                 placeholder="https://..."
                                 title="Шилтеме https:// менен башталышы шарт!"
                                 onChange={(e) => {
-                                    setVideo_url(e.target.value);
-                                    setCourseValue((prev) => ({
+                                    editMode ? setEditingLesson((prev) => ({
+                                        ...prev,
+                                        video_url: e.target.value
+                                    })) : setCourseValue((prev) => ({
                                         ...prev,
                                         video_url: e.target.value
                                     }));
@@ -269,12 +278,14 @@ export default function Course() {
                             <label className="block text-900 font-medium text-[16px] md:text-xl mb-1 md:mb-2">Мазмуну</label>
                             <InputTextarea
                                 autoResize
-                                value={description}
+                                value={editMode ? editingLesson.description : courseValue.description}
                                 rows={5}
                                 cols={30}
                                 onChange={(e) => {
-                                    setDesciption(e.target.value);
-                                    setCourseValue((prev) => ({
+                                    editMode ? setEditingLesson((prev) => ({
+                                        ...prev,
+                                        description: e.target.value
+                                    })) : setCourseValue((prev) => ({
                                         ...prev,
                                         description: e.target.value
                                     }));
@@ -285,11 +296,11 @@ export default function Course() {
                         <div className="flex flex-col pag-1 items-center justify-center">
                             <label className="block text-900 font-medium text-[16px] md:text-xl mb-1 md:mb-2">Сүрөт кошуу</label>
                             <FileUpload mode="basic" customUpload name="demo[]" accept="image/*" maxFileSize={1000000} onSelect={onSelect} />
-                            {image ? (
+                            {courseValue.image || editingLesson.image ? (
                                 <div className="mt-2 text-sm text-gray-700">
-                                    {typeof image === 'string' && (
+                                    {typeof editingLesson.image === 'string' && (
                                         <>
-                                            Сүрөт: <b className="text-[12px]">{image}</b>
+                                            Сүрөт: <b className="text-[12px]">{editingLesson.image}</b>
                                         </>
                                     )}
                                 </div>

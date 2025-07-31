@@ -31,7 +31,6 @@ export default function CourseTheme() {
     const { setMessage } = useContext(LayoutContext);
 
     const { courseTheme } = useParams() as { courseTheme: string };
-    console.log(courseTheme);
     
     const showError = useErrorMessage();
 

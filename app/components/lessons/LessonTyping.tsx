@@ -14,16 +14,10 @@ import { lessonStateType } from '@/types/lessonStateType';
 import { lessonSchema } from '@/schemas/lessonSchema';
 import { lessonType } from '@/types/lessonType';
 import { NotFound } from '../NotFound';
+import { EditableLesson } from '@/types/editableLesson';
 
 export default function LessonTyping({ mainType, courseId, lessonId }: { mainType: string; courseId: string | null; lessonId: string | null }) {
     // types
-    interface EditableLesson {
-        title: string;
-        description?: string;
-        document?: File | null;
-        url?: string | null;
-    }
-
     interface editingType {
         key: string;
         file: string;
@@ -55,7 +49,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
         title: '',
         description: '',
         file: null,
-        url: ''
+        url: '' 
     });
     const [linksShow, setLinksShow] = useState<boolean>(false);
 
@@ -76,7 +70,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
         }
     };
 
-    const selectedForModal = (id: number, type: string) => {
+    const selectedForEditing = (id: number, type: string) => {
         console.log('Открытие окна... ', id, type);
 
         setSelectId(id);
@@ -113,11 +107,10 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
     };
 
     const clearValues = () => {
-        // пока отдельная функция, если не будет расширения то сделаю без функции
+        setLinksValue({ title: '', description: '', file: null, url: '' });
+        setEditingLesson(null);
         setSelectId(null);
-        setEditingLesson(null);
         setSelectType('');
-        setEditingLesson(null);
     };
 
     // DOC SECTION
@@ -168,7 +161,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                             documents.map((item: lessonType) => (
                                 <div key={item?.id}>
                                     <LessonCard
-                                        onSelected={(id: number, type: string) => selectedForModal(id, type)}
+                                        onSelected={(id: number, type: string) => selectedForEditing(id, type)}
                                         onDelete={(id: number) => handleDeleteDoc(id)}
                                         cardValue={{ title: item?.title, id: item.id, type: 'doc' }}
                                         cardBg={'#ddc4f51a'}
@@ -330,7 +323,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                             links.map((item: lessonType) => (
                                 <div key={item?.id}>
                                     <LessonCard
-                                        onSelected={(id: number, type: string) => selectedForModal(id, type)}
+                                        onSelected={(id: number, type: string) => selectedForEditing(id, type)}
                                         onDelete={(id: number) => handleDeleteLink(id)}
                                         cardValue={{ title: item.title, id: item.id, type: 'url' }}
                                         cardBg={'#7bb78112'}

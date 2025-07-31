@@ -106,7 +106,7 @@ export default function Lesson() {
         }
     };
 
-    const edit = async () => {
+    const editing = async () => {
         setTextShow(false);
         setEditMode(true);
 
@@ -119,6 +119,7 @@ export default function Lesson() {
 
     const clearValues = () => {
         // handleFetchLesson(); пока стоит до полной реконструкции компонента
+        setSentValues('');
         setEditingLesson('');
         setTextShow(true);
         setEditMode(false);
@@ -130,6 +131,7 @@ export default function Lesson() {
         console.log(data);
 
         if (data.success) {
+            handleFetchLesson();
             clearValues();
             setMessage({
                 state: true,
@@ -188,7 +190,7 @@ export default function Lesson() {
                                                 <span>Текст</span>
                                             </div>
 
-                                            <Redacting redactor={getRedactor(textValue.id, { onEdit: edit, getConfirmOptions, onDelete: handleDeleteLesson })} textSize={'14px'} />
+                                            <Redacting redactor={getRedactor(textValue.id, { onEdit: editing, getConfirmOptions, onDelete: handleDeleteLesson })} textSize={'14px'} />
                                             {/* <MySkeleton size={{ width: '12px', height: '15px' }} /> */}
                                         </div>
                                         <div className={`flex gap-1 items-center`}>
