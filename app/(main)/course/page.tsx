@@ -41,7 +41,7 @@ export default function Course() {
         description: '',
         video_url: '',
         image: '',
-        created_at: '',
+        created_at: '', 
     });
     
     const { setMessage } = useContext(LayoutContext);

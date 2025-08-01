@@ -23,7 +23,6 @@ const SessionManager = () => {
 
         const init = async () => {
             console.log('проверяем токен...');
-
             const token = getToken('access_token');
             if (token) {
                 const res = await getUser(token);
@@ -72,8 +71,10 @@ const SessionManager = () => {
         if(!token && pathname !== '/' && pathname !== '/auth/login'){
             console.log('Перенеправляю в login');
             
-            logout({ setUser, setGlobalLoading });
-            window.location.href = '/auth/login';
+            // logout({ setUser, setGlobalLoading });
+            // window.location.href = '/auth/login';
+            setGlobalLoading(false);
+            
             return;
         } 
         setGlobalLoading(false);

@@ -125,7 +125,7 @@ const StudentLayout = ({ children }: ChildContainerProps) => {
 
     const requireRole = () => {
         if(!user?.is_student){
-            console.log('Не имеете доступ!');
+            console.log('Не имеете доступ! student');
             setPermission(false);
             // window.location.href = '/auth/login';
         }

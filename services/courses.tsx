@@ -320,10 +320,13 @@ export const updateLesson = async (type: string, token: string | null, course_id
         formData.append('description', String(value.description)); 
         body = formData;
     } else if(type === 'video'){
-        url = `/v1/teacher/ ? /update?lesson_id=${lesson_id}&title=${value.title}&description=${value.description}&url=${value.url}&link_id=${contentId}`;
+        url = `/v1/teacher/video/update?lesson_id=${lesson_id}&title=${value.title}&description=${value.description}&video_link=${value.video_link}&video_type_id=${value.video_type_id}&video_id=${contentId}`;
+        // v1/teacher/video/update?lesson_id=39&title=number&description=qqqqqq&video_link=https://codeforces.com&video_type_id=1&video_id=1
+        
         formData.append('lesson_id', String(lesson_id));
-        formData.append('video_link', value.url);
-        formData.append('video_type_id', String(contentId));
+        formData.append('video_link', value.video_link);
+        formData.append('video_type_id', String(value.video_type_id));
+        formData.append('video_id', String(contentId));
         formData.append('title', String(value.title)); 
         formData.append('description', String(value.description)); 
         body = formData;
