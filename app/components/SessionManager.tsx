@@ -5,22 +5,25 @@ import { useContext, useEffect } from 'react';
 import { LayoutContext } from '@/layout/context/layoutcontext';
 import { getUser } from '@/services/auth';
 import { logout } from '@/utils/logout';
+import { usePathname } from 'next/navigation';
 
 const SessionManager = () => {
     const { setMessage } = useContext(LayoutContext);
     const { user, setUser } = useContext(LayoutContext);
     const { setGlobalLoading } = useContext(LayoutContext);
 
+    const pathname = usePathname();
+
     useEffect(() => {
         console.log('Пользователь ', user);
     }, [user]);
 
     useEffect(() => {
-        console.log("Роутинг");
+        console.log('Роутинг');
 
         const init = async () => {
             console.log('проверяем токен...');
-            
+
             const token = getToken('access_token');
             if (token) {
                 const res = await getUser(token);
@@ -56,22 +59,25 @@ const SessionManager = () => {
                     }); // messege - Ошибка при авторизации
                     console.log('Ошибка при получении пользователя');
                 }
-            } else {
-                console.log('токена нет');
-                setGlobalLoading(false);
-                const userVisit = localStorage.getItem('userVisit');
-                if (userVisit) {
-                    setMessage({
-                        state: true,
-                        value: { severity: 'error', summary: 'Сессия завершилось', detail: 'Войдите заново' }
-                    }); // messege - Время сесси завершилось
-                }
-                logout({ setUser, setGlobalLoading });
-                console.log('Токен отсутствует - завершаем сессию');
             }
         };
         init();
     }, []);
+
+    useEffect(()=> {
+        setGlobalLoading(true);
+        console.log('Переход в', pathname);
+        const token = getToken('access_token');
+
+        if(!token && pathname !== '/' && pathname !== '/auth/login'){
+            console.log('Перенеправляю в login');
+            
+            logout({ setUser, setGlobalLoading });
+            window.location.href = '/auth/login';
+            return;
+        } 
+        setGlobalLoading(false);
+    },[pathname]);
 
     // useEffect(() => {
     //     const checkToken = () => {

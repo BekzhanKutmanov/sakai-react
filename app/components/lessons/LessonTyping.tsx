@@ -485,8 +485,6 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
 
     // VIDEO SECTIONS
     const toggleVideoType = (e: videoType) => {
-        console.log(e);
-
         setSelectedCity(e);
         setVideoValue({ title: '', description: '', file: null, url: '', video_link: '' });
     };
@@ -585,7 +583,6 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
     const handleVideoType = async () => {
         const token = getToken('access_token');
         const data = await fetchVideoType(token);
-        console.log(data);
 
         if (data) {
             setVideoTypes(data);
@@ -597,7 +594,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
         // skeleton = false
         const token = getToken('access_token');
         const data = await fetchLesson('video', token, courseId ? Number(courseId) : null, lessonId ? Number(lessonId) : null);
-        console.log(data);
+        // console.log(data);
 
         if (data?.success) {
             if (data.videos) {
@@ -698,7 +695,6 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
         const forSelect = videoTypes.map((item) => {
             return { name: item.title, status: item.is_link, id: item.id };
         });
-        console.log(forSelect);
 
         setVideoSelect(forSelect);
         setSelectedCity(forSelect[0]);

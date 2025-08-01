@@ -238,7 +238,7 @@ export const addLesson = async (
 export const fetchLesson = async (type: string, token: string | null, courseId: number | null, lessonId: number | null) => {
     let url = '';
 
-    console.log(type, courseId, lessonId);
+    // console.log(type, courseId, lessonId);
 
     if (type === 'text') {
         url = `/v1/teacher/textcontent?course_id=${courseId}&lesson_id=${lessonId}`;
