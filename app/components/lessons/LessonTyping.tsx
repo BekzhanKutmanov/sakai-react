@@ -5,7 +5,7 @@ import { InputText } from 'primereact/inputtext';
 import React, { useContext, useEffect, useState } from 'react';
 import LessonCard from '../cards/LessonCard';
 import { getToken } from '@/utils/auth';
-import { addLesson, deleteLesson, fetchLesson, updateLesson } from '@/services/courses';
+import { addLesson, deleteLesson, fetchLesson, fetchVideoType, updateLesson } from '@/services/courses';
 import useErrorMessage from '@/hooks/useErrorMessage';
 import FormModal from '../popUp/FormModal';
 import { useForm } from 'react-hook-form';
@@ -15,6 +15,7 @@ import { lessonSchema } from '@/schemas/lessonSchema';
 import { lessonType } from '@/types/lessonType';
 import { NotFound } from '../NotFound';
 import { EditableLesson } from '@/types/editableLesson';
+import { Dropdown } from 'primereact/dropdown';
 
 export default function LessonTyping({ mainType, courseId, lessonId }: { mainType: string; courseId: string | null; lessonId: string | null }) {
     // types
@@ -22,8 +23,22 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
         key: string;
         file: string;
         url: string;
+        link: string;
+        video_type_id?: number | null;
     }
 
+    interface videoType {
+        name: string;
+        status: boolean;
+        id: number;
+    }
+
+    interface videoInsideType {
+        id: number;
+        is_link: boolean;
+        short_title: string;
+        title: string;
+    }
     // validate
     const {
         setValue,
@@ -39,7 +54,8 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
         title: '',
         description: '',
         file: null,
-        url: ''
+        url: '',
+        video_link: ''
     });
     const [docShow, setDocShow] = useState<boolean>(false);
 
@@ -49,9 +65,24 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
         title: '',
         description: '',
         file: null,
-        url: '' 
+        url: '',
+        video_link: ''
     });
     const [linksShow, setLinksShow] = useState<boolean>(false);
+
+    // videos
+    const [video, setVideo] = useState([]);
+    const [selectedCity, setSelectedCity] = useState({ name: '', status: true, id: 1 });
+    const [videoSelect, setVideoSelect] = useState<videoType[]>([]);
+    const [videoTypes, setVideoTypes] = useState<videoInsideType[]>([]);
+    const [videoValue, setVideoValue] = useState<lessonStateType>({
+        title: '',
+        description: '',
+        file: null,
+        url: '',
+        video_link: ''
+    });
+    const [videoShow, setVideoShow] = useState<boolean>(false);
 
     // auxiliary
     const showError = useErrorMessage();
@@ -67,6 +98,8 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
             handleUpdateLesson();
         } else if (selectType === 'url') {
             handleUpdateLink();
+        } else if (selectType === 'video') {
+            handleUpdateVideo();
         }
     };
 
@@ -85,29 +118,38 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
 
         const token = getToken('access_token');
         const data = await fetchLesson(type, token, courseId ? Number(courseId) : null, lessonId ? Number(lessonId) : null);
-
         console.log(data);
 
-        const lesson: editingType = type === 'doc' ? { key: 'documents', file: 'document', url: '' } : type === 'url' ? { key: 'links', file: '', url: 'url' } : { key: '', file: '', url: '' };
+        const lesson: editingType =
+            type === 'doc'
+                ? { key: 'documents', file: 'document', url: '', link: '', video_type_id: 1 }
+                : type === 'url'
+                ? { key: 'links', file: '', url: 'url', link: '', video_type_id: 1 }
+                : type === 'video'
+                ? { key: 'videos', file: '', url: '', link: 'link', video_type_id: 1 }
+                : { key: '', file: '', url: '', link: '', video_type_id: 1 };
         // console.log(lesson);
         // console.log(data[lesson.key]);
+
         if (data.success) {
             if (data[lesson.key]) {
                 const arr = data[lesson.key].find((item: lessonType) => item.id === selected);
-                // console.log(arr);
+                console.log(arr);
 
                 setEditingLesson({
                     title: arr.title,
                     description: arr?.description,
                     document: arr[lesson.file],
-                    url: arr[lesson.url]
+                    url: arr[lesson.url],
+                    video_link: arr[lesson.link],
+                    video_type_id: arr?.video_type_id
                 });
             }
         }
     };
 
     const clearValues = () => {
-        setLinksValue({ title: '', description: '', file: null, url: '' });
+        setLinksValue({ title: '', description: '', file: null, url: '', video_link: '' });
         setEditingLesson(null);
         setSelectId(null);
         setSelectType('');
@@ -188,7 +230,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
         if (data?.success) {
             if (data.documents) {
                 // Присваиваю себе. Для отображения
-                setDocValue({ title: '', description: '', file: null, url: '' });
+                setDocValue({ title: '', description: '', file: null, url: '', video_link: '' });
                 setDocuments(data.documents);
                 setDocShow(false);
             } else {
@@ -211,7 +253,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
     const handleAddDoc = async () => {
         const token = getToken('access_token');
 
-        const data = await addLesson('doc', token, courseId ? Number(courseId) : null, lessonId ? Number(lessonId) : null, docValue);
+        const data = await addLesson('doc', token, courseId ? Number(courseId) : null, lessonId ? Number(lessonId) : null, docValue, 0);
         console.log(data);
 
         if (data.success) {
@@ -240,13 +282,13 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
 
         if (data?.success) {
             handleFetchDoc();
-            clearValues()
+            clearValues();
             setMessage({
                 state: true,
                 value: { severity: 'success', summary: 'Ийгиликтүү өзгөртүлдү!', detail: '' }
             });
         } else {
-            setDocValue({ title: '', description: '', file: null, url: '' });
+            setDocValue({ title: '', description: '', file: null, url: '', video_link: '' });
             setMessage({
                 state: true,
                 value: { severity: 'error', summary: 'Ошибка', detail: 'Ошибка при при изменении урока' }
@@ -284,7 +326,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
     const linkSection = () => {
         return (
             <div className="py-4 flex flex-col items-center gap-4">
-                    <div className="w-full flex flex-col justify-center gap-2">
+                <div className="w-full flex flex-col justify-center gap-2">
                     <InputText
                         id="usefulLink"
                         type="url"
@@ -293,7 +335,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                         onChange={(e) => {
                             setLinksValue((prev) => ({ ...prev, url: e.target.value }));
                             setValue('usefulLink', e.target.value, { shouldValidate: true });
-                        }}  
+                        }}
                     />
                     <b style={{ color: 'red', fontSize: '12px' }}>{errors.usefulLink?.message}</b>
 
@@ -350,7 +392,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
         if (data?.success) {
             if (data.links) {
                 // Присваиваю себе. Для отображения
-                setLinksValue({ title: '', description: '', file: null, url: '' });
+                setLinksValue({ title: '', description: '', file: null, url: '', video_link: '' });
                 setLinks(data.links);
                 setLinksShow(false);
             } else {
@@ -373,7 +415,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
     const handleAddLink = async () => {
         const token = getToken('access_token');
 
-        const data = await addLesson('url', token, courseId ? Number(courseId) : null, lessonId ? Number(lessonId) : null, linksValue);
+        const data = await addLesson('url', token, courseId ? Number(courseId) : null, lessonId ? Number(lessonId) : null, linksValue, 0);
         console.log(data);
 
         if (data.success) {
@@ -430,10 +472,197 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                 value: { severity: 'success', summary: 'Ийгиликтүү өзгөртүлдү!', detail: '' }
             });
         } else {
-            setLinksValue({ title: '', description: '', file: null, url: '' });
+            setLinksValue({ title: '', description: '', file: null, url: '', video_link: '' });
             setMessage({
                 state: true,
                 value: { severity: 'error', summary: 'Ошибка', detail: 'Ошибка при при изменении урока' }
+            });
+            if (data.response.status) {
+                showError(data.response.status);
+            }
+        }
+    };
+
+    // VIDEO SECTIONS
+    const toggleVideoType = (e: videoType) => {
+        console.log(e);
+
+        setSelectedCity(e);
+        setVideoValue({ title: '', description: '', file: null, url: '', video_link: '' });
+    };
+
+    const videoSection = () => {
+        return (
+            <div className="py-4 flex flex-col items-center gap-4">
+                <div className="w-full flex items-center">
+                    <Dropdown
+                        value={selectedCity}
+                        onChange={(e) => {
+                            toggleVideoType(e.value);
+                        }}
+                        options={videoSelect}
+                        optionLabel="name"
+                        placeholder=""
+                        className="w-full md:w-14rem"
+                    />
+                    <div className="w-full flex justify-center">
+                        {selectedCity?.status ? (
+                            <div className="flex flex-col items-center">
+                                <InputText
+                                    id="usefulLink"
+                                    type="url"
+                                    placeholder={'Шилтеме жүктөө'}
+                                    value={videoValue.video_link}
+                                    onChange={(e) => {
+                                        setVideoValue((prev) => ({ ...prev, video_link: e.target.value }));
+                                        setValue('usefulLink', e.target.value, { shouldValidate: true });
+                                    }}
+                                />
+                                <b style={{ color: 'red', fontSize: '12px' }}>{errors.usefulLink?.message}</b>
+                            </div>
+                        ) : (
+                            <FileUpload
+                                chooseLabel="Видео жүктөө"
+                                mode="basic"
+                                name="demo[]"
+                                customUpload
+                                uploadHandler={() => {}}
+                                accept="video/"
+                                onSelect={(e) =>
+                                    setVideoValue((prev) => ({
+                                        ...prev,
+                                        file: e.files[0]
+                                    }))
+                                }
+                            />
+                        )}
+                    </div>
+                </div>
+                <div className="w-full flex flex-col justify-center gap-2">
+                    <InputText
+                        id="title"
+                        type="text"
+                        placeholder={'Аталышы'}
+                        value={videoValue.title}
+                        onChange={(e) => {
+                            setVideoValue((prev) => ({ ...prev, title: e.target.value }));
+                            setValue('title', e.target.value, { shouldValidate: true });
+                        }}
+                    />
+                    <b style={{ color: 'red', fontSize: '12px' }}>{errors.title?.message}</b>
+
+                    <InputText placeholder="Мазмун" value={videoValue.description} onChange={(e) => setVideoValue((prev) => ({ ...prev, description: e.target.value }))} className="w-full" />
+                    <div className="flex justify-center">
+                        <Button label="Сактоо" disabled={!videoValue.title.length || !videoValue.video_link?.length || !!errors.title || !!errors.usefulLink} onClick={handleAddVideo} />
+                    </div>
+                </div>
+
+                <div className="flex flex-col items-center gap-4 py-4">
+                    <div className="flex flex-wrap justify-center">
+                        {videoShow ? (
+                            <NotFound titleMessage={'Сабак кошуу үчүн талааларды толтурунуз'} />
+                        ) : (
+                            video.map((item: lessonType) => (
+                                <div key={item?.id}>
+                                    <LessonCard
+                                        onSelected={(id: number, type: string) => selectedForEditing(id, type)}
+                                        onDelete={(id: number) => handleDeleteLink(id)}
+                                        cardValue={{ title: item.title, id: item.id, type: 'video' }}
+                                        cardBg={'#f1b1b31a'}
+                                        type={{ typeValue: 'Видео', icon: 'pi pi-video' }}
+                                        typeColor={'var(--mainColor)'}
+                                        lessonDate={'xx-xx-xx'}
+                                    />
+                                </div>
+                            ))
+                        )}
+                    </div>
+                </div>
+            </div>
+        );
+    };
+
+    const handleVideoType = async () => {
+        const token = getToken('access_token');
+        const data = await fetchVideoType(token);
+        console.log(data);
+
+        if (data) {
+            setVideoTypes(data);
+        }
+    };
+
+    // fetch video
+    const handleFetchVideo = async () => {
+        // skeleton = false
+        const token = getToken('access_token');
+        const data = await fetchLesson('video', token, courseId ? Number(courseId) : null, lessonId ? Number(lessonId) : null);
+        console.log(data);
+
+        if (data?.success) {
+            if (data.videos) {
+                setVideoValue({ title: '', description: '', file: null, url: '', video_link: '' });
+                setVideo(data.videos);
+                setVideoShow(false);
+            } else {
+                setVideoShow(true);
+            }
+        } else {
+            setVideoShow(true);
+            setMessage({
+                state: true,
+                value: { severity: 'error', summary: 'Ошибка', detail: 'Проблема с соединением. Повторите заново' }
+            });
+            if (data?.response?.status) {
+                showError(data.response.status);
+            }
+            // skeleton = false
+        }
+    };
+
+    // add vieo
+    const handleAddVideo = async () => {
+        const token = getToken('access_token');
+
+        const data = await addLesson('video', token, courseId ? Number(courseId) : null, lessonId ? Number(lessonId) : null, videoValue, selectedCity?.id);
+        console.log(data);
+
+        if (data.success) {
+            handleFetchVideo();
+            setMessage({
+                state: true,
+                value: { severity: 'success', summary: 'Ийгиликтүү Кошулдуу!', detail: '' }
+            });
+        } else {
+            setMessage({
+                state: true,
+                value: { severity: 'error', summary: 'Ошибка', detail: 'Ошибка при при добавлении' }
+            });
+            if (data.response.status) {
+                showError(data.response.status);
+            }
+        }
+    };
+
+        // update link
+    const handleUpdateVideo = async () => {
+        const token = getToken('access_token');
+
+        const data = await updateLesson('video', token, courseId ? Number(courseId) : null, lessonId ? Number(lessonId) : null, Number(selectId), editingLesson);
+        console.log(data);
+
+        if (data.success) {
+            handleFetchVideo();
+            clearValues();
+            setMessage({
+                state: true,
+                value: { severity: 'success', summary: 'Ийгиликтүү өзгөртүлдү!', detail: '' }
+            });
+        } else {
+            setVideoValue({ title: '', description: '', file: null, url: '', video_link: '' });
+            setMessage({
+                state: true,
+                value: { severity: 'error', summary: 'Ошибка', detail: 'Ошибка при изменении урока' }
             });
             if (data.response.status) {
                 showError(data.response.status);
@@ -446,6 +675,10 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
     useEffect(() => {
         if (mainType === 'doc') handleFetchDoc();
         if (mainType === 'link') handleFetchLink();
+        if (mainType === 'video') {
+            handleFetchVideo();
+            handleVideoType();
+        }
     }, []);
 
     useEffect(() => {
@@ -460,6 +693,24 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
         links.length < 1 ? setLinksShow(true) : setLinksShow(false);
         documents.length < 1 ? setDocShow(true) : setDocShow(false);
     }, [links, documents]);
+
+    useEffect(() => {
+        const forSelect = videoTypes.map((item) => {
+            return { name: item.title, status: item.is_link, id: item.id };
+        });
+        console.log(forSelect);
+
+        setVideoSelect(forSelect);
+        setSelectedCity(forSelect[0]);
+    }, [videoTypes]);
+
+    // useEffect(() => {
+    //     console.log(videoSelect);
+    // }, [videoSelect]);
+
+    // useEffect(() => {
+    //     console.log(selectedCity);
+    // }, [selectedCity]);
 
     return (
         <div>
@@ -491,7 +742,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                                 <b style={{ color: 'red', fontSize: '12px' }}>{errors.title?.message}</b>
                                 <InputText
                                     placeholder="Мазмун"
-                                    value={editingLesson?.description && editingLesson?.title && editingLesson?.title}
+                                    value={editingLesson?.description && editingLesson?.description}
                                     onChange={(e) => setEditingLesson((prev) => prev && { ...prev, description: e.target.value })}
                                     className="w-full"
                                 />
@@ -517,6 +768,53 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                                 <b style={{ color: 'red', fontSize: '12px' }}>{errors.title?.message}</b>
                                 <InputText placeholder="Мазмун" value={editingLesson?.description && editingLesson?.description} onChange={(e) => setEditingLesson((prev) => prev && { ...prev, description: e.target.value })} className="w-full" />
                             </>
+                        ) : selectType === 'video' ? (
+                            <>
+                                {editingLesson?.video_type_id ? (
+                                    <div className="flex flex-col items-center">
+                                        <InputText
+                                            type="url"
+                                            value={editingLesson?.video_link && editingLesson?.video_link}
+                                            onChange={(e) => {
+                                                setEditingLesson((prev) => prev && { ...prev, video_link: e.target.value });
+                                                setValue('usefulLink', e.target.value, { shouldValidate: true });
+                                            }}
+                                        />
+                                        <b style={{ color: 'red', fontSize: '12px' }}>{errors.usefulLink?.message}</b>
+                                    </div>
+                                ) : (
+                                    <>
+                                        <FileUpload
+                                            chooseLabel="Видео жүктөө"
+                                            mode="basic"
+                                            name="demo[]"
+                                            customUpload
+                                            uploadHandler={() => {}}
+                                            accept="video/"
+                                            onSelect={(e) =>
+                                                setEditingLesson(
+                                                    (prev) =>
+                                                        prev && {
+                                                            ...prev,
+                                                            file: e.files[0]
+                                                        }
+                                                )
+                                            }
+                                        />
+                                        <span>{String(editingLesson?.video_link)}</span>
+                                    </>
+                                )}
+                                <InputText
+                                    type="text"
+                                    value={editingLesson?.title && editingLesson?.title}
+                                    onChange={(e) => {
+                                        setEditingLesson((prev) => prev && ({ ...prev, title: e.target.value }));
+                                        setValue('title', e.target.value, { shouldValidate: true });
+                                    }}
+                                />
+                                <b style={{ color: 'red', fontSize: '12px' }}>{errors.title?.message}</b>
+                                <InputText placeholder="Мазмун" value={editingLesson?.description && editingLesson?.description} onChange={(e) => setEditingLesson((prev) => prev && ({ ...prev, description: e.target.value }))} className="w-full" />
+                            </>
                         ) : (
                             ''
                         )}
@@ -526,6 +824,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
 
             {mainType === 'doc' && docSection()}
             {mainType === 'link' && linkSection()}
+            {mainType === 'video' && videoSection()}
         </div>
     );
 }

@@ -66,7 +66,7 @@ export default function Lesson() {
     const handleAddLesson = async () => {
         const token = getToken('access_token');
 
-        const data = await addLesson('text', token, courseId ? Number(courseId) : null, lessonId ? Number(lessonId) : null, String(sentValues));
+        const data = await addLesson('text', token, courseId ? Number(courseId) : null, lessonId ? Number(lessonId) : null, String(sentValues), null);
         if (data?.success) {
             handleFetchLesson();
             setMessage({
@@ -258,13 +258,14 @@ export default function Lesson() {
                     leftIcon={'pi pi-video mr-1'}
                     className="p-tabview p-tabview-nav p-tabview-selected p-tabview-panels p-tabview-panel"
                 >
-                    {contentShow && (
-                        <div className="flex flex-col items-center gap-4 py-4">
-                            <div className="flex justify-center">
-                                {/* <LessonCard cardValue={'vremenno'} cardBg={'#f1b1b31a'} type={{ typeValue: 'Видео', icon: 'pi pi-video' }} typeColor={'var(--mainColor)'} lessonDate={'xx-xx-xx'} /> */}
-                            </div>
-                        </div>
-                    )}
+                    {contentShow && <LessonTyping mainType="video" courseId={courseId} lessonId={lessonId} />}
+                    {/* && (
+                       <div className="flex flex-col items-center gap-4 py-4">
+                           <div className="flex justify-center">
+                               <LessonCard cardValue={'vremenno'} cardBg={'#f1b1b31a'} type={{ typeValue: 'Видео', icon: 'pi pi-video' }} typeColor={'var(--mainColor)'} lessonDate={'xx-xx-xx'} />
+                           </div>
+                       </div>
+                   ) */}
                 </TabPanel>
             </TabView>
         </div>

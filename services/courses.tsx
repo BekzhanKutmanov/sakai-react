@@ -184,10 +184,11 @@ export const addLesson = async (
     token: string | null, 
     courseId: number | null, 
     lessonId: number | null, 
-    value: lessonStateType | string) => {
+    value: lessonStateType | string,
+    videoType: number | null) => {
     
     let formData = new FormData();
-    console.log(value, type, courseId, lessonId);
+    console.log(value, type, courseId, lessonId, videoType);
     let headers: Record<string, string> = token ? { Authorization: `Bearer ${token}` } : {};
     let url = '';
     let body: lessonStateType | string | FormData = value;    
@@ -212,7 +213,14 @@ export const addLesson = async (
         formData.append('title', String(value.title)); 
         formData.append('description', String(value?.description)); 
         body = formData;
-    } 
+    } else if(type === 'video' && typeof value === 'object' && value !== null){
+        url = `v1/teacher/video/store?lesson_id=${lessonId}&title=${value.title}&description=${value.description}&video_link=${value.video_link}&video_type_id=${videoType}&cover`;
+        formData.append('lesson_id', String(lessonId));
+        formData.append('video_link', String(value?.video_link)); 
+        formData.append('title', String(value?.title)); 
+        formData.append('description', String(value?.description)); 
+        body = formData;
+    }
 
     try {
         const res = await axiosInstance.post(url, body, {
@@ -238,6 +246,8 @@ export const fetchLesson = async (type: string, token: string | null, courseId: 
         url = `/v1/teacher/document?lesson_id=${lessonId}`
     } else if (type === 'url') {
         url = `/v1/teacher/usefullinks?lesson_id=${lessonId}`
+    } else if (type === 'video') {
+        url = `/v1/teacher/video?lesson_id=${lessonId}`
     } 
 
     try {
@@ -309,6 +319,14 @@ export const updateLesson = async (type: string, token: string | null, course_id
         formData.append('title', String(value.title)); 
         formData.append('description', String(value.description)); 
         body = formData;
+    } else if(type === 'video'){
+        url = `/v1/teacher/ ? /update?lesson_id=${lesson_id}&title=${value.title}&description=${value.description}&url=${value.url}&link_id=${contentId}`;
+        formData.append('lesson_id', String(lesson_id));
+        formData.append('video_link', value.url);
+        formData.append('video_type_id', String(contentId));
+        formData.append('title', String(value.title)); 
+        formData.append('description', String(value.description)); 
+        body = formData;
     }
 
     try {
@@ -324,3 +342,21 @@ export const updateLesson = async (type: string, token: string | null, course_id
         return err;
     }
 };
+
+export const fetchVideoType = async (token: string | null) => {
+    try {
+        const res = await axiosInstance.get('/v1/open/video/types',
+            {
+                headers: token ? { Authorization: `Bearer ${token}` } : {}
+            }
+        );
+
+        console.log('Типы видео: ', res.data);
+
+        return res.data;
+    } catch (err) {
+        console.log('Ошибка при получении типов видео', err);
+        return err;
+    }
+};
+

@@ -16,7 +16,7 @@ const SessionManager = () => {
     }, [user]);
 
     useEffect(() => {
-        console.log('Роутинг!');
+        console.log("Роутинг");
 
         const init = async () => {
             console.log('проверяем токен...');
@@ -41,7 +41,7 @@ const SessionManager = () => {
                         }
                         setUser(res.user);
                     } else {
-                        // logout({ setUser, setGlobalLoading });
+                        logout({ setUser, setGlobalLoading });
                         setMessage({
                             state: true,
                             value: { severity: 'error', summary: 'Ошибка', detail: 'Ошибка при авторизации' }
@@ -49,7 +49,7 @@ const SessionManager = () => {
                         console.log('Ошибка при получении пользователя');
                     }
                 } catch (error) {
-                    // logout({ setUser, setGlobalLoading });
+                    logout({ setUser, setGlobalLoading });
                     setMessage({
                         state: true,
                         value: { severity: 'error', summary: 'Ошибка', detail: 'Ошибка при авторизации' }
@@ -58,16 +58,16 @@ const SessionManager = () => {
                 }
             } else {
                 console.log('токена нет');
-                // setGlobalLoading(false);
-                // const userVisit = localStorage.getItem('userVisit');
-                // if (userVisit) {
-                //     setMessage({
-                //         state: true,
-                //         value: { severity: 'error', summary: 'Сессия завершилось', detail: 'Войдите заново' }
-                //     }); // messege - Время сесси завершилось
-                // }
-                // logout({ setUser, setGlobalLoading });
-                // console.log('Токен отсутствует - завершаем сессию');
+                setGlobalLoading(false);
+                const userVisit = localStorage.getItem('userVisit');
+                if (userVisit) {
+                    setMessage({
+                        state: true,
+                        value: { severity: 'error', summary: 'Сессия завершилось', detail: 'Войдите заново' }
+                    }); // messege - Время сесси завершилось
+                }
+                logout({ setUser, setGlobalLoading });
+                console.log('Токен отсутствует - завершаем сессию');
             }
         };
         init();
