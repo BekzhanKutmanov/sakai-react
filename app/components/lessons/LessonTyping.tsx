@@ -157,61 +157,6 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
 
     // DOC SECTION
 
-    const shablon = [
-    {    
-        id: 1,
-        course_id: 1,
-        created_at: 'the title',
-        description: 'the title',
-        lesson_id: 1,
-        status: true,
-        title: 'the title',
-        updated_at: 'the title',
-        user_id: 1,
-        document: 'the title',
-        url: 'the title',
-    },
-    {    
-        id: 1,
-        course_id: 1,
-        created_at: 'the title',
-        description: 'the title',
-        lesson_id: 1,
-        status: true,
-        title: 'the title',
-        updated_at: 'the title',
-        user_id: 1,
-        document: 'the title',
-        url: 'the title',
-    },
-    {    
-        id: 1,
-        course_id: 1,
-        created_at: 'the title',
-        description: 'the title',
-        lesson_id: 1,
-        status: true,
-        title: 'the title',
-        updated_at: 'the title',
-        user_id: 1,
-        document: 'the title',
-        url: 'the title',
-    },
-    {    
-        id: 1,
-        course_id: 1,
-        created_at: 'the title',
-        description: 'the title',
-        lesson_id: 1,
-        status: true,
-        title: 'the title',
-        updated_at: 'the title',
-        user_id: 1,
-        document: 'the title',
-        url: 'the title',
-    },
-    ]
-
     const docSection = () => {
         return (
             <div className="py-4 flex flex-col items-center gap-4">
@@ -252,10 +197,10 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
 
                 <div className="flex flex-col items-center gap-4 py-4">
                     <div className="flex flex-wrap justify-center gap-4">
-                        {!docShow ? (
+                        {docShow ? (
                             <NotFound titleMessage={'Сабак кошуу үчүн талааларды толтурунуз'} />
                         ) : (
-                            shablon.map((item: lessonType) => (
+                            documents.map((item: lessonType) => (
                                 <>
                                     <LessonCard
                                         onSelected={(id: number, type: string) => selectedForEditing(id, type)}
@@ -413,12 +358,12 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                 </div>
 
                 <div className="flex flex-col items-center gap-4 py-4">
-                    <div className="flex flex-wrap justify-center">
+                    <div className="flex flex-wrap justify-center gap-4">
                         {linksShow ? (
                             <NotFound titleMessage={'Сабак кошуу үчүн талааларды толтурунуз'} />
                         ) : (
                             links.map((item: lessonType) => (
-                                <div key={item?.id}>
+                                <>
                                     <LessonCard
                                         onSelected={(id: number, type: string) => selectedForEditing(id, type)}
                                         onDelete={(id: number) => handleDeleteLink(id)}
@@ -428,7 +373,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                                         typeColor={'var(--mainColor)'}
                                         lessonDate={'xx-xx-xx'}
                                     />
-                                </div>
+                                </>
                             ))
                         )}
                     </div>
@@ -611,22 +556,22 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                 </div>
 
                 <div className="flex flex-col items-center gap-4 py-4">
-                    <div className="flex flex-wrap justify-center">
+                    <div className="flex flex-wrap justify-center gap-4">
                         {videoShow ? (
                             <NotFound titleMessage={'Сабак кошуу үчүн талааларды толтурунуз'} />
                         ) : (
                             video.map((item: lessonType) => (
-                                <div key={item?.id}>
+                                <>
                                     <LessonCard
                                         onSelected={(id: number, type: string) => selectedForEditing(id, type)}
-                                        onDelete={(id: number) => handleDeleteLink(id)}
+                                        onDelete={(id: number) => handleDeleteVideo(id)}
                                         cardValue={{ title: item.title, id: item.id, type: 'video' }}
                                         cardBg={'#f1b1b31a'}
                                         type={{ typeValue: 'Видео', icon: 'pi pi-video' }}
                                         typeColor={'var(--mainColor)'}
                                         lessonDate={'xx-xx-xx'}
                                     />
-                                </div>
+                                </>
                             ))
                         )}
                     </div>
@@ -696,7 +641,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
         }
     };
 
-        // update link
+    // update video
     const handleUpdateVideo = async () => {
         const token = getToken('access_token');
 
@@ -715,6 +660,29 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
             setMessage({
                 state: true,
                 value: { severity: 'error', summary: 'Ошибка', detail: 'Ошибка при изменении урока' }
+            });
+            if (data.response.status) {
+                showError(data.response.status);
+            }
+        }
+    };
+
+    // delete video
+    const handleDeleteVideo = async (id: number) => {
+        
+        const token = getToken('access_token');
+        const data = await deleteLesson('video', token, Number(courseId), Number(lessonId), id);
+
+        if (data.success) {
+            handleFetchVideo();
+            setMessage({
+                state: true,
+                value: { severity: 'success', summary: 'Ийгиликтүү өчүрүлдү!', detail: '' }
+            });
+        } else {
+            setMessage({
+                state: true,
+                value: { severity: 'error', summary: 'Ошибка', detail: 'Ошибка при при удалении' }
             });
             if (data.response.status) {
                 showError(data.response.status);

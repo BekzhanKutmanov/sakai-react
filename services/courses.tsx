@@ -270,7 +270,7 @@ export const fetchLesson = async (type: string, token: string | null, courseId: 
 
 export const deleteLesson = async (type:string, token: string | null, courseId: number | null, lesson_id: number | null, content_id: number | null) => {
     let url = '';
-    // console.log('content id: ', content_id);
+    console.log('content id: ', content_id);
     
     if (type === 'text') {
         url = `/v1/teacher/textcontent/delete?course_id=${courseId}&lesson_id=${lesson_id}&content_id=${content_id}`;
@@ -278,6 +278,9 @@ export const deleteLesson = async (type:string, token: string | null, courseId: 
         url = `/v1/teacher/document/delete?lesson_id=${lesson_id}&document_id=${content_id}`;
     } else if(type === 'url'){
         url = `v1/teacher/usefullinks/delete?lesson_id=${lesson_id}&link_id=${content_id}`;
+    } else if(type === 'video'){
+        url = `/v1/teacher/video/delete?video_id=${content_id}`;
+        // v1/teacher/video/delete?video_id=1
     } 
     
     try {
