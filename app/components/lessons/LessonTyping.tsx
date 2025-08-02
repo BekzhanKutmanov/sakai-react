@@ -157,6 +157,61 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
 
     // DOC SECTION
 
+    const shablon = [
+    {    
+        id: 1,
+        course_id: 1,
+        created_at: 'the title',
+        description: 'the title',
+        lesson_id: 1,
+        status: true,
+        title: 'the title',
+        updated_at: 'the title',
+        user_id: 1,
+        document: 'the title',
+        url: 'the title',
+    },
+    {    
+        id: 1,
+        course_id: 1,
+        created_at: 'the title',
+        description: 'the title',
+        lesson_id: 1,
+        status: true,
+        title: 'the title',
+        updated_at: 'the title',
+        user_id: 1,
+        document: 'the title',
+        url: 'the title',
+    },
+    {    
+        id: 1,
+        course_id: 1,
+        created_at: 'the title',
+        description: 'the title',
+        lesson_id: 1,
+        status: true,
+        title: 'the title',
+        updated_at: 'the title',
+        user_id: 1,
+        document: 'the title',
+        url: 'the title',
+    },
+    {    
+        id: 1,
+        course_id: 1,
+        created_at: 'the title',
+        description: 'the title',
+        lesson_id: 1,
+        status: true,
+        title: 'the title',
+        updated_at: 'the title',
+        user_id: 1,
+        document: 'the title',
+        url: 'the title',
+    },
+    ]
+
     const docSection = () => {
         return (
             <div className="py-4 flex flex-col items-center gap-4">
@@ -196,12 +251,12 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                 </div>
 
                 <div className="flex flex-col items-center gap-4 py-4">
-                    <div className="flex flex-wrap justify-center">
-                        {docShow ? (
+                    <div className="flex flex-wrap justify-center gap-4">
+                        {!docShow ? (
                             <NotFound titleMessage={'Сабак кошуу үчүн талааларды толтурунуз'} />
                         ) : (
-                            documents.map((item: lessonType) => (
-                                <div key={item?.id}>
+                            shablon.map((item: lessonType) => (
+                                <>
                                     <LessonCard
                                         onSelected={(id: number, type: string) => selectedForEditing(id, type)}
                                         onDelete={(id: number) => handleDeleteDoc(id)}
@@ -211,7 +266,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                                         typeColor={'var(--mainColor)'}
                                         lessonDate={'xx-xx-xx'}
                                     />
-                                </div>
+                                </>
                             ))
                         )}
                     </div>
@@ -382,7 +437,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
         );
     };
 
-    // fetch document
+    // fetch link
     const handleFetchLink = async () => {
         // skeleton = false
         const token = getToken('access_token');
@@ -584,7 +639,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
         const token = getToken('access_token');
         const data = await fetchVideoType(token);
 
-        if (data) {
+        if (data) { // proverit
             setVideoTypes(data);
         }
     };

@@ -104,7 +104,7 @@ const LoginPage = () => {
                             <Controller
                                 name="password"
                                 control={control}
-                                defaultValue=""
+                                defaultValue="010270Ja"
                                 render={({ field }) => <Password {...field} toggleMask className="w-[100%]" inputClassName="w-[90%] p-2 sm:p-3" inputStyle={{ marginRight: '30px' }} feedback={false} />}
                             />
                             {errors.password && <b className="text-red-500 text-[12px] ml-2">{errors.password.message}</b>}

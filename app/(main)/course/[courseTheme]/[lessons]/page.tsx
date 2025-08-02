@@ -240,7 +240,7 @@ export default function Lesson() {
                 {/* USEFUL LINKS */}
                 <TabPanel
                     pt={{
-                        headerAction: { className: 'font-italic tab-custom-text-3' }
+                        headerAction: { className: 'font-italic tab-custom-text-3 text-center' }
                     }}
                     header="Пайдалуу шилтемелер"
                     leftIcon={'pi pi-link mr-1'}

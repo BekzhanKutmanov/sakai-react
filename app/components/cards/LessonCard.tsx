@@ -16,7 +16,7 @@ export default function LessonCard({ onSelected, onDelete, cardValue, cardBg, ty
     {
         
     return (
-        <div className={`w-[180px] h-[110px] flex flex-col shadow-xl rounded-sm p-2`} style={{ backgroundColor: cardBg }}>
+        <div className={`w-[180px] sm:w-[70%] md:w-[180px] h-[110px] flex flex-col shadow-xl rounded-sm p-2`} style={{ backgroundColor: cardBg }}>
             <div className="flex items-center justify-between">
                 <div className={`flex gap-1 items-center font-bold`} style={{ color: typeColor }}>
                     <i className={`${type.icon}`}></i>
