@@ -6,6 +6,7 @@
   --mainColor: #08A9E6;
   --redColor: #EC272F;
   --redBgColor: #EC272F1A;
+  --greenColor: rgb(46, 192, 46);
   --titleColor: #21225F;
   --bodyColor: #555555;
   --whiteColor: #ffffff;
@@ -350,7 +351,14 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .p-tabview-panels{
-  /* height: ; */
+  padding: 10px;
+}
+
+@media screen and (max-width: 640px) {
+  .p-tabview-panels{
+    padding: 5px;
+    padding-left: 5px;
+  }
 }
 
 .tab-custom-text{
