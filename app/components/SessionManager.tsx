@@ -20,6 +20,10 @@ const SessionManager = () => {
 
     useEffect(() => {
         console.log('Роутинг');
+        setGlobalLoading(true);
+        setTimeout(() => {
+            setGlobalLoading(false);
+        }, 2000);
 
         const init = async () => {
             console.log('проверяем токен...');
@@ -63,22 +67,26 @@ const SessionManager = () => {
         init();
     }, []);
 
-    useEffect(()=> {
+    useEffect(() => {
         setGlobalLoading(true);
         console.log('Переход в', pathname);
         const token = getToken('access_token');
 
-        if(!token && pathname !== '/' && pathname !== '/auth/login'){
+        if (!token && pathname !== '/' && pathname !== '/auth/login') {
             console.log('Перенеправляю в login');
-            
+
             // logout({ setUser, setGlobalLoading });
             // window.location.href = '/auth/login';
-            setGlobalLoading(false);
-            
+            setTimeout(() => {
+                setGlobalLoading(false);
+            }, 1000);
+
             return;
-        } 
-        setGlobalLoading(false);
-    },[pathname]);
+        }
+        setTimeout(() => {
+            setGlobalLoading(false);
+        }, 1000);
+    }, [pathname]);
 
     // useEffect(() => {
     //     const checkToken = () => {
