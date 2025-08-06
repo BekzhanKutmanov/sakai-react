@@ -491,7 +491,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
     const videoSection = () => {
         return (
             <div className="py-4 flex flex-col items-center gap-4">
-                <div className="w-full flex items-center">
+                <div className="w-full flex items-center justify-center flex-col sm:flex-row gap-2">
                     <Dropdown
                         value={selectedCity}
                         onChange={(e) => {
@@ -500,7 +500,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                         options={videoSelect}
                         optionLabel="name"
                         placeholder=""
-                        className="w-full md:w-14rem"
+                        className="w-[213px] sm:w-full md:w-14rem"
                     />
                     <div className="w-full flex justify-center">
                         {selectedCity?.status ? (
