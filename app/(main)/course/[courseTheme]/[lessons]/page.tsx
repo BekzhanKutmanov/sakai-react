@@ -38,8 +38,7 @@ export default function Lesson() {
     const handleFetchLesson = async () => {
         // skeleton = false
 
-        const token = getToken('access_token');
-        const data = await fetchLesson('text', token, courseId ? Number(courseId) : null, lessonId ? Number(lessonId) : null);
+        const data = await fetchLesson('text', courseId ? Number(courseId) : null, lessonId ? Number(lessonId) : null);
         console.log(data);
 
         if (data?.success) {
@@ -86,9 +85,7 @@ export default function Lesson() {
     };
 
     const handleDeleteLesson = async () => {
-        const token = getToken('access_token');
-
-        const data = await deleteLesson('text', token, Number(courseId), Number(lessonId), textValue.id);
+        const data = await deleteLesson('text', Number(courseId), Number(lessonId), textValue.id);
         if (data.success) {
             handleFetchLesson();
             setMessage({
@@ -111,7 +108,7 @@ export default function Lesson() {
         setEditMode(true);
 
         const token = getToken('access_token');
-        const data = await fetchLesson('text', token, courseId ? Number(courseId) : null, lessonId ? Number(lessonId) : null);
+        const data = await fetchLesson('text', courseId ? Number(courseId) : null, lessonId ? Number(lessonId) : null);
         if (data.success) {
             setEditingLesson(data.content.content);
         }

@@ -46,7 +46,7 @@ const LoginPage = () => {
 
             const token = user.token.access_token;
             if (token) {
-                const res = await getUser(token);
+                const res = await getUser();
                 try {
                     if (res?.success) {
                         console.log(res);

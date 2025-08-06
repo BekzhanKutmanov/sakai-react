@@ -83,7 +83,7 @@ export default function StreamList({ callIndex, courseValue, isMobile }: { callI
 
     const handleFetchStreams = async (page = 1) => {
         const token = getToken('access_token');
-        const data = await fetchStreams(token);
+        const data = await fetchStreams();
         console.log(data);
 
         if (data?.courses) {
@@ -108,7 +108,7 @@ export default function StreamList({ callIndex, courseValue, isMobile }: { callI
 
     const handleConnect = async () => {
         const token = getToken('access_token');
-        const data = await connectStreams(token, courseValue);
+        const data = await connectStreams(courseValue);
         console.log(data);
 
         if (data?.success) {

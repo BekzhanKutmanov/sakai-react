@@ -4,13 +4,11 @@ import axiosInstance from '@/utils/axiosInstance';
 
 let url = '';
 
-export const fetchCourses = async (token: string | null, page: number | null, limit: number | null) => {
+export const fetchCourses = async (page: number | null, limit: number | null) => {
     try {
         console.log('Номер запрашиваемой страницы ', page);
 
-        const res = await axiosInstance.get(`/v1/teacher/courses?page=${Number(page)}&limit=${'5'}`, {
-            headers: token ? { Authorization: `Bearer ${token}` } : {}
-        });
+        const res = await axiosInstance.get(`/v1/teacher/courses?page=${Number(page)}&limit=${''}`);
         const data = await res.data;
 
         return data;
@@ -19,7 +17,7 @@ export const fetchCourses = async (token: string | null, page: number | null, li
     }
 };
 
-export const addCourse = async (token: string | null, value: CourseCreateType) => {
+export const addCourse = async (value: CourseCreateType) => {
     const formData = new FormData();
     formData.append('title', value.title);
     formData.append('description', value.description);
@@ -31,7 +29,6 @@ export const addCourse = async (token: string | null, value: CourseCreateType) =
     try {
         const res = await axiosInstance.post(`/v1/teacher/courses/store`, formData, {
             headers: {
-                ...(token ? { Authorization: `Bearer ${token}` } : {}),
                 'Content-Type': 'multipart/form-data'
             }
         });
@@ -45,15 +42,12 @@ export const addCourse = async (token: string | null, value: CourseCreateType) =
     }
 };
 
-export const deleteCourse = async (token: string | null, id: number) => {
+export const deleteCourse = async (id: number) => {
     url = process.env.NEXT_PUBLIC_BASE_URL + `/v1/teacher/courses/delete?course_id=${id}`;
 
     try {
         const res = await axiosInstance.delete(`/v1/teacher/courses/delete?course_id=${id}`, {
-            headers: {
-                ...(token ? { Authorization: `Bearer ${token}` } : {}),
-                'Content-Type': 'multipart/form-data'
-            }
+            headers: {'Content-Type': 'multipart/form-data'}
         });
 
         console.log(res.data);
@@ -64,7 +58,7 @@ export const deleteCourse = async (token: string | null, id: number) => {
     }
 };
 
-export const updateCourse = async (token: string | null, id: number | null, value: CourseCreateType) => {
+export const updateCourse = async (id: number | null, value: CourseCreateType) => {
     console.log(value);
 
     url = process.env.NEXT_PUBLIC_BASE_URL + `/v1/teacher/courses/update?course_id=${id}`;
@@ -80,7 +74,6 @@ export const updateCourse = async (token: string | null, id: number | null, valu
     try {
         const res = await axiosInstance.post(`/v1/teacher/courses/update?course_id=${id}`, formData, {
             headers: {
-                ...(token ? { Authorization: `Bearer ${token}` } : {}),
                 'Content-Type': 'multipart/form-data'
             }
         });
@@ -95,12 +88,9 @@ export const updateCourse = async (token: string | null, id: number | null, valu
 
 // Themes
 
-export const fetchCourseInfo = async (token: string | null, id: number | null) => {
+export const fetchCourseInfo = async (id: number | null) => {
     try {
-        const res = await axiosInstance.get(`/v1/teacher/courses/show?course_id=${id}`, {
-            headers: token ? { Authorization: `Bearer ${token}` } : {}
-        });
-
+        const res = await axiosInstance.get(`/v1/teacher/courses/show?course_id=${id}`);
         const data = await res.data;
         return data;
     } catch (err) {
@@ -109,14 +99,13 @@ export const fetchCourseInfo = async (token: string | null, id: number | null) =
     }
 };
 
-export const addThemes = async (token: string | null, id: number, value: string) => {
+export const addThemes = async (id: number, value: string) => {
     const formData = new FormData();
     formData.append('title', value);
 
     try {
         const res = await axiosInstance.post(`/v1/teacher/lessons/store?course_id=${id}&title=${value}`, formData, {
             headers: {
-                ...(token ? { Authorization: `Bearer ${token}` } : {}),
                 'Content-Type': 'multipart/form-data'
             }
         });
@@ -129,11 +118,9 @@ export const addThemes = async (token: string | null, id: number, value: string)
     }
 };
 
-export const fetchThemes = async (token: string | null, id: number) => {
+export const fetchThemes = async (id: number) => {
     try {
-        const res = await axiosInstance(`/v1/teacher/lessons?course_id=${id}`, {
-            headers: token ? { Authorization: `Bearer ${token}` } : {}
-        });
+        const res = await axiosInstance(`/v1/teacher/lessons?course_id=${id}`);
 
         const data = await res.data;
         return data;
@@ -143,14 +130,13 @@ export const fetchThemes = async (token: string | null, id: number) => {
     }
 };
 
-export const updateTheme = async (token: string | null, course_id: number | null, theme_id: number | null, value: CourseCreateType) => {
+export const updateTheme = async (course_id: number | null, theme_id: number | null, value: CourseCreateType) => {
     const formData = new FormData();
     formData.append('title', value.title);
 
     try {
         const res = await axiosInstance.post(`/v1/teacher/lessons/update?course_id=${course_id}&title=${value}&lesson_id=${theme_id}`, formData, {
             headers: {
-                ...(token ? { Authorization: `Bearer ${token}` } : {}),
                 'Content-Type': 'multipart/form-data'
             }
         });
@@ -163,11 +149,9 @@ export const updateTheme = async (token: string | null, course_id: number | null
     }
 };
 
-export const deleteTheme = async (token: string | null, id: number) => {
+export const deleteTheme = async (id: number) => {
     try {
-        const res = await axiosInstance.delete(`/v1/teacher/lessons/delete?lesson_id=${id}`, {
-            headers: token ? { Authorization: `Bearer ${token}` } : {}
-        });
+        const res = await axiosInstance.delete(`/v1/teacher/lessons/delete?lesson_id=${id}`);
 
         const data = await res.data;
         return data;
@@ -235,7 +219,7 @@ export const addLesson = async (
     }
 };
 
-export const fetchLesson = async (type: string, token: string | null, courseId: number | null, lessonId: number | null) => {
+export const fetchLesson = async (type: string, courseId: number | null, lessonId: number | null) => {
     let url = '';
 
     // console.log(type, courseId, lessonId);
@@ -251,16 +235,8 @@ export const fetchLesson = async (type: string, token: string | null, courseId: 
     } 
 
     try {
-        const res = await axiosInstance.get(
-            url,
-
-            {
-                headers: token ? { Authorization: `Bearer ${token}` } : {}
-            }
-        );
-
+        const res = await axiosInstance.get(url);
         console.log('Урок: ', res.data);
-
         return res.data;
     } catch (err) {
         console.log('Ошибка при получении урока', err);
@@ -268,7 +244,7 @@ export const fetchLesson = async (type: string, token: string | null, courseId: 
     }
 };
 
-export const deleteLesson = async (type:string, token: string | null, courseId: number | null, lesson_id: number | null, content_id: number | null) => {
+export const deleteLesson = async (type:string, courseId: number | null, lesson_id: number | null, content_id: number | null) => {
     let url = '';
     console.log('content id: ', content_id);
     
@@ -280,13 +256,10 @@ export const deleteLesson = async (type:string, token: string | null, courseId: 
         url = `v1/teacher/usefullinks/delete?lesson_id=${lesson_id}&link_id=${content_id}`;
     } else if(type === 'video'){
         url = `/v1/teacher/video/delete?video_id=${content_id}`;
-        // v1/teacher/video/delete?video_id=1
     } 
     
     try {
-        const res = await axiosInstance.delete(url, {
-            headers: token ? { Authorization: `Bearer ${token}` } : {}
-        });
+        const res = await axiosInstance.delete(url);
         
         const data = await res.data;
         return data;
@@ -324,7 +297,6 @@ export const updateLesson = async (type: string, token: string | null, course_id
         body = formData;
     } else if(type === 'video'){
         url = `/v1/teacher/video/update?lesson_id=${lesson_id}&title=${value.title}&description=${value.description}&video_link=${value.video_link}&video_type_id=${value.video_type_id}&video_id=${contentId}`;
-        // v1/teacher/video/update?lesson_id=39&title=number&description=qqqqqq&video_link=https://codeforces.com&video_type_id=1&video_id=1
         
         formData.append('lesson_id', String(lesson_id));
         formData.append('video_link', value.video_link);
@@ -337,7 +309,6 @@ export const updateLesson = async (type: string, token: string | null, course_id
 
     try {
         const res = await axiosInstance.post(url, body, {
-            // headers: token ? { Authorization: `Bearer ${token}` } : {}
             headers
         });
 
@@ -349,14 +320,9 @@ export const updateLesson = async (type: string, token: string | null, course_id
     }
 };
 
-export const fetchVideoType = async (token: string | null) => {
+export const fetchVideoType = async () => {
     try {
-        const res = await axiosInstance.get('/v1/open/video/types',
-            {
-                headers: token ? { Authorization: `Bearer ${token}` } : {}
-            }
-        );
-
+        const res = await axiosInstance.get('/v1/open/video/types');
         console.log('Типы видео: ', res.data);
 
         return res.data;

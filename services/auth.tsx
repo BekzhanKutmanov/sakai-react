@@ -1,3 +1,4 @@
+import axiosInstance from '@/utils/axiosInstance';
 import { LoginType } from "@/types/login";
 
 let url = '';
@@ -12,14 +13,8 @@ export const login = async (value:LoginType) => {
     url = process.env.NEXT_PUBLIC_BASE_URL + '/login?';
 
     try {
-        const res = await fetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(value)
-        });
-        const data = await res.json();
+        const res = await axiosInstance.post('/login?', value);
+        const data = res.data;
         return data;
     } catch (err) {
         console.log('Ошибка при авторизации', err);
@@ -27,21 +22,13 @@ export const login = async (value:LoginType) => {
     }
 };
 
-export const getUser = async (token:string) => {
+export const getUser = async () => {
     url = process.env.NEXT_PUBLIC_BASE_URL + '/v1/user';
-    
-    const headers: HeadersInit = token
-        ? {
-              Authorization: `Bearer ${token}`
-          }
-        : {};
 
     try {
-        const res = await fetch(url, {
-            headers
-        });
+        const res = await axiosInstance.get(url);
 
-        const data = await res.json();
+        const data = res.data;
         return data;
     } catch (err) {
         console.log('Ошибка при получении пользователя', err);

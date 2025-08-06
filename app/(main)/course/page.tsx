@@ -117,8 +117,7 @@ export default function Course() {
     };
 
     const handleFetchCourse = async (page = 1) => {
-        const token = getToken('access_token');
-        const data = await fetchCourses(token, page, 0);
+        const data = await fetchCourses(page, 0);
         if (data?.courses) {
             setHasCourses(false);
             setCourses(data.courses.data);
@@ -140,8 +139,7 @@ export default function Course() {
     };
 
     const handleAddCourse = async () => {
-        const token = getToken('access_token');
-        const data = await addCourse(token, courseValue);
+        const data = await addCourse(courseValue);
         if (data?.success) {
             toggleSkeleton();
             handleFetchCourse();
@@ -161,9 +159,8 @@ export default function Course() {
     };
 
     const handleDeleteCourse = async (id: number) => {
-        const token = getToken('access_token');
 
-        const data = await deleteCourse(token, id);
+        const data = await deleteCourse(id);
         if (data?.success) {
             toggleSkeleton();
             handleFetchCourse();
@@ -190,9 +187,8 @@ export default function Course() {
     };
 
     const handleUpdateCourse = async () => {
-        const token = getToken('access_token');
 
-        const data = await updateCourse(token, selectedCourse, editingLesson);
+        const data = await updateCourse(selectedCourse, editingLesson);
         if (data?.success) {
             toggleSkeleton();
             handleFetchCourse();
@@ -292,8 +288,7 @@ export default function Course() {
 
     useEffect(() => {
         const handleShow = async () => {
-            const token = getToken('access_token');
-            const data = await fetchCourseInfo(token, selectedCourse);
+            const data = await fetchCourseInfo(selectedCourse);
 
             if (data?.success) {
                 setEditingLesson({

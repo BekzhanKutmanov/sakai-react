@@ -117,7 +117,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
         console.log(type, selected);
 
         const token = getToken('access_token');
-        const data = await fetchLesson(type, token, courseId ? Number(courseId) : null, lessonId ? Number(lessonId) : null);
+        const data = await fetchLesson(type, courseId ? Number(courseId) : null, lessonId ? Number(lessonId) : null);
         console.log(data);
 
         const lesson: editingType =
@@ -224,7 +224,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
     const handleFetchDoc = async () => {
         // skeleton = false
         const token = getToken('access_token');
-        const data = await fetchLesson('doc', token, courseId ? Number(courseId) : null, lessonId ? Number(lessonId) : null);
+        const data = await fetchLesson('doc', courseId ? Number(courseId) : null, lessonId ? Number(lessonId) : null);
         console.log(data);
 
         if (data?.success) {
@@ -302,7 +302,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
     // delete document
     const handleDeleteDoc = async (id: number) => {
         const token = getToken('access_token');
-        const data = await deleteLesson('doc', token, Number(courseId), Number(lessonId), id);
+        const data = await deleteLesson('doc', Number(courseId), Number(lessonId), id);
 
         if (data.success) {
             handleFetchDoc();
@@ -386,7 +386,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
     const handleFetchLink = async () => {
         // skeleton = false
         const token = getToken('access_token');
-        const data = await fetchLesson('url', token, courseId ? Number(courseId) : null, lessonId ? Number(lessonId) : null);
+        const data = await fetchLesson('url', courseId ? Number(courseId) : null, lessonId ? Number(lessonId) : null);
         console.log(data);
 
         if (data?.success) {
@@ -437,8 +437,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
 
     // delete link
     const handleDeleteLink = async (id: number) => {
-        const token = getToken('access_token');
-        const data = await deleteLesson('url', token, Number(courseId), Number(lessonId), id);
+        const data = await deleteLesson('url',  Number(courseId), Number(lessonId), id);
 
         if (data.success) {
             handleFetchLink();
@@ -581,8 +580,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
     };
 
     const handleVideoType = async () => {
-        const token = getToken('access_token');
-        const data = await fetchVideoType(token);
+        const data = await fetchVideoType();
 
         if (data) { // proverit
             setVideoTypes(data);
@@ -593,7 +591,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
     const handleFetchVideo = async () => {
         // skeleton = false
         const token = getToken('access_token');
-        const data = await fetchLesson('video', token, courseId ? Number(courseId) : null, lessonId ? Number(lessonId) : null);
+        const data = await fetchLesson('video', courseId ? Number(courseId) : null, lessonId ? Number(lessonId) : null);
         // console.log(data);
 
         if (data?.success) {
@@ -670,8 +668,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
     // delete video
     const handleDeleteVideo = async (id: number) => {
         
-        const token = getToken('access_token');
-        const data = await deleteLesson('video', token, Number(courseId), Number(lessonId), id);
+        const data = await deleteLesson('video',Number(courseId), Number(lessonId), id);
 
         if (data.success) {
             handleFetchVideo();

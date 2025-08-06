@@ -36,8 +36,7 @@ export default function CourseTheme() {
 
     const handleFetchThemes = async () => {
 
-        const token = getToken('access_token');
-        const data = await fetchThemes(token, Number(courseTheme));
+        const data = await fetchThemes(Number(courseTheme));
         console.log(data);
 
         if (data?.lessons) {
@@ -59,8 +58,7 @@ export default function CourseTheme() {
     };
 
     const handleFetchInfo = async () => {
-        const token = getToken('access_token');
-        const data = await fetchCourseInfo(token, Number(courseTheme));
+        const data = await fetchCourseInfo(Number(courseTheme));
 
         if (data.success) {
             setThemeInfo(data.course);
@@ -73,8 +71,7 @@ export default function CourseTheme() {
             return null;
         }
 
-        const token = getToken('access_token');
-        const data = await addThemes(token, Number(courseTheme), themeValue.title);
+        const data = await addThemes(Number(courseTheme), themeValue.title);
         console.log(data);
 
         if (data.success) {
@@ -96,9 +93,8 @@ export default function CourseTheme() {
     };
 
     const handleDeleteCourse = async (id: number) => {
-        const token = getToken('access_token');
 
-        const data = await deleteTheme(token, id);
+        const data = await deleteTheme(id);
         if (data.success) {
             toggleSkeleton();
             handleFetchThemes();
@@ -118,9 +114,7 @@ export default function CourseTheme() {
     };
 
     const handleUpdateTheme = async () => {
-        const token = getToken('access_token');
-
-        const data = await updateTheme(token, Number(courseTheme), selectedCourse.id, themeValue);
+        const data = await updateTheme(Number(courseTheme), selectedCourse.id, themeValue);
         if (data.success) {
             toggleSkeleton();
             handleFetchThemes();
