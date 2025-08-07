@@ -556,6 +556,15 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
 
                 <div className="flex flex-col items-center gap-4 py-4">
                     <div className="flex flex-wrap justify-center gap-4">
+                        <LessonCard
+                                        onSelected={(id: number, type: string) => selectedForEditing(id, type)}
+                                        onDelete={(id: number) => handleDeleteVideo(id)}
+                                        cardValue={{ title: 'the test the test', id: 8, type: 'video' }}
+                                        cardBg={'#f1b1b31a'}
+                                        type={{ typeValue: 'Видео', icon: 'pi pi-video' }}
+                                        typeColor={'var(--mainColor)'}
+                                        lessonDate={'xx-xx-xx'}
+                                    />
                         {videoShow ? (
                             <NotFound titleMessage={'Сабак кошуу үчүн талааларды толтурунуз'} />
                         ) : (
@@ -583,7 +592,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
         const data = await fetchVideoType();
 
         if (data) { // proverit
-            setVideoTypes(data);
+            // setVideoTypes(data);
         }
     };
 
@@ -712,12 +721,15 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
     }, [links, documents]);
 
     useEffect(() => {
-        const forSelect = videoTypes.map((item) => {
-            return { name: item.title, status: item.is_link, id: item.id };
-        });
+        if(videoTypes){
+            const forSelect = videoTypes.map((item) => {
+                return { name: item.title, status: item.is_link, id: item.id };
+            });
 
-        setVideoSelect(forSelect);
-        setSelectedCity(forSelect[0]);
+            setVideoSelect(forSelect);
+            setSelectedCity(forSelect[0]);
+        }
+
     }, [videoTypes]);
 
     // useEffect(() => {

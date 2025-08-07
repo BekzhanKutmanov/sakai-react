@@ -29,7 +29,7 @@ const SessionManager = () => {
             console.log('проверяем токен...');
             const token = getToken('access_token');
             if (token) {
-                const res = await getUser(token);
+                const res = await getUser();
                 setGlobalLoading(true);
                 try {
                     if (res?.success) {

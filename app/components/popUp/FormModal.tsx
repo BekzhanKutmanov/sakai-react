@@ -39,7 +39,7 @@ export default function FormModal({children, title, fetchValue, clearValues, vis
             <Dialog
                 header={title}
                 visible={visible}
-                // style={{ width: '50vw' }}
+                className='my-custom-dialog'
                 onHide={() => {
                     if (!visible) return;
                     setVisible(false);

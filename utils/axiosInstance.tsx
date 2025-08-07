@@ -25,6 +25,7 @@ axiosInstance.interceptors.response.use(
 
         if (status === 401) {
             console.warn('Неавторизован. Удаляю токен...');
+            alert('he he')
             document.cookie = 'access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;';
             localStorage.removeItem('userVisit');
             window.location.href = '/auth/login';

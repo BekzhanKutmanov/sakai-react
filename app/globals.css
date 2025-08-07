@@ -378,6 +378,16 @@ h1, h2, h3, h4, h5, h6 {
   color: var(--redColor) !important; 
 }
 
+.my-custom-dialog{
+  width: 400px;
+}
+
+@media screen and (max-width: 640px) {
+  .my-custom-dialog{
+    width: 300px;
+  }
+}
+
 .poka{
   background-color: rgb(211, 232, 202) !important;
   /* background-color: rgb(243, 145, 145) !important; */

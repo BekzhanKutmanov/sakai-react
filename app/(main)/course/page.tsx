@@ -314,7 +314,7 @@ export default function Course() {
             {/* modal window */}
             <FormModal title={editMode ? 'Курсту жаңылоо' : 'Кошуу'} fetchValue={editMode ? handleUpdateCourse : handleAddCourse} clearValues={clearValues} visible={formVisible} setVisible={setFormVisible} start={forStart}>
                 <div className="flex flex-col gap-1">
-                    <div className="flex flex-col lg:flex-row gap-1 justify-around items-center">
+                    {/* <div className="flex flex-col lg:flex-row gap-1 justify-around items-center"> */}
                         <div className="flex flex-col gap-1 items-center justify-center">
                             <label className="block text-900 font-medium text-[16px] md:text-xl mb-1 md:mb-2">Аталышы</label>
                             <InputText
@@ -352,9 +352,9 @@ export default function Course() {
                                 }}
                             />
                         </div>
-                    </div>
+                    {/* </div> */}
 
-                    <div className="flex flex-col lg:flex-row gap-1 justify-around items-center">
+                    {/* <div className="flex flex-col lg:flex-row gap-1 justify-around items-center"> */}
                         <div className="flex flex-col gap-1 items-center justify-center">
                             <label className="block text-900 font-medium text-[16px] md:text-xl mb-1 md:mb-2">Мазмуну</label>
                             <InputTextarea
@@ -380,10 +380,10 @@ export default function Course() {
                             <label className="block text-900 font-medium text-[16px] md:text-xl mb-1 md:mb-2">Сүрөт кошуу</label>
                             <FileUpload mode="basic" customUpload name="demo[]" accept="image/*" maxFileSize={1000000} onSelect={onSelect} />
                             {courseValue.image || editingLesson.image ? (
-                                <div className="mt-2 text-sm text-gray-700">
+                                <div className="mt-2 text-sm text-gray-700 ">
                                     {typeof editingLesson.image === 'string' && (
                                         <>
-                                            Сүрөт: <b className="text-[12px]">{editingLesson.image}</b>
+                                            Сүрөт: <b className="text-[12px] text-center w-[300px]">{editingLesson.image}</b>
                                         </>
                                     )}
                                 </div>
@@ -391,7 +391,7 @@ export default function Course() {
                                 <b className="text-[12px] text-red-500">jpeg, png, jpg</b>
                             )}
                         </div>
-                    </div>
+                    {/* </div> */}
                 </div>
             </FormModal>
 
