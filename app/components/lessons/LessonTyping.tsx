@@ -209,7 +209,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                                         cardBg={'#ddc4f51a'}
                                         type={{ typeValue: 'Документтер', icon: 'pi pi-folder' }}
                                         typeColor={'var(--mainColor)'}
-                                        lessonDate={'xx-xx-xx'}
+                                        lessonDate={'xx-xx'}
                                     />
                                 </>
                             ))
@@ -365,15 +365,17 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                             links.map((item: lessonType) => (
                                 <>
                                     <LessonCard
+                                        status={'working'}
                                         onSelected={(id: number, type: string) => selectedForEditing(id, type)}
                                         onDelete={(id: number) => handleDeleteLink(id)}
-                                        cardValue={{ title: item.title, id: item.id, type: 'url' }}
+                                        cardValue={{ title: item.title, id: item.id, desctiption: item?.description, type: 'url', photo: item?.photo }}
                                         cardBg={'#7bb78112'}
-                                        type={{ typeValue: 'Шилтемелер', icon: 'pi pi-link' }}
+                                        type={{ typeValue: '', icon: 'pi pi-link' }}
                                         typeColor={'var(--mainColor)'}
-                                        lessonDate={'xx-xx-xx'}
+                                        lessonDate={'xx-xx'}
                                     />
                                 </>
+                                
                             ))
                         )}
                     </div>
@@ -437,7 +439,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
 
     // delete link
     const handleDeleteLink = async (id: number) => {
-        const data = await deleteLesson('url',  Number(courseId), Number(lessonId), id);
+        const data = await deleteLesson('url', Number(courseId), Number(lessonId), id);
 
         if (data.success) {
             handleFetchLink();
@@ -557,27 +559,34 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                 <div className="flex flex-col items-center gap-4 py-4">
                     <div className="flex flex-wrap justify-center gap-4">
                         <LessonCard
-                                        onSelected={(id: number, type: string) => selectedForEditing(id, type)}
-                                        onDelete={(id: number) => handleDeleteVideo(id)}
-                                        cardValue={{ title: 'the test the test', id: 8, type: 'video' }}
-                                        cardBg={'#f1b1b31a'}
-                                        type={{ typeValue: 'Видео', icon: 'pi pi-video' }}
-                                        typeColor={'var(--mainColor)'}
-                                        lessonDate={'xx-xx-xx'}
-                                    />
+                            status={'student'}
+                            onSelected={(id: number, type: string) => selectedForEditing(id, type)}
+                            onDelete={(id: number) => handleDeleteVideo(id)}
+                            cardValue={{ title: 'item.title', id: 8, desctiption: 'item?.description', type: '', photo: ''}}
+                            cardBg={'#fff'}
+                            type={{ typeValue: 'Лекция', icon: 'pi pi-lecture' }}
+                            typeColor={'var(--mainColor)'}
+                            lessonDate={'xx-xx'}
+                        />
                         {videoShow ? (
                             <NotFound titleMessage={'Сабак кошуу үчүн талааларды толтурунуз'} />
                         ) : (
                             video.map((item: lessonType) => (
                                 <>
+                                    {/* {
+                                    status: 'student',
+                                    description: item.desctiption,
+                                    lessonType: item.role? // lecture/lab
+                                } */}
                                     <LessonCard
+                                        status={'working'}
                                         onSelected={(id: number, type: string) => selectedForEditing(id, type)}
                                         onDelete={(id: number) => handleDeleteVideo(id)}
-                                        cardValue={{ title: item.title, id: item.id, type: 'video' }}
+                                        cardValue={{ title: item.title, id: item.id, desctiption: item?.description, type: 'video', photo: item?.photo }}
                                         cardBg={'#f1b1b31a'}
-                                        type={{ typeValue: 'Видео', icon: 'pi pi-video' }}
+                                        type={{ typeValue: '', icon: 'pi pi-video' }}
                                         typeColor={'var(--mainColor)'}
-                                        lessonDate={'xx-xx-xx'}
+                                        lessonDate={'xx-xx'}
                                     />
                                 </>
                             ))
@@ -591,7 +600,8 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
     const handleVideoType = async () => {
         const data = await fetchVideoType();
 
-        if (data) { // proverit
+        if (data) {
+            // proverit
             // setVideoTypes(data);
         }
     };
@@ -599,7 +609,6 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
     // fetch video
     const handleFetchVideo = async () => {
         // skeleton = false
-        const token = getToken('access_token');
         const data = await fetchLesson('video', courseId ? Number(courseId) : null, lessonId ? Number(lessonId) : null);
         // console.log(data);
 
@@ -676,8 +685,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
 
     // delete video
     const handleDeleteVideo = async (id: number) => {
-        
-        const data = await deleteLesson('video',Number(courseId), Number(lessonId), id);
+        const data = await deleteLesson('video', Number(courseId), Number(lessonId), id);
 
         if (data.success) {
             handleFetchVideo();
@@ -721,7 +729,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
     }, [links, documents]);
 
     useEffect(() => {
-        if(videoTypes){
+        if (videoTypes) {
             const forSelect = videoTypes.map((item) => {
                 return { name: item.title, status: item.is_link, id: item.id };
             });
@@ -729,7 +737,6 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
             setVideoSelect(forSelect);
             setSelectedCity(forSelect[0]);
         }
-
     }, [videoTypes]);
 
     // useEffect(() => {
@@ -768,12 +775,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                                     }}
                                 />
                                 <b style={{ color: 'red', fontSize: '12px' }}>{errors.title?.message}</b>
-                                <InputText
-                                    placeholder="Мазмун"
-                                    value={editingLesson?.description && editingLesson?.description}
-                                    onChange={(e) => setEditingLesson((prev) => prev && { ...prev, description: e.target.value })}
-                                    className="w-full"
-                                />
+                                <InputText placeholder="Мазмун" value={editingLesson?.description && editingLesson?.description} onChange={(e) => setEditingLesson((prev) => prev && { ...prev, description: e.target.value })} className="w-full" />
                             </>
                         ) : selectType === 'url' ? (
                             <>
@@ -836,12 +838,12 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                                     type="text"
                                     value={editingLesson?.title && editingLesson?.title}
                                     onChange={(e) => {
-                                        setEditingLesson((prev) => prev && ({ ...prev, title: e.target.value }));
+                                        setEditingLesson((prev) => prev && { ...prev, title: e.target.value });
                                         setValue('title', e.target.value, { shouldValidate: true });
                                     }}
                                 />
                                 <b style={{ color: 'red', fontSize: '12px' }}>{errors.title?.message}</b>
-                                <InputText placeholder="Мазмун" value={editingLesson?.description && editingLesson?.description} onChange={(e) => setEditingLesson((prev) => prev && ({ ...prev, description: e.target.value }))} className="w-full" />
+                                <InputText placeholder="Мазмун" value={editingLesson?.description && editingLesson?.description} onChange={(e) => setEditingLesson((prev) => prev && { ...prev, description: e.target.value })} className="w-full" />
                             </>
                         ) : (
                             ''
