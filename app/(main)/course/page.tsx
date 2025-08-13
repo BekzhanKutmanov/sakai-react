@@ -280,7 +280,7 @@ export default function Course() {
             setHasCourses(true);
         } else {
             if (courses.length > 0) {
-                // setForStreamId({ id: courses[0].id, title: courses[0].title });
+                setForStreamId({ id: courses[0].id, title: courses[0].title });
             }
             setHasCourses(false);
         }
@@ -613,7 +613,7 @@ export default function Course() {
                             </div>
                             {/* STREAMS SECTION */}
                             <div className="w-1/2">
-                                <StreamList isMobile={false} callIndex={1} courseValue={forStreamId} />
+                                <StreamList isMobile={false} callIndex={1} courseValue={forStreamId?.id ? forStreamId : null} />
                             </div>
                         </div>
                     )}

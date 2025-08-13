@@ -3,9 +3,11 @@ import axiosInstance from '@/utils/axiosInstance';
 let url = '';
 
 // streams
-export const fetchStreams = async () => {
+export const fetchStreams = async (id: number | null) => {
+    console.log(id);
+    
     try {
-        const res = await axiosInstance.get(`/v1/teacher/courses?page=${Number()}&limit=${''}`);
+        const res = await axiosInstance.get(`v1/teacher/stream?course_id=${id}`);
         const data = await res.data;
 
         return data;
@@ -15,18 +17,18 @@ export const fetchStreams = async () => {
 };
 
 export const connectStreams = async (value) => {
-    const formData = new FormData();
-    formData.append('title', value.title);
-    formData.append('description', value.description);
-    if (value.image instanceof File) {
-        formData.append('image', value.image);
-    }
-    formData.append('video_url', value.video_url);
+    console.log(value);
+    
+    // const formData = new FormData();
+    // formData.append('title', value.title);
+    // formData.append('description', value.description);
+    // if (value.image instanceof File) {
+    //     formData.append('image', value.image);
+    // }
+    // formData.append('video_url', value.video_url);
 
     try {
-        const res = await axiosInstance.post(`/v1/teacher/courses/store`, formData, {
-            headers: { 'Content-Type': 'multipart/form-data' }
-        });
+        const res = await axiosInstance.post(`/v1/teacher/stream/store`, value);
 
         return res.data;
     } catch (err) {

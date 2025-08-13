@@ -1,7 +1,6 @@
 import Redacting from '../popUp/Redacting';
 import { getRedactor } from '@/utils/getRedactor';
 import { getConfirmOptions } from '@/utils/getConfirmOptions';
-import Image from 'next/image';
 
 export default function LessonCard({
     status,
