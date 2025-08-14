@@ -214,7 +214,6 @@ export default function StreamList({ callIndex, courseValue, isMobile }: { callI
                                                 : el
                                         ))
                                     }}
-                                    
                                     />
                                 <span className="checkbox-mark"></span>
                         </label>
@@ -241,7 +240,7 @@ export default function StreamList({ callIndex, courseValue, isMobile }: { callI
                         <div className="flex flex-col order-1 xl:order-2 align-items-center gap-2">
                             <span className="font-semibold">{item?.semester?.name_kg}</span>
                             <span className="bg-[var(--greenColor)] text-[12px] text-white p-1 rounded">{item?.edu_form?.name_kg}</span>
-                            <Link href={'#'} className='underline'>Студенттер</Link>
+                            <Link href={`/students/${item.connect_id}/${item.stream_id}`} className='underline'>Студенттер</Link>
                         </div>
                     </div>
                 </div>

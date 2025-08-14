@@ -36,3 +36,16 @@ export const connectStreams = async (value) => {
         return err;
     }
 };
+
+// students stream
+
+export const fetchStreamStudents = async (connect_id: number | null, stream_id: number | null) => {    
+    try {
+        const res = await axiosInstance.get(`v1/teacher/stream/students?connect_id=${connect_id}&stream_id=${stream_id}`,);
+        const data = await res.data;
+
+        return data;
+    } catch (error) {
+        console.error('Ошибка загрузки:', error);
+    }
+};

@@ -1,10 +1,13 @@
 'use client';
 
-export default function InfoBanner({title}:{title:string}) {
-    
-  return (
-    <div className="bg-[var(--titleColor)] flex flex-col justify-center items-center w-full text-white p-[50px] md:p-[100px]">
-        <h1 style={{color:'white'}} className="text-[30px] md:text-[50px]">{title}</h1>
-    </div>
-  );
-};
+import { useMediaQuery } from '@/hooks/useMediaQuery';
+
+export default function InfoBanner({ title, titleSize }: { title: string; titleSize: { default: string; sm: string } }) {
+    const media = useMediaQuery('(max-width: 640px)');
+
+    return (
+        <div className="bg-[var(--titleColor)] flex flex-col justify-center items-center w-full text-white p-[40px] md:p-[60px]">
+            <h1 style={{ color: 'white', fontSize: media ? titleSize.default : titleSize.sm, textAlign: 'center'}}>{title}</h1>
+        </div>
+    );
+}

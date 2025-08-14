@@ -85,7 +85,7 @@ const LoginPage = () => {
 
     return (
         <div className={'flex flex-col gap-4'}>
-            <InfoBanner title="Кирүү" />
+            <InfoBanner title="Кирүү" titleSize={{default:'30px', sm:'40px'}}/>
             <div className="flex gap-4 flex-column lg:flex-row items-center justify-evenly px-4 mb-8">
                 <div className="user-img">
                     <img src="/layout/images/man.png" className="w-[500px]" alt="" />

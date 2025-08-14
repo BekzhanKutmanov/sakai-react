@@ -110,7 +110,7 @@ export default function Course() {
     const media = useMediaQuery('(max-width: 640px)');
 
     const toggleSkeleton = () => {
-        // setSkeleton(true);
+        setSkeleton(true);
         setTimeout(() => {
             setSkeleton(false);
         }, 1000);
@@ -118,6 +118,7 @@ export default function Course() {
 
     const handleFetchCourse = async (page = 1) => {
         const data = await fetchCourses(page, 0);
+        toggleSkeleton();
         if (data?.courses) {
             setHasCourses(false);
             setCourses(data.courses.data);
@@ -159,7 +160,6 @@ export default function Course() {
     };
 
     const handleDeleteCourse = async (id: number) => {
-
         const data = await deleteCourse(id);
         if (data?.success) {
             toggleSkeleton();
@@ -211,7 +211,6 @@ export default function Course() {
     };
 
     const onSelect = (e: FileUploadSelectEvent) => {
-        console.log(e.files[0]);
         editMode
             ? setEditingLesson((prev) => ({
                   ...prev,
@@ -260,7 +259,6 @@ export default function Course() {
     };
 
     useEffect(() => {
-        // toggleLoading();
         handleFetchCourse();
     }, []);
 
@@ -530,18 +528,22 @@ export default function Course() {
                         <div className="w-full flex justify-between items-start gap-2 xl:gap-5">
                             <div className="py-4 w-1/2">
                                 {/* info section */}
-                                <div className="flex justify-between items-center mb-4 py-2 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">
-                                    <h3 className="text-[32px] m-0">Курстар</h3>
-                                    <Button
-                                        label="Кошуу"
-                                        icon="pi pi-plus"
-                                        onClick={() => {
-                                            setEditMode(false);
-                                            clearValues();
-                                            setFormVisible(true);
-                                        }}
-                                    />
-                                </div>
+                                {skeleton ? 
+                                    <GroupSkeleton count={1} size={{ width: '100%', height: '4rem' }} />
+                                : <div className="flex justify-between items-center mb-4 py-2 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">
+                                        <h3 className="text-[32px] m-0">Курстар</h3>
+                                        <Button
+                                            label="Кошуу"
+                                            icon="pi pi-plus"
+                                            onClick={() => {
+                                                setEditMode(false);
+                                                clearValues();
+                                                setFormVisible(true);
+                                            }}
+                                        />
+                                    </div>
+                                }
+
                                 {/* table section */}
                                 {hasCourses ? (
                                     <NotFound titleMessage={'Курс кошуу үчүн кошуу баскычты басыныз'} />
