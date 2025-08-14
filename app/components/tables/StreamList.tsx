@@ -120,7 +120,7 @@ export default function StreamList({ callIndex, courseValue, isMobile }: { callI
             setHasStreams(true);
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка', detail: 'Проблема с соединением. Повторите заново' }
+                value: { severity: 'error', summary: 'Катаа!', detail: 'Байланышы менен көйгөй' }
             });
             if (data?.response?.status) {
                 showError(data.response.status);
@@ -142,7 +142,7 @@ export default function StreamList({ callIndex, courseValue, isMobile }: { callI
         } else {
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка', detail: 'Ошибка при связке' }
+                value: { severity: 'error', summary: 'Катаа!', detail: 'Кошуу учурунда катаа кетти' }
             });
             if (data?.response?.status) {
                 showError(data.response.status);

@@ -187,7 +187,7 @@ export default function Lesson() {
                                                 <span>Текст</span>
                                             </div>
 
-                                            <Redacting redactor={getRedactor(textValue.id, { onEdit: editing, getConfirmOptions, onDelete: handleDeleteLesson })} textSize={'14px'} />
+                                            <Redacting redactor={getRedactor('null' ,textValue.id, { onEdit: editing, getConfirmOptions, onDelete: handleDeleteLesson })} textSize={'14px'} />
                                             {/* <MySkeleton size={{ width: '12px', height: '15px' }} /> */}
                                         </div>
                                         <div className={`flex gap-1 items-center`}>

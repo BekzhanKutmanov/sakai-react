@@ -15,30 +15,31 @@ type ConfirmDialogOptions = {
 
 interface RedactorType {
     getConfirmOptions: (id: number, onDelete: (id: number) => void) => ConfirmDialogOptions;
-    onEdit?: (id: number, type: string) => void;
-    onDelete?: (id: number) => void;
+    onEdit: (id: number, type: string) => void;
+    onDelete: (id: number) => void;
 }
 
-export const getRedactor = (status: string, rowData: any, handlers: RedactorType) => [
+export const getRedactor = (status: string, rowData: any, handlers: any) => [
     {
         label: '',
         icon: 'pi pi-pencil',
         command: () => {
-            if(handlers.onEdit) {
+            // const checkArg = handlers.onEdit(rowData.id, rowData?.type);
+            // if(handlers.onEdit) {
                 handlers.onEdit(rowData.id, rowData?.type);
-            }
+            // }
         }
     },
     {
         label: '',
         icon: 'pi pi-trash',
         command: () => {
-            if(handlers.onDelete){
+            // if(handlers.onDelete){
                 const options = handlers.getConfirmOptions(Number(rowData.id), handlers.onDelete );
-                if(options){
+                // if(options){
                     confirmDialog(options);
-                }
-            }
+                // }
+            // }
         }
     }
 ];

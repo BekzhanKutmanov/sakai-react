@@ -60,12 +60,12 @@ export default function StudentList() {
 
     const handleFetchStudents = async () => {
         const data = await fetchStreamStudents(connect_id ? Number(connect_id) : null, stream_id ? Number(stream_id) : null);
-        // console.log(data);
+        console.log(data);
         
         toggleSkeleton();
-        if (data) {
+        if (data && data.students) {
             setHasList(false);
-            setStudentList(data);
+            setStudentList(data.students);
         } else {
             setHasList(true);
             setMessage({

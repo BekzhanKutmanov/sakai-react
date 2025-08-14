@@ -6,14 +6,13 @@ let url = '';
 
 export const fetchCourses = async (page: number | null, limit: number | null) => {
     try {
-        console.log('Номер запрашиваемой страницы ', page);
-
         const res = await axiosInstance.get(`/v1/teacher/courses?page=${Number(page)}&limit=${''}`);
         const data = await res.data;
 
         return data;
-    } catch (error) {
-        console.error('Ошибка загрузки:', error);
+    } catch (err) {
+        console.log('Ошибка загрузки:', err);
+        return err;
     }
 };
 
@@ -32,8 +31,6 @@ export const addCourse = async (value: CourseCreateType) => {
                 'Content-Type': 'multipart/form-data'
             }
         });
-
-        console.log('Урок: ', res.data);
 
         return res.data;
     } catch (err) {

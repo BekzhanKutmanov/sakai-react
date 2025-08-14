@@ -131,7 +131,7 @@ export default function Course() {
             setHasCourses(true);
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка', detail: 'Проблема с соединением. Повторите заново' }
+                value: { severity: 'error', summary: 'Катаа!', detail: 'Байланышы менен көйгөй' }
             });
             if (data?.response?.status) {
                 showError(data.response.status);
@@ -151,7 +151,7 @@ export default function Course() {
         } else {
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка', detail: 'Ошибка при при добавлении' }
+                value: { severity: 'error', summary: 'Катаа!', detail: 'Кошуу учурунда катаа кетти' }
             });
             if (data?.response?.status) {
                 showError(data.response.status);
@@ -171,7 +171,7 @@ export default function Course() {
         } else {
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка', detail: 'Ошибка при при удалении' }
+                value: { severity: 'error', summary: 'Катаа', detail: 'Өчүрүүдө ката кетти' }
             }); // messege - Ошибка при добавлении
             if (data?.response?.status) {
                 showError(data.response.status);
@@ -187,7 +187,6 @@ export default function Course() {
     };
 
     const handleUpdateCourse = async () => {
-
         const data = await updateCourse(selectedCourse, editingLesson);
         if (data?.success) {
             toggleSkeleton();
@@ -202,7 +201,7 @@ export default function Course() {
         } else {
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка при при изменении курса', detail: 'Заполняйте поля правильно' }
+                value: { severity: 'error', summary: 'Катаа!', detail: 'Өзгөртүүдө ката кетти' }
             }); // messege - Ошибка при изменении курса
             if (data?.response?.status) {
                 showError(data.response.status);
@@ -220,6 +219,8 @@ export default function Course() {
                   ...prev,
                   image: e.files[0]
               }));
+
+        console.log('hi');
     };
 
     const imageBodyTemplate = (product: CourseType) => {
@@ -313,82 +314,82 @@ export default function Course() {
             <FormModal title={editMode ? 'Курсту жаңылоо' : 'Кошуу'} fetchValue={editMode ? handleUpdateCourse : handleAddCourse} clearValues={clearValues} visible={formVisible} setVisible={setFormVisible} start={forStart}>
                 <div className="flex flex-col gap-1">
                     {/* <div className="flex flex-col lg:flex-row gap-1 justify-around items-center"> */}
-                        <div className="flex flex-col gap-1 items-center justify-center">
-                            <label className="block text-900 font-medium text-[16px] md:text-xl mb-1 md:mb-2">Аталышы</label>
-                            <InputText
-                                value={editMode ? editingLesson.title : courseValue.title}
-                                placeholder="Аталышы талап кылынат"
-                                onChange={(e) => {
-                                    editMode
-                                        ? setEditingLesson((prev) => ({
-                                              ...prev,
-                                              title: e.target.value
-                                          }))
-                                        : setCourseValue((prev) => ({
-                                              ...prev,
-                                              title: e.target.value
-                                          }));
-                                }}
-                            />
-                        </div>
-                        <div className="flex flex-col gap-1 items-center justify-center">
-                            <label className="block text-900 font-medium text-[16px] md:text-xl mb-1 md:mb-2">Видео шилтеме</label>
-                            <InputText
-                                value={editMode ? editingLesson.video_url : courseValue.video_url}
-                                placeholder="https://..."
-                                title="Шилтеме https:// менен башталышы шарт!"
-                                onChange={(e) => {
-                                    editMode
-                                        ? setEditingLesson((prev) => ({
-                                              ...prev,
-                                              video_url: e.target.value
-                                          }))
-                                        : setCourseValue((prev) => ({
-                                              ...prev,
-                                              video_url: e.target.value
-                                          }));
-                                }}
-                            />
-                        </div>
+                    <div className="flex flex-col gap-1 items-center justify-center">
+                        <label className="block text-900 font-medium text-[16px] md:text-xl mb-1 md:mb-2">Аталышы</label>
+                        <InputText
+                            value={editMode ? editingLesson.title : courseValue.title}
+                            placeholder="Аталышы талап кылынат"
+                            onChange={(e) => {
+                                editMode
+                                    ? setEditingLesson((prev) => ({
+                                          ...prev,
+                                          title: e.target.value
+                                      }))
+                                    : setCourseValue((prev) => ({
+                                          ...prev,
+                                          title: e.target.value
+                                      }));
+                            }}
+                        />
+                    </div>
+                    <div className="flex flex-col gap-1 items-center justify-center">
+                        <label className="block text-900 font-medium text-[16px] md:text-xl mb-1 md:mb-2">Видео шилтеме</label>
+                        <InputText
+                            value={editMode ? editingLesson.video_url : courseValue.video_url}
+                            placeholder="https://..."
+                            title="Шилтеме https:// менен башталышы шарт!"
+                            onChange={(e) => {
+                                editMode
+                                    ? setEditingLesson((prev) => ({
+                                          ...prev,
+                                          video_url: e.target.value
+                                      }))
+                                    : setCourseValue((prev) => ({
+                                          ...prev,
+                                          video_url: e.target.value
+                                      }));
+                            }}
+                        />
+                    </div>
                     {/* </div> */}
 
                     {/* <div className="flex flex-col lg:flex-row gap-1 justify-around items-center"> */}
-                        <div className="flex flex-col gap-1 items-center justify-center">
-                            <label className="block text-900 font-medium text-[16px] md:text-xl mb-1 md:mb-2">Мазмуну</label>
-                            <InputTextarea
-                                autoResize
-                                value={editMode ? editingLesson.description : courseValue.description}
-                                rows={5}
-                                cols={30}
-                                onChange={(e) => {
-                                    editMode
-                                        ? setEditingLesson((prev) => ({
-                                              ...prev,
-                                              description: e.target.value
-                                          }))
-                                        : setCourseValue((prev) => ({
-                                              ...prev,
-                                              description: e.target.value
-                                          }));
-                                }}
-                            />
-                        </div>
+                    <div className="flex flex-col gap-1 items-center justify-center">
+                        <label className="block text-900 font-medium text-[16px] md:text-xl mb-1 md:mb-2">Мазмуну</label>
+                        <InputTextarea
+                            autoResize
+                            value={editMode ? editingLesson.description : courseValue.description}
+                            rows={5}
+                            cols={30}
+                            onChange={(e) => {
+                                editMode
+                                    ? setEditingLesson((prev) => ({
+                                          ...prev,
+                                          description: e.target.value
+                                      }))
+                                    : setCourseValue((prev) => ({
+                                          ...prev,
+                                          description: e.target.value
+                                      }));
+                            }}
+                        />
+                    </div>
 
-                        <div className="flex flex-col pag-1 items-center justify-center">
-                            <label className="block text-900 font-medium text-[16px] md:text-xl mb-1 md:mb-2">Сүрөт кошуу</label>
-                            <FileUpload mode="basic" customUpload name="demo[]" accept="image/*" maxFileSize={1000000} onSelect={onSelect} />
-                            {courseValue.image || editingLesson.image ? (
-                                <div className="mt-2 text-sm text-gray-700 ">
-                                    {typeof editingLesson.image === 'string' && (
-                                        <>
-                                            Сүрөт: <b className="text-[12px] text-center w-[300px]">{editingLesson.image}</b>
-                                        </>
-                                    )}
-                                </div>
-                            ) : (
-                                <b className="text-[12px] text-red-500">jpeg, png, jpg</b>
-                            )}
-                        </div>
+                    <div className="flex flex-col pag-1 items-center justify-center">
+                        <label className="block text-900 font-medium text-[16px] md:text-xl mb-1 md:mb-2">Сүрөт кошуу</label>
+                        <FileUpload mode="basic" chooseLabel="Сүрөт" customUpload name="demo[]" accept="image/*" maxFileSize={1000000} onSelect={onSelect} />
+                        {courseValue.image || editingLesson.image ? (
+                            <div className="mt-2 text-sm text-gray-700 ">
+                                {typeof editingLesson.image === 'string' && (
+                                    <>
+                                        Сүрөт: <b className="text-[12px] text-center w-[300px]">{editingLesson.image}</b>
+                                    </>
+                                )}
+                            </div>
+                        ) : (
+                            <b className="text-[12px] text-red-500">jpeg, png, jpg</b>
+                        )}
+                    </div>
                     {/* </div> */}
                 </div>
             </FormModal>
@@ -492,7 +493,7 @@ export default function Course() {
                                                             className="flex items-center justify-center h-[60px] border-b-0"
                                                             body={(rowData) => (
                                                                 <div className="flex items-center gap-2" key={rowData.id}>
-                                                                    <Redacting redactor={getRedactor(rowData, { onEdit: edit, getConfirmOptions, onDelete: handleDeleteCourse })} textSize={'14px'} />
+                                                                    <Redacting redactor={getRedactor('null', rowData, { onEdit: edit, getConfirmOptions, onDelete: handleDeleteCourse })} textSize={'14px'} />
                                                                 </div>
                                                             )}
                                                         />
@@ -528,9 +529,10 @@ export default function Course() {
                         <div className="w-full flex justify-between items-start gap-2 xl:gap-5">
                             <div className="py-4 w-1/2">
                                 {/* info section */}
-                                {skeleton ?     
+                                {skeleton ? (
                                     <GroupSkeleton count={1} size={{ width: '100%', height: '5rem' }} />
-                                : <div className="flex justify-between items-center mb-4 py-2 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">
+                                ) : (
+                                    <div className="flex justify-between items-center mb-4 py-2 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">
                                         <h3 className="text-[32px] m-0">Курстар</h3>
                                         <Button
                                             label="Кошуу"
@@ -542,7 +544,7 @@ export default function Course() {
                                             }}
                                         />
                                     </div>
-                                }
+                                )}
 
                                 {/* table section */}
                                 {hasCourses ? (
@@ -596,7 +598,7 @@ export default function Course() {
                                                         className="flex items-center justify-center h-[60px] border-b-0"
                                                         body={(rowData) => (
                                                             <div className="flex items-center gap-2" key={rowData.id}>
-                                                                <Redacting redactor={getRedactor(rowData, { onEdit: edit, getConfirmOptions, onDelete: handleDeleteCourse })} textSize={'14px'} />
+                                                                <Redacting redactor={getRedactor('null', rowData, { onEdit: edit, getConfirmOptions, onDelete: handleDeleteCourse })} textSize={'14px'} />
                                                             </div>
                                                         )}
                                                     />

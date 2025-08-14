@@ -129,7 +129,7 @@ const StudentLayout = ({ children }: ChildContainerProps) => {
             setPermission(false);
             // window.location.href = '/auth/login';
         }
-        setPermission(true);
+        // setPermission(true);
     }
 
     useEffect(()=> {
