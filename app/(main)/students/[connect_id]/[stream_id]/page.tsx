@@ -48,6 +48,7 @@ export default function StudentList() {
     const showError = useErrorMessage();
 
     const {connect_id, stream_id} = useParams();
+    console.log('params: ', connect_id, stream_id);
     
     // functions
     const toggleSkeleton = () => {
@@ -80,14 +81,14 @@ export default function StudentList() {
     // USEECFFECTS
 
     useEffect(() => {
-        // toggleLoading();
+        toggleSkeleton();
         handleFetchStudents();
     }, []);
 
     return (
         <div>
             {skeleton ? (
-                        <GroupSkeleton count={studentList.length} size={{ width: '100%', height: '6rem' }} />
+                        <GroupSkeleton count={studentList.length} size={{ width: '100%', height: '5rem' }} />
                     ) : (
                         <>
                         {/* info section */}

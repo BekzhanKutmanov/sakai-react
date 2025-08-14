@@ -528,8 +528,8 @@ export default function Course() {
                         <div className="w-full flex justify-between items-start gap-2 xl:gap-5">
                             <div className="py-4 w-1/2">
                                 {/* info section */}
-                                {skeleton ? 
-                                    <GroupSkeleton count={1} size={{ width: '100%', height: '4rem' }} />
+                                {skeleton ?     
+                                    <GroupSkeleton count={1} size={{ width: '100%', height: '5rem' }} />
                                 : <div className="flex justify-between items-center mb-4 py-2 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">
                                         <h3 className="text-[32px] m-0">Курстар</h3>
                                         <Button

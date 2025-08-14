@@ -63,11 +63,11 @@ export default function StreamList({ callIndex, courseValue, isMobile }: { callI
     ];
 
     // type
-    interface StreamsType {};
+    interface StreamsType {}
 
     const [streams, setStreams] = useState<StreamsType[]>([]);
-    const [streamValues, setStreamValues] = useState<{stream: {course_id: number, stream_id: number, info: string | null}[]}>({ stream: [] });
-    const [displayStreams, setDisplayStreams] = useState<{course_id: number, stream_id: number, info: string | null, stream_title: string}[]>([]);
+    const [streamValues, setStreamValues] = useState<{ stream: { course_id: number; stream_id: number; info: string | null }[] }>({ stream: [] });
+    const [displayStreams, setDisplayStreams] = useState<{ course_id: number; stream_id: number; info: string | null; stream_title: string }[]>([]);
     const [hasStreams, setHasStreams] = useState(false);
 
     const [skeleton, setSkeleton] = useState(false);
@@ -82,11 +82,33 @@ export default function StreamList({ callIndex, courseValue, isMobile }: { callI
         }, 1000);
     };
 
-    const handleFetchStreams = async (page = 1) => {
+    const profilactor = (data) => { 
+        const newStreams: { course_id: number; stream_id: number; info: string | null }[] = [];
+        console.log('srabotalo');
+        
+        data.forEach((item) => {
+            if (item?.connect_id) { 
+                newStreams.push({
+                    course_id: item?.course_id,
+                    stream_id: item.stream_id,
+                    info: ''
+                });
+            }
+        });
+
+        setStreamValues((prev) => ({
+            ...prev,
+            stream: [...prev.stream, ...newStreams]
+        }));
+    };
+
+    const handleFetchStreams = async () => {
         const data = await fetchStreams(courseValue ? courseValue.id : null);
         console.log(data);
+        setStreamValues({ stream: [] });
 
         if (data) {
+            profilactor(data);
             setHasStreams(false);
             setStreams(data);
             // setPagination({
@@ -142,11 +164,11 @@ export default function StreamList({ callIndex, courseValue, isMobile }: { callI
         };
 
         if (e.checked) {
-            setStreamValues((prev)=> ({
+            // profilactor();
+            setStreamValues((prev) => ({
                 ...prev,
                 stream: [...prev.stream, forSentStreams]
-            }));    
-
+            }));
         } else {
             setStreamValues(
                 (prev) =>
@@ -173,7 +195,6 @@ export default function StreamList({ callIndex, courseValue, isMobile }: { callI
 
     useEffect(() => {
         console.log('Потоки ', streams);
-
         if (streams.length < 1) {
             // setHasStreams(true);
         } else {
@@ -186,36 +207,37 @@ export default function StreamList({ callIndex, courseValue, isMobile }: { callI
 
     useEffect(() => {
         console.log('Id ', courseValue);
+
         setStreamValues({ stream: [] });
         toggleSkeleton();
         if (courseValue?.id) {
             handleFetchStreams();
         }
+
+        // if(streams.length > 0){
+        //     profilactor();
+        // }
     }, [courseValue]);
 
     const itemTemplate = (item, index: number) => {
-        const bgClass = item.connect_id ? 'bg-[var(--greenBgColor)] border-b border-[gray]' 
-            : index % 2 == 1 ? 'bg-[#f5f5f5]' 
-            : '';
-        
+        const bgClass = item.connect_id ? 'bg-[var(--greenBgColor)] border-b border-[gray]' : index % 2 == 1 ? 'bg-[#f5f5f5]' : '';
+
         return (
             <div className={`w-full ${bgClass}`} key={item?.stream_id}>
                 <div className={`flex flex-column p-2 gap-2`}>
                     <div className="flex justify-between gap-1 items-center">
                         <h3 className="m-0">{item?.subject_name.name_kg}</h3>
                         <label className="custom-radio">
-                                <input type="checkbox" className={`customCheckbox`} 
-                                    checked={Boolean(item.connect_id)}
-                                    onChange={(e)=> {
-                                        handleEdit(e.target, item.stream_id, item?.subject_name.name_kg);
-                                        setStreams(prev => 
-                                            prev.map(el => el.stream_id === item.stream_id
-                                                ? { ...el, connect_id: el.connect_id ? null : 1 }
-                                                : el
-                                        ))
-                                    }}
-                                    />
-                                <span className="checkbox-mark"></span>
+                            <input
+                                type="checkbox"
+                                className={`customCheckbox`}
+                                checked={Boolean(item.connect_id)}
+                                onChange={(e) => {
+                                    handleEdit(e.target, item.stream_id, item?.subject_name.name_kg);
+                                    setStreams((prev) => prev.map((el) => (el.stream_id === item.stream_id ? { ...el, connect_id: el.connect_id ? null : 1 } : el)));
+                                }}
+                            />
+                            <span className="checkbox-mark"></span>
                         </label>
                     </div>
                     <div className="flex flex-column xl:flex-row justify-content-between align-items-center xl:align-items-start flex-1 gap-4">
@@ -240,7 +262,11 @@ export default function StreamList({ callIndex, courseValue, isMobile }: { callI
                         <div className="flex flex-col order-1 xl:order-2 align-items-center gap-2">
                             <span className="font-semibold">{item?.semester?.name_kg}</span>
                             <span className="bg-[var(--greenColor)] text-[12px] text-white p-1 rounded">{item?.edu_form?.name_kg}</span>
-                            <Link href={`/students/${item.connect_id}/${item.stream_id}`} className='underline'>Студенттер</Link>
+                            {item.connect_id && (
+                                <Link href={`/students/${item.connect_id}/${item.stream_id}`} className="underline">
+                                    Студенттер
+                                </Link>
+                            )}
                         </div>
                     </div>
                 </div>
@@ -262,21 +288,27 @@ export default function StreamList({ callIndex, courseValue, isMobile }: { callI
         <>
             {callIndex === 1 && (
                 <div className="p-1 sm:py-4 px-2">
-                    {/* info section */}
-                    {!isMobile && (
-                        <div className="flex justify-between items-center mb-4 py-2 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">
-                            <h3 className="text-[32px] m-0">Агымдар</h3>
-                            <Button
-                                label="Байлоо"
-                                icon="pi pi-link"
-                                onClick={() => {
-                                    handleConnect();
-                                    // setEditMode(false);
-                                    // clearValues();
-                                    // setFormVisible(true);
-                                }}
-                            />
-                        </div>
+                    {skeleton ? (
+                        <GroupSkeleton count={10} size={{ width: '100%', height: '5rem' }} />
+                    ) : (
+                        <>
+                            {/* info section */}
+                            {!isMobile && (
+                                <div className="flex justify-between items-center mb-4 py-2 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">
+                                    <h3 className="text-[32px] m-0">Агымдар</h3>
+                                    <Button
+                                        label="Байлоо"
+                                        icon="pi pi-link"
+                                        onClick={() => {
+                                            handleConnect();
+                                            // setEditMode(false);
+                                            // clearValues();
+                                            // setFormVisible(true);
+                                        }}
+                                    />
+                                </div>
+                            )}
+                        </>
                     )}
 
                     {hasStreams ? (
