@@ -455,7 +455,6 @@ export default function Course() {
                                                             field="title"
                                                             header="Аталышы"
                                                             style={{ width: '80%' }}
-                                                            sortable
                                                             body={(rowData) => (
                                                                 <Link href={`/course/${rowData.id}`} key={rowData.id}>
                                                                     {rowData.title}
@@ -547,7 +546,7 @@ export default function Course() {
                                 )}
 
                                 {/* table section */}
-                                {hasCourses ? (
+                                {!hasCourses ? (
                                     <NotFound titleMessage={'Курс кошуу үчүн кошуу баскычты басыныз'} />
                                 ) : (
                                     <div>
@@ -561,7 +560,6 @@ export default function Course() {
                                                         field="title"
                                                         header="Аталышы"
                                                         style={{ width: '80%' }}
-                                                        sortable
                                                         body={(rowData) => (
                                                             <Link href={`/course/${rowData.id}`} key={rowData.id}>
                                                                 {rowData.title}

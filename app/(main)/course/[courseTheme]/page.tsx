@@ -242,7 +242,7 @@ export default function CourseTheme() {
                     ) : (
                         <DataTable value={themes} breakpoint="960px" className="my-custom-table">
                             <Column body={(_, { rowIndex }) => rowIndex + 1} header="Номер" style={{ width: '20px' }}></Column>
-                            <Column field="title" header="Темалар" className="w-2/3" sortable body={(rowData) => <Link href={`/course/${courseTheme}/${rowData.id}`}>{rowData.title}</Link>}></Column>
+                            <Column field="title" header="Темалар" className="w-2/3" body={(rowData) => <Link href={`/course/${courseTheme}/${rowData.id}`}>{rowData.title}</Link>}></Column>
 
                             <Column
                                 header=""

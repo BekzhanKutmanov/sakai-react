@@ -393,7 +393,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .my-custom-dialog{
-  width: 400px;
+  width: 550px;
 }
 
 @media screen and (max-width: 640px) {
