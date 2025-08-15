@@ -601,10 +601,10 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
 
     const handleVideoType = async () => {
         const data = await fetchVideoType();
-
-        if (data) {
-            // proverit
-            // setVideoTypes(data);
+        console.log(data);
+        
+        if (data && Array.isArray(data)) {
+            setVideoTypes(data);
         }
     };
 
@@ -731,6 +731,8 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
     }, [links, documents]);
 
     useEffect(() => {
+        console.log(videoTypes);
+        
         if (videoTypes) {
             const forSelect = videoTypes.map((item) => {
                 return { name: item.title, status: item.is_link, id: item.id };
