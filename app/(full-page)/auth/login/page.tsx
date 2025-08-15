@@ -88,7 +88,7 @@ const LoginPage = () => {
             <InfoBanner title="Кирүү" titleSize={{default:'30px', sm:'40px'}}/>
             <div className="flex gap-4 flex-column lg:flex-row items-center justify-evenly px-4 mb-8">
                 <div className="user-img">
-                    <img src="/layout/images/man.png" className="w-[500px]" alt="" />
+                    <img src="/layout/images/no-image.png" className="w-[500px]" alt="" />
                 </div>
 
                 <div className="w-[90%] sm:w-[500px] shadow-2xl py-6 px-3 md:py-8 sm:px-4 md:px-8 rounded">
@@ -98,19 +98,25 @@ const LoginPage = () => {
                                 MyEdu email
                             </label>
                             <InputText {...register('email')} id="email1" type="text" placeholder="email@oshsu.kg" className="w-[90%] p-2 sm:p-3" />
-                            {errors.email && <b className="text-red-500 text-[12px] ml-2">{errors.email.message}</b>}
+                            {errors.email && <b className="text-[red] text-[12px] ml-2">{errors.email.message}</b>}
                         </div>
                         <div className="flex flex-col">
                             <Controller
                                 name="password"
                                 control={control}
                                 defaultValue="010270Ja"
-                                render={({ field }) => <Password {...field} toggleMask className="w-[100%]" inputClassName="w-[90%] p-2 sm:p-3" inputStyle={{ marginRight: '30px' }} feedback={false} />}
+                                render={({ field }) => <Password {...field} toggleMask className="w-[100%]" inputClassName="w-[90%] p-2 sm:p-3" inputStyle={{ marginRight: '15px' }} feedback={false} />}
                             />
-                            {errors.password && <b className="text-red-500 text-[12px] ml-2">{errors.password.message}</b>}
+                            {errors.password && <b className="text-[red] text-[12px] ml-2">{errors.password.message}</b>}
                         </div>
-
-                        <FancyLinkBtn btnWidth={'90%'} backround={'--mainColor'} effectBg={'--titleColor'} title={'Кирүү'} />
+                        
+                        <FancyLinkBtn 
+                            btnWidth={'90%'}
+                            backround={'--mainColor'} 
+                            effectBg={'--titleColor'} 
+                            title={'Кирүү'} 
+                            disabled={errors.email}
+                        />
                     </form>
                 </div>
             </div>

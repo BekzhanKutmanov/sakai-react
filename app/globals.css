@@ -302,6 +302,14 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
+.p-icon-field{
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+
+
 /* primeReact components */
 .popup_menu_left{
   width: 300px;
