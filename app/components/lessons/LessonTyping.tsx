@@ -486,6 +486,8 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
 
     // VIDEO SECTIONS
     const toggleVideoType = (e: videoType) => {
+        console.log(e);
+        
         setSelectedCity(e);
         setVideoValue({ title: '', description: '', file: null, url: '', video_link: '' });
     };
