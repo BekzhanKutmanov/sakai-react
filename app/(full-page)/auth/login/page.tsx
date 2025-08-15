@@ -41,38 +41,38 @@ const LoginPage = () => {
 
         const user = await login(value);
         console.log(user);
-        if (user && user.success) {
-            document.cookie = `access_token=${user.token.access_token}; path=/; Secure; SameSite=Strict; expires=${user.token.expires_at}`;
+        // if (user && user.success) {
+        //     document.cookie = `access_token=${user.token.access_token}; path=/; Secure; SameSite=Strict; expires=${user.token.expires_at}`;
 
-            const token = user.token.access_token;
-            if (token) {
-                const res = await getUser();
-                try {
-                    if (res?.success) {
-                        console.log(res);
-                        if (res?.user.is_working) {
-                            window.location.href = '/course';
-                        }
-                    } else {
-                        logout({ setUser, setGlobalLoading });
-                        setMessage({
-                            state: true,
-                            value: { severity: 'error', summary: 'Ошибка', detail: 'Ошибка при авторизации' }
-                        }); // messege - Ошибка при авторизации
-                        console.log('Ошибка при получении пользователя');
-                    }
-                } catch (error) {
-                    logout({ setUser, setGlobalLoading });
-                    setMessage({
-                        state: true,
-                        value: { severity: 'error', summary: 'Ошибка', detail: 'Ошибка при авторизации' }
-                    }); // messege - Ошибка при авторизации
-                    console.log('Ошибка при получении пользователя');
-                }
-            }
-        } else {
-            console.log('Ошибка при авторизации');
-        }
+        //     const token = user.token.access_token;
+        //     if (token) {
+        //         const res = await getUser();
+        //         try {
+        //             if (res?.success) {
+        //                 console.log(res);
+        //                 if (res?.user.is_working) {
+        //                     window.location.href = '/course';
+        //                 }
+        //             } else {
+        //                 logout({ setUser, setGlobalLoading });
+        //                 setMessage({
+        //                     state: true,
+        //                     value: { severity: 'error', summary: 'Ошибка', detail: 'Ошибка при авторизации' }
+        //                 }); // messege - Ошибка при авторизации
+        //                 console.log('Ошибка при получении пользователя');
+        //             }
+        //         } catch (error) {
+        //             logout({ setUser, setGlobalLoading });
+        //             setMessage({
+        //                 state: true,
+        //                 value: { severity: 'error', summary: 'Ошибка', detail: 'Ошибка при авторизации' }
+        //             }); // messege - Ошибка при авторизации
+        //             console.log('Ошибка при получении пользователя');
+        //         }
+        //     }
+        // } else {
+        //     console.log('Ошибка при авторизации');
+        // }
     };
 
     const onError = (errors:any) => {
@@ -104,7 +104,7 @@ const LoginPage = () => {
                             <Controller
                                 name="password"
                                 control={control}
-                                defaultValue="010270Ja"
+                                // defaultValue=""
                                 render={({ field }) => <Password {...field} toggleMask className="w-[100%]" inputClassName="w-[90%] p-2 sm:p-3" inputStyle={{ marginRight: '15px' }} feedback={false} />}
                             />
                             {errors.password && <b className="text-[red] text-[12px] ml-2">{errors.password.message}</b>}

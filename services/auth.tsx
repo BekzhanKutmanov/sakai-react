@@ -10,6 +10,8 @@ let url = '';
 // });
 
 export const login = async (value:LoginType) => {
+    console.log(value);
+    
     url = process.env.NEXT_PUBLIC_BASE_URL + '/login?';
 
     try {

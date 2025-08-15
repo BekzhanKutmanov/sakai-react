@@ -546,7 +546,7 @@ export default function Course() {
                                 )}
 
                                 {/* table section */}
-                                {!hasCourses ? (
+                                {hasCourses ? (
                                     <NotFound titleMessage={'Курс кошуу үчүн кошуу баскычты басыныз'} />
                                 ) : (
                                     <div>
