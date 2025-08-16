@@ -203,11 +203,12 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                             documents.map((item: lessonType) => (
                                 <>
                                     <LessonCard
+                                        status="working"
                                         onSelected={(id: number, type: string) => selectedForEditing(id, type)}
                                         onDelete={(id: number) => handleDeleteDoc(id)}
                                         cardValue={{ title: item?.title, id: item.id, type: 'doc' }}
                                         cardBg={'#ddc4f51a'}
-                                        type={{ typeValue: 'Документтер', icon: 'pi pi-folder' }}
+                                        type={{ typeValue: 'doc', icon: 'pi pi-file' }}
                                         typeColor={'var(--mainColor)'}
                                         lessonDate={'xx-xx'}
                                     />
@@ -370,12 +371,11 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                                         onDelete={(id: number) => handleDeleteLink(id)}
                                         cardValue={{ title: item.title, id: item.id, desctiption: item?.description, type: 'url', photo: item?.photo }}
                                         cardBg={'#7bb78112'}
-                                        type={{ typeValue: '', icon: 'pi pi-link' }}
+                                        type={{ typeValue: 'link', icon: 'pi pi-link' }}
                                         typeColor={'var(--mainColor)'}
                                         lessonDate={'xx-xx'}
                                     />
                                 </>
-                                
                             ))
                         )}
                     </div>
@@ -487,7 +487,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
     // VIDEO SECTIONS
     const toggleVideoType = (e: videoType) => {
         console.log(e);
-        
+
         setSelectedCity(e);
         setVideoValue({ title: '', description: '', file: null, url: '', video_link: '' });
     };
@@ -560,7 +560,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
 
                 <div className="flex flex-col items-center gap-4 py-4">
                     <div className="flex flex-wrap justify-center gap-4">
-                        <LessonCard
+                        {/* <LessonCard
                             status={'student'}
                             onSelected={(id: number, type: string) => selectedForEditing(id, type)}
                             onDelete={(id: number) => handleDeleteVideo(id)}
@@ -569,7 +569,8 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                             type={{ typeValue: 'Лекция', icon: 'pi pi-lecture' }}
                             typeColor={'var(--mainColor)'}
                             lessonDate={'xx-xx'}
-                        />
+                        /> */}
+
                         {videoShow ? (
                             <NotFound titleMessage={'Сабак кошуу үчүн талааларды толтурунуз'} />
                         ) : (
@@ -586,7 +587,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                                         onDelete={(id: number) => handleDeleteVideo(id)}
                                         cardValue={{ title: item.title, id: item.id, desctiption: item?.description, type: 'video', photo: item?.photo }}
                                         cardBg={'#f1b1b31a'}
-                                        type={{ typeValue: '', icon: 'pi pi-video' }}
+                                        type={{ typeValue: 'video', icon: 'pi pi-video' }}
                                         typeColor={'var(--mainColor)'}
                                         lessonDate={'xx-xx'}
                                     />
@@ -602,7 +603,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
     const handleVideoType = async () => {
         const data = await fetchVideoType();
         console.log(data);
-        
+
         if (data && Array.isArray(data)) {
             setVideoTypes(data);
         }
@@ -732,7 +733,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
 
     useEffect(() => {
         console.log(videoTypes);
-        
+
         if (videoTypes) {
             const forSelect = videoTypes.map((item) => {
                 return { name: item.title, status: item.is_link, id: item.id };

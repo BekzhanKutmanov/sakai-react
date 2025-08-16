@@ -228,7 +228,7 @@ export default function Lesson() {
                         headerAction: { className: 'font-italic tab-custom-text-2' }
                     }}
                     header="Документтер"
-                    leftIcon={'pi pi-folder mr-1'}
+                    leftIcon={'pi pi-file mr-1'}
                     className="p-tabview p-tabview-nav p-tabview-selected p-tabview-panels p-tabview-panel"
                 >
                     {contentShow && <LessonTyping mainType="doc" courseId={courseId} lessonId={lessonId} />}
