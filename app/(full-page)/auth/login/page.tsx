@@ -52,30 +52,37 @@ const LoginPage = () => {
                         console.log(res);
                         if (res?.user.is_working) {
                             window.location.href = '/course';
+                        } 
+                        if(res?.user.is_student){
+                            window.location.href = '/';
                         }
                     } else {
-                        logout({ setUser, setGlobalLoading });
                         setMessage({
                             state: true,
                             value: { severity: 'error', summary: 'Ошибка', detail: 'Ошибка при авторизации' }
                         }); // messege - Ошибка при авторизации
+                        logout({ setUser, setGlobalLoading });
                         console.log('Ошибка при получении пользователя');
                     }
                 } catch (error) {
-                    logout({ setUser, setGlobalLoading });
                     setMessage({
                         state: true,
                         value: { severity: 'error', summary: 'Ошибка', detail: 'Ошибка при авторизации' }
                     }); // messege - Ошибка при авторизации
+                    logout({ setUser, setGlobalLoading });
                     console.log('Ошибка при получении пользователя');
                 }
             }
         } else {
             console.log('Ошибка при авторизации');
+            setMessage({
+                state: true,
+                value: { severity: 'error', summary: 'Ошибка', detail: 'Ошибка при авторизации' }
+            }); // messege - Ошибка при авторизации
         }
     };
 
-    const onError = (errors:any) => {
+    const onError = (errors: any) => {
         console.log('Ошибки формы:', errors);
         setMessage({
             state: true,
@@ -85,7 +92,7 @@ const LoginPage = () => {
 
     return (
         <div className={'flex flex-col gap-4'}>
-            <InfoBanner title="Кирүү" titleSize={{default:'30px', sm:'40px'}}/>
+            <InfoBanner title="Кирүү" titleSize={{ default: '30px', sm: '40px' }} />
             <div className="flex gap-4 flex-column lg:flex-row items-center justify-evenly px-4 mb-8">
                 <div className="user-img">
                     <img src="/layout/images/no-image.png" className="w-[500px]" alt="" />
@@ -109,14 +116,8 @@ const LoginPage = () => {
                             />
                             {errors.password && <b className="text-[red] text-[12px] ml-2">{errors.password.message}</b>}
                         </div>
-                        
-                        <FancyLinkBtn 
-                            btnWidth={'90%'}
-                            backround={'--mainColor'} 
-                            effectBg={'--titleColor'} 
-                            title={'Кирүү'} 
-                            disabled={errors.email}
-                        />
+
+                        <FancyLinkBtn btnWidth={'90%'} backround={'--mainColor'} effectBg={'--titleColor'} title={'Кирүү'} disabled={errors.email} />
                     </form>
                 </div>
             </div>
