@@ -546,7 +546,7 @@ export default function Course() {
                                 )}
 
                                 {/* table section */}
-                                {hasCourses ? (
+                                {!hasCourses ? (
                                     <NotFound titleMessage={'Курс кошуу үчүн кошуу баскычты басыныз'} />
                                 ) : (
                                     <div>
@@ -554,7 +554,7 @@ export default function Course() {
                                             <GroupSkeleton count={courses.length} size={{ width: '100%', height: '4rem' }} />
                                         ) : (
                                             <>
-                                                <DataTable value={courses} dataKey="id" key={JSON.stringify(forStreamId)} responsiveLayout="stack" breakpoint="960px" rows={5} className="my-custom-table">
+                                                <DataTable value={shablon} dataKey="id" key={JSON.stringify(forStreamId)} responsiveLayout="stack" breakpoint="960px" rows={5} className="my-custom-table">
                                                     <Column body={(_, { rowIndex }) => rowIndex + 1} header="Номер" style={{ width: '20px' }}></Column>
                                                     <Column
                                                         field="title"
