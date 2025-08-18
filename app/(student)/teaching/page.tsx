@@ -12,33 +12,25 @@ import { useContext, useEffect, useState } from 'react';
 export default function Teaching() {
     interface sortOptType {
         name: string;
-        page: number;
+        code: number;
     }
+
     const [skeleton, setSkeleton] = useState(false);
     const [lessons, setLessons] = useState<{}>({});
     const [lessonsDisplay, setLessonsDisplay] = useState<[]>([]);
     const [hasLessons, setHasLessons] = useState(false);
-    const [selectedSort, setSelectedSort] = useState({name: 'Баары', code: 1});
-    // const [sortOpt, setSortOpt] = useState<sortOptType[]>
-    [{ name: '1-семестр', page: 0 }];
-    const sortOpt = [
-        { name: 'Баары', code: 1 },
-        { name: 'London', code: 2 },
-        { name: 'Paris', code: 3 },
-        { name: 'Баары', code: 1 },
-        { name: 'London', code: 2 },
-        { name: 'Paris', code: 3 },
-    ];
+    const [selectedSort, setSelectedSort] = useState({ name: 'Баары', code: 1 });
+    const [sortOpt, setSortOpt] = useState<sortOptType[]>();
+    // [{ name: '1-семестр', page: 0 }];
+    // const sortOpt = [
+    //     { name: 'Баары', code: 1 },
+    //     { name: 'London', code: 2 },
+    //     { name: 'Paris', code: 3 },
+    //     { name: 'Баары', code: 1 },
+    //     { name: 'London', code: 2 },
+    //     { name: 'Paris', code: 3 }
+    // ];
 
-//     semesters.map((semester, index) => (
-//   <>
-//     <h3>{index + 1}-семестр</h3>
-//     {semester.items.map((item) => (
-//       <div>{item.name}</div>
-//     ))}
-//   </>
-// ))
-    
     const { setMessage } = useContext(LayoutContext);
     const showError = useErrorMessage();
 
@@ -78,9 +70,18 @@ export default function Teaching() {
     };
 
     useEffect(() => {
-        if (lessons?.length > 0) {
+        // if (lessons?.length > 0) {
             // setLessonsDisplay(lessons.data[selectedSort.page]);
-        }
+
+            // lessons.map((semester, index) => (
+            //   <>
+            //     <h3>{index + 1}-семестр</h3>
+            //     {semester.items.map((item) => (
+            //       <div>{item.name}</div>
+            //     ))}
+            //   </>
+            // ))
+        // }
     }, [selectedSort]);
 
     useEffect(() => {
@@ -145,12 +146,14 @@ export default function Teaching() {
                         {skeleton ? (
                             <GroupSkeleton count={10} size={{ width: '100%', height: '3rem' }} />
                         ) : (
-                            <div className='flex gap-2 items-center justify-around flex-wrap'>
-                                {sortOpt.map((item) => {
-                                    return <>
-                                        <ItemCard />
-                                    </>;
-                                })}
+                            <div className="flex gap-2 items-center justify-around flex-wrap">
+                                {/* {sortOpt.map((item) => {
+                                    return (
+                                        <>
+                                            <ItemCard />
+                                        </>
+                                    );
+                                })} */}
                             </div>
                         )}
                     </div>

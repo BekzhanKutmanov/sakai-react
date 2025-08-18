@@ -14,53 +14,53 @@ import GroupSkeleton from '../skeleton/GroupSkeleton';
 import Link from 'next/link';
 
 export default function StreamList({ callIndex, courseValue, isMobile }: { callIndex: number; courseValue: { id: number; title: string } | null; isMobile: boolean }) {
-    const streamList = [
-        {
-            created_at: '',
-            name_kg: '',
-            id: 1,
-            image: '',
-            status: true,
-            title: 'lorem-1 lorem-1 lorem-1lorem-1lorem-1lorem-1lorem-1',
-            user_id: 1
-        },
-        {
-            created_at: '',
-            name_kg: '',
-            id: 2,
-            image: '',
-            status: true,
-            title: 'lorem-2',
-            user_id: 2
-        },
-        {
-            created_at: '',
-            name_kg: '',
-            id: 3,
-            image: '',
-            status: true,
-            title: 'lorem-3',
-            user_id: 3
-        },
-        {
-            created_at: '',
-            name_kg: '',
-            id: 4,
-            image: '',
-            status: true,
-            title: 'lorem-4',
-            user_id: 4
-        },
-        {
-            created_at: '',
-            name_kg: '',
-            id: 5,
-            image: '',
-            status: true,
-            title: 'lorem-5',
-            user_id: 5
-        }
-    ];
+    // const streamList = [
+    //     {
+    //         created_at: '',
+    //         name_kg: '',
+    //         id: 1,
+    //         image: '',
+    //         status: true,
+    //         title: 'lorem-1 lorem-1 lorem-1lorem-1lorem-1lorem-1lorem-1',
+    //         user_id: 1
+    //     },
+    //     {
+    //         created_at: '',
+    //         name_kg: '',
+    //         id: 2,
+    //         image: '',
+    //         status: true,
+    //         title: 'lorem-2',
+    //         user_id: 2
+    //     },
+    //     {
+    //         created_at: '',
+    //         name_kg: '',
+    //         id: 3,
+    //         image: '',
+    //         status: true,
+    //         title: 'lorem-3',
+    //         user_id: 3
+    //     },
+    //     {
+    //         created_at: '',
+    //         name_kg: '',
+    //         id: 4,
+    //         image: '',
+    //         status: true,
+    //         title: 'lorem-4',
+    //         user_id: 4
+    //     },
+    //     {
+    //         created_at: '',
+    //         name_kg: '',
+    //         id: 5,
+    //         image: '',
+    //         status: true,
+    //         title: 'lorem-5',
+    //         user_id: 5
+    //     }
+    // ];
 
     // type
     interface StreamsType {}
@@ -198,6 +198,7 @@ export default function StreamList({ callIndex, courseValue, isMobile }: { callI
         console.log('Id ', courseValue);
 
         setStreamValues({ stream: [] });
+        setDisplayStreams([]);
         toggleSkeleton();
         if (courseValue?.id) {
             handleFetchStreams();
@@ -216,7 +217,6 @@ export default function StreamList({ callIndex, courseValue, isMobile }: { callI
         }
     }, [streams]);
 
-
     const itemTemplate = (item, index: number) => {
         const bgClass = item.connect_id ? 'bg-[var(--greenBgColor)] border-b border-[gray]' : index % 2 == 1 ? 'bg-[#f5f5f5]' : '';
 
@@ -224,15 +224,14 @@ export default function StreamList({ callIndex, courseValue, isMobile }: { callI
             <div className={`w-full ${bgClass}`} key={item?.stream_id}>
                 <div className={`flex flex-column p-2 gap-2`}>
                     <div className="flex justify-between gap-1 items-center">
-                        {/* <h3 className="m-0">{item?.subject_name.name_kg}</h3> */}
+                        <h3 className="m-0">{item?.subject_name.name_kg}</h3>
                         <label className="custom-radio">
                             <input
                                 type="checkbox"
                                 className={`customCheckbox`}
                                 checked={Boolean(item.connect_id)}
                                 onChange={(e) => {
-                                    handleEdit(e.target, item.stream_id, 'vremenno');
-                                    // handleEdit(e.target, item.stream_id, item?.subject_name.name_kg);
+                                    handleEdit(e.target, item.stream_id, item?.subject_name.name_kg);
                                     setStreams((prev) => prev.map((el) => (el.stream_id === item.stream_id ? { ...el, connect_id: el.connect_id ? null : 1 } : el)));
                                 }}
                             />
@@ -310,7 +309,7 @@ export default function StreamList({ callIndex, courseValue, isMobile }: { callI
                         </>
                     )}
 
-                    {!hasStreams ? (
+                    {hasStreams ? (
                         <NotFound titleMessage={'Агымдар азырынча жок'} />
                     ) : (
                         <div className="flex flex-col gap-2 sm:gap-4">
@@ -320,6 +319,7 @@ export default function StreamList({ callIndex, courseValue, isMobile }: { callI
                                         label="Байлоо"
                                         icon="pi pi-link"
                                         onClick={() => {
+                                            handleConnect();
                                             // setEditMode(false);
                                             // clearValues();
                                             // setFormVisible(true);
@@ -333,7 +333,7 @@ export default function StreamList({ callIndex, courseValue, isMobile }: { callI
                                     <GroupSkeleton count={10} size={{ width: '100%', height: '4rem' }} />
                                 ) : (
                                     <>
-                                        <DataView value={streamList} listTemplate={listTemplate} />
+                                        <DataView value={streams} listTemplate={listTemplate} />
                                     </>
                                 )}
                             </div>
@@ -351,7 +351,7 @@ export default function StreamList({ callIndex, courseValue, isMobile }: { callI
                                             {displayStreams.map((item) => {
                                                 return <div key={item?.stream_id}>{item?.stream_title}</div>;
                                             })}
-                                            <div>{displayStreams.length >= 3 && '...'}</div>
+                                            {/* <div>{displayStreams.length >= 3 && '...'}</div> */}
                                         </div>
                                     </div>
                                 </div>

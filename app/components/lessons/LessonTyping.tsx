@@ -772,6 +772,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                                 <span>{String(editingLesson?.document)}</span>
                                 <InputText
                                     type="text"
+                                    placeholder="Аталышы"
                                     value={editingLesson?.title && editingLesson?.title}
                                     onChange={(e) => {
                                         setEditingLesson((prev) => prev && { ...prev, title: e.target.value });
@@ -793,6 +794,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                                 />
                                 <InputText
                                     type="text"
+                                    placeholder="Аталышы"
                                     value={editingLesson?.title && editingLesson?.title}
                                     onChange={(e) => {
                                         setEditingLesson((prev) => prev && { ...prev, title: e.target.value });
@@ -840,6 +842,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                                 )}
                                 <InputText
                                     type="text"
+                                    placeholder="Аталышы"
                                     value={editingLesson?.title && editingLesson?.title}
                                     onChange={(e) => {
                                         setEditingLesson((prev) => prev && { ...prev, title: e.target.value });

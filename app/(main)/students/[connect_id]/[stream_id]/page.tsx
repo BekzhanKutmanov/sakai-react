@@ -14,33 +14,33 @@ import { DataTable } from 'primereact/datatable';
 import React, { useContext, useEffect, useState } from 'react';
 
 export default function StudentList() {
-    // [
-    //     {
-    //         student_name: 'lesha',
-    //         point: 31,
-    //         last_visist: 'xx-xx',
-    //         info: true
-    //     },
-    //     {
-    //         student_name: 'evheni',
-    //         point: 0,
-    //         last_visist: false,
-    //         info: true
-    //     },
-    //     {
-    //         student_name: 'alesha',
-    //         point: 3,
-    //         last_visist: 'xx-xx',
-    //         info: false
-    //     },
-    //     {
-    //         student_name: 'lesha',
-    //         point: 3,
-    //         last_visist: 'xx-xx',
-    //         info: true
-    //     }
-    // ]
-    const [studentList, setStudentList] = useState([]);
+    const studentList = [
+        {
+            student_name: 'lesha',
+            point: 31,
+            last_visist: 'xx-xx',
+            info: true
+        },
+        {
+            student_name: 'evheni',
+            point: 0,
+            last_visist: false,
+            info: true
+        },
+        {
+            student_name: 'alesha',
+            point: 3,
+            last_visist: 'xx-xx',
+            info: false
+        },
+        {
+            student_name: 'lesha',
+            point: 3,
+            last_visist: 'xx-xx',
+            info: true
+        }
+    ]
+    // const [studentList, setStudentList] = useState([]);
     const [hasList, setHasList] = useState(false);
     const [skeleton, setSkeleton] = useState(false);
 
@@ -97,7 +97,7 @@ export default function StudentList() {
                     ) }
 
             {/* table section */}
-            {hasList ? (
+            {!hasList ? (
                 <NotFound titleMessage={'  ?  '} />
             ) : (
                 <div>
