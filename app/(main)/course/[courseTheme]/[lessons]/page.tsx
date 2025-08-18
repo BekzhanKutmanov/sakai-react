@@ -14,10 +14,12 @@ import { getRedactor } from '@/utils/getRedactor';
 import { getConfirmOptions } from '@/utils/getConfirmOptions';
 import LessonTyping from '@/app/components/lessons/LessonTyping';
 import { TabViewChange } from '@/types/tabViewChange';
+import InfoBanner from '@/app/components/InfoBanner';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 
 export default function Lesson() {
     const [activeIndex, setActiveIndex] = useState<number>(0);
-    const [contentShow, setContentShow] = useState<boolean>(true);
+    const [contentShow, setContentShow] = useState<boolean>(false);
     const [textShow, setTextShow] = useState<boolean>(false);
     const [editMode, setEditMode] = useState<boolean>(false);
     const [editingLesson, setEditingLesson] = useState<string>('');
@@ -26,6 +28,8 @@ export default function Lesson() {
 
     const showError = useErrorMessage();
     const [sentValues, setSentValues] = useState<string>('');
+
+    const media = useMediaQuery('(max-width: 640px)');
 
     const params = useParams();
     const courseId = params.courseTheme;
@@ -148,7 +152,31 @@ export default function Lesson() {
     const handleTabChange = (e: TabViewChange) => {
         if (e.index === 0) handleFetchLesson();
         setActiveIndex(e.index);
+        setContentShow(true);
     };
+
+    const lessonInfo = <div>
+        <div className="bg-[var(--titleColor)] relative flex flex-col justify-center items-center w-full text-white p-[30px] md:p-[40px]">
+            <span className='absolute left-4 top-4 text-2xl sm:text-4xl pi pi-bookmark-fill '></span>
+            <div>
+                <h1 style={{ color: 'white', fontSize: media ? '24px' : '36px', textAlign: 'center'}}>{'title jjjjjjjj jjjjjjj '}</h1>
+                <div className='flex flex-col sm:flex-row items-center justify-between gap-5'>  
+                    <span className='flex items-center gap-3'>
+                        <span className='w-[8px] h-[8px] block bg-[var(--mainColor)]'></span>
+                        <span onClick={()=> handleTabChange({index: 1})} className='cursor-pointer hover:text-[var(--mainColor)] transition-all'>Документтердин саны: <span className='text-[var(--mainColor)] font-bold'>0</span></span>
+                    </span>   
+                    <span className='flex items-center gap-3'>
+                        <span className='w-[8px] h-[8px] block bg-[var(--mainColor)]'></span>
+                        <span onClick={()=> handleTabChange({index: 2})} className='cursor-pointer hover:text-[var(--mainColor)] transition-all'>Шилтемелердин саны: <span className='text-[var(--mainColor)] font-bold'>2</span></span>
+                    </span>  
+                    <span className='flex items-center gap-3'>
+                        <span className='w-[8px] h-[8px] block bg-[var(--mainColor)]'></span>
+                        <span onClick={()=> handleTabChange({index: 3})} className='cursor-pointer hover:text-[var(--mainColor)] transition-all'>Видеолордун саны: <span className='text-[var(--mainColor)] font-bold'>0</span></span>
+                    </span>       
+                </div>
+            </div>
+        </div>
+    </div>
 
     // USE EFFECTS
     useEffect(() => {
@@ -176,7 +204,7 @@ export default function Lesson() {
                     leftIcon={'pi pi-pen-to-square mr-1'}
                     className=" p-tabview p-tabview-nav p-tabview-selected p-tabview-panels p-tabview-panel"
                 >
-                    {contentShow && (
+                    {contentShow ? (
                         <div>
                             {textShow ? (
                                 <div className="py-4 w-[800px] h-[340px] m-auto p-2 rounded" style={{ boxShadow: '2px 2px 21px -8px rgba(34, 60, 80, 0.2)' }}>
@@ -187,7 +215,7 @@ export default function Lesson() {
                                                 <span>Текст</span>
                                             </div>
 
-                                            <Redacting redactor={getRedactor('null' ,textValue.id, { onEdit: editing, getConfirmOptions, onDelete: handleDeleteLesson })} textSize={'14px'} />
+                                            <Redacting redactor={getRedactor('null', textValue.id, { onEdit: editing, getConfirmOptions, onDelete: handleDeleteLesson })} textSize={'14px'} />
                                             {/* <MySkeleton size={{ width: '12px', height: '15px' }} /> */}
                                         </div>
                                         <div className={`flex gap-1 items-center`}>
@@ -204,7 +232,7 @@ export default function Lesson() {
                                 <div className="flex flex-col gap-16 items-center m-0">
                                     {editMode ? (
                                         <>
-                                            <CKEditorWrapper insideValue={editingLesson} textValue={(e)=> handleText(e)} />
+                                            <CKEditorWrapper insideValue={editingLesson} textValue={(e) => handleText(e)} />
                                             <div className="flex items-center gap-4">
                                                 <Button label="Артка кайтуу" className="reject-button" onClick={clearValues} />
                                                 <Button label="Өзгөртүү" disabled={!sentValues?.length} onClick={handleUpdateLesson} />
@@ -219,7 +247,7 @@ export default function Lesson() {
                                 </div>
                             )}
                         </div>
-                    )}
+                    ) : lessonInfo}
                 </TabPanel>
 
                 {/* DOC */}
@@ -243,7 +271,7 @@ export default function Lesson() {
                     leftIcon={'pi pi-link mr-1'}
                     className="p-tabview p-tabview-nav p-tabview-selected p-tabview-panels p-tabview-panel"
                 >
-                    {contentShow && <LessonTyping mainType="link" courseId={courseId} lessonId={lessonId} />}   
+                    {contentShow && <LessonTyping mainType="link" courseId={courseId} lessonId={lessonId} />}
                 </TabPanel>
 
                 {/* VIDEO */}

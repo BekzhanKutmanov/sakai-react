@@ -18,7 +18,7 @@ export default function HomeClient() {
 
     return (
         <div className="relative mt-[98px] px-2 py-[50px] z-[1]">
-          <Link href={'/teaching'}>predmet</Link>
+          <Link href={'/course/lessons/3'}>predmet</Link>
             <div className="w-full">
                 <div className="flex flex-column md:flex-row items-center justify-between">
                     <div className="lg:w-1/2">

@@ -1,4 +1,4 @@
 export interface TabViewChange {
-    originalEvent: React.SyntheticEvent;
     index: number;
+    originalEvent?: React.SyntheticEvent;
 }
