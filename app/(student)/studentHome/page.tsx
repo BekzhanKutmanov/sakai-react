@@ -1,9 +1,9 @@
-import React from 'react'
+import ItemCard from '@/app/components/cards/ItemCard';
 
 export default function StudentHome() {
   return (
-    <div>
-      
+    <div className='flex justify-center'>
+      <ItemCard />
     </div>
   )
 };

@@ -224,7 +224,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
     // fetch document
     const handleFetchDoc = async () => {
         // skeleton = false
-        const token = getToken('access_token');
+
         const data = await fetchLesson('doc', courseId ? Number(courseId) : null, lessonId ? Number(lessonId) : null);
         console.log(data);
 
@@ -387,7 +387,6 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
     // fetch link
     const handleFetchLink = async () => {
         // skeleton = false
-        const token = getToken('access_token');
         const data = await fetchLesson('url', courseId ? Number(courseId) : null, lessonId ? Number(lessonId) : null);
         console.log(data);
 
@@ -503,7 +502,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                         }}
                         options={videoSelect}
                         optionLabel="name"
-                        placeholder=""
+                        placeholder="Танданыз"
                         className="w-[213px] sm:w-full md:w-14rem"
                     />
                     <div className="w-full flex justify-center">

@@ -4,6 +4,7 @@
 :root {
   --bodyFonts: "Jost", sans-serif;
   --mainColor: #08A9E6;
+  --mainBgColor: #e6eef1;
   --redColor: #EC272F;
   --redBgColor: #EC272F1A;
   --greenColor: rgb(46, 192, 46);
@@ -416,6 +417,10 @@ h1, h2, h3, h4, h5, h6 {
   border-radius: 0px 0px 200px 200px;
   -webkit-border-radius: 0px 0px 200px 200px;
   -moz-border-radius: 0px 0px 200px 200px;
+}
+
+.udalismelo{
+  background-color: #cde7e3;
 }
 
 .poka{
