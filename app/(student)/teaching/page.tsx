@@ -19,7 +19,7 @@ export default function Teaching() {
     const [lessons, setLessons] = useState<{}>({});
     const [lessonsDisplay, setLessonsDisplay] = useState<[]>([]);
     const [hasLessons, setHasLessons] = useState(false);
-    const [selectedSort, setSelectedSort] = useState({ name: 'Баары', code: 1 });
+    const [selectedSort, setSelectedSort] = useState({ name: 'Баары', code: 0 });
     const [sortOpt, setSortOpt] = useState<sortOptType[]>();
     // [{ name: '1-семестр', page: 0 }];
     // const sortOpt = [
@@ -53,9 +53,9 @@ export default function Teaching() {
         const data = await fetchItemsLessons();
         console.log(data);
         toggleSkeleton();
-        if (data?.success) {
-            setLessons(data.data);
-            // setLessonsDisplay(data[0]);
+        if (data) {
+            // валидность проверить
+            setLessons(data);
             setHasLessons(false);
         } else {
             setHasLessons(true);
@@ -69,47 +69,122 @@ export default function Teaching() {
         }
     };
 
-    useEffect(() => {
-        // if (lessons?.length > 0) {
-            // setLessonsDisplay(lessons.data[selectedSort.page]);
+    // useEffect(() => {
+    //     console.log(lessons);
 
-            // lessons.map((semester, index) => (
-            //   <>
-            //     <h3>{index + 1}-семестр</h3>
-            //     {semester.items.map((item) => (
-            //       <div>{item.name}</div>
-            //     ))}
-            //   </>
-            // ))
-        // }
-    }, [selectedSort]);
+    // if (lessons) {
+    //     let forSortSelect = [];
+    //     Object.values(lessons).forEach((item,idx) => {
+    //         console.log(item);
+    //         const obj = { name: item.semester.name_kg, code: idx + 1 };
+    //         forSortSelect.push(obj);
+    //     });
+    //     setSortOpt(forSortSelect);
 
-    useEffect(() => {
-        if (lessons['1']) {
-            console.log(lessons['1'][0].semester.name_kg);
+    //     const x = Object.values(lessons).map((item) => {
+    //         return (
+    //             <div className="flex flex-col gap-2">
+    //                 <h3 className="text-center">{item.semester.name_kg}</h3>
+    //                 <div className="flex justify-around flex-wrap items-center gap-2">
+    //                     {item.streams.map((j) => {
+    //                         return (
+    //                             <>
+    //                                 <ItemCard lessonName={j.curricula.name_subject.name_kg} teacherName={j.teacher.name} teacherLastName={j.teacher!.last_name && j.teacher!.last_name} lessonType={j.subject_type_name.name_kg} />
+    //                             </>
+    //                         );
+    //                     })}
+    //                 </div>
+    //             </div>
+    //         );
+    //     });
 
-            setSelectedSort(lessons['1']);
-        }
-        // console.log('v ', lessons['1'][0]);
-
-        // if(lessons.length > 0){
-        //     const forSelect = lessons['0'][0].semestr.name_kg
-
-        // }
-    }, [lessons]);
+    //     setLessonsDisplay(x);
+    // }
 
     // useEffect(() => {
-    //     console.log(selectedSort);
+    //     if (lessons) {
+    //         let forSortSelect = [{ name: 'Баары', code: 0 }];
 
-    //     if (selectedSort) {
-    //         const forSelect = selectedSort.map((item) => {
-    //             return { name: item.title, status: item.is_link, id: item.id };
+    //         Object.entries(lessons).forEach(([key, item]) => {
+    //             const obj = { name: item.semester.name_kg, code: Number(key) };
+    //             forSortSelect.push(obj);
     //         });
 
-    //         setVideoSelect(forSelect);
-    //         setSelectedCity(forSelect[0]);
+    //         setSortOpt(forSortSelect);
     //     }
-    // }, [selectedSort]);
+    // }, [lessons]);
+
+    // рабочий вариант до изменении структуры
+    // useEffect(() => {
+    //     if (!lessons) return;
+
+    //     let displayData;
+
+    //     if (selectedSort?.code === 0) {
+    //         // "Баары" → показать все
+    //         displayData = Object.values(lessons);
+    //     } else {
+    //         // конкретный семестр
+    //         const selected = lessons[selectedSort.code];
+    //         displayData = selected ? [selected] : [];
+    //     }
+
+    //     const x = displayData.map((item) => (
+    //         <div className="flex flex-col gap-2" key={item.semester.name_kg}>
+    //             <h3 className="text-center">{item.semester.name_kg}</h3>
+    //             <div className="flex justify-around flex-wrap items-center gap-2">
+    //                 {item.streams?.map((j, idx) => (
+    //                     <ItemCard key={idx} lessonName={j.curricula.name_subject.name_kg} teacherName={j.teacher.name} teacherLastName={j.teacher?.last_name} lessonType={j.subject_type_name.name_kg} />
+    //                 ))}
+    //             </div>
+    //         </div>
+    //     ));
+
+    //     setLessonsDisplay(x);
+    // }, [lessons, selectedSort]);
+
+    useEffect(() => {
+        if (!lessons) return;
+
+        // готовим опции для dropdown
+        let forSortSelect = [{ name: 'Баары', code: 0 }];
+
+        Object.entries(lessons).forEach(([key, value]) => {
+            if (value.semester) {
+                forSortSelect.push({
+                    name: value.semester.name_kg,
+                    code: Number(key)
+                });
+            }
+        });
+
+        setSortOpt(forSortSelect);
+
+        // фильтрация по selectedSort
+        let displayData;
+        if (selectedSort?.code === 0) {
+            displayData = Object.values(lessons).filter((item: any) => item.semester);
+        } else {
+            const selected = lessons[selectedSort.code];
+            displayData = selected && selected.semester ? [selected] : [];
+        }
+
+        // превращаем в jsx
+        const x = displayData.map((semester: any, sIdx: number) => (
+            <div className="flex flex-col gap-2" key={sIdx}>
+                <h3 className="text-center text-[26px]">{semester.semester.name_kg}</h3>
+                <div className="flex justify-around flex-wrap items-center gap-2">
+                    {Object.values(semester)
+                        .filter((val: any) => val.subject) // только предметы
+                        .map((subj: any, subjIdx: number) => (
+                            <ItemCard key={subjIdx} lessonName={subj.subject} streams={subj.streams} />
+                        ))}
+                </div>
+            </div>
+        ));
+
+        setLessonsDisplay(x);
+    }, [lessons, selectedSort]);
 
     useEffect(() => {
         handleFetchLessons();
@@ -139,25 +214,7 @@ export default function Teaching() {
                 )}
 
                 {/* lesson section */}
-                {!hasLessons ? (
-                    <NotFound titleMessage={'Сабактар убактылуу жетклиликсиз'} />
-                ) : (
-                    <div>
-                        {skeleton ? (
-                            <GroupSkeleton count={10} size={{ width: '100%', height: '3rem' }} />
-                        ) : (
-                            <div className="flex gap-2 items-center justify-around flex-wrap">
-                                {/* {sortOpt.map((item) => {
-                                    return (
-                                        <>
-                                            <ItemCard />
-                                        </>
-                                    );
-                                })} */}
-                            </div>
-                        )}
-                    </div>
-                )}
+                {hasLessons ? <NotFound titleMessage={'Сабактар убактылуу жетклиликсиз'} /> : skeleton ? <GroupSkeleton count={10} size={{ width: '100%', height: '3rem' }} /> : <div className="flex gap-2 sm:gap-6 flex-col">{lessonsDisplay}</div>}
             </div>
         </div>
     );

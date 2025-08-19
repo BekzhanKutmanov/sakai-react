@@ -2,7 +2,6 @@
 
 import FormModal from '@/app/components/popUp/FormModal';
 import { addCourse, deleteCourse, fetchCourseInfo, fetchCourses, updateCourse } from '@/services/courses';
-import { getToken } from '@/utils/auth';
 import { Button } from 'primereact/button';
 import { FileUpload, FileUploadSelectEvent } from 'primereact/fileupload';
 import { InputText } from 'primereact/inputtext';

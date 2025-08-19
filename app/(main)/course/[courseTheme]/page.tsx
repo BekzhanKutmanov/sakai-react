@@ -10,35 +10,46 @@ import { DataTable } from 'primereact/datatable';
 import { InputText } from 'primereact/inputtext';
 import { LayoutContext } from '@/layout/context/layoutcontext';
 import React, { useContext, useEffect, useState } from 'react';
-import { getToken } from '@/utils/auth';
 import { useParams } from 'next/navigation';
 import { addThemes, deleteTheme, fetchCourseInfo, fetchThemes, updateTheme } from '@/services/courses';
 import useErrorMessage from '@/hooks/useErrorMessage';
 import { CourseCreateType } from '@/types/courseCreateType';
 import { NotFound } from '@/app/components/NotFound';
+import Redacting from '@/app/components/popUp/Redacting';
+import { getRedactor } from '@/utils/getRedactor';
+import { getConfirmOptions } from '@/utils/getConfirmOptions';
 
 export default function CourseTheme() {
     const [hasThemes, setHasThemes] = useState(false);
     const [themes, setThemes] = useState([]);
     const [themeValue, setThemeValue] = useState({ title: '', description: '', video_url: '' });
     const [themeInfo, setThemeInfo] = useState<CourseCreateType>();
-    const [courseTitle, setCourseTitle] = useState('');
     const [selectedCourse, setSelectedCourse] = useState<{ id: number | null }>({ id: null });
     const [formVisible, setFormVisible] = useState(false);
     const [editMode, setEditMode] = useState(false);
-    const [forStart, setForStart] = useState(false);
+    const [forStart, setForStart] = useState(true);
     const [skeleton, setSkeleton] = useState(false);
+    const [editingThemes, setEditingThemes] = useState<{ title: string }>({
+        title: ''
+    });
+
     const { setMessage } = useContext(LayoutContext);
 
     const { courseTheme } = useParams() as { courseTheme: string };
-    
+
     const showError = useErrorMessage();
 
+    const toggleSkeleton = () => {
+        setSkeleton(true);
+        setTimeout(() => {
+            setSkeleton(false);
+        }, 1000);
+    };
+
     const handleFetchThemes = async () => {
-
         const data = await fetchThemes(Number(courseTheme));
-        console.log(data);
 
+        toggleSkeleton();
         if (data?.lessons) {
             setHasThemes(false);
             setThemes(data.lessons.data);
@@ -52,9 +63,6 @@ export default function CourseTheme() {
                 showError(data.response.status);
             }
         }
-
-        console.log('he he bay ');
-
     };
 
     const handleFetchInfo = async () => {
@@ -67,13 +75,9 @@ export default function CourseTheme() {
 
     const handleAddTheme = async () => {
         if (themeValue.title.length < 1) {
-            alert('hi');
             return null;
         }
-
         const data = await addThemes(Number(courseTheme), themeValue.title);
-        console.log(data);
-
         if (data.success) {
             toggleSkeleton();
             handleFetchThemes();
@@ -93,7 +97,6 @@ export default function CourseTheme() {
     };
 
     const handleDeleteCourse = async (id: number) => {
-
         const data = await deleteTheme(id);
         if (data.success) {
             toggleSkeleton();
@@ -114,7 +117,9 @@ export default function CourseTheme() {
     };
 
     const handleUpdateTheme = async () => {
-        const data = await updateTheme(Number(courseTheme), selectedCourse.id, themeValue);
+        console.log('yeee');
+        
+        const data = await updateTheme(Number(courseTheme), selectedCourse.id, editingThemes.title);
         if (data.success) {
             toggleSkeleton();
             handleFetchThemes();
@@ -136,31 +141,33 @@ export default function CourseTheme() {
         }
     };
 
+    const edit = (rowData: number | null) => {
+        console.log(rowData);
+
+        setEditMode(true);
+        setSelectedCourse({id: rowData});
+        // setThemeValue({ title: rowData.title || '' });
+        setFormVisible(true);
+    };
+
     const clearValues = () => {
         setThemeValue({ title: '', description: '', video_url: '' });
-        setCourseTitle('');
+        setEditingThemes({ title: ''});
         setEditMode(false);
         setSelectedCourse({ id: null });
     };
 
-    const getConfirmOptions = (id: number) => ({
-        message: 'Сиз чын эле өчүрүүнү каалайсызбы??',
-        header: 'Өчүрүү',
-        icon: 'pi pi-info-circle',
-        defaultFocus: 'reject',
-        acceptClassName: 'p-button-danger',
-        acceptLabel: 'Кийинки кадам', // кастомная надпись для "Yes"
-        rejectLabel: 'Артка',
-        accept: () => handleDeleteCourse(id),
-        reject: () => console.log('Удаление отменено')
-    });
-
-    const toggleSkeleton = () => {
-        setSkeleton(true);
-        setTimeout(() => {
-            setSkeleton(false);
-        }, 1000);
-    };
+    // const getConfirmOptions = (id: number) => ({
+    //     message: 'Сиз чын эле өчүрүүнү каалайсызбы??',
+    //     header: 'Өчүрүү',
+    //     icon: 'pi pi-info-circle',
+    //     defaultFocus: 'reject',
+    //     acceptClassName: 'p-button-danger',
+    //     acceptLabel: 'Кийинки кадам', // кастомная надпись для "Yes"
+    //     rejectLabel: 'Артка',
+    //     accept: () => handleDeleteCourse(id),
+    //     // reject: () => console.log('Удаление отменено')
+    // });
 
     useEffect(() => {
         handleFetchInfo();
@@ -168,9 +175,34 @@ export default function CourseTheme() {
     }, []);
 
     useEffect(() => {
-        const title = courseTitle.trim();
-        title.length > 0 ? setForStart(false) : setForStart(true);
-    }, [courseTitle]);
+        const handleShow = async () => {
+            const data = await fetchThemes(Number(courseTheme));
+            console.log(data);
+            
+            if (data?.lessons) {
+                console.log('rab');
+                
+                const forEditing = data.lessons.data.find(item => item.id === selectedCourse.id)
+                
+                setEditingThemes({
+                    title: forEditing.title || '',
+                });
+            }
+        };
+
+        if (editMode) {
+            handleShow();
+        }
+    }, [editMode]);
+    
+    useEffect(() => {
+        const title = editMode ? editingThemes.title.trim() : themeValue.title.trim();
+        if (title.length > 0) {
+            setForStart(false);
+        } else {
+            setForStart(true);
+        }
+    }, [themeValue.title, editingThemes.title]);
 
     useEffect(() => {
         themes.length < 1 ? setHasThemes(true) : setHasThemes(false);
@@ -218,13 +250,18 @@ export default function CourseTheme() {
                         <div className="flex flex-col gap-1 items-center justify-center">
                             <label className="block text-900 font-medium text-[16px] md:text-xl mb-1 md:mb-2">Аталышы</label>
                             <InputText
-                                value={courseTitle}
+                                value={editMode ? editingThemes.title : themeValue.title}
                                 onChange={(e) => {
-                                    setCourseTitle(e.target.value);
-                                    setThemeValue((prev) => ({
-                                        ...prev,
-                                        title: e.target.value
-                                    }));
+                                    // setCourseTitle(e.target.value);
+                                    editMode
+                                        ? setEditingThemes((prev) => ({
+                                              ...prev,
+                                              title: e.target.value
+                                          }))
+                                        : setThemeValue((prev) => ({
+                                              ...prev,
+                                              title: e.target.value
+                                          }));
                                 }}
                             />
                         </div>
@@ -242,28 +279,16 @@ export default function CourseTheme() {
                     ) : (
                         <DataTable value={themes} breakpoint="960px" className="my-custom-table">
                             <Column body={(_, { rowIndex }) => rowIndex + 1} header="Номер" style={{ width: '20px' }}></Column>
-                            <Column field="title" header="Темалар" className="w-2/3" body={(rowData) => <Link href={`/course/${courseTheme}/${rowData.id}`}>{rowData.title}</Link>}></Column>
+                            <Column field="title" header="Темалар" className="w-full" body={(rowData) => <Link href={`/course/${courseTheme}/${rowData.id}`}>{rowData.title}</Link>}></Column>
 
                             <Column
                                 header=""
                                 className="flex justify-center"
                                 body={(rowData) => (
                                     <div className="flex gap-2">
-                                        <Button
-                                            icon="pi pi-pencil"
-                                            className="p-button-rounded bg-blue-400"
-                                            onClick={() => {
-                                                setEditMode(true);
-                                                setSelectedCourse(rowData.id);
-                                                // setThemeValue({ title: rowData.title || '' });
-                                                setCourseTitle(rowData.title);
-                                                setFormVisible(true);
-                                            }}
-                                        />
-                                        {/* <ConfirmModal confirmVisible={getConfirmOptions(rowData.id)} /> */}
-                                        <Button className=" bg-blue-400" icon="pi pi-arrow-right">
-                                            <Link href={`/course/${rowData.id}`}></Link>
-                                        </Button>
+                                        <div className="flex items-center gap-2" key={rowData.id}>
+                                            <Redacting redactor={getRedactor('null', rowData, { onEdit: edit, getConfirmOptions, onDelete: handleDeleteCourse })} textSize={'14px'} />
+                                        </div>
                                     </div>
                                 )}
                             />

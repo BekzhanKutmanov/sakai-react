@@ -127,9 +127,11 @@ export const fetchThemes = async (id: number) => {
     }
 };
 
-export const updateTheme = async (course_id: number | null, theme_id: number | null, value: CourseCreateType) => {
+export const updateTheme = async (course_id: number | null, theme_id: number | null, value: string) => {
+    console.log(value);
+    
     const formData = new FormData();
-    formData.append('title', value.title);
+    formData.append('title', value);
 
     try {
         const res = await axiosInstance.post(`/v1/teacher/lessons/update?course_id=${course_id}&title=${value}&lesson_id=${theme_id}`, formData, {
