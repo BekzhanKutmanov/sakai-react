@@ -7,6 +7,7 @@ import Message from '@/app/components/messages/Message';
 import { ConfirmDialog } from 'primereact/confirmdialog';
 import { User } from '@/types/user';
 import { MessageType } from '@/types/messageType';
+import { fetchCourses, fetchThemes } from '@/services/courses';
 
 export const LayoutContext = createContext({} as LayoutContextProps);
 
@@ -29,15 +30,15 @@ export const LayoutProvider = ({ children }: ChildContainerProps) => {
         menuHoverActive: false
     });
 
-        // 👇 Добавляем пользователя
+    // 👇 Добавляем пользователя
     const [user, setUser] = useState<User | null>(null);
 
-        // Глобальная загрузка
+    // Глобальная загрузка
     const [globalLoading, setGlobalLoading] = useState<boolean>(false);
 
-        // Сообщение об ошибке/успехе
-    const [message, setMessage] = useState<MessageType>({state:false, value:{}});
-    
+    // Сообщение об ошибке/успехе
+    const [message, setMessage] = useState<MessageType>({ state: false, value: {} });
+
     const onMenuToggle = () => {
         if (isOverlay()) {
             setLayoutState((prevLayoutState) => ({ ...prevLayoutState, overlayMenuActive: !prevLayoutState.overlayMenuActive }));
@@ -62,6 +63,29 @@ export const LayoutProvider = ({ children }: ChildContainerProps) => {
         return window.innerWidth > 991;
     };
 
+    // fetch course
+    const [course, setCourses] = useState([]);
+
+    const contextFetchCourse = async (page = 1) => {
+        const data = await fetchCourses(page, 0);
+        
+        if (data?.courses) {
+            // setCourses(data.courses.data);
+            setCourses(data.courses);
+        } else {
+            
+        }
+    };
+
+    // fetch themes
+    const [contextThemes, setContextThemes] = useState([]);
+    const contextFetchThemes = async (id: number | null) => {
+        const data = await fetchThemes(Number(id) || null);
+        console.log(data);
+        
+        setContextThemes(data);
+    }
+
     const value: LayoutContextProps = {
         layoutConfig,
         setLayoutConfig,
@@ -74,14 +98,22 @@ export const LayoutProvider = ({ children }: ChildContainerProps) => {
         globalLoading,
         setGlobalLoading,
         message,
-        setMessage
+        setMessage,
+        contextFetchCourse,
+        course,
+        setCourses,
+        contextFetchThemes,
+        contextThemes,
+        setContextThemes
     };
 
-    return <LayoutContext.Provider value={value}>
-            <SessionManager/>
-            <GlobalLoading/>
-            <ConfirmDialog />    
-            {message.state && <Message/>}
+    return (
+        <LayoutContext.Provider value={value}>
+            <SessionManager />
+            <GlobalLoading />
+            <ConfirmDialog />
+            {message.state && <Message />}
             {children}
-        </LayoutContext.Provider>;
+        </LayoutContext.Provider>
+    );
 };

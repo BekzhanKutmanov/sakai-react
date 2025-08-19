@@ -27,7 +27,9 @@ import { TabViewChange } from '@/types/tabViewChange';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 
 export default function Course() {
-    const [courses, setCourses] = useState<mainCourseType[]>([]);
+    const { setMessage, course, setCourses, contextFetchCourse } = useContext(LayoutContext);
+
+    const [coursesValue, setValueCourses] = useState<mainCourseType[]>([]);
     const [hasCourses, setHasCourses] = useState(false);
     const [courseValue, setCourseValue] = useState<CourseCreateType>({ title: '', description: '', video_url: '', image: '' });
     const [editMode, setEditMode] = useState(false);
@@ -103,7 +105,6 @@ export default function Course() {
 
     const [forStreamId, setForStreamId] = useState<{ id: number | null; title: string } | null>(null);
 
-    const { setMessage, setGlobalLoading } = useContext(LayoutContext);
     const showError = useErrorMessage();
 
     const media = useMediaQuery('(max-width: 640px)');
@@ -116,15 +117,18 @@ export default function Course() {
     };
 
     const handleFetchCourse = async (page = 1) => {
-        const data = await fetchCourses(page, 0);
+
+        // const data = await fetchCourses(page, 0);
         toggleSkeleton();
-        if (data?.courses) {
+        console.log(course);
+        
+        if (course) {
             setHasCourses(false);
-            setCourses(data.courses.data);
+            setValueCourses(course.data);
             setPagination({
-                currentPage: data.courses.current_page,
-                total: data.courses.total,
-                perPage: data.courses.per_page
+                currentPage: course.current_page,
+                total: course.total,
+                perPage: course.per_page
             });
         } else {
             setHasCourses(true);
@@ -136,13 +140,35 @@ export default function Course() {
                 showError(data.response.status);
             }
         }
+
+        //  const data = await fetchCourses(page, 0);
+        // toggleSkeleton();
+        // if (data?.courses) {
+        //     setHasCourses(false);
+        //     setValueCourses(data.courses.data);
+        //     setPagination({
+        //         currentPage: data.courses.current_page,
+        //         total: data.courses.total,
+        //         perPage: data.courses.per_page
+        //     });
+        // } else {
+        //     setHasCourses(true);
+        //     setMessage({
+        //         state: true,
+        //         value: { severity: 'error', summary: 'Катаа!', detail: 'Байланышы менен көйгөй' }
+        //     });
+        //     if (data?.response?.status) {
+        //         showError(data.response.status);
+        //     }
+        // }
     };
 
     const handleAddCourse = async () => {
         const data = await addCourse(courseValue);
         if (data?.success) {
             toggleSkeleton();
-            handleFetchCourse();
+            // handleFetchCourse();
+            contextFetchCourse();
             setMessage({
                 state: true,
                 value: { severity: 'success', summary: 'Ийгиликтүү кошулду!', detail: '' }
@@ -162,7 +188,8 @@ export default function Course() {
         const data = await deleteCourse(id);
         if (data?.success) {
             toggleSkeleton();
-            handleFetchCourse();
+            // handleFetchCourse();
+            contextFetchCourse();
             setMessage({
                 state: true,
                 value: { severity: 'success', summary: 'Ийгиликтүү өчүрүлдү!', detail: '' }
@@ -189,7 +216,8 @@ export default function Course() {
         const data = await updateCourse(selectedCourse, editingLesson);
         if (data?.success) {
             toggleSkeleton();
-            handleFetchCourse();
+            // handleFetchCourse();
+            contextFetchCourse();
             clearValues();
             setEditMode(false);
             setSelectedCourse(null);
@@ -242,7 +270,7 @@ export default function Course() {
 
     // Ручное управление пагинацией
     const handlePageChange = (page: number) => {
-        handleFetchCourse(page);
+        // handleFetchCourse(page);
     };
 
     const edit = (rowData: number | null) => {
@@ -259,8 +287,12 @@ export default function Course() {
     };
 
     useEffect(() => {
-        handleFetchCourse();
+        contextFetchCourse();
     }, []);
+
+    useEffect(()=> {
+        handleFetchCourse();
+    },[course]);
 
     useEffect(() => {
         const title = editMode ? editingLesson.title.trim() : courseValue.title.trim();
@@ -272,17 +304,17 @@ export default function Course() {
     }, [courseValue.title, editingLesson.title]);
 
     useEffect(() => {
-        console.log('Курсы ', courses);
+        console.log('Курсы ', coursesValue);
 
-        if (courses.length < 1) {
+        if (coursesValue?.length < 1) {
             setHasCourses(true);
         } else {
-            if (courses.length > 0) {
-                setForStreamId({ id: courses[0].id, title: courses[0].title });
+            if (coursesValue?.length > 0) {
+                setForStreamId({ id: coursesValue[0].id, title: coursesValue[0].title });
             }
             setHasCourses(false);
         }
-    }, [courses]);
+    }, [coursesValue]);
 
     useEffect(() => {
         const handleShow = async () => {
@@ -433,7 +465,7 @@ export default function Course() {
                                     ) : (
                                         <div className="">
                                             {skeleton ? (
-                                                <GroupSkeleton count={courses.length} size={{ width: '100%', height: '4rem' }} />
+                                                <GroupSkeleton count={coursesValue?.length} size={{ width: '100%', height: '4rem' }} />
                                             ) : (
                                                 <div className="flex flex-col gap-2 sm:gap-4">
                                                     <div className="flex">
@@ -448,7 +480,7 @@ export default function Course() {
                                                         />
                                                     </div>
 
-                                                    <DataTable value={courses} dataKey="id" key={JSON.stringify(forStreamId)} breakpoint="960px" rows={5} className="my-custom-table">
+                                                    <DataTable value={coursesValue} dataKey="id" key={JSON.stringify(forStreamId)} breakpoint="960px" rows={5} className="my-custom-table">
                                                         <Column body={(_, { rowIndex }) => rowIndex + 1} header="Номер" style={{ width: '20px' }}></Column>
                                                         <Column
                                                             field="title"
@@ -550,10 +582,10 @@ export default function Course() {
                                 ) : (
                                     <div>
                                         {skeleton ? (
-                                            <GroupSkeleton count={courses.length} size={{ width: '100%', height: '4rem' }} />
+                                            <GroupSkeleton count={coursesValue?.length} size={{ width: '100%', height: '4rem' }} />
                                         ) : (
                                             <>
-                                                <DataTable value={courses} dataKey="id" key={JSON.stringify(forStreamId)} responsiveLayout="stack" breakpoint="960px" rows={5} className="my-custom-table">
+                                                <DataTable value={coursesValue} dataKey="id" key={JSON.stringify(forStreamId)} responsiveLayout="stack" breakpoint="960px" rows={5} className="my-custom-table">
                                                     <Column body={(_, { rowIndex }) => rowIndex + 1} header="Номер" style={{ width: '20px' }}></Column>
                                                     <Column
                                                         field="title"

@@ -53,6 +53,12 @@ export interface LayoutContextProps {
     setGlobalLoading: React.Dispatch<React.SetStateAction<boolean>>;
     message: MessageType;
     setMessage: React.Dispatch<React.SetStateAction<MessageType>>;
+    contextFetchCourse: ()=> void;
+    course: mainCourseType[];
+    setCourses;
+    contextFetchThemes: (id: number)=> void;
+    contextThemes;
+    setContextThemes
     // message: { state: boolean; value: MessageType };
     // setMessage: React.Dispatch<React.SetStateAction<{ state: boolean; value: MessageType }>>;
 }

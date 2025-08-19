@@ -33,7 +33,7 @@ export default function CourseTheme() {
         title: ''
     });
 
-    const { setMessage } = useContext(LayoutContext);
+    const { setMessage, contextFetchThemes } = useContext(LayoutContext);
 
     const { courseTheme } = useParams() as { courseTheme: string };
 
@@ -50,6 +50,9 @@ export default function CourseTheme() {
         const data = await fetchThemes(Number(courseTheme));
 
         toggleSkeleton();
+        console.log('id', selectedCourse);
+        
+        contextFetchThemes(Number(courseTheme));
         if (data?.lessons) {
             setHasThemes(false);
             setThemes(data.lessons.data);
