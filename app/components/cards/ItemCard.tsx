@@ -4,7 +4,7 @@
 // import React from 'react';
 
 // export default function ItemCard({lessonName, teacherName, teacherLastName, lessonType}:{lessonName: string, teacherName: string,teacherLastName: string, lessonType: string}) {
-    
+
 //     return (
 //         // <div className="w-[350px] sm:w-[300px] shadow rounded p-3 ">
 //         <div className="w-[100%] md:w-[300px] shadow rounded p-3 ">
@@ -32,55 +32,71 @@
 //                 </div>
 //             </div>
 
-            
 //         </div>
 //     );
 // }
 
-
 'use client';
+import { itemsCourseInfo } from '@/services/studentMain';
 import { Button } from 'primereact/button';
 import React from 'react';
 
 export default function ItemCard({
-  lessonName,
-  streams
+    lessonName,
+    streams,
+    connection
 }: {
-  lessonName: string;
-  streams: { teacher?: { name: string; last_name?: string }; subject_type_name?: { name_kg: string } }[];
+    lessonName: string;
+    streams: { teacher?: { name: string; last_name?: string }; subject_type_name?: { name_kg: string } }[];
+    connection: { id: number; course_id: number; id_myedu_stream: number }[];
 }) {
-  return (
-    <div className="w-[100%] md:w-[300px] shadow rounded p-3">
-      <div className="w-full shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">
-        <h3 className="text-[16px] ">{lessonName}</h3>
-      </div>
+    const handleCourseInfo = async (course_id, stream_id) => {
+        const data = await itemsCourseInfo(course_id ? Number(course_id) : null, stream_id ? Number(stream_id) : null);
+        console.log(data);
 
-      <div className="flex flex-col gap-1">
-        {streams.map((stream, idx) => (
-          <div
-            key={idx}
-            className="flex flex-col gap-2 p-1 rounded bg-[var(--mainBgColor)]"
-          >
-            <div className="flex gap-1 items-center">
-              <span className="text-[var(--mainColor)]">Окутуучу:</span>
-              <span>{stream.teacher?.name}</span>
-              <span>{stream.teacher?.last_name}</span>
+        // if (data && data.students) {
+        //     // setHasList(false);
+        //     // setStudentList(data.students);
+        // } else {
+        //     setHasList(true);
+        //     setMessage({
+        //         state: true,
+        //         value: { severity: 'error', summary: 'Ошибка', detail: 'Проблема с соединением. Повторите заново' }
+        //     });
+        //     if (data?.response?.status) {
+        //         showError(data.response.status);
+        //     }
+        // }
+    };
+
+    return (
+        <div className="w-[100%] md:w-[300px] shadow rounded p-3">
+            <div className="w-full shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">
+                <h3 className="text-[16px] ">{lessonName}</h3>
             </div>
-            <div className="flex sm:items-center gap-1 justify-between ">
-              <div className="flex gap-1 items-center">
-                <span className="text-[var(--mainColor)]">Тип:</span>
-                <span>{stream.subject_type_name?.short_name_kg}</span>
-              </div>
-              <Button
-                label="Курс"
-                icon="pi pi-arrow-right text-sm"
-                iconPos="right"
-              />
+
+            <div className="flex flex-col gap-1">
+                {streams.map((stream, idx) => (
+                    <div key={idx} className="flex flex-col gap-2 p-1 rounded bg-[var(--mainBgColor)]">
+                        <div className="flex gap-1 items-center">
+                            <span className="text-[var(--mainColor)]">Окутуучу:</span>
+                            <span>{stream.teacher?.name}</span>
+                            <span>{stream.teacher?.last_name}</span>
+                        </div>
+                        <div className="flex sm:items-center gap-1 justify-between ">
+                            <div className="flex gap-1 items-center">
+                                <span className="text-[var(--mainColor)]">Тип:</span>
+                                <span>{stream.subject_type_name?.short_name_kg}</span>
+                            </div>
+                            {connection.map((item) => {
+                                if (item.id_myedu_stream === stream.id) {
+                                    return <Button label="Курс" onClick={() => handleCourseInfo(item.course_id, stream.id)} icon="pi pi-arrow-right text-sm" iconPos="right" />;
+                                }
+                            })}
+                        </div>
+                    </div>
+                ))}
             </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
+        </div>
+    );
 }
-

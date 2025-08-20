@@ -5,7 +5,7 @@ import { NotFound } from '@/app/components/NotFound';
 import GroupSkeleton from '@/app/components/skeleton/GroupSkeleton';
 import useErrorMessage from '@/hooks/useErrorMessage';
 import { LayoutContext } from '@/layout/context/layoutcontext';
-import { fetchItemsLessons } from '@/services/studentMain';
+import { fetchItemsConnect, fetchItemsLessons } from '@/services/studentMain';
 import { Dropdown } from 'primereact/dropdown';
 import { useContext, useEffect, useState } from 'react';
 
@@ -21,6 +21,8 @@ export default function Teaching() {
     const [hasLessons, setHasLessons] = useState(false);
     const [selectedSort, setSelectedSort] = useState({ name: 'Баары', code: 0 });
     const [sortOpt, setSortOpt] = useState<sortOptType[]>();
+    const [connection, setConnection] = useState<[]>([]);
+
     // [{ name: '1-семестр', page: 0 }];
     // const sortOpt = [
     //     { name: 'Баары', code: 1 },
@@ -62,6 +64,25 @@ export default function Teaching() {
             setMessage({
                 state: true,
                 value: { severity: 'error', summary: 'Катаа!', detail: 'Байланышы менен көйгөй' }
+            });
+            if (data?.response?.status) {
+                showError(data.response.status);
+            }
+        }
+    };
+
+     const handleFetchConnectId = async () => {
+        // skeleton = false
+        const data = await fetchItemsConnect();
+        console.log(data);
+        toggleSkeleton();
+        if (data) {
+            setConnection(data);
+        } else {
+            setHasLessons(true);
+            setMessage({
+                state: true,
+                value: { severity: 'error', summary: 'Катаа!', detail: '' }
             });
             if (data?.response?.status) {
                 showError(data.response.status);
@@ -177,7 +198,7 @@ export default function Teaching() {
                     {Object.values(semester)
                         .filter((val: any) => val.subject) // только предметы
                         .map((subj: any, subjIdx: number) => (
-                            <ItemCard key={subjIdx} lessonName={subj.subject} streams={subj.streams} />
+                            <ItemCard key={subjIdx} lessonName={subj.subject} streams={subj.streams} connection={connection}/>
                         ))}
                 </div>
             </div>
@@ -188,6 +209,7 @@ export default function Teaching() {
 
     useEffect(() => {
         handleFetchLessons();
+        handleFetchConnectId();
     }, []);
 
     return (

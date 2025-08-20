@@ -43,7 +43,7 @@ export const fetchStreamStudents = async (connect_id: number | null, stream_id: 
     console.log(connect_id, stream_id);
     
     try {
-        const res = await axiosInstance.get(`v1/teacher/stream/students?connect_id=${connect_id}&stream_id=${stream_id}`,);
+        const res = await axiosInstance.get(`v1/teacher/stream/students?connect_id=${connect_id}&stream_id=${stream_id}`);
         const data = await res.data;
 
         return data;
