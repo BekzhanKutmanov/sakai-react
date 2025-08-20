@@ -58,7 +58,11 @@ export interface LayoutContextProps {
     setCourses;
     contextFetchThemes: (id: number)=> void;
     contextThemes;
-    setContextThemes
+    setContextThemes;
+
+    contextFetchStudentThemes: ()=> void;
+    contextStudentThemes;
+    setContextStudentThemes;
     // message: { state: boolean; value: MessageType };
     // setMessage: React.Dispatch<React.SetStateAction<{ state: boolean; value: MessageType }>>;
 }

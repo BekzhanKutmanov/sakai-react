@@ -8,6 +8,7 @@ import { ConfirmDialog } from 'primereact/confirmdialog';
 import { User } from '@/types/user';
 import { MessageType } from '@/types/messageType';
 import { fetchCourses, fetchThemes } from '@/services/courses';
+import { fetchStudentThemes } from '@/services/studentMain';
 
 export const LayoutContext = createContext({} as LayoutContextProps);
 
@@ -81,9 +82,17 @@ export const LayoutProvider = ({ children }: ChildContainerProps) => {
     const [contextThemes, setContextThemes] = useState([]);
     const contextFetchThemes = async (id: number | null) => {
         const data = await fetchThemes(Number(id) || null);
-        console.log(data);
         
         setContextThemes(data);
+    }
+
+    // fetch themes for student
+    const [contextStudentThemes, setContextStudentThemes] = useState([]);
+    const contextFetchStudentThemes = async () => {
+        const data = await fetchStudentThemes();
+        console.log(data);
+        
+        setContextStudentThemes(data);
     }
 
     const value: LayoutContextProps = {
@@ -99,12 +108,18 @@ export const LayoutProvider = ({ children }: ChildContainerProps) => {
         setGlobalLoading,
         message,
         setMessage,
+        
         contextFetchCourse,
         course,
         setCourses,
+        
         contextFetchThemes,
         contextThemes,
-        setContextThemes
+        setContextThemes,
+
+        contextFetchStudentThemes,
+        contextStudentThemes,
+        setContextStudentThemes,
     };
 
     return (

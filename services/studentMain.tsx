@@ -27,13 +27,9 @@ export const fetchItemsConnect = async () => {
 };
 
 export const itemsCourseInfo = async (course_id: number | null, stream_id: number | null ) => {
-    const value = {
-        course_id: course_id,
-        stream_id: stream_id
-    }
+
     try {
         const res = await axiosInstance.get(`v1/student/course?course_id=${course_id}&stream_id=${stream_id}`);
-        // const res = await axiosInstance.get(`v1/student/course=${value}`);
         const data = await res.data;
 
         return data;
@@ -42,6 +38,19 @@ export const itemsCourseInfo = async (course_id: number | null, stream_id: numbe
         return err;
     }
 }
+
+// student theme fetch
+export const fetchStudentThemes = async () => {
+    try {
+        const res = await axiosInstance.get(`v1/student/ ?`);
+        const data = await res.data;
+
+        return data;
+    } catch (err) {
+        console.log('Ошибка загрузки:', err);
+        return err;
+    }
+};
 
 // export const addCourse = async (value: CourseCreateType) => {
 //     const formData = new FormData();

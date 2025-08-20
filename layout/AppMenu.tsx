@@ -5,6 +5,7 @@ import AppMenuitem from './AppMenuitem';
 import { LayoutContext } from './context/layoutcontext';
 import { MenuProvider } from './context/menucontext';
 import { AppMenuItem } from '@/types';
+import { usePathname } from 'next/navigation';
 
 const AppMenu = () => {
     const { layoutConfig, user, course, setCourses, contextFetchCourse, contextFetchThemes, contextThemes, setContextThemes } = useContext(LayoutContext);
@@ -21,7 +22,9 @@ const AppMenu = () => {
               }
           ]
         : user?.is_student
-        ? [{ label: 'Окуу планы', icon: 'pi pi-fw pi-calendar-clock', to: '/teaching' }]
+        ? [{ label: 'Окуу планы', icon: 'pi pi-fw pi-calendar-clock', to: '/teaching' },
+            // {label: 'to to '}
+        ]
         : [];
 
     const model: AppMenuItem[] = [
@@ -35,8 +38,19 @@ const AppMenu = () => {
         }
     ];
 
+    const location = usePathname();
+    const pathname = location
+
     useEffect(() => {
-        contextFetchCourse();
+        if(user?.is_working){
+            contextFetchCourse();   
+        } 
+        if(user?.is_student){
+            const isTopicsChildPage = pathname.startsWith("/teaching/");
+            if(isTopicsChildPage){
+                // alert('he he')
+            }
+        }
     }, []);
 
     useEffect(() => {

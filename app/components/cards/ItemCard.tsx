@@ -38,6 +38,7 @@
 
 'use client';
 import { itemsCourseInfo } from '@/services/studentMain';
+import Link from 'next/link';
 import { Button } from 'primereact/button';
 import React from 'react';
 
@@ -50,25 +51,6 @@ export default function ItemCard({
     streams: { teacher?: { name: string; last_name?: string }; subject_type_name?: { name_kg: string } }[];
     connection: { id: number; course_id: number; id_myedu_stream: number }[];
 }) {
-    const handleCourseInfo = async (course_id, stream_id) => {
-        const data = await itemsCourseInfo(course_id ? Number(course_id) : null, stream_id ? Number(stream_id) : null);
-        console.log(data);
-
-        // if (data && data.students) {
-        //     // setHasList(false);
-        //     // setStudentList(data.students);
-        // } else {
-        //     setHasList(true);
-        //     setMessage({
-        //         state: true,
-        //         value: { severity: 'error', summary: 'Ошибка', detail: 'Проблема с соединением. Повторите заново' }
-        //     });
-        //     if (data?.response?.status) {
-        //         showError(data.response.status);
-        //     }
-        // }
-    };
-
     return (
         <div className="w-[100%] md:w-[300px] shadow rounded p-3">
             <div className="w-full shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">
@@ -90,7 +72,7 @@ export default function ItemCard({
                             </div>
                             {connection.map((item) => {
                                 if (item.id_myedu_stream === stream.id) {
-                                    return <Button label="Курс" onClick={() => handleCourseInfo(item.course_id, stream.id)} icon="pi pi-arrow-right text-sm" iconPos="right" />;
+                                    return <Link href={`teaching/${item.course_id}/${stream.id}`}><Button label="Курс" icon="pi pi-arrow-right text-sm" iconPos="right" />;</Link>
                                 }
                             })}
                         </div>

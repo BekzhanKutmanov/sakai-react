@@ -14,6 +14,7 @@ import { logout } from '@/utils/logout';
 const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
     const { layoutConfig, layoutState, onMenuToggle, showProfileSidebar, user, setUser, setGlobalLoading } = useContext(LayoutContext);
 
+
     const menubuttonRef = useRef(null);
     const topbarmenuRef = useRef(null);
     const topbarmenubuttonRef = useRef(null);
