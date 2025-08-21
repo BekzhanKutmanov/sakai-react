@@ -51,6 +51,8 @@ export default function ItemCard({
     streams: { teacher?: { name: string; last_name?: string }; subject_type_name?: { name_kg: string } }[];
     connection: { id: number; course_id: number; id_myedu_stream: number }[];
 }) {
+    console.log('conn',connection);
+    
     return (
         <div className="w-[100%] md:w-[300px] shadow rounded p-3">
             <div className="w-full shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">
@@ -71,6 +73,8 @@ export default function ItemCard({
                                 <span>{stream.subject_type_name?.short_name_kg}</span>
                             </div>
                             {connection.map((item) => {
+                                console.log(item.id_myedu_stream === stream.id);
+                                
                                 if (item.id_myedu_stream === stream.id) {
                                     return <Link href={`teaching/${item.course_id}/${stream.id}`}><Button label="Курс" icon="pi pi-arrow-right text-sm" iconPos="right" />;</Link>
                                 }

@@ -18,6 +18,7 @@ export const fetchItemsConnect = async () => {
     try {
         const res = await axiosInstance.get(`v1/student/stream/connect`);
         const data = await res.data;
+        console.log(data);
 
         return data;
     } catch (err) {

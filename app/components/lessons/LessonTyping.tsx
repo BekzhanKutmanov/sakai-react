@@ -16,8 +16,8 @@ import { lessonType } from '@/types/lessonType';
 import { NotFound } from '../NotFound';
 import { EditableLesson } from '@/types/editableLesson';
 import { Dropdown } from 'primereact/dropdown';
-import Book from '../Book';
-import PDFBook from '../PDFBook';
+import PDFViewer from '../PDFBook';
+import DocumentModal from '../popUp/DocumentModal';
 
 export default function LessonTyping({ mainType, courseId, lessonId }: { mainType: string; courseId: string | null; lessonId: string | null }) {
     // types
@@ -60,7 +60,8 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
         video_link: ''
     });
     const [docShow, setDocShow] = useState<boolean>(false);
-    const [urlDPF, setUrlPDF] = useState('');
+    const [urlPDF, setUrlPDF] = useState('');
+    const [PDFVisible, setPDFVisible] = useState<boolean>(false);
 
     // links
     const [links, setLinks] = useState([]);
@@ -163,69 +164,86 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
     const sentToPDF = (url) => {
         console.log(url);
         setUrlPDF(url);
-    }
-    
+        setPDFVisible(true);
+    };
+
+    const documentView = (
+        <>
+            <div className="w-[1000px] flex flex-col gap-1">
+                <i className="pi pi-times text-2xl" onClick={() => setPDFVisible(false)}></i>
+                <div className="w-full flex flex-col gap-1 items-center justify-center">
+                    <PDFViewer url={urlPDF || ''} />
+                </div>
+            </div>
+        </>
+    );
+
     const docSection = () => {
         return (
             <div className="py-4 flex flex-col items-center gap-4">
-                <div className="w-full flex flex-col justify-center gap-2">
-                    <FileUpload
-                        chooseLabel="Документ жүктөө"
-                        mode="basic"
-                        name="demo[]"
-                        customUpload
-                        uploadHandler={() => {}}
-                        accept="application/pdf"
-                        onSelect={(e) =>
-                            setDocValue((prev) => ({
-                                ...prev,
-                                file: e.files[0]
-                            }))
-                        }
-                    />
+                {PDFVisible ? (
+                    documentView
+                ) : (
+                    <>
+                        <div className="w-full flex flex-col justify-center gap-2">
+                            <FileUpload
+                                chooseLabel="Документ жүктөө"
+                                mode="basic"
+                                name="demo[]"
+                                customUpload
+                                uploadHandler={() => {}}
+                                accept="application/pdf"
+                                onSelect={(e) =>
+                                    setDocValue((prev) => ({
+                                        ...prev,
+                                        file: e.files[0]
+                                    }))
+                                }
+                            />
 
-                    <InputText
-                        id="title"
-                        type="text"
-                        placeholder={'Аталышы'}
-                        value={docValue.title}
-                        onChange={(e) => {
-                            setDocValue((prev) => ({ ...prev, title: e.target.value }));
-                            setValue('title', e.target.value, { shouldValidate: true });
-                        }}
-                    />
-                    <b style={{ color: 'red', fontSize: '12px' }}>{errors.title?.message}</b>
+                            <InputText
+                                id="title"
+                                type="text"
+                                placeholder={'Аталышы'}
+                                value={docValue.title}
+                                onChange={(e) => {
+                                    setDocValue((prev) => ({ ...prev, title: e.target.value }));
+                                    setValue('title', e.target.value, { shouldValidate: true });
+                                }}
+                            />
+                            <b style={{ color: 'red', fontSize: '12px' }}>{errors.title?.message}</b>
 
-                    <InputText placeholder="Мазмун" value={docValue.description} onChange={(e) => setDocValue((prev) => ({ ...prev, description: e.target.value }))} className="w-full" />
-                    <div className="flex justify-center">
-                        {/* <Button disabled={!!errors.title || !docValue.file} label="Сактоо" onClick={handleAddDoc} /> */}
-                        <Button label="Сактоо" disabled={!docValue.title.length || !!errors.title || !docValue.file} onClick={handleAddDoc} />
-                    </div>
-                </div>
-                {/* <PDF url={urlDPF || ''}/> */}
-                <div className="flex flex-col items-center gap-4 py-4">
-                    <div className="flex flex-wrap justify-center gap-4">
-                        {docShow ? (
-                            <NotFound titleMessage={'Сабак кошуу үчүн талааларды толтурунуз'} />
-                        ) : (
-                            documents.map((item: lessonType) => (
-                                <>
-                                    <LessonCard
-                                        status="working"
-                                        onSelected={(id: number, type: string) => selectedForEditing(id, type)}
-                                        onDelete={(id: number) => handleDeleteDoc(id)}
-                                        cardValue={{ title: item?.title, id: item.id, type: 'doc' }}
-                                        cardBg={'#ddc4f51a'}
-                                        type={{ typeValue: 'doc', icon: 'pi pi-file' }}
-                                        typeColor={'var(--mainColor)'}
-                                        lessonDate={'xx-xx'}
-                                        urlForPDF={()=> sentToPDF(item.document)}
-                                    />
-                                </>
-                            ))
-                        )}
-                    </div>
-                </div>
+                            <InputText placeholder="Мазмун" value={docValue.description} onChange={(e) => setDocValue((prev) => ({ ...prev, description: e.target.value }))} className="w-full" />
+                            <div className="flex justify-center">
+                                {/* <Button disabled={!!errors.title || !docValue.file} label="Сактоо" onClick={handleAddDoc} /> */}
+                                <Button label="Сактоо" disabled={!docValue.title.length || !!errors.title || !docValue.file} onClick={handleAddDoc} />
+                            </div>
+                        </div>
+                        <div className="flex flex-col items-center gap-4 py-4">
+                            <div className="flex flex-wrap justify-center gap-4">
+                                {docShow ? (
+                                    <NotFound titleMessage={'Сабак кошуу үчүн талааларды толтурунуз'} />
+                                ) : (
+                                    documents.map((item: lessonType) => (
+                                        <>
+                                            <LessonCard
+                                                status="working"
+                                                onSelected={(id: number, type: string) => selectedForEditing(id, type)}
+                                                onDelete={(id: number) => handleDeleteDoc(id)}
+                                                cardValue={{ title: item?.title, id: item.id, type: 'doc' }}
+                                                cardBg={'#ddc4f51a'}
+                                                type={{ typeValue: 'doc', icon: 'pi pi-file' }}
+                                                typeColor={'var(--mainColor)'}
+                                                lessonDate={'xx-xx'}
+                                                urlForPDF={() => sentToPDF(item.document)}
+                                            />
+                                        </>
+                                    ))
+                                )}
+                            </div>
+                        </div>
+                    </>
+                )}
             </div>
         );
     };
@@ -235,7 +253,6 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
         // skeleton = false
 
         const data = await fetchLesson('doc', courseId ? Number(courseId) : null, lessonId ? Number(lessonId) : null);
-        console.log(data);
 
         if (data?.success) {
             if (data.documents) {
@@ -264,7 +281,6 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
         const token = getToken('access_token');
 
         const data = await addLesson('doc', token, courseId ? Number(courseId) : null, lessonId ? Number(lessonId) : null, docValue, 0);
-        console.log(data);
 
         if (data.success) {
             handleFetchDoc();
@@ -673,7 +689,6 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
         const token = getToken('access_token');
 
         const data = await updateLesson('video', token, courseId ? Number(courseId) : null, lessonId ? Number(lessonId) : null, Number(selectId), editingLesson);
-        console.log(data);
 
         if (data.success) {
             handleFetchVideo();
@@ -729,10 +744,6 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
     useEffect(() => {
         console.log('selected id ', selectId);
     }, [selectId]);
-
-    useEffect(() => {
-        console.log('eidting ', editingLesson);
-    }, [editingLesson]);
 
     useEffect(() => {
         links.length < 1 ? setLinksShow(true) : setLinksShow(false);

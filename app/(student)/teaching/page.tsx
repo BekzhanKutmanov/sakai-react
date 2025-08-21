@@ -72,7 +72,6 @@ export default function Teaching() {
     };
 
      const handleFetchConnectId = async () => {
-        // skeleton = false
         const data = await fetchItemsConnect();
         console.log(data);
         toggleSkeleton();

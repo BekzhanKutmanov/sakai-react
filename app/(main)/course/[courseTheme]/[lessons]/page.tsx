@@ -188,7 +188,7 @@ export default function Lesson() {
 
     return (
         <div>
-            <PDFViewer url={'http://api.mooc.oshsu.kg/public/files/lesson/documents/1755766911.pdf'}/>
+            {/* <PDFViewer url={'http://api.mooc.oshsu.kg/temprory-file/1755766911.pdf'}/> */}
             {/* <Book/> */}
 
             {/* header section */}

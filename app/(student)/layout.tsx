@@ -9,7 +9,7 @@ export default function LayoutStudent({
   return (
       <div>
           {/* <BaseLayout>{children}</BaseLayout> */}
-          <StudentLayout>{children}</StudentLayout>;
+          <StudentLayout>{children}</StudentLayout>
       </div>
   );
 }

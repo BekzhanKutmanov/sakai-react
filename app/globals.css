@@ -394,13 +394,45 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .my-custom-dialog{
-  width: 550px;
+  width: 500px;
+}
+
+.my-custom-document-dialog{
+  width: 800px;
 }
 
 @media screen and (max-width: 640px) {
   .my-custom-dialog{
     width: 300px;
   }
+  .my-custom-document-dialog{
+    width: 300px;
+  }
+}
+
+/* styles/book.css */
+
+/* Стили для контейнера всей книги */
+.book-container {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2), 0 6px 20px rgba(0, 0, 0, 0.19);
+  border-radius: 10px;
+  overflow: hidden; /* Обрезает содержимое, которое выходит за границы рамки */
+  border: 1px solid #ccc; /* Тонкая серая рамка */
+}
+
+/* Стили для каждой страницы */
+.page {
+  background-color: #f7f7f7;
+  border-radius: 5px;
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2); /* Внутренняя тень */
+  padding: 10px; /* Отступы от края страницы */
+}
+
+/* Стили для изображения внутри страницы, чтобы оно не вылезало за границы */
+.page-content img {
+  max-width: 100%;
+  height: auto;
+  display: block; /* Убирает лишние отступы под изображением */
 }
 
 .card-link{

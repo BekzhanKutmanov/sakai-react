@@ -29,11 +29,6 @@ export default function FormModal({children, title, fetchValue, clearValues, vis
         </div>
     );
 
-    useEffect(()=> {
-        console.log('visible', visible);
-        
-    },[visible]);
-
     return (
         <div>
             <Dialog
