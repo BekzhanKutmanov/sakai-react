@@ -16,6 +16,8 @@ import { lessonType } from '@/types/lessonType';
 import { NotFound } from '../NotFound';
 import { EditableLesson } from '@/types/editableLesson';
 import { Dropdown } from 'primereact/dropdown';
+import Book from '../Book';
+import PDFBook from '../PDFBook';
 
 export default function LessonTyping({ mainType, courseId, lessonId }: { mainType: string; courseId: string | null; lessonId: string | null }) {
     // types
@@ -58,6 +60,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
         video_link: ''
     });
     const [docShow, setDocShow] = useState<boolean>(false);
+    const [urlDPF, setUrlPDF] = useState('');
 
     // links
     const [links, setLinks] = useState([]);
@@ -157,6 +160,11 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
 
     // DOC SECTION
 
+    const sentToPDF = (url) => {
+        console.log(url);
+        setUrlPDF(url);
+    }
+    
     const docSection = () => {
         return (
             <div className="py-4 flex flex-col items-center gap-4">
@@ -194,7 +202,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                         <Button label="Сактоо" disabled={!docValue.title.length || !!errors.title || !docValue.file} onClick={handleAddDoc} />
                     </div>
                 </div>
-
+                {/* <PDF url={urlDPF || ''}/> */}
                 <div className="flex flex-col items-center gap-4 py-4">
                     <div className="flex flex-wrap justify-center gap-4">
                         {docShow ? (
@@ -211,6 +219,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                                         type={{ typeValue: 'doc', icon: 'pi pi-file' }}
                                         typeColor={'var(--mainColor)'}
                                         lessonDate={'xx-xx'}
+                                        urlForPDF={()=> sentToPDF(item.document)}
                                     />
                                 </>
                             ))

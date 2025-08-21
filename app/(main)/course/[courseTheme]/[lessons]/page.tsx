@@ -16,6 +16,9 @@ import LessonTyping from '@/app/components/lessons/LessonTyping';
 import { TabViewChange } from '@/types/tabViewChange';
 import InfoBanner from '@/app/components/InfoBanner';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
+import Book from '@/app/components/Book';
+import PDFBook from '@/app/components/PDFBook';
+import PDFViewer from '@/app/components/PDFBook';
 
 export default function Lesson() {
     const [activeIndex, setActiveIndex] = useState<number>(0);
@@ -185,6 +188,9 @@ export default function Lesson() {
 
     return (
         <div>
+            <PDFViewer url={'http://api.mooc.oshsu.kg/public/files/lesson/documents/1755766911.pdf'}/>
+            {/* <Book/> */}
+
             {/* header section */}
             <TabView
                 onTabChange={(e) => handleTabChange(e)}
@@ -260,6 +266,7 @@ export default function Lesson() {
                     className="p-tabview p-tabview-nav p-tabview-selected p-tabview-panels p-tabview-panel"
                 >
                     {contentShow && <LessonTyping mainType="doc" courseId={courseId} lessonId={lessonId} />}
+                    {/* <Book/> */}
                 </TabPanel>
 
                 {/* USEFUL LINKS */}

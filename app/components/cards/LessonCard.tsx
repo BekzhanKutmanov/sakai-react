@@ -13,7 +13,8 @@ export default function LessonCard({
     cardBg,
     typeColor,
     type,
-    lessonDate
+    lessonDate,
+    urlForPDF
 }: {
     status: string;
     onSelected?: (id: number, type: string) => void;
@@ -23,8 +24,15 @@ export default function LessonCard({
     type: { typeValue: string; icon: string };
     typeColor: string;
     lessonDate: string;
+    urlForPDF: ()=> void;
 }) {
-    const cardHeader =
+
+    const toSentPDF = () => {
+        console.log('privet ');
+        urlForPDF();
+    }
+
+    const cardHeader = 
         type.typeValue === 'video' && status === 'working' ? (
             <div className={`flex gap-2 justify-around items-center font-bold text-[12px]`} style={{ color: typeColor }}>
                 <div className={`${type.icon} text-2xl text-[${typeColor}]`}></div>
@@ -92,7 +100,7 @@ export default function LessonCard({
                 {videoPreviw}
 
                 {/* button */}
-                {btnLabel && <Button label={btnLabel} />}
+                {btnLabel && <Button onClick={toSentPDF} label={btnLabel} />}
             </div>
         </div>
     );

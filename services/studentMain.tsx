@@ -42,9 +42,9 @@ export const itemsCourseInfo = async (course_id: number | null, stream_id: numbe
 // student theme fetch
 export const fetchStudentThemes = async () => {
     try {
-        const res = await axiosInstance.get(`v1/student/ ?`);
+        const res = await axiosInstance.get(`v1/student/course/lessons`);
         const data = await res.data;
-
+        
         return data;
     } catch (err) {
         console.log('Ошибка загрузки:', err);
