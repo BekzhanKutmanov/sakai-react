@@ -56,10 +56,10 @@ export default function Tiered({ title, items, insideColor }: TieredProps) {
                 popup
                 ref={menu}
                 breakpoint="1000px"
-                style={{ width: media ? '90%' : '', left: '10px' }}
+                style={{ width: media ? '90%' : '220px', left: '10px' }}
                 className={`pointer mt-4 max-h-[200px] overflow-y-scroll`}
                 pt={{
-                    root: { className: `bg-white border border-gray-300 rounded-md shadow-md` },
+                    root: { className: `bg-white border w-[500px] border-gray-300 rounded-md shadow-md` },
                     menu: { className: 'transition-all' },
                     menuitem: { className: 'text-[var(--titleColor)] text-[14px] py-1 hover:shadow-xl border-gray-200 hover:text-white hover:bg-[var(--mainColor)]' },
                     action: { className: `flex justify-center items-center gap-2` }, // для иконки + текста не работает :)
