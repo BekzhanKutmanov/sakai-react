@@ -14,11 +14,7 @@ import { getRedactor } from '@/utils/getRedactor';
 import { getConfirmOptions } from '@/utils/getConfirmOptions';
 import LessonTyping from '@/app/components/lessons/LessonTyping';
 import { TabViewChange } from '@/types/tabViewChange';
-import InfoBanner from '@/app/components/InfoBanner';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
-import Book from '@/app/components/Book';
-import PDFBook from '@/app/components/PDFBook';
-import PDFViewer from '@/app/components/PDFBook';
 
 export default function Lesson() {
     const [activeIndex, setActiveIndex] = useState<number>(0);
@@ -206,7 +202,7 @@ export default function Lesson() {
                     pt={{
                         headerAction: { className: 'font-italic tab-custom-text' }
                     }}
-                    header="Тексттер"
+                    header="Текст"
                     leftIcon={'pi pi-pen-to-square mr-1'}
                     className=" p-tabview p-tabview-nav p-tabview-selected p-tabview-panels p-tabview-panel"
                 >
@@ -261,7 +257,7 @@ export default function Lesson() {
                     pt={{
                         headerAction: { className: 'font-italic tab-custom-text-2' }
                     }}
-                    header="Документтер"
+                    header="Документ"
                     leftIcon={'pi pi-file mr-1'}
                     className="p-tabview p-tabview-nav p-tabview-selected p-tabview-panels p-tabview-panel"
                 >
@@ -274,7 +270,7 @@ export default function Lesson() {
                     pt={{
                         headerAction: { className: 'font-italic tab-custom-text-3 text-center' }
                     }}
-                    header="Пайдалуу шилтемелер"
+                    header="Шилтемелер"
                     leftIcon={'pi pi-link mr-1'}
                     className="p-tabview p-tabview-nav p-tabview-selected p-tabview-panels p-tabview-panel"
                 >
