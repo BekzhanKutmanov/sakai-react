@@ -1,6 +1,9 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
+import HTMLFlipBook from 'react-pageflip'; // Импортируем flipbook
+import GroupSkeleton from './skeleton/GroupSkeleton';
+
 // import * as pdfjsLib from "pdfjs-dist";
 // pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
 
@@ -8,8 +11,6 @@ import * as pdfjsLib from 'pdfjs-dist';
 
 // Указываем путь к файлу mjs
 pdfjsLib.GlobalWorkerOptions.workerSrc = `/pdf.worker.mjs`;
-import HTMLFlipBook from 'react-pageflip'; // Импортируем flipbook
-import GroupSkeleton from './skeleton/GroupSkeleton';
 
 export default function PDFViewer({ url }: { url: string }) {
     const [pages, setPages] = useState([]);
