@@ -1,3 +1,5 @@
+'use client';
+
 import { LayoutContext } from '@/layout/context/layoutcontext';
 import { Button } from 'primereact/button';
 import { FileUpload } from 'primereact/fileupload';
@@ -17,7 +19,8 @@ import { NotFound } from '../NotFound';
 import { EditableLesson } from '@/types/editableLesson';
 import { Dropdown } from 'primereact/dropdown';
 import PDFViewer from '../PDFBook';
-import DocumentModal from '../popUp/DocumentModal';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { useRouter } from 'next/navigation';
 
 export default function LessonTyping({ mainType, courseId, lessonId }: { mainType: string; courseId: string | null; lessonId: string | null }) {
     // types
@@ -49,6 +52,9 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
         resolver: yupResolver(lessonSchema),
         mode: 'onChange'
     });
+
+    const media = useMediaQuery('(max-width: 640px)');
+    const router = useRouter();
 
     // doc
     const [documents, setDocuments] = useState([]);
@@ -164,12 +170,16 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
     const sentToPDF = (url) => {
         console.log(url);
         setUrlPDF(url);
-        setPDFVisible(true);
+        if(media){
+            router.push(`/pdf/${url}`);
+        } else {
+            setPDFVisible(true);
+        }
     };
 
     const documentView = (
         <>
-            <div className="w-[1000px] flex flex-col gap-1">
+            <div className=" flex flex-col gap-1">
                 <i className="pi pi-times text-2xl" onClick={() => setPDFVisible(false)}></i>
                 <div className="w-full flex flex-col gap-1 items-center justify-center">
                     <PDFViewer url={urlPDF || ''} />

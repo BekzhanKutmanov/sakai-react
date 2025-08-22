@@ -1,7 +1,6 @@
-// PDFViewer.js
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 // import * as pdfjsLib from "pdfjs-dist";
 // pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
 
@@ -14,21 +13,12 @@ import GroupSkeleton from './skeleton/GroupSkeleton';
 
 export default function PDFViewer({ url }: { url: string }) {
     const [pages, setPages] = useState([]);
-    const [loading, setLoading] = useState(true);
     const [skeleton, setSkeleton] = useState(false);
 
-    const [windowWidth, setWindowWidth] = useState(0);
+    const containerRef = useRef<HTMLDivElement>(null);
+    const [bookSize, setBookSize] = useState({ width: 0, height: 0, aspectRatio: 0 });
 
-    useEffect(() => {
-        const updateWidth = () => setWindowWidth(window.innerWidth);
-        updateWidth();
-        window.addEventListener('resize', updateWidth);
-        return () => window.removeEventListener('resize', updateWidth);
-    }, []);
-
-    const FIXED_BOOK_WIDTH = 1000; // Фиксированная ширина книги
     const FIXED_BOOK_HEIGHT = 800; // Фиксированная высота книги
-    const [isSinglePage, setIsSinglePage] = useState(false); // Новое состояние
 
     useEffect(() => {
         const renderPDF = async () => {
@@ -40,14 +30,12 @@ export default function PDFViewer({ url }: { url: string }) {
 
                 const newUrl = `http://api.mooc.oshsu.kg/temprory-file/${url}`;
                 const pdf = await pdfjsLib.getDocument(newUrl).promise;
-                const numPages = pdf.numPages;
-                if (numPages === 1) {
-                    setIsSinglePage(true);
-                } else {
-                    setIsSinglePage(false);
-                }
-
                 const tempPages = [];
+                const firstPage = await pdf.getPage(1);
+
+                // Получаем оригинальное соотношение сторон первой страницы
+                const viewport = firstPage.getViewport({ scale: 1.0 });
+                const aspectRatio = viewport.width / viewport.height;
 
                 for (let i = 1; i <= pdf.numPages; i++) {
                     const page = await pdf.getPage(i);
@@ -73,7 +61,15 @@ export default function PDFViewer({ url }: { url: string }) {
                         </div>
                     );
                 }
+
+                // Обновляем состояние с данными только после успешной загрузки
                 setPages(tempPages);
+                setBookSize({
+                    width: containerRef.current.offsetWidth,
+                    height: containerRef.current.offsetWidth,
+                    aspectRatio: aspectRatio
+                });
+                setSkeleton(false);
             } catch (error) {
                 console.error('Ошибка при загрузке или рендеринге PDF:', error);
             } finally {
@@ -83,6 +79,28 @@ export default function PDFViewer({ url }: { url: string }) {
 
         renderPDF();
     }, [url]);
+
+    useEffect(() => {
+        const updateBookSize = () => {
+            if (containerRef.current && bookSize.aspectRatio > 0) {
+                const containerWidth = containerRef.current.offsetWidth;
+                const bookHeight = containerWidth;
+
+                setBookSize((prev) => ({
+                    ...prev,
+                    width: containerWidth,
+                    height: bookHeight
+                }));
+            }
+        };
+        // Вызываем один раз сразу после монтирования, чтобы получить начальные размеры
+        if (containerRef.current && bookSize.aspectRatio > 0) {
+            updateBookSize();
+        }
+
+        window.addEventListener('resize', updateBookSize);
+        return () => window.removeEventListener('resize', updateBookSize);
+    }, [bookSize.aspectRatio]); // Зависит от соотношения сторон
 
     // if (isSinglePage) {
     //     return (
@@ -104,22 +122,33 @@ export default function PDFViewer({ url }: { url: string }) {
     // }
 
     return (
-        <div style={{ width: '100%', maxWidth: 1000, margin: '0 auto', border: 'solid 1px' }}>
-            {skeleton ? (
-                <GroupSkeleton count={1} size={{ width: '100%', height: '20rem' }} />
-            ) : (
-                <HTMLFlipBook className="book-container" width={FIXED_BOOK_WIDTH} height={FIXED_BOOK_HEIGHT} size="stretch" minWidth={200} maxWidth={1000} minHeight={300} maxHeight={600} showCover={true} flippingTime={1000}>
-                    {pages.map((page, index) => (
-                        <div key={index} className="page">
-                            <div className="page-content">
-                                {' '}
-                                {/* Добавляем класс для содержимого страницы */}
-                                {page}
+        <div ref={containerRef} className="">
+            <div
+                className="sm-[500px] sm:w-[500px] md:w-[500px] lg:w-[600px] xl:w-[1000px]"
+                style={{
+                    height: `${bookSize.height}px`,
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'start'
+                }}
+            >
+                {/* style={{ width: '100%', backgroundColor: 'red', maxWidth: 1000, margin: '0 auto', border: 'solid 1px' }} */}
+                {skeleton ? (
+                    <GroupSkeleton count={1} size={{ width: '100%', height: '20rem' }} />
+                ) : (
+                    <HTMLFlipBook className="book-container" width={bookSize.width / 2} height={bookSize.height} size="stretch" minWidth={320} maxWidth={1000} minHeight={300} maxHeight={600} showCover={false} flippingTime={1000}>
+                        {pages.map((page, index) => (
+                            <div key={index} className="page">
+                                <div className="page-content">
+                                    {' '}
+                                    {/* Добавляем класс для содержимого страницы */}
+                                    {page}
+                                </div>
                             </div>
-                        </div>
-                    ))}
-                </HTMLFlipBook>
-            )}
+                        ))}
+                    </HTMLFlipBook>
+                )}
+            </div>
         </div>
     );
 }

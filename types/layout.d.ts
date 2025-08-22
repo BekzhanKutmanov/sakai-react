@@ -60,7 +60,7 @@ export interface LayoutContextProps {
     contextThemes;
     setContextThemes;
 
-    contextFetchStudentThemes: ()=> void;
+    contextFetchStudentThemes: (id)=> void;
     contextStudentThemes;
     setContextStudentThemes;
     // message: { state: boolean; value: MessageType };

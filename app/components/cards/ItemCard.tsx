@@ -72,9 +72,7 @@ export default function ItemCard({
                                 <span className="text-[var(--mainColor)]">Тип:</span>
                                 <span>{stream.subject_type_name?.short_name_kg}</span>
                             </div>
-                            {connection.map((item) => {
-                                console.log(item.id_myedu_stream === stream.id);
-                                
+                            {connection.map((item) => {                                
                                 if (item.id_myedu_stream === stream.id) {
                                     return <Link href={`teaching/${item.course_id}/${stream.id}`}><Button label="Курс" icon="pi pi-arrow-right text-sm" iconPos="right" />;</Link>
                                 }

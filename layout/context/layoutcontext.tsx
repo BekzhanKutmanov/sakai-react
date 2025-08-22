@@ -88,9 +88,8 @@ export const LayoutProvider = ({ children }: ChildContainerProps) => {
 
     // fetch themes for student
     const [contextStudentThemes, setContextStudentThemes] = useState([]);
-    const contextFetchStudentThemes = async () => {
-        const data = await fetchStudentThemes();
-        console.log(data);
+    const contextFetchStudentThemes = async (id: number) => {
+        const data = await fetchStudentThemes(id);
         
         setContextStudentThemes(data);
     }

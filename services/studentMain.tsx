@@ -19,7 +19,7 @@ export const fetchItemsConnect = async () => {
         const res = await axiosInstance.get(`v1/student/stream/connect`);
         const data = await res.data;
         console.log(data);
-
+        
         return data;
     } catch (err) {
         console.log('Ошибка загрузки:', err);
@@ -41,9 +41,9 @@ export const itemsCourseInfo = async (course_id: number | null, stream_id: numbe
 }
 
 // student theme fetch
-export const fetchStudentThemes = async () => {
+export const fetchStudentThemes = async (course_id: number) => {    
     try {
-        const res = await axiosInstance.get(`v1/student/course/lessons`);
+        const res = await axiosInstance.get(`v1/student/course/lessons?course_id=${course_id}`);
         const data = await res.data;
         
         return data;

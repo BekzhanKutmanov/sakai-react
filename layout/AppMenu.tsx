@@ -5,14 +5,20 @@ import AppMenuitem from './AppMenuitem';
 import { LayoutContext } from './context/layoutcontext';
 import { MenuProvider } from './context/menucontext';
 import { AppMenuItem } from '@/types';
-import { usePathname } from 'next/navigation';
+import { useParams, usePathname } from 'next/navigation';
 
 const AppMenu = () => {
-    const { layoutConfig, user, course, setCourses, contextFetchCourse, contextFetchThemes, contextThemes, setContextThemes } = useContext(LayoutContext);
+    const { layoutConfig, user, course, contextFetchCourse, contextFetchThemes, contextThemes, setContextThemes, contextFetchStudentThemes, contextStudentThemes } = useContext(LayoutContext);
+
+    const location = usePathname();
+    const pathname = location;
+    const { studentThemeCourse } = useParams();
 
     const [courseList, setCourseList] = useState([]);
     const [clickedCourseId, setClickedCourseId] = useState<number | null>(null);
 
+    const [themesStudentList, setThemesStudentList] = useState([]);
+        
     const byStatus = user?.is_working
         ? [
               {
@@ -22,9 +28,10 @@ const AppMenu = () => {
               }
           ]
         : user?.is_student
-        ? [{ label: 'Окуу планы', icon: 'pi pi-fw pi-calendar-clock', to: '/teaching' },
-            // {label: 'to to '}
-        ]
+        ? [
+              { label: 'Окуу планы', icon: 'pi pi-fw pi-calendar-clock', to: '/teaching' },
+              pathname.startsWith('/teaching/') && { label: 'Темалар', icon: 'pi pi-fw pi-calendar-lessons', items: themesStudentList || [] }
+          ]
         : [];
 
     const model: AppMenuItem[] = [
@@ -38,41 +45,20 @@ const AppMenu = () => {
         }
     ];
 
-    const location = usePathname();
-    const pathname = location
-
     useEffect(() => {
-        if(user?.is_working){
-            contextFetchCourse();   
-        } 
-        if(user?.is_student){
-            const isTopicsChildPage = pathname.startsWith("/teaching/");
-            if(isTopicsChildPage){
-                // alert('he he')
+        if (user?.is_working) {
+            contextFetchCourse();
+        }
+        if (user?.is_student) {            
+            const isTopicsChildPage = pathname.startsWith('/teaching/');
+            if (isTopicsChildPage) {
+                console.log('Вызов функции тем студента');
+                contextFetchStudentThemes(studentThemeCourse);
             }
         }
-    }, []);
+    }, [user]);
 
     useEffect(() => {
-        // if (course) {
-        //     const forCourse = [];
-        //     console.log(course);
-
-        //     course?.data?.map((item) => {
-        //         forCourse.push({
-        //             label: item.title,
-        //             id: item.id,
-        //             items: [],
-        //             command: () => {
-        //                 contextFetchThemes(item.id);
-        //             }
-        //         });
-        //     });
-        //     console.log(forCourse);
-
-        //     setCourseList(forCourse);
-        // }
-
         if (course) {
             const forCourse = [{ label: 'Курс', id: 0, to: '/course' }];
             course.data?.map((item: any) =>
@@ -112,9 +98,22 @@ const AppMenu = () => {
         }
     }, [contextThemes]);
 
-    useEffect(() => {
-        console.log(courseList);
-    }, [courseList]);
+    useEffect(() => {        
+        console.log('Обновился и готов');
+        
+        if(contextStudentThemes?.lessons){
+            const forThemes = [];
+            contextStudentThemes.lessons.data?.map((item: any) =>
+                forThemes.push({
+                    label: item.title,
+                    id: item.id,
+                    to: '/teaching/ ? ',
+                })
+            );
+
+            setThemesStudentList(forThemes || []);
+        }
+    }, [contextStudentThemes, pathname]);
 
     return (
         <MenuProvider>
