@@ -9,5 +9,6 @@ export interface lessonType {
     updated_at: string;
     user_id: number;
     document?: string;
+    document_path?: string;
     url?: string;
 }

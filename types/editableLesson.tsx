@@ -5,4 +5,5 @@ export interface EditableLesson {
         url?: string | null;
         video_link: string;
         video_type_id: number | null;
+        file?: File | null;
     }

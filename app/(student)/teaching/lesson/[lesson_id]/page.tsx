@@ -172,6 +172,7 @@ export default function StudentLessons() {
                                     typeColor={'var(--mainColor)'}
                                     lessonDate={'xx-xx'}
                                     urlForPDF={() => sentToPDF(item.document)}
+                                    urlForDownload={item?.document_path || ''}
                                 />
                             </>
                         ))

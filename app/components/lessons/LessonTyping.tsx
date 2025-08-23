@@ -4,7 +4,7 @@ import { LayoutContext } from '@/layout/context/layoutcontext';
 import { Button } from 'primereact/button';
 import { FileUpload } from 'primereact/fileupload';
 import { InputText } from 'primereact/inputtext';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import LessonCard from '../cards/LessonCard';
 import { getToken } from '@/utils/auth';
 import { addLesson, deleteLesson, fetchLesson, fetchVideoType, updateLesson } from '@/services/courses';
@@ -69,6 +69,10 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
     const [urlPDF, setUrlPDF] = useState('');
     const [PDFVisible, setPDFVisible] = useState<boolean>(false);
 
+    useEffect(() => {
+        console.log(docValue);
+    }, [docValue]);
+
     // links
     const [links, setLinks] = useState([]);
     const [linksValue, setLinksValue] = useState<lessonStateType>({
@@ -126,20 +130,19 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
     const editing = async (type: string, selected: number) => {
         console.log(type, selected);
 
-        const token = getToken('access_token');
         const data = await fetchLesson(type, courseId ? Number(courseId) : null, lessonId ? Number(lessonId) : null);
         console.log(data);
 
         const lesson: editingType =
             type === 'doc'
-                ? { key: 'documents', file: 'document', url: '', link: '', video_type_id: 1 }
+                ? { key: 'documents', file: 'document_path', url: '', link: '', video_type_id: 1 }
                 : type === 'url'
                 ? { key: 'links', file: '', url: 'url', link: '', video_type_id: 1 }
                 : type === 'video'
                 ? { key: 'videos', file: '', url: '', link: 'link', video_type_id: 1 }
                 : { key: '', file: '', url: '', link: '', video_type_id: 1 };
-        // console.log(lesson);
-        // console.log(data[lesson.key]);
+        console.log(lesson);
+        console.log(data[lesson.key]);
 
         if (data.success) {
             if (data[lesson.key]) {
@@ -168,9 +171,8 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
     // DOC SECTION
 
     const sentToPDF = (url) => {
-        console.log(url);
         setUrlPDF(url);
-        if(media){
+        if (media) {
             router.push(`/pdf/${url}`);
         } else {
             setPDFVisible(true);
@@ -188,6 +190,25 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
         </>
     );
 
+    const fileUploadRef = useRef<FileUpload>(null);
+    const clearFile = () => {
+        fileUploadRef.current?.clear();
+        if (visible) {
+            setEditingLesson(
+                (prev) =>
+                    prev && {
+                        ...prev,
+                        file: null
+                    }
+            );
+        } else {
+            setDocValue((prev) => ({
+                ...prev,
+                file: null
+            }));
+        }
+    };
+
     const docSection = () => {
         return (
             <div className="py-4 flex flex-col items-center gap-4">
@@ -196,20 +217,24 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                 ) : (
                     <>
                         <div className="w-full flex flex-col justify-center gap-2">
-                            <FileUpload
-                                chooseLabel="Документ жүктөө"
-                                mode="basic"
-                                name="demo[]"
-                                customUpload
-                                uploadHandler={() => {}}
-                                accept="application/pdf"
-                                onSelect={(e) =>
-                                    setDocValue((prev) => ({
-                                        ...prev,
-                                        file: e.files[0]
-                                    }))
-                                }
-                            />
+                            <div className="flex gap-1 items-center">
+                                <FileUpload
+                                    ref={fileUploadRef}
+                                    chooseLabel="Документ жүктөө"
+                                    mode="basic"
+                                    name="demo[]"
+                                    customUpload
+                                    uploadHandler={() => {}}
+                                    accept="application/pdf"
+                                    onSelect={(e) =>
+                                        setDocValue((prev) => ({
+                                            ...prev,
+                                            file: e.files[0]
+                                        }))
+                                    }
+                                />
+                                <Button icon={'pi pi-trash'} onClick={clearFile} />
+                            </div>
 
                             <InputText
                                 id="title"
@@ -289,7 +314,6 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
     // add document
     const handleAddDoc = async () => {
         const token = getToken('access_token');
-
         const data = await addLesson('doc', token, courseId ? Number(courseId) : null, lessonId ? Number(lessonId) : null, docValue, 0);
 
         if (data.success) {
@@ -335,6 +359,10 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
         }
     };
 
+    useEffect(() => {
+        console.log('editing lesson ', editingLesson);
+    }, [editingLesson]);
+
     // delete document
     const handleDeleteDoc = async (id: number) => {
         const token = getToken('access_token');
@@ -358,7 +386,6 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
     };
 
     // LINKS SECTION
-
     const linkSection = () => {
         return (
             <div className="py-4 flex flex-col items-center gap-4">
@@ -759,7 +786,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
         links.length < 1 ? setLinksShow(true) : setLinksShow(false);
         documents.length < 1 ? setDocShow(true) : setDocShow(false);
     }, [links, documents]);
-    
+
     useEffect(() => {
         console.log(videoTypes);
 
@@ -780,17 +807,21 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                     <div className="flex flex-col gap-1 items-center justify-center">
                         {selectType === 'doc' ? (
                             <>
-                                <FileUpload
-                                    chooseLabel="Жаңылоо"
-                                    mode="basic"
-                                    name="demo[]"
-                                    customUpload
-                                    uploadHandler={() => {}}
-                                    accept="application/pdf"
-                                    onSelect={(e) => {
-                                        if (e.files[0]) setEditingLesson((prev) => prev && { ...prev, file: e.files[0] });
-                                    }}
-                                />
+                                <div className="flex gap-1 items-center">
+                                    <FileUpload
+                                        ref={fileUploadRef}
+                                        chooseLabel="Жаңылоо"
+                                        mode="basic"
+                                        name="demo[]"
+                                        customUpload
+                                        uploadHandler={() => {}}
+                                        accept="application/pdf"
+                                        onSelect={(e) => {
+                                            if (e.files[0]) setEditingLesson((prev) => prev && { ...prev, file: e.files[0] });
+                                        }}
+                                    />
+                                    <Button icon={'pi pi-trash'} onClick={clearFile} />
+                                </div>
                                 <span>{String(editingLesson?.document)}</span>
                                 <InputText
                                     type="text"

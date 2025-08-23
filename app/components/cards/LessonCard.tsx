@@ -4,7 +4,7 @@ import { getConfirmOptions } from '@/utils/getConfirmOptions';
 import { Button } from 'primereact/button';
 import { faPlay } from '@fortawesome/free-solid-svg-icons';
 import MyFontAwesome from '../MyFontAwesome';
-import { useRouter } from 'next/navigation';
+import { Divider } from 'primereact/divider';
 
 export default function LessonCard({
     status,
@@ -15,7 +15,8 @@ export default function LessonCard({
     typeColor,
     type,
     lessonDate,
-    urlForPDF
+    urlForPDF,
+    urlForDownload
 }: {
     status: string;
     onSelected?: (id: number, type: string) => void;
@@ -26,6 +27,7 @@ export default function LessonCard({
     typeColor: string;
     lessonDate: string;
     urlForPDF: () => void;
+    urlForDownload: string
 }) {
 
     const toSentPDF = () => {
@@ -34,7 +36,7 @@ export default function LessonCard({
 
     const lessonCardEvents = () => {
         if(type.typeValue === 'doc'){
-            toSentPDF()
+            toSentPDF();
         } else if (type.typeValue === 'link'){
             window.location.href = cardValue?.url || '#';
         }
@@ -113,7 +115,15 @@ export default function LessonCard({
                 {videoPreviw}
 
                 {/* button */}
-                {btnLabel && <Button onClick={lessonCardEvents} label={btnLabel} />}
+                {btnLabel && <>
+                    {status === 'student' && type.typeValue === 'doc' ? 
+                    <div className='flex gap-1 items-center'>
+                        <Button onClick={lessonCardEvents} className='w-full' label={btnLabel} />
+                        <a href={urlForDownload} download> <Button icon='pi pi-file-arrow-up' /></a>
+                    </div>
+                        : <Button onClick={lessonCardEvents} label={btnLabel} />
+                    }
+                </>}
             </div>
         </div>
     );
