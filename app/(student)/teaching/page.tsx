@@ -23,16 +23,6 @@ export default function Teaching() {
     const [sortOpt, setSortOpt] = useState<sortOptType[]>();
     const [connection, setConnection] = useState<[]>([]);
 
-    // [{ name: '1-семестр', page: 0 }];
-    // const sortOpt = [
-    //     { name: 'Баары', code: 1 },
-    //     { name: 'London', code: 2 },
-    //     { name: 'Paris', code: 3 },
-    //     { name: 'Баары', code: 1 },
-    //     { name: 'London', code: 2 },
-    //     { name: 'Paris', code: 3 }
-    // ];
-
     const { setMessage } = useContext(LayoutContext);
     const showError = useErrorMessage();
 
@@ -88,80 +78,6 @@ export default function Teaching() {
             }
         }
     };
-
-    // useEffect(() => {
-    //     console.log(lessons);
-
-    // if (lessons) {
-    //     let forSortSelect = [];
-    //     Object.values(lessons).forEach((item,idx) => {
-    //         console.log(item);
-    //         const obj = { name: item.semester.name_kg, code: idx + 1 };
-    //         forSortSelect.push(obj);
-    //     });
-    //     setSortOpt(forSortSelect);
-
-    //     const x = Object.values(lessons).map((item) => {
-    //         return (
-    //             <div className="flex flex-col gap-2">
-    //                 <h3 className="text-center">{item.semester.name_kg}</h3>
-    //                 <div className="flex justify-around flex-wrap items-center gap-2">
-    //                     {item.streams.map((j) => {
-    //                         return (
-    //                             <>
-    //                                 <ItemCard lessonName={j.curricula.name_subject.name_kg} teacherName={j.teacher.name} teacherLastName={j.teacher!.last_name && j.teacher!.last_name} lessonType={j.subject_type_name.name_kg} />
-    //                             </>
-    //                         );
-    //                     })}
-    //                 </div>
-    //             </div>
-    //         );
-    //     });
-
-    //     setLessonsDisplay(x);
-    // }
-
-    // useEffect(() => {
-    //     if (lessons) {
-    //         let forSortSelect = [{ name: 'Баары', code: 0 }];
-
-    //         Object.entries(lessons).forEach(([key, item]) => {
-    //             const obj = { name: item.semester.name_kg, code: Number(key) };
-    //             forSortSelect.push(obj);
-    //         });
-
-    //         setSortOpt(forSortSelect);
-    //     }
-    // }, [lessons]);
-
-    // рабочий вариант до изменении структуры
-    // useEffect(() => {
-    //     if (!lessons) return;
-
-    //     let displayData;
-
-    //     if (selectedSort?.code === 0) {
-    //         // "Баары" → показать все
-    //         displayData = Object.values(lessons);
-    //     } else {
-    //         // конкретный семестр
-    //         const selected = lessons[selectedSort.code];
-    //         displayData = selected ? [selected] : [];
-    //     }
-
-    //     const x = displayData.map((item) => (
-    //         <div className="flex flex-col gap-2" key={item.semester.name_kg}>
-    //             <h3 className="text-center">{item.semester.name_kg}</h3>
-    //             <div className="flex justify-around flex-wrap items-center gap-2">
-    //                 {item.streams?.map((j, idx) => (
-    //                     <ItemCard key={idx} lessonName={j.curricula.name_subject.name_kg} teacherName={j.teacher.name} teacherLastName={j.teacher?.last_name} lessonType={j.subject_type_name.name_kg} />
-    //                 ))}
-    //             </div>
-    //         </div>
-    //     ));
-
-    //     setLessonsDisplay(x);
-    // }, [lessons, selectedSort]);
 
     useEffect(() => {
         if (!lessons) return;

@@ -74,7 +74,7 @@ export default function ItemCard({
                             </div>
                             {connection.map((item) => {                                
                                 if (item.id_myedu_stream === stream.id) {
-                                    return <Link href={`teaching/${item.course_id}/${stream.id}`}><Button label="Курс" icon="pi pi-arrow-right text-sm" iconPos="right" />;</Link>
+                                    return <Link href={`teaching/${item.course_id}/${stream.id}`}><Button label="Курс" icon="pi pi-arrow-right text-sm" iconPos="right" /></Link>
                                 }
                             })}
                         </div>

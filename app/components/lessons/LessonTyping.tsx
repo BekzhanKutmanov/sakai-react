@@ -759,7 +759,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
         links.length < 1 ? setLinksShow(true) : setLinksShow(false);
         documents.length < 1 ? setDocShow(true) : setDocShow(false);
     }, [links, documents]);
-
+    
     useEffect(() => {
         console.log(videoTypes);
 
