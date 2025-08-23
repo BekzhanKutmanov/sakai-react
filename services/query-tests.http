@@ -1,4 +1,4 @@
-@token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2FwaS5teWVkdS5vc2hzdS5rZy9wdWJsaWMvYXBpL21vb2MvbG9naW4iLCJpYXQiOjE3NTU4NTg3NTIsImV4cCI6MTc1NTg4NzYxMiwibmJmIjoxNzU1ODU4NzUyLCJqdGkiOiJnYjN3SlRtTmdSRFM5MDVLIiwic3ViIjoiNTAzMjciLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.k-wbBaz8EzDPKAbnxx8z2znANQg4Zhgw3Idf9kr1cys
+@token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2FwaS5teWVkdS5vc2hzdS5rZy9wdWJsaWMvYXBpL21vb2MvbG9naW4iLCJpYXQiOjE3NTU4NjAxNzUsImV4cCI6MTc1NTg4OTAzNSwibmJmIjoxNzU1ODYwMTc1LCJqdGkiOiJ4ZFhqRXF1UTJCUzhPM05lIiwic3ViIjoiNTAzMjciLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.JsSkS7lVmjhq_9v9sGrcPUn_neb09rKfPTY4UjyXrLg
 
 ###
 
@@ -20,5 +20,5 @@ Authorization: Bearer {{token}}
 Content-Type: application/json  
 
 {
-    "lesson_id": 58
+    "lesson_id": 57
 }

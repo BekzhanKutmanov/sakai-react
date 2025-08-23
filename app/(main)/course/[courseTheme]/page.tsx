@@ -270,7 +270,7 @@ export default function CourseTheme() {
                         </div>
                     </div>
                 </div>
-            </FormModal>
+            </FormModal>    
 
             {/* table section */}
             {hasThemes ? (

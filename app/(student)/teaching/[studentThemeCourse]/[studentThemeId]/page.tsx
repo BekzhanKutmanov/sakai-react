@@ -108,7 +108,7 @@ export default function StudentThemes() {
                                         <div className="flex w-full items-center p-2">
                                             <div className="flex w-full flex-col gap-2 p-1 rounded bg-[var(--mainBgColor)]">
                                                 <div className="w-full flex gap-1 items-center justify-center">
-                                                    <Link href={''} className="text-[16px]">{item.title}</Link>
+                                                    <Link href={`/teaching/lesson/${item.id}`} className="text-[16px]">{item.title}</Link>
                                                 </div>
                                             </div>
                                         </div>

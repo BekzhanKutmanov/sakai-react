@@ -773,14 +773,6 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
         }
     }, [videoTypes]);
 
-    // useEffect(() => {
-    //     console.log(videoSelect);
-    // }, [videoSelect]);
-
-    // useEffect(() => {
-    //     console.log(selectedCity);
-    // }, [selectedCity]);
-
     return (
         <div>
             <FormModal title={'Сабакты жанылоо'} fetchValue={handleUpdate} clearValues={clearValues} visible={visible} setVisible={setVisisble} start={false}>

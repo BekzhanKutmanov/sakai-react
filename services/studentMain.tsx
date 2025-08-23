@@ -53,6 +53,22 @@ export const fetchStudentThemes = async (course_id: number) => {
     }
 };
 
+// fetch student lesson main info
+export const fetchMainLesson = async (lesson_id: number | null) => {    
+    console.log(lesson_id);
+    
+    try {
+        const res = await axiosInstance.get(`v1/student/course/lesson/show?lesson_id=${lesson_id}`);
+        const data = await res.data;
+        
+        return data;
+    } catch (err) {
+        console.log('Ошибка загрузки:', err);
+        return err;
+    }
+};
+
+
 // export const addCourse = async (value: CourseCreateType) => {
 //     const formData = new FormData();
 //     formData.append('title', value.title);

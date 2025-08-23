@@ -392,6 +392,11 @@ h1, h2, h3, h4, h5, h6 {
 .tab-custom-text-4{
   color: var(--redColor) !important; 
 }
+@media screen and (max-width: 640px) {
+  .p-tabview-nav-link{
+    padding: 5px;
+  }
+}
 
 .my-custom-dialog{
   width: 500px;

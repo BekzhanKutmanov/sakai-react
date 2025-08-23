@@ -71,7 +71,7 @@ export default function Teaching() {
         }
     };
 
-     const handleFetchConnectId = async () => {
+    const handleFetchConnectId = async () => {
         const data = await fetchItemsConnect();
         console.log(data);
         toggleSkeleton();
@@ -197,7 +197,7 @@ export default function Teaching() {
                     {Object.values(semester)
                         .filter((val: any) => val.subject) // только предметы
                         .map((subj: any, subjIdx: number) => (
-                            <ItemCard key={subjIdx} lessonName={subj.subject} streams={subj.streams} connection={connection}/>
+                            <ItemCard key={subjIdx} lessonName={subj.subject} streams={subj.streams} connection={connection} />
                         ))}
                 </div>
             </div>

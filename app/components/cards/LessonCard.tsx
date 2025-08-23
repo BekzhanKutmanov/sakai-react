@@ -2,8 +2,9 @@ import Redacting from '../popUp/Redacting';
 import { getRedactor } from '@/utils/getRedactor';
 import { getConfirmOptions } from '@/utils/getConfirmOptions';
 import { Button } from 'primereact/button';
-import { faPlay} from "@fortawesome/free-solid-svg-icons";
+import { faPlay } from '@fortawesome/free-solid-svg-icons';
 import MyFontAwesome from '../MyFontAwesome';
+import { useRouter } from 'next/navigation';
 
 export default function LessonCard({
     status,
@@ -19,20 +20,27 @@ export default function LessonCard({
     status: string;
     onSelected?: (id: number, type: string) => void;
     onDelete?: (id: number) => void;
-    cardValue: { title: string; id: number; desctiption?: string; type?: string; photo?: string };
+    cardValue: { title: string; id: number; desctiption?: string; type?: string; photo?: string; url?: string };
     cardBg: string;
     type: { typeValue: string; icon: string };
     typeColor: string;
     lessonDate: string;
-    urlForPDF: ()=> void;
+    urlForPDF: () => void;
 }) {
 
     const toSentPDF = () => {
-        console.log('privet ');
         urlForPDF();
-    }
+    };
 
-    const cardHeader = 
+    const lessonCardEvents = () => {
+        if(type.typeValue === 'doc'){
+            toSentPDF()
+        } else if (type.typeValue === 'link'){
+            window.location.href = cardValue?.url || '#';
+        }
+    };
+
+    const cardHeader =
         type.typeValue === 'video' && status === 'working' ? (
             <div className={`flex gap-2 justify-around items-center font-bold text-[12px]`} style={{ color: typeColor }}>
                 <div className={`${type.icon} text-2xl text-[${typeColor}]`}></div>
@@ -49,12 +57,12 @@ export default function LessonCard({
 
     const videoPreviw =
         type.typeValue === 'video' && status === 'working' ? (
-            <div className="w-[100%] h-[100px] overflow-hidden rounded-2xl">
+            <div className="w-[140px] h-[100px] overflow-hidden rounded-2xl">
                 <img src="/layout/images/no-image.png" className="w-full h-[100px] object-cover" alt="Видео" />
             </div>
         ) : type.typeValue === 'video' && status === 'student' ? (
-            <div className="relative bg-white shadow w-[100%] h-[100px] overflow-hidden rounded-2xl">
-                <div className="w-[100%] h-[100%] absolute flex justify-center items-center bg-[rgba(8,9,0,30%)]">
+            <div className="relative bg-white shadow w-[140px] h-[100px] overflow-hidden rounded-2xl">
+                <div className="w-[140px] h-[100%] absolute flex justify-center items-center bg-[rgba(8,9,0,30%)]">
                     <div className="relative flex items-center justify-center">
                         {/* Волна */}
                         {/* <span className="absolute w-full h-full rounded-full border-4 border-blue-500 animate-ping"></span> */}
@@ -67,27 +75,32 @@ export default function LessonCard({
                 </div>
                 <img src="/layout/images/no-image.png" className="w-full h-[100px] object-cover" alt="Видео" />
             </div>
-        ) : ''
+        ) : (
+            ''
+        );
 
     const btnLabel = type.typeValue === 'doc' && status === 'working' ? 'Көчүрүү' : type.typeValue === 'doc' && status === 'student' ? 'Ачуу' : type.typeValue === 'link' ? 'Өтүү' : '';
 
     return (
         <div
-            className={`${type.typeValue === 'link' && 'relative'} ${type.typeValue !== 'link' && 'overflow-hidden'} ${
-                type.typeValue === 'video' && status === 'working' ? 'h-[230px]' : 'h-[200px]'
-            } w-[160px] sm:w-[70%] md:w-[160px] flex flex-col justify-evenly shadow-xl rounded-3xl p-2`}
+            className={`${type.typeValue === 'link' && 'relative'} ${type.typeValue !== 'link' && 'overflow-hidden'} 
+            ${type.typeValue === 'video' && status === 'working' ? 'h-[200px]' : type.typeValue !== 'video' && status === 'working' ? 'h-[160px]' : ''} 
+            ${status === 'student' && type.typeValue !== 'video' ? 'h-[160px]' : status === 'student' && type.typeValue === 'video' ? 'h-[200px]' : ''}
+            w-[100%] sm:w-[100%] md:w-[160px] flex flex-col justify-evenly shadow rounded sm:rounded-2xl p-2`}
             style={{ backgroundColor: cardBg }}
         >
-            {type.typeValue === 'link' && <span className="card-link"></span>}
-            <div>
-                <div className="flex items-center justify-end">{status === 'working' && <Redacting redactor={getRedactor(status, cardValue, { onEdit: onSelected, getConfirmOptions, onDelete: onDelete })} textSize={'12px'} />}</div>
-                {cardHeader}
-            </div>
+            {status === 'working' && (
+                <div>
+                    <div className="flex items-center justify-end">{status === 'working' && <Redacting redactor={getRedactor(status, cardValue, { onEdit: onSelected, getConfirmOptions, onDelete: onDelete })} textSize={'12px'} />}</div>
+                    {/* {cardHeader} */}
+                </div>
+            )}
             <div className={`flex flex-col items-center ${type.typeValue !== 'video' ? 'gap-3' : 'gap-1'}`}>
-                <div className="bg-[#d6bcbc12] flex flex-col justify-between rounded-2xl">
+                <div className="bg-[#d6bcbc12] flex flex-col justify-between rounded-2xl p-1">
                     {/* <div className=''>{!cardValue.photo && <img className="cover" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSweN5K2yaBwZpz5W9CxY9S41DI-2LawmjzYw&s" alt="" />}</div> */}
                     <div className="flex items-center justify-center text-[16px] sm:text-2xl mt-1">{cardValue.title}</div>
-                    <div className="flex items-center justify-center text-[13px]">{cardValue?.desctiption && cardValue.desctiption} lore10lfkjslk</div>
+                    {type.typeValue === 'link' && <span className="flex justify-center">{cardValue?.url}</span>}
+                    <div className="flex items-center justify-center text-[13px]">{cardValue?.desctiption && cardValue.desctiption}</div>
                     {status === 'working' && type.typeValue !== 'video' && (
                         <div className={`flex gap-1 items-center justify-center`}>
                             <i className={`pi pi-calendar text-[var(--mainColor)]`}></i>
@@ -100,7 +113,7 @@ export default function LessonCard({
                 {videoPreviw}
 
                 {/* button */}
-                {btnLabel && <Button onClick={toSentPDF} label={btnLabel} />}
+                {btnLabel && <Button onClick={lessonCardEvents} label={btnLabel} />}
             </div>
         </div>
     );
