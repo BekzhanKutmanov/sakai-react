@@ -179,7 +179,7 @@ export default function CourseTheme() {
 
     useEffect(() => {
         const handleShow = async () => {
-            const data = await fetchThemes(Number(courseTheme));
+            const data:{lessons: {data: {id: number, title: string}[]}} = await fetchThemes(Number(courseTheme));
             console.log(data);
             
             if (data?.lessons) {
@@ -188,7 +188,7 @@ export default function CourseTheme() {
                 const forEditing = data.lessons.data.find(item => item.id === selectedCourse.id)
                 
                 setEditingThemes({
-                    title: forEditing.title || '',
+                    title: forEditing?.title || '',
                 });
             }
         };

@@ -10,7 +10,6 @@ import { fetchDocuments, fetchLinks } from '@/services/studentLessons';
 import { fetchMainLesson } from '@/services/studentMain';
 import { lessonType } from '@/types/lessonType';
 import { TabViewChange } from '@/types/tabViewChange';
-import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { Button } from 'primereact/button';
 import { ProgressBar } from 'primereact/progressbar';
@@ -22,20 +21,27 @@ export default function StudentLessons() {
     const router = useRouter();
 
     const [activeIndex, setActiveIndex] = useState<number>(0);
-    const [mainLesson, setMainLesson] = useState({});
+    const [mainLesson, setMainLesson] = useState<{title: string}>({title: ''});
     const [hasLessons, setHasLessons] = useState(false);
     const [skeleton, setSkeleton] = useState(false);
     const [contentShow, setContentShow] = useState<boolean>(false);
 
+    interface documentType {
+        title: string,
+        id: number,
+        type: string,
+
+    }
+
     // doc
-    const [documents, setDocuments] = useState([]);
+    const [documents, setDocuments] = useState<lessonType[]>([]);
     const [docShow, setDocShow] = useState<boolean>(false);
 
     // link
-    const [link, setLink] = useState([]);
+    const [link, setLink] = useState<lessonType[]>([]);
     const [linkShow, setLinkShow] = useState<boolean>(false);
 
-    const [navigaion, setNavigation] = useState({ prev: null, next: null });
+    const [navigaion, setNavigation] = useState<{prev: number | null,next: number | null}>({ prev: null, next: null });
 
     const { setMessage, contextFetchStudentThemes, contextStudentThemes } = useContext(LayoutContext);
     const showError = useErrorMessage();
@@ -119,7 +125,7 @@ export default function StudentLessons() {
         }
     };
 
-    const navigateMainLesson = async (id: number) => {
+    const navigateMainLesson = async (id: number | null) => {
         setSkeleton(true);
         router.push(`/teaching/lesson/${id}`);
     };
@@ -148,7 +154,7 @@ export default function StudentLessons() {
     }, [link, documents]);
 
     // doc section
-    const sentToPDF = (url) => {
+    const sentToPDF = (url: string) => {
         console.log(url);
         router.push(`/pdf/${url}`);
     };
@@ -171,7 +177,7 @@ export default function StudentLessons() {
                                     type={{ typeValue: 'doc', icon: 'pi pi-file' }}
                                     typeColor={'var(--mainColor)'}
                                     lessonDate={'xx-xx'}
-                                    urlForPDF={() => sentToPDF(item.document)}
+                                    urlForPDF={() => sentToPDF(item?.document ? item.document : '')}
                                     urlForDownload={item?.document_path || ''}
                                 />
                             </>
@@ -202,6 +208,7 @@ export default function StudentLessons() {
                                     typeColor={'var(--mainColor)'}
                                     lessonDate={'xx-xx'}
                                     urlForPDF={() => {}}
+                                    urlForDownload={item?.document_path || ''}
                                 />
                             </>
                         ))

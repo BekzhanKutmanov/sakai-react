@@ -20,7 +20,7 @@ import Redacting from '@/app/components/popUp/Redacting';
 import { getRedactor } from '@/utils/getRedactor';
 import { getConfirmOptions } from '@/utils/getConfirmOptions';
 import useErrorMessage from '@/hooks/useErrorMessage';
-import { mainCourseType } from '@/types/mainCourseType';
+import { myMainCourseType } from '@/types/myMainCourseType';
 import StreamList from '@/app/components/tables/StreamList';
 import { TabPanel, TabView } from 'primereact/tabview';
 import { TabViewChange } from '@/types/tabViewChange';
@@ -29,7 +29,7 @@ import { useMediaQuery } from '@/hooks/useMediaQuery';
 export default function Course() {
     const { setMessage, course, setCourses, contextFetchCourse } = useContext(LayoutContext);
 
-    const [coursesValue, setValueCourses] = useState<mainCourseType[]>([]);
+    const [coursesValue, setValueCourses] = useState<myMainCourseType[]>([]);
     const [hasCourses, setHasCourses] = useState(false);
     const [courseValue, setCourseValue] = useState<CourseCreateType>({ title: '', description: '', video_url: '', image: '' });
     const [editMode, setEditMode] = useState(false);
@@ -118,18 +118,18 @@ export default function Course() {
 
     const handleFetchCourse = async (page = 1) => {
 
-        // const data = await fetchCourses(page, 0);
+        const data = await fetchCourses(page, 0);
         toggleSkeleton();
         console.log(course);
         
         if (course) {
             setHasCourses(false);
             setValueCourses(course.data);
-            setPagination({
-                currentPage: course.current_page,
-                total: course.total,
-                perPage: course.per_page
-            });
+            // setPagination({
+            //     currentPage: course.data,
+            //     total: course?.data,
+            //     perPage: course?.data
+            // });
         } else {
             setHasCourses(true);
             setMessage({

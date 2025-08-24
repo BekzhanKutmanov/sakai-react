@@ -11,7 +11,7 @@ import { useParams } from 'next/navigation';
 import { useContext, useEffect, useState } from 'react';
 
 export default function StudentThemes() {
-    const [themes, setThemes] = useState({});
+    const [themes, setThemes] = useState<{image: string, description: string, title: string,}>({image: '', description: '', title: ''});
     const [hasCourses, setHasCourses] = useState(false);
     const [skeleton, setSkeleton] = useState(false);
     const [themesStudentList, setThemesStudentList] = useState([]);
@@ -100,7 +100,7 @@ export default function StudentThemes() {
                             <GroupSkeleton count={10} size={{ width: '100%', height: '4rem' }} />
                         ) : (
                             <div className="w-full flex gap-3 items-center justify-center flex-wrap">
-                                {themesStudentList?.map((item) => (
+                                {themesStudentList?.map((item: {id: number, title: string}) => (
                                     <div key={item.id} className="w-[100%] md:w-[350px] shadow rounded p-3">
                                         <div className="w-full shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)] m-2">
                                             <span className="text-[var(--mainColor)]">Сабактын аталышы:</span>

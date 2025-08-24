@@ -1,3 +1,4 @@
+import { myMainCourseType } from './myMainCourseType';
 import React, { ReactElement, Dispatch, SetStateAction, HTMLAttributeAnchorTarget, ReactNode } from 'react';
 import { NextPage } from 'next';
 import { Demo } from './demo';
@@ -54,7 +55,7 @@ export interface LayoutContextProps {
     message: MessageType;
     setMessage: React.Dispatch<React.SetStateAction<MessageType>>;
     contextFetchCourse: ()=> void;
-    course: mainCourseType[];
+    course: {data: myMainCourseType[]};
     setCourses;
     contextFetchThemes: (id: number)=> void;
     contextThemes;

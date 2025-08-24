@@ -1,7 +1,5 @@
 import axiosInstance from '@/utils/axiosInstance';
 
-let url = '';
-
 export const fetchItemsLessons = async () => {
     try {
         const res = await axiosInstance.get(`v1/student/streams`);

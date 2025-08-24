@@ -3,70 +3,23 @@
 import useErrorMessage from '@/hooks/useErrorMessage';
 import { LayoutContext } from '@/layout/context/layoutcontext';
 import { connectStreams, fetchStreams } from '@/services/streams';
-import { getToken } from '@/utils/auth';
 import { Button } from 'primereact/button';
-import { Column } from 'primereact/column';
-import { DataTable } from 'primereact/datatable';
-import { DataView, DataViewLayoutOptions } from 'primereact/dataview';
+import { DataView } from 'primereact/dataview';
 import { useContext, useEffect, useState } from 'react';
 import { NotFound } from '../NotFound';
 import GroupSkeleton from '../skeleton/GroupSkeleton';
 import Link from 'next/link';
+import { streamsType } from '@/types/streamType';
 
-export default function StreamList({ callIndex, courseValue, isMobile }: { callIndex: number; courseValue: { id: number; title: string } | null; isMobile: boolean }) {
-    // const streamList = [
-    //     {
-    //         created_at: '',
-    //         name_kg: '',
-    //         id: 1,
-    //         image: '',
-    //         status: true,
-    //         title: 'lorem-1 lorem-1 lorem-1lorem-1lorem-1lorem-1lorem-1',
-    //         user_id: 1
-    //     },
-    //     {
-    //         created_at: '',
-    //         name_kg: '',
-    //         id: 2,
-    //         image: '',
-    //         status: true,
-    //         title: 'lorem-2',
-    //         user_id: 2
-    //     },
-    //     {
-    //         created_at: '',
-    //         name_kg: '',
-    //         id: 3,
-    //         image: '',
-    //         status: true,
-    //         title: 'lorem-3',
-    //         user_id: 3
-    //     },
-    //     {
-    //         created_at: '',
-    //         name_kg: '',
-    //         id: 4,
-    //         image: '',
-    //         status: true,
-    //         title: 'lorem-4',
-    //         user_id: 4
-    //     },
-    //     {
-    //         created_at: '',
-    //         name_kg: '',
-    //         id: 5,
-    //         image: '',
-    //         status: true,
-    //         title: 'lorem-5',
-    //         user_id: 5
-    //     }
-    // ];
+export default function StreamList({ callIndex, courseValue, isMobile }: { callIndex: number; courseValue: { id: number | null; title: string } | null; isMobile: boolean }) {
+    interface mainStreamsType {
+        connect_id: number | null,stream_id:number, subject_name: {name_kg:string},
+        subject_type_name:{short_name_kg:string}, teacher:{name:string}, language:{name:string},
+        id_edu_year:number,id_period:number, semester:{name_kg:string}, edu_form:{name_kg:string}
+    }
 
-    // type
-    interface StreamsType {}
-
-    const [streams, setStreams] = useState<StreamsType[]>([]);
-    const [streamValues, setStreamValues] = useState<{ stream: { course_id: number; stream_id: number; info: string | null }[] }>({ stream: [] });
+    const [streams, setStreams] = useState<mainStreamsType[]>([]);
+    const [streamValues, setStreamValues] = useState<{ stream: streamsType[] }>({ stream: [] });
     const [displayStreams, setDisplayStreams] = useState<{ course_id: number; stream_id: number; info: string | null; stream_title: string }[]>([]);
     const [hasStreams, setHasStreams] = useState(false);
 
@@ -82,9 +35,8 @@ export default function StreamList({ callIndex, courseValue, isMobile }: { callI
         }, 1000);
     };
 
-    const profilactor = (data) => { 
+    const profilactor = (data: {connect_id: number, course_id: number; stream_id: number; info: string | null}[]) => { 
         const newStreams: { course_id: number; stream_id: number; info: string | null }[] = [];
-        console.log('srabotalo');
         
         data.forEach((item) => {
             if (item?.connect_id) { 
@@ -104,7 +56,6 @@ export default function StreamList({ callIndex, courseValue, isMobile }: { callI
 
     const handleFetchStreams = async () => {
         const data = await fetchStreams(courseValue ? courseValue.id : null);
-        console.log(data);
         setStreamValues({ stream: [] });
 
         if (data) {
@@ -130,7 +81,6 @@ export default function StreamList({ callIndex, courseValue, isMobile }: { callI
 
     const handleConnect = async () => {
         const data = await connectStreams(streamValues);
-        console.log(data);
 
         if (data?.success) {
             toggleSkeleton();
@@ -150,12 +100,7 @@ export default function StreamList({ callIndex, courseValue, isMobile }: { callI
         }
     };
 
-    const clearValues = () => {
-        // ?
-    };
-
-    const handleEdit = (e, id: number, title: string) => {
-        console.log(title);
+    const handleEdit = (e:{checked:boolean}, id: number, title: string) => {
         
         const forSentStreams = {
             course_id: courseValue!.id,
@@ -166,7 +111,7 @@ export default function StreamList({ callIndex, courseValue, isMobile }: { callI
 
         if (e.checked) {
             // profilactor();
-            setStreamValues((prev) => ({
+            setStreamValues((prev) => prev && ({
                 ...prev,
                 stream: [...prev.stream, forSentStreams]
             }));
@@ -191,22 +136,16 @@ export default function StreamList({ callIndex, courseValue, isMobile }: { callI
             }
         });
 
-        setDisplayStreams(forDisplay);
+        // setDisplayStreams(forDisplay);
     }, [streamValues]);
 
     useEffect(() => {
-        console.log('Id ', courseValue);
-
         setStreamValues({ stream: [] });
         setDisplayStreams([]);
         toggleSkeleton();
         if (courseValue?.id) {
             handleFetchStreams();
         }
-
-        // if(streams.length > 0){
-        //     profilactor();
-        // }
     }, [courseValue]);
 
     useEffect(() => {
@@ -217,7 +156,7 @@ export default function StreamList({ callIndex, courseValue, isMobile }: { callI
         }
     }, [streams]);
 
-    const itemTemplate = (item, index: number) => {
+    const itemTemplate = (item:mainStreamsType, index: number) => {
         const bgClass = item.connect_id ? 'bg-[var(--greenBgColor)] border-b border-[gray]' : index % 2 == 1 ? 'bg-[#f5f5f5]' : '';
 
         return (
@@ -272,7 +211,7 @@ export default function StreamList({ callIndex, courseValue, isMobile }: { callI
         );
     };
 
-    const listTemplate = (items) => {
+    const listTemplate = (items:mainStreamsType[]) => {
         if (!items || items.length === 0) return null;
 
         let list = items.map((product, index: number) => {
@@ -320,9 +259,6 @@ export default function StreamList({ callIndex, courseValue, isMobile }: { callI
                                         icon="pi pi-link"
                                         onClick={() => {
                                             handleConnect();
-                                            // setEditMode(false);
-                                            // clearValues();
-                                            // setFormVisible(true);
                                         }}
                                     />
                                 </div>
@@ -338,24 +274,24 @@ export default function StreamList({ callIndex, courseValue, isMobile }: { callI
                                 )}
                             </div>
 
-                            {courseValue?.title && (
-                                <div className="flex flex-col items-start justify-center gap-2 text-[14px]">
-                                    <div className="flex items-center gap-1">
-                                        <span className="w-[14px] sm:w-[18px] h-[14px] sm:h-[18px] block border bg-[var(--greenColor)] rounded-4xl"></span>
-                                        <span className="text-[16px] font-bold">Курстун аталышы: {courseValue?.title}</span>
-                                    </div>
-                                    <div className="w-full flex items-center gap-2">
-                                        <div className="w-[14px] sm:w-[18px] h-[14px] sm:h-[18px] border bg-[yellow]"></div>
-                                        <div className="flex flex-col gap-1">
-                                            {streamValues.stream?.length < 1 && <span className="text-[13px]">Курска байлоо үчүн агымдарды тандаңыз</span>}
-                                            {displayStreams.map((item) => {
-                                                return <div key={item?.stream_id}>{item?.stream_title}</div>;
-                                            })}
-                                            {/* <div>{displayStreams.length >= 3 && '...'}</div> */}
-                                        </div>
-                                    </div>
-                                </div>
-                            )}
+                            {/* {courseValue?.title && ( */}
+                                {/* // <div className="flex flex-col items-start justify-center gap-2 text-[14px]">
+                                //     <div className="flex items-center gap-1">
+                                //         <span className="w-[14px] sm:w-[18px] h-[14px] sm:h-[18px] block border bg-[var(--greenColor)] rounded-4xl"></span>
+                                //         <span className="text-[16px] font-bold">Курстун аталышы: {courseValue?.title}</span>
+                                //     </div>
+                                //     <div className="w-full flex items-center gap-2">
+                                //         <div className="w-[14px] sm:w-[18px] h-[14px] sm:h-[18px] border bg-[yellow]"></div>
+                                //         <div className="flex flex-col gap-1">
+                                //             {streamValues.stream?.length < 1 && <span className="text-[13px]">Курска байлоо үчүн агымдарды тандаңыз</span>}
+                                //             {displayStreams.map((item) => {
+                                //                 return <div key={item?.stream_id}>{item?.stream_title}</div>;
+                                //             })}
+                                //             <div>{displayStreams.length >= 3 && '...'}</div>
+                                //         </div>
+                                //     </div>
+                                // </div>
+                            // )} */}
                         </div>
                     )}
                 </div>

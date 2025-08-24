@@ -48,7 +48,7 @@ export default function ItemCard({
     connection
 }: {
     lessonName: string;
-    streams: { teacher?: { name: string; last_name?: string }; subject_type_name?: { name_kg: string } }[];
+    streams: {id: number, teacher?: { name: string; last_name?: string }; subject_type_name?: { name_kg: string, short_name_kg: string } }[];
     connection: { id: number; course_id: number; id_myedu_stream: number }[];
 }) {
     console.log('conn',connection);
@@ -74,7 +74,7 @@ export default function ItemCard({
                             </div>
                             {connection.map((item) => {                                
                                 if (item.id_myedu_stream === stream.id) {
-                                    return <Link href={`teaching/${item.course_id}/${stream.id}`}><Button label="Курс" icon="pi pi-arrow-right text-sm" iconPos="right" /></Link>
+                                    return <Link key={item.id} href={`teaching/${item.course_id}/${stream.id}`}><Button label="Курс" icon="pi pi-arrow-right text-sm" iconPos="right" /></Link>
                                 }
                             })}
                         </div>

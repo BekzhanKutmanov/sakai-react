@@ -14,7 +14,7 @@ import { useMediaQuery } from '@/hooks/useMediaQuery';
 pdfjsLib.GlobalWorkerOptions.workerSrc = `/pdf.worker.mjs`;
 
 export default function PDFViewer({ url }: { url: string }) {
-    const [pages, setPages] = useState([]);
+    const [pages, setPages] = useState<React.JSX.Element[]>([]);
     const [skeleton, setSkeleton] = useState(false);
 
     const containerRef = useRef<HTMLDivElement>(null);
@@ -49,10 +49,17 @@ export default function PDFViewer({ url }: { url: string }) {
                     // Создаем элемент <canvas>
                     const canvas = document.createElement('canvas');
                     const context = canvas.getContext('2d');
+
+                    if (!context) {
+                        // в последний раз добавил эту строку если что
+                        throw new Error('Canvas context is not supported.');
+                    }
+
                     canvas.height = viewport.height;
                     canvas.width = viewport.width;
 
                     await page.render({
+                        canvas, // в последний раз добавил эту строку если что
                         canvasContext: context,
                         viewport
                     }).promise;
@@ -68,11 +75,13 @@ export default function PDFViewer({ url }: { url: string }) {
 
                 // Обновляем состояние с данными только после успешной загрузки
                 setPages(tempPages);
-                setBookSize({
-                    width: containerRef.current.offsetWidth, // реально доступная ширина контейнера
-                    height: FIXED_BOOK_HEIGHT, // пока фиксированная высота
-                    aspectRatio: aspectRatio
-                });
+                if (containerRef.current) { // в последний раз добавил эту проверку если что
+                    setBookSize({
+                        width: containerRef.current.offsetWidth,
+                        height: FIXED_BOOK_HEIGHT,
+                        aspectRatio: aspectRatio
+                    });
+                }
                 setSkeleton(false);
             } catch (error) {
                 console.error('Ошибка при загрузке или рендеринге PDF:', error);
@@ -150,27 +159,48 @@ export default function PDFViewer({ url }: { url: string }) {
                 <>
                     <h1>lorm</h1>
                     <HTMLFlipBook
-                    // width={Math.min(bookSize.width, 600)} // ограничиваем ширину страницы
-                    width={300} // ограничиваем ширину страницы
-                    height={bookSize.height}
-                    size="stretch"
-                    minWidth={320}
-                    maxWidth={600} // ограничиваем maxWidth для PageFlip
-                    minHeight={420}
-                    maxHeight={bookSize.height}
-                    showCover={false}
-                    usePortrait={true}
-                >
-                    {pages.map((page, index) => (
-                        <div key={index} className="page">
-                            <div className="page-content">
-                                {' '}
-                                {/* Добавляем класс для содержимого страницы */}
-                                {page}
+                        // width={Math.min(bookSize.width, 600)} // ограничиваем ширину страницы
+                        width={300} // ограничиваем ширину страницы
+                        height={bookSize.height}
+                        size="stretch"
+                        minWidth={320}
+                        maxWidth={600} // ограничиваем maxWidth для PageFlip
+                        minHeight={420}
+                        maxHeight={bookSize.height}
+                        showCover={false}
+                        usePortrait={true}
+                        // news
+                        startZIndex={0}
+                        autoSize={true}
+                        maxShadowOpacity={0.5}
+                        mobileScrollSupport={true}
+                        swipeDistance={30}
+                        clickEventForward={true}
+                        useMouseEvents={true}
+                        renderOnlyPageLengthChange={false}
+                        className=""
+                        style={{}}
+                        onFlip={() => {}}
+                        onChangeOrientation={() => {}}
+                        onChangeState={() => {}}
+                        onInit={() => {}}
+                        onUpdate={() => {}}
+                        startPage={0}
+                        drawShadow={true}
+                        flippingTime={900}
+                        showPageCorners={true}
+                        disableFlipByClick={false}
+                    >
+                        {pages.map((page, index) => (
+                            <div key={index} className="page">
+                                <div className="page-content">
+                                    {' '}
+                                    {/* Добавляем класс для содержимого страницы */}
+                                    {page}
+                                </div>
                             </div>
-                        </div>
-                    ))}
-                </HTMLFlipBook>
+                        ))}
+                    </HTMLFlipBook>
                 </>
             ) : (
                 <HTMLFlipBook
@@ -184,6 +214,27 @@ export default function PDFViewer({ url }: { url: string }) {
                     maxHeight={bookSize.height}
                     showCover={false}
                     usePortrait={true}
+                    // news
+                    startZIndex={0}
+                    autoSize={true}
+                    maxShadowOpacity={0.5}
+                    mobileScrollSupport={true}
+                    swipeDistance={30}
+                    clickEventForward={true}
+                    useMouseEvents={true}
+                    renderOnlyPageLengthChange={false}
+                    className=""
+                    style={{}}
+                    onFlip={() => {}}
+                    onChangeOrientation={() => {}}
+                    onChangeState={() => {}}
+                    onInit={() => {}}
+                    onUpdate={() => {}}
+                    startPage={0}
+                    drawShadow={true}
+                    flippingTime={900}
+                    showPageCorners={true}
+                    disableFlipByClick={false}
                 >
                     {pages.map((page, index) => (
                         <div key={index} className="page">

@@ -91,19 +91,20 @@ const LoginPage = () => {
     };
 
     return (
-        <div className={'flex flex-col gap-4'}>
-            <InfoBanner title="Кирүү" titleSize={{ default: '30px', sm: '40px' }} />
+        <div className={'flex flex-col gap-4 pt-4 h-[100vh] login-bg'}>
+            {/* <InfoBanner title="Кирүү" titleSize={{ default: '30px', sm: '40px' }} /> */}
             <div className="flex gap-4 flex-column lg:flex-row items-center justify-evenly px-4 mb-8">
                 <div className="user-img">
                     <img src="/layout/images/no-image.png" className="w-[500px]" alt="" />
                 </div>
 
                 <div className="w-[90%] sm:w-[500px] shadow-2xl py-6 px-3 md:py-8 sm:px-4 md:px-8 rounded">
+                    <h1 className='w-[90%] text-center text-3xl sm:text-4xl'>Кирүү</h1>
                     <form onSubmit={handleSubmit(onSubmit, onError)} className="flex flex-col gap-4 md:gap-6">
                         <div className="flex flex-col">
-                            <label htmlFor="email1" className="block text-900 text-[16px] md:text-xl font-medium mb-1 md:mb-2">
+                            {/* <label htmlFor="email1" className="block text-900 text-[16px] md:text-xl font-medium mb-1 md:mb-2">
                                 MyEdu email
-                            </label>
+                            </label> */}
                             <InputText {...register('email')} id="email1" type="text" placeholder="email@oshsu.kg" className="w-[90%] p-2 sm:p-3" />
                             {errors.email && <b className="text-[red] text-[12px] ml-2">{errors.email.message}</b>}
                         </div>
@@ -117,7 +118,7 @@ const LoginPage = () => {
                             {errors.password && <b className="text-[red] text-[12px] ml-2">{errors.password.message}</b>}
                         </div>
 
-                        <FancyLinkBtn btnWidth={'90%'} backround={'--mainColor'} effectBg={'--titleColor'} title={'Кирүү'} disabled={errors.email} />
+                        <FancyLinkBtn btnWidth={'90%'} backround={'--mainColor'} effectBg={'--titleColor'} title={'Кирүү'} />
                     </form>
                 </div>
             </div>

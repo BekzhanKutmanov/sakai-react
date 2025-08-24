@@ -69,10 +69,6 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
     const [urlPDF, setUrlPDF] = useState('');
     const [PDFVisible, setPDFVisible] = useState<boolean>(false);
 
-    useEffect(() => {
-        console.log(docValue);
-    }, [docValue]);
-
     // links
     const [links, setLinks] = useState([]);
     const [linksValue, setLinksValue] = useState<lessonStateType>({
@@ -141,13 +137,13 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                 : type === 'video'
                 ? { key: 'videos', file: '', url: '', link: 'link', video_type_id: 1 }
                 : { key: '', file: '', url: '', link: '', video_type_id: 1 };
-        console.log(lesson);
-        console.log(data[lesson.key]);
+        // console.log(lesson);
+        // console.log(data[lesson.key]);
 
         if (data.success) {
             if (data[lesson.key]) {
                 const arr = data[lesson.key].find((item: lessonType) => item.id === selected);
-                console.log(arr);
+                // console.log(arr);
 
                 setEditingLesson({
                     title: arr.title,
@@ -170,7 +166,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
 
     // DOC SECTION
 
-    const sentToPDF = (url) => {
+    const sentToPDF = (url: string) => {
         setUrlPDF(url);
         if (media) {
             router.push(`/pdf/${url}`);
@@ -270,7 +266,8 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                                                 type={{ typeValue: 'doc', icon: 'pi pi-file' }}
                                                 typeColor={'var(--mainColor)'}
                                                 lessonDate={'xx-xx'}
-                                                urlForPDF={() => sentToPDF(item.document)}
+                                                urlForPDF={() => sentToPDF(item.document || '')}
+                                                urlForDownload=''
                                             />
                                         </>
                                     ))
@@ -436,6 +433,8 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                                         type={{ typeValue: 'link', icon: 'pi pi-link' }}
                                         typeColor={'var(--mainColor)'}
                                         lessonDate={'xx-xx'}
+                                        urlForPDF={() => ('')}
+                                        urlForDownload=''
                                     />
                                 </>
                             ))
@@ -651,6 +650,8 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                                         type={{ typeValue: 'video', icon: 'pi pi-video' }}
                                         typeColor={'var(--mainColor)'}
                                         lessonDate={'xx-xx'}
+                                        urlForPDF={() => ('')}
+                                        urlForDownload=''
                                     />
                                 </>
                             ))

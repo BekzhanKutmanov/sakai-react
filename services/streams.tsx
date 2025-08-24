@@ -1,3 +1,4 @@
+import { streamsType } from '@/types/streamType';
 import axiosInstance from '@/utils/axiosInstance';
 
 let url = '';
@@ -16,7 +17,7 @@ export const fetchStreams = async (id: number | null) => {
     }
 };
 
-export const connectStreams = async (value) => {
+export const connectStreams = async (value: {stream: streamsType[]}) => {
     console.log(value);
     
     // const formData = new FormData();

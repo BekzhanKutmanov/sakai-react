@@ -7,7 +7,7 @@ import useErrorMessage from '@/hooks/useErrorMessage';
 import { LayoutContext } from '@/layout/context/layoutcontext';
 import { fetchItemsConnect, fetchItemsLessons } from '@/services/studentMain';
 import { Dropdown } from 'primereact/dropdown';
-import { useContext, useEffect, useState } from 'react';
+import { ReactElement, useContext, useEffect, useState } from 'react';
 
 export default function Teaching() {
     interface sortOptType {
@@ -16,8 +16,11 @@ export default function Teaching() {
     }
 
     const [skeleton, setSkeleton] = useState(false);
-    const [lessons, setLessons] = useState<{}>({});
-    const [lessonsDisplay, setLessonsDisplay] = useState<[]>([]);
+    const [lessons, setLessons] = useState<Record<number, { semester: { name_kg: string } }>>({
+        1: { semester: { name_kg: '' } }
+    });
+
+    const [lessonsDisplay, setLessonsDisplay] = useState<ReactElement[]>([]);
     const [hasLessons, setHasLessons] = useState(false);
     const [selectedSort, setSelectedSort] = useState({ name: 'Баары', code: 0 });
     const [sortOpt, setSortOpt] = useState<sortOptType[]>();
@@ -41,9 +44,7 @@ export default function Teaching() {
 
     // fetch lessons
     const handleFetchLessons = async () => {
-        // skeleton = false
         const data = await fetchItemsLessons();
-        console.log(data);
         toggleSkeleton();
         if (data) {
             // валидность проверить

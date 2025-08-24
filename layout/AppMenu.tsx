@@ -9,17 +9,18 @@ import { useParams, usePathname } from 'next/navigation';
 
 const AppMenu = () => {
     const { layoutConfig, user, course, contextFetchCourse, contextFetchThemes, contextThemes, setContextThemes, contextFetchStudentThemes, contextStudentThemes } = useContext(LayoutContext);
+    interface test { label: string, id: number, to?: string, items?: [], command?: ()=> void };
 
     const location = usePathname();
     const pathname = location;
     const { studentThemeCourse } = useParams();
 
-    const [courseList, setCourseList] = useState([]);
+    const [courseList, setCourseList] = useState<test[]>([]);
     const [clickedCourseId, setClickedCourseId] = useState<number | null>(null);
 
-    const [themesStudentList, setThemesStudentList] = useState([]);
-        
-    const byStatus = user?.is_working
+    const [themesStudentList, setThemesStudentList] = useState<{ label: string; id: number; to: string; items?: AppMenuItem[] }[]>([]);
+
+    const byStatus: AppMenuItem[] = user?.is_working
         ? [
               {
                   label: 'Курстар',
@@ -30,7 +31,7 @@ const AppMenu = () => {
         : user?.is_student
         ? [
               { label: 'Окуу планы', icon: 'pi pi-fw pi-calendar-clock', to: '/teaching' },
-              pathname.startsWith('/teaching/') && { label: 'Темалар', icon: 'pi pi-fw pi-calendar-lessons', items: themesStudentList || [] }
+              pathname.startsWith('/teaching/') ? { label: 'Темалар', icon: 'pi pi-fw pi-calendar-lessons', items: themesStudentList?.length > 0 ? themesStudentList : [] } : { label: '' }
           ]
         : [];
 
@@ -49,7 +50,7 @@ const AppMenu = () => {
         if (user?.is_working) {
             contextFetchCourse();
         }
-        if (user?.is_student) {            
+        if (user?.is_student) {
             const isTopicsChildPage = pathname.startsWith('/teaching/');
             if (isTopicsChildPage) {
                 console.log('Вызов функции тем студента');
@@ -60,11 +61,12 @@ const AppMenu = () => {
 
     useEffect(() => {
         if (course) {
-            const forCourse = [{ label: 'Курс', id: 0, to: '/course' }];
-            course.data?.map((item: any) =>
+            const forCourse: test[] = [{ label: 'Курс', id: 0, to: '/course' }];
+            course.data?.map((item) =>
                 forCourse.push({
                     label: item.title,
                     id: item.id,
+                    to: '',
                     items: [], // пока пусто
                     command: () => {
                         contextFetchThemes(item.id);
@@ -98,20 +100,22 @@ const AppMenu = () => {
         }
     }, [contextThemes]);
 
-    useEffect(() => {        
+    useEffect(() => {
         console.log('Обновился и готов');
-        
-        if(contextStudentThemes?.lessons){
-            const forThemes = [];
+
+        if (contextStudentThemes?.lessons) {
+            const forThemes: any = [];
             contextStudentThemes.lessons.data?.map((item: any) =>
                 forThemes.push({
                     label: item.title,
                     id: item.id,
                     to: '/teaching/ ? ',
+                    items: []
                 })
             );
-
-            setThemesStudentList(forThemes || []);
+            if (forThemes.length > 0) {
+                setThemesStudentList(forThemes || []);
+            }
         }
     }, [contextStudentThemes, pathname]);
 

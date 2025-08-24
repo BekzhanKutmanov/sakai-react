@@ -178,15 +178,9 @@ export default function Lesson() {
     </div>
 
     // USE EFFECTS
-    useEffect(() => {
-        console.log(sentValues);
-    }, [sentValues]);
 
     return (
         <div>
-            {/* <PDFViewer url={'http://api.mooc.oshsu.kg/temprory-file/1755766911.pdf'}/> */}
-            {/* <Book/> */}
-
             {/* header section */}
             <TabView
                 onTabChange={(e) => handleTabChange(e)}

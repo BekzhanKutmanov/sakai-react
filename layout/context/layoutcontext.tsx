@@ -9,6 +9,7 @@ import { User } from '@/types/user';
 import { MessageType } from '@/types/messageType';
 import { fetchCourses, fetchThemes } from '@/services/courses';
 import { fetchStudentThemes } from '@/services/studentMain';
+import { myMainCourseType } from '@/types/myMainCourseType';
 
 export const LayoutContext = createContext({} as LayoutContextProps);
 
@@ -65,7 +66,7 @@ export const LayoutProvider = ({ children }: ChildContainerProps) => {
     };
 
     // fetch course
-    const [course, setCourses] = useState([]);
+    const [course, setCourses] = useState<{data: myMainCourseType[]}>({data: []});
 
     const contextFetchCourse = async (page = 1) => {
         const data = await fetchCourses(page, 0);

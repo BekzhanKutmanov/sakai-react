@@ -65,7 +65,7 @@ export default function StudentList() {
         toggleSkeleton();
         if (data && data.students) {
             setHasList(false);
-            setStudentList(data.students);
+            // setStudentList(data.students);
         } else {
             setHasList(true);
             setMessage({
