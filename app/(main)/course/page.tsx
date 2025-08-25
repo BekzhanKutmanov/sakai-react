@@ -28,6 +28,9 @@ import { useMediaQuery } from '@/hooks/useMediaQuery';
 
 export default function Course() {
     const { setMessage, course, setCourses, contextFetchCourse } = useContext(LayoutContext);
+    interface FileWithPreview extends File {
+        objectURL?: string;
+    }
 
     const [coursesValue, setValueCourses] = useState<myMainCourseType[]>([]);
     const [hasCourses, setHasCourses] = useState(false);
@@ -43,6 +46,7 @@ export default function Course() {
         perPage: 0
     });
     const [activeIndex, setActiveIndex] = useState<number>(0);
+    const [imageState, setImageState] = useState<string | null>(null);
 
     const [editingLesson, setEditingLesson] = useState<CourseCreateType>({
         title: '',
@@ -117,11 +121,9 @@ export default function Course() {
     };
 
     const handleFetchCourse = async (page = 1) => {
-
         const data = await fetchCourses(page, 0);
         toggleSkeleton();
-        console.log(course);
-        
+
         if (course) {
             setHasCourses(false);
             setValueCourses(course.data);
@@ -206,6 +208,7 @@ export default function Course() {
     };
 
     const clearValues = () => {
+        setImageState(null);
         setCourseValue({ title: '', description: '', video_url: '', image: '' });
         setEditingLesson({ title: '', description: '', video_url: '', image: '', created_at: '' });
         setEditMode(false);
@@ -236,7 +239,7 @@ export default function Course() {
         }
     };
 
-    const onSelect = (e: FileUploadSelectEvent) => {
+    const onSelect = (e: FileUploadSelectEvent & { files: FileWithPreview[] }) => {
         editMode
             ? setEditingLesson((prev) => ({
                   ...prev,
@@ -246,9 +249,12 @@ export default function Course() {
                   ...prev,
                   image: e.files[0]
               }));
-
-        console.log('hi');
+        setImageState(e.files[0].objectURL);
     };
+
+    useEffect(() => {
+        console.log(imageState);
+    }, [imageState]);
 
     const imageBodyTemplate = (product: CourseType) => {
         const image = product.image;
@@ -290,9 +296,9 @@ export default function Course() {
         contextFetchCourse();
     }, []);
 
-    useEffect(()=> {
+    useEffect(() => {
         handleFetchCourse();
-    },[course]);
+    }, [course]);
 
     useEffect(() => {
         const title = editMode ? editingLesson.title.trim() : courseValue.title.trim();
@@ -339,11 +345,37 @@ export default function Course() {
         console.log('Для потока ', forStreamId);
     }, [forStreamId]);
 
+    const imagestateStyle = imageState ? 'flex gap-1 items-center justify-between' : '';
+
     return (
         <div className="main-bg">
             {/* modal window */}
             <FormModal title={editMode ? 'Курсту жаңылоо' : 'Кошуу'} fetchValue={editMode ? handleUpdateCourse : handleAddCourse} clearValues={clearValues} visible={formVisible} setVisible={setFormVisible} start={forStart}>
                 <div className="flex flex-col gap-1">
+                    <div className={imagestateStyle}>
+                        {imagestateStyle && (
+                            <div className="w-1/2 max-h-[170px] max-w-[330px] overflow-hidden flex justify-center items-center">
+                                {typeof imageState === 'string' && 
+                                <img className="w-full object-cover" src={imageState} alt="" />
+                                } 
+                            </div>
+                        )}
+                        <div className="flex flex-col pag-1 items-center justify-center">
+                            <label className="block text-900 font-medium text-[16px] md:text-xl mb-1 md:mb-2">Сүрөт кошуу</label>
+                            <FileUpload mode="basic" chooseLabel="Сүрөт" customUpload name="demo[]" accept="image/*" maxFileSize={1000000} onSelect={onSelect} />
+                            {courseValue.image || editingLesson.image ? (
+                                <div className="mt-2 text-sm text-gray-700 ">
+                                    {typeof editingLesson.image === 'string' && (
+                                        <>
+                                            Сүрөт: <b className="text-[12px] text-center w-[300px]">{editingLesson.image}</b>
+                                        </>
+                                    )}
+                                </div>
+                            ) : (
+                                <b className="text-[12px] text-red-500">jpeg, png, jpg</b>
+                            )}
+                        </div>
+                    </div>
                     {/* <div className="flex flex-col lg:flex-row gap-1 justify-around items-center"> */}
                     <div className="flex flex-col gap-1 items-center justify-center">
                         <label className="block text-900 font-medium text-[16px] md:text-xl mb-1 md:mb-2">Аталышы</label>
@@ -404,22 +436,6 @@ export default function Course() {
                                       }));
                             }}
                         />
-                    </div>
-
-                    <div className="flex flex-col pag-1 items-center justify-center">
-                        <label className="block text-900 font-medium text-[16px] md:text-xl mb-1 md:mb-2">Сүрөт кошуу</label>
-                        <FileUpload mode="basic" chooseLabel="Сүрөт" customUpload name="demo[]" accept="image/*" maxFileSize={1000000} onSelect={onSelect} />
-                        {courseValue.image || editingLesson.image ? (
-                            <div className="mt-2 text-sm text-gray-700 ">
-                                {typeof editingLesson.image === 'string' && (
-                                    <>
-                                        Сүрөт: <b className="text-[12px] text-center w-[300px]">{editingLesson.image}</b>
-                                    </>
-                                )}
-                            </div>
-                        ) : (
-                            <b className="text-[12px] text-red-500">jpeg, png, jpg</b>
-                        )}
                     </div>
                     {/* </div> */}
                 </div>
