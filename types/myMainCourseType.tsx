@@ -15,7 +15,6 @@ export interface myMainCourseType {
     title: string;
     user_id: number;
     current_page?: number;
-    total?: number;
-    per_page?: number;
-    data?: test[];
+
+    // data?: test[];
 }

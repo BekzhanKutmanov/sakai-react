@@ -54,8 +54,12 @@ export interface LayoutContextProps {
     setGlobalLoading: React.Dispatch<React.SetStateAction<boolean>>;
     message: MessageType;
     setMessage: React.Dispatch<React.SetStateAction<MessageType>>;
-    contextFetchCourse: ()=> void;
-    course: {data: myMainCourseType[]};
+    contextFetchCourse: (id)=> void;
+    course: { current_page: number;
+        total: number;
+        per_page: number;
+        data: myMainCourseType[] 
+    };
     setCourses;
     contextFetchThemes: (id: number)=> void;
     contextThemes;

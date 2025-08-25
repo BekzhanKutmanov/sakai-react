@@ -1,14 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 
-import { useRouter } from 'next/navigation';
 import { useEventListener, useMountEffect, useUnmountEffect } from 'primereact/hooks';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { classNames } from 'primereact/utils';
-import AppFooter from './AppFooter';
 import AppSidebar from './AppSidebar';
 import AppTopbar from './AppTopbar';
-import AppConfig from './AppConfig';
 import { LayoutContext } from './context/layoutcontext';
 import { PrimeReactContext } from 'primereact/api';
 import { ChildContainerProps, LayoutState, AppTopbarRef } from '@/types';
@@ -136,7 +133,7 @@ const StudentLayout = ({ children }: ChildContainerProps) => {
         requireRole();
     },[user]);
 
-    if(permission) return null;
+    // if(permission) return null;
 
     return (
         <React.Fragment>    

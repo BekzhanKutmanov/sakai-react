@@ -19,11 +19,13 @@ import FancyLinkBtn from '@/app/components/buttons/FancyLinkBtn';
 import { getToken } from '@/utils/auth';
 import { logout } from '@/utils/logout';
 import { LoginType } from '@/types/login';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 
 const LoginPage = () => {
     const { layoutConfig, setUser, setMessage, setGlobalLoading } = useContext(LayoutContext);
 
     const router = useRouter();
+    const media = useMediaQuery('(max-width: 640px)');
     // const containerClassName = classNames('surface-ground flex align-items-center justify-content-center min-h-screen min-w-screen overflow-hidden', { 'p-input-filled': layoutConfig.inputStyle === 'filled' });
 
     const {
@@ -40,7 +42,6 @@ const LoginPage = () => {
         console.log('Данные пользователя: ', value);
 
         const user = await login(value);
-        console.log(user);
         if (user && user.success) {
             document.cookie = `access_token=${user.token.access_token}; path=/; Secure; SameSite=Strict; expires=${user.token.expires_at}`;
 
@@ -91,7 +92,7 @@ const LoginPage = () => {
     };
 
     return (
-        <div className={'flex flex-col gap-4 pt-4 h-[100vh] login-bg'}>
+        <div className={`flex flex-col gap-4 pt-4 h-[100vh] ${!media && 'login-bg'}`}>
             {/* <InfoBanner title="Кирүү" titleSize={{ default: '30px', sm: '40px' }} /> */}
             <div className="flex gap-4 flex-column lg:flex-row items-center justify-evenly px-4 mb-8">
                 <div className="user-img">

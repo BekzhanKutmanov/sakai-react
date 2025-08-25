@@ -44,7 +44,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .login-bg{
-  background: url('/layout/images/login-bg.jpg') no-repeat center/cover;
+  background: url('/layout/svg/login-bg.svg') no-repeat center/cover;
 }
 
 /* animate */
@@ -342,6 +342,10 @@ h1, h2, h3, h4, h5, h6 {
   100%{
       box-shadow: 1px 1px 6px 1px ;
   }
+}
+
+.select-column .my-custom-table td{
+  background-color: var(--greenBgColor);
 }
 
 .my-custom-table td,

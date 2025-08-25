@@ -40,7 +40,7 @@ export default function Course() {
     const [formVisible, setFormVisible] = useState(false);
     const [forStart, setForStart] = useState(false);
     const [skeleton, setSkeleton] = useState(false);
-    const [pagination, setPagination] = useState({
+    const [pagination, setPagination] = useState<{ currentPage: number; total: number; perPage: number }>({
         currentPage: 1,
         total: 0,
         perPage: 0
@@ -125,13 +125,15 @@ export default function Course() {
         toggleSkeleton();
 
         if (course) {
+            console.log(course);
+
             setHasCourses(false);
             setValueCourses(course.data);
-            // setPagination({
-            //     currentPage: course.data,
-            //     total: course?.data,
-            //     perPage: course?.data
-            // });
+            setPagination({
+                currentPage: course.current_page,
+                total: course?.total,
+                perPage: course?.per_page
+            });
         } else {
             setHasCourses(true);
             setMessage({
@@ -170,7 +172,7 @@ export default function Course() {
         if (data?.success) {
             toggleSkeleton();
             // handleFetchCourse();
-            contextFetchCourse();
+            contextFetchCourse(1);
             setMessage({
                 state: true,
                 value: { severity: 'success', summary: 'Ийгиликтүү кошулду!', detail: '' }
@@ -191,7 +193,7 @@ export default function Course() {
         if (data?.success) {
             toggleSkeleton();
             // handleFetchCourse();
-            contextFetchCourse();
+            contextFetchCourse(1);
             setMessage({
                 state: true,
                 value: { severity: 'success', summary: 'Ийгиликтүү өчүрүлдү!', detail: '' }
@@ -220,7 +222,7 @@ export default function Course() {
         if (data?.success) {
             toggleSkeleton();
             // handleFetchCourse();
-            contextFetchCourse();
+            contextFetchCourse(1);
             clearValues();
             setEditMode(false);
             setSelectedCourse(null);
@@ -277,6 +279,8 @@ export default function Course() {
     // Ручное управление пагинацией
     const handlePageChange = (page: number) => {
         // handleFetchCourse(page);
+        contextFetchCourse(page);
+        console.log(page);
     };
 
     const edit = (rowData: number | null) => {
@@ -293,7 +297,7 @@ export default function Course() {
     };
 
     useEffect(() => {
-        contextFetchCourse();
+        contextFetchCourse(1);
     }, []);
 
     useEffect(() => {
@@ -353,13 +357,7 @@ export default function Course() {
             <FormModal title={editMode ? 'Курсту жаңылоо' : 'Кошуу'} fetchValue={editMode ? handleUpdateCourse : handleAddCourse} clearValues={clearValues} visible={formVisible} setVisible={setFormVisible} start={forStart}>
                 <div className="flex flex-col gap-1">
                     <div className={imagestateStyle}>
-                        {imagestateStyle && (
-                            <div className="w-1/2 max-h-[170px] max-w-[330px] overflow-hidden flex justify-center items-center">
-                                {typeof imageState === 'string' && 
-                                <img className="w-full object-cover" src={imageState} alt="" />
-                                } 
-                            </div>
-                        )}
+                        {imagestateStyle && <div className="w-1/2 max-h-[170px] max-w-[330px] overflow-hidden flex justify-center items-center">{typeof imageState === 'string' && <img className="w-full object-cover" src={imageState} alt="" />}</div>}
                         <div className="flex flex-col pag-1 items-center justify-center">
                             <label className="block text-900 font-medium text-[16px] md:text-xl mb-1 md:mb-2">Сүрөт кошуу</label>
                             <FileUpload mode="basic" chooseLabel="Сүрөт" customUpload name="demo[]" accept="image/*" maxFileSize={1000000} onSelect={onSelect} />
@@ -496,7 +494,7 @@ export default function Course() {
                                                         />
                                                     </div>
 
-                                                    <DataTable value={coursesValue} dataKey="id" key={JSON.stringify(forStreamId)} breakpoint="960px" rows={5} className="my-custom-table">
+                                                    <DataTable value={coursesValue}  dataKey="id" key={JSON.stringify(forStreamId)} breakpoint="960px" rows={5} className="my-custom-table">
                                                         <Column body={(_, { rowIndex }) => rowIndex + 1} header="Номер" style={{ width: '20px' }}></Column>
                                                         <Column
                                                             field="title"
@@ -521,8 +519,6 @@ export default function Course() {
                                                                             name="radio"
                                                                             onChange={() => {
                                                                                 const newValue = forStreamId?.id === rowData.id ? null : { id: rowData.id, title: rowData.title };
-                                                                                console.log(rowData, forStreamId);
-
                                                                                 // Устанавливаем состояние
                                                                                 setForStreamId(newValue);
                                                                             }}
@@ -549,7 +545,8 @@ export default function Course() {
                                                         rows={pagination.perPage}
                                                         totalRecords={pagination.total}
                                                         onPageChange={(e) => handlePageChange(e.page + 1)}
-                                                        template="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
+                                                        // template="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
+                                                        template={media ? 'PrevPageLink NextPageLink' : 'FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink'}
                                                     />
                                                 </div>
                                             )}

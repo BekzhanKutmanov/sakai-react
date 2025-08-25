@@ -48,7 +48,7 @@ const AppMenu = () => {
 
     useEffect(() => {
         if (user?.is_working) {
-            contextFetchCourse();
+            contextFetchCourse(1);
         }
         if (user?.is_student) {
             const isTopicsChildPage = pathname.startsWith('/teaching/');

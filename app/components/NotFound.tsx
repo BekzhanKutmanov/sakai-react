@@ -9,7 +9,7 @@ export const NotFound = ({ titleMessage }: { titleMessage: string }) => {
         <div>
             <div className="flex flex-col gap-2 justify-center items-center m-4">
                 <p className="text-[16px] text-center font-bold">{titleMessage}</p>
-                <Link href={'/'}>
+                <Link href={'/'} className='text-center text-[12px] sm:text-[14px]'>
                     {/* <FancyLinkBtn btnWidth={'240px'} backround={'--mainColor'} effectBg={'--titleColor'} title={''} /> */}
                     Башкы баракчага кайтуу
                 </Link>

@@ -50,7 +50,6 @@ export default function CourseTheme() {
         const data = await fetchThemes(Number(courseTheme));
 
         toggleSkeleton();
-        console.log('id', selectedCourse);
         
         contextFetchThemes(Number(courseTheme));
         if (data?.lessons) {
@@ -120,7 +119,6 @@ export default function CourseTheme() {
     };
 
     const handleUpdateTheme = async () => {
-        console.log('yeee');
         
         const data = await updateTheme(Number(courseTheme), selectedCourse.id, editingThemes.title);
         if (data.success) {
@@ -145,7 +143,6 @@ export default function CourseTheme() {
     };
 
     const edit = (rowData: number | null) => {
-        console.log(rowData);
 
         setEditMode(true);
         setSelectedCourse({id: rowData});
@@ -160,18 +157,6 @@ export default function CourseTheme() {
         setSelectedCourse({ id: null });
     };
 
-    // const getConfirmOptions = (id: number) => ({
-    //     message: 'Сиз чын эле өчүрүүнү каалайсызбы??',
-    //     header: 'Өчүрүү',
-    //     icon: 'pi pi-info-circle',
-    //     defaultFocus: 'reject',
-    //     acceptClassName: 'p-button-danger',
-    //     acceptLabel: 'Кийинки кадам', // кастомная надпись для "Yes"
-    //     rejectLabel: 'Артка',
-    //     accept: () => handleDeleteCourse(id),
-    //     // reject: () => console.log('Удаление отменено')
-    // });
-
     useEffect(() => {
         handleFetchInfo();
         handleFetchThemes();
@@ -180,7 +165,6 @@ export default function CourseTheme() {
     useEffect(() => {
         const handleShow = async () => {
             const data:{lessons: {data: {id: number, title: string}[]}} = await fetchThemes(Number(courseTheme));
-            console.log(data);
             
             if (data?.lessons) {
                 console.log('rab');
@@ -226,7 +210,6 @@ export default function CourseTheme() {
                     <div className="flex items-center gap-2">
                         <i className={'pi pi-clock text-blue-500'}></i>
                         <span>{themeInfo?.created_at}</span>
-                        <span>Home/theme</span>
                     </div>
                 </div>
 

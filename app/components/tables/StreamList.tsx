@@ -14,7 +14,7 @@ import { streamsType } from '@/types/streamType';
 export default function StreamList({ callIndex, courseValue, isMobile }: { callIndex: number; courseValue: { id: number | null; title: string } | null; isMobile: boolean }) {
     interface mainStreamsType {
         connect_id: number | null,stream_id:number, subject_name: {name_kg:string},
-        subject_type_name:{short_name_kg:string}, teacher:{name:string}, language:{name:string},
+        subject_type_name:{name_kg:string}, teacher:{name:string}, language:{name:string},
         id_edu_year:number,id_period:number, semester:{name_kg:string}, edu_form:{name_kg:string}
     }
 
@@ -156,7 +156,7 @@ export default function StreamList({ callIndex, courseValue, isMobile }: { callI
         }
     }, [streams]);
 
-    const itemTemplate = (item:mainStreamsType, index: number) => {
+    const itemTemplate = (item:mainStreamsType, index: number) => {        
         const bgClass = item.connect_id ? 'bg-[var(--greenBgColor)] border-b border-[gray]' : index % 2 == 1 ? 'bg-[#f5f5f5]' : '';
 
         return (
@@ -180,8 +180,8 @@ export default function StreamList({ callIndex, courseValue, isMobile }: { callI
                     <div className="flex flex-column xl:flex-row justify-content-between align-items-center xl:align-items-start flex-1 gap-4">
                         <div className="flex flex-col order-2 xl:order-1 gap-1 items-start text-[12px] sm:text-[14px]">
                             <div className="flex gap-1 items-center">
-                                <span className="text-[var(--mainColor)]">{item?.subject_type_name?.short_name_kg}:</span>
-                                <span>{item?.teacher?.name}</span>
+                                <span className="text-[var(--mainColor)]">{item?.subject_type_name?.name_kg}</span>
+                                {/* <span>{item?.teacher?.name}</span> */}
                             </div>
                             <div className="flex gap-1 items-center">
                                 <span className="text-[var(--mainColor)]">Үйрөтүлүү тили: </span>
@@ -189,7 +189,7 @@ export default function StreamList({ callIndex, courseValue, isMobile }: { callI
                             </div>
                             <div className="flex gap-1 items-center">
                                 <span className="text-[var(--mainColor)]">Окуу жылы: </span>
-                                <span className="font-semibold">{item?.id_edu_year}</span>
+                                <span className="font-semibold">20{item?.id_edu_year}</span>
                             </div>
                             <div className="flex gap-1 items-center">
                                 <span className="text-[var(--mainColor)]">Период: </span>
@@ -251,7 +251,7 @@ export default function StreamList({ callIndex, courseValue, isMobile }: { callI
                     {hasStreams ? (
                         <NotFound titleMessage={'Агымдар азырынча жок'} />
                     ) : (
-                        <div className="flex flex-col gap-2 sm:gap-4">
+                        <div className="flex flex-col gap-2 sm:gap-2">
                             {isMobile && (
                                 <div className="flex">
                                     <Button
@@ -274,24 +274,24 @@ export default function StreamList({ callIndex, courseValue, isMobile }: { callI
                                 )}
                             </div>
 
-                            {/* {courseValue?.title && ( */}
-                                {/* // <div className="flex flex-col items-start justify-center gap-2 text-[14px]">
-                                //     <div className="flex items-center gap-1">
-                                //         <span className="w-[14px] sm:w-[18px] h-[14px] sm:h-[18px] block border bg-[var(--greenColor)] rounded-4xl"></span>
-                                //         <span className="text-[16px] font-bold">Курстун аталышы: {courseValue?.title}</span>
-                                //     </div>
-                                //     <div className="w-full flex items-center gap-2">
-                                //         <div className="w-[14px] sm:w-[18px] h-[14px] sm:h-[18px] border bg-[yellow]"></div>
-                                //         <div className="flex flex-col gap-1">
-                                //             {streamValues.stream?.length < 1 && <span className="text-[13px]">Курска байлоо үчүн агымдарды тандаңыз</span>}
-                                //             {displayStreams.map((item) => {
-                                //                 return <div key={item?.stream_id}>{item?.stream_title}</div>;
-                                //             })}
-                                //             <div>{displayStreams.length >= 3 && '...'}</div>
-                                //         </div>
-                                //     </div>
-                                // </div>
-                            // )} */}
+                            {courseValue?.title && (
+                                <div className="flex flex-col items-start justify-center gap-2 text-[14px]">
+                                    <div className="flex items-center gap-1">
+                                        <span className="w-[14px] sm:w-[18px] h-[14px] sm:h-[18px] block border bg-[var(--greenColor)] rounded-4xl"></span>
+                                        <span className="text-[16px] sm:text-[18px] font-bold">Тандалган курстун аталышы: {courseValue?.title}</span>
+                                    </div>
+                                    {/* <div className="w-full flex items-center gap-2">
+                                        <div className="w-[14px] sm:w-[18px] h-[14px] sm:h-[18px] border bg-[yellow]"></div>
+                                        <div className="flex flex-col gap-1">
+                                            {streamValues.stream?.length < 1 && <span className="text-[13px]">Курска байлоо үчүн агымдарды тандаңыз</span>}
+                                            {displayStreams.map((item) => {
+                                                return <div key={item?.stream_id}>{item?.stream_title}</div>;
+                                            })}
+                                            <div>{displayStreams.length >= 3 && '...'}</div>
+                                        </div>
+                                    </div> */}
+                                </div>
+                            )}
                         </div>
                     )}
                 </div>

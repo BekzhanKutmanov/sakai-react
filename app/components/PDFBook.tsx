@@ -157,7 +157,6 @@ export default function PDFViewer({ url }: { url: string }) {
             // </HTMLFlipBook>
             media ? (
                 <>
-                    <h1>lorm</h1>
                     <HTMLFlipBook
                         // width={Math.min(bookSize.width, 600)} // ограничиваем ширину страницы
                         width={300} // ограничиваем ширину страницы

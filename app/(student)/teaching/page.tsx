@@ -31,7 +31,6 @@ export default function Teaching() {
 
     // functions
     const toggleSortSelect = (e: sortOptType) => {
-        console.log(e);
         setSelectedSort(e);
     };
 
@@ -110,7 +109,7 @@ export default function Teaching() {
         const x = displayData.map((semester: any, sIdx: number) => (
             <div className="flex flex-col gap-2" key={sIdx}>
                 <h3 className="text-center text-[26px]">{semester.semester.name_kg}</h3>
-                <div className="flex justify-around flex-wrap items-center gap-2">
+                <div className="flex justify-around flex-wrap items-start gap-4">
                     {Object.values(semester)
                         .filter((val: any) => val.subject) // только предметы
                         .map((subj: any, subjIdx: number) => (

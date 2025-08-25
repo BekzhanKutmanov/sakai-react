@@ -66,16 +66,15 @@ export const LayoutProvider = ({ children }: ChildContainerProps) => {
     };
 
     // fetch course
-    const [course, setCourses] = useState<{data: myMainCourseType[]}>({data: []});
+    const [course, setCourses] = useState<{ current_page: number; total: number; per_page: number; data:myMainCourseType[]  }>({ current_page: 1, total: 0, per_page: 10, data: []  });
 
-    const contextFetchCourse = async (page = 1) => {
+    const contextFetchCourse = async (page: number) => {
         const data = await fetchCourses(page, 0);
-        
+        console.log(data.courses);
+
         if (data?.courses) {
             // setCourses(data.courses.data);
             setCourses(data.courses);
-        } else {
-            
         }
     };
 
@@ -83,17 +82,21 @@ export const LayoutProvider = ({ children }: ChildContainerProps) => {
     const [contextThemes, setContextThemes] = useState([]);
     const contextFetchThemes = async (id: number | null) => {
         const data = await fetchThemes(Number(id) || null);
-        
+
         setContextThemes(data);
-    }
+    };
+
+    useEffect(() => {
+        console.log('course ', course);
+    }, [course]);
 
     // fetch themes for student
     const [contextStudentThemes, setContextStudentThemes] = useState([]);
     const contextFetchStudentThemes = async (id: number) => {
         const data = await fetchStudentThemes(id);
-        
+
         setContextStudentThemes(data);
-    }
+    };
 
     const value: LayoutContextProps = {
         layoutConfig,
@@ -108,18 +111,18 @@ export const LayoutProvider = ({ children }: ChildContainerProps) => {
         setGlobalLoading,
         message,
         setMessage,
-        
+
         contextFetchCourse,
         course,
         setCourses,
-        
+
         contextFetchThemes,
         contextThemes,
         setContextThemes,
 
         contextFetchStudentThemes,
         contextStudentThemes,
-        setContextStudentThemes,
+        setContextStudentThemes
     };
 
     return (

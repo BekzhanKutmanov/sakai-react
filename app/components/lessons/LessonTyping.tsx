@@ -250,8 +250,8 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                                 <Button label="Сактоо" disabled={!docValue.title.length || !!errors.title || !docValue.file} onClick={handleAddDoc} />
                             </div>
                         </div>
-                        <div className="flex flex-col items-center gap-4 py-4">
-                            <div className="flex flex-wrap justify-center gap-4">
+                        <div className="w-full flex flex-col items-center gap-4 py-4">
+                            <div className="w-full flex flex-wrap justify-center gap-4">
                                 {docShow ? (
                                     <NotFound titleMessage={'Сабак кошуу үчүн талааларды толтурунуз'} />
                                 ) : (
@@ -417,8 +417,8 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                     </div>
                 </div>
 
-                <div className="flex flex-col items-center gap-4 py-4">
-                    <div className="flex flex-wrap justify-center gap-4">
+                <div className="w-full flex flex-col items-center gap-4 py-4">
+                    <div className="w-full flex flex-wrap justify-center gap-4">
                         {linksShow ? (
                             <NotFound titleMessage={'Сабак кошуу үчүн талааларды толтурунуз'} />
                         ) : (
@@ -621,19 +621,8 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                     </div>
                 </div>
 
-                <div className="flex flex-col items-center gap-4 py-4">
-                    <div className="flex flex-wrap justify-center gap-4">
-                        {/* <LessonCard
-                            status={'student'}
-                            onSelected={(id: number, type: string) => selectedForEditing(id, type)}
-                            onDelete={(id: number) => handleDeleteVideo(id)}
-                            cardValue={{ title: 'item.title', id: 8, desctiption: 'item?.description', type: '', photo: ''}}
-                            cardBg={'#fff'}
-                            type={{ typeValue: 'Лекция', icon: 'pi pi-lecture' }}
-                            typeColor={'var(--mainColor)'}
-                            lessonDate={'xx-xx'}
-                        /> */}
-
+                <div className="w-full flex flex-col items-center gap-4 py-4">
+                    <div className="w-full flex flex-wrap justify-center gap-4">
                         {videoShow ? (
                             <NotFound titleMessage={'Сабак кошуу үчүн талааларды толтурунуз'} />
                         ) : (
