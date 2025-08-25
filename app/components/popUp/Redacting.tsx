@@ -8,7 +8,7 @@ export default function Redacting({ redactor, textSize }: {redactor: MenuItem[],
     
     return (
         <div>
-            <i className="mr-2 pi pi-ellipsis-v cursor-pointer" onClick={(event) => menuLeft.current?.toggle(event)} aria-controls="popup_menu_left" aria-haspopup />
+            <i className="mr-2 pi pi-ellipsis-v cursor-pointer border-2 text-[var(--mainColor)] border-[var(--mainColor)] hover:text-white hover:bg-[var(--mainColor)] transition-all rounded-full p-1" onClick={(event) => menuLeft.current?.toggle(event)} aria-controls="popup_menu_left" aria-haspopup />
             <Menu
                 model={redactor}
                 ref={menuLeft}

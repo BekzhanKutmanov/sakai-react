@@ -26,7 +26,7 @@ const AppFooter = () => {
                             <span>edu@oshsu.kg</span>
                         </div>
                     </div>
-                    <div className="flex flex-col items-start gap-4 w-[200px]">
+                    {/* <div className="flex flex-col items-start gap-4 w-[200px]">
                         <div className="flex items-center gap-2">
                             <MyFontAwesome icon={faChalkboard} className="text-white text-[18px] sm:text-2xl" />
                             <h4 style={{ color: 'white' }} className="text-[18px] sm:text-[22px]">
@@ -51,7 +51,7 @@ const AppFooter = () => {
                             <Link href={'#'}>lorem ipsum</Link>
                             <Link href={'#'}>lorem ipsum</Link>
                         </div>
-                    </div>
+                    </div> */}
                 </div>
                 <p style={{ color: 'white' }} className="p-1 sm:p-5 text-[12px] sm:text=[14px] sm:w-[400px] m-auto text-center ">
                     © 2025 ОшГУ | 2025 OshSU - IT Academy Ошский Государственный Университет oshsu.kg

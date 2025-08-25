@@ -149,7 +149,7 @@ const StudentLayout = ({ children }: ChildContainerProps) => {
                     <div className="layout-main">{children}</div>
                     {/* <AppFooter /> */}
                 </div>
-                <AppConfig />
+                {/* <AppConfig /> */}
                 <div className="layout-mask"></div>
             </div>
         </React.Fragment>

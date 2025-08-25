@@ -19,10 +19,11 @@ export default function VideoPlay() {
                 <div className="flex justify-center items-center">
                     <iframe
                         className="w-full h-[200px] md:h-[400px]"
-                        src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1"
+                        // src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1"
+                        src="https://www.youtube.com/embed/x9YiXbSQFMA"
                         title="YouTube video player"
                         frameBorder="0"
-                        allow="encrypted-media"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                         allowFullScreen
                     ></iframe>
                 </div>

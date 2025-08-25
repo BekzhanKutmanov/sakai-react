@@ -267,7 +267,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                                                 typeColor={'var(--mainColor)'}
                                                 lessonDate={'xx-xx'}
                                                 urlForPDF={() => sentToPDF(item.document || '')}
-                                                urlForDownload=''
+                                                urlForDownload=""
                                             />
                                         </>
                                     ))
@@ -433,8 +433,8 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                                         type={{ typeValue: 'link', icon: 'pi pi-link' }}
                                         typeColor={'var(--mainColor)'}
                                         lessonDate={'xx-xx'}
-                                        urlForPDF={() => ('')}
-                                        urlForDownload=''
+                                        urlForPDF={() => ''}
+                                        urlForDownload=""
                                     />
                                 </>
                             ))
@@ -555,8 +555,8 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
     const videoSection = () => {
         return (
             <div className="py-4 flex flex-col items-center gap-4">
-                <div className="w-full flex items-center justify-center flex-col sm:flex-row gap-2">
-                    <Dropdown
+                <div className="w-full flex items-start justify-center flex-col sm:flex-row gap-2">
+                    {/* <Dropdown
                         value={selectedCity}
                         onChange={(e) => {
                             toggleVideoType(e.value);
@@ -564,16 +564,19 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                         options={videoSelect}
                         optionLabel="name"
                         placeholder="Танданыз"
+                        style={{backgroundColor: 'var(--mainColor', color: 'white'}}
+                        panelStyle={{color: 'white'}}
                         className="w-[213px] sm:w-full md:w-14rem"
-                    />
+                    /> */}
                     <div className="w-full flex justify-center">
-                        {selectedCity?.status ? (
-                            <div className="flex flex-col items-center">
+                        {/* {!selectedCity?.status ? ( */}
+                            <div className="w-full flex flex-col items-center">
                                 <InputText
                                     id="usefulLink"
                                     type="url"
                                     placeholder={'Шилтеме жүктөө'}
                                     value={videoValue.video_link}
+                                    className='w-full'
                                     onChange={(e) => {
                                         setVideoValue((prev) => ({ ...prev, video_link: e.target.value }));
                                         setValue('usefulLink', e.target.value, { shouldValidate: true });
@@ -581,22 +584,22 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                                 />
                                 <b style={{ color: 'red', fontSize: '12px' }}>{errors.usefulLink?.message}</b>
                             </div>
-                        ) : (
-                            <FileUpload
-                                chooseLabel="Видео жүктөө"
-                                mode="basic"
-                                name="demo[]"
-                                customUpload
-                                uploadHandler={() => {}}
-                                accept="video/"
-                                onSelect={(e) =>
-                                    setVideoValue((prev) => ({
-                                        ...prev,
-                                        file: e.files[0]
-                                    }))
-                                }
-                            />
-                        )}
+                        {/* // ) : (
+                            // <FileUpload */}
+                            {/* //     chooseLabel="Видео жүктөө"
+                            //     mode="basic"
+                            //     name="demo[]"
+                            //     customUpload
+                            //     uploadHandler={() => {}}
+                            //     accept="video/"
+                            //     onSelect={(e) =>
+                            //         setVideoValue((prev) => ({
+                            //             ...prev,
+                            //             file: e.files[0]
+                            //         }))
+                            //     }
+                            // />
+                        // )} */}
                     </div>
                 </div>
                 <div className="w-full flex flex-col justify-center gap-2">
@@ -650,8 +653,8 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                                         type={{ typeValue: 'video', icon: 'pi pi-video' }}
                                         typeColor={'var(--mainColor)'}
                                         lessonDate={'xx-xx'}
-                                        urlForPDF={() => ('')}
-                                        urlForDownload=''
+                                        urlForPDF={() => ''}
+                                        urlForDownload=""
                                     />
                                 </>
                             ))

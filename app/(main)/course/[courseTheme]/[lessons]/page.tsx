@@ -158,19 +158,19 @@ export default function Lesson() {
         <div className="bg-[var(--titleColor)] relative flex flex-col justify-center items-center w-full text-white p-[30px] md:p-[40px]">
             <span className='absolute left-4 top-4 text-2xl sm:text-4xl pi pi-bookmark-fill '></span>
             <div>
-                <h1 style={{ color: 'white', fontSize: media ? '24px' : '36px', textAlign: 'center'}}>{'title jjjjjjjj jjjjjjj '}</h1>
+                <h1 style={{ color: 'white', fontSize: media ? '24px' : '36px', textAlign: 'center'}}>{'Сабактын аталышы'}</h1>
                 <div className='flex flex-col sm:flex-row items-center justify-between gap-5'>  
                     <span className='flex items-center gap-3'>
                         <span className='w-[8px] h-[8px] block bg-[var(--mainColor)]'></span>
-                        <span onClick={()=> handleTabChange({index: 1})} className='cursor-pointer hover:text-[var(--mainColor)] transition-all'>Документтердин саны: <span className='text-[var(--mainColor)] font-bold'>0</span></span>
+                        <span onClick={()=> handleTabChange({index: 1})} className='cursor-pointer hover:text-[var(--mainColor)] transition-all'>Документтердин саны: <span className='text-[var(--mainColor)] font-bold'>?</span></span>
                     </span>   
                     <span className='flex items-center gap-3'>
                         <span className='w-[8px] h-[8px] block bg-[var(--mainColor)]'></span>
-                        <span onClick={()=> handleTabChange({index: 2})} className='cursor-pointer hover:text-[var(--mainColor)] transition-all'>Шилтемелердин саны: <span className='text-[var(--mainColor)] font-bold'>2</span></span>
+                        <span onClick={()=> handleTabChange({index: 2})} className='cursor-pointer hover:text-[var(--mainColor)] transition-all'>Шилтемелердин саны: <span className='text-[var(--mainColor)] font-bold'>?</span></span>
                     </span>  
                     <span className='flex items-center gap-3'>
                         <span className='w-[8px] h-[8px] block bg-[var(--mainColor)]'></span>
-                        <span onClick={()=> handleTabChange({index: 3})} className='cursor-pointer hover:text-[var(--mainColor)] transition-all'>Видеолордун саны: <span className='text-[var(--mainColor)] font-bold'>0</span></span>
+                        <span onClick={()=> handleTabChange({index: 3})} className='cursor-pointer hover:text-[var(--mainColor)] transition-all'>Видеолордун саны: <span className='text-[var(--mainColor)] font-bold'>?</span></span>
                     </span>       
                 </div>
             </div>

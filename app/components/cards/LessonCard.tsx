@@ -4,7 +4,6 @@ import { getConfirmOptions } from '@/utils/getConfirmOptions';
 import { Button } from 'primereact/button';
 import { faPlay } from '@fortawesome/free-solid-svg-icons';
 import MyFontAwesome from '../MyFontAwesome';
-import { Divider } from 'primereact/divider';
 
 export default function LessonCard({
     status,

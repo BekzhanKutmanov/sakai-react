@@ -145,7 +145,7 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                     {media ? (
                         <Tiered title={{ name: '', font: 'pi pi-ellipsis-v' }} insideColor={'--bodyColor'} items={mobileMenu} />
                     ) : (
-                        <div className={`flex items-center gap-3 ${!media ? 'order-2' : 'order-3'} `}>
+                        <div className={`flex items-center gap-3 ${!media ? 'order-2'   : 'order-3'} `}>
                             {/* <Tiered title={{ name: 'Каталог', font: 'pi pi-list' }} insideColor={'--titleColor'} items={items} />
                             <Tiered
                                 title={{ name: 'Окуялар', font: 'pi pi-calendar' }}
@@ -166,9 +166,9 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                             <Link className="text-[var(--titleColor)] hover:text-[var(--mainColor)]" href={'https://www.oshsu.kg/ru'}>
                                 ОшМУнун сайты
                             </Link>
-                            <Link className="text-[var(--titleColor)] hover:text-[var(--mainColor)]" href={'#'}>
+                            {/* <Link className="text-[var(--titleColor)] hover:text-[var(--mainColor)]" href={'#'}>
                                 Байланыш
-                            </Link>
+                            </Link> */}
                         </div>
                     )}
 
