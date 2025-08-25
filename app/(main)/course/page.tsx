@@ -125,8 +125,6 @@ export default function Course() {
         toggleSkeleton();
 
         if (course) {
-            console.log(course);
-
             setHasCourses(false);
             setValueCourses(course.data);
             setPagination({
@@ -210,6 +208,8 @@ export default function Course() {
     };
 
     const clearValues = () => {
+        console.log('clear');
+
         setImageState(null);
         setCourseValue({ title: '', description: '', video_url: '', image: '' });
         setEditingLesson({ title: '', description: '', video_url: '', image: '', created_at: '' });
@@ -242,16 +242,21 @@ export default function Course() {
     };
 
     const onSelect = (e: FileUploadSelectEvent & { files: FileWithPreview[] }) => {
-        editMode
-            ? setEditingLesson((prev) => ({
-                  ...prev,
-                  image: e.files[0]
-              }))
-            : setCourseValue((prev) => ({
-                  ...prev,
-                  image: e.files[0]
-              }));
-        setImageState(e.files[0].objectURL);
+        console.log('rabotaet ', e);
+        if (e.files.length > 0) {
+            editMode
+                ? setEditingLesson((prev) => ({
+                      ...prev,
+                      image: e.files[0]
+                  }))
+                : setCourseValue((prev) => ({
+                      ...prev,
+                      image: e.files[0]
+                  }));
+            setImageState(e.files[0].objectURL);
+        } else {
+            console.log('noo');
+        }
     };
 
     useEffect(() => {
@@ -494,7 +499,7 @@ export default function Course() {
                                                         />
                                                     </div>
 
-                                                    <DataTable value={coursesValue}  dataKey="id" key={JSON.stringify(forStreamId)} breakpoint="960px" rows={5} className="my-custom-table">
+                                                    <DataTable value={coursesValue} dataKey="id" key={JSON.stringify(forStreamId)} breakpoint="960px" rows={5} className="my-custom-table">
                                                         <Column body={(_, { rowIndex }) => rowIndex + 1} header="Номер" style={{ width: '20px' }}></Column>
                                                         <Column
                                                             field="title"
@@ -598,7 +603,15 @@ export default function Course() {
                                             <GroupSkeleton count={coursesValue?.length} size={{ width: '100%', height: '4rem' }} />
                                         ) : (
                                             <>
-                                                <DataTable value={coursesValue} dataKey="id" key={JSON.stringify(forStreamId)} responsiveLayout="stack" breakpoint="960px" rows={5} className="my-custom-table">
+                                                <DataTable
+                                                    value={coursesValue}
+                                                    dataKey="id"
+                                                    key={JSON.stringify(forStreamId)}
+                                                    responsiveLayout="stack"
+                                                    breakpoint="960px"
+                                                    rows={5}
+                                                    className="my-custom-table"
+                                                >
                                                     <Column body={(_, { rowIndex }) => rowIndex + 1} header="Номер" style={{ width: '20px' }}></Column>
                                                     <Column
                                                         field="title"

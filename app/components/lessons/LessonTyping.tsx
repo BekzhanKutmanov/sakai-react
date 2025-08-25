@@ -819,6 +819,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                                 <InputText
                                     type="text"
                                     placeholder="Аталышы"
+                                    className="w-full"
                                     value={editingLesson?.title && editingLesson?.title}
                                     onChange={(e) => {
                                         setEditingLesson((prev) => prev && { ...prev, title: e.target.value });
@@ -833,6 +834,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                                 <InputText
                                     type="url"
                                     value={editingLesson?.url && editingLesson?.url}
+                                    className="w-full"
                                     onChange={(e) => {
                                         setEditingLesson((prev) => prev && { ...prev, url: e.target.value });
                                         setValue('usefulLink', e.target.value, { shouldValidate: true });
@@ -841,6 +843,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                                 <InputText
                                     type="text"
                                     placeholder="Аталышы"
+                                    className="w-full"
                                     value={editingLesson?.title && editingLesson?.title}
                                     onChange={(e) => {
                                         setEditingLesson((prev) => prev && { ...prev, title: e.target.value });
@@ -853,10 +856,11 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                         ) : selectType === 'video' ? (
                             <>
                                 {editingLesson?.video_type_id ? (
-                                    <div className="flex flex-col items-center">
+                                    <div className="w-full flex flex-col items-center">
                                         <InputText
                                             type="url"
                                             value={editingLesson?.video_link && editingLesson?.video_link}
+                                            className="w-full"
                                             onChange={(e) => {
                                                 setEditingLesson((prev) => prev && { ...prev, video_link: e.target.value });
                                                 setValue('usefulLink', e.target.value, { shouldValidate: true });
@@ -889,6 +893,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                                 <InputText
                                     type="text"
                                     placeholder="Аталышы"
+                                    className="w-full"
                                     value={editingLesson?.title && editingLesson?.title}
                                     onChange={(e) => {
                                         setEditingLesson((prev) => prev && { ...prev, title: e.target.value });

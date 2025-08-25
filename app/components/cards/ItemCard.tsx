@@ -20,6 +20,7 @@ export default function ItemCard({
             setActiveStreamIdx(matchedIdx);
         }
     }, [streams, connection]);
+    
     return (
         <div className="w-[100%] md:w-[300px] shadow-md rounded p-3">
             <div className="w-full shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">

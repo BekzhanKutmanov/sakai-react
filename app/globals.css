@@ -345,7 +345,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .select-column .my-custom-table td{
-  background-color: var(--greenBgColor);
+  background-color: var(--greenBgColor) !important;
 }
 
 .my-custom-table td,
