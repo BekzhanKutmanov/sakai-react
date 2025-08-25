@@ -109,8 +109,8 @@ const AppMenu = () => {
                 forThemes.push({
                     label: item.title,
                     id: item.id,
-                    to: '/teaching/ ? ',
-                    items: []
+                    to: `/teaching/lesson/${item.id}`,
+                    // items: []
                 })
             );
             if (forThemes.length > 0) {
