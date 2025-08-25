@@ -119,6 +119,7 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
             icon: 'pi pi-sign-out',
             items: [],
             command: () => {
+                window.location.href = '/auth/login';
                 logout({ setUser, setGlobalLoading });
             }
         }

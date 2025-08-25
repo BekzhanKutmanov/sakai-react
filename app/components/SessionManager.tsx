@@ -19,7 +19,6 @@ const SessionManager = () => {
     }, [user]);
 
     useEffect(() => {
-        console.log('Роутинг');
         setGlobalLoading(true);
         setTimeout(() => {
             setGlobalLoading(false);
@@ -33,7 +32,9 @@ const SessionManager = () => {
                 setGlobalLoading(true);
                 try {
                     if (res?.success) {
-                        setGlobalLoading(false);
+                        setTimeout(() => {
+                            setGlobalLoading(false);
+                        }, 1000);
                         console.log('Данные пользователя успешно пришли ', res);
 
                         const userVisit = localStorage.getItem('userVisit');
@@ -75,12 +76,8 @@ const SessionManager = () => {
         if (!token && pathname !== '/' && pathname !== '/auth/login') {
             console.log('Перенеправляю в login');
 
-            // logout({ setUser, setGlobalLoading });
-            // window.location.href = '/auth/login';
-            setTimeout(() => {
-                setGlobalLoading(false);
-            }, 1000);
-
+            logout({ setUser, setGlobalLoading });
+            window.location.href = '/auth/login';
             return;
         }
         setTimeout(() => {

@@ -3,7 +3,7 @@ import { getToken } from './auth';
 
 const axiosInstance = axios.create({
     baseURL: process.env.NEXT_PUBLIC_BASE_URL,
-    timeout: 10000,
+    timeout: 20000,
 });
 
 axiosInstance.interceptors.request.use((config) => {
@@ -25,21 +25,21 @@ axiosInstance.interceptors.response.use(
 
         if (status === 401) {
             console.warn('Неавторизован. Удаляю токен...');
-            // document.cookie = 'access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;';
-            // localStorage.removeItem('userVisit');
-            // window.location.href = '/auth/login';
+            window.location.href = '/auth/login';
+            document.cookie = 'access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;';
+            localStorage.removeItem('userVisit');
         }
 
         if (status === 403) {
+            window.location.href = '/';
             console.warn('Не имеет доступ. Перенаправляю...');
-            // window.location.href = '/';
         }
         
         if (status === 404) {
             console.warn('404 - Перенаправляю...');
-            // document.cookie = 'access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;';
-            // localStorage.removeItem('userVisit');
-            // window.location.href = '/pages/notfound';
+            window.location.href = '/pages/notfound';
+            document.cookie = 'access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;';
+            localStorage.removeItem('userVisit');
         }
 
         return Promise.reject(error);

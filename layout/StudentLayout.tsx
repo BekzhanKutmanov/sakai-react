@@ -122,18 +122,17 @@ const StudentLayout = ({ children }: ChildContainerProps) => {
 
     const requireRole = () => {
         if(!user?.is_student){
-            console.log('Не имеете доступ! student');
+            console.warn('Не имеете доступ! student');
             setPermission(false);
-            // window.location.href = '/auth/login';
+            window.location.href = '/auth/login';
         }
-        // setPermission(true);
     }
 
     useEffect(()=> {
         requireRole();
     },[user]);
 
-    // if(permission) return null;
+    if(permission) return null;
 
     return (
         <React.Fragment>    
