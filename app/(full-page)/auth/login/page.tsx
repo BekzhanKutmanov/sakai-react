@@ -25,7 +25,7 @@ const LoginPage = () => {
     const { layoutConfig, setUser, setMessage, setGlobalLoading } = useContext(LayoutContext);
 
     const router = useRouter();
-    const media = useMediaQuery('(max-width: 640px)');
+    const media = useMediaQuery('(max-width: 1030px)');
     // const containerClassName = classNames('surface-ground flex align-items-center justify-content-center min-h-screen min-w-screen overflow-hidden', { 'p-input-filled': layoutConfig.inputStyle === 'filled' });
 
     const {
@@ -100,7 +100,7 @@ const LoginPage = () => {
                 </div>
 
                 <div className="w-[90%] sm:w-[500px] shadow-2xl py-6 px-3 md:py-8 sm:px-4 md:px-8 rounded">
-                    <h1 className='w-[90%] text-center text-3xl sm:text-4xl'>Кирүү</h1>
+                    <h1 className='w-[90%] text-center text-3xl sm:text-4xl font-bold'>Кирүү</h1>
                     <form onSubmit={handleSubmit(onSubmit, onError)} className="flex flex-col gap-4 md:gap-6">
                         <div className="flex flex-col">
                             {/* <label htmlFor="email1" className="block text-900 text-[16px] md:text-xl font-medium mb-1 md:mb-2">
@@ -114,7 +114,7 @@ const LoginPage = () => {
                                 name="password"
                                 control={control}
                                 defaultValue="010270Ja"
-                                render={({ field }) => <Password {...field} toggleMask className="w-[100%]" inputClassName="w-[90%] p-2 sm:p-3" inputStyle={{ marginRight: '15px' }} feedback={false} />}
+                                render={({ field }) => <Password {...field} toggleMask className={`w-[100%] ${!media && 'text-white'}`} inputClassName="w-[90%] p-2 sm:p-3" inputStyle={{ marginRight: '15px' }} feedback={false} />}
                             />
                             {errors.password && <b className="text-[red] text-[12px] ml-2">{errors.password.message}</b>}
                         </div>

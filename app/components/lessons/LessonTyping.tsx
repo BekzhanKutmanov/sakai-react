@@ -275,11 +275,11 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                                                 status="working"
                                                 onSelected={(id: number, type: string) => selectedForEditing(id, type)}
                                                 onDelete={(id: number) => handleDeleteDoc(id)}
-                                                cardValue={{ title: item?.title, id: item.id, type: 'doc' }}
+                                                cardValue={{ title: item?.title, id: item.id, desctiption: item?.description, type: 'doc' }}
                                                 cardBg={'#ddc4f51a'}
                                                 type={{ typeValue: 'doc', icon: 'pi pi-file' }}
                                                 typeColor={'var(--mainColor)'}
-                                                lessonDate={'xx-xx'}
+                                                lessonDate={new Date(item.created_at).toISOString().slice(0, 10)}
                                                 urlForPDF={() => sentToPDF(item.document || '')}
                                                 urlForDownload=""
                                             />

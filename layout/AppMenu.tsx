@@ -102,15 +102,14 @@ const AppMenu = () => {
 
     useEffect(() => {
         console.log('Обновился и готов');
-
+        
         if (contextStudentThemes?.lessons) {
             const forThemes: any = [];
             contextStudentThemes.lessons.data?.map((item: any) =>
                 forThemes.push({
                     label: item.title,
                     id: item.id,
-                    to: `/teaching/lesson/${item.id}`,
-                    // items: []
+                    to: `/teaching/lesson/${item.id}`
                 })
             );
             if (forThemes.length > 0) {

@@ -99,8 +99,8 @@ export default function LessonCard({
     return (
         <div
             className={`${type.typeValue === 'link' && 'relative'} ${type.typeValue !== 'link' && 'overflow-hidden'} 
-            ${type.typeValue === 'video' && status === 'working' ? 'h-[200px]' : type.typeValue !== 'video' && status === 'working' ? 'h-[160px]' : ''} 
-            ${status === 'student' && type.typeValue !== 'video' ? 'h-[160px]' : status === 'student' && type.typeValue === 'video' ? 'h-[200px]' : ''}
+            ${type.typeValue === 'video' && status === 'working' ? 'min-h-[200px]' : type.typeValue !== 'video' && status === 'working' ? 'min-h-[160px]' : ''} 
+            ${status === 'student' && type.typeValue !== 'video' ? 'min-h-[160px]' : status === 'student' && type.typeValue === 'video' ? 'min-h-[200px]' : ''}
             w-[100%] sm:w-[100%] md:w-[160px] flex flex-col justify-evenly shadow rounded sm:rounded-2xl p-2`}
             style={{ backgroundColor: cardBg }}
         >
