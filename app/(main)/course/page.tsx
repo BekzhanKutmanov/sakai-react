@@ -25,6 +25,7 @@ import StreamList from '@/app/components/tables/StreamList';
 import { TabPanel, TabView } from 'primereact/tabview';
 import { TabViewChange } from '@/types/tabViewChange';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
+import useShortText from '@/hooks/useShortText';
 
 export default function Course() {
     const { setMessage, course, setCourses, contextFetchCourse } = useContext(LayoutContext);
@@ -355,6 +356,7 @@ export default function Course() {
     }, [forStreamId]);
 
     const imagestateStyle = imageState ? 'flex gap-1 items-center justify-between' : '';
+    const imageTitle = useShortText(typeof editingLesson.image === 'string' ? editingLesson.image : '', 30);
 
     return (
         <div className="main-bg">
@@ -370,7 +372,7 @@ export default function Course() {
                                 <div className="mt-2 text-sm text-gray-700 ">
                                     {typeof editingLesson.image === 'string' && (
                                         <>
-                                            Сүрөт: <b className="text-[12px] text-center w-[300px]">{editingLesson.image}</b>
+                                            <b className="text-[12px] text-center w-[300px]">{imageTitle}</b>
                                         </>
                                     )}
                                 </div>

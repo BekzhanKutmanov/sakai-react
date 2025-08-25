@@ -422,8 +422,9 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                         {linksShow ? (
                             <NotFound titleMessage={'Сабак кошуу үчүн талааларды толтурунуз'} />
                         ) : (
-                            links.map((item: lessonType) => (
-                                <>
+                            links.map((item: lessonType) => {
+                                console.log(item);
+                                return <>
                                     <LessonCard
                                         status={'working'}
                                         onSelected={(id: number, type: string) => selectedForEditing(id, type)}
@@ -432,12 +433,12 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                                         cardBg={'#7bb78112'}
                                         type={{ typeValue: 'link', icon: 'pi pi-link' }}
                                         typeColor={'var(--mainColor)'}
-                                        lessonDate={'xx-xx'}
+                                        lessonDate={new Date(item.created_at).toISOString().slice(0, 10)}
                                         urlForPDF={() => ''}
                                         urlForDownload=""
                                     />
                                 </>
-                            ))
+                            })
                         )}
                     </div>
                 </div>

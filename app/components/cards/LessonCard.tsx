@@ -4,6 +4,7 @@ import { getConfirmOptions } from '@/utils/getConfirmOptions';
 import { Button } from 'primereact/button';
 import { faPlay } from '@fortawesome/free-solid-svg-icons';
 import MyFontAwesome from '../MyFontAwesome';
+import useShortText from '@/hooks/useShortText';
 
 export default function LessonCard({
     status,
@@ -28,6 +29,8 @@ export default function LessonCard({
     urlForPDF: () => void;
     urlForDownload: string
 }) {
+
+    const shortTitle = useShortText(cardValue.title, 10);
 
     const toSentPDF = () => {
         urlForPDF();
@@ -99,13 +102,13 @@ export default function LessonCard({
             <div className={`flex flex-col items-center ${type.typeValue !== 'video' ? 'gap-3' : 'gap-1'}`}>
                 <div className="bg-[#d6bcbc12] flex flex-col justify-between rounded-2xl p-1">
                     {/* <div className=''>{!cardValue.photo && <img className="cover" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSweN5K2yaBwZpz5W9CxY9S41DI-2LawmjzYw&s" alt="" />}</div> */}
-                    <div className="flex items-center justify-center text-[16px] sm:text-2xl mt-1">{cardValue.title}</div>
+                    <div className="flex items-center justify-center text-[16px] sm:text-xl mt-1">{shortTitle}</div>
                     {type.typeValue === 'link' && <span className="flex justify-center">{cardValue?.url}</span>}
                     <div className="flex items-center justify-center text-[13px]">{cardValue?.desctiption && cardValue.desctiption}</div>
                     {status === 'working' && type.typeValue !== 'video' && (
-                        <div className={`flex gap-1 items-center justify-center`}>
+                        <div className={`flex gap-1 items-center justify-center mt-1`}>
                             <i className={`pi pi-calendar text-[var(--mainColor)]`}></i>
-                            <span className="text-[14px]">{lessonDate}</span>
+                            <span className="text-[12px]">{lessonDate}</span>
                         </div>
                     )}
                 </div>
