@@ -5,6 +5,8 @@ import { Button } from 'primereact/button';
 import { faPlay } from '@fortawesome/free-solid-svg-icons';
 import MyFontAwesome from '../MyFontAwesome';
 import useShortText from '@/hooks/useShortText';
+import { useState } from 'react';
+import { ProgressSpinner } from 'primereact/progressspinner';
 
 export default function LessonCard({
     status,
@@ -27,20 +29,29 @@ export default function LessonCard({
     typeColor: string;
     lessonDate: string;
     urlForPDF: () => void;
-    urlForDownload: string
+    urlForDownload: string;
 }) {
-
     const shortTitle = useShortText(cardValue.title, 10);
+    const [progressSpinner, setProgressSpinner] = useState(false);
+
+    const toggleSpinner = () => {
+        setProgressSpinner(true);
+        setInterval(() => {
+            setProgressSpinner(false);
+        }, 2000);
+    };
 
     const toSentPDF = () => {
+        toggleSpinner();
         urlForPDF();
     };
 
     const lessonCardEvents = () => {
-        if(type.typeValue === 'doc'){
+        if (type.typeValue === 'doc') {
             toSentPDF();
-        } else if (type.typeValue === 'link'){
-            window.location.href = cardValue?.url || '#';
+        } else if (type.typeValue === 'link') {
+            // window.location.href = cardValue?.url || '#';
+            window.open(cardValue?.url || '#', '_blank');
         }
     };
 
@@ -117,15 +128,24 @@ export default function LessonCard({
                 {videoPreviw}
 
                 {/* button */}
-                {btnLabel && <>
-                    {status === 'student' && type.typeValue === 'doc' ? 
-                    <div className='flex gap-1 items-center'>
-                        <Button onClick={lessonCardEvents} className='w-full' label={btnLabel} />
-                        <a href={urlForDownload} download> <Button icon='pi pi-file-arrow-up' /></a>
-                    </div>
-                        : <Button onClick={lessonCardEvents} label={btnLabel} />
-                    }
-                </>}
+                {btnLabel && (
+                    <>
+                        {status === 'student' && type.typeValue === 'doc' ? (
+                            <div className="flex gap-1 items-center">
+                                <div className="flex gap-1 items-center">
+                                    <Button onClick={lessonCardEvents} className="w-full" label={btnLabel} disabled={progressSpinner === true ? true : false} />
+                                    {progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}
+                                </div>
+                                <a href={urlForDownload} download target="_blank" rel="noopener noreferrer">
+                                    {' '}
+                                    <Button icon="pi pi-file-arrow-up" />
+                                </a>
+                            </div>
+                        ) : (
+                            <Button onClick={lessonCardEvents} label={btnLabel} />
+                        )}
+                    </>
+                )}
             </div>
         </div>
     );

@@ -18,6 +18,7 @@ import { NotFound } from '@/app/components/NotFound';
 import Redacting from '@/app/components/popUp/Redacting';
 import { getRedactor } from '@/utils/getRedactor';
 import { getConfirmOptions } from '@/utils/getConfirmOptions';
+import { ProgressSpinner } from 'primereact/progressspinner';
 
 export default function CourseTheme() {
     const [hasThemes, setHasThemes] = useState(false);
@@ -29,6 +30,7 @@ export default function CourseTheme() {
     const [editMode, setEditMode] = useState(false);
     const [forStart, setForStart] = useState(true);
     const [skeleton, setSkeleton] = useState(false);
+    const [progressSpinner, setProgressSpinner] = useState(false);
     const [editingThemes, setEditingThemes] = useState<{ title: string }>({
         title: ''
     });
@@ -50,7 +52,7 @@ export default function CourseTheme() {
         const data = await fetchThemes(Number(courseTheme));
 
         toggleSkeleton();
-        
+
         contextFetchThemes(Number(courseTheme));
         if (data?.lessons) {
             setHasThemes(false);
@@ -119,7 +121,6 @@ export default function CourseTheme() {
     };
 
     const handleUpdateTheme = async () => {
-        
         const data = await updateTheme(Number(courseTheme), selectedCourse.id, editingThemes.title);
         if (data.success) {
             toggleSkeleton();
@@ -143,16 +144,15 @@ export default function CourseTheme() {
     };
 
     const edit = (rowData: number | null) => {
-
         setEditMode(true);
-        setSelectedCourse({id: rowData});
+        setSelectedCourse({ id: rowData });
         // setThemeValue({ title: rowData.title || '' });
         setFormVisible(true);
     };
 
     const clearValues = () => {
         setThemeValue({ title: '', description: '', video_url: '' });
-        setEditingThemes({ title: ''});
+        setEditingThemes({ title: '' });
         setEditMode(false);
         setSelectedCourse({ id: null });
     };
@@ -164,16 +164,18 @@ export default function CourseTheme() {
 
     useEffect(() => {
         const handleShow = async () => {
-            const data:{lessons: {data: {id: number, title: string}[]}} = await fetchThemes(Number(courseTheme));
-            
+            setProgressSpinner(true)
+            const data: { lessons: { data: { id: number; title: string }[] } } = await fetchThemes(Number(courseTheme));
+
             if (data?.lessons) {
-                console.log('rab');
-                
-                const forEditing = data.lessons.data.find(item => item.id === selectedCourse.id)
-                
+                setProgressSpinner(false);
+                const forEditing = data.lessons.data.find((item) => item.id === selectedCourse.id);
+
                 setEditingThemes({
-                    title: forEditing?.title || '',
+                    title: forEditing?.title || ''
                 });
+            } else {
+                setProgressSpinner(false);
             }
         };
 
@@ -181,7 +183,7 @@ export default function CourseTheme() {
             handleShow();
         }
     }, [editMode]);
-    
+
     useEffect(() => {
         const title = editMode ? editingThemes.title.trim() : themeValue.title.trim();
         if (title.length > 0) {
@@ -235,25 +237,29 @@ export default function CourseTheme() {
                     <div className="flex flex-col lg:flex-row gap-1 justify-around items-center">
                         <div className="flex flex-col gap-1 items-center justify-center">
                             <label className="block text-900 font-medium text-[16px] md:text-xl mb-1 md:mb-2">Аталышы</label>
-                            <InputText
-                                value={editMode ? editingThemes.title : themeValue.title}
-                                onChange={(e) => {
-                                    // setCourseTitle(e.target.value);
-                                    editMode
-                                        ? setEditingThemes((prev) => ({
-                                              ...prev,
-                                              title: e.target.value
-                                          }))
-                                        : setThemeValue((prev) => ({
-                                              ...prev,
-                                              title: e.target.value
-                                          }));
-                                }}
-                            />
+                            <div className="flex gap-2 items-center">
+                                <InputText
+                                    value={editMode ? editingThemes.title || '' : themeValue.title}
+                                    disabled={progressSpinner === true ? true : false}
+                                    onChange={(e) => {
+                                        // setCourseTitle(e.target.value);
+                                        editMode
+                                            ? setEditingThemes((prev) => ({
+                                                  ...prev,
+                                                  title: e.target.value
+                                              }))
+                                            : setThemeValue((prev) => ({
+                                                  ...prev,
+                                                  title: e.target.value
+                                              }));
+                                    }}
+                                />
+                                {progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}
+                            </div>
                         </div>
                     </div>
                 </div>
-            </FormModal>    
+            </FormModal>
 
             {/* table section */}
             {hasThemes ? (

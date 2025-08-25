@@ -26,6 +26,7 @@ import { TabPanel, TabView } from 'primereact/tabview';
 import { TabViewChange } from '@/types/tabViewChange';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import useShortText from '@/hooks/useShortText';
+import { ProgressSpinner } from 'primereact/progressspinner';
 
 export default function Course() {
     const { setMessage, course, setCourses, contextFetchCourse } = useContext(LayoutContext);
@@ -41,6 +42,7 @@ export default function Course() {
     const [formVisible, setFormVisible] = useState(false);
     const [forStart, setForStart] = useState(false);
     const [skeleton, setSkeleton] = useState(false);
+    const [progressSpinner, setProgressSpinner] = useState(false);
     const [pagination, setPagination] = useState<{ currentPage: number; total: number; perPage: number }>({
         currentPage: 1,
         total: 0,
@@ -260,10 +262,6 @@ export default function Course() {
         }
     };
 
-    useEffect(() => {
-        console.log(imageState);
-    }, [imageState]);
-
     const imageBodyTemplate = (product: CourseType) => {
         const image = product.image;
 
@@ -286,7 +284,6 @@ export default function Course() {
     const handlePageChange = (page: number) => {
         // handleFetchCourse(page);
         contextFetchCourse(page);
-        console.log(page);
     };
 
     const edit = (rowData: number | null) => {
@@ -334,15 +331,19 @@ export default function Course() {
 
     useEffect(() => {
         const handleShow = async () => {
+            setProgressSpinner(true);                    
             const data = await fetchCourseInfo(selectedCourse);
 
             if (data?.success) {
+                setProgressSpinner(false);                
                 setEditingLesson({
                     title: data.course.title || '',
                     video_url: data.course.video_url || '',
                     description: data.course.description || '',
                     image: data.course.image
                 });
+            } else {
+                setProgressSpinner(false);
             }
         };
 
@@ -384,63 +385,75 @@ export default function Course() {
                     {/* <div className="flex flex-col lg:flex-row gap-1 justify-around items-center"> */}
                     <div className="flex flex-col gap-1 items-center justify-center">
                         <label className="block text-900 font-medium text-[16px] md:text-xl mb-1 md:mb-2">Аталышы</label>
-                        <InputText
-                            value={editMode ? editingLesson.title : courseValue.title}
-                            placeholder="Аталышы талап кылынат"
-                            onChange={(e) => {
-                                editMode
-                                    ? setEditingLesson((prev) => ({
-                                          ...prev,
-                                          title: e.target.value
-                                      }))
-                                    : setCourseValue((prev) => ({
-                                          ...prev,
-                                          title: e.target.value
-                                      }));
-                            }}
-                        />
+                        <div className="flex gap-2 items-center">
+                            <InputText
+                                value={editMode ? editingLesson.title || '' : courseValue.title}
+                                placeholder="Аталышы талап кылынат"
+                                disabled={progressSpinner === true ? true : false}
+                                onChange={(e) => {
+                                    editMode
+                                        ? setEditingLesson((prev) => ({
+                                              ...prev,
+                                              title: e.target.value
+                                          }))
+                                        : setCourseValue((prev) => ({
+                                              ...prev,
+                                              title: e.target.value
+                                          }));
+                                }}
+                            />
+                            {progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}
+                        </div>
                     </div>
                     <div className="flex flex-col gap-1 items-center justify-center">
                         <label className="block text-900 font-medium text-[16px] md:text-xl mb-1 md:mb-2">Видео шилтеме</label>
-                        <InputText
-                            value={editMode ? editingLesson.video_url : courseValue.video_url}
-                            placeholder="https://..."
-                            title="Шилтеме https:// менен башталышы шарт!"
-                            onChange={(e) => {
-                                editMode
-                                    ? setEditingLesson((prev) => ({
-                                          ...prev,
-                                          video_url: e.target.value
-                                      }))
-                                    : setCourseValue((prev) => ({
-                                          ...prev,
-                                          video_url: e.target.value
-                                      }));
-                            }}
-                        />
+                        <div className="flex gap-2 items-center">
+                            <InputText
+                                value={editMode ? editingLesson.video_url || '' : courseValue.video_url}
+                                placeholder="https://..."
+                                title="Шилтеме https:// менен башталышы шарт!"
+                                disabled={progressSpinner === true ? true : false}
+                                onChange={(e) => {
+                                    editMode
+                                        ? setEditingLesson((prev) => ({
+                                              ...prev,
+                                              video_url: e.target.value
+                                          }))
+                                        : setCourseValue((prev) => ({
+                                              ...prev,
+                                              video_url: e.target.value
+                                          }));
+                                }}
+                            />
+                            {progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}
+                        </div>
                     </div>
                     {/* </div> */}
 
                     {/* <div className="flex flex-col lg:flex-row gap-1 justify-around items-center"> */}
                     <div className="flex flex-col gap-1 items-center justify-center">
                         <label className="block text-900 font-medium text-[16px] md:text-xl mb-1 md:mb-2">Мазмуну</label>
-                        <InputTextarea
-                            autoResize
-                            value={editMode ? editingLesson.description : courseValue.description}
-                            rows={5}
-                            cols={30}
-                            onChange={(e) => {
-                                editMode
-                                    ? setEditingLesson((prev) => ({
-                                          ...prev,
-                                          description: e.target.value
-                                      }))
-                                    : setCourseValue((prev) => ({
-                                          ...prev,
-                                          description: e.target.value
-                                      }));
-                            }}
-                        />
+                        <div className="flex gap-2 items-center">
+                            <InputTextarea
+                                autoResize
+                                value={editMode ? editingLesson.description || '' : courseValue.description}
+                                disabled={progressSpinner === true ? true : false}
+                                rows={5}
+                                cols={30}
+                                onChange={(e) => {
+                                    editMode
+                                        ? setEditingLesson((prev) => ({
+                                              ...prev,
+                                              description: e.target.value
+                                          }))
+                                        : setCourseValue((prev) => ({
+                                              ...prev,
+                                              description: e.target.value
+                                          }));
+                                }}
+                            />
+                            {progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}
+                        </div>
                     </div>
                     {/* </div> */}
                 </div>
@@ -605,15 +618,7 @@ export default function Course() {
                                             <GroupSkeleton count={coursesValue?.length} size={{ width: '100%', height: '4rem' }} />
                                         ) : (
                                             <>
-                                                <DataTable
-                                                    value={coursesValue}
-                                                    dataKey="id"
-                                                    key={JSON.stringify(forStreamId)}
-                                                    responsiveLayout="stack"
-                                                    breakpoint="960px"
-                                                    rows={5}
-                                                    className="my-custom-table"
-                                                >
+                                                <DataTable value={coursesValue} dataKey="id" key={JSON.stringify(forStreamId)} responsiveLayout="stack" breakpoint="960px" rows={5} className="my-custom-table">
                                                     <Column body={(_, { rowIndex }) => rowIndex + 1} header="Номер" style={{ width: '20px' }}></Column>
                                                     <Column
                                                         field="title"
