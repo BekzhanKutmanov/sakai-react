@@ -19,7 +19,7 @@ const Layout = ({ children }: ChildContainerProps) => {
     const { setRipple } = useContext(PrimeReactContext);
     const topbarRef = useRef<AppTopbarRef>(null);
     const sidebarRef = useRef<HTMLDivElement>(null);
-    const [permission, setPermission] = useState<boolean>(false);
+    const [permission, setPermission] = useState<boolean>(true);
     const [bindMenuOutsideClickListener, unbindMenuOutsideClickListener] = useEventListener({
         type: 'click',
         listener: (event) => {
@@ -124,17 +124,20 @@ const Layout = ({ children }: ChildContainerProps) => {
     });
 
     const requireRole = () => {
-        if(!user?.is_working){
-            console.log('Не имеете доступ! working');
+        console.log('Ваш статус: ', user?.is_working);
+        if(user){
+            if(!user?.is_working){
+                // window.location.href = '/auth/login';
+                // setPermission(true);
+                console.log('Не имеете доступ! working');
+            }
             setPermission(false);
-            // window.location.href = '/auth/login';
-        }
-        setPermission(true);
+        }   
     }
 
     useEffect(()=> {
-        requireRole();
-    },[user]);
+        requireRole();  
+    },[user, pathname]);
 
     // if(permission) return null;
 

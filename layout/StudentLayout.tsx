@@ -121,18 +121,23 @@ const StudentLayout = ({ children }: ChildContainerProps) => {
     });
 
     const requireRole = () => {
-        if(!user?.is_student){
-            console.warn('Не имеете доступ! student');
+        console.log('Ваш статус: ', user?.is_student);
+        
+        if(user){
+            if(!user?.is_student){
+                console.warn('Не имеете доступ! student');
+                // window.location.href = '/auth/login';
+                // setPermission(true);
+            }
             setPermission(false);
-            window.location.href = '/auth/login';
         }
     }
 
     useEffect(()=> {
         requireRole();
-    },[user]);
+    },[user, pathname]);
 
-    if(permission) return null;
+    // if(permission) return null;
 
     return (
         <React.Fragment>    
