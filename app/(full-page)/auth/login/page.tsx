@@ -2,13 +2,9 @@
 'use client';
 import { useRouter } from 'next/navigation';
 import React, { useContext, useState } from 'react';
-import { Checkbox } from 'primereact/checkbox';
-import { Button } from 'primereact/button';
 import { Password } from 'primereact/password';
 import { LayoutContext } from '../../../../layout/context/layoutcontext';
 import { InputText } from 'primereact/inputtext';
-import { classNames } from 'primereact/utils';
-import InfoBanner from '@/app/components/InfoBanner';
 
 import { useForm } from 'react-hook-form';
 import { schema } from '@/schemas/authSchema';
@@ -16,7 +12,6 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { Controller } from 'react-hook-form';
 import { getUser, login } from '@/services/auth';
 import FancyLinkBtn from '@/app/components/buttons/FancyLinkBtn';
-import { getToken } from '@/utils/auth';
 import { logout } from '@/utils/logout';
 import { LoginType } from '@/types/login';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
@@ -60,25 +55,25 @@ const LoginPage = () => {
                     } else {
                         setMessage({
                             state: true,
-                            value: { severity: 'error', summary: 'Ошибка', detail: 'Ошибка при авторизации' }
-                        }); // messege - Ошибка при авторизации
+                            value: { severity: 'error', summary: 'Ошибка при авторизации', detail: 'Повторите позже' }
+                        }); // messege - Ошибка при авторизации, повторите позже
                         logout({ setUser, setGlobalLoading });
                         console.log('Ошибка при получении пользователя');
                     }
                 } catch (error) {
                     setMessage({
                         state: true,
-                        value: { severity: 'error', summary: 'Ошибка', detail: 'Ошибка при авторизации' }
-                    }); // messege - Ошибка при авторизации
+                        value: { severity: 'error', summary: 'Ошибка при авторизации', detail: 'Повторите позже' }
+                    }); // messege - Ошибка при авторизации, повторите позже
                     logout({ setUser, setGlobalLoading });
                     console.log('Ошибка при получении пользователя');
                 }
             }
         } else {
-            console.log('Ошибка при авторизации');
+            console.log('Ошибка при авторизации, повторите позже');
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка', detail: 'Ошибка при авторизации' }
+                value: { severity: 'error', summary: 'Ошибка', detail: 'Введите корректные данные' }
             }); // messege - Ошибка при авторизации
         }
     };
@@ -87,20 +82,21 @@ const LoginPage = () => {
         console.log('Ошибки формы:', errors);
         setMessage({
             state: true,
-            value: { severity: 'error', summary: 'Катаа', detail: 'ПОвтор' }
+            value: { severity: 'error', summary: 'Ошибка', detail: 'Введите корректные данные' }
         }); // messege - Ошибка при авторизации
     };
 
     return (
-        <div className={`flex flex-col gap-4 pt-4 h-[100vh] ${!media && 'login-bg'}`}>
+        <div className={`flex flex-col gap-4 pt-4 h-[100vh] login-bg`}>
+        {/* <div className={`flex flex-col gap-4 pt-4 h-[100vh] ${!media && 'login-bg'}`}> */}
             {/* <InfoBanner title="Кирүү" titleSize={{ default: '30px', sm: '40px' }} /> */}
             <div className="flex gap-4 flex-column lg:flex-row items-center justify-evenly px-4 mb-8">
                 <div className="user-img">
                     <img src="/layout/images/no-image.png" className="w-[500px]" alt="" />
                 </div>
 
-                <div className={`w-[90%] sm:w-[500px] shadow-2xl ${!media && 'bg-[#f1f0f0]'} py-6 px-3 md:py-8 sm:px-4 md:px-8 rounded`}>
-                    <h1 className='w-[90%] text-center text-3xl sm:text-4xl font-bold'>Кирүү</h1>
+                <div className={`w-[90%] sm:w-[500px] shadow-2xl bg-white py-6 px-3 md:py-8 sm:px-4 md:px-8 rounded`}>
+                    <h1 className='text-3xl sm:text-4xl font-bold inline-block border-b-2 pb-1 border-[var(--mainColor)]'>Кирүү</h1>
                     <form onSubmit={handleSubmit(onSubmit, onError)} className="flex flex-col gap-4 md:gap-6">
                         <div className="flex flex-col">
                             {/* <label htmlFor="email1" className="block text-900 text-[16px] md:text-xl font-medium mb-1 md:mb-2">

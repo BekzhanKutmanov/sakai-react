@@ -5,7 +5,7 @@ import { addCourse, deleteCourse, fetchCourseInfo, fetchCourses, updateCourse } 
 import { Button } from 'primereact/button';
 import { FileUpload, FileUploadSelectEvent } from 'primereact/fileupload';
 import { InputText } from 'primereact/inputtext';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { LayoutContext } from '@/layout/context/layoutcontext';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { DataTable } from 'primereact/datatable';
@@ -27,11 +27,17 @@ import { TabViewChange } from '@/types/tabViewChange';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import useShortText from '@/hooks/useShortText';
 import { ProgressSpinner } from 'primereact/progressspinner';
+import { RadioButton } from 'primereact/radiobutton';
+import { DataView } from 'primereact/dataview';
 
 export default function Course() {
     const { setMessage, course, setCourses, contextFetchCourse } = useContext(LayoutContext);
     interface FileWithPreview extends File {
         objectURL?: string;
+    }
+
+    interface forDisplayType {
+        streamTitle: string;
     }
 
     const [coursesValue, setValueCourses] = useState<myMainCourseType[]>([]);
@@ -50,6 +56,7 @@ export default function Course() {
     });
     const [activeIndex, setActiveIndex] = useState<number>(0);
     const [imageState, setImageState] = useState<string | null>(null);
+    const [displayStrem, setDisplayStreams] = useState<forDisplayType[]>([]);
 
     const [editingLesson, setEditingLesson] = useState<CourseCreateType>({
         title: '',
@@ -115,12 +122,17 @@ export default function Course() {
     const showError = useErrorMessage();
 
     const media = useMediaQuery('(max-width: 640px)');
+    const tableMedia = useMediaQuery('(max-width: 577px)');
 
     const toggleSkeleton = () => {
         setSkeleton(true);
         setTimeout(() => {
             setSkeleton(false);
         }, 1000);
+    };
+
+    const handleDisplay = (value: forDisplayType[]) => {
+        setDisplayStreams(value);
     };
 
     const handleFetchCourse = async (page = 1) => {
@@ -245,7 +257,6 @@ export default function Course() {
     };
 
     const onSelect = (e: FileUploadSelectEvent & { files: FileWithPreview[] }) => {
-        console.log('rabotaet ', e);
         if (e.files.length > 0) {
             editMode
                 ? setEditingLesson((prev) => ({
@@ -257,8 +268,6 @@ export default function Course() {
                       image: e.files[0]
                   }));
             setImageState(e.files[0].objectURL);
-        } else {
-            console.log('noo');
         }
     };
 
@@ -331,11 +340,11 @@ export default function Course() {
 
     useEffect(() => {
         const handleShow = async () => {
-            setProgressSpinner(true);                    
+            setProgressSpinner(true);
             const data = await fetchCourseInfo(selectedCourse);
 
             if (data?.success) {
-                setProgressSpinner(false);                
+                setProgressSpinner(false);
                 setEditingLesson({
                     title: data.course.title || '',
                     video_url: data.course.video_url || '',
@@ -355,6 +364,61 @@ export default function Course() {
     useEffect(() => {
         console.log('Для потока ', forStreamId);
     }, [forStreamId]);
+
+    const itemTemplate = (shablonData: any) => {
+        return (
+            <div className="col-12">
+                <div className={`w-full flex flex-column sm:flex-row align-items-center p-4 gap-3 `}>
+                    {/* Номер (rowIndex) можно добавить через внешний счетчик или props, но для DataView это сложнее */}
+
+                    {/* Заголовок */}
+                    <div className={`w-full flex-1 ${tableMedia && 'flex items-center gap-1 justify-between'}`}>
+                        <div className="font-bold text-md mb-2">
+                            <Link href={`/course/${shablonData.id}`}>
+                                {shablonData.title} {/* Используем subject_name из вашего шаблона */}
+                            </Link>
+                        </div>
+                        {tableMedia && (
+                            <div className="flex flex-column sm:flex-row gap-2 sm:mt-0">
+                                <Redacting redactor={getRedactor('null', shablonData, { onEdit: edit, getConfirmOptions, onDelete: handleDeleteCourse })} textSize={'14px'} />
+                            </div>
+                        )}
+                    </div>
+
+                    <div>{imageBodyTemplate(shablonData)}</div>
+
+                    {/* Радиокнопка */}
+                    <div className="flex-auto">
+                        {/* <RadioButton inputId={`radio-${shablonData.id}`} name="radio" value={shablonData} onChange={() => setForStreamId(shablonData)} checked={forStreamId?.id === shablonData.id} /> */}
+                        <label className="custom-radio">
+                            <span>Агымга байлоо</span>
+                            <input
+                                type="radio"
+                                name="radio"
+                                onChange={() => {
+                                    const newValue = forStreamId?.id === shablonData.id ? null : { id: shablonData.id, title: shablonData.title };
+                                    // Устанавливаем состояние
+                                    setForStreamId(newValue);
+                                }}
+                                checked={forStreamId?.id === shablonData.id}
+                            />
+                            <span className="radio-mark"></span>
+                            {/* {Radio(rowData)} */}
+                        </label>
+                    </div>
+
+                    {/* Кнопки действий */}
+                    {!tableMedia && (
+                        <div className="flex flex-column sm:flex-row gap-2 sm:mt-0">
+                            {/* <Button icon="pi pi-pencil" className="p-button-rounded" onClick={() => edit(shablonData)} /> */}
+                            {/* <Button icon="pi pi-trash" className="p-button-rounded p-button-danger" onClick={() => handleDeleteCourse(shablonData.id)} /> */}
+                            <Redacting redactor={getRedactor('null', shablonData, { onEdit: edit, getConfirmOptions, onDelete: handleDeleteCourse })} textSize={'14px'} />
+                        </div>
+                    )}
+                </div>
+            </div>
+        );
+    };
 
     const imagestateStyle = imageState ? 'flex gap-1 items-center justify-between' : '';
     const imageTitle = useShortText(typeof editingLesson.image === 'string' ? editingLesson.image : '', 30);
@@ -481,7 +545,8 @@ export default function Course() {
                                     className=" p-tabview p-tabview-nav p-tabview-selected p-tabview-panels p-tabview-panel"
                                 >
                                     {/* mobile table section */}
-                                    {hasCourses ? (
+                                    {/* mobile table section */}
+                                    {false ? (
                                         <>
                                             <div className="flex justify-end">
                                                 <Button
@@ -497,80 +562,26 @@ export default function Course() {
                                             <NotFound titleMessage={'Курс кошуу үчүн кошуу баскычты басыныз'} />
                                         </>
                                     ) : (
-                                        <div className="">
-                                            {skeleton ? (
-                                                <GroupSkeleton count={coursesValue?.length} size={{ width: '100%', height: '4rem' }} />
-                                            ) : (
-                                                <div className="flex flex-col gap-2 sm:gap-4">
-                                                    <div className="flex">
-                                                        <Button
-                                                            label="Кошуу"
-                                                            icon="pi pi-plus"
-                                                            onClick={() => {
-                                                                setEditMode(false);
-                                                                clearValues();
-                                                                setFormVisible(true);
-                                                            }}
-                                                        />
-                                                    </div>
-
-                                                    <DataTable value={coursesValue} dataKey="id" key={JSON.stringify(forStreamId)} breakpoint="960px" rows={5} className="my-custom-table">
-                                                        <Column body={(_, { rowIndex }) => rowIndex + 1} header="Номер" style={{ width: '20px' }}></Column>
-                                                        <Column
-                                                            field="title"
-                                                            header="Аталышы"
-                                                            style={{ width: '80%' }}
-                                                            body={(rowData) => (
-                                                                <Link href={`/course/${rowData.id}`} key={rowData.id}>
-                                                                    {rowData.title}
-                                                                </Link>
-                                                            )}
-                                                        ></Column>
-                                                        <Column body={imageBodyTemplate}></Column>
-
-                                                        <Column
-                                                            header="Агымга байлоо"
-                                                            style={{ width: '40%' }}
-                                                            body={(rowData) => (
-                                                                <>
-                                                                    <label className="custom-radio">
-                                                                        <input
-                                                                            type="radio"
-                                                                            name="radio"
-                                                                            onChange={() => {
-                                                                                const newValue = forStreamId?.id === rowData.id ? null : { id: rowData.id, title: rowData.title };
-                                                                                // Устанавливаем состояние
-                                                                                setForStreamId(newValue);
-                                                                            }}
-                                                                            checked={forStreamId?.id === rowData.id}
-                                                                        />
-                                                                        <span className="radio-mark"></span>
-                                                                        {/* {Radio(rowData)} */}
-                                                                    </label>
-                                                                </>
-                                                            )}
-                                                        ></Column>
-
-                                                        <Column
-                                                            className="flex items-center justify-center h-[60px] border-b-0"
-                                                            body={(rowData) => (
-                                                                <div className="flex items-center gap-2" key={rowData.id}>
-                                                                    <Redacting redactor={getRedactor('null', rowData, { onEdit: edit, getConfirmOptions, onDelete: handleDeleteCourse })} textSize={'14px'} />
-                                                                </div>
-                                                            )}
-                                                        />
-                                                    </DataTable>
-                                                    <Paginator
-                                                        first={(pagination.currentPage - 1) * pagination.perPage}
-                                                        rows={pagination.perPage}
-                                                        totalRecords={pagination.total}
-                                                        onPageChange={(e) => handlePageChange(e.page + 1)}
-                                                        // template="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
-                                                        template={media ? 'PrevPageLink NextPageLink' : 'FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink'}
-                                                    />
-                                                </div>
-                                            )}
-                                        </div>
+                                        <>
+                                            <div className="flex">
+                                                <Button
+                                                    label="Кошуу"
+                                                    icon="pi pi-plus"
+                                                    onClick={() => {
+                                                        setEditMode(false);
+                                                        clearValues();
+                                                        setFormVisible(true);
+                                                    }}
+                                                />
+                                            </div>
+                                            <DataView
+                                                value={shablon}
+                                                itemTemplate={itemTemplate}
+                                                layout="list" // Отображение в виде сетки, что идеально подходит для карточек
+                                                rows={5}
+                                                emptyMessage="Нет данных для отображения"
+                                            />
+                                        </>
                                     )}
                                 </TabPanel>
 
@@ -583,7 +594,7 @@ export default function Course() {
                                     className="p-tabview p-tabview-nav p-tabview-selected p-tabview-panels p-tabview-panel"
                                 >
                                     <div className="w-full sm:w-1/2">
-                                        <StreamList isMobile={true} callIndex={activeIndex} courseValue={forStreamId} />
+                                        <StreamList callIndex={activeIndex} courseValue={forStreamId} isMobile={true} insideDisplayStreams={() => {}} />
                                     </div>
                                 </TabPanel>
                             </TabView>

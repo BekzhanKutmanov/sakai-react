@@ -12,7 +12,7 @@ export default function Message() {
     const toast = useRef<ToastRef>(null);
 
     const showError = () => {
-        toast.current?.show({ severity: message.value.severity as SeverityType, summary: message.value.summary, detail: message.value.detail, life: 3000 });
+        toast.current?.show({ severity: message.value.severity as SeverityType, summary: message.value.summary, detail: message.value.detail, life: 30000 });
     };
 
     useEffect(() => {
@@ -26,7 +26,7 @@ export default function Message() {
     return (
         <div>
             {/* <Button label="Error" severity="danger" onClick={showError} /> */}
-            <Toast ref={toast} />
+            <Toast className='text-[12px] w-[40]' style={{fontSize: '12px', width: '40px'}} ref={toast} />
         </div>
     );
 }

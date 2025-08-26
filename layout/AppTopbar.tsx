@@ -91,11 +91,6 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
             icon: '',
             items: [],
             url: 'https://oshsu.kg'
-        },
-        {
-            label: 'Байланыш',
-            icon: '',
-            items: []
         }
     ];
 

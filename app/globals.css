@@ -4,7 +4,8 @@
 :root {
   --bodyFonts: "Jost", sans-serif;
   --mainColor: #08A9E6;
-  --mainBgColor: #e6eef1;
+  /* --mainBgColor: #e6eef1; */
+  --mainBgColor: #fff;
   --redColor: #EC272F;
   --redBgColor: #EC272F1A;
   --greenColor: rgb(46, 192, 46);
@@ -44,7 +45,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .login-bg{
-  background: url('/layout/svg/login-bg.svg') no-repeat center/cover;
+  background: url('/layout/svg/login-bg.svg') repeat left/cover;
 }
 
 /* animate */
@@ -136,6 +137,7 @@ h1, h2, h3, h4, h5, h6 {
   height: 60px;
   width: 60px;
 }
+
 #preloader-area .spinner {
   position: absolute;
   z-index: 9999;
@@ -195,11 +197,28 @@ h1, h2, h3, h4, h5, h6 {
   right: 0;
 }
 
+@media screen and (max-width: 640px) {
+    #preloader-area{
+      position: absolute;
+      left: 60%;
+      top: 50%;
+      width: 10px;
+      height: 10px;
+    }
+
+    #preloader-area .spinner {
+      position: absolute;
+      z-index: 9999;
+      /* width: 3px; Уменьшаем с 6px до 3px */
+      height: 45px; /* Уменьшаем с 90px до 45px */
+      margin-top: -22.5px; /* Уменьшаем с -45px до -22.5px */
+    }
+}
+
 .p-password .p-password-toggle-icon {
   top: 50% !important;
   transform: translateY(-50%);
 }
-
 
 .loaded #preloader-area {
   opacity: 0;
@@ -313,8 +332,6 @@ h1, h2, h3, h4, h5, h6 {
   width: 100%;
 }
 
-
-
 /* primeReact components */
 .popup_menu_left{
   width: 300px;
@@ -366,6 +383,10 @@ h1, h2, h3, h4, h5, h6 {
 .mini-table .p-datatable-tbody > tr:nth-child(even) {
   /* background-color: rgb(255, 239, 239); */
   background-color: #f5f5f5;
+}
+
+.my-custom-mobile-table:nth-child(even) {
+  background-color: red;
 }
 
 /* удаление встроенного underline при активаности для таб (TabView) */
@@ -425,6 +446,18 @@ h1, h2, h3, h4, h5, h6 {
 
 .p-tooltip {
   font-size: 12px; /* или любой нужный размер */
+}
+
+@media screen and (max-width: 640px) {
+  .p-toast-message{
+    font-size: 14px !important;
+    width: 290px !important; 
+    margin: 0 auto;
+  }
+  
+  .p-toast-message-content{
+    padding: 10px !important;
+  }
 }
 
 /* styles/book.css */

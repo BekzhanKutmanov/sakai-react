@@ -11,16 +11,73 @@ import GroupSkeleton from '../skeleton/GroupSkeleton';
 import Link from 'next/link';
 import { streamsType } from '@/types/streamType';
 
-export default function StreamList({ callIndex, courseValue, isMobile }: { callIndex: number; courseValue: { id: number | null; title: string } | null; isMobile: boolean }) {
+export default function StreamList({ callIndex, courseValue, isMobile, insideDisplayStreams }: { callIndex: number; courseValue: { id: number | null; title: string } | null; isMobile: boolean; insideDisplayStreams: ()=> void  }) {
     interface mainStreamsType {
-        connect_id: number | null,stream_id:number, subject_name: {name_kg:string},
-        subject_type_name:{name_kg:string}, teacher:{name:string}, language:{name:string},
-        id_edu_year:number,id_period:number, semester:{name_kg:string}, edu_form:{name_kg:string}
+        connect_id: number | null;
+        stream_id: number;
+        subject_name: { name_kg: string };
+        subject_type_name: { name_kg: string };
+        teacher: { name: string };
+        language: { name: string };
+        id_edu_year: number;
+        id_period: number;
+        semester: { name_kg: string };
+        edu_form: { name_kg: string };
     }
 
+    const shablon = [
+        {
+            connect_id: 0,
+            stream_id: 2,
+            subject_name: { name_kg: 'test' },
+            subject_type_name: { name_kg: 'test' },
+            teacher: { name: 'test' },
+            language: { name: 'test' },
+            id_edu_year: 2,
+            id_period: 2,
+            semester: { name_kg: 'test' },
+            edu_form: { name_kg: 'test' }
+        },
+        {
+            connect_id: 0,
+            stream_id: 0,
+            subject_name: { name_kg: 'test' },
+            subject_type_name: { name_kg: 'test' },
+            teacher: { name: 'test' },
+            language: { name: 'test' },
+            id_edu_year: 2,
+            id_period: 2,
+            semester: { name_kg: 'test' },
+            edu_form: { name_kg: 'test' }
+        },
+        {
+            connect_id: 2,
+            stream_id: 2,
+            subject_name: { name_kg: 'test' },
+            subject_type_name: { name_kg: 'test' },
+            teacher: { name: 'test' },
+            language: { name: 'test' },
+            id_edu_year: 2,
+            id_period: 2,
+            semester: { name_kg: 'test' },
+            edu_form: { name_kg: 'test' }
+        },
+        {
+            connect_id: 2,
+            stream_id: 2,
+            subject_name: { name_kg: 'test' },
+            subject_type_name: { name_kg: 'test' },
+            teacher: { name: 'test' },
+            language: { name: 'test' },
+            id_edu_year: 2,
+            id_period: 2,
+            semester: { name_kg: 'test' },
+            edu_form: { name_kg: 'test' }
+        },
+    ];
     const [streams, setStreams] = useState<mainStreamsType[]>([]);
     const [streamValues, setStreamValues] = useState<{ stream: streamsType[] }>({ stream: [] });
-    const [displayStreams, setDisplayStreams] = useState<{ course_id: number; stream_id: number; info: string | null; stream_title: string }[]>([]);
+    const [displayStreams, setDisplayStreams] = useState<{ course_id: number; stream_id: number; info: string | null; stream_title: string }[] | any>([]);
     const [hasStreams, setHasStreams] = useState(false);
 
     const [skeleton, setSkeleton] = useState(false);
@@ -35,11 +92,11 @@ export default function StreamList({ callIndex, courseValue, isMobile }: { callI
         }, 1000);
     };
 
-    const profilactor = (data: {connect_id: number, course_id: number; stream_id: number; info: string | null}[]) => { 
+    const profilactor = (data: { connect_id: number; course_id: number; stream_id: number; info: string | null }[]) => {
         const newStreams: { course_id: number; stream_id: number; info: string | null }[] = [];
-        
+
         data.forEach((item) => {
-            if (item?.connect_id) { 
+            if (item?.connect_id) {
                 newStreams.push({
                     course_id: item?.course_id,
                     stream_id: item.stream_id,
@@ -100,8 +157,7 @@ export default function StreamList({ callIndex, courseValue, isMobile }: { callI
         }
     };
 
-    const handleEdit = (e:{checked:boolean}, id: number, title: string) => {
-        
+    const handleEdit = (e: { checked: boolean }, id: number, title: string) => {
         const forSentStreams = {
             course_id: courseValue!.id,
             stream_id: id,
@@ -111,10 +167,15 @@ export default function StreamList({ callIndex, courseValue, isMobile }: { callI
 
         if (e.checked) {
             // profilactor();
-            setStreamValues((prev) => prev && ({
-                ...prev,
-                stream: [...prev.stream, forSentStreams]
-            }));
+            setStreamValues(
+                (prev) =>
+                    prev && {
+                        ...prev,
+                        stream: [...prev.stream, forSentStreams]
+                    }
+            );
+            const x = {streamTitle}
+            insideDisplayStreams();
         } else {
             setStreamValues(
                 (prev) =>
@@ -136,7 +197,7 @@ export default function StreamList({ callIndex, courseValue, isMobile }: { callI
             }
         });
 
-        // setDisplayStreams(forDisplay);
+        setDisplayStreams(forDisplay);
     }, [streamValues]);
 
     useEffect(() => {
@@ -156,7 +217,11 @@ export default function StreamList({ callIndex, courseValue, isMobile }: { callI
         }
     }, [streams]);
 
-    const itemTemplate = (item:mainStreamsType, index: number) => {        
+    useEffect(()=> {
+        console.log(displayStreams);
+    },[displayStreams])
+
+    const itemTemplate = (item: mainStreamsType, index: number) => {
         const bgClass = item.connect_id ? 'bg-[var(--greenBgColor)] border-b border-[gray]' : index % 2 == 1 ? 'bg-[#f5f5f5]' : '';
 
         return (
@@ -177,7 +242,7 @@ export default function StreamList({ callIndex, courseValue, isMobile }: { callI
                             <span className="checkbox-mark"></span>
                         </label>
                     </div>
-                    <div className="flex flex-column xl:flex-row justify-content-between align-items-center xl:align-items-start flex-1 gap-4">
+                    <div className="flex flex-column xl:flex-row justify-content-between align-items-center xl:align-items-start flex-1 gap-2">
                         <div className="flex flex-col order-2 xl:order-1 gap-1 items-start text-[12px] sm:text-[14px]">
                             <div className="flex gap-1 items-center">
                                 <span className="text-[var(--mainColor)]">{item?.subject_type_name?.name_kg}</span>
@@ -211,7 +276,7 @@ export default function StreamList({ callIndex, courseValue, isMobile }: { callI
         );
     };
 
-    const listTemplate = (items:mainStreamsType[]) => {
+    const listTemplate = (items: mainStreamsType[]) => {
         if (!items || items.length === 0) return null;
 
         let list = items.map((product, index: number) => {
@@ -248,7 +313,7 @@ export default function StreamList({ callIndex, courseValue, isMobile }: { callI
                         </>
                     )}
 
-                    {hasStreams ? (
+                    {!hasStreams ? (
                         <NotFound titleMessage={'Агымдар азырынча жок'} />
                     ) : (
                         <div className="flex flex-col gap-2 sm:gap-2">
@@ -269,7 +334,7 @@ export default function StreamList({ callIndex, courseValue, isMobile }: { callI
                                     <GroupSkeleton count={10} size={{ width: '100%', height: '4rem' }} />
                                 ) : (
                                     <>
-                                        <DataView value={streams} listTemplate={listTemplate} />
+                                        <DataView value={shablon} listTemplate={listTemplate} />
                                     </>
                                 )}
                             </div>
