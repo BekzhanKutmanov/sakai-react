@@ -18,7 +18,7 @@ const AppFooter = () => {
             <div className='w-full absolute left-0 bg-[#A00e07]'>
                 <div className="flex flex-col md:flex-row gap-2 md:gap-8 border-b-1 border-white p-[30px] md:px-14 md:py-10">
                     <div>
-                        <Image src={'/layout/images/logo-remove-white.png'} width={70} height={80} alt="Логотип" />
+                        <img src={'/layout/images/logo-remove-white.png'} width={70} height={80} alt="Логотип" />
                         <div className="flex flex-col text-[14px] sm:text-[16px]">
                             <span>Кыргызстан, 723500, г. Ош, ул. Ленина, 331, ОшГУ Главный корпус</span>
                             <span>Общий отдел: +996 3222 7-07-12,</span>

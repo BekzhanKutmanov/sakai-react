@@ -420,7 +420,7 @@ export default function Course() {
         );
     };
 
-    const imagestateStyle = imageState ? 'flex gap-1 items-center justify-between' : '';
+    const imagestateStyle = imageState ? 'flex gap-1 items-center justify-between flex-col sm:flex-row' : '';
     const imageTitle = useShortText(typeof editingLesson.image === 'string' ? editingLesson.image : '', 30);
 
     return (
@@ -429,10 +429,14 @@ export default function Course() {
             <FormModal title={editMode ? 'Курсту жаңылоо' : 'Кошуу'} fetchValue={editMode ? handleUpdateCourse : handleAddCourse} clearValues={clearValues} visible={formVisible} setVisible={setFormVisible} start={forStart}>
                 <div className="flex flex-col gap-1">
                     <div className={imagestateStyle}>
-                        {imagestateStyle && <div className="w-1/2 max-h-[170px] max-w-[330px] overflow-hidden flex justify-center items-center">{typeof imageState === 'string' && <img className="w-full object-cover" src={imageState} alt="" />}</div>}
-                        <div className="flex flex-col pag-1 items-center justify-center">
+                        {imagestateStyle && (
+                            <div className="w-1/2 order-2 sm:order-1 max-h-[170px] max-w-[300px] overflow-hidden flex justify-center items-center">
+                                {typeof imageState === 'string' && <img className="w-full object-cover" src={imageState} alt="" />}
+                            </div>
+                        )}
+                        <div className={`flex flex-col pag-1 order-1 sm:order-2 items-center justify-center ${imageState && 'w-1/2'}`}>
                             <label className="block text-900 font-medium text-[16px] md:text-xl mb-1 md:mb-2">Сүрөт кошуу</label>
-                            <FileUpload mode="basic" chooseLabel="Сүрөт" customUpload name="demo[]" accept="image/*" maxFileSize={1000000} onSelect={onSelect} />
+                            <FileUpload mode="basic" chooseLabel="Сүрөт" style={{ fontSize: '12px' }} customUpload name="demo[]" accept="image/*" maxFileSize={1000000} onSelect={onSelect} />
                             {courseValue.image || editingLesson.image ? (
                                 <div className="mt-2 text-sm text-gray-700 ">
                                     {typeof editingLesson.image === 'string' && (
@@ -504,7 +508,7 @@ export default function Course() {
                                 disabled={progressSpinner === true ? true : false}
                                 rows={5}
                                 cols={30}
-                                className='w-[300px]'
+                                className="w-[300px]"
                                 onChange={(e) => {
                                     editMode
                                         ? setEditingLesson((prev) => ({
@@ -576,11 +580,18 @@ export default function Course() {
                                                 />
                                             </div>
                                             <DataView
-                                                value={shablon}
+                                                value={coursesValue}
                                                 itemTemplate={itemTemplate}
                                                 layout="list" // Отображение в виде сетки, что идеально подходит для карточек
                                                 rows={5}
                                                 emptyMessage="Нет данных для отображения"
+                                            />
+                                            <Paginator
+                                                first={(pagination.currentPage - 1) * pagination.perPage}
+                                                rows={pagination.perPage}
+                                                totalRecords={pagination.total}
+                                                onPageChange={(e) => handlePageChange(e.page + 1)}
+                                                template={media ? 'FirstPageLink PrevPageLink NextPageLink LastPageLink' : 'FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink'}
                                             />
                                         </>
                                     )}
@@ -691,7 +702,7 @@ export default function Course() {
                             </div>
                             {/* STREAMS SECTION */}
                             <div className="w-1/2">
-                                <StreamList isMobile={false} callIndex={1} courseValue={forStreamId?.id ? forStreamId : null} insideDisplayStreams={()=>{}} />
+                                <StreamList isMobile={false} callIndex={1} courseValue={forStreamId?.id ? forStreamId : null} insideDisplayStreams={() => {}} />
                             </div>
                         </div>
                     )}

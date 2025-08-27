@@ -226,6 +226,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                         <div className="w-full flex flex-col justify-center gap-2">
                             <div className="flex gap-1 items-center">
                                 <FileUpload
+                                    className='text-[12px]'
                                     ref={fileUploadRef}
                                     chooseLabel="Документ жүктөө"
                                     mode="basic"

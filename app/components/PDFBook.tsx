@@ -32,7 +32,7 @@ export default function PDFViewer({ url }: { url: string }) {
             try {
                 // Проверяем, одна ли страница в документе
 
-                const newUrl = `http://api.mooc.oshsu.kg/temprory-file/${url}`;
+                const newUrl = `https://api.mooc.oshsu.kg/temprory-file/${url}`;
                 const pdf = await pdfjsLib.getDocument(newUrl).promise;
                 const tempPages = [];
                 const firstPage = await pdf.getPage(1);

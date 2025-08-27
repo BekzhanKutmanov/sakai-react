@@ -8,7 +8,7 @@ import { classNames } from 'primereact/utils';
 import { AppTopbarRef } from '@/types';
 import { LayoutContext } from './context/layoutcontext';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { logout } from '@/utils/logout';
 
 const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
@@ -28,29 +28,7 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
     const pathName = usePathname();
     const media = useMediaQuery('(max-width: 1000px)');
 
-    const items = [
-        {
-            label: 'Ачык онлайн курстар',
-            icon: 'pi pi-file',
-            items: [],
-            url: '/login'
-        },
-        {
-            label: 'Бакалавриат',
-            icon: 'pi pi-file',
-            items: []
-        },
-        {
-            label: 'Магистратура',
-            icon: 'pi pi-file',
-            items: []
-        },
-        {
-            label: 'Кошумча билим берүү',
-            icon: 'pi pi-file',
-            items: []
-        }
-    ];
+    const router = useRouter()
 
     const mobileMenu = [
         user
@@ -84,7 +62,10 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                   label: 'Кирүү',
                   icon: 'pi pi-sign-in',
                   items: [],
-                  url: '/auth/login'
+                //   url: '/auth/login'
+                  command: ()=> {
+                    router.push('/auth/login');
+                  }
               },
         {
             label: 'ОшМУнун сайты',

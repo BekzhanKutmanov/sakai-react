@@ -43,7 +43,7 @@ export default function VideoPlay() {
                         </div>
                     </div>
                 </div>
-                <Image src={'/layout/images/logo-remove.png'} width={400} height={400} className="w-[200px] sm:w-[400px]" alt="Логотип ОшГУ"/>
+                <img src={'/layout/images/logo-remove.png'} width={400} height={400} className="w-[200px] sm:w-[400px]" alt="Логотип ОшГУ"/>
             </div>
         </div>
     )

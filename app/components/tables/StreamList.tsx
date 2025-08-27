@@ -313,7 +313,7 @@ export default function StreamList({ callIndex, courseValue, isMobile, insideDis
                         </>
                     )}
 
-                    {!hasStreams ? (
+                    {hasStreams ? (
                         <NotFound titleMessage={'Агымдар азырынча жок'} />
                     ) : (
                         <div className="flex flex-col gap-2 sm:gap-2">
@@ -334,7 +334,7 @@ export default function StreamList({ callIndex, courseValue, isMobile, insideDis
                                     <GroupSkeleton count={10} size={{ width: '100%', height: '4rem' }} />
                                 ) : (
                                     <>
-                                        <DataView value={shablon} listTemplate={listTemplate} />
+                                        <DataView value={streams} listTemplate={listTemplate} />
                                     </>
                                 )}
                             </div>
