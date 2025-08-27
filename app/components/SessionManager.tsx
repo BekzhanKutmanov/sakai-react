@@ -1,7 +1,7 @@
 'use client';
 
 import { getToken } from '@/utils/auth';
-import { useContext, useEffect } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { LayoutContext } from '@/layout/context/layoutcontext';
 import { getUser } from '@/services/auth';
 import { logout } from '@/utils/logout';

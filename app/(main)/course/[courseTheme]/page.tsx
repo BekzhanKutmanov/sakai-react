@@ -10,7 +10,7 @@ import { DataTable } from 'primereact/datatable';
 import { InputText } from 'primereact/inputtext';
 import { LayoutContext } from '@/layout/context/layoutcontext';
 import React, { useContext, useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
+import { useParams, usePathname } from 'next/navigation';
 import { addThemes, deleteTheme, fetchCourseInfo, fetchThemes, updateTheme } from '@/services/courses';
 import useErrorMessage from '@/hooks/useErrorMessage';
 import { CourseCreateType } from '@/types/courseCreateType';
@@ -19,6 +19,7 @@ import Redacting from '@/app/components/popUp/Redacting';
 import { getRedactor } from '@/utils/getRedactor';
 import { getConfirmOptions } from '@/utils/getConfirmOptions';
 import { ProgressSpinner } from 'primereact/progressspinner';
+import useBreadCrumbs from '@/hooks/useBreadCrumbs';
 
 export default function CourseTheme() {
     const [hasThemes, setHasThemes] = useState(false);
@@ -39,7 +40,42 @@ export default function CourseTheme() {
 
     const { courseTheme } = useParams() as { courseTheme: string };
 
+    const teachingBreadCrumb = [
+        {
+            id: 1,
+            url: '/',
+            title: 'Башкы баракча',
+            parent_id: null
+        },
+        {
+            id: 2,
+            url: '/course',
+            title: 'Курстар',
+            parent_id: 1
+        },
+        {
+            id: 3,
+            url: `/course/:id`,
+            title: 'Темалар',
+            parent_id: 2
+        },
+        {
+            id: 4,
+            url: '/course/:course_id/:lesson_id',
+            title: 'Сабактар',
+            parent_id: 3
+        },
+        {
+            id: 5,
+            url: '/students/:course_id/:stream_id',
+            title: 'Студенттер',
+            parent_id: 2
+        }
+    ];
+
     const showError = useErrorMessage();
+    const pathname = usePathname();
+    const breadcrumb = useBreadCrumbs(teachingBreadCrumb, pathname);
 
     const toggleSkeleton = () => {
         setSkeleton(true);
@@ -158,13 +194,13 @@ export default function CourseTheme() {
     };
 
     useEffect(() => {
-        handleFetchInfo();
-        handleFetchThemes();
+        // handleFetchInfo();
+        // handleFetchThemes();
     }, []);
 
     useEffect(() => {
         const handleShow = async () => {
-            setProgressSpinner(true)
+            setProgressSpinner(true);
             const data: { lessons: { data: { id: number; title: string }[] } } = await fetchThemes(Number(courseTheme));
 
             if (data?.lessons) {
@@ -203,21 +239,24 @@ export default function CourseTheme() {
     return (
         <div className="main-bg">
             {/* title section */}
-            <div className={`bg-[var(--titleColor)] flex flex-col gap-3 md:flex-row items-center p-10 mt-2 mb-10 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]`}>
-                <div className={`${titleInfoClass} flex flex-col justify-center gap-2 text-white`}>
-                    <h3 className="text-[36px] font-bold m-0" style={{ color: 'white' }}>
-                        {themeInfo?.title}
-                    </h3>
-                    <p style={{ color: 'white' }}>{themeInfo?.description}</p>
-                    <div className="flex items-center gap-2">
-                        <i className={'pi pi-clock text-blue-500'}></i>
-                        <span>{themeInfo?.created_at}</span>
+            <div className="bg-[var(--titleColor)] flex flex-col gap-3 p-10 pb-3 mt-2 mb-10 ">
+                <div className={`flex flex-col gap-3 md:flex-row items-center shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]`}>
+                    <div className={`${titleInfoClass} flex flex-col justify-center gap-2 text-white`}>
+                        <h3 className="text-[36px] font-bold m-0" style={{ color: 'white' }}>
+                            {themeInfo?.title}
+                        </h3>
+                        <p style={{ color: 'white' }}>{themeInfo?.description}</p>
+                        <div className="flex items-center gap-2">
+                            <i className={'pi pi-clock text-blue-500'}></i>
+                            <span>{themeInfo?.created_at}</span>
+                        </div>
+                    </div>
+
+                    <div className={`${titleImageClass}`}>
+                        <img src={String(themeInfo?.image)} />
                     </div>
                 </div>
-
-                <div className={`${titleImageClass}`}>
-                    <img src={String(themeInfo?.image)} />
-                </div>
+                <div className="w-full">{breadcrumb}</div>
             </div>
 
             {/* add button*/}

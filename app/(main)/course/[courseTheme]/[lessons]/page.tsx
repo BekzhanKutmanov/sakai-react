@@ -7,7 +7,7 @@ import { Button } from 'primereact/button';
 import Redacting from '@/app/components/popUp/Redacting';
 import { addLesson, deleteLesson, fetchLesson, updateLesson } from '@/services/courses';
 import { getToken } from '@/utils/auth';
-import { useParams } from 'next/navigation';
+import { useParams, usePathname } from 'next/navigation';
 import { LayoutContext } from '@/layout/context/layoutcontext';
 import useErrorMessage from '@/hooks/useErrorMessage';
 import { getRedactor } from '@/utils/getRedactor';
@@ -15,6 +15,7 @@ import { getConfirmOptions } from '@/utils/getConfirmOptions';
 import LessonTyping from '@/app/components/lessons/LessonTyping';
 import { TabViewChange } from '@/types/tabViewChange';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
+import useBreadCrumbs from '@/hooks/useBreadCrumbs';
 
 export default function Lesson() {
     const [activeIndex, setActiveIndex] = useState<number>(0);
@@ -33,6 +34,42 @@ export default function Lesson() {
     const params = useParams();
     const courseId = params.courseTheme;
     const lessonId = params.lessons;
+
+    const teachingBreadCrumb = [
+        {
+            id: 1,
+            url: '/',
+            title: 'Башкы баракча',
+            parent_id: null
+        },
+        {
+            id: 2,
+            url: '/course',
+            title: 'Курстар',
+            parent_id: 1
+        },
+        {
+            id: 3,
+            url: `/course/${lessonId}`,
+            title: 'Темалар',
+            parent_id: 2
+        },
+        {
+            id: 4,
+            url: '/course/:course_id/:lesson_id',
+            title: 'Сабактар',
+            parent_id: 3
+        },
+        {
+            id: 5,
+            url: '/students/:course_id/:stream_id',
+            title: 'Студенттер',
+            parent_id: 2
+        }
+    ];
+
+    const pathname = usePathname();
+    const breadcrumb = useBreadCrumbs(teachingBreadCrumb,pathname);
 
     const handleText = (e: string) => {
         setSentValues(e);
@@ -154,28 +191,37 @@ export default function Lesson() {
         setContentShow(true);
     };
 
-    const lessonInfo = <div>
-        <div className="bg-[var(--titleColor)] relative flex flex-col justify-center items-center w-full text-white p-[30px] md:p-[40px]">
-            <span className='absolute left-4 top-4 text-2xl sm:text-4xl pi pi-bookmark-fill '></span>
-            <div>
-                <h1 style={{ color: 'white', fontSize: media ? '24px' : '36px', textAlign: 'center'}}>{'Сабактын аталышы'}</h1>
-                <div className='flex flex-col sm:flex-row items-center justify-between gap-5'>  
-                    <span className='flex items-center gap-3'>
-                        <span className='w-[8px] h-[8px] block bg-[var(--mainColor)]'></span>
-                        <span onClick={()=> handleTabChange({index: 1})} className='cursor-pointer hover:text-[var(--mainColor)] transition-all'>Документтердин саны: <span className='text-[var(--mainColor)] font-bold'>?</span></span>
-                    </span>   
-                    <span className='flex items-center gap-3'>
-                        <span className='w-[8px] h-[8px] block bg-[var(--mainColor)]'></span>
-                        <span onClick={()=> handleTabChange({index: 2})} className='cursor-pointer hover:text-[var(--mainColor)] transition-all'>Шилтемелердин саны: <span className='text-[var(--mainColor)] font-bold'>?</span></span>
-                    </span>  
-                    <span className='flex items-center gap-3'>
-                        <span className='w-[8px] h-[8px] block bg-[var(--mainColor)]'></span>
-                        <span onClick={()=> handleTabChange({index: 3})} className='cursor-pointer hover:text-[var(--mainColor)] transition-all'>Видеолордун саны: <span className='text-[var(--mainColor)] font-bold'>?</span></span>
-                    </span>       
+    const lessonInfo = (
+        <div>
+            <div className="bg-[var(--titleColor)] relative flex flex-col justify-center items-center w-full text-white p-[30px] md:p-[40px] pb-4">
+                <span className="absolute left-4 top-4 text-2xl sm:text-4xl pi pi-bookmark-fill "></span>
+                <div>
+                    <h1 style={{ color: 'white', fontSize: media ? '24px' : '36px', textAlign: 'center' }}>{'Сабактын аталышы'}</h1>
+                    <div className="flex flex-col sm:flex-row items-center justify-between gap-5 m-4">
+                        <span className="flex items-center gap-3">
+                            <span className="w-[8px] h-[8px] block bg-[var(--mainColor)]"></span>
+                            <span onClick={() => handleTabChange({ index: 1 })} className="cursor-pointer hover:text-[var(--mainColor)] transition-all">
+                                Документтердин саны: <span className="text-[var(--mainColor)] font-bold">?</span>
+                            </span>
+                        </span>
+                        <span className="flex items-center gap-3">
+                            <span className="w-[8px] h-[8px] block bg-[var(--mainColor)]"></span>
+                            <span onClick={() => handleTabChange({ index: 2 })} className="cursor-pointer hover:text-[var(--mainColor)] transition-all">
+                                Шилтемелердин саны: <span className="text-[var(--mainColor)] font-bold">?</span>
+                            </span>
+                        </span>
+                        <span className="flex items-center gap-3">
+                            <span className="w-[8px] h-[8px] block bg-[var(--mainColor)]"></span>
+                            <span onClick={() => handleTabChange({ index: 3 })} className="cursor-pointer hover:text-[var(--mainColor)] transition-all">
+                                Видеолордун саны: <span className="text-[var(--mainColor)] font-bold">?</span>
+                            </span>
+                        </span>
+                    </div>
+                    <div className="w-full">{breadcrumb}</div>
                 </div>
             </div>
         </div>
-    </div>
+    );
 
     // USE EFFECTS
 
@@ -243,7 +289,9 @@ export default function Lesson() {
                                 </div>
                             )}
                         </div>
-                    ) : lessonInfo}
+                    ) : (
+                        lessonInfo
+                    )}
                 </TabPanel>
 
                 {/* DOC */}

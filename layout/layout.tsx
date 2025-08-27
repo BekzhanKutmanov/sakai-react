@@ -125,19 +125,19 @@ const Layout = ({ children }: ChildContainerProps) => {
 
     const requireRole = () => {
         console.log('Ваш статус: ', user?.is_working);
-        if(user){
-            if(!user?.is_working){
+        if (user) {
+            if (!user?.is_working) {
                 // window.location.href = '/auth/login';
                 // setPermission(true);
                 console.log('Не имеете доступ! working');
             }
             setPermission(false);
-        }   
-    }
+        }
+    };
 
-    useEffect(()=> {
-        requireRole();  
-    },[user, pathname]);
+    useEffect(() => {
+        requireRole();
+    }, [user, pathname]);
 
     // if(permission) return null;
 
