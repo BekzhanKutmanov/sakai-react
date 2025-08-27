@@ -504,6 +504,7 @@ export default function Course() {
                                 disabled={progressSpinner === true ? true : false}
                                 rows={5}
                                 cols={30}
+                                className='w-[300px]'
                                 onChange={(e) => {
                                     editMode
                                         ? setEditingLesson((prev) => ({
@@ -690,7 +691,7 @@ export default function Course() {
                             </div>
                             {/* STREAMS SECTION */}
                             <div className="w-1/2">
-                                <StreamList isMobile={false} callIndex={1} courseValue={forStreamId?.id ? forStreamId : null} />
+                                <StreamList isMobile={false} callIndex={1} courseValue={forStreamId?.id ? forStreamId : null} insideDisplayStreams={()=>{}} />
                             </div>
                         </div>
                     )}

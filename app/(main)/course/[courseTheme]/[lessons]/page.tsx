@@ -193,7 +193,7 @@ export default function Lesson() {
 
     const lessonInfo = (
         <div>
-            <div className="bg-[var(--titleColor)] relative flex flex-col justify-center items-center w-full text-white p-[30px] md:p-[40px] pb-4">
+            <div className="bg-[var(--titleColor)] relative flex flex-col justify-center items-center w-full text-white p-5 md:p-10 pb-4">
                 <span className="absolute left-4 top-4 text-2xl sm:text-4xl pi pi-bookmark-fill "></span>
                 <div>
                     <h1 style={{ color: 'white', fontSize: media ? '24px' : '36px', textAlign: 'center' }}>{'Сабактын аталышы'}</h1>
@@ -240,7 +240,7 @@ export default function Lesson() {
                 {/* CKEDITOR */}
                 <TabPanel
                     pt={{
-                        headerAction: { className: 'font-italic tab-custom-text' }
+                        headerAction: { className: 'font-italic text-sm sm:text-md tab-custom-text' }
                     }}
                     header="Текст"
                     leftIcon={'pi pi-pen-to-square mr-1'}
@@ -297,7 +297,7 @@ export default function Lesson() {
                 {/* DOC */}
                 <TabPanel
                     pt={{
-                        headerAction: { className: 'font-italic tab-custom-text-2' }
+                        headerAction: { className: 'font-italic text-sm sm:text-md tab-custom-text-2' }
                     }}
                     header="Документ"
                     leftIcon={'pi pi-file mr-1'}
@@ -310,7 +310,7 @@ export default function Lesson() {
                 {/* USEFUL LINKS */}
                 <TabPanel
                     pt={{
-                        headerAction: { className: 'font-italic tab-custom-text-3 text-center' }
+                        headerAction: { className: 'font-italic text-sm sm:text-md tab-custom-text-3 text-center' }
                     }}
                     header="Шилтемелер"
                     leftIcon={'pi pi-link mr-1'}
@@ -322,7 +322,7 @@ export default function Lesson() {
                 {/* VIDEO */}
                 <TabPanel
                     pt={{
-                        headerAction: { className: 'font-italic tab-custom-text-4' }
+                        headerAction: { className: 'font-italic text-sm sm:text-md tab-custom-text-4' }
                     }}
                     header="Видео"
                     leftIcon={'pi pi-video mr-1'}

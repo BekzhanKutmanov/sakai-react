@@ -52,10 +52,10 @@ export default function useBreadCrumbs(insideBreadCrumb: breadCrumbType[], curre
     }, [pathname]);
 
     return (
-        <div className="flex w-full justify-center items-center flex-wrap">
+        <div className="flex w-full sm:justify-center items-center flex-wrap">
             {breadCrumb?.map((crumb: breadCrumbType, index) => (
                 <div key={crumb.id} className="flex items-center">
-                    <div className="text-sm">
+                    <div className="text-[12px] sm:text-sm">
                         {index < breadCrumb.length - 1 ? (
                             <Link className="text-white mainColor-hover" href={crumb.url}>
                                 {crumb.title}
@@ -64,7 +64,7 @@ export default function useBreadCrumbs(insideBreadCrumb: breadCrumbType[], curre
                             <span className="text-[var(--mainColor)]">{crumb.title}</span>
                         )}
                     </div>
-                    {index < breadCrumb.length - 1 && <span className="text-white px-1 text-2xl"> / </span>}
+                    {index < breadCrumb.length - 1 && <span className="text-white px-1 sm:text-2xl"> / </span>}
                 </div>
             ))}
         </div>

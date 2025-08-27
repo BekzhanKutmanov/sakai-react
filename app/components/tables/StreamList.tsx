@@ -174,7 +174,7 @@ export default function StreamList({ callIndex, courseValue, isMobile, insideDis
                         stream: [...prev.stream, forSentStreams]
                     }
             );
-            const x = {streamTitle}
+            // const x = {streamTitle}
             insideDisplayStreams();
         } else {
             setStreamValues(

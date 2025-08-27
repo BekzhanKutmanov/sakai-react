@@ -438,7 +438,16 @@ h1, h2, h3, h4, h5, h6 {
 
 @media screen and (max-width: 640px) {
   .my-custom-dialog{
+    width: 350px;
+  }
+  .my-custom-document-dialog{
     width: 300px;
+  }
+}
+
+@media screen and (max-width: 440px) {
+  .my-custom-dialog{
+    width:320px;
   }
   .my-custom-document-dialog{
     width: 300px;
@@ -458,6 +467,17 @@ h1, h2, h3, h4, h5, h6 {
   
   .p-toast-message-content{
     padding: 10px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .p-confirm-dialog {
+    width: 90% !important;
+    margin: 0 5% !important;
+  }
+  .p-confirm-dialog .p-button {
+    width: 100%;
+    margin-top: 0.5rem;
   }
 }
 

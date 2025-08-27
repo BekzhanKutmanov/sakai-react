@@ -239,7 +239,7 @@ export default function CourseTheme() {
     return (
         <div className="main-bg">
             {/* title section */}
-            <div className="bg-[var(--titleColor)] flex flex-col gap-3 p-10 pb-3 mt-2 mb-10 ">
+            <div className="bg-[var(--titleColor)] flex flex-col gap-3 p-5 sm:p-10 pb-3 mt-2 mb-10 ">
                 <div className={`flex flex-col gap-3 md:flex-row items-center shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]`}>
                     <div className={`${titleInfoClass} flex flex-col justify-center gap-2 text-white`}>
                         <h3 className="text-[36px] font-bold m-0" style={{ color: 'white' }}>
