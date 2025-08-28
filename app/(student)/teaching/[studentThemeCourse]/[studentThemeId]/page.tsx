@@ -4,6 +4,7 @@ import { NotFound } from '@/app/components/NotFound';
 import GroupSkeleton from '@/app/components/skeleton/GroupSkeleton';
 import useErrorMessage from '@/hooks/useErrorMessage';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
+import useShortText from '@/hooks/useShortText';
 import { LayoutContext } from '@/layout/context/layoutcontext';
 import { itemsCourseInfo } from '@/services/studentMain';
 import Link from 'next/link';
@@ -25,6 +26,7 @@ export default function StudentThemes() {
     const showError = useErrorMessage();
 
     const media = useMediaQuery('(max-width: 640px)');
+    const titleShort = useShortText(themes?.title, 20);
 
     const titleInfoClass = `${themes?.image ? 'items-center justify-between' : 'justify-center'}`;
     const titleImageClass = `${true ? 'md:w-1/3' : ''}`;
@@ -56,8 +58,11 @@ export default function StudentThemes() {
 
     useEffect(() => {
         handleCourseInfo();
-        contextFetchStudentThemes(courseId);
-    }, []);
+        if(courseId){
+            console.log(courseId);
+            contextFetchStudentThemes(courseId);
+        }
+    }, [courseId]);
 
     useEffect(() => {
         if (contextStudentThemes?.lessons) {
@@ -74,10 +79,9 @@ export default function StudentThemes() {
                     <GroupSkeleton count={1} size={{ width: '100%', height: '5rem' }} />
                 ) : (
                     <div className="w-full bg-[var(--titleColor)] relative flex justify-center items-center text-white p-[30px] md:p-[40px] mb-4">
-                        <span className="absolute left-4 top-4 text-2xl sm:text-4xl pi pi-bookmark-fill "></span>
-                        <div className={`w-full flex flex-col sm:flex-row gap-3 ${titleInfoClass}`}>
-                            <div className="">
-                                <h1 style={{ color: 'white', fontSize: media ? '24px' : '36px', textAlign: 'center' }}>{themes?.title}</h1>
+                            <div className={`w-full flex flex-col sm:flex-row gap-3 ${titleInfoClass}`}>
+                            <div className="w-full flex flex-col items-center">
+                                <h1 style={{ color: 'white', fontSize: media ? '24px' : '28px', textAlign: 'center' }} className=''>{titleShort}</h1>
                                 <p style={{ color: 'white' }} className="sm:w-[300px] text-[12px] sm:text-[14px] text-center">
                                     {themes?.description}
                                 </p>
@@ -108,7 +112,7 @@ export default function StudentThemes() {
                                         <div className="flex w-full items-center p-2">
                                             <div className="flex w-full flex-col gap-2 p-1 rounded bg-[var(--mainBgColor)]">
                                                 <div className="w-full flex gap-1 items-center justify-center">
-                                                    <Link href={`/teaching/lesson/${item.id}`} className="text-[16px]">{item.title}</Link>
+                                                    <Link href={`/teaching/lesson/${courseId}/${item.id}`} className="text-[16px]">{item.title}</Link>
                                                 </div>
                                             </div>
                                         </div>

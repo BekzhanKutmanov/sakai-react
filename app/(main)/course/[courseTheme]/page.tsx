@@ -92,6 +92,8 @@ export default function CourseTheme() {
         contextFetchThemes(Number(courseTheme));
         if (data?.lessons) {
             setHasThemes(false);
+            console.log(data.lessons);
+            
             setThemes(data.lessons.data);
         } else {
             setHasThemes(true);
@@ -194,8 +196,8 @@ export default function CourseTheme() {
     };
 
     useEffect(() => {
-        // handleFetchInfo();
-        // handleFetchThemes();
+        handleFetchInfo();
+        handleFetchThemes();
     }, []);
 
     useEffect(() => {

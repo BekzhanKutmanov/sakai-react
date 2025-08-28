@@ -5,6 +5,7 @@ import { NotFound } from '@/app/components/NotFound';
 import GroupSkeleton from '@/app/components/skeleton/GroupSkeleton';
 import useErrorMessage from '@/hooks/useErrorMessage';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
+import useShortText from '@/hooks/useShortText';
 import { LayoutContext } from '@/layout/context/layoutcontext';
 import { fetchDocuments, fetchLinks } from '@/services/studentLessons';
 import { fetchMainLesson } from '@/services/studentMain';
@@ -24,14 +25,6 @@ export default function StudentLessons() {
     const [mainLesson, setMainLesson] = useState<{title: string}>({title: ''});
     const [hasLessons, setHasLessons] = useState(false);
     const [skeleton, setSkeleton] = useState(false);
-    const [contentShow, setContentShow] = useState<boolean>(false);
-
-    interface documentType {
-        title: string,
-        id: number,
-        type: string,
-
-    }
 
     // doc
     const [documents, setDocuments] = useState<lessonType[]>([]);
@@ -47,6 +40,7 @@ export default function StudentLessons() {
     const showError = useErrorMessage();
 
     const media = useMediaQuery('(max-width: 640px)');
+    const titleShort = useShortText(mainLesson?.title, 25);
 
     const toggleSkeleton = () => {
         setSkeleton(true);
@@ -84,7 +78,6 @@ export default function StudentLessons() {
         // skeleton = false
 
         const data = await fetchDocuments(lesson_id ? Number(lesson_id) : null);
-        console.log(data);
         setSkeleton(true);
         if (data && Array.isArray(data)) {
             setDocuments(data);
@@ -106,7 +99,6 @@ export default function StudentLessons() {
     // fetch link
     const handleFetchLink = async () => {
         const data = await fetchLinks(lesson_id ? Number(lesson_id) : null);
-        console.log(data);
         setSkeleton(true);
         if (data && Array.isArray(data)) {
             setLink(data);
@@ -226,7 +218,7 @@ export default function StudentLessons() {
             ) : (
                 <div className="w-full bg-[var(--titleColor)] relative flex flex-col justify-center items-center rounded text-white p-[30px] md:p-[40px] mb-4 mt-2">
                     <div className={`w-full flex justify-center`}>
-                        <h1 style={{ color: 'white', fontSize: media ? '28px' : '36px', textAlign: 'center' }}>{mainLesson?.title}</h1>
+                        <h1 style={{ color: 'white', fontSize: media ? '24px' : '28px', textAlign: 'center' }}>{titleShort}</h1>
                     </div>
                     <div className="text-center">Home/theme</div>
                 </div>

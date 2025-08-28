@@ -92,7 +92,8 @@ const LoginPage = () => {
             {/* <InfoBanner title="Кирүү" titleSize={{ default: '30px', sm: '40px' }} /> */}
             <div className="flex gap-4 flex-column lg:flex-row items-center justify-evenly px-4 mb-8">
                 <div className="user-img">
-                    <img src="/layout/images/no-image.png" className="w-[500px]" alt="" />
+                    {/* <img src="/layout/images/enrolled-img2.png" className="w-[450px] object-cover" alt="" /> */}
+                    <img src="/layout/images/no-image.png" className="w-[450px] object-cover" alt="" />
                 </div>
 
                 <div className={`w-[90%] sm:w-[500px] shadow-2xl bg-white py-6 px-3 md:py-8 sm:px-4 md:px-8 rounded`}>

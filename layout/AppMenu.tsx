@@ -9,7 +9,13 @@ import { useParams, usePathname } from 'next/navigation';
 
 const AppMenu = () => {
     const { layoutConfig, user, course, contextFetchCourse, contextFetchThemes, contextThemes, setContextThemes, contextFetchStudentThemes, contextStudentThemes } = useContext(LayoutContext);
-    interface test { label: string, id: number, to?: string, items?: [], command?: ()=> void };
+    interface test {
+        label: string;
+        id: number;
+        to?: string;
+        items?: [];
+        command?: () => void;
+    }
 
     const location = usePathname();
     const pathname = location;
@@ -54,10 +60,13 @@ const AppMenu = () => {
             const isTopicsChildPage = pathname.startsWith('/teaching/');
             if (isTopicsChildPage) {
                 console.log('Вызов функции тем студента');
-                contextFetchStudentThemes(studentThemeCourse);
+                if (studentThemeCourse) {
+                    console.log(studentThemeCourse);
+                    contextFetchStudentThemes(1);
+                }
             }
         }
-    }, [user]);
+    }, [user, studentThemeCourse]);
 
     useEffect(() => {
         if (course) {
@@ -102,7 +111,7 @@ const AppMenu = () => {
 
     useEffect(() => {
         console.log('Обновился и готов');
-        
+
         if (contextStudentThemes?.lessons) {
             const forThemes: any = [];
             contextStudentThemes.lessons.data?.map((item: any) =>

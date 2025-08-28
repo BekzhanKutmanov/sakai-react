@@ -39,7 +39,7 @@ export default function HomeClient() {
                                     <li>ачык онлайн курстар</li>
                                     <li>жогорку билим берүү программалары</li>
                                 </ul>
-                                {user && 
+                                {user &&
                                   <Link href={user.is_working ? '/course' : user.is_student ? '/teaching' : ''}>
                                       <FancyLinkBtn btnWidth={'200px'} backround={'--mainColor'} effectBg={'--titleColor'} title={user.is_working ? 'Окутуучу' : user.is_student ? 'Студент' : ''} />
                                   </Link>
@@ -105,7 +105,7 @@ export default function HomeClient() {
                   data-aos-delay="900"
                   data-aos-duration="1000"
                   data-aos-once="true"
-                > 
+                >
                   <div className="flex flex-col bg-white p-2 sm:p-4">
                     <span className="text-[var(--titleColor)] sm:text-[16px]">User experience className</span>
                     <p className="text-[12px] sm:text-[16px]">Today at 12.00 PM</p>
