@@ -108,7 +108,7 @@ export default function Teaching() {
         // превращаем в jsx
         const x = displayData.map((semester: any, sIdx: number) => (
             <div className="flex flex-col gap-2" key={sIdx}>
-                <h3 className="text-center text-[26px]">{semester.semester.name_kg}</h3>
+                <h3 className="text-center text-[22px] sm:text-[26px] mb-1">{semester.semester.name_kg}</h3>
                 <div className="flex justify-around flex-wrap items-start gap-4">
                     {Object.values(semester)
                         .filter((val: any) => val.subject) // только предметы
@@ -135,7 +135,7 @@ export default function Teaching() {
                     <GroupSkeleton count={1} size={{ width: '100%', height: '4rem' }} />
                 ) : (
                     <div className="flex flex-col sm:flex-row justify-between items-center gap-2 mb-4 py-2 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">
-                        <h3 className="text-[20px] sm:text-[28px] m-0">Менин окуу планым</h3>
+                        <h3 className="text-[24px] sm:text-[28px] m-0">Менин окуу планым</h3>
 
                         <Dropdown
                             value={selectedSort}
@@ -151,7 +151,7 @@ export default function Teaching() {
                 )}
 
                 {/* lesson section */}
-                {hasLessons ? <NotFound titleMessage={'Сабактар убактылуу жетклиликсиз'} /> : skeleton ? <GroupSkeleton count={10} size={{ width: '100%', height: '3rem' }} /> : <div className="flex gap-2 sm:gap-6 flex-col">{lessonsDisplay}</div>}
+                {hasLessons ? <NotFound titleMessage={'Сабактар убактылуу жетклиликсиз'} /> : skeleton ? <GroupSkeleton count={10} size={{ width: '100%', height: '3rem' }} /> : <div className="flex gap-4 sm:gap-6 flex-col">{lessonsDisplay}</div>}
             </div>
         </div>
     );

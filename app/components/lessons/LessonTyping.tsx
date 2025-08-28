@@ -218,7 +218,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
 
     const docSection = () => {
         return (
-            <div className="py-4 flex flex-col items-center gap-4">
+            <div className="py-1 sm:py-4 flex flex-col items-center gap-4">
                 {PDFVisible ? (
                     documentView
                 ) : (
@@ -226,7 +226,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                         <div className="w-full flex flex-col justify-center gap-2">
                             <div className="flex gap-1 items-center">
                                 <FileUpload
-                                    className='text-[12px]'
+                                    className="text-[12px]"
                                     ref={fileUploadRef}
                                     chooseLabel="Документ жүктөө"
                                     mode="basic"
@@ -265,7 +265,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                                 </div>
                             </div>
                         </div>
-                        <div className="w-full flex flex-col items-center gap-4 py-4">
+                        <div className="w-full flex flex-col items-center gap-4 py-2 sm:py-4">
                             <div className="w-full flex flex-wrap justify-center gap-4">
                                 {docShow ? (
                                     <NotFound titleMessage={'Сабак кошуу үчүн талааларды толтурунуз'} />
@@ -400,7 +400,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
     // LINKS SECTION
     const linkSection = () => {
         return (
-            <div className="py-4 flex flex-col items-center gap-4">
+            <div className="py-1 sm:py-4 flex flex-col items-center gap-4">
                 <div className="w-full flex flex-col justify-center gap-2">
                     <InputText
                         id="usefulLink"
@@ -435,7 +435,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                     </div>
                 </div>
 
-                <div className="w-full flex flex-col items-center gap-4 py-4">
+                <div className="w-full flex flex-col items-center gap-4 py-2 sm:py-4">
                     <div className="w-full flex flex-wrap justify-center gap-4">
                         {linksShow ? (
                             <NotFound titleMessage={'Сабак кошуу үчүн талааларды толтурунуз'} />
@@ -572,9 +572,9 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
 
     const videoSection = () => {
         return (
-            <div className="py-4 flex flex-col items-center gap-4">
-                <div className="w-full flex items-start justify-center flex-col sm:flex-row gap-2">
-                    {/* <Dropdown
+            <div className="py-1 sm:py-4 flex flex-col items-center gap-3">
+                <div className="w-full flex items-center justify-center flex-col sm:flex-row gap-2">
+                    <Dropdown
                         value={selectedCity}
                         onChange={(e) => {
                             toggleVideoType(e.value);
@@ -582,42 +582,44 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                         options={videoSelect}
                         optionLabel="name"
                         placeholder="Танданыз"
-                        style={{backgroundColor: 'var(--mainColor', color: 'white'}}
-                        panelStyle={{color: 'white'}}
+                        // style={{backgroundColor: 'var(--mainColor', color: 'white'}}
+                        panelStyle={{ color: 'white' }}
                         className="w-[213px] sm:w-full md:w-14rem"
-                    /> */}
+                    />
                     <div className="w-full flex justify-center">
-                        {/* {!selectedCity?.status ? ( */}
-                        <div className="w-full flex flex-col items-center">
-                            <InputText
-                                id="usefulLink"
-                                type="url"
-                                placeholder={'Шилтеме жүктөө'}
-                                value={videoValue.video_link}
-                                className="w-full"
-                                onChange={(e) => {
-                                    setVideoValue((prev) => ({ ...prev, video_link: e.target.value }));
-                                    setValue('usefulLink', e.target.value, { shouldValidate: true });
-                                }}
-                            />
-                            <b style={{ color: 'red', fontSize: '12px' }}>{errors.usefulLink?.message}</b>
-                        </div>
-                        {/* // ) : (
-                            // <FileUpload */}
-                        {/* //     chooseLabel="Видео жүктөө"
-                            //     mode="basic"
-                            //     name="demo[]"
-                            //     customUpload
-                            //     uploadHandler={() => {}}
-                            //     accept="video/"
-                            //     onSelect={(e) =>
-                            //         setVideoValue((prev) => ({
-                            //             ...prev,
-                            //             file: e.files[0]
-                            //         }))
-                            //     }
-                            // />
-                        // )} */}
+                        {selectedCity?.status ? (
+                            <div className="w-full flex flex-col items-center">
+                                <InputText
+                                    id="usefulLink"
+                                    type="url"
+                                    placeholder={'Шилтеме жүктөө'}
+                                    value={videoValue.video_link}
+                                    className="w-full"
+                                    onChange={(e) => {
+                                        setVideoValue((prev) => ({ ...prev, video_link: e.target.value }));
+                                        setValue('usefulLink', e.target.value, { shouldValidate: true });
+                                    }}
+                                />
+                                <b style={{ color: 'red', fontSize: '12px' }}>{errors.usefulLink?.message}</b>
+                            </div>
+                        ) : (
+                            <div className='w-full flex justify-center sm:justify-start'>
+                                <FileUpload
+                                    chooseLabel="Видео жүктөө"
+                                    mode="basic"
+                                    name="demo[]"
+                                    customUpload
+                                    uploadHandler={() => {}}
+                                    accept="video/"
+                                    onSelect={(e) =>
+                                        setVideoValue((prev) => ({
+                                            ...prev,
+                                            file: e.files[0]
+                                        }))
+                                    }
+                                />
+                            </div>
+                        )}
                     </div>
                 </div>
                 <div className="w-full flex flex-col justify-center gap-2">
@@ -642,7 +644,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                     </div>
                 </div>
 
-                <div className="w-full flex flex-col items-center gap-4 py-4">
+                <div className="w-full flex flex-col items-center gap-4 py-2 sm:py-4">
                     <div className="w-full flex flex-wrap justify-center gap-4">
                         {videoShow ? (
                             <NotFound titleMessage={'Сабак кошуу үчүн талааларды толтурунуз'} />
@@ -687,7 +689,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
     const handleFetchVideo = async () => {
         // skeleton = false
         const data = await fetchLesson('video', courseId ? Number(courseId) : null, lessonId ? Number(lessonId) : null);
-        // console.log(data);
+        console.log(data);
 
         if (data?.success) {
             if (data.videos) {
@@ -796,7 +798,8 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
     useEffect(() => {
         links.length < 1 ? setLinksShow(true) : setLinksShow(false);
         documents.length < 1 ? setDocShow(true) : setDocShow(false);
-    }, [links, documents]);
+        video.length < 1 ? setVideoShow(true) : setVideoShow(false);
+    }, [links, documents, video]);
 
     useEffect(() => {
         console.log(videoTypes);
@@ -807,6 +810,8 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
             });
 
             setVideoSelect(forSelect);
+            console.log(forSelect);
+            
             setSelectedCity(forSelect[0]);
         }
     }, [videoTypes]);

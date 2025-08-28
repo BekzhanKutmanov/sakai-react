@@ -6,7 +6,7 @@ let url = '';
 
 export const fetchCourses = async (page: number | null, limit: number | null) => {
     try {
-        const res = await axiosInstance.get(`/v1/teacher/courses?page=${Number(page)}&limit=${'3'}`);
+        const res = await axiosInstance.get(`/v1/teacher/courses?page=${Number(page)}&limit=${''}`);
         const data = await res.data;
 
         return data;
@@ -174,7 +174,7 @@ export const addLesson = async (
     console.log(value, type, courseId, lessonId, videoType);
     let headers: Record<string, string> = token ? { Authorization: `Bearer ${token}` } : {};
     let url = '';
-    let body: lessonStateType | string | FormData = value;    
+    let body: lessonStateType | string | FormData = value;
 
     if (type === 'text') {
         url = `/v1/teacher/textcontent/store?course_id=${courseId}&lesson_id=${lessonId}&content=${value}`;
@@ -199,9 +199,9 @@ export const addLesson = async (
     } else if(type === 'video' && typeof value === 'object' && value !== null){
         url = `v1/teacher/video/store?lesson_id=${lessonId}&title=${value.title}&description=${value.description}&video_link=${value.video_link}&video_type_id=${videoType}&cover`;
         formData.append('lesson_id', String(lessonId));
-        formData.append('video_link', String(value?.video_link)); 
+        formData.append('video_link', String(value?.video_link));
         formData.append('title', String(value?.title)); 
-        formData.append('description', String(value?.description)); 
+        formData.append('description', String(value?.description));
         body = formData;
     }
 
