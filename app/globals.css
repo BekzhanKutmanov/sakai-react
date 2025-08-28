@@ -388,8 +388,12 @@ h1, h2, h3, h4, h5, h6 {
   background-color: #f5f5f5;
 }
 
-.my-custom-mobile-table:nth-child(even) {
-  background-color: red;
+.col-12:nth-child(odd) {
+  /* background-color: #f9f9f9; */
+}
+
+.col-12:nth-child(even) {
+  background-color: #f5f5f5;
 }
 
 /* удаление встроенного underline при активаности для таб (TabView) */
@@ -474,7 +478,7 @@ h1, h2, h3, h4, h5, h6 {
 
 @media (max-width: 480px) {
   .p-confirm-dialog {
-    width: 90% !important;
+    width: 320px !important;
     margin: 0 5% !important;
   }
   .p-confirm-dialog .p-button {
