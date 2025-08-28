@@ -16,7 +16,6 @@ export const fetchItemsConnect = async () => {
     try {
         const res = await axiosInstance.get(`v1/student/stream/connect`);
         const data = await res.data;
-        console.log(data);
         
         return data;
     } catch (err) {
@@ -26,7 +25,6 @@ export const fetchItemsConnect = async () => {
 };
 
 export const itemsCourseInfo = async (course_id: number | null, stream_id: number | null ) => {
-
     try {
         const res = await axiosInstance.get(`v1/student/course?course_id=${course_id}&stream_id=${stream_id}`);
         const data = await res.data;

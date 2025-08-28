@@ -19,8 +19,6 @@ export default function ItemCard({
         if (matchedIdx !== -1) {
             setActiveStreamIdx(matchedIdx);
         }
-        console.log(connection);
-        
     }, [streams, connection]);
 
     return (
@@ -47,7 +45,6 @@ export default function ItemCard({
                                     <span>{stream.subject_type_name?.short_name_kg}</span>
                                 </div>
                                 {connection.map((item) => {
-                                    console.log(item.id_myedu_stream === stream.id);
                                     if (item.id_myedu_stream === stream.id) {
                                         return (
                                             <Link key={item.id} href={`teaching/${item.course_id}/${stream.id}`}>
