@@ -3,4 +3,5 @@ export interface breadCrumbType {
     url: string;
     title: string;
     parent_id: number | null;
+    icon?: boolean
 }

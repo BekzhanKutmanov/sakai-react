@@ -56,7 +56,8 @@ export default function StudentList() {
         {
             id: 1,
             url: '/',
-            title: 'Башкы баракча',
+            title: '',
+            icon: true,
             parent_id: null
         },
         {
@@ -131,7 +132,6 @@ export default function StudentList() {
                 <>
                     {/* info section */}
                     <div className="bg-[var(--titleColor)] relative flex flex-col justify-center items-center w-full text-white p-[30px] md:p-[40px] pb-4">
-                        <span className="absolute left-4 top-4 text-2xl sm:text-4xl pi pi-bookmark-fill "></span>
                         <div>
                             <h1 style={{ color: 'white', fontSize: media ? '24px' : '36px', textAlign: 'center' }}>{'Угуучулардын тизмеси'}</h1>
                             <div className="w-full">{breadcrumb}</div>

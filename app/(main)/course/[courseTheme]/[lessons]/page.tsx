@@ -39,7 +39,8 @@ export default function Lesson() {
         {
             id: 1,
             url: '/',
-            title: 'Башкы баракча',
+            title: '',
+            icon: true,
             parent_id: null
         },
         {

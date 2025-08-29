@@ -270,8 +270,9 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                                 {docShow ? (
                                     <NotFound titleMessage={'Сабак кошуу үчүн талааларды толтурунуз'} />
                                 ) : (
-                                    documents.map((item: lessonType) => (
-                                        <>
+                                    documents.map((item: lessonType) => {
+                                        console.log(item.created_at);
+                                        return <>
                                             <LessonCard
                                                 status="working"
                                                 onSelected={(id: number, type: string) => selectedForEditing(id, type)}
@@ -285,7 +286,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                                                 urlForDownload=""
                                             />
                                         </>
-                                    ))
+                                    })
                                 )}
                             </div>
                         </div>

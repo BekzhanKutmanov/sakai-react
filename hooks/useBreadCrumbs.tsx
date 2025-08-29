@@ -57,11 +57,11 @@ export default function useBreadCrumbs(insideBreadCrumb: breadCrumbType[], curre
                 <div key={crumb.id} className="flex items-center">
                     <div className="text-[12px] sm:text-sm">
                         {index < breadCrumb.length - 1 ? (
-                            <Link className="text-white mainColor-hover" href={crumb.url}>
+                            <Link className={`text-white mainColor-hover ${crumb.icon && 'pi pi-home text-white'}`} href={crumb.url}>
                                 {crumb.title}
                             </Link>
                         ) : (
-                            <span className="text-[var(--mainColor)]">{crumb.title}</span>
+                            <span className={`text-[var(--mainColor)]`}>{crumb.title}</span>
                         )}
                     </div>
                     {index < breadCrumb.length - 1 && <span className="text-white px-1 sm:text-2xl"> / </span>}

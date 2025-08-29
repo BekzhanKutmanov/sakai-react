@@ -20,6 +20,8 @@ import { getRedactor } from '@/utils/getRedactor';
 import { getConfirmOptions } from '@/utils/getConfirmOptions';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import useBreadCrumbs from '@/hooks/useBreadCrumbs';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { DataView } from 'primereact/dataview';
 
 export default function CourseTheme() {
     const [hasThemes, setHasThemes] = useState(false);
@@ -44,7 +46,8 @@ export default function CourseTheme() {
         {
             id: 1,
             url: '/',
-            title: 'Башкы баракча',
+            title: '',
+            icon: true,
             parent_id: null
         },
         {
@@ -76,6 +79,8 @@ export default function CourseTheme() {
     const showError = useErrorMessage();
     const pathname = usePathname();
     const breadcrumb = useBreadCrumbs(teachingBreadCrumb, pathname);
+    const media = useMediaQuery('(max-width: 640px)');
+    const tableMedia = useMediaQuery('(max-width: 577px)');
 
     const toggleSkeleton = () => {
         setSkeleton(true);
@@ -93,7 +98,7 @@ export default function CourseTheme() {
         if (data?.lessons) {
             setHasThemes(false);
             console.log(data.lessons);
-            
+
             setThemes(data.lessons.data);
         } else {
             setHasThemes(true);
@@ -232,11 +237,43 @@ export default function CourseTheme() {
     }, [themeValue.title, editingThemes.title]);
 
     useEffect(() => {
+        console.log(themeInfo);
         themes.length < 1 ? setHasThemes(true) : setHasThemes(false);
     }, [themes]);
 
     const titleInfoClass = `${!themeInfo?.image ? 'items-center' : 'w-full'} ${themeInfo?.image ? 'w-1/2' : 'w-full'}`;
     const titleImageClass = `${themeInfo?.image ? 'md:w-1/3' : ''}`;
+
+    const itemTemplate = (shablonData: any) => {
+        return (
+            <div className="col-12">
+                <div className={`w-full flex flex-column sm:flex-row align-items-center p-2 sm:p-4 gap-3 `}>
+                    {/* Заголовок */}
+                    <div className={`w-full flex-1 ${tableMedia && 'flex items-center gap-1 justify-between'}`}>
+                        <div className="font-bold text-md mb-2">
+                            <Link href={`/course/${shablonData.id}`}>
+                                {shablonData.title} {/* Используем subject_name из вашего шаблона */}
+                            </Link>
+                        </div>
+                        {tableMedia && (
+                            <div className="flex flex-column sm:flex-row gap-2 sm:mt-0">
+                                <Redacting redactor={getRedactor('null', shablonData, { onEdit: edit, getConfirmOptions, onDelete: handleDeleteCourse })} textSize={'14px'} />
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Кнопки действий */}
+                    {!tableMedia && (
+                        <div className="flex flex-column sm:flex-row gap-2 sm:mt-0">
+                            {/* <Button icon="pi pi-pencil" className="p-button-rounded" onClick={() => edit(shablonData)} /> */}
+                            {/* <Button icon="pi pi-trash" className="p-button-rounded p-button-danger" onClick={() => handleDeleteCourse(shablonData.id)} /> */}
+                            <Redacting redactor={getRedactor('null', shablonData, { onEdit: edit, getConfirmOptions, onDelete: handleDeleteCourse })} textSize={'14px'} />
+                        </div>
+                    )}
+                </div>
+            </div>
+        );
+    };
 
     return (
         <div className="main-bg">
@@ -249,14 +286,15 @@ export default function CourseTheme() {
                         </h3>
                         <p style={{ color: 'white' }}>{themeInfo?.description}</p>
                         <div className="flex items-center gap-2">
-                            <i className={'pi pi-clock text-blue-500'}></i>
-                            <span>{themeInfo?.created_at}</span>
+                            <i className={`pi pi-calendar text-white`}></i>
+                            <span>{themeInfo?.created_at && new Date(themeInfo?.created_at).toISOString().slice(0, 10)}</span>
                         </div>
                     </div>
-
-                    <div className={`${titleImageClass}`}>
-                        <img src={String(themeInfo?.image)} />
-                    </div>
+                    {themeInfo?.image && (
+                        <div className={`${titleImageClass}`}>
+                            <img src={String(themeInfo?.image)} />
+                        </div>
+                    )}
                 </div>
                 <div className="w-full">{breadcrumb}</div>
             </div>
@@ -309,6 +347,16 @@ export default function CourseTheme() {
                 <div className="py-4">
                     {skeleton ? (
                         <GroupSkeleton count={themes.length} size={{ width: '100%', height: '4rem' }} />
+                    ) : media ? (
+                        <>
+                            <DataView
+                                value={themes}
+                                itemTemplate={itemTemplate}
+                                layout="list" // Отображение в виде сетки, что идеально подходит для карточек
+                                rows={5}
+                                emptyMessage="Нет данных для отображения"
+                            />
+                        </>
                     ) : (
                         <DataTable value={themes} breakpoint="960px" className="my-custom-table">
                             <Column body={(_, { rowIndex }) => rowIndex + 1} header="Номер" style={{ width: '20px' }}></Column>

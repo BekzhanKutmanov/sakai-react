@@ -29,15 +29,12 @@ import useShortText from '@/hooks/useShortText';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import { RadioButton } from 'primereact/radiobutton';
 import { DataView } from 'primereact/dataview';
+import { displayType } from '@/types/displayType';
 
 export default function Course() {
     const { setMessage, course, setCourses, contextFetchCourse } = useContext(LayoutContext);
     interface FileWithPreview extends File {
         objectURL?: string;
-    }
-
-    interface forDisplayType {
-        streamTitle: string;
     }
 
     const [coursesValue, setValueCourses] = useState<myMainCourseType[]>([]);
@@ -56,7 +53,7 @@ export default function Course() {
     });
     const [activeIndex, setActiveIndex] = useState<number>(0);
     const [imageState, setImageState] = useState<string | null>(null);
-    const [displayStrem, setDisplayStreams] = useState<forDisplayType[]>([]);
+    const [displayStrem, setDisplayStreams] = useState<displayType[]>([]);
 
     const [editingLesson, setEditingLesson] = useState<CourseCreateType>({
         title: '',
@@ -129,10 +126,6 @@ export default function Course() {
         setTimeout(() => {
             setSkeleton(false);
         }, 1000);
-    };
-
-    const handleDisplay = (value: forDisplayType[]) => {
-        setDisplayStreams(value);
     };
 
     const handleFetchCourse = async (page = 1) => {
@@ -308,6 +301,11 @@ export default function Course() {
         setActiveIndex(e.index);
     };
 
+    const displayInfo = (value: displayType[]) => {
+        console.log('info ', value);
+        setDisplayStreams(value);
+    };
+
     useEffect(() => {
         contextFetchCourse(1);
     }, []);
@@ -368,7 +366,7 @@ export default function Course() {
     const itemTemplate = (shablonData: any) => {
         return (
             <div className="col-12">
-                <div className={`w-full flex flex-column sm:flex-row align-items-center p-4 gap-3 `}>
+                <div className={`w-full flex flex-column sm:flex-row align-items-center p-3 gap-3 `}>
                     {/* Номер (rowIndex) можно добавить через внешний счетчик или props, но для DataView это сложнее */}
 
                     {/* Заголовок */}
@@ -530,6 +528,32 @@ export default function Course() {
 
             <div className="flex justify-between gap-3">
                 <div className="w-full">
+                    <div className="w-full flex justify-center">
+                        {forStreamId?.title && (
+                            <div className="flex flex-col items-center justify-center gap-2 text-[14px]">
+                                <div className="w-full flex items-center justify-center gap-1">
+                                    <span className="w-[14px] sm:w-[18px] h-[14px] sm:h-[18px] block border bg-[var(--greenColor)]"></span>
+                                    <span className="text-[16px] sm:text-[18px] font-bold text-[var(--mainColor)] text-center">Тандалган курстун аталышы: <span className='text-[#4B4563]'>{forStreamId?.title}</span></span>
+                                </div>
+                                <div className="w-full flex items-center gap-2"> 
+                                    <div className="w-[14px] sm:w-[18px] h-[14px] sm:h-[18px] border bg-[yellow]"></div>
+                                    <div className="flex flex-col gap-1">
+                                        {displayStrem?.length < 1 && <span className="text-[13px]">Курска байлоо үчүн агымдарды тандаңыз</span>}
+                                        {displayStrem.map((item, idx) => {
+                                            if (idx < 1) {
+                                                return (
+                                                    <>
+                                                        <div key={item?.stream_id}>{item?.stream_title}...</div>
+                                                    </>
+                                                );
+                                            }
+                                            // <span>{displayStrem.length >= 3 && '...'}</span>
+                                        })}
+                                    </div>
+                                 </div>
+                            </div>
+                        )}
+                    </div>
                     {media ? (
                         <>
                             <TabView
@@ -551,7 +575,7 @@ export default function Course() {
                                 >
                                     {/* mobile table section */}
                                     {/* mobile table section */}
-                                    {false ? (
+                                    {hasCourses ? (
                                         <>
                                             <div className="flex justify-end">
                                                 <Button
@@ -702,7 +726,7 @@ export default function Course() {
                             </div>
                             {/* STREAMS SECTION */}
                             <div className="w-1/2">
-                                <StreamList isMobile={false} callIndex={1} courseValue={forStreamId?.id ? forStreamId : null} insideDisplayStreams={() => {}} />
+                                <StreamList isMobile={false} callIndex={1} courseValue={forStreamId?.id ? forStreamId : null} insideDisplayStreams={(value: displayType[]) => displayInfo(value)} />
                             </div>
                         </div>
                     )}
