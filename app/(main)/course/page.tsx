@@ -528,16 +528,16 @@ export default function Course() {
 
             <div className="flex justify-between gap-3">
                 <div className="w-full">
-                    <div className="w-full flex justify-center">
+                    <div className="w-full flex justify-center pt-1">
                         {forStreamId?.title && (
                             <div className="flex flex-col items-center justify-center gap-2 text-[14px]">
-                                <div className="w-full flex items-center justify-center gap-1">
-                                    <span className="w-[14px] sm:w-[18px] h-[14px] sm:h-[18px] block border bg-[var(--greenColor)]"></span>
-                                    <span className="text-[16px] sm:text-[18px] font-bold text-[var(--mainColor)] text-center">Тандалган курстун аталышы: <span className='text-[#4B4563]'>{forStreamId?.title}</span></span>
+                                <div className="w-full flex items-center justify-center gap-2">
+                                    <span className="min-w-[14px] w-[14px] sm:w-[18px] h-[14px] sm:h-[18px] block border bg-[var(--greenColor)]"></span>
+                                    <span className="text-[16px] sm:text-[18px] font-bold text-[var(--mainColor)] ">Тандалган курстун аталышы: <span className='text-[#4B4563]'>{forStreamId?.title}</span></span>
                                 </div>
-                                <div className="w-full flex items-center gap-2"> 
-                                    <div className="w-[14px] sm:w-[18px] h-[14px] sm:h-[18px] border bg-[yellow]"></div>
-                                    <div className="flex flex-col gap-1">
+                                <div className="w-full flex items-center justify-center gap-2"> 
+                                    <div className="min-w-[14px] w-[14px] sm:w-[18px] h-[14px] sm:h-[18px] border bg-[yellow]"></div>
+                                    <div className="flex flex-col gap-1 ">
                                         {displayStrem?.length < 1 && <span className="text-[13px]">Курска байлоо үчүн агымдарды тандаңыз</span>}
                                         {displayStrem.map((item, idx) => {
                                             if (idx < 1) {
@@ -630,7 +630,7 @@ export default function Course() {
                                     className="p-tabview p-tabview-nav p-tabview-selected p-tabview-panels p-tabview-panel"
                                 >
                                     <div className="w-full sm:w-1/2">
-                                        <StreamList callIndex={activeIndex} courseValue={forStreamId} isMobile={true} insideDisplayStreams={() => {}} />
+                                        <StreamList callIndex={activeIndex} courseValue={forStreamId} isMobile={true} insideDisplayStreams={(value: displayType[]) => displayInfo(value)} />
                                     </div>
                                 </TabPanel>
                             </TabView>

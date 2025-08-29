@@ -12,7 +12,7 @@ import Link from 'next/link';
 import { streamsType } from '@/types/streamType';
 import { displayType } from '@/types/displayType';
 
-export default function StreamList({ callIndex, courseValue, isMobile, insideDisplayStreams }: { callIndex: number; courseValue: { id: number | null; title: string } | null; isMobile: boolean; insideDisplayStreams: (id:displayType[]) => void }) {
+export default function StreamList({ callIndex, courseValue, isMobile, insideDisplayStreams }: { callIndex: number; courseValue: { id: number | null; title: string } | null; isMobile: boolean; insideDisplayStreams: (id: displayType[]) => void }) {
     interface mainStreamsType {
         connect_id: number | null;
         stream_id: number;
@@ -24,6 +24,7 @@ export default function StreamList({ callIndex, courseValue, isMobile, insideDis
         id_period: number;
         semester: { name_kg: string };
         edu_form: { name_kg: string };
+        courseValue?: number;
     }
 
     const shablon = [
@@ -82,6 +83,7 @@ export default function StreamList({ callIndex, courseValue, isMobile, insideDis
     const [hasStreams, setHasStreams] = useState(false);
     const [selectedStreams, setSelectedStreams] = useState([]);
     const [skeleton, setSkeleton] = useState(false);
+    const [pendingChanges, setPendingChanges] = useState<streamsType[]>([]);
 
     const { setMessage } = useContext(LayoutContext);
     const showError = useErrorMessage();
@@ -93,10 +95,10 @@ export default function StreamList({ callIndex, courseValue, isMobile, insideDis
         }, 1000);
     };
 
-    const profilactor = (data: { connect_id: number; course_id: number; stream_id: number; info: string | null, subject_name: {name_kg:string} }[]) => {
-        const newStreams: { course_id: number; stream_id: number; info: string | null, stream_title: string  }[] = [];
+    const profilactor = (data: { connect_id: number; course_id: number; stream_id: number; info: string | null; subject_name: { name_kg: string } }[]) => {
+        const newStreams: { course_id: number; stream_id: number; info: string | null; stream_title: string }[] = [];
         console.log(data);
-        
+
         data.forEach((item) => {
             if (item?.connect_id) {
                 newStreams.push({
@@ -108,15 +110,23 @@ export default function StreamList({ callIndex, courseValue, isMobile, insideDis
             }
         });
 
-        setStreamValues((prev) => ({
-            ...prev,
-            stream: [...prev.stream, ...newStreams]
-        }));
+        // setStreamValues((prev) => ({
+        //     ...prev,
+        //     stream: [...prev.stream, ...newStreams]
+        // }));
+        // setPendingChanges((prev)=> [...prev, ...newStreams]);
+
+        setPendingChanges((prev) => {
+            const pendingIds = new Set(prev.map((p) => p.stream_id));
+            const uniqueNewStreams = newStreams.filter((s) => !pendingIds.has(s.stream_id));
+            return [...prev, ...uniqueNewStreams];
+        });
     };
 
     const handleFetchStreams = async () => {
         const data = await fetchStreams(courseValue ? courseValue.id : null);
-        setStreamValues({ stream: [] });
+        // setStreamValues({ stream: [] });
+        setPendingChanges([]);
 
         if (data) {
             profilactor(data);
@@ -140,7 +150,8 @@ export default function StreamList({ callIndex, courseValue, isMobile, insideDis
     };
 
     const handleConnect = async () => {
-        const data = await connectStreams(streamValues);
+        const data = await connectStreams({ stream: pendingChanges });
+        // const data = await connectStreams(streamValues);
 
         if (data?.success) {
             toggleSkeleton();
@@ -160,48 +171,73 @@ export default function StreamList({ callIndex, courseValue, isMobile, insideDis
         }
     };
 
-    const handleEdit = (e: { checked: boolean }, id: number, title: string) => {
+    const handleEdit = (e: { checked: boolean }, item: mainStreamsType) => {
+        const { stream_id, subject_name } = item;
+        const isChecked = e.checked;
+
         const forSentStreams = {
             course_id: courseValue!.id,
-            stream_id: id,
+            stream_id: stream_id,
             info: '',
-            stream_title: title
+            stream_title: subject_name.name_kg
         };
 
-        if (e.checked) {
-            // profilactor();
-            setStreamValues(
-                (prev) =>
-                    prev && {
-                        ...prev,
-                        stream: [...prev.stream, forSentStreams]
-                    }
-            );
-            // const x = {streamTitle}
-        } else {
-            setStreamValues(
-                (prev) =>
-                    prev && {
-                        ...prev,
-                        stream: [...prev.stream.filter((item) => item?.stream_id !== id)]
-                    }
-            );
-        }
-    };
+        setPendingChanges((prev) => {
+            const isCurrentlyPending = prev.some((s) => s.stream_id === stream_id);
 
-    useEffect(() => {
-        console.log('отправляемый поток ', streamValues);
-        const forDisplay = streamValues.stream.filter((item, idx) => {
-            // if (idx <= 2) {
-                return item;
-            // }
+            if (isChecked) {
+                // Если чекбокс отмечается
+                if (!isCurrentlyPending) {
+                    return [...prev, forSentStreams];
+                }
+            } else {
+                // Если чекбокс снимается, удаляем объект из временного состояния
+                return prev.filter((s) => s.stream_id !== stream_id);
+            }
+
+            return prev;
         });
 
-        setDisplayStreams(forDisplay);
-    }, [streamValues]);
+        // if (e.checked) {
+        //     // profilactor();
+        //     setStreamValues(
+        //         (prev) =>
+        //             prev && {
+        //                 ...prev,
+        //                 stream: [...prev.stream, forSentStreams]
+        //             }
+        //     );
+        //     // const x = {streamTitle}
+        // } else {
+        //     setStreamValues(
+        //         (prev) =>
+        //             prev && {
+        //                 ...prev,
+        //                 stream: [...prev.stream.filter((item) => item?.stream_id !== id)]
+        //             }
+        //     );
+        // }
+    };
+
+    // useEffect(() => {
+    //     console.log('отправляемый поток ', streamValues);
+    //     // const forDisplay = streamValues.stream.filter((item, idx) => {
+    //     //     // if (idx <= 2) {
+    //     //     return item;
+    //     //     // }
+    //     // });
+
+    //     // setDisplayStreams(forDisplay);
+
+    // }, [streamValues]);
 
     useEffect(() => {
-        setStreamValues({ stream: [] });
+        console.log('отправляемый поток ', pendingChanges);
+        setDisplayStreams(pendingChanges); // Или filter/map по вашему усмотрению
+    }, [pendingChanges]);
+
+    useEffect(() => {
+        // setStreamValues({ stream: [] });
         setDisplayStreams([]);
         toggleSkeleton();
         if (courseValue?.id) {
@@ -224,8 +260,7 @@ export default function StreamList({ callIndex, courseValue, isMobile, insideDis
 
     const itemTemplate = (item: mainStreamsType, index: number) => {
         const bgClass = item.connect_id ? 'bg-[var(--greenBgColor)] border-b border-[gray]' : index % 2 == 1 ? 'bg-[#f5f5f5]' : '';
-        console.log(item);
-        
+
         return (
             <div className={`w-full ${bgClass}`} key={item?.stream_id}>
                 <div className={`flex flex-column p-2 gap-2`}>
@@ -235,10 +270,30 @@ export default function StreamList({ callIndex, courseValue, isMobile, insideDis
                             <input
                                 type="checkbox"
                                 className={`customCheckbox`}
-                                checked={Boolean(item.connect_id)}
+                                // svoysky
+                                // checked={Boolean(item.connect_id)}
+                                // onChange={(e) => {
+                                //     handleEdit(e.target, item.stream_id, item?.subject_name.name_kg);
+                                //     setStreams((prev) => prev.map((el) => (el.stream_id === item.stream_id ? { ...el, connect_id: el.connect_id ? null : 1 } : el)));
+                                // }}
+                                // vtoroy gde obratno ne ot
+                                // checked={
+                                //     // Проверяем, есть ли этот элемент в вашем массиве для отправки (streamValues).
+                                //     // Это отвечает за "включение" чекбокса для новых элементов.
+                                //     streamValues?.stream?.some((s) => s.stream_id === item.stream_id) ||
+                                //     // ...ИЛИ если этот элемент уже пришёл с сервера (есть connect_id), НО
+                                //     // его НЕТ в вашем массиве для отправки, что означает, что вы его не "отжали".
+                                //     (Boolean(item.connect_id) && !streamValues?.stream?.some((s) => s.stream_id === item.stream_id))
+                                // }
+                                // checked={
+                                //     // Проверяем, есть ли объект в нашем буфере
+                                //     pendingChanges.some((s) => s.stream_id === item.stream_id) ||
+                                //     // ...ИЛИ если его нет в буфере, проверяем, есть ли он на сервере
+                                //     (Boolean(item.connect_id) && !pendingChanges.some((s) => s.stream_id === item.stream_id))
+                                // }
+                                checked={pendingChanges.some((s) => s.stream_id === item.stream_id)}
                                 onChange={(e) => {
-                                    handleEdit(e.target, item.stream_id, item?.subject_name.name_kg);
-                                    setStreams((prev) => prev.map((el) => (el.stream_id === item.stream_id ? { ...el, connect_id: el.connect_id ? null : 1 } : el)));
+                                    handleEdit(e.target, item);
                                 }}
                             />
                             <span className="checkbox-mark"></span>
