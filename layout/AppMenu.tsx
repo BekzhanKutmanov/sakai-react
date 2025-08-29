@@ -93,11 +93,7 @@ const AppMenu = () => {
                 label: item.title,
                 id: item.id,
                 to: `/course/${clickedCourseId}/${item.id}`,
-                command: () => {
-                    console.log('clicked theme', item.id);
-                }
             }));
-            console.log(newThemes);
 
             setCourseList((prev) =>
                 prev.map((course) =>

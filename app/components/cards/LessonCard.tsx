@@ -32,6 +32,7 @@ export default function LessonCard({
     urlForDownload: string;
 }) {
     const shortTitle = useShortText(cardValue.title, 10);
+    const shortDescription = useShortText(cardValue.desctiption ? cardValue.desctiption : '', 17);
     const [progressSpinner, setProgressSpinner] = useState(false);
 
     const toggleSpinner = () => {
@@ -113,9 +114,9 @@ export default function LessonCard({
             <div className={`flex flex-col items-center ${type.typeValue !== 'video' ? 'gap-3' : 'gap-1'}`}>
                 <div className="bg-[#d6bcbc12] flex flex-col justify-between rounded-2xl p-1">
                     {/* <div className=''>{!cardValue.photo && <img className="cover" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSweN5K2yaBwZpz5W9CxY9S41DI-2LawmjzYw&s" alt="" />}</div> */}
-                    <div className="flex items-center justify-center text-[16px] sm:text-xl mt-1">{shortTitle}</div>
+                    <div className="flex items-center justify-center text-[15px] sm:text-[17px] mt-1">{shortTitle}</div>
                     {type.typeValue === 'link' && <span className="flex justify-center">{cardValue?.url}</span>}
-                    <div className="flex items-center justify-center text-[13px]">{cardValue?.desctiption && cardValue.desctiption}</div>
+                    <div className="flex items-center justify-center text-[13px]">{cardValue?.desctiption && cardValue?.desctiption !== 'null' && shortDescription}</div>
                     {status === 'working' && type.typeValue !== 'video' && (
                         <div className={`flex gap-1 items-center justify-center mt-1`}>
                             <i className={`pi pi-calendar text-[var(--mainColor)]`}></i>

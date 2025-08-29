@@ -12,7 +12,7 @@ import Link from 'next/link';
 import { streamsType } from '@/types/streamType';
 import { displayType } from '@/types/displayType';
 
-export default function StreamList({ callIndex, courseValue, isMobile, insideDisplayStreams }: { callIndex: number; courseValue: { id: number | null; title: string } | null; isMobile: boolean; insideDisplayStreams: (id: displayType[]) => void }) {
+export default function StreamList({ callIndex, courseValue, isMobile, insideDisplayStreams, toggleIndex }: { callIndex: number; courseValue: { id: number | null; title: string } | null; isMobile: boolean; insideDisplayStreams: (id: displayType[]) => void, toggleIndex: ()=> void }) {
     interface mainStreamsType {
         connect_id: number | null;
         stream_id: number;
@@ -360,9 +360,6 @@ export default function StreamList({ callIndex, courseValue, isMobile, insideDis
                                         icon="pi pi-link"
                                         onClick={() => {
                                             handleConnect();
-                                            // setEditMode(false);
-                                            // clearValues();
-                                            // setFormVisible(true);
                                         }}
                                     />
                                 </div>
@@ -375,12 +372,22 @@ export default function StreamList({ callIndex, courseValue, isMobile, insideDis
                     ) : (
                         <div className="flex flex-col gap-2 sm:gap-2">
                             {isMobile && (
-                                <div className="flex">
+                                <div className="w-full flex flex-col items-center gap-1">
                                     <Button
                                         label="Байлоо"
+                                        className='w-full'
                                         icon="pi pi-link"
                                         onClick={() => {
                                             handleConnect();
+                                        }}
+                                    />
+
+                                    <Button
+                                        label="Курстар"
+                                        className='w-full'
+                                        icon="pi pi-arrow-left"
+                                        onClick={() => {
+                                            toggleIndex();
                                         }}
                                     />
                                 </div>

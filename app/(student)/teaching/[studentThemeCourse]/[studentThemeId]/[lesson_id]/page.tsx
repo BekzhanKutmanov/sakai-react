@@ -244,7 +244,7 @@ export default function StudentLessons() {
                     {/* DOC */}
                     <TabPanel
                         pt={{
-                            headerAction: { className: 'font-italic text-[12px] sm:text-[14px]' }
+                            headerAction: { className: 'cursor-pointer font-italic text-[12px] sm:text-[14px]' }
                         }}
                         header="Документ"
                         className="p-tabview p-tabview-nav p-tabview-selected p-tabview-panels p-tabview-panel"
@@ -255,7 +255,7 @@ export default function StudentLessons() {
                     {/* USEFUL LINKS */}
                     <TabPanel
                         pt={{
-                            headerAction: { className: 'font-italic text-center text-[12px] sm:text-[14px]' }
+                            headerAction: { className: 'cursor-pointer font-italic text-center text-[12px] sm:text-[14px]' }
                         }}
                         header="Шилтеме"
                         className="p-tabview p-tabview-nav p-tabview-selected p-tabview-panels p-tabview-panel"
@@ -266,7 +266,7 @@ export default function StudentLessons() {
                     {/* VIDEO */}
                     <TabPanel
                         pt={{
-                            headerAction: { className: 'font-italic text-[12px] sm:text-[14px]' }
+                            headerAction: { className: 'cursor-pointer font-italic text-[12px] sm:text-[14px]' }
                         }}
                         header="Видео"
                         className="p-tabview p-tabview-nav p-tabview-selected p-tabview-panels p-tabview-panel"

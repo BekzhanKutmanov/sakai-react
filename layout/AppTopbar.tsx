@@ -39,7 +39,7 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                       {
                           label: '',
                           template: (
-                            <div className="flex justify-center m-auto items-center flex-col gap-1 text-sm">
+                            <div className="flex items-center flex-col gap-1 text-sm">
                                   <div className="flex gap-1">
                                       <span className="text-[var(--titleColor)]">{user?.last_name}</span>
                                       <span className="text-[var(--titleColor)]">{user?.name}</span>
@@ -51,6 +51,7 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                       {
                           label: 'Чыгуу',
                           icon: 'pi pi-sign-out',
+                          className: 'text-[12px]',
                           items: [],
                           command: () => {
                               logout({ setUser, setGlobalLoading });

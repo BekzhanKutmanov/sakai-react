@@ -22,6 +22,7 @@ import PDFViewer from '../PDFBook';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { useRouter } from 'next/navigation';
 import { ProgressSpinner } from 'primereact/progressspinner';
+import useShortText from '@/hooks/useShortText';
 
 export default function LessonTyping({ mainType, courseId, lessonId }: { mainType: string; courseId: string | null; lessonId: string | null }) {
     // types
@@ -103,7 +104,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
     const [visible, setVisisble] = useState(false);
     const [editingLesson, setEditingLesson] = useState<EditableLesson | null>(null);
     const [progressSpinner, setProgressSpinner] = useState(false);
-
+    
     // functions
     const handleUpdate = () => {
         if (selectType === 'doc') {
@@ -116,8 +117,6 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
     };
 
     const selectedForEditing = (id: number, type: string) => {
-        console.log('Открытие окна... ', id, type);
-
         setSelectId(id);
         setSelectType(type);
         editing(type, id);
@@ -133,7 +132,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
 
         const lesson: editingType =
             type === 'doc'
-                ? { key: 'documents', file: 'document_path', url: '', link: '', video_type_id: 1 }
+                ? { key: 'documents', file: 'document', url: '', link: '', video_type_id: 1 }
                 : type === 'url'
                 ? { key: 'links', file: '', url: 'url', link: '', video_type_id: 1 }
                 : type === 'video'
@@ -149,7 +148,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
 
                 setEditingLesson({
                     title: arr.title,
-                    description: arr?.description,
+                    description: arr?.description,  
                     document: arr[lesson.file],
                     url: arr[lesson.url],
                     video_link: arr[lesson.link],
@@ -271,7 +270,6 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                                     <NotFound titleMessage={'Сабак кошуу үчүн талааларды толтурунуз'} />
                                 ) : (
                                     documents.map((item: lessonType) => {
-                                        console.log(item.created_at);
                                         return <>
                                             <LessonCard
                                                 status="working"
@@ -345,6 +343,10 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
             }
         }
     };
+
+    useEffect(()=> {
+        console.log(documents);
+    },[documents])
 
     // update document
     const handleUpdateLesson = async () => {
@@ -810,16 +812,14 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                 return { name: item.title, status: item.is_link, id: item.id };
             });
 
-            setVideoSelect(forSelect);
-            console.log(forSelect);
-            
+            setVideoSelect(forSelect);            
             setSelectedCity(forSelect[0]);
         }
     }, [videoTypes]);
 
     return (
         <div>
-            <FormModal title={'Сабакты жанылоо'} fetchValue={handleUpdate} clearValues={clearValues} visible={visible} setVisible={setVisisble} start={false}>
+            <FormModal title={'Сабакты жаңылоо'} fetchValue={handleUpdate} clearValues={clearValues} visible={visible} setVisible={setVisisble} start={false}>
                 <div className="flex flex-col gap-1">
                     <div className="flex flex-col gap-1 items-center justify-center">
                         {selectType === 'doc' ? (
@@ -851,7 +851,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                                     }}
                                 />
                                 <b style={{ color: 'red', fontSize: '12px' }}>{errors.title?.message}</b>
-                                <InputText placeholder="Мазмун" value={editingLesson?.description && editingLesson?.description} onChange={(e) => setEditingLesson((prev) => prev && { ...prev, description: e.target.value })} className="w-full" />
+                                <InputText placeholder="Мазмун" value={editingLesson?.description !== 'null' ? editingLesson?.description : ''} onChange={(e) => setEditingLesson((prev) => prev && { ...prev, description: e.target.value })} className="w-full" />
                             </>
                         ) : selectType === 'url' ? (
                             <>

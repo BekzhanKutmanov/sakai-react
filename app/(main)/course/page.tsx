@@ -592,14 +592,25 @@ export default function Course() {
                                         </>
                                     ) : (
                                         <>
-                                            <div className="flex">
+                                            <div className="w-full flex flex-col items-center justify-between gap-1">
                                                 <Button
-                                                    label="Кошуу"
+                                                    label="Курс кошуу"
                                                     icon="pi pi-plus"
+                                                    iconPos='right'
+                                                    className='w-full'
                                                     onClick={() => {
                                                         setEditMode(false);
                                                         clearValues();
                                                         setFormVisible(true);
+                                                    }}
+                                                />
+                                                <Button
+                                                    label="Агымдар"
+                                                    icon="pi pi-arrow-right"
+                                                    className='w-full'
+                                                    iconPos='right'
+                                                    onClick={() => {
+                                                        setActiveIndex(1);
                                                     }}
                                                 />
                                             </div>
@@ -626,11 +637,11 @@ export default function Course() {
                                     pt={{
                                         headerAction: { className: 'font-italic' }
                                     }}
-                                    header="Потоктор"
+                                    header="Агымдар"
                                     className="p-tabview p-tabview-nav p-tabview-selected p-tabview-panels p-tabview-panel"
                                 >
                                     <div className="w-full sm:w-1/2">
-                                        <StreamList callIndex={activeIndex} courseValue={forStreamId} isMobile={true} insideDisplayStreams={(value: displayType[]) => displayInfo(value)} />
+                                        <StreamList callIndex={activeIndex} courseValue={forStreamId} isMobile={true} insideDisplayStreams={(value: displayType[]) => displayInfo(value)} toggleIndex={()=> setActiveIndex(0)}/>
                                     </div>
                                 </TabPanel>
                             </TabView>
@@ -726,7 +737,7 @@ export default function Course() {
                             </div>
                             {/* STREAMS SECTION */}
                             <div className="w-1/2">
-                                <StreamList isMobile={false} callIndex={1} courseValue={forStreamId?.id ? forStreamId : null} insideDisplayStreams={(value: displayType[]) => displayInfo(value)} />
+                                <StreamList isMobile={false} callIndex={1} courseValue={forStreamId?.id ? forStreamId : null} insideDisplayStreams={(value: displayType[]) => displayInfo(value)} toggleIndex={()=> {}}/>
                             </div>
                         </div>
                     )}

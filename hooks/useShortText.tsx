@@ -21,7 +21,7 @@ export default function useShortText(text: string, textLength: number) {
         <>
             <Tooltip target=".hasTooltip" />
             {isLength ? (
-                <div className="hasTooltip flex justify-center items-end gap-1" data-pr-tooltip={text} data-pr-position="right">
+                <div className="hasTooltip flex justify-center items-end gap-1 px-1" data-pr-tooltip={text} data-pr-position="right">
                     {resultText}
                     <i className="pi pi-ellipsis-h"></i>
                 </div>

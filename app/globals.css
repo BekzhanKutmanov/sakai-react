@@ -568,3 +568,14 @@ h1, h2, h3, h4, h5, h6 {
     padding: 4px 5px;
   }
 }
+
+/* menu item , sidebar */
+.p-menuitem-link, .p-menuitem-icon{
+  font-size: 13px !important;
+}
+
+@media screen and (max-width: 640px) {
+  .layout-menuitem-text{
+    font-size: 13px !important;
+  }
+}

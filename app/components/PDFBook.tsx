@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import HTMLFlipBook from 'react-pageflip'; // Импортируем flipbook
 import GroupSkeleton from './skeleton/GroupSkeleton';
 
@@ -9,19 +9,23 @@ import GroupSkeleton from './skeleton/GroupSkeleton';
 
 import * as pdfjsLib from 'pdfjs-dist';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { LayoutContext } from '@/layout/context/layoutcontext';
+import { NotFound } from './NotFound';
 
 // Указываем путь к файлу mjs
 pdfjsLib.GlobalWorkerOptions.workerSrc = `/pdf.worker.mjs`;
 
 export default function PDFViewer({ url }: { url: string }) {
+    const { setMessage } = useContext(LayoutContext);
+
     const [pages, setPages] = useState<React.JSX.Element[]>([]);
     const [skeleton, setSkeleton] = useState(false);
+    const [hasPdf, setHasPdf] = useState(false);
 
     const containerRef = useRef<HTMLDivElement>(null);
     const [bookSize, setBookSize] = useState({ width: 0, height: 0, aspectRatio: 0 });
 
     const FIXED_BOOK_HEIGHT = 800; // Фиксированная высота книги
-
     const media = useMediaQuery('(max-width: 640px)');
 
     useEffect(() => {
@@ -52,6 +56,11 @@ export default function PDFViewer({ url }: { url: string }) {
 
                     if (!context) {
                         // в последний раз добавил эту строку если что
+                        setHasPdf(true);
+                        setMessage({
+                            state: true,
+                            value: { severity: 'error', summary: 'Ошибка', detail: 'Документти жүктөө же көрсөтүү катасы' }
+                        });
                         throw new Error('Canvas context is not supported.');
                     }
 
@@ -75,16 +84,24 @@ export default function PDFViewer({ url }: { url: string }) {
 
                 // Обновляем состояние с данными только после успешной загрузки
                 setPages(tempPages);
-                if (containerRef.current) { // в последний раз добавил эту проверку если что
+                if (containerRef.current) {
+                    // в последний раз добавил эту проверку если что
                     setBookSize({
                         width: containerRef.current.offsetWidth,
                         height: FIXED_BOOK_HEIGHT,
                         aspectRatio: aspectRatio
                     });
+                    setHasPdf(false);
                 }
                 setSkeleton(false);
             } catch (error) {
                 console.error('Ошибка при загрузке или рендеринге PDF:', error);
+                setHasPdf(true);
+                setSkeleton(false);
+                setMessage({
+                    state: true,
+                    value: { severity: 'error', summary: 'Ошибка', detail: 'Документти жүктөө же көрсөтүү катасы' }
+                });
             } finally {
                 setSkeleton(false);
             }
@@ -102,37 +119,13 @@ export default function PDFViewer({ url }: { url: string }) {
                 setBookSize({ width, height, aspectRatio: width / height });
             }
         };
-
-        // Вызываем сразу после монтирования
         updateBookSize();
-
         window.addEventListener('resize', updateBookSize);
         return () => window.removeEventListener('resize', updateBookSize);
     }, [bookSize.aspectRatio]);
 
-    // useEffect(() => {
-    //     const updateBookSize = () => {
-    //         if (containerRef.current && bookSize.aspectRatio > 0) {
-    //             const containerWidth = containerRef.current.offsetWidth;
-    //             const bookHeight = containerWidth / bookSize.aspectRatio; // пропорциональная высота
-
-    //             setBookSize((prev) => ({
-    //                 ...prev,
-    //                 width: containerWidth,
-    //                 height: bookHeight
-    //             }));
-    //         }
-    //     };
-
-    //     updateBookSize(); // сразу после монтирования
-    //     window.addEventListener('resize', updateBookSize);
-    //     return () => window.removeEventListener('resize', updateBookSize);
-    // }, [bookSize.aspectRatio]);
-
     return (
-        // <div ref={containerRef} className="">
         <div
-            // className="sm-[500px] sm:w-[500px] md:w-[500px] lg:w-[600px] xl:w-[1000px]"
             ref={containerRef}
             className="w-[800px]"
             style={{
@@ -141,110 +134,106 @@ export default function PDFViewer({ url }: { url: string }) {
                 margin: '0 auto'
             }}
         >
-            {/* style={{ width: '100%', backgroundColor: 'red', maxWidth: 1000, margin: '0 auto', border: 'solid 1px' }} */}
-            {skeleton ? (
-                <GroupSkeleton count={1} size={{ width: '100%', height: '20rem' }} />
-            ) : // <HTMLFlipBook className="book-container" width={bookSize.width / 2} height={bookSize.height} size="stretch" minWidth={320} maxWidth={1000} minHeight={300} maxHeight={600} showCover={false} flippingTime={1000} usePortrait={true}>
-            //     {pages.map((page, index) => (
-            //         <div key={index} className="page">
-            //             <div className="page-content">
-            //                 {' '}
-            //                 {/* Добавляем класс для содержимого страницы */}
-            //                 {page}
-            //             </div>
-            //         </div>
-            //     ))}
-            // </HTMLFlipBook>
-            media ? (
-                <>
-                    <HTMLFlipBook
-                        // width={Math.min(bookSize.width, 600)} // ограничиваем ширину страницы
-                        width={300} // ограничиваем ширину страницы
-                        height={bookSize.height}
-                        size="stretch"
-                        minWidth={320}
-                        maxWidth={600} // ограничиваем maxWidth для PageFlip
-                        minHeight={420}
-                        maxHeight={bookSize.height}
-                        showCover={false}
-                        usePortrait={true}
-                        // news
-                        startZIndex={0}
-                        autoSize={true}
-                        maxShadowOpacity={0.5}
-                        mobileScrollSupport={true}
-                        swipeDistance={30}
-                        clickEventForward={true}
-                        useMouseEvents={true}
-                        renderOnlyPageLengthChange={false}
-                        className=""
-                        style={{}}
-                        onFlip={() => {}}
-                        onChangeOrientation={() => {}}
-                        onChangeState={() => {}}
-                        onInit={() => {}}
-                        onUpdate={() => {}}
-                        startPage={0}
-                        drawShadow={true}
-                        flippingTime={900}
-                        showPageCorners={true}
-                        disableFlipByClick={false}
-                    >
-                        {pages.map((page, index) => (
-                            <div key={index} className="page">
-                                <div className="page-content">
-                                    {' '}
-                                    {/* Добавляем класс для содержимого страницы */}
-                                    {page}
-                                </div>
-                            </div>
-                        ))}
-                    </HTMLFlipBook>
-                </>
+            {hasPdf ? (
+                <NotFound titleMessage={'Кийинчерээк кайра аракет кылыңыз'} />
             ) : (
-                <HTMLFlipBook
-                    // width={Math.min(bookSize.width, 600)} // ограничиваем ширину страницы
-                    width={Math.min(bookSize.width, 1000)} // ограничиваем ширину страницы
-                    height={bookSize.height}
-                    size="stretch"
-                    minWidth={media ? 320 : 600}
-                    maxWidth={600} // ограничиваем maxWidth для PageFlip
-                    minHeight={420}
-                    maxHeight={bookSize.height}
-                    showCover={false}
-                    usePortrait={true}
-                    // news
-                    startZIndex={0}
-                    autoSize={true}
-                    maxShadowOpacity={0.5}
-                    mobileScrollSupport={true}
-                    swipeDistance={30}
-                    clickEventForward={true}
-                    useMouseEvents={true}
-                    renderOnlyPageLengthChange={false}
-                    className=""
-                    style={{}}
-                    onFlip={() => {}}
-                    onChangeOrientation={() => {}}
-                    onChangeState={() => {}}
-                    onInit={() => {}}
-                    onUpdate={() => {}}
-                    startPage={0}
-                    drawShadow={true}
-                    flippingTime={900}
-                    showPageCorners={true}
-                    disableFlipByClick={false}
-                >
-                    {pages.map((page, index) => (
-                        <div key={index} className="page">
-                            <div className="page-content">
-                                {' '}
-                                {/* Добавляем класс для содержимого страницы */}
-                                {page}
-                            </div>
+                <>
+                    {skeleton ? (
+                        <div className='w-[300px] sm:w-[800px]'>
+                            <GroupSkeleton count={1} size={{ width: '100%', height: '20rem' }} />
                         </div>
-                    ))}
-                </HTMLFlipBook>
+                    ) : media ? (
+                        <>
+                            <HTMLFlipBook
+                                // width={Math.min(bookSize.width, 600)} // ограничиваем ширину страницы
+                                width={300} // ограничиваем ширину страницы
+                                height={bookSize.height}
+                                size="stretch"
+                                minWidth={320}
+                                maxWidth={600} // ограничиваем maxWidth для PageFlip
+                                minHeight={420}
+                                maxHeight={bookSize.height}
+                                showCover={false}
+                                usePortrait={true}
+                                // news
+                                startZIndex={0}
+                                autoSize={true}
+                                maxShadowOpacity={0.5}
+                                mobileScrollSupport={true}
+                                swipeDistance={30}
+                                clickEventForward={true}
+                                useMouseEvents={true}
+                                renderOnlyPageLengthChange={false}
+                                className=""
+                                style={{}}
+                                onFlip={() => {}}
+                                onChangeOrientation={() => {}}
+                                onChangeState={() => {}}
+                                onInit={() => {}}
+                                onUpdate={() => {}}
+                                startPage={0}
+                                drawShadow={true}
+                                flippingTime={900}
+                                showPageCorners={true}
+                                disableFlipByClick={false}
+                            >
+                                {pages.map((page, index) => (
+                                    <div key={index} className="page">
+                                        <div className="page-content">
+                                            {' '}
+                                            {/* Добавляем класс для содержимого страницы */}
+                                            {page}
+                                        </div>
+                                    </div>
+                                ))}
+                            </HTMLFlipBook>
+                        </>
+                    ) : (
+                        <HTMLFlipBook
+                            // width={Math.min(bookSize.width, 600)} // ограничиваем ширину страницы
+                            width={Math.min(bookSize.width, 1000)} // ограничиваем ширину страницы
+                            height={bookSize.height}
+                            size="stretch"
+                            minWidth={media ? 320 : 600}
+                            maxWidth={600} // ограничиваем maxWidth для PageFlip
+                            minHeight={420}
+                            maxHeight={bookSize.height}
+                            showCover={false}
+                            usePortrait={true}
+                            // news
+                            startZIndex={0}
+                            autoSize={true}
+                            maxShadowOpacity={0.5}
+                            mobileScrollSupport={true}
+                            swipeDistance={30}
+                            clickEventForward={true}
+                            useMouseEvents={true}
+                            renderOnlyPageLengthChange={false}
+                            className=""
+                            style={{}}
+                            onFlip={() => {}}
+                            onChangeOrientation={() => {}}
+                            onChangeState={() => {}}
+                            onInit={() => {}}
+                            onUpdate={() => {}}
+                            startPage={0}
+                            drawShadow={true}
+                            flippingTime={900}
+                            showPageCorners={true}
+                            disableFlipByClick={false}
+                        >
+                            {pages.map((page, index) => (
+                                <div key={index} className="page">
+                                    <div className="page-content">
+                                        {' '}
+                                        {/* Добавляем класс для содержимого страницы */}
+                                        {page}
+                                    </div>
+                                </div>
+                            ))}
+                        </HTMLFlipBook>
+                    )}
+                </>
             )}
         </div>
         // </div>

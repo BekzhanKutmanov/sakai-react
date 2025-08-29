@@ -241,7 +241,7 @@ export default function Lesson() {
                 {/* CKEDITOR */}
                 <TabPanel
                     pt={{
-                        headerAction: { className: 'font-italic text-sm sm:text-md tab-custom-text' }
+                        headerAction: { className: 'cursor-pointer font-italic text-sm sm:text-md tab-custom-text' }
                     }}
                     header="Текст"
                     leftIcon={'pi pi-pen-to-square mr-1'}
@@ -298,7 +298,7 @@ export default function Lesson() {
                 {/* DOC */}
                 <TabPanel
                     pt={{
-                        headerAction: { className: 'font-italic text-sm sm:text-md tab-custom-text-2' }
+                        headerAction: { className: 'cursor-pointer font-italic text-sm sm:text-md tab-custom-text-2' }
                     }}
                     header="Документ"
                     leftIcon={'pi pi-file mr-1'}
@@ -311,7 +311,7 @@ export default function Lesson() {
                 {/* USEFUL LINKS */}
                 <TabPanel
                     pt={{
-                        headerAction: { className: 'font-italic text-sm sm:text-md tab-custom-text-3 text-center' }
+                        headerAction: { className: 'cursor-pointer font-italic text-sm sm:text-md tab-custom-text-3 text-center' }
                     }}
                     header="Шилтемелер"
                     leftIcon={'pi pi-link mr-1'}
@@ -323,7 +323,7 @@ export default function Lesson() {
                 {/* VIDEO */}
                 <TabPanel
                     pt={{
-                        headerAction: { className: 'font-italic text-sm sm:text-md tab-custom-text-4' }
+                        headerAction: { className: 'cursor-pointer font-italic text-sm sm:text-md tab-custom-text-4' }
                     }}
                     header="Видео"
                     leftIcon={'pi pi-video mr-1'}
