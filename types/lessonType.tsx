@@ -12,4 +12,5 @@ export interface lessonType {
     document_path?: string;
     url?: string;
     photo?: string; 
+    link?:string;
 }

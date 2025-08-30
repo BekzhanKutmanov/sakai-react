@@ -23,6 +23,7 @@ import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { useRouter } from 'next/navigation';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import useShortText from '@/hooks/useShortText';
+import { Dialog } from 'primereact/dialog';
 
 export default function LessonTyping({ mainType, courseId, lessonId }: { mainType: string; courseId: string | null; lessonId: string | null }) {
     // types
@@ -87,6 +88,8 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
     const [selectedCity, setSelectedCity] = useState({ name: '', status: true, id: 1 });
     const [videoSelect, setVideoSelect] = useState<videoType[]>([]);
     const [videoTypes, setVideoTypes] = useState<videoInsideType[]>([]);
+    const [videoCall, setVideoCall] = useState(false);
+    const [videoLink, setVideoLink] = useState('');
     const [videoValue, setVideoValue] = useState<lessonStateType>({
         title: '',
         description: '',
@@ -104,7 +107,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
     const [visible, setVisisble] = useState(false);
     const [editingLesson, setEditingLesson] = useState<EditableLesson | null>(null);
     const [progressSpinner, setProgressSpinner] = useState(false);
-    
+
     // functions
     const handleUpdate = () => {
         if (selectType === 'doc') {
@@ -148,7 +151,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
 
                 setEditingLesson({
                     title: arr.title,
-                    description: arr?.description,  
+                    description: arr?.description,
                     document: arr[lesson.file],
                     url: arr[lesson.url],
                     video_link: arr[lesson.link],
@@ -270,20 +273,22 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                                     <NotFound titleMessage={'Сабак кошуу үчүн талааларды толтурунуз'} />
                                 ) : (
                                     documents.map((item: lessonType) => {
-                                        return <>
-                                            <LessonCard
-                                                status="working"
-                                                onSelected={(id: number, type: string) => selectedForEditing(id, type)}
-                                                onDelete={(id: number) => handleDeleteDoc(id)}
-                                                cardValue={{ title: item?.title, id: item.id, desctiption: item?.description, type: 'doc' }}
-                                                cardBg={'#ddc4f51a'}
-                                                type={{ typeValue: 'doc', icon: 'pi pi-file' }}
-                                                typeColor={'var(--mainColor)'}
-                                                lessonDate={new Date(item.created_at).toISOString().slice(0, 10)}
-                                                urlForPDF={() => sentToPDF(item.document || '')}
-                                                urlForDownload=""
-                                            />
-                                        </>
+                                        return (
+                                            <>
+                                                <LessonCard
+                                                    status="working"
+                                                    onSelected={(id: number, type: string) => selectedForEditing(id, type)}
+                                                    onDelete={(id: number) => handleDeleteDoc(id)}
+                                                    cardValue={{ title: item?.title, id: item.id, desctiption: item?.description, type: 'doc' }}
+                                                    cardBg={'#ddc4f51a'}
+                                                    type={{ typeValue: 'doc', icon: 'pi pi-file' }}
+                                                    typeColor={'var(--mainColor)'}
+                                                    lessonDate={new Date(item.created_at).toISOString().slice(0, 10)}
+                                                    urlForPDF={() => sentToPDF(item.document || '')}
+                                                    urlForDownload=""
+                                                />
+                                            </>
+                                        );
                                     })
                                 )}
                             </div>
@@ -344,9 +349,9 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
         }
     };
 
-    useEffect(()=> {
+    useEffect(() => {
         console.log(documents);
-    },[documents])
+    }, [documents]);
 
     // update document
     const handleUpdateLesson = async () => {
@@ -573,6 +578,12 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
         setVideoValue({ title: '', description: '', file: null, url: '', video_link: '' });
     };
 
+    const handleVideoCall = (value: string | null) => {
+        console.log('value', value);
+        setVideoLink(typeof value === 'string' ? value : '');
+        setVideoCall(true);
+    }
+
     const videoSection = () => {
         return (
             <div className="py-1 sm:py-4 flex flex-col items-center gap-3">
@@ -606,7 +617,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                                 <b style={{ color: 'red', fontSize: '12px' }}>{errors.usefulLink?.message}</b>
                             </div>
                         ) : (
-                            <div className='w-full flex justify-center sm:justify-start'>
+                            <div className="w-full flex justify-center sm:justify-start">
                                 <FileUpload
                                     chooseLabel="Видео жүктөө"
                                     mode="basic"
@@ -649,6 +660,27 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
 
                 <div className="w-full flex flex-col items-center gap-4 py-2 sm:py-4">
                     <div className="w-full flex flex-wrap justify-center gap-4">
+                        <Dialog
+                            header={''}
+                            className="w-[80%] h-[300px] md:h-[500px]"
+                            visible={videoCall}
+                            onHide={() => {
+                                if (!videoCall) return;
+                                setVideoCall(false);
+                            }}
+                        >
+                            <div className="flex justify-center items-center">
+                                <iframe
+                                    className="w-full h-[200px] md:h-[400px]"
+                                    // src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1"
+                                    src={videoLink}
+                                    title="YouTube video player"
+                                    frameBorder="0"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                    allowFullScreen
+                                ></iframe>
+                            </div>
+                        </Dialog>
                         {videoShow ? (
                             <NotFound titleMessage={'Сабак кошуу үчүн талааларды толтурунуз'} />
                         ) : (
@@ -670,7 +702,8 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                                         lessonDate={'xx-xx'}
                                         urlForPDF={() => ''}
                                         urlForDownload=""
-                                    />
+                                        videoVisible={()=> handleVideoCall(String(item?.link))}
+                                    />  
                                 </>
                             ))
                         )}
@@ -789,6 +822,8 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
         if (mainType === 'doc') handleFetchDoc();
         if (mainType === 'link') handleFetchLink();
         if (mainType === 'video') {
+            console.log(video);
+            
             handleFetchVideo();
             handleVideoType();
         }
@@ -812,7 +847,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                 return { name: item.title, status: item.is_link, id: item.id };
             });
 
-            setVideoSelect(forSelect);            
+            setVideoSelect(forSelect);
             setSelectedCity(forSelect[0]);
         }
     }, [videoTypes]);
@@ -851,7 +886,12 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                                     }}
                                 />
                                 <b style={{ color: 'red', fontSize: '12px' }}>{errors.title?.message}</b>
-                                <InputText placeholder="Мазмун" value={editingLesson?.description !== 'null' ? editingLesson?.description : ''} onChange={(e) => setEditingLesson((prev) => prev && { ...prev, description: e.target.value })} className="w-full" />
+                                <InputText
+                                    placeholder="Мазмун"
+                                    value={editingLesson?.description !== 'null' ? editingLesson?.description : ''}
+                                    onChange={(e) => setEditingLesson((prev) => prev && { ...prev, description: e.target.value })}
+                                    className="w-full"
+                                />
                             </>
                         ) : selectType === 'url' ? (
                             <>

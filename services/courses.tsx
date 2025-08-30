@@ -281,7 +281,7 @@ export const updateLesson = async (type: string, token: string | null, course_id
     } else if(type === 'doc'){
         url = `/v1/teacher/document/update?lesson_id=${lesson_id}&document_id=${contentId}&document=${value.file}`;
         formData.append('lesson_id', String(lesson_id));
-        formData.append('document', value.file || '');
+        formData.append('document', value.file);
         formData.append('document_id', String(contentId));
         formData.append('title', String(value.title)); 
         formData.append('description', String(value.description)); 

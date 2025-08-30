@@ -539,8 +539,9 @@ h1, h2, h3, h4, h5, h6 {
   -moz-border-radius: 0px 0px 200px 200px;
 }
 
-.udalismelo{
-  background-color: #cde7e3;
+.lesson-card-border {
+  border: solid 2px rgb(224, 224, 224);
+
 }
 
 .poka{

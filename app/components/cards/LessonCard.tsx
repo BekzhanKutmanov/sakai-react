@@ -18,7 +18,8 @@ export default function LessonCard({
     type,
     lessonDate,
     urlForPDF,
-    urlForDownload
+    urlForDownload,
+    videoVisible
 }: {
     status: string;
     onSelected?: (id: number, type: string) => void;
@@ -30,6 +31,7 @@ export default function LessonCard({
     lessonDate: string;
     urlForPDF: () => void;
     urlForDownload: string;
+    videoVisible?: (id: string | null)=> void;
 }) {
     const shortTitle = useShortText(cardValue.title, 10);
     const shortDescription = useShortText(cardValue.desctiption ? cardValue.desctiption : '', 17);
@@ -72,28 +74,22 @@ export default function LessonCard({
         );
 
     const videoPreviw =
-        type.typeValue === 'video' && status === 'working' ? (
-            <div className="w-[140px] h-[100px] overflow-hidden rounded-2xl">
-                <img src="/layout/images/no-image.png" className="w-full h-[100px] object-cover" alt="Видео" />
-            </div>
-        ) : type.typeValue === 'video' && status === 'student' ? (
-            <div className="relative bg-white shadow w-[140px] h-[100px] overflow-hidden rounded-2xl">
-                <div className="w-[140px] h-[100%] absolute flex justify-center items-center bg-[rgba(8,9,0,30%)]">
-                    <div className="relative flex items-center justify-center">
+        type.typeValue === 'video' && (
+            <div className="relative bg-white shadow w-[70%] rounded-2xl">
+                <div className="w-full h-[100%] absolute flex justify-center items-center bg-[rgba(8,9,0,30%)]">
+                    <div className="relative flex items-center justify-center" onClick={()=> videoVisible?.(type.typeValue)}>
                         {/* Волна */}
                         {/* <span className="absolute w-full h-full rounded-full border-4 border-blue-500 animate-ping"></span> */}
 
                         {/* Иконка-кнопка */}
-                        <div className="relative z-10 w-[40px] h-[40px] rounded-full bg-white text-[var(--mainColor)] flex items-center justify-center hover:scale-110 transition-transform duration-300 cursor-pointer shadow-lg">
+                        <div className="relative z-10 w-[50px] h-[50px] sm:w-[70px] sm:h-[70px] rounded-full bg-white text-[var(--mainColor)] flex items-center justify-center hover:scale-110 transition-transform duration-300 cursor-pointer shadow-lg">
                             <MyFontAwesome icon={faPlay} />
                         </div>
                     </div>
                 </div>
-                <img src="/layout/images/no-image.png" className="w-full h-[100px] object-cover" alt="Видео" />
+                <img src="/layout/images/no-image.png" className="w-full object-cover" alt="Видео" />
             </div>
-        ) : (
-            ''
-        );
+        ) 
 
     const btnLabel = type.typeValue === 'doc' && status === 'working' ? 'Көчүрүү' : type.typeValue === 'doc' && status === 'student' ? 'Ачуу' : type.typeValue === 'link' ? 'Өтүү' : '';
 
@@ -102,7 +98,7 @@ export default function LessonCard({
             className={`${type.typeValue === 'link' && 'relative'} ${type.typeValue !== 'link' && 'overflow-hidden'} 
             ${type.typeValue === 'video' && status === 'working' ? 'min-h-[200px]' : type.typeValue !== 'video' && status === 'working' ? 'min-h-[160px]' : ''} 
             ${status === 'student' && type.typeValue !== 'video' ? 'min-h-[160px]' : status === 'student' && type.typeValue === 'video' ? 'min-h-[200px]' : ''}
-            w-[100%] sm:w-[100%] md:w-[160px] flex flex-col justify-evenly shadow rounded sm:rounded-2xl p-2`}
+            w-[90%] sm:w-[80%] ${type.typeValue === 'video' ? 'md:w-[30%]' : 'md:w-[160px]'} flex flex-col justify-evenly lesson-card-border sm:rounded-2xl rounded p-2`}
             style={{ backgroundColor: cardBg }}
         >
             {status === 'working' && (
