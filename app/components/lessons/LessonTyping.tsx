@@ -579,10 +579,37 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
     };
 
     const handleVideoCall = (value: string | null) => {
-        console.log('value', value);
-        setVideoLink(typeof value === 'string' ? value : '');
+        if (!value) {
+            setMessage({
+                state: true,
+                value: { severity: 'error', summary: 'Видеону иштетүүдө ката', detail: '' }
+            });
+        }
+
+        const url = new URL(typeof value === 'string' ? value : '');
+        let videoId = null;
+
+        if (url.hostname === 'youtu.be') {
+            // короткая ссылка, видео ID — в пути
+            videoId = url.pathname.slice(1); // убираем первый слеш
+        } else if (url.hostname === 'www.youtube.com' || url.hostname === 'youtube.com') {
+            // стандартная ссылка, видео ID в параметре v
+            videoId = url.searchParams.get('v');
+        }
+
+        if (!videoId) {
+            setMessage({
+                state: true,
+                value: { severity: 'error', summary: 'Видеону иштетүүдө ката', detail: '' }
+            });
+            return null; // не удалось получить ID
+        }
+        // return `https://www.youtube.com/embed/${videoId}`;
+
+        console.log('value', videoId);
+        setVideoLink(`https://www.youtube.com/embed/${videoId}`);
         setVideoCall(true);
-    }
+    };
 
     const videoSection = () => {
         return (
@@ -702,8 +729,8 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                                         lessonDate={'xx-xx'}
                                         urlForPDF={() => ''}
                                         urlForDownload=""
-                                        videoVisible={()=> handleVideoCall(String(item?.link))}
-                                    />  
+                                        videoVisible={() => handleVideoCall(String(item?.link))}
+                                    />
                                 </>
                             ))
                         )}
@@ -823,7 +850,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
         if (mainType === 'link') handleFetchLink();
         if (mainType === 'video') {
             console.log(video);
-            
+
             handleFetchVideo();
             handleVideoType();
         }
