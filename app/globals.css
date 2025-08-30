@@ -4,8 +4,10 @@
 :root {
   --bodyFonts: "Jost", sans-serif;
   --mainColor: #08A9E6;
-  /* --mainBgColor: #e6eef1; */
-  --mainBgColor: #fff;
+  --mainBorder: #83d6f4;
+  --mainBgColor: #e6eef1;
+  /* --mainBgColor: #fff; */
+
   --redColor: #EC272F;
   --redBgColor: #EC272F1A;
   --greenColor: rgb(46, 192, 46);
@@ -578,5 +580,14 @@ h1, h2, h3, h4, h5, h6 {
 @media screen and (max-width: 640px) {
   .layout-menuitem-text{
     font-size: 13px !important;
+  }
+}
+
+/* input */
+
+@media screen and (max-width: 640px) {
+  .p-inputtext{
+    font-size: 14px !important;
+    padding: 8px;
   }
 }

@@ -30,13 +30,10 @@ import { ProgressSpinner } from 'primereact/progressspinner';
 import { RadioButton } from 'primereact/radiobutton';
 import { DataView } from 'primereact/dataview';
 import { displayType } from '@/types/displayType';
+import { FileWithPreview } from '@/types/fileuploadPreview';
 
 export default function Course() {
     const { setMessage, course, setCourses, contextFetchCourse } = useContext(LayoutContext);
-    interface FileWithPreview extends File {
-        objectURL?: string;
-    }
-
     const [coursesValue, setValueCourses] = useState<myMainCourseType[]>([]);
     const [hasCourses, setHasCourses] = useState(false);
     const [courseValue, setCourseValue] = useState<CourseCreateType>({ title: '', description: '', video_url: '', image: '' });

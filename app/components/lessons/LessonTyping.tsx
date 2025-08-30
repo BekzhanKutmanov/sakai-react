@@ -2,7 +2,7 @@
 
 import { LayoutContext } from '@/layout/context/layoutcontext';
 import { Button } from 'primereact/button';
-import { FileUpload } from 'primereact/fileupload';
+import { FileUpload, FileUploadSelectEvent } from 'primereact/fileupload';
 import { InputText } from 'primereact/inputtext';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import LessonCard from '../cards/LessonCard';
@@ -24,6 +24,7 @@ import { useRouter } from 'next/navigation';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import useShortText from '@/hooks/useShortText';
 import { Dialog } from 'primereact/dialog';
+import { FileWithPreview } from '@/types/fileuploadPreview';
 
 export default function LessonTyping({ mainType, courseId, lessonId }: { mainType: string; courseId: string | null; lessonId: string | null }) {
     // types
@@ -98,6 +99,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
         video_link: ''
     });
     const [videoShow, setVideoShow] = useState<boolean>(false);
+    const [imageState, setImageState] = useState<string | null>(null);
 
     // auxiliary
     const showError = useErrorMessage();
@@ -107,6 +109,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
     const [visible, setVisisble] = useState(false);
     const [editingLesson, setEditingLesson] = useState<EditableLesson | null>(null);
     const [progressSpinner, setProgressSpinner] = useState(false);
+    const [additional, setAdditional] = useState<{ doc: boolean; link: boolean; video: boolean }>({ doc: false, link: false, video: false });
 
     // functions
     const handleUpdate = () => {
@@ -164,6 +167,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
     const fileUploadRef = useRef<FileUpload>(null);
     const clearFile = () => {
         fileUploadRef.current?.clear();
+        setImageState(null);
         if (visible) {
             setEditingLesson(
                 (prev) =>
@@ -257,11 +261,16 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                                 }}
                             />
                             <b style={{ color: 'red', fontSize: '12px' }}>{errors.title?.message}</b>
+                            {additional.doc && <InputText placeholder="Мазмун" value={docValue.description} onChange={(e) => setDocValue((prev) => ({ ...prev, description: e.target.value }))} className="w-full" />}
 
-                            <InputText placeholder="Мазмун" value={docValue.description} onChange={(e) => setDocValue((prev) => ({ ...prev, description: e.target.value }))} className="w-full" />
-                            <div className="flex justify-center">
+                            <div className="flex relative">
                                 {/* <Button disabled={!!errors.title || !docValue.file} label="Сактоо" onClick={handleAddDoc} /> */}
-                                <div className="flex gap-1 items-center">
+                                <div className="absolute">
+                                    <span className="cursor-pointer ml-1 text-sm text-[var(--mainColor)]" onClick={() => setAdditional((prev) => ({ ...prev, doc: !prev.doc }))}>
+                                        Кошумча {additional.doc ? '-' : '+'}
+                                    </span>
+                                </div>
+                                <div className="w-full flex gap-1 justify-center items-center">
                                     <Button label="Сактоо" disabled={progressSpinner || !docValue.title.length || !!errors.title || !docValue.file} onClick={handleAddDoc} />
                                     {progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}
                                 </div>
@@ -433,12 +442,20 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                         }}
                     />
                     <b style={{ color: 'red', fontSize: '12px' }}>{errors.title?.message}</b>
+                    {additional.link && <InputText placeholder="Мазмун" value={linksValue.description} onChange={(e) => setLinksValue((prev) => ({ ...prev, description: e.target.value }))} className="w-full" />}
 
-                    <InputText placeholder="Мазмун" value={linksValue.description} onChange={(e) => setLinksValue((prev) => ({ ...prev, description: e.target.value }))} className="w-full" />
-                    <div className="flex justify-center">
-                        <div className="flex gap-1 items-center">
-                            <Button label="Сактоо" disabled={progressSpinner || !linksValue.title.length || !linksValue.url?.length || !!errors.title || !!errors.usefulLink} onClick={handleAddLink} />
-                            {progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}
+                    <div className="flex relative">
+                        {/* <Button disabled={!!errors.title || !docValue.file} label="Сактоо" onClick={handleAddDoc} /> */}
+                        <div className="absolute">
+                            <span className="cursor-pointer ml-1 text-sm text-[var(--mainColor)]" onClick={() => setAdditional((prev) => ({ ...prev, link: !prev.link }))}>
+                                Кошумча {additional.link ? '-' : '+'}
+                            </span>
+                        </div>
+                        <div className="w-full flex gap-1 justify-center items-center">
+                            <div className="flex gap-1 items-center">
+                                <Button label="Сактоо" disabled={progressSpinner || !linksValue.title.length || !linksValue.url?.length || !!errors.title || !!errors.usefulLink} onClick={handleAddLink} />
+                                {progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -611,6 +628,12 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
         setVideoCall(true);
     };
 
+    const onSelect = (e: FileUploadSelectEvent & { files: FileWithPreview[] }) => {
+        if (e.files.length > 0) {
+            setImageState(e.files[0].objectURL);
+        }
+    };
+
     const videoSection = () => {
         return (
             <div className="py-1 sm:py-4 flex flex-col items-center gap-3">
@@ -675,10 +698,29 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                         }}
                     />
                     <b style={{ color: 'red', fontSize: '12px' }}>{errors.title?.message}</b>
+                    {additional.video && (
+                        <div>
+                            <InputText placeholder="Мазмун" value={videoValue.description} onChange={(e) => setVideoValue((prev) => ({ ...prev, description: e.target.value }))} className="w-full" />
+                            <div className="flex flex-col sm:flex-row gap-2 items-center sm:w-xl h-[140px] my-2">
+                                <div className="flex items-center gap-1">
+                                    <FileUpload ref={fileUploadRef} mode="basic" chooseLabel="Превью" style={{ fontSize: '12px' }} customUpload name="demo[]" accept="image/*" maxFileSize={1000000} onSelect={onSelect} />
+                                    {imageState && <Button icon={'pi pi-trash'} onClick={clearFile} />}
+                                </div>
+                                <div className="w-1/2 order-2 sm:order-1 max-h-[150px] max-w-[250px] border overflow-hidden flex justify-center items-center">
+                                    {imageState ? <img className="w-full object-cover" src={imageState} alt="" /> : <img className="w-full object-cover" src={'/layout/images/no-image.png'} alt="" />}
+                                </div>
+                            </div>
+                        </div>
+                    )}
 
-                    <InputText placeholder="Мазмун" value={videoValue.description} onChange={(e) => setVideoValue((prev) => ({ ...prev, description: e.target.value }))} className="w-full" />
-                    <div className="flex justify-center">
-                        <div className="flex gap-1 items-center">
+                    <div className="flex relative">
+                        {/* <Button disabled={!!errors.title || !docValue.file} label="Сактоо" onClick={handleAddDoc} /> */}
+                        <div className="absolute">
+                            <span className="cursor-pointer ml-1 text-sm text-[var(--mainColor)]" onClick={() => setAdditional((prev) => ({ ...prev, video: !prev.video }))}>
+                                Кошумча {additional.video ? '-' : '+'}
+                            </span>
+                        </div>
+                        <div className="w-full flex gap-1 justify-center items-center">
                             <Button label="Сактоо" disabled={progressSpinner || !videoValue.title.length || !videoValue.video_link?.length || !!errors.title || !!errors.usefulLink} onClick={handleAddVideo} />
                             {progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}
                         </div>

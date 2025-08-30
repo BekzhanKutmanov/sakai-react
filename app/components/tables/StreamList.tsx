@@ -24,6 +24,7 @@ export default function StreamList({ callIndex, courseValue, isMobile, insideDis
         id_period: number;
         semester: { name_kg: string };
         edu_form: { name_kg: string };
+        period: {name_kg: string},
         courseValue?: number;
     }
 
@@ -306,7 +307,7 @@ export default function StreamList({ callIndex, courseValue, isMobile, insideDis
                                 {/* <span>{item?.teacher?.name}</span> */}
                             </div>
                             <div className="flex gap-1 items-center">
-                                <span className="text-[var(--mainColor)]">Үйрөтүлүү тили: </span>
+                                <span className="text-[var(--mainColor)]">Окутуу тили: </span>
                                 <span>{item?.language?.name}</span>
                             </div>
                             <div className="flex gap-1 items-center">
@@ -315,7 +316,7 @@ export default function StreamList({ callIndex, courseValue, isMobile, insideDis
                             </div>
                             <div className="flex gap-1 items-center">
                                 <span className="text-[var(--mainColor)]">Период: </span>
-                                <span className="font-semibold">{item?.id_period}</span>
+                                <span>{item?.period.name_kg}</span>
                             </div>
                         </div>
                         <div className="flex flex-col order-1 xl:order-2 align-items-center gap-2">
