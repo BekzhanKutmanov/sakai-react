@@ -37,7 +37,7 @@ const AppMenu = () => {
         : user?.is_student
         ? [
               { label: 'Окуу планы', icon: 'pi pi-fw pi-calendar-clock', to: '/teaching' },
-              pathname.startsWith('/teaching/') ? { label: 'Темалар', icon: 'pi pi-fw pi-calendar-lessons', items: themesStudentList?.length > 0 ? themesStudentList : [] } : { label: '' }
+              pathname.startsWith('/teaching/') ? { label: 'Темалар', icon: 'pi pi-fw pi-book', items: themesStudentList?.length > 0 ? themesStudentList : [] } : { label: '' }
           ]
         : [];
 
@@ -114,7 +114,7 @@ const AppMenu = () => {
                 forThemes.push({
                     label: item.title,
                     id: item.id,
-                    to: `/teaching/lesson/${item.id}`
+                    to: `/teaching/lesson/${studentThemeCourse}/${item.id}`
                 })
             );
             if (forThemes.length > 0) {

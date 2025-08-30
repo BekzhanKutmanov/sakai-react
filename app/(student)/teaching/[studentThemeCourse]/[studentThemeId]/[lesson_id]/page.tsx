@@ -19,6 +19,9 @@ import { useContext, useEffect, useState } from 'react';
 
 export default function StudentLessons() {
     const { lesson_id } = useParams();
+    const params = useParams();
+    console.log(params);
+    
     const router = useRouter();
 
     const [activeIndex, setActiveIndex] = useState<number>(0);
@@ -119,7 +122,7 @@ export default function StudentLessons() {
 
     const navigateMainLesson = async (id: number | null) => {
         setSkeleton(true);
-        router.push(`/teaching/lesson/${id}`);
+        router.push(`/teaching/lesson/${lesson_id}/${id}`);
     };
 
     const handleTabChange = (e: TabViewChange) => {

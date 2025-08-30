@@ -47,6 +47,7 @@ export default function Teaching() {
         toggleSkeleton();
         if (data) {
             // валидность проверить
+            console.log(data);
             setLessons(data);
             setHasLessons(false);
         } else {
@@ -104,7 +105,9 @@ export default function Teaching() {
             const selected = lessons[selectedSort.code];
             displayData = selected && selected.semester ? [selected] : [];
         }
-
+        console.log('streams', displayData);
+        console.log('connection', connection);
+        
         // превращаем в jsx
         const x = displayData.map((semester: any, sIdx: number) => (
             <div className="flex flex-col gap-2" key={sIdx}>

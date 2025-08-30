@@ -18,7 +18,7 @@ export const fetchStreams = async (id: number | null) => {
 };
 
 // export const connectStreams = async (value: {stream: streamsType[]}) => {
-export const connectStreams = async (value: {stream: streamsType[]}) => {
+export const connectStreams = async (value: {course_id: number | null, stream: streamsType[]}) => {
     console.log(value);
     
     // const formData = new FormData();

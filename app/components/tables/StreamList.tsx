@@ -151,7 +151,7 @@ export default function StreamList({ callIndex, courseValue, isMobile, insideDis
     };
 
     const handleConnect = async () => {
-        const data = await connectStreams({ stream: pendingChanges });
+        const data = await connectStreams({course_id: courseValue?.id ? courseValue?.id : null, stream: pendingChanges });
         // const data = await connectStreams(streamValues);
 
         if (data?.success) {
