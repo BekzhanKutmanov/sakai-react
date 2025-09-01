@@ -171,7 +171,7 @@ export const addLesson = async (
     videoType: number | null) => {
     
     let formData = new FormData();
-    console.log(value.cover, value.file, type, courseId, lessonId, videoType, );
+    console.log(value, value, type, courseId, lessonId, videoType, );
     let headers: Record<string, string> = token ? { Authorization: `Bearer ${token}` } : {};
     let url = '';
     let body: lessonStateType | string | FormData = value;
@@ -224,9 +224,6 @@ export const addLesson = async (
 
 export const fetchLesson = async (type: string, courseId: number | null, lessonId: number | null) => {
     let url = '';
-
-    // console.log(type, courseId, lessonId);
-
     if (type === 'text') {
         url = `/v1/teacher/textcontent?course_id=${courseId}&lesson_id=${lessonId}`;
     } else if (type === 'doc') {
@@ -240,6 +237,17 @@ export const fetchLesson = async (type: string, courseId: number | null, lessonI
     try {
         const res = await axiosInstance.get(url);
         console.log('Урок: ', res.data);
+        return res.data;
+    } catch (err) {
+        console.log('Ошибка при получении урока', err);
+        return err;
+    }
+};
+
+export const fetchLessonShow = async (lessonId: number | null) => {    
+    try {
+        const res = await axiosInstance.get(`v1/teacher/lessons/show?lesson_id=${lessonId}`);
+        console.log('Info lesson: ', res.data);
         return res.data;
     } catch (err) {
         console.log('Ошибка при получении урока', err);

@@ -37,7 +37,7 @@ const AppMenu = () => {
         : user?.is_student
         ? [
               { label: 'Окуу планы', icon: 'pi pi-fw pi-calendar-clock', to: '/teaching' },
-              pathname.startsWith('/teaching/') ? { label: 'Темалар', icon: 'pi pi-fw pi-book', items: themesStudentList?.length > 0 ? themesStudentList : [] } : { label: '' }
+              pathname.startsWith('/teaching/lesson/') ? { label: 'Темалар', icon: 'pi pi-fw pi-book', items: themesStudentList?.length > 0 ? themesStudentList : [] } : { label: '' }
           ] 
         : [];
 

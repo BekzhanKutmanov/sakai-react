@@ -314,7 +314,8 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
     const handleFetchDoc = async () => {
         // skeleton = false
         const data = await fetchLesson('doc', courseId ? Number(courseId) : null, lessonId ? Number(lessonId) : null);
-
+        console.log(data);
+        
         if (data?.success) {
             if (data.documents) {
                 // Присваиваю себе. Для отображения

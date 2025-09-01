@@ -5,7 +5,7 @@ import { TabView, TabPanel } from 'primereact/tabview';
 import CKEditorWrapper from '@/app/components/CKEditorWrapper.tsx';
 import { Button } from 'primereact/button';
 import Redacting from '@/app/components/popUp/Redacting';
-import { addLesson, deleteLesson, fetchLesson, updateLesson } from '@/services/courses';
+import { addLesson, deleteLesson, fetchLesson, fetchLessonShow, updateLesson } from '@/services/courses';
 import { getToken } from '@/utils/auth';
 import { useParams, usePathname } from 'next/navigation';
 import { LayoutContext } from '@/layout/context/layoutcontext';
@@ -24,6 +24,7 @@ export default function Lesson() {
     const [editMode, setEditMode] = useState<boolean>(false);
     const [editingLesson, setEditingLesson] = useState<string>('');
     const [textValue, setTextValue] = useState<{ id: number | null }>({ id: null });
+    const [lessonInfoState, setLessonInfoState] = useState<{ title: string, documents_count: string, usefullinks_count: string, videos_count: string } | null>(null);
     const { setMessage } = useContext(LayoutContext);
 
     const showError = useErrorMessage();
@@ -70,7 +71,7 @@ export default function Lesson() {
     ];
 
     const pathname = usePathname();
-    const breadcrumb = useBreadCrumbs(teachingBreadCrumb,pathname);
+    const breadcrumb = useBreadCrumbs(teachingBreadCrumb, pathname);
 
     const handleText = (e: string) => {
         setSentValues(e);
@@ -80,8 +81,6 @@ export default function Lesson() {
         // skeleton = false
 
         const data = await fetchLesson('text', courseId ? Number(courseId) : null, lessonId ? Number(lessonId) : null);
-        console.log(data);
-
         if (data?.success) {
             if (data?.content?.content) {
                 setTextValue({ id: data?.content.id });
@@ -92,6 +91,26 @@ export default function Lesson() {
             }
         } else {
             setTextShow(false);
+            setMessage({
+                state: true,
+                value: { severity: 'error', summary: 'Ошибка', detail: 'Проблема с соединением. Повторите заново' }
+            });
+            if (data?.response?.status) {
+                showError(data.response.status);
+            }
+            // skeleton = false
+        }
+    };
+
+    const handleShow = async () => {
+        // skeleton = false
+
+        const data = await fetchLessonShow(lessonId ? Number(lessonId) : null);
+        console.log(data);
+        
+        if (data?.lesson) {
+            setLessonInfoState({title: data.lesson.title, videos_count: data.lesson.videos_count, usefullinks_count: data.lesson.usefullinks_count, documents_count: data.lesson.documents_count });
+        } else {
             setMessage({
                 state: true,
                 value: { severity: 'error', summary: 'Ошибка', detail: 'Проблема с соединением. Повторите заново' }
@@ -192,29 +211,33 @@ export default function Lesson() {
         setContentShow(true);
     };
 
+    useEffect(() => {
+        handleShow();
+    }, []);
+
     const lessonInfo = (
         <div>
             <div className="bg-[var(--titleColor)] relative flex flex-col justify-center items-center w-full text-white p-5 md:p-10 pb-4">
                 <span className="absolute left-4 top-4 text-2xl sm:text-4xl pi pi-bookmark-fill "></span>
                 <div>
-                    <h1 style={{ color: 'white', fontSize: media ? '24px' : '36px', textAlign: 'center' }}>{'Сабактын аталышы'}</h1>
+                    <h1 style={{ color: 'white', fontSize: media ? '24px' : '36px', textAlign: 'center' }}>{lessonInfoState?.title}</h1>
                     <div className="flex flex-col sm:flex-row items-center justify-between gap-5 m-4">
                         <span className="flex items-center gap-3">
                             <span className="w-[8px] h-[8px] block bg-[var(--mainColor)]"></span>
                             <span onClick={() => handleTabChange({ index: 1 })} className="cursor-pointer hover:text-[var(--mainColor)] transition-all">
-                                Документтердин саны: <span className="text-[var(--mainColor)] font-bold">?</span>
+                                Документтердин саны: <span className="text-[var(--mainColor)] font-bold">{lessonInfoState?.documents_count}</span>
                             </span>
                         </span>
                         <span className="flex items-center gap-3">
                             <span className="w-[8px] h-[8px] block bg-[var(--mainColor)]"></span>
                             <span onClick={() => handleTabChange({ index: 2 })} className="cursor-pointer hover:text-[var(--mainColor)] transition-all">
-                                Шилтемелердин саны: <span className="text-[var(--mainColor)] font-bold">?</span>
+                                Шилтемелердин саны: <span className="text-[var(--mainColor)] font-bold">{lessonInfoState?.usefullinks_count}</span>
                             </span>
                         </span>
                         <span className="flex items-center gap-3">
                             <span className="w-[8px] h-[8px] block bg-[var(--mainColor)]"></span>
                             <span onClick={() => handleTabChange({ index: 3 })} className="cursor-pointer hover:text-[var(--mainColor)] transition-all">
-                                Видеолордун саны: <span className="text-[var(--mainColor)] font-bold">?</span>
+                                Видеолордун саны: <span className="text-[var(--mainColor)] font-bold">{lessonInfoState?.videos_count}</span>
                             </span>
                         </span>
                     </div>
