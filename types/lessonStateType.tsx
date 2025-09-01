@@ -4,4 +4,5 @@ export interface lessonStateType {
     file: File | null;
     url: string | null;
     video_link: string | null;
+    cover?: File | null;
 }

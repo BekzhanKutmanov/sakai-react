@@ -51,6 +51,7 @@ export default function Course() {
     const [activeIndex, setActiveIndex] = useState<number>(0);
     const [imageState, setImageState] = useState<string | null>(null);
     const [displayStrem, setDisplayStreams] = useState<displayType[]>([]);
+    const [visible, setVisisble] = useState(false);
 
     const [editingLesson, setEditingLesson] = useState<CourseCreateType>({
         title: '',
@@ -123,6 +124,27 @@ export default function Course() {
         setTimeout(() => {
             setSkeleton(false);
         }, 1000);
+    };
+
+    const fileUploadRef = useRef<FileUpload>(null);
+    const clearFile = () => {
+        fileUploadRef.current?.clear();
+        setImageState(null);
+        if (editMode) {
+            setEditingLesson(
+                (prev) =>
+                    prev && {
+                        ...prev,
+                        image: ''
+                    }
+            );
+            // query 
+        } else {
+            setCourseValue((prev) => ({
+                ...prev,
+                image: ''
+            }));
+        }
     };
 
     const handleFetchCourse = async (page = 1) => {
@@ -299,7 +321,6 @@ export default function Course() {
     };
 
     const displayInfo = (value: displayType[]) => {
-        console.log('info ', value);
         setDisplayStreams(value);
     };
 
@@ -339,6 +360,8 @@ export default function Course() {
             const data = await fetchCourseInfo(selectedCourse);
 
             if (data?.success) {
+                console.log('udali', data);
+                
                 setProgressSpinner(false);
                 setEditingLesson({
                     title: data.course.title || '',
@@ -415,8 +438,8 @@ export default function Course() {
         );
     };
 
-    const imagestateStyle = imageState ? 'flex gap-1 items-center justify-between flex-col sm:flex-row' : '';
-    const imageTitle = useShortText(typeof editingLesson.image === 'string' ? editingLesson.image : '', 30);
+    const imagestateStyle = imageState || editingLesson.image ? 'flex gap-1 items-center justify-between flex-col sm:flex-row' : '';
+    const imageTitle = useShortText(typeof editingLesson.image === 'string' ? editingLesson.image : '', 20);
 
     return (
         <div className="main-bg">
@@ -424,14 +447,18 @@ export default function Course() {
             <FormModal title={editMode ? 'Курсту жаңылоо' : 'Кошуу'} fetchValue={editMode ? handleUpdateCourse : handleAddCourse} clearValues={clearValues} visible={formVisible} setVisible={setFormVisible} start={forStart}>
                 <div className="flex flex-col gap-1">
                     <div className={imagestateStyle}>
-                        {imagestateStyle && (
+                        {/* {imagestateStyle && ( */}
                             <div className="w-1/2 order-2 sm:order-1 max-h-[170px] max-w-[300px] overflow-hidden flex justify-center items-center">
-                                {typeof imageState === 'string' && <img className="w-full object-cover" src={imageState} alt="" />}
+                                {/* {typeof imageState === 'string' && <img className="w-full object-cover" src={editMode ? typeof editingLesson.image === 'string' ? editingLesson.image : '' : imageState} alt="" />} */}
+                                {typeof imageState === 'string' ? 
+                                    <img className="w-full object-cover" src={imageState} />
+                                    : <img className="w-full object-cover" src={typeof editingLesson.image === 'string' ? editingLesson.image : ''} />
+                                }
                             </div>
-                        )}
+                        {/* )} */}
                         <div className={`flex flex-col pag-1 order-1 sm:order-2 items-center justify-center ${imageState && 'w-1/2'}`}>
                             <label className="block text-900 font-medium text-[16px] md:text-xl mb-1 md:mb-2">Сүрөт кошуу</label>
-                            <FileUpload mode="basic" chooseLabel="Сүрөт" style={{ fontSize: '12px' }} customUpload name="demo[]" accept="image/*" maxFileSize={1000000} onSelect={onSelect} />
+                            <FileUpload ref={fileUploadRef} mode="basic" chooseLabel="Сүрөт" style={{ fontSize: '12px' }} customUpload name="demo[]" accept="image/*" maxFileSize={1000000} onSelect={onSelect} />
                             {courseValue.image || editingLesson.image ? (
                                 <div className="mt-2 text-sm text-gray-700 ">
                                     {typeof editingLesson.image === 'string' && (
@@ -443,6 +470,7 @@ export default function Course() {
                             ) : (
                                 <b className="text-[12px] text-red-500">jpeg, png, jpg</b>
                             )}
+                            <div className="flex items-center gap-1">{(editingLesson.image || imageState) && <Button icon={'pi pi-trash'} onClick={clearFile} />}</div>
                         </div>
                     </div>
                     {/* <div className="flex flex-col lg:flex-row gap-1 justify-around items-center"> */}
@@ -530,9 +558,11 @@ export default function Course() {
                             <div className="flex flex-col items-center justify-center gap-2 text-[14px]">
                                 <div className="w-full flex items-center justify-center gap-2">
                                     <span className="min-w-[14px] w-[14px] sm:w-[18px] h-[14px] sm:h-[18px] block border bg-[var(--greenColor)]"></span>
-                                    <span className="text-[16px] sm:text-[18px] font-bold text-[var(--mainColor)] ">Тандалган курстун аталышы: <span className='text-[#4B4563]'>{forStreamId?.title}</span></span>
+                                    <span className="text-[16px] sm:text-[18px] font-bold text-[var(--mainColor)] ">
+                                        Тандалган курстун аталышы: <span className="text-[#4B4563]">{forStreamId?.title}</span>
+                                    </span>
                                 </div>
-                                <div className="w-full flex items-center justify-center gap-2"> 
+                                <div className="w-full flex items-center justify-center gap-2">
                                     <div className="min-w-[14px] w-[14px] sm:w-[18px] h-[14px] sm:h-[18px] border bg-[yellow]"></div>
                                     <div className="flex flex-col gap-1 ">
                                         {displayStrem?.length < 1 && <span className="text-[13px]">Курска байлоо үчүн агымдарды тандаңыз</span>}
@@ -547,7 +577,7 @@ export default function Course() {
                                             // <span>{displayStrem.length >= 3 && '...'}</span>
                                         })}
                                     </div>
-                                 </div>
+                                </div>
                             </div>
                         )}
                     </div>
@@ -593,8 +623,8 @@ export default function Course() {
                                                 <Button
                                                     label="Курс кошуу"
                                                     icon="pi pi-plus"
-                                                    iconPos='right'
-                                                    className='w-full'
+                                                    iconPos="right"
+                                                    className="w-full"
                                                     onClick={() => {
                                                         setEditMode(false);
                                                         clearValues();
@@ -604,8 +634,8 @@ export default function Course() {
                                                 <Button
                                                     label="Агымдар"
                                                     icon="pi pi-arrow-right"
-                                                    className='w-full'
-                                                    iconPos='right'
+                                                    className="w-full"
+                                                    iconPos="right"
                                                     onClick={() => {
                                                         setActiveIndex(1);
                                                     }}
@@ -638,7 +668,7 @@ export default function Course() {
                                     className="p-tabview p-tabview-nav p-tabview-selected p-tabview-panels p-tabview-panel"
                                 >
                                     <div className="w-full sm:w-1/2">
-                                        <StreamList callIndex={activeIndex} courseValue={forStreamId} isMobile={true} insideDisplayStreams={(value: displayType[]) => displayInfo(value)} toggleIndex={()=> setActiveIndex(0)}/>
+                                        <StreamList callIndex={activeIndex} courseValue={forStreamId} isMobile={true} insideDisplayStreams={(value: displayType[]) => displayInfo(value)} toggleIndex={() => setActiveIndex(0)} />
                                     </div>
                                 </TabPanel>
                             </TabView>
@@ -734,7 +764,7 @@ export default function Course() {
                             </div>
                             {/* STREAMS SECTION */}
                             <div className="w-1/2">
-                                <StreamList isMobile={false} callIndex={1} courseValue={forStreamId?.id ? forStreamId : null} insideDisplayStreams={(value: displayType[]) => displayInfo(value)} toggleIndex={()=> {}}/>
+                                <StreamList isMobile={false} callIndex={1} courseValue={forStreamId?.id ? forStreamId : null} insideDisplayStreams={(value: displayType[]) => displayInfo(value)} toggleIndex={() => {}} />
                             </div>
                         </div>
                     )}

@@ -38,7 +38,7 @@ const AppMenu = () => {
         ? [
               { label: 'Окуу планы', icon: 'pi pi-fw pi-calendar-clock', to: '/teaching' },
               pathname.startsWith('/teaching/') ? { label: 'Темалар', icon: 'pi pi-fw pi-book', items: themesStudentList?.length > 0 ? themesStudentList : [] } : { label: '' }
-          ]
+          ] 
         : [];
 
     const model: AppMenuItem[] = [
@@ -114,7 +114,7 @@ const AppMenu = () => {
                 forThemes.push({
                     label: item.title,
                     id: item.id,
-                    to: `/teaching/lesson/${studentThemeCourse}/${item.id}`
+                    to: `/teaching/${studentThemeCourse}/${item.id}`
                 })
             );
             if (forThemes.length > 0) {

@@ -3,7 +3,7 @@ import { getToken } from './auth';
 
 const axiosInstance = axios.create({
     baseURL: process.env.NEXT_PUBLIC_BASE_URL,
-    timeout: 20000,
+    timeout: 30000,
 });
 
 axiosInstance.interceptors.request.use((config) => {
@@ -31,7 +31,7 @@ axiosInstance.interceptors.response.use(
         }
 
         if (status === 403) {
-            // window.location.href = '/';
+            window.location.href = '/';
             console.warn('Не имеет доступ. Перенаправляю...');
         }
         

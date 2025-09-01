@@ -44,12 +44,15 @@ export default function Teaching() {
     // fetch lessons
     const handleFetchLessons = async () => {
         const data = await fetchItemsLessons();
-        toggleSkeleton();
+        setSkeleton(true)
+        console.log(data);
+        
         if (data) {
             // валидность проверить
             console.log(data);
             setLessons(data);
             setHasLessons(false);
+            setSkeleton(false)
         } else {
             setHasLessons(true);
             setMessage({
@@ -59,6 +62,7 @@ export default function Teaching() {
             if (data?.response?.status) {
                 showError(data.response.status);
             }
+            setSkeleton(false);
         }
     };
 
@@ -126,6 +130,8 @@ export default function Teaching() {
     }, [lessons, selectedSort]);
 
     useEffect(() => {
+        console.log('kfjlsdj;');
+        
         handleFetchLessons();
         handleFetchConnectId();
     }, []);

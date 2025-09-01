@@ -68,6 +68,9 @@ export interface LayoutContextProps {
     contextFetchStudentThemes: (id)=> void;
     contextStudentThemes;
     setContextStudentThemes;
+
+    crumbUrls: {type: string; crumbUrl: string }[];
+    contextAddCrumb: (id)=> void
     // message: { state: boolean; value: MessageType };
     // setMessage: React.Dispatch<React.SetStateAction<{ state: boolean; value: MessageType }>>;
 }

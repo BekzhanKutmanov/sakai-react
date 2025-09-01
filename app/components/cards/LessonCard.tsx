@@ -33,8 +33,9 @@ export default function LessonCard({
     urlForDownload: string;
     videoVisible?: (id: string | null)=> void;
 }) {
-    const shortTitle = useShortText(cardValue.title, 10);
+    const shortTitle = useShortText(cardValue.title, 20);
     const shortDescription = useShortText(cardValue.desctiption ? cardValue.desctiption : '', 17);
+    const shortUrl = useShortText(cardValue?.url ? cardValue?.url : '', 17);
     const [progressSpinner, setProgressSpinner] = useState(false);
 
     const toggleSpinner = () => {
@@ -75,7 +76,7 @@ export default function LessonCard({
 
     const videoPreviw =
         type.typeValue === 'video' && (
-            <div className="relative bg-white shadow w-[70%] rounded-2xl">
+            <div className="relative bg-white shadow w-[70%] max-h-[180px] overflow-hidden rounded-2xl">
                 <div className="w-full h-[100%] absolute flex justify-center items-center bg-[rgba(8,9,0,30%)]">
                     <div className="relative flex items-center justify-center" onClick={()=> videoVisible?.(type.typeValue)}>
                         {/* Волна */}
@@ -87,7 +88,7 @@ export default function LessonCard({
                         </div>
                     </div>
                 </div>
-                <img src="/layout/images/no-image.png" className="w-full object-cover" alt="Видео" />
+                <img src={cardValue.photo || "/layout/images/no-image.png"} className="w-full object-cover" alt="Видео" />
             </div>
         ) 
 
@@ -111,7 +112,7 @@ export default function LessonCard({
                 <div className="bg-[#d6bcbc12] flex flex-col justify-between rounded-2xl p-1">
                     {/* <div className=''>{!cardValue.photo && <img className="cover" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSweN5K2yaBwZpz5W9CxY9S41DI-2LawmjzYw&s" alt="" />}</div> */}
                     <div className="flex items-center justify-center text-[15px] sm:text-[17px] mt-1">{shortTitle}</div>
-                    {type.typeValue === 'link' && <span className="flex justify-center">{cardValue?.url}</span>}
+                    {type.typeValue === 'link' && <span className="flex justify-center">{shortUrl}</span>}
                     <div className="flex items-center justify-center text-[13px]">{cardValue?.desctiption && cardValue?.desctiption !== 'null' && shortDescription}</div>
                     {status === 'working' && type.typeValue !== 'video' && (
                         <div className={`flex gap-1 items-center justify-center mt-1`}>

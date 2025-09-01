@@ -96,7 +96,8 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
         description: '',
         file: null,
         url: '',
-        video_link: ''
+        video_link: '',
+        cover: null
     });
     const [videoShow, setVideoShow] = useState<boolean>(false);
     const [imageState, setImageState] = useState<string | null>(null);
@@ -167,6 +168,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
     const fileUploadRef = useRef<FileUpload>(null);
     const clearFile = () => {
         fileUploadRef.current?.clear();
+        setAdditional((prev) => ({ ...prev, video: false }))
         setImageState(null);
         if (visible) {
             setEditingLesson(
@@ -473,7 +475,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                                             status={'working'}
                                             onSelected={(id: number, type: string) => selectedForEditing(id, type)}
                                             onDelete={(id: number) => handleDeleteLink(id)}
-                                            cardValue={{ title: item.title, id: item.id, desctiption: item?.description, type: 'url', photo: item?.photo }}
+                                            cardValue={{ title: item.title, id: item.id, desctiption: item?.description, type: 'url', photo: item?.cover_url }}
                                             cardBg={'#7bb78112'}
                                             type={{ typeValue: 'link', icon: 'pi pi-link' }}
                                             typeColor={'var(--mainColor)'}
@@ -592,7 +594,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
     // VIDEO SECTIONS
     const toggleVideoType = (e: videoType) => {
         setSelectedCity(e);
-        setVideoValue({ title: '', description: '', file: null, url: '', video_link: '' });
+        setVideoValue({ title: '', description: '', file: null, url: '', video_link: '', cover: null });
     };
 
     const handleVideoCall = (value: string | null) => {
@@ -631,8 +633,16 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
     const onSelect = (e: FileUploadSelectEvent & { files: FileWithPreview[] }) => {
         if (e.files.length > 0) {
             setImageState(e.files[0].objectURL);
+            setVideoValue((prev) => ({
+                ...prev,
+                cover: e.files[0]
+            }));
         }
     };
+
+    useEffect(() => {
+        console.log(imageState);
+    }, [imageState]);
 
     const videoSection = () => {
         return (
@@ -764,7 +774,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                                         status={'working'}
                                         onSelected={(id: number, type: string) => selectedForEditing(id, type)}
                                         onDelete={(id: number) => handleDeleteVideo(id)}
-                                        cardValue={{ title: item.title, id: item.id, desctiption: item?.description, type: 'video', photo: item?.photo }}
+                                        cardValue={{ title: item.title, id: item.id, desctiption: item?.description, type: 'video', photo: item?.cover_url }}
                                         cardBg={'#f1b1b31a'}
                                         type={{ typeValue: 'video', icon: 'pi pi-video' }}
                                         typeColor={'var(--mainColor)'}
@@ -794,7 +804,6 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
     const handleFetchVideo = async () => {
         // skeleton = false
         const data = await fetchLesson('video', courseId ? Number(courseId) : null, lessonId ? Number(lessonId) : null);
-        console.log(data);
 
         if (data?.success) {
             if (data.videos) {
@@ -821,8 +830,9 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
     const handleAddVideo = async () => {
         toggleSpinner();
         const token = getToken('access_token');
-        const data = await addLesson('video', token, courseId ? Number(courseId) : null, lessonId ? Number(lessonId) : null, videoValue, selectedCity?.id);
+        const data = await addLesson('video', token, courseId ? Number(courseId) : null, lessonId ? Number(lessonId) : null, videoValue, selectedCity?.id );
         if (data.success) {
+            clearFile();
             handleFetchVideo();
             setMessage({
                 state: true,

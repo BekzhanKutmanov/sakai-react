@@ -98,7 +98,6 @@ export default function StreamList({ callIndex, courseValue, isMobile, insideDis
 
     const profilactor = (data: { connect_id: number; course_id: number; stream_id: number; info: string | null; subject_name: { name_kg: string } }[]) => {
         const newStreams: { course_id: number; stream_id: number; info: string | null; stream_title: string }[] = [];
-        console.log(data);
 
         data.forEach((item) => {
             if (item?.connect_id) {

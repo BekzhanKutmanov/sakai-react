@@ -45,7 +45,7 @@ export default function ItemCard({
                                 </div>
                                 {connection.map((item) => {
                                     if (item.id_myedu_stream === stream.id) {
-                                        console.log('Здесь кнопка должна появиться:', item.id_myedu_stream + '=' + stream.id);
+                                        // console.log('Здесь кнопка должна появиться:', item.id_myedu_stream + '=' + stream.id);
                                         return (
                                             <Link key={item.id} href={`teaching/${item.course_id}/${stream.id}`}>
                                                 <Button className="px-2 py-1" style={{ fontSize: '14px' }} label="Курс" icon="pi pi-arrow-right text-sm" iconPos="right" />

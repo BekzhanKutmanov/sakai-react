@@ -14,7 +14,6 @@ import { logout } from '@/utils/logout';
 const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
     const { layoutConfig, layoutState, onMenuToggle, showProfileSidebar, user, setUser, setGlobalLoading } = useContext(LayoutContext);
 
-
     const menubuttonRef = useRef(null);
     const topbarmenuRef = useRef(null);
     const topbarmenubuttonRef = useRef(null);
@@ -28,7 +27,7 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
     const pathName = usePathname();
     const media = useMediaQuery('(max-width: 1000px)');
 
-    const router = useRouter()
+    const router = useRouter();
 
     const mobileMenu = [
         user
@@ -54,7 +53,8 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                           className: 'text-[12px]',
                           items: [],
                           command: () => {
-                              logout({ setUser, setGlobalLoading });
+                            window.location.href = '/auth/login';
+                            logout({ setUser, setGlobalLoading });
                           }
                       }
                   ]
@@ -65,7 +65,8 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                   items: [],
                 //   url: '/auth/login'
                   command: ()=> {
-                    router.push('/auth/login');
+                    // router.push('/auth/login');
+                    window.location.href = '/auth/login';
                   }
               },
         {

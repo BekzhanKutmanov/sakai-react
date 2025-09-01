@@ -171,7 +171,7 @@ export const addLesson = async (
     videoType: number | null) => {
     
     let formData = new FormData();
-    console.log(value, type, courseId, lessonId, videoType);
+    console.log(value.cover, value.file, type, courseId, lessonId, videoType, );
     let headers: Record<string, string> = token ? { Authorization: `Bearer ${token}` } : {};
     let url = '';
     let body: lessonStateType | string | FormData = value;
@@ -197,11 +197,15 @@ export const addLesson = async (
         formData.append('description', String(value?.description)); 
         body = formData;
     } else if(type === 'video' && typeof value === 'object' && value !== null){
-        url = `v1/teacher/video/store?lesson_id=${lessonId}&title=${value.title}&description=${value.description}&video_link=${value.video_link}&video_type_id=${videoType}&cover`;
+        headers['Content-Type'] = 'multipart/form-data';
+        url = `v1/teacher/video/store?lesson_id=${lessonId}&title=${value.title}&description=${value.description}&video_link=${value.video_link}&video_type_id=${videoType}`;
         formData.append('lesson_id', String(lessonId));
         formData.append('video_link', String(value?.video_link));
         formData.append('title', String(value?.title)); 
         formData.append('description', String(value?.description));
+        if(value.cover){
+            formData.append('cover', value?.cover && value?.cover);
+        }
         body = formData;
     }
 

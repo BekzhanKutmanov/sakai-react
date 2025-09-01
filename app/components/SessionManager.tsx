@@ -69,7 +69,9 @@ const SessionManager = () => {
     }, []);
 
     useEffect(() => {
-        setGlobalLoading(true);
+        if(!pathname.startsWith('/teaching/lesson/')){
+            setGlobalLoading(true);
+        }
         console.log('Переход в', pathname);
         const token = getToken('access_token');
 

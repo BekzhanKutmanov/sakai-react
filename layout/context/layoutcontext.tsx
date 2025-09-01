@@ -10,6 +10,7 @@ import { MessageType } from '@/types/messageType';
 import { fetchCourses, fetchThemes } from '@/services/courses';
 import { fetchStudentThemes } from '@/services/studentMain';
 import { myMainCourseType } from '@/types/myMainCourseType';
+import { usePathname } from 'next/navigation';
 
 export const LayoutContext = createContext({} as LayoutContextProps);
 
@@ -32,7 +33,9 @@ export const LayoutProvider = ({ children }: ChildContainerProps) => {
         menuHoverActive: false
     });
 
-    // 👇 Добавляем пользователя
+    const pathname = usePathname();
+
+    // Добавляем пользователя
     const [user, setUser] = useState<User | null>(null);
 
     // Глобальная загрузка
@@ -65,12 +68,25 @@ export const LayoutProvider = ({ children }: ChildContainerProps) => {
         return window.innerWidth > 991;
     };
 
+    // breadCrumb urls
+    const isTopicsChildPage = /^\/teaching\/[^/]+\/[^/]+$/.test(pathname);
+    const [crumbUrls, setCrumbUrls] = useState<{type: string; crumbUrl: string }>({type: '', crumbUrl: ''});
+    const contextAddCrumb = (url: { type: string; crumbUrl: string }) => {
+        const urlName = url.type === 'studentStream' ? 'studentStream' : '';
+        setCrumbUrls((prev) => ({ ...prev, [urlName]: url.crumbUrl }));
+    };
+
+    useEffect(()=> {
+        if(isTopicsChildPage && crumbUrls){
+            localStorage.setItem('currentBreadCrumb', JSON.stringify(crumbUrls));
+        } 
+    },[crumbUrls]);
+
     // fetch course
-    const [course, setCourses] = useState<{ current_page: number; total: number; per_page: number; data:myMainCourseType[]  }>({ current_page: 1, total: 0, per_page: 10, data: []  });
+    const [course, setCourses] = useState<{ current_page: number; total: number; per_page: number; data: myMainCourseType[] }>({ current_page: 1, total: 0, per_page: 10, data: [] });
 
     const contextFetchCourse = async (page: number) => {
         const data = await fetchCourses(page, 0);
-        console.log(data.courses);
 
         if (data?.courses) {
             // setCourses(data.courses.data);
@@ -85,10 +101,6 @@ export const LayoutProvider = ({ children }: ChildContainerProps) => {
 
         setContextThemes(data);
     };
-
-    useEffect(() => {
-        console.log('course ', course);
-    }, [course]);
 
     // fetch themes for student
     const [contextStudentThemes, setContextStudentThemes] = useState([]);
@@ -122,7 +134,10 @@ export const LayoutProvider = ({ children }: ChildContainerProps) => {
 
         contextFetchStudentThemes,
         contextStudentThemes,
-        setContextStudentThemes
+        setContextStudentThemes,
+
+        crumbUrls,
+        contextAddCrumb,
     };
 
     return (
