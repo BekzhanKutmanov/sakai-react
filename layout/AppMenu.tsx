@@ -78,7 +78,7 @@ const AppMenu = () => {
                     to: `/course/${clickedCourseId}`,
                     items: [], // пока пусто
                     command: () => {
-                        contextFetchThemes(item.id);
+                        contextFetchThemes(item.id);                        
                         setClickedCourseId(item.id);
                     }
                 })

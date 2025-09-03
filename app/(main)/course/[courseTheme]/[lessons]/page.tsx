@@ -30,7 +30,7 @@ export default function Lesson() {
     const showError = useErrorMessage();
     const [sentValues, setSentValues] = useState<string>('');
 
-    const media = useMediaQuery('(max-width: 640px)');
+    const media = useMediaQuery('(max-width: 640px)');  
 
     const params = useParams();
     const courseId = params.courseTheme;

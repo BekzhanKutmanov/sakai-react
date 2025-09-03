@@ -311,7 +311,7 @@ export default function CourseTheme() {
             />
 
             {/* modal sectoin */}
-            <FormModal title={editMode ? 'Теманы жаңылоо' : 'Кошуу'} fetchValue={editMode ? handleUpdateTheme : handleAddTheme} clearValues={clearValues} visible={formVisible} setVisible={setFormVisible} start={forStart}>
+            <FormModal title={editMode ? 'Сабакты жаңылоо' : 'Кошуу'} fetchValue={editMode ? handleUpdateTheme : handleAddTheme} clearValues={clearValues} visible={formVisible} setVisible={setFormVisible} start={forStart}>
                 <div className="flex flex-col gap-1">
                     <div className="flex flex-col lg:flex-row gap-1 justify-around items-center">
                         <div className="flex flex-col gap-1 items-center justify-center">
@@ -347,33 +347,50 @@ export default function CourseTheme() {
                 <div className="py-4">
                     {skeleton ? (
                         <GroupSkeleton count={themes.length} size={{ width: '100%', height: '4rem' }} />
-                    ) : media ? (
-                        <>
-                            <DataView
-                                value={themes}
-                                itemTemplate={itemTemplate}
-                                layout="list" // Отображение в виде сетки, что идеально подходит для карточек
-                                rows={5}
-                                emptyMessage="Нет данных для отображения"
-                            />
-                        </>
                     ) : (
-                        <DataTable value={themes} breakpoint="960px" className="my-custom-table">
-                            <Column body={(_, { rowIndex }) => rowIndex + 1} header="Номер" style={{ width: '20px' }}></Column>
-                            <Column field="title" header="Темалар" className="w-full" body={(rowData) => <Link href={`/course/${courseTheme}/${rowData.id}`}>{rowData.title}</Link>}></Column>
+                        <div>
+                            {themes.map((item: any, index: number) => {
+                                return (
+                                    <div className="col-12">
+                                        <div className={`w-full flex flex-column sm:flex-row align-items-center p-2 sm:p-4 gap-3 `}>
+                                            {/* Заголовок */}
+                                            <div className={`w-full flex-1 ${tableMedia && 'flex items-center gap-1 justify-between'}`}>
+                                                <div className="font-bold text-md mb-2 flex gap-1 items-center">
+                                                    <div className="w-[15px] flex flex-col justify-between gap-2 mr-1">
+                                                        <div className='flex gap-1'>
+                                                            <span className="w-[10px] h-[10px] bg-[var(--mainBgColor)]"></span>
+                                                            <span className="w-[10px] h-[10px] bg-[var(--mainBgColor)]"></span>
+                                                        </div>
+                                                        <div className='flex gap-1'>
+                                                            <span className="w-[10px] h-[10px] bg-[var(--mainBgColor)]"></span>
+                                                            <span className="w-[10px] h-[10px] bg-[var(--mainBgColor)]"></span>
+                                                        </div>
+                                                    </div>
+                                                    <div>{index + 1}.</div>
+                                                    <Link className='max-w-[170px] sm:max-w-full break-all' href={`/course/${courseTheme}/lessonStep/${courseTheme}/${item.id}`}>
+                                                        {item.title} {/* Используем subject_name из вашего шаблона */}
+                                                    </Link>
+                                                </div>
+                                                {tableMedia && (
+                                                    <div className="flex flex-column sm:flex-row gap-2 sm:mt-0">
+                                                        <Redacting redactor={getRedactor('null', item, { onEdit: edit, getConfirmOptions, onDelete: handleDeleteCourse })} textSize={'14px'} />
+                                                    </div>
+                                                )}
+                                            </div>
 
-                            <Column
-                                header=""
-                                className="flex justify-center"
-                                body={(rowData) => (
-                                    <div className="flex gap-2">
-                                        <div className="flex items-center gap-2" key={rowData.id}>
-                                            <Redacting redactor={getRedactor('null', rowData, { onEdit: edit, getConfirmOptions, onDelete: handleDeleteCourse })} textSize={'14px'} />
+                                            {/* Кнопки действий */}
+                                            {!tableMedia && (
+                                                <div className="flex flex-column sm:flex-row gap-2 sm:mt-0">
+                                                    {/* <Button icon="pi pi-pencil" className="p-button-rounded" onClick={() => edit(item)} /> */}
+                                                    {/* <Button icon="pi pi-trash" className="p-button-rounded p-button-danger" onClick={() => handleDeleteCourse(item.id)} /> */}
+                                                    <Redacting redactor={getRedactor('null', item, { onEdit: edit, getConfirmOptions, onDelete: handleDeleteCourse })} textSize={'14px'} />
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
-                                )}
-                            />
-                        </DataTable>
+                                );
+                            })}
+                        </div>
                     )}
                 </div>
             )}
