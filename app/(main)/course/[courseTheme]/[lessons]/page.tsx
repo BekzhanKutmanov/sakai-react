@@ -218,7 +218,7 @@ export default function Lesson() {
     const lessonInfo = (
         <div>
             <div className="bg-[var(--titleColor)] relative flex flex-col justify-center items-center w-full text-white p-5 md:p-10 pb-4">
-                <span className="absolute left-4 top-4 text-2xl sm:text-4xl pi pi-bookmark-fill "></span>
+                <span className="absolute left-2 sm:left-4 top-2 text-2xl sm:text-4xl pi pi-bookmark-fill "></span>
                 <div>
                     <h1 style={{ color: 'white', fontSize: media ? '24px' : '36px', textAlign: 'center' }}>{lessonInfoState?.title}</h1>
                     <div className="flex flex-col sm:flex-row items-center justify-between gap-5 m-4">
@@ -262,7 +262,7 @@ export default function Lesson() {
                 }}
             >
                 {/* CKEDITOR */}
-                <TabPanel
+                {/* <TabPanel
                     pt={{
                         headerAction: { className: 'cursor-pointer font-italic text-sm sm:text-md tab-custom-text' }
                     }}
@@ -282,7 +282,6 @@ export default function Lesson() {
                                             </div>
 
                                             <Redacting redactor={getRedactor('null', textValue.id, { onEdit: editing, getConfirmOptions, onDelete: handleDeleteLesson })} textSize={'14px'} />
-                                            {/* <MySkeleton size={{ width: '12px', height: '15px' }} /> */}
                                         </div>
                                         <div className={`flex gap-1 items-center`}>
                                             <i className={`pi pi-calendar text-[var(--mainColor)]`}></i>
@@ -291,7 +290,6 @@ export default function Lesson() {
                                     </div>
                                     <div className="w-full h-[80%] break-words whitespace-normal overflow-scroll">
                                         <div dangerouslySetInnerHTML={{ __html: typeof sentValues === 'string' && sentValues }} />
-                                        {/* {sentValues.text} */}
                                     </div>
                                 </div>
                             ) : (
@@ -316,7 +314,7 @@ export default function Lesson() {
                     ) : (
                         lessonInfo
                     )}
-                </TabPanel>
+                </TabPanel> */}
 
                 {/* DOC */}
                 <TabPanel
@@ -327,7 +325,7 @@ export default function Lesson() {
                     leftIcon={'pi pi-file mr-1'}
                     className="p-tabview p-tabview-nav p-tabview-selected p-tabview-panels p-tabview-panel"
                 >
-                    {contentShow && <LessonTyping mainType="doc" courseId={courseId} lessonId={lessonId} />}
+                    {<LessonTyping mainType="doc" courseId={courseId} lessonId={lessonId} /> }
                     {/* <Book/> */}
                 </TabPanel>
 

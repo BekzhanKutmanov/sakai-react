@@ -141,7 +141,7 @@ export default function StudentList() {
             )}
 
             {/* table section */}
-            {!hasList ? (
+            {hasList ? (
                 <NotFound titleMessage={'  ?  '} />
             ) : (
                 <div>

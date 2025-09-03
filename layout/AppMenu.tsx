@@ -75,7 +75,7 @@ const AppMenu = () => {
                 forCourse.push({
                     label: item.title,
                     id: item.id,
-                    to: '',
+                    to: `/course/${clickedCourseId}`,
                     items: [], // пока пусто
                     command: () => {
                         contextFetchThemes(item.id);

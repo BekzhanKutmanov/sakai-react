@@ -53,6 +53,24 @@ export default function Course() {
     const [displayStrem, setDisplayStreams] = useState<displayType[]>([]);
     const [visible, setVisisble] = useState(false);
 
+    [
+        {
+            title: 'dfdj', 
+            topic_id: 1,
+            lessons: []
+        },
+        {
+            title: 'r', 
+            topic_id: 2,
+            lessons: []
+        },
+        {
+            title: 't', 
+            topic_id: 3,
+            lessons: []
+        }
+    ];
+
     const [editingLesson, setEditingLesson] = useState<CourseCreateType>({
         title: '',
         description: '',
@@ -138,7 +156,7 @@ export default function Course() {
                         image: ''
                     }
             );
-            // query 
+            // query
         } else {
             setCourseValue((prev) => ({
                 ...prev,
@@ -361,7 +379,7 @@ export default function Course() {
 
             if (data?.success) {
                 console.log('udali', data);
-                
+
                 setProgressSpinner(false);
                 setEditingLesson({
                     title: data.course.title || '',
@@ -448,13 +466,10 @@ export default function Course() {
                 <div className="flex flex-col gap-1">
                     <div className={imagestateStyle}>
                         {/* {imagestateStyle && ( */}
-                            <div className="w-1/2 order-2 sm:order-1 max-h-[170px] max-w-[300px] overflow-hidden flex justify-center items-center">
-                                {/* {typeof imageState === 'string' && <img className="w-full object-cover" src={editMode ? typeof editingLesson.image === 'string' ? editingLesson.image : '' : imageState} alt="" />} */}
-                                {typeof imageState === 'string' ? 
-                                    <img className="w-full object-cover" src={imageState} />
-                                    : <img className="w-full object-cover" src={typeof editingLesson.image === 'string' ? editingLesson.image : ''} />
-                                }
-                            </div>
+                        <div className="w-1/2 order-2 sm:order-1 max-h-[170px] max-w-[300px] overflow-hidden flex justify-center items-center">
+                            {/* {typeof imageState === 'string' && <img className="w-full object-cover" src={editMode ? typeof editingLesson.image === 'string' ? editingLesson.image : '' : imageState} alt="" />} */}
+                            {typeof imageState === 'string' ? <img className="w-full object-cover" src={imageState} /> : <img className="w-full object-cover" src={typeof editingLesson.image === 'string' ? editingLesson.image : ''} />}
+                        </div>
                         {/* )} */}
                         <div className={`flex flex-col pag-1 order-1 sm:order-2 items-center justify-center ${imageState && 'w-1/2'}`}>
                             <label className="block text-900 font-medium text-[16px] md:text-xl mb-1 md:mb-2">Сүрөт кошуу</label>
@@ -675,7 +690,7 @@ export default function Course() {
                         </>
                     ) : (
                         <div className="w-full flex justify-between items-start gap-2 xl:gap-5">
-                            <div className="py-4 w-1/2">
+                            <div className="py-4 w-full">
                                 {/* info section */}
                                 {skeleton ? (
                                     <GroupSkeleton count={1} size={{ width: '100%', height: '5rem' }} />
@@ -763,9 +778,9 @@ export default function Course() {
                                 )}
                             </div>
                             {/* STREAMS SECTION */}
-                            <div className="w-1/2">
+                            {/* <div className="w-1/2">
                                 <StreamList isMobile={false} callIndex={1} courseValue={forStreamId?.id ? forStreamId : null} insideDisplayStreams={(value: displayType[]) => displayInfo(value)} toggleIndex={() => {}} />
-                            </div>
+                            </div> */}
                         </div>
                     )}
                 </div>

@@ -31,7 +31,7 @@ axiosInstance.interceptors.response.use(
         }
 
         if (status === 403) {
-            // window.location.href = '/';
+            window.location.href = '/';
             console.warn('Не имеет доступ. Перенаправляю...');
         }
         
