@@ -9,5 +9,6 @@ export const lessonSchema = yup.object().shape({
         .string()
         .required('Талап кылынат!')
         .matches(/^https?:\/\/.+/, 'Шилтеме "http://" "https://" форматында болуш керек'),
-    title: yup.string().required('Талап кылынат!').max(30, 'Аталыштын узундугу макс 30 тамга')
+    title: yup.string().required('Талап кылынат!')
+    // .max(50, 'Аталыштын узундугу макс 50 тамга')
 });

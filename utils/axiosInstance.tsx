@@ -37,9 +37,9 @@ axiosInstance.interceptors.response.use(
         
         if (status === 404) {
             console.warn('404 - Перенаправляю...');
-            window.location.href = '/pages/notfound';
-            document.cookie = 'access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;';
-            localStorage.removeItem('userVisit');
+            // window.location.href = '/pages/notfound';
+            // document.cookie = 'access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;';
+            // localStorage.removeItem('userVisit');
         }
 
         return Promise.reject(error);

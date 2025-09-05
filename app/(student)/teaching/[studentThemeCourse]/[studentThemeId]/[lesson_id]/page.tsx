@@ -265,7 +265,7 @@ export default function StudentLessons() {
                     {docShow ? (
                         <NotFound titleMessage={'Документтер жеткиликтүү эмес'} />
                     ) : (
-                        documents.map((item: lessonType) => (
+                        documents.map((item: lessonType) => (   
                             <>
                                 <LessonCard
                                     status="student"

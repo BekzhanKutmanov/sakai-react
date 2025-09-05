@@ -61,6 +61,10 @@ button {
   }
 }
 
+.p-button .mini-button {
+    padding: 5px 10px;
+}
+
 .reject-button {
   background-color: transparent;
   color: var(--bodyColor);

@@ -591,3 +591,29 @@ h1, h2, h3, h4, h5, h6 {
     padding: 8px;
   }
 }
+
+.step{
+  background-color: rgb(209, 210, 208);
+  transition: .5s;
+}
+.step:hover{
+  background-color: var(--greenColor);
+}
+
+.activeStep{
+  background-color: var(--greenColor);
+}
+
+.animate-step {
+  animation: bacgroundAnimate 2s ease infinite;
+}
+
+@keyframes bacgroundAnimate {
+  0%{
+    background-color: rgb(209, 210, 208);
+  } 50%{
+    background-color: var(--greenColor);
+  } 100%{
+    background-color: rgb(209, 210, 208);
+  }
+}

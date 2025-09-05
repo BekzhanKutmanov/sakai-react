@@ -39,7 +39,7 @@ export const addCourse = async (value: CourseCreateType) => {
     }
 };
 
-export const deleteCourse = async (id: number) => {
+export const deleteCourse = async (id: number) => { 
     url = process.env.NEXT_PUBLIC_BASE_URL + `/v1/teacher/courses/delete?course_id=${id}`;
 
     try {

@@ -641,10 +641,6 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
         }
     };
 
-    useEffect(() => {
-        console.log(imageState);
-    }, [imageState]);
-
     const videoSection = () => {
         return (
             <div className="py-1 sm:py-4 flex flex-col items-center gap-3">

@@ -20,7 +20,6 @@ export default function useBreadCrumbs(insideBreadCrumb: breadCrumbType[], curre
         
         // 1. Находим текущую страницу по URL (с учётом динамики)
         const currentPage = data.find((item) => matchUrl(item.url, currentUrl));
-
         if (!currentPage) return [];
 
         const breadcrumbs = [];
@@ -45,6 +44,8 @@ export default function useBreadCrumbs(insideBreadCrumb: breadCrumbType[], curre
     };
 
     useEffect(() => {
+        console.log(insideBreadCrumb, currentUrl);
+        
         const forBreadcrumb = getBreadcrumbs(insideBreadCrumb, currentUrl);
         setBreadCrumb(forBreadcrumb);
     }, [pathname]);
