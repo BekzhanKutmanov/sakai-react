@@ -1,8 +1,6 @@
 'use client';
 
 import { lessonSchema } from '@/schemas/lessonSchema';
-import { EditableLesson } from '@/types/editableLesson';
-import { lessonStateType } from '@/types/lessonStateType';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useParams, useRouter } from 'next/navigation';
 import { Button } from 'primereact/button';
@@ -12,17 +10,20 @@ import { ProgressSpinner } from 'primereact/progressspinner';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { NotFound } from '../NotFound';
-import { lessonType } from '@/types/lessonType';
 import LessonCard from '../cards/LessonCard';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
-import { log } from 'node:console';
 import { getToken } from '@/utils/auth';
 import { addDocument, deleteDocument, fetchElement, updateDocument } from '@/services/steps';
 import { mainStepsType } from '@/types/mainStepType';
 import useErrorMessage from '@/hooks/useErrorMessage';
 import { LayoutContext } from '@/layout/context/layoutcontext';
 import FormModal from '../popUp/FormModal';
-import PDFViewer from '../PDFBook';
+// import PDFViewer from '../PDFBook';
+import dynamic from "next/dynamic";
+
+const PDFViewer = dynamic(()=> import('../PDFBook'), {
+    ssr: false,
+})
 
 export default function LessonDocument({ element, content, fetchPropElement, clearProp }: { element: mainStepsType; content: any; fetchPropElement: (id: number) => void; clearProp: boolean}) {
     interface docValueType {

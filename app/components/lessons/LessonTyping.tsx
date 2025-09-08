@@ -18,7 +18,6 @@ import { lessonType } from '@/types/lessonType';
 import { NotFound } from '../NotFound';
 import { EditableLesson } from '@/types/editableLesson';
 import { Dropdown } from 'primereact/dropdown';
-import PDFViewer from '../PDFBook';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { useRouter } from 'next/navigation';
 import { ProgressSpinner } from 'primereact/progressspinner';
@@ -213,23 +212,10 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
         }
     };
 
-    const documentView = (
-        <>
-            <div className=" flex flex-col gap-1">
-                <i className="pi pi-times text-2xl" onClick={() => setPDFVisible(false)}></i>
-                <div className="w-full flex flex-col gap-1 items-center justify-center">
-                    <PDFViewer url={urlPDF || ''} />
-                </div>
-            </div>
-        </>
-    );
-
     const docSection = () => {
         return (
             <div className="py-1 sm:py-4 flex flex-col items-center gap-4">
-                {PDFVisible ? (
-                    documentView
-                ) : (
+                (
                     <>
                         <div className="w-full flex flex-col justify-center gap-2">
                             <div className="flex gap-1 items-center">
@@ -305,7 +291,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                             </div>
                         </div>
                     </>
-                )}
+                )
             </div>
         );
     };
