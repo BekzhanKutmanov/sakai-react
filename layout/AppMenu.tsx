@@ -5,10 +5,20 @@ import AppMenuitem from './AppMenuitem';
 import { LayoutContext } from './context/layoutcontext';
 import { MenuProvider } from './context/menucontext';
 import { AppMenuItem } from '@/types';
-import { useParams, usePathname } from 'next/navigation';
+import { useParams, usePathname, useRouter } from 'next/navigation';
+import { getConfirmOptions } from '@/utils/getConfirmOptions';
+import { confirmDialog } from 'primereact/confirmdialog';
+import { addThemes, deleteTheme, fetchLessonShow, updateTheme } from '@/services/courses';
+import FormModal from '@/app/components/popUp/FormModal';
+import { InputText } from 'primereact/inputtext';
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { lessonSchema } from '@/schemas/lessonSchema';
+import useErrorMessage from '@/hooks/useErrorMessage';
+import { Button } from 'primereact/button';
 
 const AppMenu = () => {
-    const { layoutConfig, user, course, contextFetchCourse, contextFetchThemes, contextThemes, setContextThemes, contextFetchStudentThemes, contextStudentThemes } = useContext(LayoutContext);
+    const { layoutConfig, user, course, mainCourseId, setMainCourseId, contextFetchCourse, contextFetchThemes, contextThemes, setContextThemes, contextFetchStudentThemes, contextStudentThemes } = useContext(LayoutContext);
     interface test {
         label: string;
         id: number;
@@ -17,28 +27,55 @@ const AppMenu = () => {
         command?: () => void;
     }
 
+    // validate
+    const {
+        setValue,
+        formState: { errors }
+    } = useForm({
+        resolver: yupResolver(lessonSchema),
+        mode: 'onChange'
+    });
+
     const location = usePathname();
     const pathname = location;
     const { studentThemeCourse } = useParams();
+    const params = useParams();
+    const course_Id = params.course_Id;
+
+    const router = useRouter();
 
     const [courseList, setCourseList] = useState<test[]>([]);
-    const [clickedCourseId, setClickedCourseId] = useState<number | null>(null);
+    const [selectId, setSelectId] = useState<number | null>(null);
+    const [visible, setVisisble] = useState(false);
+    const [themeAddvisible, setThemeAddVisisble] = useState(false);
+    const [editingLesson, setEditingLesson] = useState<{ title: string } | null>(null);
+    const [themeValue, setThemeValue] = useState<{ title: string }>({title: ''});
 
     const [themesStudentList, setThemesStudentList] = useState<{ label: string; id: number; to: string; items?: AppMenuItem[] }[]>([]);
 
+    const showError = useErrorMessage();
+    const { setMessage } = useContext(LayoutContext);
+
     const byStatus: AppMenuItem[] = user?.is_working
-        ? [
-              {
-                  label: 'Курстар',
-                  icon: 'pi pi-fw pi-calendar-clock',
-                  items: courseList?.length > 0 ? courseList : []
-              }
-          ]
+        ? pathname.startsWith('/course/')
+            ? [
+                  {
+                      label: 'Артка',
+                      icon: 'pi pi-fw pi-arrow-left',
+                      to: '/course'
+                  },
+                  {
+                      label: 'Темалар',
+                      icon: 'pi pi-fw pi-calendar-clock',
+                      items: courseList?.length > 0 ? courseList : []
+                  }
+              ]
+            : []
         : user?.is_student
         ? [
               { label: 'Окуу планы', icon: 'pi pi-fw pi-calendar-clock', to: '/teaching' },
               pathname.startsWith('/teaching/lesson/') ? { label: 'Темалар', icon: 'pi pi-fw pi-book', items: themesStudentList?.length > 0 ? themesStudentList : [] } : { label: '' }
-          ] 
+          ]
         : [];
 
     const model: AppMenuItem[] = [
@@ -51,6 +88,102 @@ const AppMenu = () => {
             items: byStatus
         }
     ];
+
+    const selectedForEditing = (id: number) => {
+        setSelectId(id);
+        setVisisble(true);
+        editing(id);
+    };
+
+    const editing = async (id: number) => {
+        console.log(selectId);
+
+        const data = await fetchLessonShow(id);
+        console.log(data);
+        if (data.lesson) {
+            setEditingLesson({ title: data.lesson.title });
+        } else {
+            setMessage({
+                state: true,
+                value: { severity: 'error', summary: 'Катаа!', detail: 'Кийинирээк кайталаныз' }
+            });
+            if (data?.response?.status) {
+                showError(data.response.status);
+            }
+        }
+    };
+
+    const clearValues = () => {
+        setThemeValue({title: ''})
+        setEditingLesson(null);
+        setSelectId(null);
+    };
+
+        // add theme
+    const handleAddTheme = async () => {
+        console.log(course_Id);
+
+        const data = await addThemes(Number(course_Id), themeValue?.title ? themeValue?.title : '');
+        console.log(data);
+
+        if (data?.success) {
+            contextFetchThemes(Number(course_Id));
+            clearValues();
+            setMessage({
+                state: true,
+                value: { severity: 'success', summary: 'Ийгиликтүү кошулду!', detail: '' }
+            });
+        } else {
+            setEditingLesson(null);
+            setMessage({
+                state: true,
+                value: { severity: 'error', summary: 'Ошибка', detail: 'Ошибка при добавлении темы' }
+            });
+            if (data?.response?.status) {
+                showError(data.response.status);
+            }
+        }
+    };
+
+    const handleDeleteTheme = async (id: number) => {
+        const data = await deleteTheme(id);
+        console.log(data);
+        if (data.success) {
+            contextFetchThemes(Number(course_Id));
+        }
+    };
+
+    // update document
+    const handleUpdate = async () => {
+        console.log(selectId, course_Id);
+
+        const data = await updateTheme(Number(course_Id), selectId, editingLesson?.title ? editingLesson?.title : '');
+        console.log(data);
+
+        if (data?.success) {
+            contextFetchThemes(Number(course_Id));
+            clearValues();
+            setMessage({
+                state: true,
+                value: { severity: 'success', summary: 'Ийгиликтүү өзгөртүлдү!', detail: '' }
+            });
+        } else {
+            setEditingLesson(null);
+            setMessage({
+                state: true,
+                value: { severity: 'error', summary: 'Ошибка', detail: 'Ошибка при при изменении урока' }
+            });
+            if (data?.response?.status) {
+                showError(data.response.status);
+            }
+        }
+    };
+
+    const sentDelete = (item: any) => {
+        console.log('Delete theme ID:', item.id);
+        const options = getConfirmOptions(Number(), () => handleDeleteTheme(item.id));
+        confirmDialog(options);
+    };
 
     useEffect(() => {
         if (user?.is_working) {
@@ -69,39 +202,18 @@ const AppMenu = () => {
     }, [user, studentThemeCourse]);
 
     useEffect(() => {
-        if (course) {
-            const forCourse: test[] = [{ label: 'Курс', id: 0, to: '/course' }];
-            course.data?.map((item) =>
-                forCourse.push({
-                    label: item.title,
-                    id: item.id,
-                    to: `/course/${clickedCourseId}`,
-                    items: [], // пока пусто
-                    command: () => {
-                        contextFetchThemes(item.id);                        
-                        setClickedCourseId(item.id);
-                    }
-                })
-            );
-            setCourseList(forCourse);
-        }
-    }, [course]);
-
-    useEffect(() => {
         if (contextThemes && contextThemes.lessons) {
             const newThemes = contextThemes.lessons.data.map((item: any) => ({
                 label: item.title,
                 id: item.id,
-                to: `/course/${clickedCourseId}/${item.id}`,
+                to: `/course/${course_Id}/${item.id}`,
+                onEdit: () => {
+                    selectedForEditing(item.id);
+                },
+                onDelete: () => sentDelete(item)
             }));
 
-            setCourseList((prev) =>
-                prev.map((course) =>
-                    course.id === clickedCourseId
-                        ? { ...course, items: newThemes } // добавляем темы
-                        : course
-                )
-            );
+            setCourseList(newThemes);
         }
     }, [contextThemes]);
 
@@ -125,11 +237,72 @@ const AppMenu = () => {
 
     return (
         <MenuProvider>
+            <FormModal
+                title={'Теманы жаңылоо'}
+                fetchValue={() => {
+                    handleUpdate();
+                }}
+                clearValues={clearValues}
+                visible={visible}
+                setVisible={setVisisble}
+                start={false}
+            >
+                <div className="flex flex-col gap-1">
+                    <div className="flex flex-col gap-1 items-center justify-center">
+                        <InputText
+                            type="text"
+                            placeholder="Аталышы"
+                            className="w-full"
+                            value={editingLesson?.title && editingLesson?.title}
+                            onChange={(e) => {
+                                console.log(editingLesson);
+                                setEditingLesson((prev) => prev && { ...prev, title: e.target.value });
+                                setValue('title', e.target.value, { shouldValidate: true });
+                            }}
+                        />
+                        <b style={{ color: 'red', fontSize: '12px' }}>{errors.title?.message}</b>
+                    </div>
+                </div>
+            </FormModal>
+
+            <FormModal
+                title={'Тема кошуу'}
+                fetchValue={() => {
+                    handleAddTheme();
+                }}
+                clearValues={clearValues}
+                visible={themeAddvisible}
+                setVisible={setThemeAddVisisble}
+                start={false}
+            >
+                <div className="flex flex-col gap-1">
+                    <div className="flex flex-col gap-1 items-center justify-center">
+                        <InputText
+                            type="text"
+                            placeholder="Аталышы"
+                            className="w-full"
+                            value={themeValue?.title && themeValue?.title}
+                            onChange={(e) => {
+                                console.log(e.target.value, themeValue);
+                                setThemeValue((prev) => prev && { ...prev, title: e.target.value });
+                                setValue('title', e.target.value, { shouldValidate: true });
+                            }}
+                        />
+                        <b style={{ color: 'red', fontSize: '12px' }}>{errors.title?.message}</b>
+                    </div>
+                </div>
+            </FormModal>
+
             <ul className="layout-menu">
                 {model.map((item, i) => {
                     return !item?.seperator ? <AppMenuitem item={item} root={true} index={i} key={item.label} /> : <li className="menu-separator"></li>;
                 })}
             </ul>
+            {pathname.startsWith('/course/') && <div className="p-4 mt-auto">
+                <Button label='Тема кошуу' icon={'pi pi-plus'} className="cursor-pointer w-full py-2 px-4 rounded-lg transition" onClick={() => setThemeAddVisisble(true)}>
+                    
+                </Button>
+            </div>}
         </MenuProvider>
     );
 };

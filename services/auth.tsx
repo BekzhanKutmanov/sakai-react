@@ -11,7 +11,6 @@ let url = '';
 
 export const login = async (value:LoginType) => {
     url = process.env.NEXT_PUBLIC_BASE_URL + '/login?';
-    console.log(url);
     
     try {
         const res = await axiosInstance.post('/login?', value);

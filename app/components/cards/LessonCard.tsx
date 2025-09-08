@@ -21,12 +21,13 @@ export default function LessonCard({
     lessonDate,
     urlForPDF,
     urlForDownload,
-    videoVisible
+    videoVisible,
+    answers
 }: {
     status: string;
     onSelected?: (id: number, type: string) => void;
     onDelete?: (id: number) => void;
-    cardValue: { title: string; id: number; desctiption?: string; type?: string; photo?: string; url?: string; document?: string };
+    cardValue: { title: string; id: number; desctiption?: string; type?: string; photo?: string; url?: string; document?: string; score?: number };
     cardBg: string;
     type: { typeValue: string; icon: string };
     typeColor: string;
@@ -34,6 +35,7 @@ export default function LessonCard({
     urlForPDF: () => void;
     urlForDownload: string;
     videoVisible?: (id: string | null) => void;
+    answers?: { id?: number | null; text: string; is_correct: boolean }[];
 }) {
     const shortTitle = useShortText(cardValue.title, 90);
     const shortDoc = useShortText(cardValue?.document || '', 70);
@@ -99,7 +101,7 @@ export default function LessonCard({
         </div>
     );
 
-    const btnLabel = type.typeValue === 'doc' && status === 'working' ? 'Көчүрүү' : type.typeValue === 'doc' && status === 'student' ? 'Ачуу' : type.typeValue === 'link' ? 'Өтүү' : '';
+    const btnLabel = type.typeValue === 'doc' && status === 'working' ? 'Ачуу' : type.typeValue === 'doc' && status === 'student' ? 'Ачуу' : type.typeValue === 'link' ? 'Өтүү' : '';
 
     return (
         <div className="w-full flex flex-col items-start gap-2">
@@ -111,6 +113,8 @@ export default function LessonCard({
                 ${type.typeValue === 'video' ? 'w-full' : ''} flex flex-col justify-evenly lesson-card-border rounded p-2
                 
                 ${type.typeValue === 'doc' ? 'w-full min-h-[160px] bg-black' : ''}
+                
+                ${type.typeValue === 'test' ? 'w-full min-h-[160px] bg-black' : ''}
 
                 `}
                 style={{ backgroundColor: cardBg }}
@@ -118,9 +122,27 @@ export default function LessonCard({
                 <div className={`flex flex-col items-center ${type.typeValue !== 'video' ? 'gap-3' : 'gap-1'}`}>
                     <div className="bg-[#d6bcbc12] flex flex-col gap-1 justify-between rounded-2xl p-2">
                         {/* <div className=''>{!cardValue.photo && <img className="cover" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSweN5K2yaBwZpz5W9CxY9S41DI-2LawmjzYw&s" alt="" />}</div> */}
-                        <b className="flex items-center justify-center text-[16px] sm:text-[18px] mt-1">{shortTitle}</b>
+                        <div className={`flex gap-1 ${cardValue.score ? 'items-center' : 'justify-center'}`}>
+                            <b className="flex items-center justify-center text-[16px] sm:text-[18px] mt-1">{shortTitle}</b>
+                            {cardValue.score ? <span className="text-[16px] sm:text-[18px]">{`/ Балл: ${cardValue.score}`}</span> : ''}
+                        </div>
                         <div className="flex items-center justify-center text-[15px] sm:text-[17px] mt-1">{shortDoc}</div>
                         {type.typeValue === 'link' && <span className="flex justify-center">{shortUrl}</span>}
+                        {answers && (
+                            <div className="flex flex-wrap">
+                                {answers.map((item) => {
+                                    return (
+                                        <div key={item.id}>
+                                            <label className="custom-radio opacity-[60%]">
+                                                <input disabled type="radio" name="radio" checked={item.is_correct} />
+                                                <span className="radio-mark min-w-[18px]"></span>
+                                                <span>{item.text}</span>
+                                            </label>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        )}
                         <div className="flex items-center justify-center text-[13px]">{cardValue?.desctiption && cardValue?.desctiption !== 'null' && shortDescription}</div>
                         {status === 'working' && (
                             <div className={`flex gap-1 items-center justify-center mt-1`}>
@@ -134,7 +156,7 @@ export default function LessonCard({
                     {videoPreviw}
 
                     {/* button */}
-                    {(
+                    {
                         <>
                             {status === 'student' && type.typeValue === 'doc' ? (
                                 <div className="flex gap-1 items-center">
@@ -148,10 +170,21 @@ export default function LessonCard({
                                     </a>
                                 </div>
                             ) : (
-                                <div className="flex  justify-center items-center gap-2 sm:gap-0 sm:flex-row">
-                                    {btnLabel && <Button onClick={lessonCardEvents} label={btnLabel} />}
+                                <div className="flex justify-center items-center gap-2 sm:gap-2 sm:flex-row">
+                                    {type.typeValue === 'doc' && (
+                                        <div className="flex gap-1 items-center">
+                                            <div className="flex gap-1 items-center">
+                                                <Button onClick={lessonCardEvents} className="w-full" label={btnLabel} disabled={progressSpinner === true ? true : false} />
+                                                {progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}
+                                            </div>
+                                            <a href={urlForDownload} download target="_blank" rel="noopener noreferrer">
+                                                {' '}
+                                                <Button icon="pi pi-file-arrow-up" />
+                                            </a>
+                                        </div>
+                                    )}
                                     {status === 'working' && (
-                                        <div className="pl-2 flex items-center">
+                                        <div className="flex items-center">
                                             <div className="flex gap-2 ">
                                                 <Button
                                                     className=""
@@ -176,7 +209,7 @@ export default function LessonCard({
                                 </div>
                             )}
                         </>
-                    )}
+                    }
                 </div>
             </div>
         </div>

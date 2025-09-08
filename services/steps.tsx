@@ -51,7 +51,7 @@ export const addLesson = async (value: { lesson_id: number; type_id: number }) =
 
 export const fetchElement = async (lesson_id: number, step_id: number) => {
     console.log(lesson_id, step_id);
-    
+
     try {
         const res = await axiosInstance.get(`/v1/teacher/lessons/step/content?lesson_id=${lesson_id}&step_id=${step_id}`);
         const data = await res.data;
@@ -174,7 +174,7 @@ export const deleteVideo = async (lesson_id: number, content_id: number) => {
 
 export const updateVideo = async (
     token: string | null,
-    value: { file: File | null; title: string; description: string; video_link: string; cover: string | null, video_type_id: number },
+    value: { file: File | null; title: string; description: string; video_link: string; cover: string | null; video_type_id: number },
     lesson_id: number,
     contentId: number,
     videoType: number,
@@ -211,6 +211,71 @@ export const deleteStep = async (lesson_id: number, step_id: number) => {
 
     try {
         const res = await axiosInstance.delete(`/v1/teacher/lessons/step/delete?lesson_id=${lesson_id}&step_id=${step_id}`);
+
+        const data = await res.data;
+        return data;
+    } catch (err) {
+        console.log('Ошибка при удалении темы', err);
+        return err;
+    }
+};
+
+// test
+export const addTest = async (answers: { text: string; is_correct: boolean }[], title: string, lesson_id: number, type_id: number, step_id: number, score: number) => {
+    console.log(score);
+
+    const payload = {
+        lesson_id,
+        type_id,
+        step_id,
+        answers, // массив уходит как есть
+        content: title,
+        img: null, // если файла нет, можно null или пустую строку
+        score
+    };
+
+    try {
+        const res = await axiosInstance.post(`/v1/teacher/test/store`, payload);
+
+        return res.data;
+    } catch (err) {
+        console.log('Ошибка при добавлении курса', err);
+        return err;
+    }
+};
+
+export const updateTest = async (
+    answers: { text: string; is_correct: boolean }[], title: string, lesson_id: number, test_id:number, type_id: number, step_id: number, score: number
+) => {
+    url = `/v1/teacher/test/update`;
+    
+    const payload = {
+        lesson_id,
+        test_id,
+        type_id,
+        step_id,
+        answers, // массив уходит как есть
+        content: title,
+        img: null, // если файла нет, можно null или пустую строку
+        score
+    };
+
+    try {
+        const res = await axiosInstance.post(url, payload);
+
+        const data = await res.data;
+        return data;
+    } catch (err) {
+        console.log('Ошибка при обновлении урока', err);
+        return err;
+    }
+};
+
+export const deleteTest = async (lesson_id: number, test_id: number, type_id: number, step_id: number) => {
+    console.log(lesson_id, test_id, type_id,step_id);
+
+    try {
+        const res = await axiosInstance.delete(`/v1/teacher/test/delete?lesson_id=${lesson_id}&test_id=${test_id}&type_id=${type_id}&step_id=${step_id}`);
 
         const data = await res.data;
         return data;

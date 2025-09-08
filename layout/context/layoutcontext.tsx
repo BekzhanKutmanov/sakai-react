@@ -83,6 +83,7 @@ export const LayoutProvider = ({ children }: ChildContainerProps) => {
     },[crumbUrls]);
 
     // fetch course
+    const [mainCourseId, setMainCourseId] = useState<number | null>(null);
     const [course, setCourses] = useState<{ current_page: number; total: number; per_page: number; data: myMainCourseType[] }>({ current_page: 1, total: 0, per_page: 10, data: [] });
 
     const contextFetchCourse = async (page: number) => {
@@ -138,6 +139,8 @@ export const LayoutProvider = ({ children }: ChildContainerProps) => {
 
         crumbUrls,
         contextAddCrumb,
+        mainCourseId,
+        setMainCourseId
     };
 
     return (

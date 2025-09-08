@@ -71,6 +71,9 @@ export interface LayoutContextProps {
 
     crumbUrls: {type: string; crumbUrl: string }[];
     contextAddCrumb: (id)=> void
+
+    mainCourseId: number | null,
+    setMainCourseId
     // message: { state: boolean; value: MessageType };
     // setMessage: React.Dispatch<React.SetStateAction<{ state: boolean; value: MessageType }>>;
 }
@@ -123,6 +126,10 @@ export interface AppMenuItem extends MenuModel {
     disabled?: boolean;
     replaceUrl?: boolean;
     command?: ({ originalEvent, item }: CommandProps) => void;
+
+    // 
+    onEdit?: () => void;
+    onDelete?: () => void;
 }
 
 export interface AppMenuItemProps {

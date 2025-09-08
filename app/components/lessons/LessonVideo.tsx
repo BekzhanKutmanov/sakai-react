@@ -22,7 +22,7 @@ import { Dropdown } from 'primereact/dropdown';
 import { Dialog } from 'primereact/dialog';
 import { FileWithPreview } from '@/types/fileuploadPreview';
 
-export default function LessonVideo({ element, content, fetchPropElement, deleteElement }: { element: mainStepsType; content: any; fetchPropElement: (id: number) => void; deleteElement: (id: number) => void }) {
+export default function LessonVideo({ element, content, fetchPropElement, clearProp }: { element: mainStepsType; content: any; fetchPropElement: (id: number) => void; clearProp: boolean }) {
     interface docValueType {
         title: string;
         description: string;
@@ -199,7 +199,7 @@ export default function LessonVideo({ element, content, fetchPropElement, delete
         const data = await fetchElement(element.lesson_id, element.id);
         if (data.success) {
             // setElement({ content: data.content, step: data.step });
-            setEditingLesson({ title: data.content.title, video_type_id: data.content.video_type_id , video_link: data.content.link, description: data.content.description,  });
+            setEditingLesson({ title: data.content.title, video_type_id: data.content.video_type_id, video_link: data.content.link, description: data.content.description });
         } else {
             setMessage({
                 state: true,
@@ -287,52 +287,21 @@ export default function LessonVideo({ element, content, fetchPropElement, delete
                 {!contentShow ? (
                     <div className="w-full flex flex-col items-center gap-1">
                         <div className="w-full flex items-center justify-center flex-col sm:flex-row gap-2">
-                            <Dropdown
-                                value={selectedCity}
-                                onChange={(e) => {
-                                    toggleVideoType(e.value);
-                                }}
-                                options={videoSelect}
-                                optionLabel="name"
-                                placeholder="Танданыз"
-                                // style={{backgroundColor: 'var(--mainColor', color: 'white'}}
-                                panelStyle={{ color: 'white' }}
-                                className="w-[213px] sm:w-full md:w-14rem"
-                            />
                             <div className="w-full flex justify-center">
-                                {selectedCity?.status ? (
-                                    <div className="w-full flex flex-col items-center">
-                                        <InputText
-                                            id="usefulLink"
-                                            type="url"
-                                            placeholder={'Шилтеме жүктөө'}
-                                            value={videoValue.video_link}
-                                            className="w-full"
-                                            onChange={(e) => {
-                                                setVideoValue((prev) => ({ ...prev, video_link: e.target.value }));
-                                                setValue('usefulLink', e.target.value, { shouldValidate: true });
-                                            }}
-                                        />
-                                        <b style={{ color: 'red', fontSize: '12px' }}>{errors.usefulLink?.message}</b>
-                                    </div>
-                                ) : (
-                                    <div className="w-full flex justify-center sm:justify-start">
-                                        <FileUpload
-                                            chooseLabel="Видео жүктөө"
-                                            mode="basic"
-                                            name="demo[]"
-                                            customUpload
-                                            uploadHandler={() => {}}
-                                            accept="video/"
-                                            onSelect={(e) =>
-                                                setVideoValue((prev) => ({
-                                                    ...prev,
-                                                    file: e.files[0]
-                                                }))
-                                            }
-                                        />
-                                    </div>
-                                )}
+                                <div className="w-full flex flex-col items-center">
+                                    <InputText
+                                        id="usefulLink"
+                                        type="url"
+                                        placeholder={'Шилтеме жүктөө'}
+                                        value={videoValue.video_link}
+                                        className="w-full"
+                                        onChange={(e) => {
+                                            setVideoValue((prev) => ({ ...prev, video_link: e.target.value }));
+                                            setValue('usefulLink', e.target.value, { shouldValidate: true });
+                                        }}
+                                    />
+                                    <b style={{ color: 'red', fontSize: '12px' }}>{errors.usefulLink?.message}</b>
+                                </div>
                             </div>
                         </div>
                         <div className="w-full flex flex-col justify-center gap-2">
@@ -412,7 +381,7 @@ export default function LessonVideo({ element, content, fetchPropElement, delete
                                         cardBg={'white'}
                                         type={{ typeValue: 'video', icon: 'pi pi-video' }}
                                         typeColor={'var(--mainColor)'}
-                                        lessonDate={'xx-xx'}
+                                        lessonDate={new Date(video.created_at).toISOString().slice(0, 10)}
                                         urlForPDF={() => ''}
                                         urlForDownload=""
                                         videoVisible={() => handleVideoCall(String(video?.link))}
@@ -436,9 +405,10 @@ export default function LessonVideo({ element, content, fetchPropElement, delete
         }
     }, [content]);
 
-    useEffect(()=> {
-        console.log('video', video);
-    },[video]);
+    useEffect(() => {
+        console.log('video', element);
+        setVideoValue({ title: '', description: '', file: null, url: '', video_link: '', cover: null, link: null });
+    }, [element]);
 
     useEffect(() => {
         console.log('edititing', editingLesson);
@@ -504,7 +474,7 @@ export default function LessonVideo({ element, content, fetchPropElement, delete
                     </div>
                 </div>
             </FormModal>
-            {videoSection()}
+            {!clearProp && videoSection()}
         </div>
     );
 }

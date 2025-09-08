@@ -33,7 +33,7 @@ import { displayType } from '@/types/displayType';
 import { FileWithPreview } from '@/types/fileuploadPreview';
 
 export default function Course() {
-    const { setMessage, course, setCourses, contextFetchCourse } = useContext(LayoutContext);
+    const { setMessage, course, setCourses, contextFetchCourse, setMainCourseId} = useContext(LayoutContext);
     const [coursesValue, setValueCourses] = useState<myMainCourseType[]>([]);
     const [hasCourses, setHasCourses] = useState(false);
     const [courseValue, setCourseValue] = useState<CourseCreateType>({ title: '', description: '', video_url: '', image: '' });
@@ -410,7 +410,7 @@ export default function Course() {
                     {/* Заголовок */}
                     <div className={`w-full flex-1 ${tableMedia && 'flex items-center gap-1 justify-between'}`}>
                         <div className="font-bold text-md mb-2">
-                            <Link href={`/course/${shablonData.id}`}>
+                            <Link href={`/course/${shablonData.id}/${null}`} onClick={()=> setMainCourseId(shablonData.id)}>
                                 {shablonData.title} {/* Используем subject_name из вашего шаблона */}
                             </Link>
                         </div>
@@ -690,7 +690,7 @@ export default function Course() {
                         </>
                     ) : (
                         <div className="w-full flex justify-between items-start gap-2 xl:gap-5">
-                            <div className="py-4 w-full">
+                            <div className="py-4 w-1/2">
                                 {/* info section */}
                                 {skeleton ? (
                                     <GroupSkeleton count={1} size={{ width: '100%', height: '5rem' }} />
@@ -725,7 +725,7 @@ export default function Course() {
                                                         header="Аталышы"
                                                         style={{ width: '80%' }}
                                                         body={(rowData) => (
-                                                            <Link href={`/course/${rowData.id}`} key={rowData.id}>
+                                                            <Link href={`/course/${rowData.id}/${null}`} onClick={()=> setMainCourseId(rowData.id)} key={rowData.id}>
                                                                 {rowData.title}
                                                             </Link>
                                                         )}
@@ -778,9 +778,9 @@ export default function Course() {
                                 )}
                             </div>
                             {/* STREAMS SECTION */}
-                            {/* <div className="w-1/2">
+                            <div className="w-1/2">
                                 <StreamList isMobile={false} callIndex={1} courseValue={forStreamId?.id ? forStreamId : null} insideDisplayStreams={(value: displayType[]) => displayInfo(value)} toggleIndex={() => {}} />
-                            </div> */}
+                            </div>
                         </div>
                     )}
                 </div>

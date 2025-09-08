@@ -116,6 +116,8 @@ export const addThemes = async (id: number, value: string) => {
 };
 
 export const fetchThemes = async (id: number | null) => {
+    console.log('Вызываемая тема ',id);
+    
     try {
         const res = await axiosInstance(`/v1/teacher/lessons?course_id=${id}`);
 

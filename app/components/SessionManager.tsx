@@ -78,8 +78,8 @@ const SessionManager = () => {
         if (!token && pathname !== '/' && pathname !== '/auth/login') {
             console.log('Перенеправляю в login');
 
-            logout({ setUser, setGlobalLoading });
-            window.location.href = '/auth/login';
+            // logout({ setUser, setGlobalLoading });
+            // window.location.href = '/auth/login';
             return;
         }
         setTimeout(() => {

@@ -15,12 +15,12 @@
 
 # ###
 # test  
-GET https://api.mooc.oshsu.kg/public/api/v1/teacher/lessons/step?lesson_id=77
-Authorization: Bearer {{token}}
+POST https://api.mooc.oshsu.kg/public/api/v1/login?email=ajaparkulov@oshsu.kg&password=010270Ja
 Content-Type: application/json  
 
 {
-    "lesson_id": 77
+    "email": "ajaparkulov@oshsu.kg", 
+    "password": "010270Ja"
 }
 
 # test  
@@ -33,5 +33,6 @@ Content-Type: application/json
     "lesson_id": 77,
     "type_id":3
 }
+
 
 

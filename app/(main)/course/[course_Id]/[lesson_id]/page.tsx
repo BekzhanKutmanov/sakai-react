@@ -1,7 +1,9 @@
 'use client';
 
 import LessonDocument from '@/app/components/lessons/LessonDocument';
+import LessonTest from '@/app/components/lessons/LessonTest';
 import LessonVideo from '@/app/components/lessons/LessonVideo';
+import { NotFound } from '@/app/components/NotFound';
 import PDFViewer from '@/app/components/PDFBook';
 import FormModal from '@/app/components/popUp/FormModal';
 import useBreadCrumbs from '@/hooks/useBreadCrumbs';
@@ -21,7 +23,7 @@ import { Button } from 'primereact/button';
 import { confirmDialog } from 'primereact/confirmdialog';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
-import { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 export default function LessonStep() {
@@ -47,11 +49,13 @@ export default function LessonStep() {
         title: string;
     }
 
-    const { course_id, lesson_id } = useParams();
+    const param = useParams();
+    const course_id = param.course_Id;
+    console.log('step param ', param);
 
     const [lessonInfoState, setLessonInfoState] = useState<{ title: string; documents_count: string; usefullinks_count: string; videos_count: string } | null>(null);
     const media = useMediaQuery('(max-width: 640px)');
-    const { setMessage } = useContext(LayoutContext);
+    const { setMessage, contextFetchThemes, contextThemes } = useContext(LayoutContext);
     const showError = useErrorMessage();
 
     const [formVisible, setFormVisible] = useState(false);
@@ -60,6 +64,8 @@ export default function LessonStep() {
     const [element, setElement] = useState<{ content: any | null; step: mainStepsType } | null>(null);
     const [selectedId, setSelectId] = useState<number | null>(null);
     const [hasSteps, setHasSteps] = useState(false);
+    const [themeNull, setThemeNull] = useState(false);
+    const [lesson_id, setLesson_id] = useState<number | null>((param.lesson_id && Number(param.lesson_id)) || null);
 
     const teachingBreadCrumb = [
         {
@@ -74,7 +80,7 @@ export default function LessonStep() {
             url: '/course',
             title: 'Курстар',
             parent_id: 1
-        },
+        }
         // {
         //     id: 3,
         //     url: `/course/${''}`,
@@ -91,11 +97,15 @@ export default function LessonStep() {
 
     const pathname = usePathname();
     const breadcrumb = useBreadCrumbs(teachingBreadCrumb, pathname);
-    
+
     const clearValues = () => {};
 
-    const handleShow = async () => {
-        const data = await fetchLessonShow(lesson_id ? Number(lesson_id) : null);
+    const handleShow = async (LessonId: number) => {
+        // alert('lessson_id: ' + lesson_id);
+
+        const data = await fetchLessonShow(LessonId);
+        console.log(data?.lesson);
+
         if (data?.lesson) {
             setLessonInfoState({ title: data.lesson.title, videos_count: data.lesson.videos_count, usefullinks_count: data.lesson.usefullinks_count, documents_count: data.lesson.documents_count });
         } else {
@@ -111,8 +121,9 @@ export default function LessonStep() {
     };
 
     const handleFetchTypes = async () => {
+        setFormVisible(true);
         const data = await fetchTypes();
-        
+
         if (data && Array.isArray(data)) {
             setTypes(data);
         } else {
@@ -124,15 +135,13 @@ export default function LessonStep() {
                 showError(data.response.status);
             }
         }
-        setFormVisible(true);
     };
 
-    const handleFetchSteps = async () => {        
+    const handleFetchSteps = async (lesson_id: number) => {
         const data = await fetchSteps(Number(lesson_id));
-        
-        if (data.success) {
-            console.log(data.steps);
+        console.log('steps', data);
 
+        if (data.success) {
             if (data.steps.length < 1) {
                 setHasSteps(true);
             } else {
@@ -154,7 +163,7 @@ export default function LessonStep() {
     const handleAddLesson = async (lessonId: number, typeId: number) => {
         const data = await addLesson({ lesson_id: lessonId, type_id: typeId });
         if (data.success) {
-            handleFetchSteps();
+            handleFetchSteps(lessonId);
             setMessage({
                 state: true,
                 value: { severity: 'success', summary: 'Ийгиликтүү кошулду!', detail: '' }
@@ -172,26 +181,28 @@ export default function LessonStep() {
     };
 
     const handleFetchElement = async (stepId: number) => {
-        const data = await fetchElement(Number(lesson_id), stepId);
-        if (data.success) {
-            setElement({ content: data.content, step: data.step });
-        } else {
-            setMessage({
-                state: true,
-                value: { severity: 'error', summary: 'Катаа!', detail: 'Кийинирээк кайталаныз' }
-            });
-            if (data?.response?.status) {
-                showError(data.response.status);
+        console.log('sendStep 404', stepId);
+
+        if (lesson_id) {
+            const data = await fetchElement(Number(lesson_id), stepId);
+            if (data.success) {
+                setElement({ content: data.content, step: data.step });
+            } else {
+                setMessage({
+                    state: true,
+                    value: { severity: 'error', summary: 'Катаа!', detail: 'Кийинирээк кайталаныз' }
+                });
+                if (data?.response?.status) {
+                    showError(data.response.status);
+                }
             }
         }
     };
 
     const handleDeleteStep = async () => {
         const data = await deleteStep(Number(lesson_id), Number(selectedId));
-        console.log(data);
-
         if (data.success) {
-            handleFetchSteps();
+            handleFetchSteps(Number(lesson_id));
             setMessage({
                 state: true,
                 value: { severity: 'success', summary: 'Ийгиликтүү өчүрүлдү!', detail: '' }
@@ -241,14 +252,50 @@ export default function LessonStep() {
     }, [steps]);
 
     useEffect(() => {
-        handleShow();
-        handleFetchSteps();
-        // handleAddLesson(lesson_id, );
+        if (lesson_id) {
+            handleShow(lesson_id);
+        }
+    }, [lesson_id]);
+
+    useEffect(() => {
+        // console.log('element', element);
+    }, [element]);
+
+    useEffect(() => {
+        contextFetchThemes(Number(course_id));
     }, []);
 
     useEffect(() => {
-        console.log('element', element);
-    }, [element]);
+        console.log('Тема ', contextThemes);
+        console.log('variant 1');
+
+        if (contextThemes?.lessons?.data?.length > 0) {
+            console.log('variant 2');
+            setThemeNull(false);
+            if (param.lesson_id == 'null') {
+                handleShow(contextThemes.lessons.data[0].id);
+                console.log('variant 4', contextThemes.lessons.data[0].id);
+                handleFetchSteps(contextThemes.lessons.data[0].id);
+                setLesson_id(contextThemes.lessons.data[0].id);
+            } else {
+                console.log('variant 5');
+                handleShow(Number(param.lesson_id));
+                setLesson_id((param.lesson_id && Number(param.lesson_id)) || null);
+                handleFetchSteps(Number(param.lesson_id));
+            }
+        } else {
+            setThemeNull(true);
+            console.log('variant 3');
+        }
+    }, [contextThemes]);
+
+    // if (themeNull) {
+    //     return (
+    //         <div>
+    //             <NotFound titleMessage="Тема жок. Курска тема кошуңуз" />
+    //         </div>
+    //     );
+    // }
 
     return (
         <div className="main-bg">
@@ -262,22 +309,20 @@ export default function LessonStep() {
                     setFormVisible(false);
                     clearValues();
                 }}
-                // footer={footerContent}
             >
                 <div className="w-full step-type-grid">
                     {types.map((item) => {
                         console.log(item);
-                        const iconClass = item.name === 'link' ? 'pi pi-link' : item.name === 'video' ? 'pi pi-video' : item.name === 'document' ? 'pi pi-folder' : '';
 
                         return (
-                            <div>
+                            <React.Fragment key={item.id}>
                                 <div className="flex-1 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)] flex gap-1 items-center">
-                                    <i className={`${iconClass}`}></i>
+                                    <i className={`${item.logo}`}></i>
                                     <b className="cursor-pointer" onClick={() => handleAddLesson(Number(lesson_id), item.id)}>
                                         {item.title}
                                     </b>
                                 </div>
-                            </div>
+                            </React.Fragment>
                         );
                     })}
                 </div>
@@ -289,8 +334,7 @@ export default function LessonStep() {
             {/* steps section */}
             <div className="flex gap-2 mt-4">
                 {hasSteps ? (
-                    <div className='flex items-center gap-4'>
-                        <h3>Азырынча кадамдар жок</h3>
+                    <div className="flex items-center gap-4">
                         <div onClick={handleFetchTypes} className="cursor-pointer w-[40px] h-[40px] sm:w-[57px] sm:h-[57px] rounded animate-step"></div>
                     </div>
                 ) : (
@@ -310,19 +354,26 @@ export default function LessonStep() {
                 >
                     +
                 </button>
-                <Button
-                    icon={'pi pi-trash'}
-                    className="min-w-[40px] min-h-[40px] w-[40px] h-[40px] sm:w-[57px] sm:h-[57px] hover:bg-[var(--mainBorder)] transition"
-                    onClick={() => {
-                        const options = getConfirmOptions(Number(), () => handleDeleteStep());
-                        confirmDialog(options);
-                    }}
-                />
+                {!hasSteps && (
+                    <Button
+                        icon={'pi pi-trash'}
+                        className="min-w-[40px] min-h-[40px] w-[40px] h-[40px] sm:w-[57px] sm:h-[57px] hover:bg-[var(--mainBorder)] transition"
+                        onClick={() => {
+                            const options = getConfirmOptions(Number(), () => handleDeleteStep());
+                            confirmDialog(options);
+                        }}
+                    />
+                )}
             </div>
 
-            {/* {lessonDisplay} */}
-            {element?.step.type.name === 'document' && <LessonDocument element={element?.step} content={element?.content} fetchPropElement={handleFetchElement} deleteElement={() => {}} />}
-            {element?.step.type.name === 'video' && <LessonVideo element={element?.step} content={element?.content} fetchPropElement={handleFetchElement} deleteElement={() => {}} />}
+            {hasSteps && (
+                <div>
+                    <NotFound titleMessage="Азырынча кадамдар жок" />
+                </div>
+            )}
+            {element?.step.type.name === 'document' && <LessonDocument element={element?.step} content={element?.content} fetchPropElement={handleFetchElement} clearProp={hasSteps} />}
+            {element?.step.type.name === 'video' && <LessonVideo element={element?.step} content={element?.content} fetchPropElement={handleFetchElement} clearProp={hasSteps} />}
+            {element?.step.type.name === 'test' && <LessonTest element={element?.step} content={element?.content} fetchPropElement={handleFetchElement} clearProp={hasSteps} />}
         </div>
     );
 }

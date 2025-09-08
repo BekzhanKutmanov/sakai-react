@@ -22,8 +22,9 @@ import { mainStepsType } from '@/types/mainStepType';
 import useErrorMessage from '@/hooks/useErrorMessage';
 import { LayoutContext } from '@/layout/context/layoutcontext';
 import FormModal from '../popUp/FormModal';
+import PDFViewer from '../PDFBook';
 
-export default function LessonDocument({ element, content, fetchPropElement, deleteElement }: { element: mainStepsType; content: any; fetchPropElement: (id: number) => void; deleteElement: (id: number) => void }) {
+export default function LessonDocument({ element, content, fetchPropElement, clearProp }: { element: mainStepsType; content: any; fetchPropElement: (id: number) => void; clearProp: boolean}) {
     interface docValueType {
         title: string;
         description: string;
@@ -42,6 +43,7 @@ export default function LessonDocument({ element, content, fetchPropElement, del
         title: string;
         updated_at: string;
         user_id: number;
+        document_path:string;
     }
 
     const { course_id } = useParams();
@@ -120,7 +122,7 @@ export default function LessonDocument({ element, content, fetchPropElement, del
         <>
             <div className=" flex flex-col gap-1">
                 <i className="pi pi-times text-2xl" onClick={() => setPDFVisible(false)}></i>
-                <div className="w-full flex flex-col gap-1 items-center justify-center">{/* <PDFViewer url={urlPDF || ''} /> */}</div>
+                <div className="w-full flex flex-col gap-1 items-center justify-center"><PDFViewer url={urlPDF || ''} /></div>
             </div>
         </>
     );
@@ -143,9 +145,7 @@ export default function LessonDocument({ element, content, fetchPropElement, del
     const editing = async () => {
         const data = await fetchElement(element.lesson_id, element.id);
         if (data.success) {
-            // setElement({ content: data.content, step: data.step });
             setEditingLesson({title: data.content.title, file:null, document: data.content.document, description: data.content.description})
-            console.log(data);
         } else {
             setMessage({
                 state: true,
@@ -248,9 +248,9 @@ export default function LessonDocument({ element, content, fetchPropElement, del
                                         cardBg={'#ddc4f51a'}
                                         type={{ typeValue: 'doc', icon: 'pi pi-doc' }}
                                         typeColor={'var(--mainColor)'}
-                                        lessonDate={'xx-xx'}
+                                        lessonDate={new Date(document.created_at).toISOString().slice(0, 10)}
                                         urlForPDF={() => sentToPDF(document.document || '')}
-                                        urlForDownload=""
+                                        urlForDownload={document.document_path || ''}
                                     />
                                 )
                             )}
@@ -326,8 +326,9 @@ export default function LessonDocument({ element, content, fetchPropElement, del
     }, [content]);
 
     useEffect(() => {
-        console.log('edititing', editingLesson);
-    }, [editingLesson]);
+        console.log('edititing', element);
+        setDocValue({ title: '', description: '', file: null });
+    }, [element]);
 
     return (
         <div>
@@ -389,7 +390,7 @@ export default function LessonDocument({ element, content, fetchPropElement, del
                     </div>
                 </div>
             </FormModal>
-            {documentSection()}
+            {!clearProp && documentSection()}
         </div>
     );
 }
