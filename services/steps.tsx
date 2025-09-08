@@ -132,7 +132,7 @@ export const updateDocument = async (token: string | null, lesson_id: number | n
 
 // video
 
-export const addVideo = async (value: { file: File | null; title: string; description: string; video_link: string; cover: string | null }, lesson_id: number, videoType: number, type_id: number, step_id: number) => {
+export const addVideo = async (value: { file: File | null; title: string; description: string; video_link: string; cover: File | null }, lesson_id: number, videoType: number, type_id: number, step_id: number) => {
     const formData = new FormData();
     url = `v1/teacher/video/store?lesson_id=${lesson_id}&title=${value.title}&description=${value.description}&video_link=${value.video_link}&video_type_id=${videoType}`;
     formData.append('type_id', String(type_id));
@@ -174,8 +174,8 @@ export const deleteVideo = async (lesson_id: number, content_id: number) => {
 
 export const updateVideo = async (
     token: string | null,
-    value: { file: File | null; title: string; description: string; video_link: string; cover: string | null; video_type_id: number },
-    lesson_id: number,
+    value: { title: string; description: string | null; video_link: string; cover: File | null; video_type_id: number } | null,
+    lesson_id: number | null,
     contentId: number,
     videoType: number,
     type_id: number,
@@ -183,15 +183,15 @@ export const updateVideo = async (
 ) => {
     let headers: Record<string, string> = token ? { Authorization: `Bearer ${token}` } : {};
     let formData = new FormData();
-    url = `/v1/teacher/video/update?lesson_id=${lesson_id}&title=${value.title}&description=${value.description}&video_link=${value.video_link}&video_type_id=${value.video_type_id}&video_id=${contentId}`;
+    url = `/v1/teacher/video/update?lesson_id=${lesson_id}&title=${value?.title}&description=${value?.description}&video_link=${value?.video_link}&video_type_id=${value?.video_type_id}&video_id=${contentId}`;
     formData.append('type_id', String(type_id));
     formData.append('step_id', String(step_id));
     formData.append('lesson_id', String(lesson_id));
-    formData.append('video_link', value.video_link);
-    formData.append('video_type_id', String(value.video_type_id));
+    formData.append('video_link', value?.video_link || '');
+    formData.append('video_type_id', String(value?.video_type_id));
     formData.append('video_id', String(contentId));
-    formData.append('title', String(value.title));
-    formData.append('description', String(value.description));
+    formData.append('title', String(value?.title));
+    formData.append('description', String(value?.description));
 
     try {
         const res = await axiosInstance.post(url, formData, {

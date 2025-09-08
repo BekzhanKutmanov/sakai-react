@@ -63,6 +63,7 @@ export default function LessonStep() {
     const [steps, setSteps] = useState<mainStepsType[]>([]);
     const [element, setElement] = useState<{ content: any | null; step: mainStepsType } | null>(null);
     const [selectedId, setSelectId] = useState<number | null>(null);
+    const [lastSelectedId, setLastSelectId] = useState<number | null>(null);
     const [hasSteps, setHasSteps] = useState(false);
     const [themeNull, setThemeNull] = useState(false);
     const [lesson_id, setLesson_id] = useState<number | null>((param.lesson_id && Number(param.lesson_id)) || null);
@@ -162,6 +163,8 @@ export default function LessonStep() {
 
     const handleAddLesson = async (lessonId: number, typeId: number) => {
         const data = await addLesson({ lesson_id: lessonId, type_id: typeId });
+        console.log(data);
+
         if (data.success) {
             handleFetchSteps(lessonId);
             setMessage({
@@ -243,10 +246,16 @@ export default function LessonStep() {
         </div>
     );
 
+    useEffect(()=> {
+        console.log('last', lastSelectedId);
+        
+    },[lastSelectedId])
+
     useEffect(() => {
         if (Array.isArray(steps) && steps.length > 0) {
-            const firstStep = steps[0]?.id;
-            setSelectId(steps[0]?.id);
+            // const firstStep = steps[0]?.id;
+            const firstStep = steps[steps.length - 1]?.id;
+            setSelectId(firstStep);
             handleFetchElement(firstStep);
         }
     }, [steps]);
@@ -289,13 +298,13 @@ export default function LessonStep() {
         }
     }, [contextThemes]);
 
-    // if (themeNull) {
-    //     return (
-    //         <div>
-    //             <NotFound titleMessage="Тема жок. Курска тема кошуңуз" />
-    //         </div>
-    //     );
-    // }
+    if (themeNull) {
+        return (
+            <div>
+                <NotFound titleMessage="Тема жок. Курска тема кошуңуз" />
+            </div>
+        );
+    }
 
     return (
         <div className="main-bg">
@@ -312,8 +321,6 @@ export default function LessonStep() {
             >
                 <div className="w-full step-type-grid">
                     {types.map((item) => {
-                        console.log(item);
-
                         return (
                             <React.Fragment key={item.id}>
                                 <div className="flex-1 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)] flex gap-1 items-center">

@@ -29,7 +29,7 @@ export default function StudentLessons() {
     const [hasLessons, setHasLessons] = useState(false);
     const [skeleton, setSkeleton] = useState(false);
     const x = localStorage.getItem('currentBreadCrumb');
-    const parseX = JSON.parse(x);
+    const parseX = JSON.parse('x');
     const [streamId, setStreamId] = useState<string>(parseX.studentStream || '');
 
     // doc
@@ -229,10 +229,10 @@ export default function StudentLessons() {
     };
 
     useEffect(() => {
-        const x = localStorage.getItem('currentBreadCrumb');
-        const parseX = JSON.parse(x);
-        console.log('Eto x', parseX);
-        console.log('Eto x', x);
+        // const x = localStorage.getItem('currentBreadCrumb');
+        // const parseX = JSON.parse(x);
+        // console.log('Eto x', parseX);
+        // console.log('Eto x', x);
 
         setStreamId(parseX.studentStream);
     }, [pathname]);

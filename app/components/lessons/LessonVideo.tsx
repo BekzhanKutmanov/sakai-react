@@ -42,7 +42,7 @@ export default function LessonVideo({ element, content, fetchPropElement, clearP
         updated_at: string;
         user_id: number;
         link: File | null;
-        cover: string;
+        cover: string | null;
         cover_url: string;
     }
 
@@ -61,12 +61,12 @@ export default function LessonVideo({ element, content, fetchPropElement, clearP
 
     interface videoValueType {
         title: string;
-        description?: string;
+        description: string | null; // вместо ? → строго string | null
         document?: File | null;
         url?: string | null;
         video_link: string;
-        video_type_id: number | null;
-        file?: File | null;
+        video_type_id: number; // без null
+        cover: File | null;
     }
 
     const { course_id } = useParams();
@@ -82,7 +82,7 @@ export default function LessonVideo({ element, content, fetchPropElement, clearP
     const [videoTypes, setVideoTypes] = useState<videoInsideType[]>([]);
     const [videoCall, setVideoCall] = useState(false);
     const [videoLink, setVideoLink] = useState('');
-    const [videoValue, setVideoValue] = useState({
+    const [videoValue, setVideoValue] = useState<{ title: string; description: string; file: null; url: string; video_link: string; cover: File | null; link: null }>({
         title: '',
         description: '',
         file: null,
@@ -199,7 +199,7 @@ export default function LessonVideo({ element, content, fetchPropElement, clearP
         const data = await fetchElement(element.lesson_id, element.id);
         if (data.success) {
             // setElement({ content: data.content, step: data.step });
-            setEditingLesson({ title: data.content.title, video_type_id: data.content.video_type_id, video_link: data.content.link, description: data.content.description });
+            setEditingLesson({ title: data.content.title, video_type_id: data.content.video_type_id, video_link: data.content.link, cover: null, description: data.content.description });
         } else {
             setMessage({
                 state: true,
@@ -260,7 +260,6 @@ export default function LessonVideo({ element, content, fetchPropElement, clearP
     const handleUpdateVideo = async () => {
         const token = getToken('access_token');
         const data = await updateVideo(token, editingLesson, video?.lesson_id ? Number(video?.lesson_id) : null, Number(selectId), 1, element.type.id, element.type.id);
-        console.log(data);
 
         if (data?.success) {
             fetchPropElement(element.id);
@@ -426,7 +425,7 @@ export default function LessonVideo({ element, content, fetchPropElement, clearP
                                     <InputText
                                         type="url"
                                         placeholder="Шилтеме"
-                                        value={typeof editingLesson?.video_link === 'string' && editingLesson?.video_link}
+                                        value={String(editingLesson?.video_link)}
                                         className="w-full"
                                         onChange={(e) => {
                                             setEditingLesson((prev) => prev && { ...prev, video_link: e.target.value });

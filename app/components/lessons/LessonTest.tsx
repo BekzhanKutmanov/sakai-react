@@ -42,27 +42,24 @@ export default function LessonTest({ element, content, fetchPropElement, clearPr
         image: null | string;
     }
 
+    interface testType { answers: { id: number | null, text: string, is_correct: boolean }[], id: number | null, content: string, score: number, image: string | null, title: string, created_at: string }
+    
     const { course_id } = useParams();
-
-    const router = useRouter();
     const media = useMediaQuery('(max-width: 640px)');
-    const fileUploadRef = useRef<FileUpload>(null);
     const showError = useErrorMessage();
     const { setMessage } = useContext(LayoutContext);
 
     const [editingLesson, setEditingLesson] = useState<{ title: string; score: number } | null>({ title: '', score: 0 });
     const [visible, setVisisble] = useState(false);
-    const [imageState, setImageState] = useState<string | null>(null);
     const [contentShow, setContentShow] = useState(false);
     // doc
     const [answer, setAnswer] = useState<{ id: number | null; text: string; is_correct: boolean }[]>([
         { text: '', is_correct: false, id: null },
         { text: '', is_correct: false, id: null }
     ]);
-    const [test, setTests] = useState<contentType>({ answers: { id: null, text: '', is_correct: false }, content: '', score: 0, image: null, title: '' });
+    const [test, setTests] = useState<testType>({ answers: [{ id: null, text: '', is_correct: false }], id: null, content: '', score: 0, image: null, title: '', created_at:'' });
     const [testValue, setTestValue] = useState<{ title: string; score: number }>({ title: '', score: 0 });
     const [testShow, setTestShow] = useState<boolean>(false);
-    const [urlPDF, setUrlPDF] = useState('');
 
     const [progressSpinner, setProgressSpinner] = useState(false);
     const [selectType, setSelectType] = useState('');
@@ -100,13 +97,9 @@ export default function LessonTest({ element, content, fetchPropElement, clearPr
 
     const editing = async () => {
         const data = await fetchElement(element.lesson_id, element.id);
-        console.log(data);
-
         if (data.success) {
             setEditingLesson({ title: data.content.content, score: data.content.score});
-            if(data.content.answers && Array.isArray(data.content.answers)){
-                console.log('DA! ', );
-                
+            if(data.content.answers && Array.isArray(data.content.answers)){                
                 setAnswer(data.content.answers);
             }
         } else {
@@ -125,8 +118,6 @@ export default function LessonTest({ element, content, fetchPropElement, clearPr
         console.log(answer);
 
         const data = await addTest(answer, testValue.title, element?.lesson_id && Number(element?.lesson_id), element.type.id, element.id, testValue.score);
-        console.log(data);
-
         if (data?.success) {
             fetchPropElement(element.id);
             clearValues();
@@ -160,24 +151,24 @@ export default function LessonTest({ element, content, fetchPropElement, clearPr
         const data = await updateTest(answer, editingLesson?.title || '', element.lesson_id, Number(selectId), element.type.id, element.id, 1);
         console.log(data);
 
-        // if (data?.success) {
-        //     fetchPropElement(element.id);
-        //     clearValues();
-        //     setMessage({
-        //         state: true,
-        //         value: { severity: 'success', summary: 'Ийгиликтүү өзгөртүлдү!', detail: '' }
-        //     });
-        // } else {
-        //     // setDocValue({ title: '', description: '', file: null });
-        //     setEditingLesson(null);
-        //     setMessage({
-        //         state: true,
-        //         value: { severity: 'error', summary: 'Ошибка', detail: 'Ошибка при при изменении урока' }
-        //     });
-        //     if (data?.response?.status) {
-        //         showError(data.response.status);
-        //     }
-        // }
+        if (data?.success) {
+            fetchPropElement(element.id);
+            clearValues();
+            setMessage({
+                state: true,
+                value: { severity: 'success', summary: 'Ийгиликтүү өзгөртүлдү!', detail: '' }
+            });
+        } else {
+            // setDocValue({ title: '', description: '', file: null });
+            setEditingLesson(null);
+            setMessage({
+                state: true,
+                value: { severity: 'error', summary: 'Ошибка', detail: 'Ошибка при при изменении урока' }
+            });
+            if (data?.response?.status) {
+                showError(data.response.status);
+            }
+        }
     };
 
     // delete document
@@ -188,7 +179,6 @@ export default function LessonTest({ element, content, fetchPropElement, clearPr
         console.log(data);
 
         if (data.success) {
-            console.log(element.id);
             clearValues();
             fetchPropElement(element.id);
             setMessage({
@@ -221,7 +211,7 @@ export default function LessonTest({ element, content, fetchPropElement, clearPr
                                         status="working"
                                         onSelected={(id: number, type: string) => selectedForEditing(id)}
                                         onDelete={(id: number) => handleDeleteTest(id)}
-                                        cardValue={{ title: test?.content || '', id: Number(test!.id), desctiption: test?.description || '', type: 'test', score: test.score }}
+                                        cardValue={{ title: test?.content || '', id: Number(test!.id), desctiption: '', type: 'test', score: test.score }}
                                         cardBg={'#ddc4f51a'}
                                         type={{ typeValue: 'test', icon: 'pi pi-doc' }}
                                         typeColor={'var(--mainColor)'}

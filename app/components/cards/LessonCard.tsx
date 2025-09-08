@@ -124,7 +124,10 @@ export default function LessonCard({
                         {/* <div className=''>{!cardValue.photo && <img className="cover" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSweN5K2yaBwZpz5W9CxY9S41DI-2LawmjzYw&s" alt="" />}</div> */}
                         <div className={`flex gap-1 ${cardValue.score ? 'items-center' : 'justify-center'}`}>
                             <b className="flex items-center justify-center text-[16px] sm:text-[18px] mt-1">{shortTitle}</b>
-                            {cardValue.score ? <span className="text-[16px] sm:text-[18px]">{`/ Балл: ${cardValue.score}`}</span> : ''}
+                            {cardValue.score ? <div>
+                                <span className='text-[var(--mainColor)]'>/ Балл: </span>
+                                <b className="text-[16px] sm:text-[18px]">{`${cardValue.score}`}</b>
+                            </div> : ''}
                         </div>
                         <div className="flex items-center justify-center text-[15px] sm:text-[17px] mt-1">{shortDoc}</div>
                         {type.typeValue === 'link' && <span className="flex justify-center">{shortUrl}</span>}
