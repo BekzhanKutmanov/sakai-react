@@ -16,9 +16,10 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { lessonSchema } from '@/schemas/lessonSchema';
 import useErrorMessage from '@/hooks/useErrorMessage';
 import { Button } from 'primereact/button';
+import Link from 'next/link';
 
 const AppMenu = () => {
-    const { layoutConfig, user, course, mainCourseId, setMainCourseId, contextFetchCourse, contextFetchThemes, contextThemes, setContextThemes, contextFetchStudentThemes, contextStudentThemes } = useContext(LayoutContext);
+    const { layoutConfig, user, setDeleteQuery, course, mainCourseId, setMainCourseId, contextFetchCourse, contextFetchThemes, contextThemes, setContextThemes, contextFetchStudentThemes, contextStudentThemes } = useContext(LayoutContext);
     interface test {
         label: string;
         id: number;
@@ -49,7 +50,7 @@ const AppMenu = () => {
     const [visible, setVisisble] = useState(false);
     const [themeAddvisible, setThemeAddVisisble] = useState(false);
     const [editingLesson, setEditingLesson] = useState<{ title: string } | null>(null);
-    const [themeValue, setThemeValue] = useState<{ title: string }>({title: ''});
+    const [themeValue, setThemeValue] = useState<{ title: string }>({ title: '' });
 
     const [themesStudentList, setThemesStudentList] = useState<{ label: string; id: number; to: string; items?: AppMenuItem[] }[]>([]);
 
@@ -114,12 +115,12 @@ const AppMenu = () => {
     };
 
     const clearValues = () => {
-        setThemeValue({title: ''})
+        setThemeValue({ title: '' });
         setEditingLesson(null);
         setSelectId(null);
     };
 
-        // add theme
+    // add theme
     const handleAddTheme = async () => {
         console.log(course_Id);
 
@@ -147,9 +148,21 @@ const AppMenu = () => {
 
     const handleDeleteTheme = async (id: number) => {
         const data = await deleteTheme(id);
-        console.log(data);
         if (data.success) {
             contextFetchThemes(Number(course_Id));
+            setDeleteQuery(true);
+            setMessage({
+                state: true,
+                value: { severity: 'success', summary: 'Ийгиликтүү өчүрүлдү!', detail: '' }
+            });
+        } else {
+            setMessage({
+                state: true,
+                value: { severity: 'error', summary: 'Ошибка', detail: 'Ошибка при удалении темы' }
+            });
+            if (data?.response?.status) {
+                showError(data.response.status);
+            }
         }
     };
 
@@ -298,11 +311,11 @@ const AppMenu = () => {
                     return !item?.seperator ? <AppMenuitem item={item} root={true} index={i} key={item.label} /> : <li className="menu-separator"></li>;
                 })}
             </ul>
-            {pathname.startsWith('/course/') && <div className="p-4 mt-auto">
-                <Button label='Тема кошуу' icon={'pi pi-plus'} className="cursor-pointer w-full py-2 px-4 rounded-lg transition" onClick={() => setThemeAddVisisble(true)}>
-                    
-                </Button>
-            </div>}
+            {pathname.startsWith('/course/') && (
+                <div className="p-4 mt-auto">
+                    <Button label="Тема кошуу" icon={'pi pi-plus'} className="cursor-pointer w-full py-2 px-4 rounded-lg transition" onClick={() => setThemeAddVisisble(true)}></Button>
+                </div>
+            )}
         </MenuProvider>
     );
 };

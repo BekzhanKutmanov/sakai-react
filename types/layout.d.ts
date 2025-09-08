@@ -64,6 +64,8 @@ export interface LayoutContextProps {
     contextFetchThemes: (id: number)=> void;
     contextThemes;
     setContextThemes;
+    deleteQuery: boolean;
+    setDeleteQuery;
 
     contextFetchStudentThemes: (id)=> void;
     contextStudentThemes;

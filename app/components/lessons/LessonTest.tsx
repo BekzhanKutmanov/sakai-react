@@ -42,8 +42,16 @@ export default function LessonTest({ element, content, fetchPropElement, clearPr
         image: null | string;
     }
 
-    interface testType { answers: { id: number | null, text: string, is_correct: boolean }[], id: number | null, content: string, score: number, image: string | null, title: string, created_at: string }
-    
+    interface testType {
+        answers: { id: number | null; text: string; is_correct: boolean }[];
+        id: number | null;
+        content: string;
+        score: number;
+        image: string | null;
+        title: string;
+        created_at: string;
+    }
+
     const { course_id } = useParams();
     const media = useMediaQuery('(max-width: 640px)');
     const showError = useErrorMessage();
@@ -57,20 +65,21 @@ export default function LessonTest({ element, content, fetchPropElement, clearPr
         { text: '', is_correct: false, id: null },
         { text: '', is_correct: false, id: null }
     ]);
-    const [test, setTests] = useState<testType>({ answers: [{ id: null, text: '', is_correct: false }], id: null, content: '', score: 0, image: null, title: '', created_at:'' });
+    const [test, setTests] = useState<testType>({ answers: [{ id: null, text: '', is_correct: false }], id: null, content: '', score: 0, image: null, title: '', created_at: '' });
     const [testValue, setTestValue] = useState<{ title: string; score: number }>({ title: '', score: 0 });
     const [testShow, setTestShow] = useState<boolean>(false);
 
     const [progressSpinner, setProgressSpinner] = useState(false);
-    const [selectType, setSelectType] = useState('');
     const [selectId, setSelectId] = useState<number | null>(null);
 
     const clearValues = () => {
         setTestValue({ title: '', score: 0 });
-        setAnswer([]);
+        setAnswer([
+            { text: '', is_correct: false, id: null },
+            { text: '', is_correct: false, id: null }
+        ]);
         setEditingLesson(null);
         setSelectId(null);
-        setSelectType('');
     };
 
     const toggleSpinner = () => {
@@ -98,8 +107,8 @@ export default function LessonTest({ element, content, fetchPropElement, clearPr
     const editing = async () => {
         const data = await fetchElement(element.lesson_id, element.id);
         if (data.success) {
-            setEditingLesson({ title: data.content.content, score: data.content.score});
-            if(data.content.answers && Array.isArray(data.content.answers)){                
+            setEditingLesson({ title: data.content.content, score: data.content.score });
+            if (data.content.answers && Array.isArray(data.content.answers)) {
                 setAnswer(data.content.answers);
             }
         } else {
@@ -226,57 +235,64 @@ export default function LessonTest({ element, content, fetchPropElement, clearPr
                     </div>
                 ) : (
                     <div className="w-full flex flex-col justify-center gap-2 my-2">
-                        <div className="w-[280px] sm:w-[320px] md:w-[600px] m-auto lesson-card-border flex flex-col gap-2 sm:items-center shadow rounded p-1 sm:p-2">
-                            <div className="w-full flex items-center gap-1">
-                                <div className="w-full">
-                                    <InputTextarea
-                                        id="title"
-                                        placeholder={'Суроо...'}
-                                        value={testValue.title}
-                                        style={{ resize: 'none', width: '100%' }}
-                                        onChange={(e) => {
-                                            setTestValue((prev) => ({ ...prev, title: e.target.value }));
-                                            setValue('title', e.target.value, { shouldValidate: true });
-                                        }}
-                                    />
-                                    <b style={{ color: 'red', fontSize: '12px' }}>{errors.title?.message}</b>
+                        <div className="lesson-card-border shadow rounded p-2">
+                            <div className='w-[99%] sm:w-[90%]  m-auto  flex flex-col gap-2 sm:items-center  p-1 sm:p-2'>
+                                <div className="w-full flex items-start gap-1">
+                                    <div className="w-full">
+                                        <InputTextarea
+                                            id="title"
+                                            placeholder={'Суроо...'}
+                                            value={testValue.title}
+                                            style={{ resize: 'none', width: '100%' }}
+                                            onChange={(e) => {
+                                                setTestValue((prev) => ({ ...prev, title: e.target.value }));
+                                                setValue('title', e.target.value, { shouldValidate: true });
+                                            }}
+                                        />
+                                        <b style={{ color: 'red', fontSize: '12px' }}>{errors.title?.message}</b>
+                                    </div>
+                                    <div className="flex flex-col justify-center items-center">
+                                        <span>Балл</span>
+                                        <InputText
+                                            type="number"
+                                            placeholder='0'
+                                            className="w-[50px] sm:w-[70px]"
+                                            onChange={(e) => {
+                                                setTestValue((prev) => ({ ...prev, score: Number(e.target.value) }));
+                                            }}
+                                        />
+                                    </div>
                                 </div>
-                                <div className="flex flex-col justify-center items-center">
-                                    <span>Балл</span>
-                                    <InputText
-                                        type="number"
-                                        className="w-[70px]"
-                                        onChange={(e) => {
-                                            setTestValue((prev) => ({ ...prev, score: Number(e.target.value) }));
-                                        }}
-                                    />
-                                </div>
-                            </div>
-                            <div className="flex flex-col justify-start items-start gap-2">
-                                {answer.map((item, index) => {
-                                    return (
-                                        <div className="flex items-center gap-1">
-                                            <input
-                                                type="radio"
-                                                name="testRadio"
-                                                onChange={() => {
-                                                    setAnswer((prev) => prev.map((ans, i) => (i === index ? { ...ans, is_correct: true } : { ...ans, is_correct: false })));
-                                                }}
-                                            />
-                                            <InputText
-                                                type="text"
-                                                value={item.text}
-                                                className="w-[200px] sm:w-full"
-                                                onChange={(e) => {
-                                                    setAnswer((prev) => prev.map((ans, i) => (i === index ? { ...ans, text: e.target.value } : ans)));
-                                                }}
-                                            />
-                                            <Button icon="pi pi-trash" onClick={() => deleteOption(index)} className="p-[0px] w-2 " style={{ fontSize: '14px' }} />
-                                        </div>
-                                    );
-                                })}
+                                <div className="flex flex-col justify-start items-start gap-2">
+                                    {answer.map((item, index) => {
+                                        return (
+                                            <div className="flex items-center gap-1">
+                                                <label className="custom-radio">
+                                                    <input
+                                                        type="radio"
+                                                        name="testRadio"
+                                                        onChange={() => {
+                                                            setAnswer((prev) => prev.map((ans, i) => (i === index ? { ...ans, is_correct: true } : { ...ans, is_correct: false })));
+                                                        }}
+                                                    />
+                                                    {/* <input type="radio" name="radio" /> */}
+                                                    <span className="radio-mark min-w-[18px]"></span>
+                                                </label>
+                                                <InputText
+                                                    type="text"
+                                                    value={item.text}
+                                                    className="w-[90%] sm:w-full"
+                                                    onChange={(e) => {
+                                                        setAnswer((prev) => prev.map((ans, i) => (i === index ? { ...ans, text: e.target.value } : ans)));
+                                                    }}
+                                                />
+                                                <Button icon="pi pi-trash" onClick={() => deleteOption(index)} className="p-[0px] w-2 " style={{ fontSize: '14px' }} />
+                                            </div>
+                                        );
+                                    })}
 
-                                <Button label="Вариант кошуу" onClick={addOption} disabled={optionAddBtn} icon="pi pi-plus" className="p-1 ml-4" style={{ fontSize: '14px' }} />
+                                    <Button label="Вариант кошуу" onClick={addOption} disabled={optionAddBtn} icon="pi pi-plus" className="p-1 ml-4" style={{ fontSize: '14px' }} />
+                                </div>
                             </div>
                         </div>
                         <div className="flex relative">
@@ -338,7 +354,7 @@ export default function LessonTest({ element, content, fetchPropElement, clearPr
                                     value={editingLesson?.title && editingLesson.title}
                                     style={{ resize: 'none', width: '100%' }}
                                     onChange={(e) => {
-                                        setEditingLesson((prev) => prev && ({ ...prev, title: e.target.value }));
+                                        setEditingLesson((prev) => prev && { ...prev, title: e.target.value });
                                         setValue('title', e.target.value, { shouldValidate: true });
                                     }}
                                 />
@@ -351,7 +367,7 @@ export default function LessonTest({ element, content, fetchPropElement, clearPr
                                     className="w-[70px]"
                                     value={String(editingLesson?.score)}
                                     onChange={(e) => {
-                                        setEditingLesson((prev) => prev && ({ ...prev, score: Number(e.target.value) }));
+                                        setEditingLesson((prev) => prev && { ...prev, score: Number(e.target.value) });
                                     }}
                                 />
                             </div>
@@ -359,7 +375,7 @@ export default function LessonTest({ element, content, fetchPropElement, clearPr
                         <div className="flex flex-col justify-start items-start gap-2">
                             {answer.map((item, index) => {
                                 console.log(item);
-                                
+
                                 return (
                                     <div className="flex items-center gap-1">
                                         <input

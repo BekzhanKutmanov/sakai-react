@@ -410,7 +410,7 @@ export default function Course() {
                     {/* Заголовок */}
                     <div className={`w-full flex-1 ${tableMedia && 'flex items-center gap-1 justify-between'}`}>
                         <div className="font-bold text-md mb-2">
-                            <Link href={`/course/${shablonData.id}/${null}`} onClick={()=> setMainCourseId(shablonData.id)}>
+                            <Link href={`/course/${shablonData.id}/${'null'}`} onClick={()=> setMainCourseId(shablonData.id)}>
                                 {shablonData.title} {/* Используем subject_name из вашего шаблона */}
                             </Link>
                         </div>
@@ -725,7 +725,7 @@ export default function Course() {
                                                         header="Аталышы"
                                                         style={{ width: '80%' }}
                                                         body={(rowData) => (
-                                                            <Link href={`/course/${rowData.id}/${null}`} onClick={()=> setMainCourseId(rowData.id)} key={rowData.id}>
+                                                            <Link href={`/course/${rowData.id}/${'null'}`} onClick={()=> setMainCourseId(rowData.id)} key={rowData.id}>
                                                                 {rowData.title}
                                                             </Link>
                                                         )}

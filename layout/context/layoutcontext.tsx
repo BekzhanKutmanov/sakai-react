@@ -96,6 +96,7 @@ export const LayoutProvider = ({ children }: ChildContainerProps) => {
     };
 
     // fetch themes
+    const [deleteQuery, setDeleteQuery] = useState(false);
     const [contextThemes, setContextThemes] = useState([]);
     const contextFetchThemes = async (id: number | null) => {
         const data = await fetchThemes(Number(id) || null);
@@ -132,6 +133,8 @@ export const LayoutProvider = ({ children }: ChildContainerProps) => {
         contextFetchThemes,
         contextThemes,
         setContextThemes,
+        deleteQuery,
+        setDeleteQuery,
 
         contextFetchStudentThemes,
         contextStudentThemes,
@@ -140,7 +143,7 @@ export const LayoutProvider = ({ children }: ChildContainerProps) => {
         crumbUrls,
         contextAddCrumb,
         mainCourseId,
-        setMainCourseId
+        setMainCourseId,
     };
 
     return (

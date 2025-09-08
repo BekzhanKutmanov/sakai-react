@@ -11,7 +11,7 @@ import useErrorMessage from '@/hooks/useErrorMessage';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { LayoutContext } from '@/layout/context/layoutcontext';
 import { lessonSchema } from '@/schemas/lessonSchema';
-import { fetchLessonShow } from '@/services/courses';
+import { deleteLesson, fetchLessonShow } from '@/services/courses';
 import { addLesson, deleteStep, fetchElement, fetchSteps, fetchTypes } from '@/services/steps';
 import { lessonStateType } from '@/types/lessonStateType';
 import { mainStepsType } from '@/types/mainStepType';
@@ -27,35 +27,13 @@ import React, { useContext, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 export default function LessonStep() {
-    // types
-    interface editingType {
-        key: string;
-        file: string;
-        url: string;
-        link: string;
-        video_type_id?: number | null;
-    }
-
-    interface videoType {
-        name: string;
-        status: boolean;
-        id: number;
-    }
-
-    interface videoInsideType {
-        id: number;
-        is_link: boolean;
-        short_title: string;
-        title: string;
-    }
-
     const param = useParams();
     const course_id = param.course_Id;
     console.log('step param ', param);
 
     const [lessonInfoState, setLessonInfoState] = useState<{ title: string; documents_count: string; usefullinks_count: string; videos_count: string } | null>(null);
     const media = useMediaQuery('(max-width: 640px)');
-    const { setMessage, contextFetchThemes, contextThemes } = useContext(LayoutContext);
+    const { setMessage, contextFetchThemes, contextThemes, setDeleteQuery, deleteQuery } = useContext(LayoutContext);
     const showError = useErrorMessage();
 
     const [formVisible, setFormVisible] = useState(false);
@@ -96,14 +74,17 @@ export default function LessonStep() {
         // }
     ];
 
+    const router = useRouter();
     const pathname = usePathname();
     const breadcrumb = useBreadCrumbs(teachingBreadCrumb, pathname);
 
     const clearValues = () => {};
 
-    const handleShow = async (LessonId: number) => {
-        // alert('lessson_id: ' + lesson_id);
+    const changeUrl = (lessonId: number) => {
+        router.replace(`/course/${course_id}/${lessonId ? lessonId : null}`);
+    };
 
+    const handleShow = async (LessonId: number) => {
         const data = await fetchLessonShow(LessonId);
         console.log(data?.lesson);
 
@@ -246,11 +227,6 @@ export default function LessonStep() {
         </div>
     );
 
-    useEffect(()=> {
-        console.log('last', lastSelectedId);
-        
-    },[lastSelectedId])
-
     useEffect(() => {
         if (Array.isArray(steps) && steps.length > 0) {
             // const firstStep = steps[0]?.id;
@@ -263,6 +239,7 @@ export default function LessonStep() {
     useEffect(() => {
         if (lesson_id) {
             handleShow(lesson_id);
+            changeUrl(lesson_id);
         }
     }, [lesson_id]);
 
@@ -275,17 +252,17 @@ export default function LessonStep() {
     }, []);
 
     useEffect(() => {
-        console.log('Тема ', contextThemes);
-        console.log('variant 1');
+        console.log('Тема ', contextThemes, deleteQuery);
 
         if (contextThemes?.lessons?.data?.length > 0) {
             console.log('variant 2');
             setThemeNull(false);
-            if (param.lesson_id == 'null') {
+            if (param.lesson_id == 'null' || deleteQuery) {
                 handleShow(contextThemes.lessons.data[0].id);
                 console.log('variant 4', contextThemes.lessons.data[0].id);
                 handleFetchSteps(contextThemes.lessons.data[0].id);
                 setLesson_id(contextThemes.lessons.data[0].id);
+                setDeleteQuery(false);
             } else {
                 console.log('variant 5');
                 handleShow(Number(param.lesson_id));
