@@ -16,8 +16,9 @@ export default function StreamList({ callIndex, courseValue, isMobile, insideDis
     interface mainStreamsType {
         connect_id: number | null;
         stream_id: number;
-        subject_name: { name_kg: string };
-        subject_type_name: { name_kg: string };
+        id_curricula: number;
+        subject_name: { name_kg: string, id: number };
+        subject_type_name: { name_kg: string, id: number };
         teacher: { name: string };
         language: { name: string };
         id_edu_year: number;
@@ -26,6 +27,7 @@ export default function StreamList({ callIndex, courseValue, isMobile, insideDis
         edu_form: { name_kg: string };
         period: {name_kg: string},
         courseValue?: number;
+        speciality: {id: number, id_faculty: number};
     }
 
     const shablon = [
@@ -151,7 +153,6 @@ export default function StreamList({ callIndex, courseValue, isMobile, insideDis
 
     const handleConnect = async () => {
         const data = await connectStreams({course_id: courseValue?.id ? courseValue?.id : null, stream: pendingChanges });
-        // const data = await connectStreams(streamValues);
 
         if (data?.success) {
             toggleSkeleton();
@@ -171,13 +172,23 @@ export default function StreamList({ callIndex, courseValue, isMobile, insideDis
         }
     };
 
-    const handleEdit = (e: { checked: boolean }, item: mainStreamsType) => {
+    const handleEdit = (e: { checked: boolean }, item: mainStreamsType) => {        
+        console.log(item);
+        
         const { stream_id, subject_name } = item;
         const isChecked = e.checked;
 
         const forSentStreams = {
             course_id: courseValue!.id,
             stream_id: stream_id,
+            id_curricula: item.id_curricula,
+            id_subject: item.subject_name.id,
+            subject_type: item.subject_type_name.name_kg,
+            id_subject_type: item.subject_type_name.id,
+            id_edu_year: item.id_edu_year,
+            id_period: item.id_period,
+            id_speciality: item.speciality.id,
+            id_faculty: item.speciality.id_faculty,
             info: '',
             stream_title: subject_name.name_kg
         };

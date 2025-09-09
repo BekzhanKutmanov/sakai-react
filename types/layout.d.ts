@@ -71,7 +71,7 @@ export interface LayoutContextProps {
     contextStudentThemes;
     setContextStudentThemes;
 
-    crumbUrls: {type: string; crumbUrl: string }[];
+    crumbUrls: {type: string; crumbUrl: string };
     contextAddCrumb: (id)=> void
 
     mainCourseId: number | null,
