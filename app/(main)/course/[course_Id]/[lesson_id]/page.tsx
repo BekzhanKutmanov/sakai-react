@@ -238,24 +238,20 @@ export default function LessonStep() {
 
     useEffect(() => {
         if (lesson_id) {
+            console.warn('LESSONID ', lesson_id);
             handleShow(lesson_id);
             changeUrl(lesson_id);
         }
     }, [lesson_id]);
 
     useEffect(() => {
-        // console.log('element', element);
-    }, [element]);
-
-    useEffect(() => {
         contextFetchThemes(Number(course_id));
-    }, []);
+    }, [course_id]);
 
     useEffect(() => {
-        console.log('Тема ', contextThemes, deleteQuery);
+        console.log('Тема ', contextThemes, lesson_id);
 
         if (contextThemes?.lessons?.data?.length > 0) {
-            console.log('variant 2');
             setThemeNull(false);
             if (param.lesson_id == 'null' || deleteQuery) {
                 handleShow(contextThemes.lessons.data[0].id);
@@ -263,7 +259,8 @@ export default function LessonStep() {
                 handleFetchSteps(contextThemes.lessons.data[0].id);
                 setLesson_id(contextThemes.lessons.data[0].id);
                 setDeleteQuery(false);
-            } else {
+            } 
+            else {
                 console.log('variant 5');
                 handleShow(Number(param.lesson_id));
                 setLesson_id((param.lesson_id && Number(param.lesson_id)) || null);
