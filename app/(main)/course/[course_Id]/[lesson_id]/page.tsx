@@ -236,6 +236,10 @@ export default function LessonStep() {
         }
     }, [steps]);
 
+    useEffect(()=> {
+        
+    },[]);
+
     useEffect(() => {
         if (lesson_id) {
             console.warn('LESSONID ', lesson_id);
