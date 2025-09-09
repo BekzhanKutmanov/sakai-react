@@ -252,7 +252,7 @@ export default function LessonStep() {
 
     useEffect(() => {
         console.log('Тема ', contextThemes, lesson_id);
-        if(testovy || updateQuery){
+        if(testovy || updateQuery || deleteQuery){
             setTestovy(false);
             setUpdateeQuery(false);
             if (contextThemes?.lessons?.data?.length > 0) {
