@@ -219,8 +219,8 @@ const AppMenu = () => {
         console.log(contextThemes);
         
         if (contextThemes && contextThemes.lessons) {
-            const newThemes = contextThemes.lessons.data.map((item: any) => ({
-                label: item.title,
+            const newThemes = contextThemes.lessons.data.map((item: any, idx:number) => ({
+                label: <div>{idx+1}. {item.title}</div>,
                 id: item.id,
                 to: `/course/${course_Id}/${item.id}`,
                 onEdit: () => {

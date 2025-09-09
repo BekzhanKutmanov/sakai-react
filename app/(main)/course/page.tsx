@@ -1,7 +1,7 @@
 'use client';
 
 import FormModal from '@/app/components/popUp/FormModal';
-import { addCourse, deleteCourse, fetchCourseInfo, fetchCourses, updateCourse } from '@/services/courses';
+import { addCourse, deleteCourse, fetchCourseInfo, fetchCourses, publishCourse, updateCourse } from '@/services/courses';
 import { Button } from 'primereact/button';
 import { FileUpload, FileUploadSelectEvent } from 'primereact/fileupload';
 import { InputText } from 'primereact/inputtext';
@@ -261,6 +261,25 @@ export default function Course() {
         setEditMode(false);
         setSelectedCourse(null);
     };
+
+    const publish = async (id: number) => {
+        const data = await publishCourse(id);
+        if(data.success){
+            setMessage({
+                state: true,
+                value: { severity: 'success', summary: 'Ийгиликтүү кошулду!', detail: '' }
+            });
+        } else {
+            setMessage({
+                state: true,
+                value: { severity: 'error', summary: 'Катаа', detail: 'Кийинирээк кайталаныз' }
+            }); // messege - Ошибка при добавлении
+            if (data?.response?.status) {
+                showError(data.response.status);
+            }
+        }
+
+    }
 
     const handleUpdateCourse = async () => {
         const data = await updateCourse(selectedCourse, editingLesson);
@@ -732,7 +751,13 @@ export default function Course() {
                                                     ></Column>
 
                                                     <Column body={imageBodyTemplate}></Column>
-
+                                                    <Column
+                                                        field=""
+                                                        header=""
+                                                        body={(rowData) => (
+                                                            <Button icon='pi pi-unlock' className='w-[25px]' onClick={()=> publish(rowData.id)} key={rowData.id} />
+                                                        )}
+                                                    ></Column>
                                                     <Column
                                                         header="Агымга байлоо"
                                                         style={{ margin: '0 3px', textAlign: 'center' }}

@@ -345,3 +345,20 @@ export const fetchVideoType = async () => {
     }
 };
 
+export const publishCourse = async (id: number) => {    
+    const formData = new FormData();
+    formData.append('course_id', String(id));
+    
+    try {
+        const res = await axiosInstance.post(`/v1/teacher/courses/published`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        });
+
+        return res.data;
+    } catch (err) {
+        console.log('Ошибка при добавлении курса', err);
+        return err;
+    }
+};

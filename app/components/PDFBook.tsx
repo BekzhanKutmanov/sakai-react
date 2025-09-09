@@ -35,8 +35,12 @@ export default function PDFViewer({ url }: { url: string }) {
             setSkeleton(true);
             try {
                 // Проверяем, одна ли страница в документе
-
-                const newUrl = `https://api.mooc.oshsu.kg/temprory-file/${url}`;
+                const forUrl = new RegExp('https:');
+                let newUrl = `https://api.mooc.oshsu.kg/temprory-file/${url}`;
+                if(forUrl.test(url)){
+                    newUrl = url;
+                }
+                console.log(newUrl);
                 const pdf = await pdfjsLib.getDocument(newUrl).promise;
                 const tempPages = [];
                 const firstPage = await pdf.getPage(1);

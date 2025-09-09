@@ -1,6 +1,7 @@
 'use client';
 
 import LessonDocument from '@/app/components/lessons/LessonDocument';
+import LessonPractica from '@/app/components/lessons/LessonPractica';
 import LessonTest from '@/app/components/lessons/LessonTest';
 import LessonVideo from '@/app/components/lessons/LessonVideo';
 import { NotFound } from '@/app/components/NotFound';
@@ -171,6 +172,8 @@ export default function LessonStep() {
         if (lesson_id) {
             const data = await fetchElement(Number(lesson_id), stepId);
             if (data.success) {
+                console.log(data);
+
                 setElement({ content: data.content, step: data.step });
             } else {
                 setMessage({
@@ -214,19 +217,22 @@ export default function LessonStep() {
         </div>
     );
 
-    const step = (icon: string, step: number) => (
-        <div
-            className="cursor-pointer"
-            onClick={() => {
-                setSelectId(step);
-                handleFetchElement(step);
-            }}
-        >
-            <div className={`w-[40px] h-[40px] sm:w-[57px] sm:h-[57px] rounded ${step === selectedId ? 'activeStep' : 'step'} flex justify-center items-center`}>
-                <i className={`${icon} text-xl sm:text-2xl text-white`}></i>
+    const step = (icon: string, step: number, idx: number) => {
+        return (
+            <div
+                className="cursor-pointer flex flex-col items-center"
+                onClick={() => {
+                    setSelectId(step);
+                    handleFetchElement(step);
+                }}
+            >
+                <span>{idx + 1}</span>
+                <div className={`w-[40px] h-[40px] sm:w-[57px] sm:h-[57px] rounded ${step === selectedId ? 'activeStep' : 'step'} flex justify-center items-center`}>
+                    <i className={`${icon} text-xl sm:text-2xl text-white`}></i>
+                </div>
             </div>
-        </div>
-    );
+        );
+    };
 
     useEffect(() => {
         if (Array.isArray(steps) && steps.length > 0) {
@@ -252,21 +258,20 @@ export default function LessonStep() {
 
     useEffect(() => {
         console.log('Тема ', contextThemes, lesson_id);
-        if(testovy || updateQuery || deleteQuery){
+        if (testovy || updateQuery || deleteQuery) {
             setTestovy(false);
             setUpdateeQuery(false);
             if (contextThemes?.lessons?.data?.length > 0) {
                 setThemeNull(false);
                 if (param.lesson_id == 'null' || deleteQuery) {
                     console.log(contextThemes.lessons.data[0].id);
-                    
+
                     handleShow(contextThemes.lessons.data[0].id);
                     console.log('variant 4', contextThemes.lessons.data[0].id);
                     handleFetchSteps(contextThemes.lessons.data[0].id);
                     setLesson_id(contextThemes.lessons.data[0].id);
                     setDeleteQuery(false);
-                } 
-                else {
+                } else {
                     console.log('variant 5');
                     handleShow(Number(param.lesson_id));
                     setLesson_id((param.lesson_id && Number(param.lesson_id)) || null);
@@ -320,7 +325,7 @@ export default function LessonStep() {
             {lessonInfo}
 
             {/* steps section */}
-            <div className="flex gap-2 mt-4">
+            <div className="flex gap-2 mt-4 items-end">
                 {hasSteps ? (
                     <div className="flex items-center gap-4">
                         <div onClick={handleFetchTypes} className="cursor-pointer w-[40px] h-[40px] sm:w-[57px] sm:h-[57px] rounded animate-step"></div>
@@ -330,28 +335,30 @@ export default function LessonStep() {
                         {steps.map((item, idx) => {
                             return (
                                 <div key={item.id} className="flex flex-col items-center">
-                                    {step(item.type.logo, item.id)}
+                                    {step(item.type.logo, item.id, idx)}
                                 </div>
                             );
                         })}
                     </div>
                 )}
-                <button
-                    onClick={handleFetchTypes}
-                    className="cursor-pointer min-w-[40px] min-h-[40px] w-[40px] h-[40px] sm:w-[57px] sm:h-[57px] border rounded flex justify-center items-center text-4xl text-white bg-[var(--mainColor)] hover:bg-[var(--mainBorder)] transition"
-                >
-                    +
-                </button>
-                {!hasSteps && (
-                    <Button
-                        icon={'pi pi-trash'}
-                        className="min-w-[40px] min-h-[40px] w-[40px] h-[40px] sm:w-[57px] sm:h-[57px] hover:bg-[var(--mainBorder)] transition"
-                        onClick={() => {
-                            const options = getConfirmOptions(Number(), () => handleDeleteStep());
-                            confirmDialog(options);
-                        }}
-                    />
-                )}
+                <div className='flex items-center gap-1 sm:mb-[15px]'>
+                    <button
+                        onClick={handleFetchTypes}
+                        className="cursor-pointer min-w-[40px] min-h-[40px] w-[40px] h-[40px] sm:w-[57px] sm:h-[57px] border rounded flex justify-center items-center text-4xl text-white bg-[var(--mainColor)] hover:bg-[var(--mainBorder)] transition"
+                    >
+                        +
+                    </button>
+                    {!hasSteps && (
+                        <Button
+                            icon={'pi pi-trash'}
+                            className="min-w-[40px] min-h-[40px] w-[40px] h-[40px] sm:w-[57px] sm:h-[57px] hover:bg-[var(--mainBorder)] transition"
+                            onClick={() => {
+                                const options = getConfirmOptions(Number(), () => handleDeleteStep());
+                                confirmDialog(options);
+                            }}
+                        />
+                    )}
+                </div>
             </div>
 
             {hasSteps && (
@@ -362,6 +369,7 @@ export default function LessonStep() {
             {element?.step.type.name === 'document' && <LessonDocument element={element?.step} content={element?.content} fetchPropElement={handleFetchElement} clearProp={hasSteps} />}
             {element?.step.type.name === 'video' && <LessonVideo element={element?.step} content={element?.content} fetchPropElement={handleFetchElement} clearProp={hasSteps} />}
             {element?.step.type.name === 'test' && <LessonTest element={element?.step} content={element?.content} fetchPropElement={handleFetchElement} clearProp={hasSteps} />}
+            {element?.step.type.name === 'practical' && <LessonPractica element={element?.step} content={element?.content} fetchPropElement={handleFetchElement} clearProp={hasSteps} />}
         </div>
     );
 }

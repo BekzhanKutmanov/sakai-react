@@ -244,11 +244,9 @@ export const addTest = async (answers: { text: string; is_correct: boolean }[], 
     }
 };
 
-export const updateTest = async (
-    answers: { text: string; is_correct: boolean }[], title: string, lesson_id: number, test_id:number, type_id: number, step_id: number, score: number
-) => {
+export const updateTest = async (answers: { text: string; is_correct: boolean }[], title: string, lesson_id: number, test_id: number, type_id: number, step_id: number, score: number) => {
     url = `/v1/teacher/test/update`;
-    
+
     const payload = {
         lesson_id,
         test_id,
@@ -272,10 +270,83 @@ export const updateTest = async (
 };
 
 export const deleteTest = async (lesson_id: number, test_id: number, type_id: number, step_id: number) => {
-    console.log(lesson_id, test_id, type_id,step_id);
+    console.log(lesson_id, test_id, type_id, step_id);
 
     try {
         const res = await axiosInstance.delete(`/v1/teacher/test/delete?lesson_id=${lesson_id}&test_id=${test_id}&type_id=${type_id}&step_id=${step_id}`);
+
+        const data = await res.data;
+        return data;
+    } catch (err) {
+        console.log('Ошибка при удалении темы', err);
+        return err;
+    }
+};
+
+// practica
+export const addPractica = async (value: { url: string | null; title: string; description: string | null; document: File | null }, lesson_id: number, type_id: number, step_id: number) => {
+    console.log(value);
+
+    const formData = new FormData();
+    url = `/v1/teacher/practice-lesson/store?lesson_id=${lesson_id}&title=${value.title}&description=${value.description}&url=${value.url}&document=${value.document}&video_type_id=${type_id}&step_id=${step_id}`;
+    formData.append('type_id', String(type_id));
+    formData.append('step_id', String(step_id));
+    formData.append('lesson_id', String(lesson_id));
+    formData.append('url', String(value?.url));
+    formData.append('title', String(value?.title));
+    formData.append('description', String(value?.description));
+    if (value.document) formData.append('document', value?.document && value?.document);
+    else formData.append('document', '');
+
+    try {
+        const res = await axiosInstance.post(url, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        });
+
+        return res.data;
+    } catch (err) {
+        console.log('Ошибка при добавлении курса', err);
+        return err;
+    }
+};
+
+export const updatePractica = async (value: { url: string | null; title: string; description: string | null; document: File | null }, lesson_id: number | null, practice_id: number, type_id: number, step_id: number) => {
+    console.log(value);
+    
+    let formData = new FormData();
+    url = `/v1/teacher/practice-lesson/update?lesson_id=${lesson_id}&title=${value.title}&description=${value.description}&url=${value.url}&document=${value.document}&practice_id=${practice_id}&video_type_id=${type_id}&step_id=${step_id}`;
+    formData.append('type_id', String(type_id));
+    formData.append('step_id', String(step_id));
+    formData.append('lesson_id', String(lesson_id));
+    formData.append('practice_id', String(practice_id));
+    formData.append('url', value?.url || '');
+    formData.append('title', String(value?.title));
+    formData.append('description', String(value?.description));
+    if (value.document) formData.append('document', value?.document && value?.document);
+    else formData.append('document', '');
+
+    try {
+        const res = await axiosInstance.post(url, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        });
+
+        const data = await res.data;
+        return data;
+    } catch (err) {
+        console.log('Ошибка при обновлении урока', err);
+        return err;
+    }
+};
+
+export const deletePractica = async (lesson_id: number, practice_id: number, type_id: number, step_id: number) => {
+    console.log(lesson_id, practice_id);
+
+    try {
+        const res = await axiosInstance.delete(`/v1/teacher/practice-lesson/delete?lesson_id=${lesson_id}&practice_id=${practice_id}&step_id=${step_id}&type_id=${type_id}`);
 
         const data = await res.data;
         return data;

@@ -20,13 +20,13 @@ export default function useShortText(text: string, textLength: number) {
     return (
         <>
             <Tooltip target=".hasTooltip" />
-            {isLength ? (
+            {isLength ? (   
                 <div className="hasTooltip flex flex-col justify-center items-center gap-1 px-1" data-pr-tooltip={text} data-pr-position="right">
                     {resultText}
                     <i className="pi pi-ellipsis-h"></i>
                 </div>
             ) : (
-                <div>{resultText}</div>
+                <div  className='flex justify-center'>{resultText}</div>
             )}
         </>
     );
