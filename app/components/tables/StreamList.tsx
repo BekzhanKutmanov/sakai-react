@@ -12,22 +12,34 @@ import Link from 'next/link';
 import { streamsType } from '@/types/streamType';
 import { displayType } from '@/types/displayType';
 
-export default function StreamList({ callIndex, courseValue, isMobile, insideDisplayStreams, toggleIndex }: { callIndex: number; courseValue: { id: number | null; title: string } | null; isMobile: boolean; insideDisplayStreams: (id: displayType[]) => void, toggleIndex: ()=> void }) {
+export default function StreamList({
+    callIndex,
+    courseValue,
+    isMobile,
+    insideDisplayStreams,
+    toggleIndex
+}: {
+    callIndex: number;
+    courseValue: { id: number | null; title: string } | null;
+    isMobile: boolean;
+    insideDisplayStreams: (id: displayType[]) => void;
+    toggleIndex: () => void;
+}) {
     interface mainStreamsType {
         connect_id: number | null;
         stream_id: number;
         id_curricula: number;
-        subject_name: { name_kg: string, id: number };
-        subject_type_name: { name_kg: string, id: number };
+        subject_name: { name_kg: string; id: number };
+        subject_type_name: { name_kg: string; id: number };
         teacher: { name: string };
         language: { name: string };
         id_edu_year: number;
         id_period: number;
         semester: { name_kg: string };
         edu_form: { name_kg: string };
-        period: {name_kg: string},
+        period: { name_kg: string };
         courseValue?: number;
-        speciality: {id: number, id_faculty: number};
+        speciality: { id: number; id_faculty: number };
     }
 
     const shablon = [
@@ -107,16 +119,18 @@ export default function StreamList({ callIndex, courseValue, isMobile, insideDis
                     course_id: item?.course_id,
                     stream_id: item.stream_id,
                     info: '',
-                    stream_title: item?.subject_name.name_kg
+                    id_curricula: item.id_curricula,
+                    id_subject: item.subject_name.id,
+                    subject_type: item.subject_type_name.name_kg,
+                    id_subject_type: item.subject_type_name.id,
+                    id_edu_year: item.id_edu_year,
+                    id_period: item.id_period,
+                    id_speciality: item.speciality.id,
+                    id_faculty: item.speciality.id_faculty,
+                    stream_title: item?.subject_name.name_kg //
                 });
             }
         });
-
-        // setStreamValues((prev) => ({
-        //     ...prev,
-        //     stream: [...prev.stream, ...newStreams]
-        // }));
-        // setPendingChanges((prev)=> [...prev, ...newStreams]);
 
         setPendingChanges((prev) => {
             const pendingIds = new Set(prev.map((p) => p.stream_id));
@@ -131,6 +145,8 @@ export default function StreamList({ callIndex, courseValue, isMobile, insideDis
         setPendingChanges([]);
 
         if (data) {
+            console.log(data);
+
             profilactor(data);
             setHasStreams(false);
             setStreams(data);
@@ -152,7 +168,9 @@ export default function StreamList({ callIndex, courseValue, isMobile, insideDis
     };
 
     const handleConnect = async () => {
-        const data = await connectStreams({course_id: courseValue?.id ? courseValue?.id : null, stream: pendingChanges });
+        console.log(pendingChanges);
+
+        const data = await connectStreams({ course_id: courseValue?.id ? courseValue?.id : null, stream: pendingChanges });
 
         if (data?.success) {
             toggleSkeleton();
@@ -172,9 +190,9 @@ export default function StreamList({ callIndex, courseValue, isMobile, insideDis
         }
     };
 
-    const handleEdit = (e: { checked: boolean }, item: mainStreamsType) => {        
+    const handleEdit = (e: { checked: boolean }, item: mainStreamsType) => {
         console.log(item);
-        
+
         const { stream_id, subject_name } = item;
         const isChecked = e.checked;
 
@@ -208,26 +226,6 @@ export default function StreamList({ callIndex, courseValue, isMobile, insideDis
 
             return prev;
         });
-
-        // if (e.checked) {
-        //     // profilactor();
-        //     setStreamValues(
-        //         (prev) =>
-        //             prev && {
-        //                 ...prev,
-        //                 stream: [...prev.stream, forSentStreams]
-        //             }
-        //     );
-        //     // const x = {streamTitle}
-        // } else {
-        //     setStreamValues(
-        //         (prev) =>
-        //             prev && {
-        //                 ...prev,
-        //                 stream: [...prev.stream.filter((item) => item?.stream_id !== id)]
-        //             }
-        //     );
-        // }
     };
 
     // useEffect(() => {
@@ -386,7 +384,7 @@ export default function StreamList({ callIndex, courseValue, isMobile, insideDis
                                 <div className="w-full flex flex-col items-center gap-1">
                                     <Button
                                         label="Байлоо"
-                                        className='w-full'
+                                        className="w-full"
                                         icon="pi pi-link"
                                         onClick={() => {
                                             handleConnect();
@@ -395,7 +393,7 @@ export default function StreamList({ callIndex, courseValue, isMobile, insideDis
 
                                     <Button
                                         label="Курстар"
-                                        className='w-full'
+                                        className="w-full"
                                         icon="pi pi-arrow-left"
                                         onClick={() => {
                                             toggleIndex();
