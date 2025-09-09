@@ -114,6 +114,7 @@ export const LayoutProvider = ({ children }: ChildContainerProps) => {
 
     // fetch themes
     const [deleteQuery, setDeleteQuery] = useState(false);
+    const [updateQuery, setUpdateeQuery] = useState(false);
     const [contextThemes, setContextThemes] = useState([]);
     const contextFetchThemes = async (id: number | null) => {
         const data = await fetchThemes(Number(id) || null);
@@ -152,6 +153,8 @@ export const LayoutProvider = ({ children }: ChildContainerProps) => {
         setContextThemes,
         deleteQuery,
         setDeleteQuery,
+        updateQuery,
+        setUpdateeQuery,
 
         contextFetchStudentThemes,
         contextStudentThemes,

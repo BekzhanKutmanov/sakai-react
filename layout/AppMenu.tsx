@@ -19,7 +19,7 @@ import { Button } from 'primereact/button';
 import Link from 'next/link';
 
 const AppMenu = () => {
-    const { layoutConfig, user, setDeleteQuery, course, mainCourseId, setMainCourseId, contextFetchCourse, contextFetchThemes, contextThemes, setContextThemes, contextFetchStudentThemes, contextStudentThemes } = useContext(LayoutContext);
+    const { layoutConfig, user, setDeleteQuery, setUpdateeQuery, course, mainCourseId, setMainCourseId, contextFetchCourse, contextFetchThemes, contextThemes, setContextThemes, contextFetchStudentThemes, contextStudentThemes } = useContext(LayoutContext);
     interface test {
         label: string;
         id: number;
@@ -174,6 +174,7 @@ const AppMenu = () => {
         console.log(data);
 
         if (data?.success) {
+            setUpdateeQuery(true)
             contextFetchThemes(Number(course_Id));
             clearValues();
             setMessage({

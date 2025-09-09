@@ -33,7 +33,7 @@ export default function LessonStep() {
 
     const [lessonInfoState, setLessonInfoState] = useState<{ title: string; documents_count: string; usefullinks_count: string; videos_count: string } | null>(null);
     const media = useMediaQuery('(max-width: 640px)');
-    const { setMessage, contextFetchThemes, contextThemes, setDeleteQuery, deleteQuery } = useContext(LayoutContext);
+    const { setMessage, contextFetchThemes, contextThemes, setDeleteQuery, deleteQuery, updateQuery, setUpdateeQuery } = useContext(LayoutContext);
     const showError = useErrorMessage();
 
     const [formVisible, setFormVisible] = useState(false);
@@ -46,6 +46,7 @@ export default function LessonStep() {
     const [themeNull, setThemeNull] = useState(false);
     const [lesson_id, setLesson_id] = useState<number | null>((param.lesson_id && Number(param.lesson_id)) || null);
 
+    const [testovy, setTestovy] = useState(false);
     const teachingBreadCrumb = [
         {
             id: 1,
@@ -236,10 +237,6 @@ export default function LessonStep() {
         }
     }, [steps]);
 
-    useEffect(()=> {
-        
-    },[]);
-
     useEffect(() => {
         if (lesson_id) {
             console.warn('LESSONID ', lesson_id);
@@ -249,30 +246,36 @@ export default function LessonStep() {
     }, [lesson_id]);
 
     useEffect(() => {
+        setTestovy(true);
         contextFetchThemes(Number(course_id));
     }, [course_id]);
 
     useEffect(() => {
         console.log('Тема ', contextThemes, lesson_id);
-
-        if (contextThemes?.lessons?.data?.length > 0) {
-            setThemeNull(false);
-            if (param.lesson_id == 'null' || deleteQuery) {
-                handleShow(contextThemes.lessons.data[0].id);
-                console.log('variant 4', contextThemes.lessons.data[0].id);
-                handleFetchSteps(contextThemes.lessons.data[0].id);
-                setLesson_id(contextThemes.lessons.data[0].id);
-                setDeleteQuery(false);
-            } 
-            else {
-                console.log('variant 5');
-                handleShow(Number(param.lesson_id));
-                setLesson_id((param.lesson_id && Number(param.lesson_id)) || null);
-                handleFetchSteps(Number(param.lesson_id));
+        if(testovy || updateQuery){
+            setTestovy(false);
+            setUpdateeQuery(false);
+            if (contextThemes?.lessons?.data?.length > 0) {
+                setThemeNull(false);
+                if (param.lesson_id == 'null' || deleteQuery) {
+                    console.log(contextThemes.lessons.data[0].id);
+                    
+                    handleShow(contextThemes.lessons.data[0].id);
+                    console.log('variant 4', contextThemes.lessons.data[0].id);
+                    handleFetchSteps(contextThemes.lessons.data[0].id);
+                    setLesson_id(contextThemes.lessons.data[0].id);
+                    setDeleteQuery(false);
+                } 
+                else {
+                    console.log('variant 5');
+                    handleShow(Number(param.lesson_id));
+                    setLesson_id((param.lesson_id && Number(param.lesson_id)) || null);
+                    handleFetchSteps(Number(param.lesson_id));
+                }
+            } else {
+                setThemeNull(true);
+                console.log('variant 3');
             }
-        } else {
-            setThemeNull(true);
-            console.log('variant 3');
         }
     }, [contextThemes]);
 
