@@ -38,7 +38,8 @@ export default function LessonCard({
     videoVisible?: (id: string | null) => void;
     answers?: { id?: number | null; text: string; is_correct: boolean }[];
 }) {
-    const shortTitle = type.typeValue !== 'practica' ? useShortText(cardValue.title, 200) : cardValue.title;
+    const forShortTitle = useShortText(cardValue.title, 200);
+    const shortTitle = type.typeValue !== 'practica' ? forShortTitle : cardValue.title;
     const shortDoc = useShortText(cardValue?.document || '', 20);
     const shortDescription = useShortText(cardValue.desctiption ? cardValue.desctiption : '', 90);
     const shortUrl = useShortText(cardValue?.url ? cardValue?.url : '', 100);

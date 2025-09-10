@@ -31,9 +31,11 @@ import { RadioButton } from 'primereact/radiobutton';
 import { DataView } from 'primereact/dataview';
 import { displayType } from '@/types/displayType';
 import { FileWithPreview } from '@/types/fileuploadPreview';
+import { InputSwitch, InputSwitchChangeEvent } from 'primereact/inputswitch';
+import { SelectButton, SelectButtonChangeEvent } from 'primereact/selectbutton';
 
 export default function Course() {
-    const { setMessage, course, setCourses, contextFetchCourse, setMainCourseId} = useContext(LayoutContext);
+    const { setMessage, course, setCourses, contextFetchCourse, setMainCourseId } = useContext(LayoutContext);
     const [coursesValue, setValueCourses] = useState<myMainCourseType[]>([]);
     const [hasCourses, setHasCourses] = useState(false);
     const [courseValue, setCourseValue] = useState<CourseCreateType>({ title: '', description: '', video_url: '', image: '' });
@@ -52,25 +54,6 @@ export default function Course() {
     const [imageState, setImageState] = useState<string | null>(null);
     const [displayStrem, setDisplayStreams] = useState<displayType[]>([]);
     const [visible, setVisisble] = useState(false);
-
-    [
-        {
-            title: 'dfdj', 
-            topic_id: 1,
-            lessons: []
-        },
-        {
-            title: 'r', 
-            topic_id: 2,
-            lessons: []
-        },
-        {
-            title: 't', 
-            topic_id: 3,
-            lessons: []
-        }
-    ];
-
     const [editingLesson, setEditingLesson] = useState<CourseCreateType>({
         title: '',
         description: '',
@@ -78,6 +61,8 @@ export default function Course() {
         image: '',
         created_at: ''
     });
+
+    const [active, setActive] = useState<boolean>(false);
 
     const shablon = [
         {
@@ -264,7 +249,7 @@ export default function Course() {
 
     const publish = async (id: number) => {
         const data = await publishCourse(id);
-        if(data.success){
+        if (data.success) {
             setMessage({
                 state: true,
                 value: { severity: 'success', summary: 'Ийгиликтүү кошулду!', detail: '' }
@@ -278,8 +263,7 @@ export default function Course() {
                 showError(data.response.status);
             }
         }
-
-    }
+    };
 
     const handleUpdateCourse = async () => {
         const data = await updateCourse(selectedCourse, editingLesson);
@@ -367,6 +351,7 @@ export default function Course() {
 
     useEffect(() => {
         handleFetchCourse();
+        console.log('Приходящие', course);
     }, [course]);
 
     useEffect(() => {
@@ -429,7 +414,7 @@ export default function Course() {
                     {/* Заголовок */}
                     <div className={`w-full flex-1 ${tableMedia && 'flex items-center gap-1 justify-between'}`}>
                         <div className="font-bold text-md mb-2">
-                            <Link href={`/course/${shablonData.id}/${'null'}`} onClick={()=> setMainCourseId(shablonData.id)}>
+                            <Link href={`/course/${shablonData.id}/${'null'}`} onClick={() => setMainCourseId(shablonData.id)}>
                                 {shablonData.title} {/* Используем subject_name из вашего шаблона */}
                             </Link>
                         </div>
@@ -474,6 +459,8 @@ export default function Course() {
             </div>
         );
     };
+
+    
 
     const imagestateStyle = imageState || editingLesson.image ? 'flex gap-1 items-center justify-between flex-col sm:flex-row' : '';
     const imageTitle = useShortText(typeof editingLesson.image === 'string' ? editingLesson.image : '', 20);
@@ -744,20 +731,13 @@ export default function Course() {
                                                         header="Аталышы"
                                                         style={{ width: '80%' }}
                                                         body={(rowData) => (
-                                                            <Link href={`/course/${rowData.id}/${'null'}`} onClick={()=> setMainCourseId(rowData.id)} key={rowData.id}>
+                                                            <Link href={`/course/${rowData.id}/${'null'}`} onClick={() => setMainCourseId(rowData.id)} key={rowData.id}>
                                                                 {rowData.title}
                                                             </Link>
                                                         )}
                                                     ></Column>
 
                                                     <Column body={imageBodyTemplate}></Column>
-                                                    <Column
-                                                        field=""
-                                                        header=""
-                                                        body={(rowData) => (
-                                                            <Button icon='pi pi-unlock' className='w-[25px]' onClick={()=> publish(rowData.id)} key={rowData.id} />
-                                                        )}
-                                                    ></Column>
                                                     <Column
                                                         header="Агымга байлоо"
                                                         style={{ margin: '0 3px', textAlign: 'center' }}

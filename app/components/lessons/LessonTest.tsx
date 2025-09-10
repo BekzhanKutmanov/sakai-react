@@ -266,7 +266,7 @@ export default function LessonTest({ element, content, fetchPropElement, clearPr
                                 <div className="flex flex-col justify-start items-start gap-2">
                                     {answer.map((item, index) => {
                                         return (
-                                            <div className="flex items-center gap-1">
+                                            <div className="flex items-center gap-1" key={index}>
                                                 <label className="custom-radio">
                                                     <input
                                                         type="radio"
@@ -377,7 +377,7 @@ export default function LessonTest({ element, content, fetchPropElement, clearPr
                                 console.log(item);
 
                                 return (
-                                    <div className="flex items-center gap-1">
+                                    <div className="flex items-center gap-1" key={index}>
                                         <input
                                             type="radio"
                                             name="testRadio"

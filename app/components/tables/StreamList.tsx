@@ -40,58 +40,9 @@ export default function StreamList({
         period: { name_kg: string };
         courseValue?: number;
         speciality: { id: number; id_faculty: number };
+        course_id?: number | null;
     }
 
-    const shablon = [
-        {
-            connect_id: 0,
-            stream_id: 2,
-            subject_name: { name_kg: 'test' },
-            subject_type_name: { name_kg: 'test' },
-            teacher: { name: 'test' },
-            language: { name: 'test' },
-            id_edu_year: 2,
-            id_period: 2,
-            semester: { name_kg: 'test' },
-            edu_form: { name_kg: 'test' }
-        },
-        {
-            connect_id: 0,
-            stream_id: 0,
-            subject_name: { name_kg: 'test' },
-            subject_type_name: { name_kg: 'test' },
-            teacher: { name: 'test' },
-            language: { name: 'test' },
-            id_edu_year: 2,
-            id_period: 2,
-            semester: { name_kg: 'test' },
-            edu_form: { name_kg: 'test' }
-        },
-        {
-            connect_id: 2,
-            stream_id: 2,
-            subject_name: { name_kg: 'test' },
-            subject_type_name: { name_kg: 'test' },
-            teacher: { name: 'test' },
-            language: { name: 'test' },
-            id_edu_year: 2,
-            id_period: 2,
-            semester: { name_kg: 'test' },
-            edu_form: { name_kg: 'test' }
-        },
-        {
-            connect_id: 2,
-            stream_id: 2,
-            subject_name: { name_kg: 'test' },
-            subject_type_name: { name_kg: 'test' },
-            teacher: { name: 'test' },
-            language: { name: 'test' },
-            id_edu_year: 2,
-            id_period: 2,
-            semester: { name_kg: 'test' },
-            edu_form: { name_kg: 'test' }
-        }
-    ];
     const [streams, setStreams] = useState<mainStreamsType[]>([]);
     const [streamValues, setStreamValues] = useState<{ stream: streamsType[] }>({ stream: [] });
     const [displayStreams, setDisplayStreams] = useState<displayType[] | any>([]);
@@ -110,13 +61,13 @@ export default function StreamList({
         }, 1000);
     };
 
-    const profilactor = (data: { connect_id: number; course_id: number; stream_id: number; info: string | null; subject_name: { name_kg: string } }[]) => {
-        const newStreams: { course_id: number; stream_id: number; info: string | null; stream_title: string }[] = [];
+    const profilactor = (data: mainStreamsType[]) => {
+        const newStreams: streamsType[] = [];
 
         data.forEach((item) => {
             if (item?.connect_id) {
                 newStreams.push({
-                    course_id: item?.course_id,
+                    course_id: item?.course_id || null,
                     stream_id: item.stream_id,
                     info: '',
                     id_curricula: item.id_curricula,

@@ -168,11 +168,7 @@ const AppMenu = () => {
 
     // update document
     const handleUpdate = async () => {
-        console.log(selectId, course_Id);
-
         const data = await updateTheme(Number(course_Id), selectId, editingLesson?.title ? editingLesson?.title : '');
-        console.log(data);
-
         if (data?.success) {
             setUpdateeQuery(true)
             contextFetchThemes(Number(course_Id));
