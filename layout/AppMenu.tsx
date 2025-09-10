@@ -19,7 +19,8 @@ import { Button } from 'primereact/button';
 import Link from 'next/link';
 
 const AppMenu = () => {
-    const { layoutConfig, user, setDeleteQuery, setUpdateeQuery, course, mainCourseId, setMainCourseId, contextFetchCourse, contextFetchThemes, contextThemes, setContextThemes, contextFetchStudentThemes, contextStudentThemes } = useContext(LayoutContext);
+    const { layoutConfig, user, setDeleteQuery, setUpdateeQuery, course, mainCourseId, setMainCourseId, contextFetchCourse, contextFetchThemes, contextThemes, setContextThemes, contextFetchStudentThemes, contextStudentThemes } =
+        useContext(LayoutContext);
     interface test {
         label: string;
         id: number;
@@ -49,8 +50,8 @@ const AppMenu = () => {
     const [selectId, setSelectId] = useState<number | null>(null);
     const [visible, setVisisble] = useState(false);
     const [themeAddvisible, setThemeAddVisisble] = useState(false);
-    const [editingLesson, setEditingLesson] = useState<{ title: string } | null>(null);
-    const [themeValue, setThemeValue] = useState<{ title: string }>({ title: '' });
+    const [editingLesson, setEditingLesson] = useState<{ title: string, sequence_number: number | null } | null>(null);
+    const [themeValue, setThemeValue] = useState<{ title: string, sequence_number: number | null }>({ title: '', sequence_number: null });
 
     const [themesStudentList, setThemesStudentList] = useState<{ label: string; id: number; to: string; items?: AppMenuItem[] }[]>([]);
 
@@ -97,12 +98,10 @@ const AppMenu = () => {
     };
 
     const editing = async (id: number) => {
-        console.log(selectId);
-
         const data = await fetchLessonShow(id);
         console.log(data);
         if (data.lesson) {
-            setEditingLesson({ title: data.lesson.title });
+            setEditingLesson({ title: data.lesson.title, sequence_number: data.lesson.sequence_number });
         } else {
             setMessage({
                 state: true,
@@ -115,7 +114,7 @@ const AppMenu = () => {
     };
 
     const clearValues = () => {
-        setThemeValue({ title: '' });
+        setThemeValue({ title: '', sequence_number: null });
         setEditingLesson(null);
         setSelectId(null);
     };
@@ -124,7 +123,7 @@ const AppMenu = () => {
     const handleAddTheme = async () => {
         console.log(course_Id);
 
-        const data = await addThemes(Number(course_Id), themeValue?.title ? themeValue?.title : '');
+        const data = await addThemes(Number(course_Id), themeValue?.title ? themeValue?.title : '', themeValue.sequence_number);
         console.log(data);
 
         if (data?.success) {
@@ -168,9 +167,9 @@ const AppMenu = () => {
 
     // update document
     const handleUpdate = async () => {
-        const data = await updateTheme(Number(course_Id), selectId, editingLesson?.title ? editingLesson?.title : '');
+        const data = await updateTheme(Number(course_Id), selectId, editingLesson?.title ? editingLesson?.title : '', editingLesson?.sequence_number ? editingLesson?.sequence_number : null);
         if (data?.success) {
-            setUpdateeQuery(true)
+            setUpdateeQuery(true);
             contextFetchThemes(Number(course_Id));
             clearValues();
             setMessage({
@@ -213,10 +212,14 @@ const AppMenu = () => {
 
     useEffect(() => {
         console.log(contextThemes);
-        
+
         if (contextThemes && contextThemes.lessons) {
-            const newThemes = contextThemes.lessons.data.map((item: any, idx:number) => ({
-                label: <div>{idx+1}. {item.title}</div>,
+            const newThemes = contextThemes.lessons.data.map((item: any, idx: number) => ({
+                label: (
+                    <div>
+                        {idx + 1}. {item.title}
+                    </div>
+                ),
                 id: item.id,
                 to: `/course/${course_Id}/${item.id}`,
                 onEdit: () => {
@@ -228,6 +231,10 @@ const AppMenu = () => {
             setCourseList(newThemes);
         }
     }, [contextThemes]);
+
+    useEffect(()=> {
+        console.log(themeValue);
+    },[themeValue]);
 
     useEffect(() => {
         console.log('Обновился и готов');
@@ -259,7 +266,19 @@ const AppMenu = () => {
                 setVisible={setVisisble}
                 start={false}
             >
-                <div className="flex flex-col gap-1">
+                <div className="flex w-full items-end gap-1">
+                    <div className="flex flex-col justify-center items-center">
+                        <span>Позиция:</span>
+                        <InputText
+                            type="number"
+                            placeholder="0"
+                            value={String(editingLesson?.sequence_number)}
+                            className="w-[50px] sm:w-[70px]"
+                            onChange={(e) => {
+                                setEditingLesson((prev) => prev && ({ ...prev, sequence_number: Number(e.target.value) }));
+                            }}
+                        />
+                    </div>
                     <div className="flex flex-col gap-1 items-center justify-center">
                         <InputText
                             type="text"
@@ -287,7 +306,18 @@ const AppMenu = () => {
                 setVisible={setThemeAddVisisble}
                 start={false}
             >
-                <div className="flex flex-col gap-1">
+                <div className="flex w-full items-end gap-1">
+                    <div className="flex flex-col justify-center items-center">
+                        <span>Позиция:</span>
+                        <InputText
+                            type="number"
+                            placeholder="0"
+                            className="w-[50px] sm:w-[70px]"
+                            onChange={(e) => {
+                                setThemeValue((prev) => prev && ({ ...prev, sequence_number: Number(e.target.value) }));
+                            }}
+                        />
+                    </div>
                     <div className="flex flex-col gap-1 items-center justify-center">
                         <InputText
                             type="text"

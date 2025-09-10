@@ -28,13 +28,16 @@ export const fetchSteps = async (lesson_id: number) => {
     }
 };
 
-export const addLesson = async (value: { lesson_id: number; type_id: number }) => {
+export const addLesson = async (value: { lesson_id: number; type_id: number }, step: number | null) => {
+    console.log(step);
+    
     const formData = new FormData();
     formData.append('lesson_id', String(value.lesson_id));
     formData.append('type_id', String(value.type_id));
+    formData.append('step', String(step));
 
     try {
-        const res = await axiosInstance.post(`/v1/teacher/lessons/step`, formData, {
+        const res = await axiosInstance.post(`/v1/teacher/lessons/step?lesson_id=${value.lesson_id}&type_id=${value.type_id}&step=${step}`, formData, {
             headers: {
                 'Content-Type': 'multipart/form-data'
             }

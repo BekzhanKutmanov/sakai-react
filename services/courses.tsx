@@ -96,12 +96,15 @@ export const fetchCourseInfo = async (id: number | null) => {
     }
 };
 
-export const addThemes = async (id: number, value: string) => {
+export const addThemes = async (id: number, title: string, sequence_number: number | null) => {
+    console.log(sequence_number);
+    
     const formData = new FormData();
-    formData.append('title', value);
+    formData.append('title', title);
+    formData.append('sequence_number', String(sequence_number));
 
     try {
-        const res = await axiosInstance.post(`/v1/teacher/lessons/store?course_id=${id}&title=${value}`, formData, {
+        const res = await axiosInstance.post(`/v1/teacher/lessons/store?course_id=${id}&title=${title}&sequence_number=${sequence_number}`, formData, {
             headers: {
                 'Content-Type': 'multipart/form-data'
             }
@@ -129,14 +132,15 @@ export const fetchThemes = async (id: number | null) => {
     }
 };
 
-export const updateTheme = async (course_id: number | null, theme_id: number | null, value: string) => {
-    console.log(value);
+export const updateTheme = async (course_id: number | null, theme_id: number | null, title: string, sequence_number: number | null) => {
+    console.log(course_id, title, sequence_number);
     
     const formData = new FormData();
-    formData.append('title', value);
+    formData.append('title', title);
+    formData.append('sequence_number', String(sequence_number));
 
     try {
-        const res = await axiosInstance.post(`/v1/teacher/lessons/update?course_id=${course_id}&title=${value}&lesson_id=${theme_id}`, formData, {
+        const res = await axiosInstance.post(`/v1/teacher/lessons/update?course_id=${course_id}&title=${title}&lesson_id=${theme_id}&sequence_number=${sequence_number}`, formData, {
             headers: {
                 'Content-Type': 'multipart/form-data'
             }

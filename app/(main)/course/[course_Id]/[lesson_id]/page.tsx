@@ -42,10 +42,10 @@ export default function LessonStep() {
     const [steps, setSteps] = useState<mainStepsType[]>([]);
     const [element, setElement] = useState<{ content: any | null; step: mainStepsType } | null>(null);
     const [selectedId, setSelectId] = useState<number | null>(null);
-    const [lastSelectedId, setLastSelectId] = useState<number | null>(null);
     const [hasSteps, setHasSteps] = useState(false);
     const [themeNull, setThemeNull] = useState(false);
     const [lesson_id, setLesson_id] = useState<number | null>((param.lesson_id && Number(param.lesson_id)) || null);
+    const [sequence_number, setSequence_number] = useState<number | null>(null);
 
     const [testovy, setTestovy] = useState(false);
     const teachingBreadCrumb = [
@@ -145,8 +145,7 @@ export default function LessonStep() {
     };
 
     const handleAddLesson = async (lessonId: number, typeId: number) => {
-        const data = await addLesson({ lesson_id: lessonId, type_id: typeId });
-        console.log(data);
+        const data = await addLesson({ lesson_id: lessonId, type_id: typeId }, sequence_number);
 
         if (data.success) {
             handleFetchSteps(lessonId);
@@ -292,6 +291,10 @@ export default function LessonStep() {
         );
     }
 
+    useEffect(()=> {
+        console.log(sequence_number);
+    },[sequence_number])
+
     return (
         <div className="main-bg">
             {/* modal sectoin */}
@@ -305,19 +308,32 @@ export default function LessonStep() {
                     clearValues();
                 }}
             >
-                <div className="w-full step-type-grid">
-                    {types.map((item) => {
-                        return (
-                            <React.Fragment key={item.id}>
-                                <div className="flex-1 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)] flex gap-1 items-center">
-                                    <i className={`${item.logo}`}></i>
-                                    <b className="cursor-pointer" onClick={() => handleAddLesson(Number(lesson_id), item.id)}>
-                                        {item.title}
-                                    </b>
-                                </div>
-                            </React.Fragment>
-                        );
-                    })}
+                <div className="flex flex-col gap-1">
+                    <div className="flex flex-col justify-center">
+                        <span>Позиция:</span>
+                        <InputText
+                            type="number"
+                            placeholder="0"
+                            className="w-[50px] sm:w-[70px]"
+                            onChange={(e) => {
+                                setSequence_number(Number(e.target.value));
+                            }}
+                        />
+                    </div>
+                    <div className="w-full step-type-grid">
+                        {types.map((item) => {
+                            return (
+                                <React.Fragment key={item.id}>
+                                    <div className="flex-1 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)] flex gap-1 items-center">
+                                        <i className={`${item.logo}`}></i>
+                                        <b className="cursor-pointer" onClick={() => handleAddLesson(Number(lesson_id), item.id)}>
+                                            {item.title}
+                                        </b>
+                                    </div>
+                                </React.Fragment>
+                            );
+                        })}
+                    </div>
                 </div>
             </Dialog>
 
@@ -341,7 +357,7 @@ export default function LessonStep() {
                         })}
                     </div>
                 )}
-                <div className='flex items-center gap-1 sm:mb-[15px]'>
+                <div className="flex items-center gap-1 sm:mb-[15px]">
                     <button
                         onClick={handleFetchTypes}
                         className="cursor-pointer min-w-[40px] min-h-[40px] w-[40px] h-[40px] sm:w-[57px] sm:h-[57px] border rounded flex justify-center items-center text-4xl text-white bg-[var(--mainColor)] hover:bg-[var(--mainBorder)] transition"
