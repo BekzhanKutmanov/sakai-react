@@ -111,7 +111,7 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                 <h3 className="hidden sm:block text-[18px] md:text-[30px]">Цифровой кампус ОшГУ</h3>
             </Link>
 
-            {pathName !== '/' ? (
+            {pathName !== '/' && pathName !== '/course' ? (
                 <button ref={menubuttonRef} type="button" className="p-link layout-menu-button layout-topbar-button" onClick={onMenuToggle}>
                     <i className="pi pi-bars text-[var(--mainColor)]" />
                 </button>

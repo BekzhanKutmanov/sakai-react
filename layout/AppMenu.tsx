@@ -62,7 +62,7 @@ const AppMenu = () => {
         ? pathname.startsWith('/course/')
             ? [
                   {
-                      label: 'Артка',
+                      label: '',
                       icon: 'pi pi-fw pi-arrow-left',
                       to: '/course'
                   },
@@ -81,10 +81,6 @@ const AppMenu = () => {
         : [];
 
     const model: AppMenuItem[] = [
-        {
-            label: 'Баракчалар',
-            items: [{ label: 'Башкы баракча', icon: 'pi pi-fw pi-home', to: '/' }]
-        },
         {
             label: '',
             items: byStatus
