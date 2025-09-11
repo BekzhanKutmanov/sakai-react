@@ -30,7 +30,6 @@ import { useForm } from 'react-hook-form';
 export default function LessonStep() {
     const param = useParams();
     const course_id = param.course_Id;
-    console.log('step param ', param);
 
     const [lessonInfoState, setLessonInfoState] = useState<{ title: string; documents_count: string; usefullinks_count: string; videos_count: string } | null>(null);
     const media = useMediaQuery('(max-width: 640px)');
@@ -48,37 +47,8 @@ export default function LessonStep() {
     const [sequence_number, setSequence_number] = useState<number | null>(null);
 
     const [testovy, setTestovy] = useState(false);
-    const teachingBreadCrumb = [
-        {
-            id: 1,
-            url: '/',
-            title: '',
-            icon: true,
-            parent_id: null
-        },
-        {
-            id: 2,
-            url: '/course',
-            title: 'Курстар',
-            parent_id: 1
-        }
-        // {
-        //     id: 3,
-        //     url: `/course/${''}`,
-        //     title: 'Темалар',
-        //     parent_id: 2
-        // },
-        // {
-        //     id: 4,
-        //     url: '/course/:course_id/:lesson_id',
-        //     title: 'Сабактар',
-        //     parent_id: 3
-        // }
-    ];
-
     const router = useRouter();
     const pathname = usePathname();
-    const breadcrumb = useBreadCrumbs(teachingBreadCrumb, pathname);
 
     const clearValues = () => {};
 
@@ -88,14 +58,13 @@ export default function LessonStep() {
 
     const handleShow = async (LessonId: number) => {
         const data = await fetchLessonShow(LessonId);
-        console.log(data?.lesson);
 
         if (data?.lesson) {
             setLessonInfoState({ title: data.lesson.title, videos_count: data.lesson.videos_count, usefullinks_count: data.lesson.usefullinks_count, documents_count: data.lesson.documents_count });
         } else {
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка', detail: 'Проблема с соединением. Повторите заново' }
+                value: { severity: 'error', summary: 'Катаа!', detail: 'Кийинчерээк кайталаныз' }
             });
             if (data?.response?.status) {
                 showError(data.response.status);
@@ -106,13 +75,13 @@ export default function LessonStep() {
 
     const handleFetchTypes = async () => {
         setFormVisible(true);
-        const data = await fetchTypes();        
+        const data = await fetchTypes();
         if (data && Array.isArray(data)) {
             setTypes(data);
         } else {
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Катаа!', detail: 'Кийинирээк кайталаныз' }
+                value: { severity: 'error', summary: 'Катаа!', detail: 'Кийинчерээк кайталаныз' }
             });
             if (data?.response?.status) {
                 showError(data.response.status);
@@ -135,7 +104,7 @@ export default function LessonStep() {
             setHasSteps(false);
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Катаа!', detail: 'Кийинирээк кайталаныз' }
+                value: { severity: 'error', summary: 'Катаа!', detail: 'Кийинчерээк кайталаныз' }
             });
             if (data?.response?.status) {
                 showError(data.response.status);
@@ -146,7 +115,7 @@ export default function LessonStep() {
     const handleAddLesson = async (lessonId: number, typeId: number) => {
         const data = await addLesson({ lesson_id: lessonId, type_id: typeId }, sequence_number);
         console.log(data);
-        
+
         if (data.success) {
             handleFetchSteps(lessonId);
             setMessage({
@@ -156,7 +125,7 @@ export default function LessonStep() {
         } else {
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Катаа!', detail: 'Кийинирээк кайталаныз' }
+                value: { severity: 'error', summary: 'Катаа!', detail: 'Кийинчерээк кайталаныз' }
             });
             if (data?.response?.status) {
                 showError(data.response.status);
@@ -173,7 +142,7 @@ export default function LessonStep() {
             } else {
                 setMessage({
                     state: true,
-                    value: { severity: 'error', summary: 'Катаа!', detail: 'Кийинирээк кайталаныз' }
+                    value: { severity: 'error', summary: 'Катаа!', detail: 'Кийинчерээк кайталаныз' }
                 });
                 if (data?.response?.status) {
                     showError(data.response.status);
@@ -193,7 +162,7 @@ export default function LessonStep() {
         } else {
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка', detail: 'Ошибка при при удалении' }
+                value: { severity: 'error', summary: 'Катаа!', detail: 'Өчүрүүдө ката кетти' }
             });
             if (data.response.status) {
                 showError(data.response.status);
@@ -204,10 +173,7 @@ export default function LessonStep() {
     const lessonInfo = (
         <div>
             <div className="bg-[var(--titleColor)] relative flex flex-col justify-center items-center w-full text-white p-4 md:p-3 pb-4">
-                <div>
-                    <h1 style={{ color: 'white', fontSize: media ? '24px' : '28px', textAlign: 'center' }}>{lessonInfoState?.title}</h1>
-                    <div className="w-full">{breadcrumb}</div>
-                </div>
+                <h1 style={{ color: 'white', fontSize: media ? '24px' : '28px', textAlign: 'center' }}>{lessonInfoState?.title}</h1>
             </div>
         </div>
     );

@@ -150,7 +150,7 @@ export default function LessonDocument({ element, content, fetchPropElement, cle
         } else {
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Катаа!', detail: 'Кийинирээк кайталаныз' }
+                value: { severity: 'error', summary: 'Катаа!', detail: 'Кийинчерээк кайталаныз' }
             });
             if (data?.response?.status) {
                 showError(data.response.status);
@@ -172,7 +172,7 @@ export default function LessonDocument({ element, content, fetchPropElement, cle
         } else {
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка', detail: 'Ошибка при при добавлении' }
+                value: { severity: 'error', summary: 'Катаа!', detail: 'Кошуу учурунда катаа кетти' }
             });
             if (data.response.status) {
                 showError(data.response.status);
@@ -195,7 +195,7 @@ export default function LessonDocument({ element, content, fetchPropElement, cle
         } else {
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка', detail: 'Ошибка при при удалении' }
+                value: { severity: 'error', summary: 'Катаа!', detail: 'Өчүрүүдө ката кетти' }
             });
             if (data.response.status) {
                 showError(data.response.status);
@@ -221,7 +221,7 @@ export default function LessonDocument({ element, content, fetchPropElement, cle
             setEditingLesson(null);
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка', detail: 'Ошибка при при изменении урока' }
+                value: { severity: 'error', summary: 'Катаа!', detail: 'Өзгөртүүдө ката кетти' }
             });
             if (data?.response?.status) {
                 showError(data.response.status);

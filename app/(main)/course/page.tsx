@@ -53,7 +53,6 @@ export default function Course() {
     const [activeIndex, setActiveIndex] = useState<number>(0);
     const [imageState, setImageState] = useState<string | null>(null);
     const [displayStrem, setDisplayStreams] = useState<displayType[]>([]);
-    const [visible, setVisisble] = useState(false);
     const [editingLesson, setEditingLesson] = useState<CourseCreateType>({
         title: '',
         description: '',
@@ -61,59 +60,6 @@ export default function Course() {
         image: '',
         created_at: ''
     });
-
-    const [active, setActive] = useState<boolean>(false);
-
-    const shablon = [
-        {
-            created_at: '',
-            id: 3,
-            image: '',
-            status: true,
-            title: 'course-1',
-            user_id: 2
-        },
-        {
-            created_at: '',
-            id: 4,
-            image: '',
-            status: true,
-            title: 'course-2',
-            user_id: 2
-        },
-        {
-            created_at: '',
-            id: 5,
-            image: '',
-            status: true,
-            title: 'course-3',
-            user_id: 2
-        },
-        {
-            created_at: '',
-            id: 6,
-            image: '',
-            status: true,
-            title: 'course-4',
-            user_id: 2
-        },
-        {
-            created_at: '',
-            id: 7,
-            image: '',
-            status: true,
-            title: 'course-5',
-            user_id: 2
-        },
-        {
-            created_at: '',
-            id: 8,
-            image: '',
-            status: true,
-            title: 'course-6',
-            user_id: 5
-        }
-    ];
 
     const [forStreamId, setForStreamId] = useState<{ id: number | null; title: string } | null>(null);
 
@@ -166,40 +112,18 @@ export default function Course() {
             setHasCourses(true);
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Катаа!', detail: 'Байланышы менен көйгөй' }
+                value: { severity: 'error', summary: 'Катаа!', detail: 'Кийинчерээк кайталаныз' }
             });
             if (data?.response?.status) {
                 showError(data.response.status);
             }
         }
-
-        //  const data = await fetchCourses(page, 0);
-        // toggleSkeleton();
-        // if (data?.courses) {
-        //     setHasCourses(false);
-        //     setValueCourses(data.courses.data);
-        //     setPagination({
-        //         currentPage: data.courses.current_page,
-        //         total: data.courses.total,
-        //         perPage: data.courses.per_page
-        //     });
-        // } else {
-        //     setHasCourses(true);
-        //     setMessage({
-        //         state: true,
-        //         value: { severity: 'error', summary: 'Катаа!', detail: 'Байланышы менен көйгөй' }
-        //     });
-        //     if (data?.response?.status) {
-        //         showError(data.response.status);
-        //     }
-        // }
     };
 
     const handleAddCourse = async () => {
         const data = await addCourse(courseValue);
         if (data?.success) {
             toggleSkeleton();
-            // handleFetchCourse();
             contextFetchCourse(1);
             setMessage({
                 state: true,
@@ -229,7 +153,7 @@ export default function Course() {
         } else {
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Катаа', detail: 'Өчүрүүдө ката кетти' }
+                value: { severity: 'error', summary: 'Катаа!', detail: 'Өчүрүүдө ката кетти' }
             }); // messege - Ошибка при добавлении
             if (data?.response?.status) {
                 showError(data.response.status);
@@ -238,8 +162,6 @@ export default function Course() {
     };
 
     const clearValues = () => {
-        console.log('clear');
-
         setImageState(null);
         setCourseValue({ title: '', description: '', video_url: '', image: '' });
         setEditingLesson({ title: '', description: '', video_url: '', image: '', created_at: '' });
@@ -257,7 +179,7 @@ export default function Course() {
         } else {
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Катаа', detail: 'Кийинирээк кайталаныз' }
+                value: { severity: 'error', summary: 'Катаа!', detail: 'Кийинирээк кайталаныз' }
             }); // messege - Ошибка при добавлении
             if (data?.response?.status) {
                 showError(data.response.status);
@@ -351,7 +273,6 @@ export default function Course() {
 
     useEffect(() => {
         handleFetchCourse();
-        console.log('Приходящие', course);
     }, [course]);
 
     useEffect(() => {
@@ -459,8 +380,6 @@ export default function Course() {
             </div>
         );
     };
-
-    
 
     const imagestateStyle = imageState || editingLesson.image ? 'flex gap-1 items-center justify-between flex-col sm:flex-row' : '';
     const imageTitle = useShortText(typeof editingLesson.image === 'string' ? editingLesson.image : '', 20);

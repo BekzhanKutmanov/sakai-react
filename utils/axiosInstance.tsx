@@ -21,18 +21,16 @@ axiosInstance.interceptors.response.use(
     (error) => {
         
         const status = error.response?.status;
-        console.log('Ошибка из axiosInstance ', error);
-
         if (status === 401) {
             console.warn('Неавторизован. Удаляю токен...');
-            // window.location.href = '/auth/login';
-            // document.cookie = 'access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;';
-            // localStorage.removeItem('userVisit');
+            window.location.href = '/auth/login';
+            document.cookie = 'access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;';
+            localStorage.removeItem('userVisit');
         }
 
         if (status === 403) {
             console.warn('Не имеет доступ. Перенаправляю...');
-            // window.location.href = '/';
+            window.location.href = '/';
         }
         
         if (status === 404) {

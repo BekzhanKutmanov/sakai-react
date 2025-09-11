@@ -101,7 +101,7 @@ const AppMenu = () => {
         } else {
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Катаа!', detail: 'Кийинирээк кайталаныз' }
+                value: { severity: 'error', summary: 'Катаа!', detail: 'Кийинчерээк кайталаныз' }
             });
             if (data?.response?.status) {
                 showError(data.response.status);
@@ -133,7 +133,7 @@ const AppMenu = () => {
             setEditingLesson(null);
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка', detail: 'Ошибка при добавлении темы' }
+                value: { severity: 'error', summary: 'Катаа!', detail: 'Кошуу учурунда катаа кетти' }
             });
             if (data?.response?.status) {
                 showError(data.response.status);
@@ -153,7 +153,7 @@ const AppMenu = () => {
         } else {
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка', detail: 'Ошибка при удалении темы' }
+                value: { severity: 'error', summary: 'Катаа!', detail: 'Өчүрүүдө ката кетти' }
             });
             if (data?.response?.status) {
                 showError(data.response.status);
@@ -176,7 +176,7 @@ const AppMenu = () => {
             setEditingLesson(null);
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка', detail: 'Ошибка при при изменении урока' }
+                value: { severity: 'error', summary: 'Катаа!', detail: 'Өзгөртүүдө ката кетти' }
             });
             if (data?.response?.status) {
                 showError(data.response.status);
@@ -207,8 +207,6 @@ const AppMenu = () => {
     }, [user, studentThemeCourse]);
 
     useEffect(() => {
-        console.log(contextThemes);
-
         if (contextThemes && contextThemes.lessons) {
             const newThemes = contextThemes.lessons.data.map((item: any, idx: number) => ({
                 label: (
@@ -228,13 +226,7 @@ const AppMenu = () => {
         }
     }, [contextThemes]);
 
-    useEffect(()=> {
-        console.log(themeValue);
-    },[themeValue]);
-
     useEffect(() => {
-        console.log('Обновился и готов');
-
         if (contextStudentThemes?.lessons) {
             const forThemes: any = [];
             contextStudentThemes.lessons.data?.map((item: any) =>

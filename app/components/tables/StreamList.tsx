@@ -110,7 +110,7 @@ export default function StreamList({
             setHasStreams(true);
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Катаа!', detail: 'Байланышы менен көйгөй' }
+                value: { severity: 'error', summary: 'Катаа!', detail: 'Байланыш менен көйгөй' }
             });
             if (data?.response?.status) {
                 showError(data.response.status);
@@ -119,8 +119,6 @@ export default function StreamList({
     };
 
     const handleConnect = async () => {
-        console.log(pendingChanges);
-
         const data = await connectStreams({ course_id: courseValue?.id ? courseValue?.id : null, stream: pendingChanges });
 
         if (data?.success) {
@@ -142,8 +140,6 @@ export default function StreamList({
     };
 
     const handleEdit = (e: { checked: boolean }, item: mainStreamsType) => {
-        console.log(item);
-
         const { stream_id, subject_name } = item;
         const isChecked = e.checked;
 
@@ -192,8 +188,7 @@ export default function StreamList({
     // }, [streamValues]);
 
     useEffect(() => {
-        console.log('отправляемый поток ', pendingChanges);
-        setDisplayStreams(pendingChanges); // Или filter/map по вашему усмотрению
+        setDisplayStreams(pendingChanges);
     }, [pendingChanges]);
 
     useEffect(() => {
@@ -214,7 +209,6 @@ export default function StreamList({
     }, [streams]);
 
     useEffect(() => {
-        console.log(displayStreams);
         insideDisplayStreams(displayStreams);
     }, [displayStreams]);
 
@@ -236,21 +230,6 @@ export default function StreamList({
                                 //     handleEdit(e.target, item.stream_id, item?.subject_name.name_kg);
                                 //     setStreams((prev) => prev.map((el) => (el.stream_id === item.stream_id ? { ...el, connect_id: el.connect_id ? null : 1 } : el)));
                                 // }}
-                                // vtoroy gde obratno ne ot
-                                // checked={
-                                //     // Проверяем, есть ли этот элемент в вашем массиве для отправки (streamValues).
-                                //     // Это отвечает за "включение" чекбокса для новых элементов.
-                                //     streamValues?.stream?.some((s) => s.stream_id === item.stream_id) ||
-                                //     // ...ИЛИ если этот элемент уже пришёл с сервера (есть connect_id), НО
-                                //     // его НЕТ в вашем массиве для отправки, что означает, что вы его не "отжали".
-                                //     (Boolean(item.connect_id) && !streamValues?.stream?.some((s) => s.stream_id === item.stream_id))
-                                // }
-                                // checked={
-                                //     // Проверяем, есть ли объект в нашем буфере
-                                //     pendingChanges.some((s) => s.stream_id === item.stream_id) ||
-                                //     // ...ИЛИ если его нет в буфере, проверяем, есть ли он на сервере
-                                //     (Boolean(item.connect_id) && !pendingChanges.some((s) => s.stream_id === item.stream_id))
-                                // }
                                 checked={pendingChanges.some((s) => s.stream_id === item.stream_id)}
                                 onChange={(e) => {
                                     handleEdit(e.target, item);
@@ -281,11 +260,11 @@ export default function StreamList({
                         <div className="flex flex-col order-1 xl:order-2 align-items-center gap-2">
                             <span className="font-semibold">{item?.semester?.name_kg}</span>
                             <span className="bg-[var(--greenColor)] text-[12px] text-white p-1 rounded">{item?.edu_form?.name_kg}</span>
-                            {item.connect_id && (
+                            {/* {item.connect_id && (
                                 <Link href={`/students/${item.connect_id}/${item.stream_id}`} className="underline">
                                     Студенттер
                                 </Link>
-                            )}
+                            )} */}
                         </div>
                     </div>
                 </div>
@@ -353,7 +332,7 @@ export default function StreamList({
                                 </div>
                             )}
 
-                            <div className="max-h-[450px] overflow-y-scroll shadow-[0_2px_2px_0px_rgba(0,0,0,0.2)]">
+                            <div className="max-h-[685px] overflow-y-scroll shadow-[0_2px_2px_0px_rgba(0,0,0,0.2)]">
                                 {skeleton ? (
                                     <GroupSkeleton count={10} size={{ width: '100%', height: '4rem' }} />
                                 ) : (

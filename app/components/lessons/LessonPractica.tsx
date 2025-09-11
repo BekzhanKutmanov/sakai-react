@@ -139,8 +139,6 @@ export default function LessonPractica({ element, content, fetchPropElement, cle
     };
 
     const sentToPDF = (url: string) => {
-        console.log(url);
-
         setUrlPDF(url);
         if (media) {
             router.push(`/pdf/${url}`);
@@ -150,15 +148,13 @@ export default function LessonPractica({ element, content, fetchPropElement, cle
     };
 
     const editing = async () => {
-        
         const data = await fetchElement(element.lesson_id, element.id);
-        console.log('send ', data.content); 
         if (data.success) {
             setEditingLesson({ title: data.content.title, document: null, description: data.content.description, url: '' });
         } else {
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Катаа!', detail: 'Кийинирээк кайталаныз' }
+                value: { severity: 'error', summary: 'Катаа!', detail: 'Кийинчерээк кайталаныз' }
             });
             if (data?.response?.status) {
                 showError(data.response.status);
@@ -169,8 +165,6 @@ export default function LessonPractica({ element, content, fetchPropElement, cle
     const handleAddPracica = async () => {
         toggleSpinner();
         const data = await addPractica(docValue, element.lesson_id, element.type_id, element.id);
-        console.log(data);
-
         if (data.success) {
             fetchPropElement(element.id);
             setMessage({
@@ -180,7 +174,7 @@ export default function LessonPractica({ element, content, fetchPropElement, cle
         } else {
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка', detail: 'Ошибка при при добавлении' }
+                value: { severity: 'error', summary: 'Катаа!', detail: 'Кошуу учурунда катаа кетти' }
             });
             if (data.response.status) {
                 showError(data.response.status);
@@ -190,8 +184,6 @@ export default function LessonPractica({ element, content, fetchPropElement, cle
 
     // delete document
     const handleDeleteDoc = async (id: number) => {
-        console.log(id);
-
         const data = await deletePractica(Number(document?.lesson_id), id, element.type.id, element.id);
         if (data.success) {
             fetchPropElement(element.id);
@@ -202,7 +194,7 @@ export default function LessonPractica({ element, content, fetchPropElement, cle
         } else {
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка', detail: 'Ошибка при при удалении' }
+                value: { severity: 'error', summary: 'Катаа!', detail: 'Өчүрүүдө ката кетти' }
             });
             if (data.response.status) {
                 showError(data.response.status);
@@ -210,15 +202,9 @@ export default function LessonPractica({ element, content, fetchPropElement, cle
         }
     };
 
-    useEffect(() => {
-        console.log('editinglesson', editingLesson);
-    }, [editingLesson]);
-
     // update document
     const handleUpdateDoc = async () => {
         const data = await updatePractica(editingLesson, document?.lesson_id ? Number(document?.lesson_id) : null, Number(selectId), element.type.id, element.id);
-        console.log(data);
-
         if (data?.success) {
             fetchPropElement(element.id);
             clearValues();
@@ -231,7 +217,7 @@ export default function LessonPractica({ element, content, fetchPropElement, cle
             setEditingLesson({ title: '', description: '', document: null, url: '' });
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка', detail: 'Ошибка при при изменении урока' }
+                value: { severity: 'error', summary: 'Катаа!', detail: 'Өзгөртүүдө ката кетти' }
             });
             if (data?.response?.status) {
                 showError(data.response.status);
