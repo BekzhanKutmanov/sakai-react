@@ -4,11 +4,13 @@ export const lessonSchema = yup.object().shape({
     videoReq: yup
         .string()
         .required('Талап кылынат!')
-        .matches(/^https?:\/\/.+/, 'Видео шилтеме  "http://" "https://" форматында болуш керек'),
+        .matches(/^https?:\/\/.+/, 'Видео шилтеме  "http://" "https://" форматында болуш керек')
+        .max(200, 'Узундугу макс 200 тамга'),
     usefulLink: yup
         .string()
         .required('Талап кылынат!')
-        .matches(/^https?:\/\/.+/, 'Шилтеме "http://" "https://" форматында болуш керек'),
+        .matches(/^https?:\/\/.+/, 'Шилтеме "http://" "https://" форматында болуш керек')
+        .max(200, 'Узундугу макс 200 тамга'),
     usefulLinkNotReq: yup
         .string()
         .matches(/^https?:\/\/.+/, 'Шилтеме "http://" "https://" форматында болуш керек'),

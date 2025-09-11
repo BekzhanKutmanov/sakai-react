@@ -30,7 +30,7 @@ export const fetchSteps = async (lesson_id: number) => {
 
 export const addLesson = async (value: { lesson_id: number; type_id: number }, step: number | null) => {
     console.log(step);
-    
+
     const formData = new FormData();
     formData.append('lesson_id', String(value.lesson_id));
     formData.append('type_id', String(value.type_id));
@@ -317,7 +317,7 @@ export const addPractica = async (value: { url: string | null; title: string; de
 
 export const updatePractica = async (value: { url: string | null; title: string; description: string | null; document: File | null }, lesson_id: number | null, practice_id: number, type_id: number, step_id: number) => {
     console.log(value);
-    
+
     let formData = new FormData();
     url = `/v1/teacher/practice-lesson/update?lesson_id=${lesson_id}&title=${value.title}&description=${value.description}&url=${value.url}&document=${value.document}&practice_id=${practice_id}&video_type_id=${type_id}&step_id=${step_id}`;
     formData.append('type_id', String(type_id));
@@ -355,6 +355,69 @@ export const deletePractica = async (lesson_id: number, practice_id: number, typ
         return data;
     } catch (err) {
         console.log('Ошибка при удалении темы', err);
+        return err;
+    }
+};
+
+export const addLink = async (value: { url: string; title: string; description: string }, lesson_id: number, type_id: number, step_id: number) => {
+    const formData = new FormData();
+    formData.append('lesson_id', String(lesson_id));
+    formData.append('type_id', String(type_id));
+    formData.append('step_id', String(step_id));
+    formData.append('url', String(value.url));
+    formData.append('title', String(value.title));
+    formData.append('description', String(value?.description));
+
+    try {
+        const res = await axiosInstance.post(`/v1/teacher/usefullinks/store`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        });
+
+        return res.data;
+    } catch (err) {
+        console.log('Ошибка при добавлении курса', err);
+        return err;
+    }
+};
+
+export const deleteLink = async (lesson_id: number, link_id: number, type_id: number, step_id: number) => {   
+    try {
+        const res = await axiosInstance.delete(`/v1/teacher/usefullinks/delete?lesson_id=${lesson_id}&link_id=${link_id}&step_id=${step_id}&type_id=${type_id}`);
+
+        const data = await res.data;
+        return data;
+    } catch (err) {
+        console.log('Ошибка при удалении темы', err);
+        return err;
+    }
+};
+
+export const updateLink = async (value: { url: string | null; title: string; description: string | null }, lesson_id: number | null, link_id: number, type_id: number, step_id: number) => {
+    console.log(value);
+
+    let formData = new FormData();
+    url = `/v1/teacher/usefullinks/update?lesson_id=${lesson_id}&title=${value.title}&description=${value.description}&url=${value.url}&link_id=${link_id}&type_id=${type_id}&step_id=${step_id}`;
+    formData.append('type_id', String(type_id));
+    formData.append('step_id', String(step_id));
+    formData.append('lesson_id', String(lesson_id));
+    formData.append('link_id', String(link_id));
+    formData.append('url', String(value.url));
+    formData.append('title', String(value?.title));
+    formData.append('description', String(value?.description));
+
+    try {
+        const res = await axiosInstance.post(url, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        });
+
+        const data = await res.data;
+        return data;
+    } catch (err) {
+        console.log('Ошибка при обновлении урока', err);
         return err;
     }
 };

@@ -1,6 +1,7 @@
 'use client';
 
 import LessonDocument from '@/app/components/lessons/LessonDocument';
+import LessonLink from '@/app/components/lessons/LessonLink';
 import LessonPractica from '@/app/components/lessons/LessonPractica';
 import LessonTest from '@/app/components/lessons/LessonTest';
 import LessonVideo from '@/app/components/lessons/LessonVideo';
@@ -344,6 +345,7 @@ export default function LessonStep() {
             {element?.step.type.name === 'video' && <LessonVideo element={element?.step} content={element?.content} fetchPropElement={handleFetchElement} clearProp={hasSteps} />}
             {element?.step.type.name === 'test' && <LessonTest element={element?.step} content={element?.content} fetchPropElement={handleFetchElement} clearProp={hasSteps} />}
             {element?.step.type.name === 'practical' && <LessonPractica element={element?.step} content={element?.content} fetchPropElement={handleFetchElement} clearProp={hasSteps} />}
+            {element?.step.type.name === 'link' && <LessonLink element={element?.step} content={element?.content} fetchPropElement={handleFetchElement} clearProp={hasSteps} />}
         </div>
     );
 }

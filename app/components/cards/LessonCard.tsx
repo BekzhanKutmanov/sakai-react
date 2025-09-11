@@ -112,13 +112,7 @@ export default function LessonCard({
                 ${type.typeValue === 'video' && status === 'working' ? 'min-h-[200px]' : type.typeValue !== 'video' && status === 'working' ? 'min-h-[160px]' : ''} 
                 ${status === 'student' && type.typeValue !== 'video' ? 'min-h-[160px]' : status === 'student' && type.typeValue === 'video' ? 'min-h-[200px]' : ''}
 
-                ${type.typeValue === 'video' ? 'w-full' : ''} flex flex-col justify-evenly lesson-card-border rounded p-2
-                
-                ${type.typeValue === 'doc' ? 'w-full min-h-[160px] bg-black' : ''}
-                
-                ${type.typeValue === 'test' ? 'w-full min-h-[160px] bg-black' : ''}
-                
-                ${type.typeValue === 'practica' ? 'w-full min-h-[160px] bg-black' : ''}
+                ${type.typeValue === 'video' ? 'w-full' : 'w-full'} flex flex-col justify-evenly lesson-card-border rounded p-2
 
                 `}
                 style={{ backgroundColor: cardBg }}
@@ -188,9 +182,7 @@ export default function LessonCard({
                         <>
                             {status === 'student' && type.typeValue === 'doc' ? (
                                 <div className="flex gap-1 items-center">
-                                    <div className="flex gap-1 items-center">
-                                        {progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}
-                                    </div>
+                                    <div className="flex gap-1 items-center">{progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}</div>
                                     <a href={urlForDownload} download target="_blank" rel="noopener noreferrer">
                                         {' '}
                                         <Button icon="pi pi-file-arrow-up" />
@@ -218,9 +210,15 @@ export default function LessonCard({
                                             </a>
                                         </div>
                                     )}
+                                    {type.typeValue === 'link' && (
+                                        <div className="flex gap-1 items-center">
+                                            <Button onClick={lessonCardEvents} className="w-full" label={btnLabel} disabled={progressSpinner === true ? true : false} />
+                                            {progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}
+                                        </div>
+                                    )}
                                     {status === 'working' && (
                                         <div className="flex items-center">
-                                            <div className="flex gap-2 ">
+                                            <div className="flex gap-2">
                                                 <Button
                                                     className=""
                                                     icon={'pi pi-pencil'}
