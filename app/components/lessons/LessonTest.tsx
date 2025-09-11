@@ -122,7 +122,6 @@ export default function LessonTest({ element, content, fetchPropElement, clearPr
         }
     };
 
-    // update document
     const handleAddTest = async () => {
         console.log(answer);
 
@@ -157,7 +156,7 @@ export default function LessonTest({ element, content, fetchPropElement, clearPr
 
     // update test
     const handleUpdateTest = async () => {
-        const data = await updateTest(answer, editingLesson?.title || '', element.lesson_id, Number(selectId), element.type.id, element.id, 1);
+        const data = await updateTest(answer, editingLesson?.title || '', element.lesson_id, Number(selectId), element.type.id, element.id, editingLesson?.score || 0);
         console.log(data);
 
         if (data?.success) {

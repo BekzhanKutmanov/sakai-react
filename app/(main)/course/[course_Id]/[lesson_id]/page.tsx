@@ -170,8 +170,6 @@ export default function LessonStep() {
         if (lesson_id) {
             const data = await fetchElement(Number(lesson_id), stepId);
             if (data.success) {
-                console.log(data);
-
                 setElement({ content: data.content, step: data.step });
             } else {
                 setMessage({
@@ -234,8 +232,8 @@ export default function LessonStep() {
 
     useEffect(() => {
         if (Array.isArray(steps) && steps.length > 0) {
-            // const firstStep = steps[0]?.id;
-            const firstStep = steps[steps.length - 1]?.id;
+            const firstStep = steps[0]?.id;
+            // const firstStep = steps[steps.length - 1]?.id;
             setSelectId(firstStep);
             handleFetchElement(firstStep);
         }
