@@ -12,7 +12,6 @@ import { useForm } from 'react-hook-form';
 import { NotFound } from '../NotFound';
 import LessonCard from '../cards/LessonCard';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
-import { getToken } from '@/utils/auth';
 import { addDocument, addPractica, deleteDocument, deletePractica, fetchElement, updateDocument, updatePractica } from '@/services/steps';
 import { mainStepsType } from '@/types/mainStepType';
 import useErrorMessage from '@/hooks/useErrorMessage';
@@ -271,7 +270,10 @@ export default function LessonPractica({ element, content, fetchPropElement, cle
                 ) : (
                     <div className="w-full flex flex-col justify-center gap-2">
                         <div className="flex gap-1 items-center">
-                            <InputTextarea value={docValue.title} onChange={(e) => setDocValue((prev) => ({ ...prev, title: e.target.value }))} />
+                            <InputTextarea value={docValue.title} id="title" placeholder='Суроо...' style={{resize: 'none', width: '100%'}} onChange={(e) => {
+                                setDocValue((prev) => ({ ...prev, title: e.target.value }));
+                                setValue('title', e.target.value, { shouldValidate: true });
+                            }} />
                         </div>
                         <b style={{ color: 'red', fontSize: '12px' }}>{errors.title?.message}</b>
                         {additional.doc && (
@@ -298,20 +300,24 @@ export default function LessonPractica({ element, content, fetchPropElement, cle
                         {additional.doc && (
                             <div className="w-full flex flex-col items-center">
                                 <InputText
-                                    id="usefulLink"
+                                    id="usefulLinkNotReq"
                                     type="url"
                                     placeholder={'Шилтеме жүктөө'}
                                     value={docValue.url}
                                     className="w-full"
                                     onChange={(e) => {
                                         setDocValue((prev) => ({ ...prev, url: e.target.value }));
-                                        setValue('usefulLink', e.target.value, { shouldValidate: true });
+                                        setValue('usefulLinkNotReq', e.target.value, { shouldValidate: true });
                                     }}
                                 />
-                                <b style={{ color: 'red', fontSize: '12px' }}>{errors.usefulLink?.message}</b>
+                                <b style={{ color: 'red', fontSize: '12px' }}>{errors.usefulLinkNotReq?.message}</b>
                             </div>
                         )}
-                        {additional.doc && <InputText placeholder="Мазмун" value={docValue.description} onChange={(e) => setDocValue((prev) => ({ ...prev, description: e.target.value }))} className="w-full" />}
+                        <InputText placeholder="Мазмун" id="title" value={docValue.description} onChange={(e) => {
+                            setDocValue((prev) => ({ ...prev, description: e.target.value }))
+                            setValue('title', e.target.value, { shouldValidate: true });
+                        }} className="w-full" />
+                        <b style={{ color: 'red', fontSize: '12px' }}>{errors.title?.message}</b>
 
                         <div className="flex relative">
                             {/* <Button disabled={!!errors.title || !docValue.file} label="Сактоо" onClick={handleAddDoc} /> */}
@@ -323,7 +329,7 @@ export default function LessonPractica({ element, content, fetchPropElement, cle
                             <div className="w-full flex gap-1 justify-center items-center">
                                 <Button
                                     label="Сактоо"
-                                    disabled={progressSpinner || !docValue.title.length || !!errors.title}
+                                    disabled={progressSpinner || !docValue.title.length || !!errors.title || !docValue.description.length}
                                     onClick={() => {
                                         handleAddPracica();
                                     }}
