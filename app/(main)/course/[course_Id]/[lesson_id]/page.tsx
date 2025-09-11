@@ -106,8 +106,7 @@ export default function LessonStep() {
 
     const handleFetchTypes = async () => {
         setFormVisible(true);
-        const data = await fetchTypes();
-
+        const data = await fetchTypes();        
         if (data && Array.isArray(data)) {
             setTypes(data);
         } else {
@@ -313,11 +312,11 @@ export default function LessonStep() {
                             }}
                         />
                     </div>
-                    <div className="w-full step-type-grid">
+                    <div className="w-full step-type-grid mt-1">
                         {types.map((item) => {
                             return (
                                 <React.Fragment key={item.id}>
-                                    <div className="flex-1 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)] flex gap-1 items-center">
+                                    <div className="flex-1 p-1 shadow flex gap-1 items-center">
                                         <i className={`${item.logo}`}></i>
                                         <b className="cursor-pointer" onClick={() => handleAddLesson(Number(lesson_id), item.id)}>
                                             {item.title}

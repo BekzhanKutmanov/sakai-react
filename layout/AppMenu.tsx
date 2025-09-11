@@ -212,7 +212,7 @@ const AppMenu = () => {
         if (contextThemes && contextThemes.lessons) {
             const newThemes = contextThemes.lessons.data.map((item: any, idx: number) => ({
                 label: (
-                    <div>
+                    <div key={item.id}>
                         {idx + 1}. {item.title}
                     </div>
                 ),
