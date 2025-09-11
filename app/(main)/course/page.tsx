@@ -479,7 +479,7 @@ export default function Course() {
                         {/* )} */}
                         <div className={`flex flex-col pag-1 order-1 sm:order-2 items-center justify-center ${imageState && 'w-1/2'}`}>
                             <label className="block text-900 font-medium text-[16px] md:text-xl mb-1 md:mb-2">Сүрөт кошуу</label>
-                            <FileUpload ref={fileUploadRef} mode="basic" chooseLabel="Сүрөт" style={{ fontSize: '12px' }} customUpload name="demo[]" accept="image/*" maxFileSize={1000000} onSelect={onSelect} />
+                            <FileUpload ref={fileUploadRef} mode="basic" chooseLabel="Сүрөт" style={{ fontSize: '12px', textWrap: 'wrap' }} className='max-w-[200px]' customUpload name="demo[]" accept="image/*" maxFileSize={1000000} onSelect={onSelect} />
                             {courseValue.image || editingLesson.image ? (
                                 <div className="mt-2 text-sm text-gray-700 ">
                                     {typeof editingLesson.image === 'string' && (

@@ -266,24 +266,23 @@ const AppMenu = () => {
                 setVisible={setVisisble}
                 start={false}
             >
-                <div className="flex w-full items-end gap-1">
-                    <div className="flex flex-col justify-center items-center">
+                <div className="flex flex-col w-full items-center gap-2">
+                    <div className="w-full flex flex-col justify-center items-center">
                         <span>Позиция:</span>
                         <InputText
                             type="number"
-                            placeholder="0"
                             value={String(editingLesson?.sequence_number)}
-                            className="w-[50px] sm:w-[70px]"
+                            className="w-[90%]"
                             onChange={(e) => {
                                 setEditingLesson((prev) => prev && ({ ...prev, sequence_number: Number(e.target.value) }));
                             }}
                         />
                     </div>
-                    <div className="flex flex-col gap-1 items-center justify-center">
+                    <div className="w-full flex flex-col gap-1 items-center justify-center">
                         <InputText
                             type="text"
                             placeholder="Аталышы"
-                            className="w-full"
+                            className="w-[90%]"
                             value={editingLesson?.title && editingLesson?.title}
                             onChange={(e) => {
                                 console.log(editingLesson);
@@ -306,23 +305,23 @@ const AppMenu = () => {
                 setVisible={setThemeAddVisisble}
                 start={false}
             >
-                <div className="flex w-full items-end gap-1">
-                    <div className="flex flex-col justify-center items-center">
+                <div className="flex flex-col w-full items-center gap-2">
+                    <div className="w-full flex flex-col justify-center items-center">
                         <span>Позиция:</span>
                         <InputText
                             type="number"
-                            placeholder="0"
-                            className="w-[50px] sm:w-[70px]"
+                            // className="w-[50px] sm:w-[70px]"
+                            className="w-[90%]"
                             onChange={(e) => {
                                 setThemeValue((prev) => prev && ({ ...prev, sequence_number: Number(e.target.value) }));
                             }}
                         />
                     </div>
-                    <div className="flex flex-col gap-1 items-center justify-center">
+                    <div className="w-full flex flex-col gap-1 items-center justify-center">
+                        <span>Аталышы</span>
                         <InputText
                             type="text"
-                            placeholder="Аталышы"
-                            className="w-full"
+                            className="w-[90%]"
                             value={themeValue?.title && themeValue?.title}
                             onChange={(e) => {
                                 console.log(e.target.value, themeValue);

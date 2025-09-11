@@ -42,6 +42,25 @@ h1, h2, h3, h4, h5, h6 {
   color: var(--titleColor);
 }
 
+.scrollbar-thin::-webkit-scrollbar {
+  height: 4px;              /* толщина */
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;  /* фон дорожки */
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: rgba(20, 152, 229, 0.4); /* сам ползунок */
+  border-radius: 9999px;
+}
+
+@media screen and (max-width: 440px) {
+ .scrollbar-thin::-webkit-scrollbar {
+    height: 2px;              /* толщина */
+  } 
+}
+
 .mainColor-hover:hover{
   color: #08A9E6 !important;
   transition: .5s;
@@ -563,6 +582,11 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* file upload */
+.p-fileupload-choose{
+  text-wrap: wrap !important;
+  word-break: break-all !important;
+}
+
 @media screen and (max-width: 640px) {
   .p-button-label .p-clickable{ 
     font-size: 14px !important;

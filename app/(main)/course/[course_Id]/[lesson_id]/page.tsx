@@ -146,7 +146,8 @@ export default function LessonStep() {
 
     const handleAddLesson = async (lessonId: number, typeId: number) => {
         const data = await addLesson({ lesson_id: lessonId, type_id: typeId }, sequence_number);
-
+        console.log(data);
+        
         if (data.success) {
             handleFetchSteps(lessonId);
             setMessage({
@@ -166,8 +167,6 @@ export default function LessonStep() {
     };
 
     const handleFetchElement = async (stepId: number) => {
-        console.log('sendStep 404', stepId);
-
         if (lesson_id) {
             const data = await fetchElement(Number(lesson_id), stepId);
             if (data.success) {
@@ -291,10 +290,6 @@ export default function LessonStep() {
         );
     }
 
-    useEffect(()=> {
-        console.log(sequence_number);
-    },[sequence_number])
-
     return (
         <div className="main-bg">
             {/* modal sectoin */}
@@ -309,12 +304,12 @@ export default function LessonStep() {
                 }}
             >
                 <div className="flex flex-col gap-1">
-                    <div className="flex flex-col justify-center">
+                    <div className="flex flex-col items-center">
                         <span>Позиция:</span>
                         <InputText
                             type="number"
-                            placeholder="0"
-                            className="w-[50px] sm:w-[70px]"
+                            // value={}
+                            className="w-[90%]"
                             onChange={(e) => {
                                 setSequence_number(Number(e.target.value));
                             }}
@@ -347,7 +342,7 @@ export default function LessonStep() {
                         <div onClick={handleFetchTypes} className="cursor-pointer w-[40px] h-[40px] sm:w-[57px] sm:h-[57px] rounded animate-step"></div>
                     </div>
                 ) : (
-                    <div className="flex gap-2 max-w-[550px] sm:max-w-[800px] overflow-x-scroll">
+                    <div className="flex gap-2 max-w-[550px] sm:max-w-[800px] overflow-x-auto scrollbar-thin">
                         {steps.map((item, idx) => {
                             return (
                                 <div key={item.id} className="flex flex-col items-center">
@@ -357,7 +352,7 @@ export default function LessonStep() {
                         })}
                     </div>
                 )}
-                <div className="flex items-center gap-1 sm:mb-[15px]">
+                <div className="flex items-center gap-1">
                     <button
                         onClick={handleFetchTypes}
                         className="cursor-pointer min-w-[40px] min-h-[40px] w-[40px] h-[40px] sm:w-[57px] sm:h-[57px] border rounded flex justify-center items-center text-4xl text-white bg-[var(--mainColor)] hover:bg-[var(--mainBorder)] transition"
