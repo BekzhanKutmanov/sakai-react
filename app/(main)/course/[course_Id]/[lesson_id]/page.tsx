@@ -8,6 +8,7 @@ import LessonVideo from '@/app/components/lessons/LessonVideo';
 import { NotFound } from '@/app/components/NotFound';
 import PDFViewer from '@/app/components/PDFBook';
 import FormModal from '@/app/components/popUp/FormModal';
+import GroupSkeleton from '@/app/components/skeleton/GroupSkeleton';
 import useBreadCrumbs from '@/hooks/useBreadCrumbs';
 import useErrorMessage from '@/hooks/useErrorMessage';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
@@ -46,7 +47,7 @@ export default function LessonStep() {
     const [themeNull, setThemeNull] = useState(false);
     const [lesson_id, setLesson_id] = useState<number | null>((param.lesson_id && Number(param.lesson_id)) || null);
     const [sequence_number, setSequence_number] = useState<number | null>(null);
-
+    const [skeleton, setSkeleton] = useState(false);
     const [testovy, setTestovy] = useState(false);
     const router = useRouter();
     const pathname = usePathname();
@@ -76,10 +77,13 @@ export default function LessonStep() {
 
     const handleFetchTypes = async () => {
         setFormVisible(true);
+        setSkeleton(true);
         const data = await fetchTypes();
         if (data && Array.isArray(data)) {
             setTypes(data);
+            setSkeleton(false);
         } else {
+            setSkeleton(false);
             setMessage({
                 state: true,
                 value: { severity: 'error', summary: 'Катаа!', detail: 'Кийинчерээк кайталаныз' }
@@ -279,20 +283,24 @@ export default function LessonStep() {
                             }}
                         />
                     </div>
-                    <div className="w-full step-type-grid mt-1">
-                        {types.map((item) => {
-                            return (
-                                <React.Fragment key={item.id}>
-                                    <div className="flex-1 p-1 shadow flex gap-1 items-center">
-                                        <i className={`${item.logo}`}></i>
-                                        <b className="cursor-pointer" onClick={() => handleAddLesson(Number(lesson_id), item.id)}>
-                                            {item.title}
-                                        </b>
-                                    </div>
-                                </React.Fragment>
-                            );
-                        })}
-                    </div>
+                    {skeleton ? (
+                        <GroupSkeleton count={1} size={{ width: '100%', height: '5rem' }} />
+                    ) : (
+                        <div className="w-full step-type-grid mt-1">
+                            {types.map((item) => {
+                                return (
+                                    <React.Fragment key={item.id}>
+                                        <div className="flex-1 p-1 shadow flex gap-1 items-center">
+                                            <i className={`${item.logo}`}></i>
+                                            <b className="cursor-pointer" onClick={() => handleAddLesson(Number(lesson_id), item.id)}>
+                                                {item.title}
+                                            </b>
+                                        </div>
+                                    </React.Fragment>
+                                );
+                            })}
+                        </div>
+                    )}
                 </div>
             </Dialog>
 
