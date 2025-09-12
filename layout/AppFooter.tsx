@@ -1,29 +1,57 @@
 /* eslint-disable @next/next/no-img-element */
+'use client';
 
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { LayoutContext } from './context/layoutcontext';
-import Image from 'next/image';
-import { faChalkboard, faPhone } from '@fortawesome/free-solid-svg-icons';
-import MyFontAwesome from '@/app/components/MyFontAwesome';
-import Link from 'next/link';
+import axiosInstance from '@/utils/axiosInstance';
 
 const AppFooter = () => {
     const { layoutConfig } = useContext(LayoutContext);
-
+    const [univer, setUniver] = useState<{ address_kg: string; contact_kg: string, info_ru: string, info_en: string }>({ address_kg: '', contact_kg: '', info_ru: '', info_en:'' });
     // dark mode
     // <img src={`/layout/images/logo-${layoutConfig.colorScheme === 'light' ? 'dark' : 'white'}.svg`} alt="Logo" height="20" className="mr-2" />
 
+    const fetchInfo = async () => {
+        try {
+            const res = await axiosInstance.get('https://api.myedu.oshsu.kg/public/api/open/universities');
+            const data = res.data;
+            return data;
+        } catch (err) {
+            console.log('Ошибка при получении данных', err);
+        }
+    };
+
+    useEffect(() => {
+        const handleInfo = async ()=> {
+            const data = await fetchInfo();
+            console.log(data);
+
+            if(data){
+                setUniver({
+                    address_kg: data[0]?.address_kg,
+                    contact_kg: data[0]?.contact_kg,
+                    info_ru: data[0]?.info_ru,
+                    info_en: data[0]?.info_en,
+                    // contact_kg: data[0]?.contact_kg  
+                });
+            }
+        }
+        handleInfo();
+    }, []);
+
+    useEffect(() => {
+        console.log(univer);
+    }, [univer]);
+
     return (
         <footer className="text-white">
-            <div className='w-full absolute left-0 bg-[#A00e07]'>
+            <div className="w-full absolute left-0 bg-[#A00e07]">
                 <div className="flex flex-col md:flex-row gap-2 md:gap-8 border-b-1 border-white p-[30px] md:px-14 md:py-10">
                     <div>
                         <img src={'/layout/images/logo-remove-white.png'} width={70} height={80} alt="Логотип" />
                         <div className="flex flex-col text-[14px] sm:text-[16px]">
-                            <span>Кыргызстан, 723500, г. Ош, ул. Ленина, 331, ОшГУ Главный корпус</span>
-                            <span>Общий отдел: +996 3222 7-07-12,</span>
-                            <span>факс +996 3222 7-09-15,</span>
-                            <span>edu@oshsu.kg</span>
+                            <span>{univer.address_kg}</span>
+                            <span>{univer.contact_kg}</span>
                         </div>
                     </div>
                     {/* <div className="flex flex-col items-start gap-4 w-[200px]">
@@ -53,8 +81,9 @@ const AppFooter = () => {
                         </div>
                     </div> */}
                 </div>
-                <p style={{ color: 'white' }} className="p-1 sm:p-5 text-[12px] sm:text=[14px] sm:w-[400px] m-auto text-center ">
-                    © 2025 ОшГУ | 2025 OshSU - IT Academy Ошский Государственный Университет oshsu.kg
+                <p style={{ color: 'white' }} className="flex flex-col p-1 sm:p-5 text-[12px] sm:text=[14px] sm:w-[400px] m-auto text-center ">
+                    <span>©{univer.info_ru} | {univer.info_en} IT Academy</span>
+                    <span>Ошский Государственный Университет oshsu.kg</span>
                 </p>
             </div>
         </footer>
