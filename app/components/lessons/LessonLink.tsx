@@ -176,9 +176,9 @@ export default function LessonLink({ element, content, fetchPropElement, clearPr
 
     const linkSection = () => {
         return (
-            <div className="py-1 sm:py-4 flex flex-col items-center gap-4">
+            <div className="py-1 sm:py-3 flex flex-col items-center gap-4">
                 {contentShow ? (
-                    <div className="w-full flex flex-col items-center gap-4 py-2 sm:py-4">
+                    <div className="w-full flex flex-col items-center gap-4 py-2">
                         <div className="w-full flex flex-wrap gap-4">
                             {docShow ? (
                                 <NotFound titleMessage={'Сабак кошуу үчүн талааларды толтурунуз'} />

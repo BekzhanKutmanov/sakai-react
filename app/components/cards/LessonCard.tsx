@@ -193,7 +193,7 @@ export default function LessonCard({
                                     {type.typeValue === 'doc' && (
                                         <div className="flex gap-1 items-center">
                                             <div className="flex gap-1 items-center">
-                                                <Button onClick={lessonCardEvents} className="w-full" label={btnLabel} disabled={progressSpinner === true ? true : false} />
+                                                <Button onClick={lessonCardEvents} className={`w-full ${btnLabel === 'Ачуу' ? 'flex justify-center pi pi-eye h-[31px] sm:h-[38px]' : ''}`} label={btnLabel !== 'Ачуу' ? btnLabel : ' '} disabled={progressSpinner === true ? true : false} />
                                                 {progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}
                                             </div>
                                             <a href={urlForDownload} download target="_blank" rel="noopener noreferrer">
@@ -212,7 +212,7 @@ export default function LessonCard({
                                     )}
                                     {type.typeValue === 'link' && (
                                         <div className="flex gap-1 items-center">
-                                            <Button onClick={lessonCardEvents} className="w-full" label={btnLabel} disabled={progressSpinner === true ? true : false} />
+                                            <Button onClick={lessonCardEvents} className={`w-full ${btnLabel === 'Ачуу' ? 'flex justify-center pi pi-eye h-[31px] sm:h-[38px]' : btnLabel === 'Өтүү' ? 'flex justify-center pi pi-link h-[31px] sm:h-[38px]' : ' '}`} label={btnLabel !== 'Ачуу' && btnLabel !== 'Өтүү' ? btnLabel : ' '} disabled={progressSpinner === true ? true : false} />
                                             {progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}
                                         </div>
                                     )}

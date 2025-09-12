@@ -207,9 +207,9 @@ export default function LessonTest({ element, content, fetchPropElement, clearPr
     const optionAddBtn = answer.length > 2 && answer[answer.length - 1].text.length < 1;
     const testSection = () => {
         return (
-            <div className="py-1 sm:py-4 flex flex-col items-center gap-4">
+            <div className="py-1 sm:py-3 flex flex-col items-center gap-4">
                 {contentShow ? (
-                    <div className="w-full flex flex-col items-center gap-4 py-2 sm:py-4">
+                    <div className="w-full flex flex-col items-center gap-4 py-2">
                         <div className="w-full flex flex-wrap gap-4">
                             {testShow ? (
                                 <NotFound titleMessage={'Тест кошуу үчүн талааларды толтурунуз'} />

@@ -456,11 +456,17 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .my-custom-dialog{
-  width: 500px;
+  width: 650px;
 }
 
 .my-custom-document-dialog{
   width: 800px;
+}
+
+@media screen and (max-width: 920px) {
+  .my-custom-dialog{
+    width: 500px;
+  }
 }
 
 @media screen and (max-width: 640px) {

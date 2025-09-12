@@ -37,7 +37,7 @@ export default function FormModal({
             />
             {
                 <Button
-                    label="Кийинки кадам"
+                    label="Кошуу"
                     disabled={start}
                     icon="pi pi-check"
                     onClick={() => {
@@ -52,36 +52,19 @@ export default function FormModal({
 
     return (
         <div>
-            {media ? (
-                <Dialog
-                    header={title}
-                    visible={visible}
-                    className="my-custom-dialog"
-                    maximizable
-                    onHide={() => {
-                        if (!visible) return;
-                        setVisible(false);
-                        clearValues();
-                    }}
-                    footer={footerContent}
-                >
-                    {children}
-                </Dialog>
-            ) : (
-                <Dialog
-                    header={title}
-                    visible={visible}
-                    className="my-custom-dialog"
-                    onHide={() => {
-                        if (!visible) return;
-                        setVisible(false);
-                        clearValues();
-                    }}
-                    footer={footerContent}
-                >
-                    {children}
-                </Dialog>
-            )}
+            <Dialog
+                header={title}
+                visible={visible}
+                className="my-custom-dialog"
+                onHide={() => {
+                    if (!visible) return;
+                    setVisible(false);
+                    clearValues();
+                }}
+                footer={footerContent}
+            >
+                {children}
+            </Dialog>
         </div>
     );
 }

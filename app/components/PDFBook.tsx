@@ -31,7 +31,7 @@ export default function PDFViewer({ url }: { url: string }) {
     useEffect(() => {
         const renderPDF = async () => {
             console.log(url);
-            
+
             if (!url) return;
 
             setSkeleton(true);
@@ -128,30 +128,84 @@ export default function PDFViewer({ url }: { url: string }) {
 
     return (
         <div
-            ref={containerRef}
-            className="w-[800px]"
             style={{
-                width: '100%', // или фиксированная ширина, например 800px
-                maxWidth: '1000px', // не даём контейнеру быть бесконечно широким
+                position: 'relative',
+                overflow: 'hidden',
+                isolation: 'isolate',
+                maxWidth: '800px',
                 margin: '0 auto'
             }}
         >
-            {hasPdf ? (
-                <NotFound titleMessage={'Кийинчерээк кайра аракет кылыңыз'} />
-            ) : (
-                <>
-                    {skeleton ? (
-                        <div className='w-[300px] sm:w-[800px]'>
-                            <GroupSkeleton count={1} size={{ width: '100%', height: '20rem' }} />
-                        </div>
-                    ) : media ? (
-                        <>
+            <div
+                ref={containerRef}
+                className="w-[800px]"
+                style={{
+                    width: '100%', // или фиксированная ширина, например 800px
+                    maxWidth: '800px', // не даём контейнеру быть бесконечно широким
+                    margin: '0 auto'
+                }}
+            >
+                {hasPdf ? (
+                    <NotFound titleMessage={'Кийинчерээк кайра аракет кылыңыз'} />
+                ) : (
+                    <>
+                        {skeleton ? (
+                            <div className="w-[300px] sm:w-[800px]">
+                                <GroupSkeleton count={1} size={{ width: '100%', height: '15rem' }} />
+                            </div>
+                        ) : media ? (
+                            <>
+                                <HTMLFlipBook
+                                    // width={Math.min(bookSize.width, 600)} // ограничиваем ширину страницы
+                                    width={300} // ограничиваем ширину страницы
+                                    height={bookSize.height}
+                                    size="stretch"
+                                    minWidth={320}
+                                    maxWidth={600} // ограничиваем maxWidth для PageFlip
+                                    minHeight={420}
+                                    maxHeight={bookSize.height}
+                                    showCover={false}
+                                    usePortrait={true}
+                                    // news
+                                    startZIndex={0}
+                                    autoSize={true}
+                                    maxShadowOpacity={0.5}
+                                    mobileScrollSupport={true}
+                                    swipeDistance={30}
+                                    clickEventForward={true}
+                                    useMouseEvents={true}
+                                    renderOnlyPageLengthChange={false}
+                                    className=""
+                                    style={{}}
+                                    onFlip={() => {}}
+                                    onChangeOrientation={() => {}}
+                                    onChangeState={() => {}}
+                                    onInit={() => {}}
+                                    onUpdate={() => {}}
+                                    startPage={0}
+                                    drawShadow={true}
+                                    flippingTime={900}
+                                    showPageCorners={true}
+                                    disableFlipByClick={false}
+                                >
+                                    {pages.map((page, index) => (
+                                        <div key={index} className="page">
+                                            <div className="page-content">
+                                                {' '}
+                                                {/* Добавляем класс для содержимого страницы */}
+                                                {page}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </HTMLFlipBook>
+                            </>
+                        ) : (
                             <HTMLFlipBook
                                 // width={Math.min(bookSize.width, 600)} // ограничиваем ширину страницы
-                                width={300} // ограничиваем ширину страницы
+                                width={Math.min(bookSize.width, 800)} // ограничиваем ширину страницы
                                 height={bookSize.height}
                                 size="stretch"
-                                minWidth={320}
+                                minWidth={media ? 320 : 600}
                                 maxWidth={600} // ограничиваем maxWidth для PageFlip
                                 minHeight={420}
                                 maxHeight={bookSize.height}
@@ -189,55 +243,10 @@ export default function PDFViewer({ url }: { url: string }) {
                                     </div>
                                 ))}
                             </HTMLFlipBook>
-                        </>
-                    ) : (
-                        <HTMLFlipBook
-                            // width={Math.min(bookSize.width, 600)} // ограничиваем ширину страницы
-                            width={Math.min(bookSize.width, 1000)} // ограничиваем ширину страницы
-                            height={bookSize.height}
-                            size="stretch"
-                            minWidth={media ? 320 : 600}
-                            maxWidth={600} // ограничиваем maxWidth для PageFlip
-                            minHeight={420}
-                            maxHeight={bookSize.height}
-                            showCover={false}
-                            usePortrait={true}
-                            // news
-                            startZIndex={0}
-                            autoSize={true}
-                            maxShadowOpacity={0.5}
-                            mobileScrollSupport={true}
-                            swipeDistance={30}
-                            clickEventForward={true}
-                            useMouseEvents={true}
-                            renderOnlyPageLengthChange={false}
-                            className=""
-                            style={{}}
-                            onFlip={() => {}}
-                            onChangeOrientation={() => {}}
-                            onChangeState={() => {}}
-                            onInit={() => {}}
-                            onUpdate={() => {}}
-                            startPage={0}
-                            drawShadow={true}
-                            flippingTime={900}
-                            showPageCorners={true}
-                            disableFlipByClick={false}
-                        >
-                            {pages.map((page, index) => (
-                                <div key={index} className="page">
-                                    <div className="page-content">
-                                        {' '}
-                                        {/* Добавляем класс для содержимого страницы */}
-                                        {page}
-                                    </div>
-                                </div>
-                            ))}
-                        </HTMLFlipBook>
-                    )}
-                </>
-            )}
+                        )}
+                    </>
+                )}
+            </div>
         </div>
-        // </div>
     );
 }

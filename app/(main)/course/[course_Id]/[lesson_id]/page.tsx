@@ -234,7 +234,7 @@ export default function LessonStep() {
                     console.log('variant 4', contextThemes.lessons.data[0].id);
                     handleFetchSteps(contextThemes.lessons.data[0].id);
                     setLesson_id(contextThemes.lessons.data[0].id);
-                    setDeleteQuery(false);  
+                    setDeleteQuery(false);
                 } else {
                     console.log('variant 5');
                     handleShow(Number(param.lesson_id));
@@ -328,16 +328,6 @@ export default function LessonStep() {
                     >
                         +
                     </button>
-                    {!hasSteps && (
-                        <Button
-                            icon={'pi pi-trash'}
-                            className="min-w-[40px] min-h-[40px] w-[40px] h-[40px] sm:w-[57px] sm:h-[57px] hover:bg-[var(--mainBorder)] transition"
-                            onClick={() => {
-                                const options = getConfirmOptions(Number(), () => handleDeleteStep());
-                                confirmDialog(options);
-                            }}
-                        />
-                    )}
                 </div>
             </div>
 
@@ -346,6 +336,20 @@ export default function LessonStep() {
                     <NotFound titleMessage="Азырынча кадамдар жок" />
                 </div>
             )}
+            <div className='max-w-[500px] m-auto shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)] mt-3 pb-1 flex items-center justify-between flex-col sm:flex-row gap-1'>
+                <b className='sm:text-[18px]'>{element?.step.type.title}</b>
+                {!hasSteps && (
+                    <Button
+                        icon={'pi pi-trash'}
+                        label='Кадамды өчүрүү'
+                        className=" hover:bg-[var(--mainBorder)] transition"
+                        onClick={() => {
+                            const options = getConfirmOptions(Number(), () => handleDeleteStep());
+                            confirmDialog(options);
+                        }}
+                    />
+                )}
+            </div>
             {element?.step.type.name === 'document' && <LessonDocument element={element?.step} content={element?.content} fetchPropElement={handleFetchElement} clearProp={hasSteps} />}
             {element?.step.type.name === 'video' && <LessonVideo element={element?.step} content={element?.content} fetchPropElement={handleFetchElement} clearProp={hasSteps} />}
             {element?.step.type.name === 'test' && <LessonTest element={element?.step} content={element?.content} fetchPropElement={handleFetchElement} clearProp={hasSteps} />}

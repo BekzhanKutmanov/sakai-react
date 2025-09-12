@@ -389,38 +389,15 @@ export default function Course() {
             {/* modal window */}
             <FormModal title={editMode ? 'Курсту жаңылоо' : 'Кошуу'} fetchValue={editMode ? handleUpdateCourse : handleAddCourse} clearValues={clearValues} visible={formVisible} setVisible={setFormVisible} start={forStart}>
                 <div className="flex flex-col gap-1">
-                    <div className={imagestateStyle}>
-                        {/* {imagestateStyle && ( */}
-                        <div className="w-1/2 order-2 sm:order-1 max-h-[170px] max-w-[300px] overflow-hidden flex justify-center items-center">
-                            {/* {typeof imageState === 'string' && <img className="w-full object-cover" src={editMode ? typeof editingLesson.image === 'string' ? editingLesson.image : '' : imageState} alt="" />} */}
-                            {typeof imageState === 'string' ? <img className="w-full object-cover" src={imageState} /> : <img className="w-full object-cover" src={typeof editingLesson.image === 'string' ? editingLesson.image : ''} />}
-                        </div>
-                        {/* )} */}
-                        <div className={`flex flex-col pag-1 order-1 sm:order-2 items-center justify-center ${imageState && 'w-1/2'}`}>
-                            <label className="block text-900 font-medium text-[16px] md:text-xl mb-1 md:mb-2">Сүрөт кошуу</label>
-                            <FileUpload ref={fileUploadRef} mode="basic" chooseLabel="Сүрөт" style={{ fontSize: '12px', textWrap: 'wrap' }} className='max-w-[200px]' customUpload name="demo[]" accept="image/*" maxFileSize={1000000} onSelect={onSelect} />
-                            {courseValue.image || editingLesson.image ? (
-                                <div className="mt-2 text-sm text-gray-700 ">
-                                    {typeof editingLesson.image === 'string' && (
-                                        <>
-                                            <b className="text-[12px] text-center w-[300px]">{imageTitle}</b>
-                                        </>
-                                    )}
-                                </div>
-                            ) : (
-                                <b className="text-[12px] text-red-500">jpeg, png, jpg</b>
-                            )}
-                            <div className="flex items-center gap-1">{(editingLesson.image || imageState) && <Button icon={'pi pi-trash'} onClick={clearFile} />}</div>
-                        </div>
-                    </div>
                     {/* <div className="flex flex-col lg:flex-row gap-1 justify-around items-center"> */}
                     <div className="flex flex-col gap-1 items-center justify-center">
                         <label className="block text-900 font-medium text-[16px] md:text-xl mb-1 md:mb-2">Аталышы</label>
-                        <div className="flex gap-2 items-center">
+                        <div className="w-full flex gap-2 items-center">
                             <InputText
                                 value={editMode ? editingLesson.title || '' : courseValue.title}
                                 placeholder="Аталышы талап кылынат"
                                 disabled={progressSpinner === true ? true : false}
+                                className="w-full"
                                 onChange={(e) => {
                                     editMode
                                         ? setEditingLesson((prev) => ({
@@ -438,12 +415,13 @@ export default function Course() {
                     </div>
                     <div className="flex flex-col gap-1 items-center justify-center">
                         <label className="block text-900 font-medium text-[16px] md:text-xl mb-1 md:mb-2">Видео шилтеме</label>
-                        <div className="flex gap-2 items-center">
+                        <div className="w-full flex gap-2 items-center">
                             <InputText
                                 value={editMode ? editingLesson.video_url || '' : courseValue.video_url}
                                 placeholder="https://..."
                                 title="Шилтеме https:// менен башталышы шарт!"
                                 disabled={progressSpinner === true ? true : false}
+                                className="w-full"
                                 onChange={(e) => {
                                     editMode
                                         ? setEditingLesson((prev) => ({
@@ -464,14 +442,14 @@ export default function Course() {
                     {/* <div className="flex flex-col lg:flex-row gap-1 justify-around items-center"> */}
                     <div className="flex flex-col gap-1 items-center justify-center">
                         <label className="block text-900 font-medium text-[16px] md:text-xl mb-1 md:mb-2">Мазмуну</label>
-                        <div className="flex gap-2 items-center">
+                        <div className="w-full flex gap-2 justify-center items-center">
                             <InputTextarea
                                 autoResize
                                 value={editMode ? editingLesson.description || '' : courseValue.description}
                                 disabled={progressSpinner === true ? true : false}
-                                rows={5}
+                                rows={3}
                                 cols={30}
-                                className="w-[300px]"
+                                className="w-[300px] sm:w-full h-[100px]"
                                 onChange={(e) => {
                                     editMode
                                         ? setEditingLesson((prev) => ({
@@ -488,6 +466,42 @@ export default function Course() {
                         </div>
                     </div>
                     {/* </div> */}
+
+                    <div className={imagestateStyle}>
+                        {/* {imagestateStyle && ( */}
+                        <div className="w-1/2 order-2 sm:order-1 max-h-[170px] max-w-[300px] overflow-hidden flex justify-center items-center">
+                            {/* {typeof imageState === 'string' && <img className="w-full object-cover" src={editMode ? typeof editingLesson.image === 'string' ? editingLesson.image : '' : imageState} alt="" />} */}
+                            {typeof imageState === 'string' ? <img className="w-full object-cover" src={imageState} /> : <img className="w-full object-cover" src={typeof editingLesson.image === 'string' ? editingLesson.image : ''} />}
+                        </div>
+                        {/* )} */}
+                        <div className={`flex flex-col pag-1 order-1 sm:order-2 items-center justify-center ${imageState && 'w-1/2'}`}>
+                            <label className="block text-900 font-medium text-[16px] md:text-xl mb-1 md:mb-2">Сүрөт кошуу</label>
+                            <FileUpload
+                                ref={fileUploadRef}
+                                mode="basic"
+                                chooseLabel="Сүрөт"
+                                style={{ fontSize: '12px', textWrap: 'wrap' }}
+                                className="max-w-[200px]"
+                                customUpload
+                                name="demo[]"
+                                accept="image/*"
+                                maxFileSize={1000000}
+                                onSelect={onSelect}
+                            />
+                            {courseValue.image || editingLesson.image ? (
+                                <div className="mt-2 text-sm text-gray-700 ">
+                                    {typeof editingLesson.image === 'string' && (
+                                        <>
+                                            <b className="text-[12px] text-center w-[300px]">{imageTitle}</b>
+                                        </>
+                                    )}
+                                </div>
+                            ) : (
+                                <b className="text-[12px] text-red-500">jpeg, png, jpg</b>
+                            )}
+                            <div className="flex items-center gap-1">{(editingLesson.image || imageState) && <Button icon={'pi pi-trash'} onClick={clearFile} />}</div>
+                        </div>
+                    </div>
                 </div>
             </FormModal>
 

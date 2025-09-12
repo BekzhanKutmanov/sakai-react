@@ -282,7 +282,7 @@ export default function LessonVideo({ element, content, fetchPropElement, clearP
 
     const videoSection = () => {
         return (
-            <div className="py-1 sm:py-4 flex flex-col items-center gap-3">
+            <div className="py-1 sm:py-3 flex flex-col items-center gap-3">
                 {!contentShow ? (
                     <div className="w-full flex flex-col items-center gap-1">
                         <div className="w-full flex items-center justify-center flex-col sm:flex-row gap-2">
@@ -345,7 +345,7 @@ export default function LessonVideo({ element, content, fetchPropElement, clearP
                         </div>
                     </div>
                 ) : (
-                    <div className="w-full flex flex-col items-center gap-4 py-2 sm:py-4">
+                    <div className="w-full flex flex-col items-center gap-4 py-2">
                         <div className="w-full flex flex-wrap justify-center gap-4">
                             <Dialog
                                 header={''}

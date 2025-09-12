@@ -229,11 +229,11 @@ export default function LessonDocument({ element, content, fetchPropElement, cle
 
     const documentSection = () => {
         return (
-            <div className="py-1 sm:py-4 flex flex-col items-center gap-4">
+            <div className="py-1 sm:py-3 flex flex-col items-center gap-4">
                 {PDFVisible ? (
                     documentView
                 ) : contentShow ? (
-                    <div className="w-full flex flex-col items-center gap-4 py-2 sm:py-4">
+                    <div className="w-full flex flex-col items-center gap-4 py-2">
                         <div className="w-full flex flex-wrap gap-4">
                             {docShow ? (
                                 <NotFound titleMessage={'Сабак кошуу үчүн талааларды толтурунуз'} />
@@ -325,7 +325,6 @@ export default function LessonDocument({ element, content, fetchPropElement, cle
     }, [content]);
 
     useEffect(() => {
-        console.log('edititing', element);
         setDocValue({ title: '', description: '', file: null });
     }, [element]);
 
