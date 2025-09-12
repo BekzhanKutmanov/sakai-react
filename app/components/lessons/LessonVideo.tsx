@@ -377,7 +377,7 @@ export default function LessonVideo({ element, content, fetchPropElement, clearP
                                         onSelected={(id: number, type: string) => selectedForEditing(id, type)}
                                         onDelete={(id: number) => handleDeleteVideo(id)}
                                         cardValue={{ title: video.title, id: video.id, desctiption: video?.description || '', type: 'video', photo: video?.cover_url }}
-                                        cardBg={'white'}
+                                        cardBg={'#ddc4f51a'}
                                         type={{ typeValue: 'video', icon: 'pi pi-video' }}
                                         typeColor={'var(--mainColor)'}
                                         lessonDate={new Date(video.created_at).toISOString().slice(0, 10)}

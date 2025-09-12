@@ -7,7 +7,7 @@ import { useEffect } from 'react';
 
 export default function BaseLayout() {
     // useEffect(() => {
-    //     window.location.href = 'http://oldmooc.oshsu.kg/'; // твоя ссылка
+    //     window.location.href = 'http://oldmooc.oshsu.kg/'; 
     // }, []);
 
     // return null; // ничего не показываем

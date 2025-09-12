@@ -115,7 +115,11 @@ export const updateDocument = async (token: string | null, lesson_id: number | n
     formData.append('type_id', String(type_id));
     formData.append('step_id', String(step_id));
     formData.append('lesson_id', String(lesson_id));
-    formData.append('document', value.file);
+    if(value.file){
+        formData.append('document', value.file)
+    } else {
+        formData.append('document', '');
+    }
     formData.append('document_id', String(contentId));
     formData.append('title', String(value.title));
     formData.append('description', String(value.description));

@@ -46,8 +46,8 @@ export default function LessonCard({
     const [progressSpinner, setProgressSpinner] = useState(false);
 
     // useEffect(()=> {
-    //     console.log(cardValue.photo);
-    // },[cardValue]);
+    //     console.log(urlForDownload);
+    // },[urlForDownload]);
     const media = useMediaQuery('(max-width: 640px)');
 
     const toggleSpinner = () => {
@@ -117,11 +117,11 @@ export default function LessonCard({
                 `}
                 style={{ backgroundColor: cardBg }}
             >
-                <div className={`flex flex-col ${type.typeValue === 'practica' ? 'items-start' : 'items-center'} ${type.typeValue !== 'video' ? 'gap-3' : 'gap-1'}`}>
+                <div className={`flex flex-col items-center ${type.typeValue !== 'video' ? 'gap-3' : 'gap-1'}`}>
                     <div className="flex flex-col gap-1 justify-between rounded-2xl p-2">
                         {/* <div className=''>{!cardValue.photo && <img className="cover" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSweN5K2yaBwZpz5W9CxY9S41DI-2LawmjzYw&s" alt="" />}</div> */}
-                        <div className={`flex gap-1 ${cardValue.score ? 'items-center gap-2 flex-col sm:flex-row' : type.typeValue === 'practica' ? 'justify-start' : 'justify-center'}`}>
-                            <b className={`flex items-center justify-center text-[16px] sm:text-[18px] mt-1 ${type.typeValue === 'practica' && ' shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]'}`}>{shortTitle}</b>
+                        <div className={`flex gap-1 ${cardValue.score ? 'items-center gap-2 flex-col sm:flex-row' : 'justify-center'}`}>
+                            <b className={`flex items-center justify-center text-[16px] sm:text-[18px] mt-1 text-wrap break-all ${type.typeValue === 'practica' && ' shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]'}`}>{shortTitle}</b>
                             {cardValue.score ? (
                                 <div className="flex items-center justify-center">
                                     <span className="text-[var(--mainColor)] ">{!media && '/'} Балл: </span>
@@ -139,12 +139,12 @@ export default function LessonCard({
                                 <Link href={cardValue?.url} target="_blank" className="underline">
                                     Шилтеме:
                                 </Link>
-                                <span className="flex justify-center">{shortUrl}</span>
+                                <span className="flex justify-center max-w-[500px] text-wrap break-all">{cardValue?.url}</span>
                             </div>
                         ) : (
                             type.typeValue === 'link' && (
                                 <>
-                                    <span className="flex justify-center">{shortUrl}</span>
+                                    <span className="flex justify-center text-wrap break-all">{shortUrl}</span>
                                 </>
                             )
                         )}
@@ -163,12 +163,12 @@ export default function LessonCard({
                                 })}
                             </div>
                         )}
-                        <div className={`flex items-center ${type.typeValue !== 'practica' && 'justify-center'} text-[13px]`}>
+                        <div className={`flex items-center justify-center text-[13px]`}>
                             {cardValue?.desctiption && cardValue?.desctiption !== 'null' ? shortDescription : cardValue?.desctiption && cardValue?.desctiption !== 'null' && type.typeValue === 'practica' ? <div>{shortDescription}</div> : ''}
                         </div>
 
                         {status === 'working' && (
-                            <div className={`flex gap-1 items-center ${type.typeValue === 'practica' ? 'justify-start' : 'justify-center'} mt-1`}>
+                            <div className={`flex gap-1 items-center justify-center mt-1`}>
                                 <i className={`pi pi-calendar text-[var(--mainColor)]`}></i>
                                 <span className="text-[12px]">{lessonDate}</span>
                             </div>
@@ -202,7 +202,7 @@ export default function LessonCard({
                                             </a>
                                         </div>
                                     )}
-                                    {type.typeValue === 'practica' && (
+                                    {type.typeValue === 'practica' && urlForDownload.length > 1 && (
                                         <div className="flex gap-1 items-center">
                                             <a href={urlForDownload} download target="_blank" rel="noopener noreferrer">
                                                 {' '}

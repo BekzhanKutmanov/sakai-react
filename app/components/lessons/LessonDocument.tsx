@@ -182,8 +182,6 @@ export default function LessonDocument({ element, content, fetchPropElement, cle
 
     // delete document
     const handleDeleteDoc = async (id: number) => {
-        console.log(id);
-
         // const token = getToken('access_token');
         const data = await deleteDocument(Number(document?.lesson_id), id);
         if (data.success) {
@@ -369,7 +367,6 @@ export default function LessonDocument({ element, content, fetchPropElement, cle
                                     className="w-full"
                                     value={editingLesson?.title && editingLesson?.title}
                                     onChange={(e) => {
-                                        console.log(editingLesson);
                                         setEditingLesson((prev) => prev && { ...prev, title: e.target.value });
                                         setValue('title', e.target.value, { shouldValidate: true });
                                     }}

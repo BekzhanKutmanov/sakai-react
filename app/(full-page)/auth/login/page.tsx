@@ -41,9 +41,9 @@ const LoginPage = () => {
             const token = user.token.access_token;
             if (token) {
                 const res = await getUser();
+                
                 try {
                     if (res?.success) {
-                        console.log(res);
                         if (res?.user.is_working) {
                             window.location.href = '/course';
                         } 
@@ -108,7 +108,6 @@ const LoginPage = () => {
                             <Controller
                                 name="password"
                                 control={control}
-                                defaultValue="010270Ja"
                                 render={({ field }) => <Password {...field} toggleMask className={`w-[100%]`} inputClassName="w-[90%] p-2 sm:p-3" inputStyle={{ marginRight: '15px' }} feedback={false} />}
                             />
                             {errors.password && <b className="text-[red] text-[12px] ml-2">{errors.password.message}</b>}

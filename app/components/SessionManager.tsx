@@ -15,15 +15,6 @@ const SessionManager = () => {
     const pathname = usePathname();
 
     useEffect(() => {
-        console.log('Пользователь ', user);
-    }, [user]);
-
-    useEffect(() => {
-        setGlobalLoading(true);
-        setTimeout(() => {
-            setGlobalLoading(false);
-        }, 2000);
-
         const init = async () => {
             console.log('проверяем токен...');
             const token = getToken('access_token');
@@ -69,54 +60,23 @@ const SessionManager = () => {
     }, []);
 
     useEffect(() => {
-        if(!pathname.startsWith('/teaching/lesson/')){
+        if(!pathname.startsWith('/teaching/lesson/') && !pathname.startsWith('/course/')){
             setGlobalLoading(true);
         }
-        console.log('Переход в', pathname);
+
         const token = getToken('access_token');
 
         if (!token && pathname !== '/' && pathname !== '/auth/login') {
             console.log('Перенеправляю в login');
 
-            // logout({ setUser, setGlobalLoading });
-            // window.location.href = '/auth/login';
+            logout({ setUser, setGlobalLoading });
+            window.location.href = '/auth/login';
             return;
         }
         setTimeout(() => {
             setGlobalLoading(false);
-        }, 1000);
+        }, 900);
     }, [pathname]);
-
-    // useEffect(() => {
-    //     const checkToken = () => {
-    //         const token = getToken('access_token');
-
-    //         if (!token) {
-    //             const userVisit = localStorage.getItem('userVisit');
-    //             if(userVisit){
-    //                 setMessage({
-    //                     state: true,
-    //                     value: { severity: 'error', summary: 'Сессия завершилось', detail: 'Войдите заново' }
-    //                 }); // messege - Время сесси завершилось
-    //             }
-    //             logout({setUser, setGlobalLoading});
-    //             console.log('Токен отсутствует - завершаем сессию');
-    //             return false; // сигнал для остановки интервала
-    //         }
-    //         return true;
-    //     };
-
-    //     // немедленная проверка
-    //     if (!checkToken()) return;
-
-    //     const interval = setInterval(() => {
-    //         if (!checkToken()) {
-    //             clearInterval(interval);
-    //         }
-    //     }, 5000);
-
-    //     return () => clearInterval(interval);
-    // }, []);
 
     return null;
 };

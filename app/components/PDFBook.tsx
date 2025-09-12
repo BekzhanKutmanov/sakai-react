@@ -30,16 +30,14 @@ export default function PDFViewer({ url }: { url: string }) {
 
     useEffect(() => {
         const renderPDF = async () => {
+            console.log(url);
+            
             if (!url) return;
 
             setSkeleton(true);
             try {
                 // Проверяем, одна ли страница в документе
-                const forUrl = new RegExp('https:');
                 let newUrl = `https://api.mooc.oshsu.kg/temprory-file/${url}`;
-                if(forUrl.test(url)){
-                    newUrl = url;
-                }
                 console.log(newUrl);
                 const pdf = await pdfjsLib.getDocument(newUrl).promise;
                 const tempPages = [];

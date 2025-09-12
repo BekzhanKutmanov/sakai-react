@@ -246,8 +246,8 @@ export default function LessonPractica({ element, content, fetchPropElement, cle
                                         type={{ typeValue: 'practica', icon: 'pi pi-list' }}
                                         typeColor={'var(--mainColor)'}
                                         lessonDate={new Date(document.created_at).toISOString().slice(0, 10)}
-                                        urlForPDF={() => sentToPDF(document.document_path || '')}
-                                        urlForDownload={document.document_path || ''}
+                                        urlForPDF={() => sentToPDF('')}
+                                        urlForDownload={document.document ? document.document_path : ''}
                                     />
                                 )
                             )}
@@ -345,8 +345,8 @@ export default function LessonPractica({ element, content, fetchPropElement, cle
     }, [element]);
 
     useEffect(() => {
-        console.log('value ', docValue);
-    }, [docValue]);
+        console.log('value ', editingLesson);
+    }, [editingLesson]);
 
     return (
         <div>
@@ -362,8 +362,8 @@ export default function LessonPractica({ element, content, fetchPropElement, cle
             >
                 <div className="flex flex-col gap-1">
                     <div className="flex flex-col gap-1 items-center justify-center">
-                        <div className="flex gap-1 items-center">
-                            <InputTextarea id="title" value={editingLesson?.title && editingLesson.title} onChange={(e) => {
+                        <div className="w-full flex gap-1 items-center">
+                            <InputTextarea id="title" style={{resize: 'none', width: '100%'}} value={editingLesson?.title && editingLesson.title} onChange={(e) => {
                                 setEditingLesson((prev) => prev && { ...prev, title: e.target.value })
                                 setValue('title', e.target.value, { shouldValidate: true });
                             }} />

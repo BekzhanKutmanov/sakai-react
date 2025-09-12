@@ -110,6 +110,7 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                 <img src={`/layout/images/logo-remove.png`} className="w-[90px] sm:w-[100px]" alt="logo" />
                 <h3 className="hidden sm:block text-[18px] md:text-[30px]">Цифровой кампус ОшГУ</h3>
             </Link>
+            <b className='text-[red] text-[14px] hidden sm:block'>(в разработке)</b>
 
             {pathName !== '/' && pathName !== '/course' ? (
                 <button ref={menubuttonRef} type="button" className="p-link layout-menu-button layout-topbar-button" onClick={onMenuToggle}>
@@ -151,7 +152,7 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                         </div>
                     )}
 
-                    {user && user ? (
+                    {/* {user && user ? (
                         <div className={`hidden lg:block ${media ? 'order-1' : 'order-2'}`}>
                             <Tiered title={{ name: '', font: 'pi pi-user' }} items={profileItems} insideColor={'--titleColor'} />
                         </div>
@@ -161,9 +162,11 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                                 <FancyLinkBtn btnWidth={'100px'} backround={'--redColor'} effectBg={'--mainColor'} title={'Кирүү'} />
                             </Link>
                         </div>
-                    )}
+                    )} */}
                 </div>
             </div>
+
+            <b className='text-[red] text-[14px] block sm:hidden '>(в разработке)</b>
         </div>
     );
 });

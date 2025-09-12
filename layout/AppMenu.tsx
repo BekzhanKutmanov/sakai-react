@@ -209,11 +209,7 @@ const AppMenu = () => {
     useEffect(() => {
         if (contextThemes && contextThemes.lessons) {
             const newThemes = contextThemes.lessons.data.map((item: any, idx: number) => ({
-                label: (
-                    <div key={item.id}>
-                        {idx + 1}. {item.title}
-                    </div>
-                ),
+                label: `${idx + 1}. ${item.title}`,
                 id: item.id,
                 to: `/course/${course_Id}/${item.id}`,
                 onEdit: () => {
@@ -231,7 +227,7 @@ const AppMenu = () => {
             const forThemes: any = [];
             contextStudentThemes.lessons.data?.map((item: any) =>
                 forThemes.push({
-                    label: item.title,
+                    label: item.title || '',
                     id: item.id,
                     to: `/teaching/${studentThemeCourse}/${item.id}`
                 })

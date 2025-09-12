@@ -52,8 +52,6 @@ export default function LessonStep() {
     const router = useRouter();
     const pathname = usePathname();
 
-    const clearValues = () => {};
-
     const changeUrl = (lessonId: number) => {
         router.replace(`/course/${course_id}/${lessonId ? lessonId : null}`);
     };
@@ -236,7 +234,7 @@ export default function LessonStep() {
                     console.log('variant 4', contextThemes.lessons.data[0].id);
                     handleFetchSteps(contextThemes.lessons.data[0].id);
                     setLesson_id(contextThemes.lessons.data[0].id);
-                    setDeleteQuery(false);
+                    setDeleteQuery(false);  
                 } else {
                     console.log('variant 5');
                     handleShow(Number(param.lesson_id));
@@ -268,7 +266,6 @@ export default function LessonStep() {
                 onHide={() => {
                     if (!formVisible) return;
                     setFormVisible(false);
-                    clearValues();
                 }}
             >
                 <div className="flex flex-col gap-1">
