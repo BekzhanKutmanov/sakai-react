@@ -36,12 +36,10 @@ const LoginPage = () => {
     const onSubmit = async (value: LoginType) => {
         const user = await login(value);
         if (user && user.success) {
-            document.cookie = `access_token=${user.token.access_token}; path=/; Secure; SameSite=Strict; expires=${user.token.expires_at}`;
-
+            document.cookie = `access_token=${user.token.access_token}; path=/; Secure; SameSite=Strict; expires=${user.token.expires_at}`;            
             const token = user.token.access_token;
             if (token) {
-                const res = await getUser();
-                
+                const res = await getUser();                
                 try {
                     if (res?.success) {
                         if (res?.user.is_working) {

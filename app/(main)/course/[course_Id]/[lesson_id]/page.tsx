@@ -337,7 +337,7 @@ export default function LessonStep() {
                 </div>
             )}
             <div className='max-w-[500px] m-auto shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)] mt-3 pb-1 flex items-center justify-between flex-col sm:flex-row gap-1'>
-                <b className='sm:text-[18px]'>{element?.step.type.title}</b>
+                {!hasSteps && <b className='sm:text-[18px]'>{element?.step.type.title}</b>}
                 {!hasSteps && (
                     <Button
                         icon={'pi pi-trash'}

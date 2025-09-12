@@ -244,6 +244,9 @@ export default function Course() {
         );
     };
 
+    const topRef = useRef<HTMLDivElement>(null);
+    const [isTall, setIsTall] = useState(false);
+
     // Ручное управление пагинацией
     const handlePageChange = (page: number) => {
         // handleFetchCourse(page);
@@ -272,7 +275,12 @@ export default function Course() {
     }, []);
 
     useEffect(() => {
-        handleFetchCourse();
+        handleFetchCourse();        
+        if (course?.data.length > 5) {
+            setIsTall(true);
+        } else {
+            setIsTall(false);
+        }
     }, [course]);
 
     useEffect(() => {
@@ -303,8 +311,6 @@ export default function Course() {
             const data = await fetchCourseInfo(selectedCourse);
 
             if (data?.success) {
-                console.log('udali', data);
-
                 setProgressSpinner(false);
                 setEditingLesson({
                     title: data.course.title || '',
@@ -321,10 +327,6 @@ export default function Course() {
             handleShow();
         }
     }, [editMode]);
-
-    useEffect(() => {
-        console.log('Для потока ', forStreamId);
-    }, [forStreamId]);
 
     const itemTemplate = (shablonData: any) => {
         return (
@@ -507,34 +509,6 @@ export default function Course() {
 
             <div className="flex justify-between gap-3">
                 <div className="w-full">
-                    <div className="w-full flex justify-center pt-1">
-                        {forStreamId?.title && (
-                            <div className="flex flex-col items-center justify-center gap-2 text-[14px]">
-                                <div className="w-full flex items-center justify-center gap-2">
-                                    <span className="min-w-[14px] w-[14px] sm:w-[18px] h-[14px] sm:h-[18px] block border bg-[var(--greenColor)]"></span>
-                                    <span className="text-[16px] sm:text-[18px] font-bold text-[var(--mainColor)] ">
-                                        Тандалган курстун аталышы: <span className="text-[#4B4563]">{forStreamId?.title}</span>
-                                    </span>
-                                </div>
-                                <div className="w-full flex items-center justify-center gap-2">
-                                    <div className="min-w-[14px] w-[14px] sm:w-[18px] h-[14px] sm:h-[18px] border bg-[yellow]"></div>
-                                    <div className="flex flex-col gap-1 ">
-                                        {displayStrem?.length < 1 && <span className="text-[13px]">Курска байлоо үчүн агымдарды тандаңыз</span>}
-                                        {displayStrem.map((item, idx) => {
-                                            if (idx < 1) {
-                                                return (
-                                                    <>
-                                                        <div key={item?.stream_id}>{item?.stream_title}...</div>
-                                                    </>
-                                                );
-                                            }
-                                            // <span>{displayStrem.length >= 3 && '...'}</span>
-                                        })}
-                                    </div>
-                                </div>
-                            </div>
-                        )}
-                    </div>
                     {media ? (
                         <>
                             <TabView
@@ -652,67 +626,69 @@ export default function Course() {
                                 {hasCourses ? (
                                     <NotFound titleMessage={'Курс кошуу үчүн кошуу баскычты басыныз'} />
                                 ) : (
-                                    <div>
+                                    <>
                                         {skeleton ? (
                                             <GroupSkeleton count={coursesValue?.length} size={{ width: '100%', height: '4rem' }} />
                                         ) : (
-                                            <>
-                                                <DataTable value={coursesValue} dataKey="id" key={JSON.stringify(forStreamId)} responsiveLayout="stack" breakpoint="960px" rows={5} className="my-custom-table">
-                                                    <Column body={(_, { rowIndex }) => rowIndex + 1} header="Номер" style={{ width: '20px' }}></Column>
-                                                    <Column
-                                                        field="title"
-                                                        header="Аталышы"
-                                                        style={{ width: '80%' }}
-                                                        body={(rowData) => (
-                                                            <Link href={`/course/${rowData.id}/${'null'}`} onClick={() => setMainCourseId(rowData.id)} key={rowData.id}>
-                                                                {rowData.title}
-                                                            </Link>
-                                                        )}
-                                                    ></Column>
+                                            <div>
+                                                <div ref={topRef}>
+                                                    <DataTable value={coursesValue} dataKey="id" key={JSON.stringify(forStreamId)} responsiveLayout="stack" breakpoint="960px" rows={5} className="my-custom-table">
+                                                        <Column body={(_, { rowIndex }) => rowIndex + 1} header="Номер" style={{ width: '20px' }}></Column>
+                                                        <Column body={imageBodyTemplate}></Column>
 
-                                                    <Column body={imageBodyTemplate}></Column>
-                                                    <Column
-                                                        header="Агымга байлоо"
-                                                        style={{ margin: '0 3px', textAlign: 'center' }}
-                                                        body={(rowData) => (
-                                                            <>
-                                                                <label className="custom-radio">
-                                                                    <input
-                                                                        type="radio"
-                                                                        name="radio"
-                                                                        onChange={() => {
-                                                                            const newValue = forStreamId?.id === rowData.id ? null : { id: rowData.id, title: rowData.title };
-                                                                            console.log(rowData, forStreamId);
-
-                                                                            // Устанавливаем состояние
-                                                                            setForStreamId(newValue);
-                                                                        }}
-                                                                        checked={forStreamId?.id === rowData.id}
-                                                                    />
-                                                                    <span className="radio-mark"></span>
-                                                                </label>
-                                                            </>
-                                                        )}
-                                                    ></Column>
-                                                    <Column
-                                                        className="flex items-center justify-center h-[60px] border-b-0"
-                                                        body={(rowData) => (
-                                                            <div className="flex items-center gap-2" key={rowData.id}>
-                                                                <Redacting redactor={getRedactor('null', rowData, { onEdit: edit, getConfirmOptions, onDelete: handleDeleteCourse })} textSize={'14px'} />
-                                                            </div>
-                                                        )}
+                                                        <Column
+                                                            field="title"
+                                                            header="Аталышы"
+                                                            style={{ width: '80%' }}
+                                                            body={(rowData) => (
+                                                                <Link href={`/course/${rowData.id}/${'null'}`} onClick={() => setMainCourseId(rowData.id)} key={rowData.id}>
+                                                                    {rowData.title}
+                                                                </Link>
+                                                            )}
+                                                        ></Column>
+                                                        <Column
+                                                            header="Агымга байлоо"
+                                                            style={{ margin: '0 3px', textAlign: 'center' }}
+                                                            body={(rowData) => (
+                                                                <>
+                                                                    <label className="custom-radio">
+                                                                        <input
+                                                                            type="radio"
+                                                                            name="radio"
+                                                                            onChange={() => {
+                                                                                const newValue = forStreamId?.id === rowData.id ? null : { id: rowData.id, title: rowData.title };
+                                                                                // Устанавливаем состояние
+                                                                                setForStreamId(newValue);
+                                                                            }}
+                                                                            checked={forStreamId?.id === rowData.id}
+                                                                        />
+                                                                        <span className="radio-mark"></span>
+                                                                    </label>
+                                                                </>
+                                                            )}
+                                                        ></Column>
+                                                        <Column
+                                                            className="flex items-center justify-center h-[60px] border-b-0"
+                                                            body={(rowData) => (
+                                                                <div className="flex items-center gap-2" key={rowData.id}>
+                                                                    <Redacting redactor={getRedactor('null', rowData, { onEdit: edit, getConfirmOptions, onDelete: handleDeleteCourse })} textSize={'14px'} />
+                                                                </div>
+                                                            )}
+                                                        />
+                                                    </DataTable>
+                                                </div>
+                                                <div className={`${isTall ? "mt-[20px]" : "mt-[5px]"} shadow-[0px_-11px_5px_-6px_rgba(0,_0,_0,_0.1)]`} style={{marginTop: isTall ? '20px' : '5px'}}>
+                                                    <Paginator
+                                                        first={(pagination.currentPage - 1) * pagination.perPage}
+                                                        rows={pagination.perPage}
+                                                        totalRecords={pagination.total}
+                                                        onPageChange={(e) => handlePageChange(e.page + 1)}
+                                                        template="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
                                                     />
-                                                </DataTable>
-                                                <Paginator
-                                                    first={(pagination.currentPage - 1) * pagination.perPage}
-                                                    rows={pagination.perPage}
-                                                    totalRecords={pagination.total}
-                                                    onPageChange={(e) => handlePageChange(e.page + 1)}
-                                                    template="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
-                                                />
-                                            </>
+                                                </div>
+                                            </div>
                                         )}
-                                    </div>
+                                    </>
                                 )}
                             </div>
                             {/* STREAMS SECTION */}

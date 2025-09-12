@@ -192,6 +192,8 @@ export default function StreamList({
     }, [pendingChanges]);
 
     useEffect(() => {
+        console.log('title', courseValue);
+        
         // setStreamValues({ stream: [] });
         setDisplayStreams([]);
         toggleSkeleton();
@@ -292,10 +294,12 @@ export default function StreamList({
                         <>
                             {/* info section */}
                             {!isMobile && (
-                                <div className="flex justify-between items-center mb-4 py-2 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">
-                                    <h3 className="text-[32px] m-0">Агымдар</h3>
+                                <div className="flex justify-between items-center gap-1 mb-4 py-2 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">
+                                    <span className="text-[16px] sm:text-[18px] font-bold text-[var(--mainColor)] ">
+                                        Курс связанный с потокам: <span className="text-[#4B4563]">{courseValue?.title}</span>
+                                    </span>
                                     <Button
-                                        label="Байлоо"
+                                        label="Сактоо"
                                         icon="pi pi-link"
                                         onClick={() => {
                                             handleConnect();
