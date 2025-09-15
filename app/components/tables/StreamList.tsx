@@ -8,9 +8,12 @@ import { DataView } from 'primereact/dataview';
 import { useContext, useEffect, useState } from 'react';
 import { NotFound } from '../NotFound';
 import GroupSkeleton from '../skeleton/GroupSkeleton';
-import Link from 'next/link';
 import { streamsType } from '@/types/streamType';
 import { displayType } from '@/types/displayType';
+import { Dialog } from 'primereact/dialog';
+import { DataTable } from 'primereact/datatable';
+import { Column } from 'primereact/column';
+import { mainStreamsType } from '@/types/mainStreamsType';
 
 export default function StreamList({
     callIndex,
@@ -22,33 +25,16 @@ export default function StreamList({
     callIndex: number;
     courseValue: { id: number | null; title: string } | null;
     isMobile: boolean;
-    insideDisplayStreams: (id: displayType[]) => void;
+    insideDisplayStreams: (id: mainStreamsType[]) => void;
     toggleIndex: () => void;
 }) {
-    interface mainStreamsType {
-        connect_id: number | null;
-        stream_id: number;
-        id_curricula: number;
-        subject_name: { name_kg: string; id: number };
-        subject_type_name: { name_kg: string; id: number };
-        teacher: { name: string };
-        language: { name: string };
-        id_edu_year: number;
-        id_period: number;
-        semester: { name_kg: string };
-        edu_form: { name_kg: string };
-        period: { name_kg: string };
-        courseValue?: number;
-        speciality: { id: number; id_faculty: number };
-        course_id?: number | null;
-    }
 
     const [streams, setStreams] = useState<mainStreamsType[]>([]);
-    const [streamValues, setStreamValues] = useState<{ stream: streamsType[] }>({ stream: [] });
     const [displayStreams, setDisplayStreams] = useState<displayType[] | any>([]);
     const [hasStreams, setHasStreams] = useState(false);
-    const [selectedStreams, setSelectedStreams] = useState([]);
     const [skeleton, setSkeleton] = useState(false);
+    const [visible, setVisible] = useState(false);
+    const [contentShow, setContentShow] = useState(false);
     const [pendingChanges, setPendingChanges] = useState<streamsType[]>([]);
 
     const { setMessage } = useContext(LayoutContext);
@@ -72,13 +58,13 @@ export default function StreamList({
                     info: '',
                     id_curricula: item.id_curricula,
                     id_subject: item.subject_name.id,
-                    subject_type: item.subject_type_name.name_kg,
+                    subject_type: item.subject_type_name.short_name_ru,
                     id_subject_type: item.subject_type_name.id,
                     id_edu_year: item.id_edu_year,
                     id_period: item.id_period,
                     id_speciality: item.speciality.id,
                     id_faculty: item.speciality.id_faculty,
-                    stream_title: item?.subject_name.name_kg //
+                    stream_title: item?.subject_name.name_ru //
                 });
             }
         });
@@ -101,11 +87,6 @@ export default function StreamList({
             profilactor(data);
             setHasStreams(false);
             setStreams(data);
-            // setPagination({
-            //     currentPage: data.courses.current_page,
-            //     total: data.courses.total,
-            //     perPage: data.courses.per_page
-            // });
         } else {
             setHasStreams(true);
             setMessage({
@@ -148,14 +129,14 @@ export default function StreamList({
             stream_id: stream_id,
             id_curricula: item.id_curricula,
             id_subject: item.subject_name.id,
-            subject_type: item.subject_type_name.name_kg,
+            subject_type: item.subject_type_name.short_name_ru,
             id_subject_type: item.subject_type_name.id,
             id_edu_year: item.id_edu_year,
             id_period: item.id_period,
             id_speciality: item.speciality.id,
             id_faculty: item.speciality.id_faculty,
             info: '',
-            stream_title: subject_name.name_kg
+            stream_title: subject_name.name_ru
         };
 
         setPendingChanges((prev) => {
@@ -175,26 +156,12 @@ export default function StreamList({
         });
     };
 
-    // useEffect(() => {
-    //     console.log('отправляемый поток ', streamValues);
-    //     // const forDisplay = streamValues.stream.filter((item, idx) => {
-    //     //     // if (idx <= 2) {
-    //     //     return item;
-    //     //     // }
-    //     // });
-
-    //     // setDisplayStreams(forDisplay);
-
-    // }, [streamValues]);
-
     useEffect(() => {
         setDisplayStreams(pendingChanges);
+        console.log(pendingChanges);
     }, [pendingChanges]);
 
     useEffect(() => {
-        console.log('title', courseValue);
-        
-        // setStreamValues({ stream: [] });
         setDisplayStreams([]);
         toggleSkeleton();
         if (courseValue?.id) {
@@ -203,7 +170,10 @@ export default function StreamList({
     }, [courseValue]);
 
     useEffect(() => {
+        console.log('обнова');
+        
         if (streams.length < 1) {
+            insideDisplayStreams(streams);
             setHasStreams(true);
         } else {
             setHasStreams(false);
@@ -211,7 +181,7 @@ export default function StreamList({
     }, [streams]);
 
     useEffect(() => {
-        insideDisplayStreams(displayStreams);
+        // insideDisplayStreams(displayStreams);
     }, [displayStreams]);
 
     const itemTemplate = (item: mainStreamsType, index: number) => {
@@ -221,47 +191,49 @@ export default function StreamList({
             <div className={`w-full ${bgClass}`} key={item?.stream_id}>
                 <div className={`flex flex-column p-2 gap-2`}>
                     <div className="flex justify-between gap-1 items-center">
-                        <h3 className="m-0">{item?.subject_name.name_kg}</h3>
-                        <label className="custom-radio">
+                        <h3 className="m-0">{item?.subject_name.name_ru}</h3>
+                        {/* <label className="custom-radio">
                             <input
                                 type="checkbox"
                                 className={`customCheckbox`}
                                 // svoysky
                                 // checked={Boolean(item.connect_id)}
                                 // onChange={(e) => {
-                                //     handleEdit(e.target, item.stream_id, item?.subject_name.name_kg);
+                                //     handleEdit(e.target, item.stream_id, item?.subject_name.name_ru);
                                 //     setStreams((prev) => prev.map((el) => (el.stream_id === item.stream_id ? { ...el, connect_id: el.connect_id ? null : 1 } : el)));
                                 // }}
                                 checked={pendingChanges.some((s) => s.stream_id === item.stream_id)}
                                 onChange={(e) => {
+                                    // console.log();
+
                                     handleEdit(e.target, item);
                                 }}
                             />
                             <span className="checkbox-mark"></span>
-                        </label>
+                        </label> */}
                     </div>
                     <div className="flex flex-column xl:flex-row justify-content-between align-items-center xl:align-items-start flex-1 gap-2">
                         <div className="flex flex-col order-2 xl:order-1 gap-1 items-start text-[12px] sm:text-[14px]">
                             <div className="flex gap-1 items-center">
-                                <span className="text-[var(--mainColor)]">{item?.subject_type_name?.name_kg}</span>
+                                <span className="text-[var(--mainColor)]">{item?.subject_type_name?.name_ru}</span>
                                 {/* <span>{item?.teacher?.name}</span> */}
                             </div>
                             <div className="flex gap-1 items-center">
-                                <span className="text-[var(--mainColor)]">Окутуу тили: </span>
+                                <span className="text-[var(--mainColor)]">Язык обучения: </span>
                                 <span>{item?.language?.name}</span>
                             </div>
                             <div className="flex gap-1 items-center">
-                                <span className="text-[var(--mainColor)]">Окуу жылы: </span>
+                                <span className="text-[var(--mainColor)]">Год обучения: </span>
                                 <span className="font-semibold">20{item?.id_edu_year}</span>
                             </div>
                             <div className="flex gap-1 items-center">
                                 <span className="text-[var(--mainColor)]">Период: </span>
-                                <span>{item?.period.name_kg}</span>
+                                <span>{item?.period.name_ru}</span>
                             </div>
                         </div>
                         <div className="flex flex-col order-1 xl:order-2 align-items-center gap-2">
-                            <span className="font-semibold">{item?.semester?.name_kg}</span>
-                            <span className="bg-[var(--greenColor)] text-[12px] text-white p-1 rounded">{item?.edu_form?.name_kg}</span>
+                            <span className="font-semibold">{item?.semester?.name_ru}</span>
+                            <span className="bg-[var(--greenColor)] text-[12px] text-white p-1 rounded">{item?.edu_form?.name_ru}</span>
                             {/* {item.connect_id && (
                                 <Link href={`/students/${item.connect_id}/${item.stream_id}`} className="underline">
                                     Студенттер
@@ -277,15 +249,107 @@ export default function StreamList({
     const listTemplate = (items: mainStreamsType[]) => {
         if (!items || items.length === 0) return null;
 
-        let list = items.map((product, index: number) => {
-            return itemTemplate(product, index);
-        });
-
-        return <div className="grid grid-nogutter">{list}</div>;
+        const hasData = items.some((item) => item.connect_id !== null);
+        // console.warn('HAS', hasData);
+        if (hasData) {
+            let list = items.map((product, index: number) => {
+                if (product.connect_id !== null) {
+                    return itemTemplate(product, index);
+                }
+            });
+            return <div className="grid grid-nogutter shadow-[0_2px_2px_0px_rgba(0,0,0,0.2)]">{list}</div>;
+        }
+        return (
+            <div className="flex flex-col gap-2 justify-center items-center m-4">
+                <p className="text-[16px] text-center font-bold">Нет связанных потоков</p>
+            </div>
+        );
     };
+
+    const footerContent = (
+        <div>
+            <Button
+                label="Назад"
+                className="reject-button"
+                icon="pi pi-times"
+                onClick={() => {
+                    setVisible(false);
+                    // clearValues();
+                }}
+            />
+            {
+                <Button
+                    label="Добавить"
+                    disabled={false}
+                    icon="pi pi-check"
+                    onClick={() => {
+                        setVisible(false);
+                        handleConnect();
+                    }}
+                    autoFocus
+                />
+            }
+        </div>
+    );
 
     return (
         <>
+            <Dialog
+                header={'Потоки'}
+                visible={visible}
+                className="w-[95%]"
+                onHide={() => {
+                    if (!visible) return;
+                    setVisible(false);
+                    // clearValues();
+                }}
+                footer={footerContent}
+            >
+                {
+                    <DataTable value={streams} className="w-full my-custom-table" dataKey="stream_id" key={JSON.stringify(pendingChanges)} responsiveLayout="stack" breakpoint="960px" rows={5}>
+                        <Column body={(_, { rowIndex }) => rowIndex + 1} header="Номер"></Column>
+                        {/* <Column body={imageBodyTemplate}></Column> */}
+
+                        <Column field="title" header="Название" body={(rowData) => <p key={rowData.id}>{rowData.subject_name.name_ru}</p>}></Column>
+
+                        <Column header="Язык обучения" body={(rowData) => <p key={rowData.id}>{rowData.language.name}</p>}></Column>
+
+                        <Column field="title" header="Год обучения" body={(rowData) => <p key={rowData.id}>20{rowData.id_edu_year}</p>}></Column>
+                        <Column field="title" header="Период" body={(rowData) => <p key={rowData.id}>{rowData.period.name_ru}</p>}></Column>
+
+                        <Column field="title" header="Семестр" body={(rowData) => <p key={rowData.id}>{rowData.semester.name_ru}</p>}></Column>
+
+                        <Column field="title" header="Тип обучения" body={(rowData) => <p key={rowData.id}>{rowData.subject_type_name.short_name_ru}</p>}></Column>
+
+                        <Column
+                            header="Связь к потоку"
+                            style={{ margin: '0 3px', textAlign: 'center' }}
+                            body={(rowData) => (
+                                <>
+                                    <label className="custom-radio">
+                                        <input
+                                            type="checkbox"
+                                            className={`customCheckbox`}
+                                            // svoysky
+                                            // checked={Boolean(item.connect_id)}
+                                            // onChange={(e) => {
+                                            //     handleEdit(e.target, item.stream_id, item?.subject_name.name_kg);
+                                            //     setStreams((prev) => prev.map((el) => (el.stream_id === item.stream_id ? { ...el, connect_id: el.connect_id ? null : 1 } : el)));
+                                            // }}
+                                            checked={pendingChanges.some((s) => s.stream_id === rowData.stream_id)}
+                                            // checked={true}
+                                            onChange={(e) => {
+                                                handleEdit(e.target, rowData);
+                                            }}
+                                        />
+                                        <span className="checkbox-mark"></span>
+                                    </label>
+                                </>
+                            )}
+                        ></Column>
+                    </DataTable>
+                }
+            </Dialog>
             {callIndex === 1 && (
                 <div className="p-1 sm:py-4 px-2">
                     {skeleton ? (
@@ -294,17 +358,21 @@ export default function StreamList({
                         <>
                             {/* info section */}
                             {!isMobile && (
-                                <div className="flex justify-between items-center gap-1 mb-4 py-2 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">
-                                    <span className="text-[16px] sm:text-[18px] font-bold text-[var(--mainColor)] ">
-                                        Курс связанный с потокам: <span className="text-[#4B4563]">{courseValue?.title}</span>
-                                    </span>
-                                    <Button
-                                        label="Сактоо"
-                                        icon="pi pi-link"
-                                        onClick={() => {
-                                            handleConnect();
-                                        }}
-                                    />
+                                <div className="flex flex-col md:flex-row justify-between md:items-center gap-1 mb-4 py-2 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">
+                                    {/* <span className=" text-[var(--mainColor)] "> */}
+                                    <span className="lg:max-w-[300px] xl:max-w-[400px] text-[16px] sm:text-[16px] md:text-[18px] font-bold text-[#4B4563]">{courseValue?.title}</span>
+                                    {/* </span> */}
+                                    <div className='min-w-[110px]'>
+                                        <Button
+                                            label="Добавить"
+                                            icon="pi pi-link"
+                                            className='w-full'
+                                            onClick={() => {
+                                                handleFetchStreams();
+                                                setVisible(true);
+                                            }}
+                                        />
+                                    </div>
                                 </div>
                             )}
                         </>
@@ -317,11 +385,12 @@ export default function StreamList({
                             {isMobile && (
                                 <div className="w-full flex flex-col items-center gap-1">
                                     <Button
-                                        label="Байлоо"
+                                        label="Добавить"
                                         className="w-full"
                                         icon="pi pi-link"
                                         onClick={() => {
-                                            handleConnect();
+                                            handleFetchStreams();
+                                            setVisible(true);
                                         }}
                                     />
 
@@ -336,12 +405,14 @@ export default function StreamList({
                                 </div>
                             )}
 
-                            <div className="max-h-[685px] overflow-y-scroll shadow-[0_2px_2px_0px_rgba(0,0,0,0.2)]">
+                            <div className="max-h-[685px] overflow-y-scroll">
                                 {skeleton ? (
                                     <GroupSkeleton count={10} size={{ width: '100%', height: '4rem' }} />
                                 ) : (
                                     <>
-                                        <DataView value={streams} listTemplate={listTemplate} />
+                                        <div>
+                                            <DataView value={streams} listTemplate={listTemplate} />
+                                        </div>
                                     </>
                                 )}
                             </div>

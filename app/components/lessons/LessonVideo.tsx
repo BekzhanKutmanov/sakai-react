@@ -104,6 +104,7 @@ export default function LessonVideo({ element, content, fetchPropElement, clearP
     const [selectType, setSelectType] = useState('');
     const [selectId, setSelectId] = useState<number | null>(null);
     const [contentShow, setContentShow] = useState(false);
+    const [videoVisible, setVideoVisible] = useState(false);
 
     const clearFile = () => {
         fileUploadRef.current?.clear();
@@ -161,6 +162,7 @@ export default function LessonVideo({ element, content, fetchPropElement, clearP
         // return `https://www.youtube.com/embed/${videoId}`;
         setVideoLink(`https://www.youtube.com/embed/${videoId}`);
         setVideoCall(true);
+        // setVisisble(true);
     };
 
     // validate
@@ -347,7 +349,7 @@ export default function LessonVideo({ element, content, fetchPropElement, clearP
                 ) : (
                     <div className="w-full flex flex-col items-center gap-4 py-2">
                         <div className="w-full flex flex-wrap justify-center gap-4">
-                            <Dialog
+                            {/* <Dialog
                                 header={''}
                                 className="w-[80%] h-[300px] md:h-[500px]"
                                 visible={videoCall}
@@ -367,25 +369,44 @@ export default function LessonVideo({ element, content, fetchPropElement, clearP
                                         allowFullScreen
                                     ></iframe>
                                 </div>
-                            </Dialog>
+                            </Dialog> */}
                             {videoShow ? (
                                 <NotFound titleMessage={'Сабак кошуу үчүн талааларды толтурунуз'} />
                             ) : (
-                                video && (
-                                    <LessonCard
-                                        status={'working'}
-                                        onSelected={(id: number, type: string) => selectedForEditing(id, type)}
-                                        onDelete={(id: number) => handleDeleteVideo(id)}
-                                        cardValue={{ title: video.title, id: video.id, desctiption: video?.description || '', type: 'video', photo: video?.cover_url }}
-                                        cardBg={'#ddc4f51a'}
-                                        type={{ typeValue: 'video', icon: 'pi pi-video' }}
-                                        typeColor={'var(--mainColor)'}
-                                        lessonDate={new Date(video.created_at).toISOString().slice(0, 10)}
-                                        urlForPDF={() => ''}
-                                        urlForDownload=""
-                                        videoVisible={() => handleVideoCall(String(video?.link))}
-                                    />
-                                )
+                                <>
+                                    {!videoCall ? (
+                                        video && (
+                                            <LessonCard
+                                                status={'working'}
+                                                onSelected={(id: number, type: string) => selectedForEditing(id, type)}
+                                                onDelete={(id: number) => handleDeleteVideo(id)}
+                                                cardValue={{ title: video.title, id: video.id, desctiption: video?.description || '', type: 'video', photo: video?.cover_url }}
+                                                cardBg={'#ddc4f51a'}
+                                                type={{ typeValue: 'video', icon: 'pi pi-video' }}
+                                                typeColor={'va  r(--mainColor)'}
+                                                lessonDate={new Date(video.created_at).toISOString().slice(0, 10)}
+                                                urlForPDF={() => ''}
+                                                urlForDownload=""
+                                                videoVisible={() => handleVideoCall(String(video?.link))}
+                                            />
+                                        )
+                                    ) : (
+                                        <div className="w-full flex flex-col justify-center items-center">
+                                            <div className='w-[90%] flex justify-start'>
+                                                <i className="pi pi-times sm:text-2xl my-2 cursor-pointer" onClick={() => setVideoCall(false)}></i>
+                                            </div>
+                                            <iframe
+                                                className="w-[90%] h-[200px] md:h-[400px]"
+                                                // src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1"
+                                                src={videoLink}
+                                                title="YouTube video player"
+                                                frameBorder="0"
+                                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                                allowFullScreen
+                                            ></iframe>
+                                        </div>
+                                    )}
+                                </>
                             )}
                         </div>
                     </div>

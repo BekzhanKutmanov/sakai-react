@@ -71,6 +71,7 @@ const SessionManager = () => {
 
             // logout({ setUser, setGlobalLoading });
             // window.location.href = '/auth/login';
+            setGlobalLoading(false);
             return;
         }
         setTimeout(() => {

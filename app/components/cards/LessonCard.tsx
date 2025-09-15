@@ -87,7 +87,7 @@ export default function LessonCard({
         );
 
     const videoPreviw = type.typeValue === 'video' && (
-        <div className="relative bg-white shadow w-[90%] max-h-[190px]/ overflow-hidden rounded-2xl">
+        <div className="relative bg-white shadow w-[90%] max-h-[400px] overflow-hidden rounded-2xl">
             <div className="w-full h-[100%] absolute flex justify-center items-center bg-[rgba(8,9,0,50%)]">
                 <div className="relative flex items-center justify-center" onClick={() => videoVisible?.(type.typeValue)}>
                     {/* Волна */}
@@ -99,7 +99,7 @@ export default function LessonCard({
                     </div>
                 </div>
             </div>
-            <img src={(cardValue.photo && cardValue.photo) || '/layout/images/no-image.png'} className="w-full sm:w-[200px] max-h-[200px] object-cover" alt="Видео" />
+            <img src={(cardValue.photo && cardValue.photo) || '/layout/images/no-image.png'} className="w-full sm:w-[200px] max-h-[400px] object-cover" alt="Видео" />
         </div>
     );
 

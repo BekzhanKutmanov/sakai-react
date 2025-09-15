@@ -27,7 +27,7 @@ export default function FormModal({
     const footerContent = (
         <div>
             <Button
-                label="Чыгуу"
+                label="Назад"
                 className="reject-button"
                 icon="pi pi-times"
                 onClick={() => {
@@ -37,7 +37,7 @@ export default function FormModal({
             />
             {
                 <Button
-                    label="Кошуу"
+                    label="Добавить"
                     disabled={start}
                     icon="pi pi-check"
                     onClick={() => {

@@ -33,6 +33,7 @@ import { displayType } from '@/types/displayType';
 import { FileWithPreview } from '@/types/fileuploadPreview';
 import { InputSwitch, InputSwitchChangeEvent } from 'primereact/inputswitch';
 import { SelectButton, SelectButtonChangeEvent } from 'primereact/selectbutton';
+import { mainStreamsType } from '@/types/mainStreamsType';
 
 export default function Course() {
     const { setMessage, course, setCourses, contextFetchCourse, setMainCourseId } = useContext(LayoutContext);
@@ -45,6 +46,7 @@ export default function Course() {
     const [forStart, setForStart] = useState(false);
     const [skeleton, setSkeleton] = useState(false);
     const [progressSpinner, setProgressSpinner] = useState(false);
+    const [forStreamCount, setForStreamCount] = useState<mainStreamsType[]>([]);
     const [pagination, setPagination] = useState<{ currentPage: number; total: number; perPage: number }>({
         currentPage: 1,
         total: 0,
@@ -52,7 +54,6 @@ export default function Course() {
     });
     const [activeIndex, setActiveIndex] = useState<number>(0);
     const [imageState, setImageState] = useState<string | null>(null);
-    const [displayStrem, setDisplayStreams] = useState<displayType[]>([]);
     const [editingLesson, setEditingLesson] = useState<CourseCreateType>({
         title: '',
         description: '',
@@ -266,16 +267,12 @@ export default function Course() {
         setActiveIndex(e.index);
     };
 
-    const displayInfo = (value: displayType[]) => {
-        setDisplayStreams(value);
-    };
-
     useEffect(() => {
         contextFetchCourse(1);
     }, []);
 
     useEffect(() => {
-        handleFetchCourse();        
+        handleFetchCourse();
         if (course?.data.length > 5) {
             setIsTall(true);
         } else {
@@ -327,6 +324,10 @@ export default function Course() {
             handleShow();
         }
     }, [editMode]);
+
+    useEffect(() => {
+        console.log('forstream ', forStreamCount);
+    }, [forStreamCount]);
 
     const itemTemplate = (shablonData: any) => {
         return (
@@ -389,7 +390,7 @@ export default function Course() {
     return (
         <div className="main-bg">
             {/* modal window */}
-            <FormModal title={editMode ? 'Курсту жаңылоо' : 'Кошуу'} fetchValue={editMode ? handleUpdateCourse : handleAddCourse} clearValues={clearValues} visible={formVisible} setVisible={setFormVisible} start={forStart}>
+            <FormModal title={editMode ? 'Обновить курс' : 'Добавить'} fetchValue={editMode ? handleUpdateCourse : handleAddCourse} clearValues={clearValues} visible={formVisible} setVisible={setFormVisible} start={forStart}>
                 <div className="flex flex-col gap-1">
                     {/* <div className="flex flex-col lg:flex-row gap-1 justify-around items-center"> */}
                     <div className="flex flex-col gap-1 items-center justify-center">
@@ -491,16 +492,16 @@ export default function Course() {
                                 onSelect={onSelect}
                             />
                             {courseValue.image || editingLesson.image ? (
-                                <div className="mt-2 text-sm text-gray-700 ">
-                                    {typeof editingLesson.image === 'string' && (
-                                        <>
-                                            <b className="text-[12px] text-center w-[300px]">{imageTitle}</b>
-                                        </>
-                                    )}
-                                </div>
+                            <div className="mt-2 text-sm text-gray-700 ">
+                                {typeof editingLesson.image === 'string' && (
+                                    <>
+                                        <b className="text-[12px] text-center w-[300px]">{imageTitle}</b>
+                                    </>
+                                )}
+                            </div>
                             ) : (
                                 <b className="text-[12px] text-red-500">jpeg, png, jpg</b>
-                            )}
+                            )} 
                             <div className="flex items-center gap-1">{(editingLesson.image || imageState) && <Button icon={'pi pi-trash'} onClick={clearFile} />}</div>
                         </div>
                     </div>
@@ -525,7 +526,7 @@ export default function Course() {
                                     pt={{
                                         headerAction: { className: 'font-italic ' }
                                     }}
-                                    header="Курстар"
+                                    header="Курсы"
                                     className=" p-tabview p-tabview-nav p-tabview-selected p-tabview-panels p-tabview-panel"
                                 >
                                     {/* mobile table section */}
@@ -534,7 +535,7 @@ export default function Course() {
                                         <>
                                             <div className="flex justify-end">
                                                 <Button
-                                                    label="Кошуу"
+                                                    label="Добавить курс"
                                                     icon="pi pi-plus"
                                                     onClick={() => {
                                                         setEditMode(false);
@@ -549,7 +550,7 @@ export default function Course() {
                                         <>
                                             <div className="w-full flex flex-col items-center justify-between gap-1">
                                                 <Button
-                                                    label="Курс кошуу"
+                                                    label="Добавить курс"
                                                     icon="pi pi-plus"
                                                     iconPos="right"
                                                     className="w-full"
@@ -596,7 +597,7 @@ export default function Course() {
                                     className="p-tabview p-tabview-nav p-tabview-selected p-tabview-panels p-tabview-panel"
                                 >
                                     <div className="w-full sm:w-1/2">
-                                        <StreamList callIndex={activeIndex} courseValue={forStreamId} isMobile={true} insideDisplayStreams={(value: displayType[]) => displayInfo(value)} toggleIndex={() => setActiveIndex(0)} />
+                                        <StreamList callIndex={activeIndex} courseValue={forStreamId} isMobile={true} insideDisplayStreams={(value) => setForStreamCount(value)} toggleIndex={() => setActiveIndex(0)} />
                                     </div>
                                 </TabPanel>
                             </TabView>
@@ -608,10 +609,10 @@ export default function Course() {
                                 {skeleton ? (
                                     <GroupSkeleton count={1} size={{ width: '100%', height: '5rem' }} />
                                 ) : (
-                                    <div className="flex justify-between items-center mb-4 py-2 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">
-                                        <h3 className="text-[32px] m-0">Курстар</h3>
+                                    <div className="flex flex-col md:flex-row justify-between md:items-center mb-4 py-2 gap-1 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">
+                                        <h3 className="text-[32px] m-0">Курсы</h3>
                                         <Button
-                                            label="Кошуу"
+                                            label="Добавить курс"
                                             icon="pi pi-plus"
                                             onClick={() => {
                                                 setEditMode(false);
@@ -633,12 +634,12 @@ export default function Course() {
                                             <div>
                                                 <div ref={topRef}>
                                                     <DataTable value={coursesValue} dataKey="id" key={JSON.stringify(forStreamId)} responsiveLayout="stack" breakpoint="960px" rows={5} className="my-custom-table">
-                                                        <Column body={(_, { rowIndex }) => rowIndex + 1} header="Номер" style={{ width: '20px' }}></Column>
+                                                        <Column body={(_, { rowIndex }) => rowIndex + 1} header="#" style={{ width: '20px' }}></Column>
                                                         <Column body={imageBodyTemplate}></Column>
 
                                                         <Column
                                                             field="title"
-                                                            header="Аталышы"
+                                                            header="Название"
                                                             style={{ width: '80%' }}
                                                             body={(rowData) => (
                                                                 <Link href={`/course/${rowData.id}/${'null'}`} onClick={() => setMainCourseId(rowData.id)} key={rowData.id}>
@@ -647,11 +648,11 @@ export default function Course() {
                                                             )}
                                                         ></Column>
                                                         <Column
-                                                            header="Агымга байлоо"
+                                                            header="Связь с потоком"
                                                             style={{ margin: '0 3px', textAlign: 'center' }}
                                                             body={(rowData) => (
                                                                 <>
-                                                                    <label className="custom-radio">
+                                                                    <label className="custom-course-radio">
                                                                         <input
                                                                             type="radio"
                                                                             name="radio"
@@ -662,7 +663,7 @@ export default function Course() {
                                                                             }}
                                                                             checked={forStreamId?.id === rowData.id}
                                                                         />
-                                                                        <span className="radio-mark"></span>
+                                                                        <span className="radio-course-mark">Кнопка</span>
                                                                     </label>
                                                                 </>
                                                             )}
@@ -677,7 +678,7 @@ export default function Course() {
                                                         />
                                                     </DataTable>
                                                 </div>
-                                                <div className={`${isTall ? "mt-[20px]" : "mt-[5px]"} shadow-[0px_-11px_5px_-6px_rgba(0,_0,_0,_0.1)]`} style={{marginTop: isTall ? '20px' : '5px'}}>
+                                                <div className={`${isTall ? 'mt-[20px]' : 'mt-[5px]'} shadow-[0px_-11px_5px_-6px_rgba(0,_0,_0,_0.1)]`} style={{ marginTop: isTall ? '20px' : '5px' }}>
                                                     <Paginator
                                                         first={(pagination.currentPage - 1) * pagination.perPage}
                                                         rows={pagination.perPage}
@@ -693,7 +694,7 @@ export default function Course() {
                             </div>
                             {/* STREAMS SECTION */}
                             <div className="w-1/2">
-                                <StreamList isMobile={false} callIndex={1} courseValue={forStreamId?.id ? forStreamId : null} insideDisplayStreams={(value: displayType[]) => displayInfo(value)} toggleIndex={() => {}} />
+                                <StreamList isMobile={false} callIndex={1} courseValue={forStreamId?.id ? forStreamId : null} insideDisplayStreams={(value) => setForStreamCount(value)} toggleIndex={() => {}} />
                             </div>
                         </div>
                     )}

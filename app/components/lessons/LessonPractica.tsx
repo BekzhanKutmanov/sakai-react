@@ -263,25 +263,40 @@ export default function LessonPractica({ element, content, fetchPropElement, cle
                         </div>
                         <b style={{ color: 'red', fontSize: '12px' }}>{errors.title?.message}</b>
                         {additional.doc && (
-                            <div className="flex gap-1 items-center">
-                                <FileUpload
-                                    className="text-[12px]"
-                                    ref={fileUploadRef}
-                                    chooseLabel="Документ жүктөө"
-                                    mode="basic"
-                                    name="demo[]"
-                                    customUpload
-                                    uploadHandler={() => {}}
-                                    accept="application/pdf"
-                                    onSelect={(e) =>
-                                        setDocValue((prev) => ({
-                                            ...prev,
-                                            document: e.files[0]
-                                        }))
-                                    }
-                                />
-                                <Button icon={'pi pi-trash'} onClick={clearFile} />
-                            </div>
+                            // <div className="flex gap-1 items-center">
+                            //     <FileUpload
+                            //         className="text-[12px]"
+                            //         ref={fileUploadRef}
+                            //         chooseLabel="Документ жүктөө"
+                            //         mode="basic"
+                            //         name="demo[]"
+                            //         customUpload
+                            //         uploadHandler={() => {}}
+                            //         accept="application/pdf"
+                            //         onSelect={(e) =>
+                            //             setDocValue((prev) => ({
+                            //                 ...prev,
+                            //                 document: e.files[0]
+                            //             }))
+                            //         }
+                            //     />
+                            //     <Button icon={'pi pi-trash'} onClick={clearFile} />
+                            // </div>
+                            <input
+                            type="file"
+                            accept="application/pdf"
+                            className='border rounded p-1'
+                            onChange={(e) => {
+                                console.log(e.target.files);
+                                const file = e.target.files?.[0]; 
+                                if(file){
+                                    setDocValue((prev) => ({
+                                        ...prev,
+                                        document: file
+                                    }))
+                                }
+                            }}
+                        />
                         )}
                         {additional.doc && (
                             <div className="w-full flex flex-col items-center">

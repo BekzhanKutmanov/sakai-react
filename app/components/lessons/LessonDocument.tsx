@@ -19,13 +19,13 @@ import useErrorMessage from '@/hooks/useErrorMessage';
 import { LayoutContext } from '@/layout/context/layoutcontext';
 import FormModal from '../popUp/FormModal';
 // import PDFViewer from '../PDFBook';
-import dynamic from "next/dynamic";
+import dynamic from 'next/dynamic';
 
-const PDFViewer = dynamic(()=> import('../PDFBook'), {
-    ssr: false,
-})
+const PDFViewer = dynamic(() => import('../PDFBook'), {
+    ssr: false
+});
 
-export default function LessonDocument({ element, content, fetchPropElement, clearProp }: { element: mainStepsType; content: any; fetchPropElement: (id: number) => void; clearProp: boolean}) {
+export default function LessonDocument({ element, content, fetchPropElement, clearProp }: { element: mainStepsType; content: any; fetchPropElement: (id: number) => void; clearProp: boolean }) {
     interface docValueType {
         title: string;
         description: string;
@@ -44,7 +44,7 @@ export default function LessonDocument({ element, content, fetchPropElement, cle
         title: string;
         updated_at: string;
         user_id: number;
-        document_path:string;
+        document_path: string;
     }
 
     const { course_id } = useParams();
@@ -122,8 +122,10 @@ export default function LessonDocument({ element, content, fetchPropElement, cle
     const documentView = (
         <>
             <div className=" flex flex-col gap-1">
-                <i className="pi pi-times text-2xl" onClick={() => setPDFVisible(false)}></i>
-                <div className="w-full flex flex-col gap-1 items-center justify-center"><PDFViewer url={urlPDF || ''} /></div>
+                <i className="pi pi-times text-2xl cursor-pointer" onClick={() => setPDFVisible(false)}></i>
+                <div className="w-full flex flex-col gap-1 items-center justify-center">
+                    <PDFViewer url={urlPDF || ''} />
+                </div>
             </div>
         </>
     );
@@ -146,7 +148,7 @@ export default function LessonDocument({ element, content, fetchPropElement, cle
     const editing = async () => {
         const data = await fetchElement(element.lesson_id, element.id);
         if (data.success) {
-            setEditingLesson({title: data.content.title, file:null, document: data.content.document, description: data.content.description})
+            setEditingLesson({ title: data.content.title, file: null, document: data.content.document, description: data.content.description });
         } else {
             setMessage({
                 state: true,
@@ -257,8 +259,8 @@ export default function LessonDocument({ element, content, fetchPropElement, cle
                     </div>
                 ) : (
                     <div className="w-full flex flex-col justify-center gap-2">
-                        <div className="flex gap-1 items-center">
-                            <FileUpload
+                        {/* <div className="flex gap-1 items-center"> */}
+                        {/* <FileUpload
                                 className="text-[12px]"
                                 ref={fileUploadRef}
                                 chooseLabel="Документ жүктөө"
@@ -275,7 +277,22 @@ export default function LessonDocument({ element, content, fetchPropElement, cle
                                 }
                             />
                             <Button icon={'pi pi-trash'} onClick={clearFile} />
-                        </div>
+                        </div> */}
+                        <input
+                            type="file"
+                            accept="application/pdf"
+                            className='border rounded p-1'
+                            onChange={(e) => {
+                                console.log(e.target.files);
+                                const file = e.target.files?.[0];
+                                if (file) {
+                                    setDocValue((prev) => ({
+                                        ...prev,
+                                        file: file
+                                    }));
+                                }
+                            }}
+                        />
 
                         <InputText
                             id="title"
@@ -344,7 +361,7 @@ export default function LessonDocument({ element, content, fetchPropElement, cle
                     <div className="flex flex-col gap-1 items-center justify-center">
                         {selectType === 'doc' ? (
                             <>
-                                <div className="flex gap-1 items-center">
+                                {/* <div className="flex gap-1 items-center">
                                     <FileUpload
                                         ref={fileUploadRef}
                                         chooseLabel="Жаңылоо"
@@ -358,7 +375,25 @@ export default function LessonDocument({ element, content, fetchPropElement, cle
                                         }}
                                     />
                                     <Button icon={'pi pi-trash'} onClick={clearFile} />
-                                </div>
+                                </div> */}
+                                <input
+                                    type="file"
+                                    accept="application/pdf"
+                                    className='border rounded p-1'
+                                    onChange={(e) => {
+                                        console.log(e.target.files);
+                                        const file = e.target.files?.[0];
+                                        if (file) {
+                                            setEditingLesson(
+                                                (prev) =>
+                                                    prev && {
+                                                        ...prev,
+                                                        file: file
+                                                    }
+                                            );
+                                        }
+                                    }}
+                                />
                                 {/* <span>{String(editingLesson?.file[0].objectURL)}</span> */}
                                 <InputText
                                     type="text"
@@ -379,8 +414,7 @@ export default function LessonDocument({ element, content, fetchPropElement, cle
                                 />
                             </>
                         ) : selectType === 'video' ? (
-                            <>
-                            </>
+                            <></>
                         ) : (
                             ''
                         )}
