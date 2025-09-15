@@ -76,8 +76,11 @@ export interface LayoutContextProps {
     crumbUrls: {type: string; crumbUrl: string };
     contextAddCrumb: (id)=> void
 
-    mainCourseId: number | null,
-    setMainCourseId
+    mainCourseId: number | null;
+    setMainCourseId;
+
+    departament: {last_name:string, name:string, father_name:string, info: string},
+    setDepartament,
     // message: { state: boolean; value: MessageType };
     // setMessage: React.Dispatch<React.SetStateAction<{ state: boolean; value: MessageType }>>;
 }

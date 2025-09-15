@@ -85,10 +85,16 @@
   /* width: 18px;
   height: 18px; */
   border: 2px solid var(--mainColor);
-  /* border-radius: 50%; */
+  border-radius: 2px;
+  padding: 2px;
   display: inline-block;
   position: relative;
   transition: all 0.3s ease;
+}
+
+.radio-course-mark:hover {
+  background-color: var(--mainColor);
+  color: white;
 }
 
 /* Внутренняя точка при выборе */

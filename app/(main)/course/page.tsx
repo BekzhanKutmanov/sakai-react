@@ -170,24 +170,6 @@ export default function Course() {
         setSelectedCourse(null);
     };
 
-    const publish = async (id: number) => {
-        const data = await publishCourse(id);
-        if (data.success) {
-            setMessage({
-                state: true,
-                value: { severity: 'success', summary: 'Ийгиликтүү кошулду!', detail: '' }
-            });
-        } else {
-            setMessage({
-                state: true,
-                value: { severity: 'error', summary: 'Катаа!', detail: 'Кийинирээк кайталаныз' }
-            }); // messege - Ошибка при добавлении
-            if (data?.response?.status) {
-                showError(data.response.status);
-            }
-        }
-    };
-
     const handleUpdateCourse = async () => {
         const data = await updateCourse(selectedCourse, editingLesson);
         if (data?.success) {
@@ -351,11 +333,8 @@ export default function Course() {
 
                     <div>{imageBodyTemplate(shablonData)}</div>
 
-                    {/* Радиокнопка */}
-                    <div className="flex-auto">
-                        {/* <RadioButton inputId={`radio-${shablonData.id}`} name="radio" value={shablonData} onChange={() => setForStreamId(shablonData)} checked={forStreamId?.id === shablonData.id} /> */}
-                        <label className="custom-radio">
-                            <span>Агымга байлоо</span>
+                    <>
+                        <label className="custom-course-radio">
                             <input
                                 type="radio"
                                 name="radio"
@@ -366,10 +345,9 @@ export default function Course() {
                                 }}
                                 checked={forStreamId?.id === shablonData.id}
                             />
-                            <span className="radio-mark"></span>
-                            {/* {Radio(rowData)} */}
+                            <span className="radio-course-mark" onClick={()=> setActiveIndex(1)}>Связать к потоку</span>
                         </label>
-                    </div>
+                    </>
 
                     {/* Кнопки действий */}
                     {!tableMedia && (
@@ -492,16 +470,16 @@ export default function Course() {
                                 onSelect={onSelect}
                             />
                             {courseValue.image || editingLesson.image ? (
-                            <div className="mt-2 text-sm text-gray-700 ">
-                                {typeof editingLesson.image === 'string' && (
-                                    <>
-                                        <b className="text-[12px] text-center w-[300px]">{imageTitle}</b>
-                                    </>
-                                )}
-                            </div>
+                                <div className="mt-2 text-sm text-gray-700 ">
+                                    {typeof editingLesson.image === 'string' && (
+                                        <>
+                                            <b className="text-[12px] text-center w-[300px]">{imageTitle}</b>
+                                        </>
+                                    )}
+                                </div>
                             ) : (
                                 <b className="text-[12px] text-red-500">jpeg, png, jpg</b>
-                            )} 
+                            )}
                             <div className="flex items-center gap-1">{(editingLesson.image || imageState) && <Button icon={'pi pi-trash'} onClick={clearFile} />}</div>
                         </div>
                     </div>
@@ -561,7 +539,7 @@ export default function Course() {
                                                     }}
                                                 />
                                                 <Button
-                                                    label="Агымдар"
+                                                    label="Потоки"
                                                     icon="pi pi-arrow-right"
                                                     className="w-full"
                                                     iconPos="right"
@@ -593,7 +571,7 @@ export default function Course() {
                                     pt={{
                                         headerAction: { className: 'font-italic' }
                                     }}
-                                    header="Агымдар"
+                                    header="Потоки"
                                     className="p-tabview p-tabview-nav p-tabview-selected p-tabview-panels p-tabview-panel"
                                 >
                                     <div className="w-full sm:w-1/2">
@@ -640,12 +618,19 @@ export default function Course() {
                                                         <Column
                                                             field="title"
                                                             header="Название"
-                                                            style={{ width: '80%' }}
+                                                            // style={{ width: '80%' }}
                                                             body={(rowData) => (
                                                                 <Link href={`/course/${rowData.id}/${'null'}`} onClick={() => setMainCourseId(rowData.id)} key={rowData.id}>
                                                                     {rowData.title}
                                                                 </Link>
                                                             )}
+                                                        ></Column>
+                                                        <Column
+                                                            header="Публикация"
+                                                            style={{ margin: '0 3px', textAlign: 'center' }}
+                                                            body={(rowData) =>
+                                                                rowData.is_published ? <i className="pi pi-check text-md sm:text-lg text-[var(--mainColor)]"></i> : <i className="pi pi-times text-md sm:text-lg text-[var(--mainColor)]"></i>
+                                                            }
                                                         ></Column>
                                                         <Column
                                                             header="Связь с потоком"
@@ -663,7 +648,7 @@ export default function Course() {
                                                                             }}
                                                                             checked={forStreamId?.id === rowData.id}
                                                                         />
-                                                                        <span className="radio-course-mark">Кнопка</span>
+                                                                        <span className="radio-course-mark">Связать</span>
                                                                     </label>
                                                                 </>
                                                             )}

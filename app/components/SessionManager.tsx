@@ -9,7 +9,7 @@ import { usePathname } from 'next/navigation';
 
 const SessionManager = () => {
     const { setMessage } = useContext(LayoutContext);
-    const { user, setUser } = useContext(LayoutContext);
+    const { user, setUser, departament, setDepartament } = useContext(LayoutContext);
     const { setGlobalLoading } = useContext(LayoutContext);
 
     const pathname = usePathname();
@@ -27,7 +27,12 @@ const SessionManager = () => {
                             setGlobalLoading(false);
                         }, 1000);
                         console.log('Данные пользователя успешно пришли ', res);
-
+                        if (res.roles && res.roles.length > 0) {
+                            const roleCheck = res.roles.find((i: { id_role: number }) => i.id_role);
+                            if (roleCheck) {
+                                setDepartament({ info: roleCheck.roles_name.info_ru, last_name: res.user?.last_name, name: res?.user.name, father_name: res.user?.father_name });
+                            }
+                        }
                         const userVisit = localStorage.getItem('userVisit');
                         if (!userVisit) {
                             localStorage.setItem('userVisit', JSON.stringify(true));
@@ -60,7 +65,7 @@ const SessionManager = () => {
     }, []);
 
     useEffect(() => {
-        if(!pathname.startsWith('/teaching/lesson/') && !pathname.startsWith('/course/')){
+        if (!pathname.startsWith('/teaching/lesson/') && !pathname.startsWith('/course/')) {
             setGlobalLoading(true);
         }
 
@@ -69,8 +74,8 @@ const SessionManager = () => {
         if (!token && pathname !== '/' && pathname !== '/auth/login') {
             console.log('Перенеправляю в login');
 
-            // logout({ setUser, setGlobalLoading });
-            // window.location.href = '/auth/login';
+            logout({ setUser, setGlobalLoading });
+            window.location.href = '/auth/login';
             setGlobalLoading(false);
             return;
         }

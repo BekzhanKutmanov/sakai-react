@@ -11,7 +11,7 @@ export const NotFound = ({ titleMessage }: { titleMessage: string }) => {
                 <p className="text-[16px] text-center font-bold">{titleMessage}</p>
                 <Link href={'/'} className='text-center text-[12px] sm:text-[14px]'>
                     {/* <FancyLinkBtn btnWidth={'240px'} backround={'--mainColor'} effectBg={'--titleColor'} title={''} /> */}
-                    Башкы баракчага кайтуу
+                    Перейти в главную страницу
                 </Link>
             </div>
         </div>

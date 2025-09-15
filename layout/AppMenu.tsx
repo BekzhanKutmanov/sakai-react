@@ -1,4 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
+'use client';
 
 import React, { useContext, useEffect, useState } from 'react';
 import AppMenuitem from './AppMenuitem';
@@ -19,8 +20,7 @@ import { Button } from 'primereact/button';
 import Link from 'next/link';
 
 const AppMenu = () => {
-    const { layoutConfig, user, setDeleteQuery, setUpdateeQuery, course, mainCourseId, setMainCourseId, contextFetchCourse, contextFetchThemes, contextThemes, setContextThemes, contextFetchStudentThemes, contextStudentThemes } =
-        useContext(LayoutContext);
+    const { user, setDeleteQuery, setUpdateeQuery, contextFetchThemes, contextThemes, contextFetchStudentThemes, contextStudentThemes, departament } = useContext(LayoutContext);
     interface test {
         label: string;
         id: number;
@@ -38,20 +38,19 @@ const AppMenu = () => {
         mode: 'onChange'
     });
 
+    const router = useRouter();
     const location = usePathname();
     const pathname = location;
     const { studentThemeCourse } = useParams();
     const params = useParams();
     const course_Id = params.course_Id;
 
-    const router = useRouter();
-
     const [courseList, setCourseList] = useState<test[]>([]);
     const [selectId, setSelectId] = useState<number | null>(null);
     const [visible, setVisisble] = useState(false);
     const [themeAddvisible, setThemeAddVisisble] = useState(false);
-    const [editingLesson, setEditingLesson] = useState<{ title: string, sequence_number: number | null } | null>(null);
-    const [themeValue, setThemeValue] = useState<{ title: string, sequence_number: number | null }>({ title: '', sequence_number: null });
+    const [editingLesson, setEditingLesson] = useState<{ title: string; sequence_number: number | null } | null>(null);
+    const [themeValue, setThemeValue] = useState<{ title: string; sequence_number: number | null }>({ title: '', sequence_number: null });
 
     const [themesStudentList, setThemesStudentList] = useState<{ label: string; id: number; to: string; items?: AppMenuItem[] }[]>([]);
 
@@ -61,11 +60,6 @@ const AppMenu = () => {
     const byStatus: AppMenuItem[] = user?.is_working
         ? pathname.startsWith('/course/')
             ? [
-                  {
-                      label: '',
-                      icon: 'pi pi-fw pi-arrow-left',
-                      to: '/course'
-                  },
                   {
                       label: 'Темалар',
                       icon: 'pi pi-fw pi-calendar-clock',
@@ -80,7 +74,37 @@ const AppMenu = () => {
           ]
         : [];
 
+    const forDepartament =
+        !pathname.startsWith('/course/') && departament.info.length > 0
+            ? [
+                  {
+                      label: 'Главная страница',
+                      icon: 'pi pi-home',
+                      to: '/'
+                  },
+                  {
+                      label: 'Факультет',
+                      icon: 'pi pi-graduation-cap',
+                      to: '/faculty'
+                  },
+                  {
+                      label: 'Курсы',
+                      icon: 'pi pi-fw pi-book',
+                      to: '/course'
+                  }
+              ]
+            : [];
+
     const model: AppMenuItem[] = [
+        {
+            label: '',
+            icon: 'pi pi-fw pi-arrow-left',
+            to: '/course'
+        },
+        {
+            label: '',
+            items: forDepartament
+        },
         {
             label: '',
             items: byStatus
@@ -191,9 +215,6 @@ const AppMenu = () => {
     };
 
     useEffect(() => {
-        if (user?.is_working) {
-            contextFetchCourse(1);
-        }
         if (user?.is_student) {
             const isTopicsChildPage = pathname.startsWith('/teaching/');
             if (isTopicsChildPage) {
@@ -258,7 +279,7 @@ const AppMenu = () => {
                             value={String(editingLesson?.sequence_number)}
                             className="w-[90%]"
                             onChange={(e) => {
-                                setEditingLesson((prev) => prev && ({ ...prev, sequence_number: Number(e.target.value) }));
+                                setEditingLesson((prev) => prev && { ...prev, sequence_number: Number(e.target.value) });
                             }}
                         />
                     </div>
@@ -297,7 +318,7 @@ const AppMenu = () => {
                             // className="w-[50px] sm:w-[70px]"
                             className="w-[90%]"
                             onChange={(e) => {
-                                setThemeValue((prev) => prev && ({ ...prev, sequence_number: Number(e.target.value) }));
+                                setThemeValue((prev) => prev && { ...prev, sequence_number: Number(e.target.value) });
                             }}
                         />
                     </div>

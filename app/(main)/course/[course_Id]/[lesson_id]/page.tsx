@@ -26,7 +26,7 @@ import { Button } from 'primereact/button';
 import { confirmDialog } from 'primereact/confirmdialog';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 export default function LessonStep() {
@@ -93,10 +93,12 @@ export default function LessonStep() {
     };
 
     const handleFetchSteps = async (lesson_id: number) => {
+        setSkeleton(true);
         const data = await fetchSteps(Number(lesson_id));
         console.log('steps', data);
 
         if (data.success) {
+            setSkeleton(false);
             if (data.steps.length < 1) {
                 setHasSteps(true);
             } else {
@@ -104,6 +106,7 @@ export default function LessonStep() {
                 setSteps(data.steps);
             }
         } else {
+            setSkeleton(false);
             setHasSteps(false);
             setMessage({
                 state: true,
@@ -116,6 +119,7 @@ export default function LessonStep() {
     };
 
     const handleAddLesson = async (lessonId: number, typeId: number) => {
+        setFormVisible(false);
         const data = await addLesson({ lesson_id: lessonId, type_id: typeId }, sequence_number);
         console.log(data);
 
@@ -134,7 +138,6 @@ export default function LessonStep() {
                 showError(data.response.status);
             }
         }
-        setFormVisible(false);
     };
 
     const handleFetchElement = async (stepId: number) => {
@@ -256,6 +259,23 @@ export default function LessonStep() {
         );
     }
 
+    const scrollRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const el = scrollRef.current;
+        if (!el) return;
+
+        const onWheel = (e: WheelEvent) => {
+            if (e.deltaY !== 0) {
+                e.preventDefault();
+                el.scrollLeft += e.deltaY; // прокрутка по горизонтали
+            }
+        };
+
+        el.addEventListener('wheel', onWheel, { passive: false });
+        return () => el.removeEventListener('wheel', onWheel);
+    }, []);
+
     return (
         <div className="main-bg">
             {/* modal sectoin */}
@@ -311,14 +331,18 @@ export default function LessonStep() {
                         <div onClick={handleFetchTypes} className="cursor-pointer w-[40px] h-[40px] sm:w-[57px] sm:h-[57px] rounded animate-step"></div>
                     </div>
                 ) : (
-                    <div className="flex gap-2 max-w-[550px] sm:max-w-[800px] overflow-x-auto scrollbar-thin">
-                        {steps.map((item, idx) => {
-                            return (
-                                <div key={item.id} className="flex flex-col items-center">
-                                    {step(item.type.logo, item.id, idx)}
-                                </div>
-                            );
-                        })}
+                    <div ref={scrollRef} className="flex gap-2 max-w-[550px] sm:max-w-[800px] overflow-x-auto scrollbar-thin right-shadow">
+                        {skeleton ? (
+                            <div className='w-[700px]'><GroupSkeleton count={1} size={{ width: '100%', height: '3rem' }} /></div>
+                        ) : (
+                            steps.map((item, idx) => {
+                                return (
+                                    <div key={item.id} className="flex flex-col items-center">
+                                        {step(item.type.logo, item.id, idx)}
+                                    </div>
+                                );
+                            })
+                        )}
                     </div>
                 )}
                 <div className="flex items-center gap-1">
@@ -336,12 +360,12 @@ export default function LessonStep() {
                     <NotFound titleMessage="Азырынча кадамдар жок" />
                 </div>
             )}
-            <div className='max-w-[500px] m-auto shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)] mt-3 pb-1 flex items-center justify-between flex-col sm:flex-row gap-1'>
-                {!hasSteps && <b className='sm:text-[18px]'>{element?.step.type.title}</b>}
+            <div className="max-w-[500px] m-auto shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)] mt-3 pb-1 flex items-center justify-between flex-col sm:flex-row gap-1">
+                {!hasSteps && <b className="sm:text-[18px]">{element?.step.type.title}</b>}
                 {!hasSteps && (
                     <Button
                         icon={'pi pi-trash'}
-                        label='Кадамды өчүрүү'
+                        label="Кадамды өчүрүү"
                         className=" hover:bg-[var(--mainBorder)] transition"
                         onClick={() => {
                             const options = getConfirmOptions(Number(), () => handleDeleteStep());

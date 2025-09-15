@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 
 import Link from 'next/link';
-import React, { forwardRef, useContext, useImperativeHandle, useRef } from 'react';
+import React, { forwardRef, useContext, useEffect, useImperativeHandle, useRef } from 'react';
 import Tiered from '@/app/components/popUp/Tiered';
 import FancyLinkBtn from '@/app/components/buttons/FancyLinkBtn';
 import { classNames } from 'primereact/utils';
@@ -12,7 +12,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { logout } from '@/utils/logout';
 
 const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
-    const { layoutConfig, layoutState, onMenuToggle, showProfileSidebar, user, setUser, setGlobalLoading } = useContext(LayoutContext);
+    const { layoutConfig, layoutState, onMenuToggle, showProfileSidebar, user, setUser, setGlobalLoading, departament } = useContext(LayoutContext);
 
     const menubuttonRef = useRef(null);
     const topbarmenuRef = useRef(null);
@@ -38,7 +38,7 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                       {
                           label: '',
                           template: (
-                            <div className="flex items-center flex-col gap-1 text-sm">
+                              <div className="flex items-center flex-col gap-1 text-sm">
                                   <div className="flex gap-1">
                                       <span className="text-[var(--titleColor)]">{user?.last_name}</span>
                                       <span className="text-[var(--titleColor)]">{user?.name}</span>
@@ -53,8 +53,8 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                           className: 'text-[12px]',
                           items: [],
                           command: () => {
-                            window.location.href = '/auth/login';
-                            logout({ setUser, setGlobalLoading });
+                              window.location.href = '/auth/login';
+                              logout({ setUser, setGlobalLoading });
                           }
                       }
                   ]
@@ -63,10 +63,10 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                   label: 'Кирүү',
                   icon: 'pi pi-sign-in',
                   items: [],
-                //   url: '/auth/login'
-                  command: ()=> {
-                    // router.push('/auth/login');
-                    window.location.href = '/auth/login';
+                  //   url: '/auth/login'
+                  command: () => {
+                      // router.push('/auth/login');
+                      window.location.href = '/auth/login';
                   }
               },
         {
@@ -90,7 +90,6 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                     <span className="text-gray-500 text-[12px]">{user?.email}</span>
                 </div>
             )
-
         },
         {
             label: 'Чыгуу',
@@ -103,6 +102,10 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
         }
     ];
 
+    useEffect(() => {
+        console.log('dep', departament);
+    }, [departament]);
+
     return (
         <div className="layout-topbar">
             <Link href="/" className="layout-topbar-logo">
@@ -110,9 +113,13 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                 <img src={`/layout/images/logo-remove.png`} className="w-[90px] sm:w-[100px]" alt="logo" />
                 <h3 className="hidden sm:block text-[18px] md:text-[30px]">Цифровой кампус ОшГУ</h3>
             </Link>
-            <b className='text-[red] text-[14px] hidden sm:block'>(в разработке)</b>
+            <b className="text-[red] text-[14px] hidden sm:block">(в разработке)</b>
 
-            {pathName !== '/' && pathName !== '/course' ? (
+            {pathName !== '/' && departament.name.length > 0 ? (
+                <button ref={menubuttonRef} type="button" className="p-link layout-menu-button layout-topbar-button" onClick={onMenuToggle}>
+                    <i className="pi pi-bars text-[var(--mainColor)]" />
+                </button>
+            ) : pathName !== '/course' ? (
                 <button ref={menubuttonRef} type="button" className="p-link layout-menu-button layout-topbar-button" onClick={onMenuToggle}>
                     <i className="pi pi-bars text-[var(--mainColor)]" />
                 </button>
@@ -124,9 +131,9 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                 <div className="flex items-center gap-4">
                     {media ? (
                         <></>
-                        // <Tiered title={{ name: '', font: 'pi pi-ellipsis-v' }} insideColor={'--bodyColor'} items={mobileMenu} />
                     ) : (
-                        <div className={`flex items-center gap-3 ${!media ? 'order-2'   : 'order-3'} `}>
+                        // <Tiered title={{ name: '', font: 'pi pi-ellipsis-v' }} insideColor={'--bodyColor'} items={mobileMenu} />
+                        <div className={`flex items-center gap-3 ${!media ? 'order-2' : 'order-3'} `}>
                             {/* <Tiered title={{ name: 'Каталог', font: 'pi pi-list' }} insideColor={'--titleColor'} items={items} />
                             <Tiered
                                 title={{ name: 'Окуялар', font: 'pi pi-calendar' }}
@@ -167,7 +174,7 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                 </div>
             </div>
 
-            <b className='text-[red] text-[14px] block sm:hidden '>(в разработке)</b>
+            <b className="text-[red] text-[14px] block sm:hidden ">(в разработке)</b>
         </div>
     );
 });

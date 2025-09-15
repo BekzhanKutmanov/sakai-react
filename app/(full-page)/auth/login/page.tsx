@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 import { useRouter } from 'next/navigation';
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Password } from 'primereact/password';
 import { LayoutContext } from '../../../../layout/context/layoutcontext';
 import { InputText } from 'primereact/inputtext';
@@ -17,7 +17,7 @@ import { LoginType } from '@/types/login';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 
 const LoginPage = () => {
-    const { layoutConfig, setUser, setMessage, setGlobalLoading } = useContext(LayoutContext);
+    const { layoutConfig, setUser, setMessage, setGlobalLoading, setDepartament, departament } = useContext(LayoutContext);
 
     const router = useRouter();
     const media = useMediaQuery('(max-width: 1030px)');
@@ -39,13 +39,23 @@ const LoginPage = () => {
             document.cookie = `access_token=${user.token.access_token}; path=/; Secure; SameSite=Strict; expires=${user.token.expires_at}`;            
             const token = user.token.access_token;
             if (token) {
-                const res = await getUser();                
+                const res = await getUser();
                 console.log(res);
                 
                 try {
                     if (res?.success) {
                         if (res?.user.is_working) {
-                            window.location.href = '/course';
+                            if(res.roles && res.roles.length > 0){
+                                const roleCheck = res.roles.find((i:{id_role: number})=> i.id_role)
+                                if(roleCheck){                                    
+                                    setDepartament({info: roleCheck.roles_name.info_ru, last_name:res.user?.last_name, name:res?.user.name, father_name:res.user?.father_name});
+                                    window.location.href = '/faculty';
+                                } else {
+                                    window.location.href = '/course';
+                                }                                
+                            } else {
+                                window.location.href = '/course';
+                            }
                         } 
                         if(res?.user.is_student){
                             window.location.href = '/';
@@ -83,6 +93,11 @@ const LoginPage = () => {
             value: { severity: 'error', summary: 'Ошибка', detail: 'Введите корректные данные' }
         }); // messege - Ошибка при авторизации
     };
+
+    useEffect(()=> {
+        console.log(departament);
+        
+    },[departament]);
 
     return (
         <div className={`flex flex-col gap-4 pt-4 h-[100vh] login-bg`}>

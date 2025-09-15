@@ -28,7 +28,6 @@ export default function StreamList({
     insideDisplayStreams: (id: mainStreamsType[]) => void;
     toggleIndex: () => void;
 }) {
-
     const [streams, setStreams] = useState<mainStreamsType[]>([]);
     const [displayStreams, setDisplayStreams] = useState<displayType[] | any>([]);
     const [hasStreams, setHasStreams] = useState(false);
@@ -170,7 +169,7 @@ export default function StreamList({
     }, [courseValue]);
 
     useEffect(() => {
-        console.log('обнова');
+        console.log('streams', streams);
         
         if (streams.length < 1) {
             insideDisplayStreams(streams);
@@ -250,7 +249,6 @@ export default function StreamList({
         if (!items || items.length === 0) return null;
 
         const hasData = items.some((item) => item.connect_id !== null);
-        // console.warn('HAS', hasData);
         if (hasData) {
             let list = items.map((product, index: number) => {
                 if (product.connect_id !== null) {
@@ -305,7 +303,7 @@ export default function StreamList({
                 }}
                 footer={footerContent}
             >
-                {
+                {streams && streams.length > 0 ? (
                     <DataTable value={streams} className="w-full my-custom-table" dataKey="stream_id" key={JSON.stringify(pendingChanges)} responsiveLayout="stack" breakpoint="960px" rows={5}>
                         <Column body={(_, { rowIndex }) => rowIndex + 1} header="Номер"></Column>
                         {/* <Column body={imageBodyTemplate}></Column> */}
@@ -348,7 +346,9 @@ export default function StreamList({
                             )}
                         ></Column>
                     </DataTable>
-                }
+                ) : (
+                    <p className="text-[16px] text-center font-bold">Курс не опубликован или данные временно не доступны</p>
+                )}
             </Dialog>
             {callIndex === 1 && (
                 <div className="p-1 sm:py-4 px-2">
@@ -362,11 +362,11 @@ export default function StreamList({
                                     {/* <span className=" text-[var(--mainColor)] "> */}
                                     <span className="lg:max-w-[300px] xl:max-w-[400px] text-[16px] sm:text-[16px] md:text-[18px] font-bold text-[#4B4563]">{courseValue?.title}</span>
                                     {/* </span> */}
-                                    <div className='min-w-[110px]'>
+                                    <div className="min-w-[110px]">
                                         <Button
                                             label="Добавить"
                                             icon="pi pi-link"
-                                            className='w-full'
+                                            className="w-full"
                                             onClick={() => {
                                                 handleFetchStreams();
                                                 setVisible(true);
@@ -379,7 +379,9 @@ export default function StreamList({
                     )}
 
                     {hasStreams ? (
-                        <NotFound titleMessage={'Агымдар азырынча жок'} />
+                        <>
+                            <NotFound titleMessage={'Агымдар азырынча жок'} />
+                        </>
                     ) : (
                         <div className="flex flex-col gap-2 sm:gap-2">
                             {isMobile && (
@@ -395,7 +397,7 @@ export default function StreamList({
                                     />
 
                                     <Button
-                                        label="Курстар"
+                                        label="Курсы"
                                         className="w-full"
                                         icon="pi pi-arrow-left"
                                         onClick={() => {

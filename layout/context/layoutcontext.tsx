@@ -132,6 +132,9 @@ export const LayoutProvider = ({ children }: ChildContainerProps) => {
         setContextStudentThemes(data);
     };
 
+    // departament
+    const [departament, setDepartament] = useState<{last_name:string, name:string, father_name:string, info:string}>({last_name:'', name:'', father_name:'', info: ''});
+    
     const value: LayoutContextProps = {
         layoutConfig,
         setLayoutConfig,
@@ -165,7 +168,10 @@ export const LayoutProvider = ({ children }: ChildContainerProps) => {
         crumbUrls,
         contextAddCrumb,
         mainCourseId,
-        setMainCourseId
+        setMainCourseId,
+
+        departament,
+        setDepartament,
     };
 
     return (
