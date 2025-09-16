@@ -102,7 +102,10 @@ const AppMenu = () => {
         {
             label: '',
             icon: 'pi pi-fw pi-arrow-left',
-            to: '/course'
+            to: '#',
+            command: ()=> {
+                router.back();
+            }
         },
         {
             label: '',

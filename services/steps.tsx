@@ -1,5 +1,3 @@
-import { CourseCreateType } from '@/types/courseCreateType';
-import { lessonStateType } from '@/types/lessonStateType';
 import axiosInstance from '@/utils/axiosInstance';
 
 let url = '';
@@ -422,6 +420,18 @@ export const updateLink = async (value: { url: string | null; title: string; des
         return data;
     } catch (err) {
         console.log('Ошибка при обновлении урока', err);
+        return err;
+    }
+};
+
+export const fetchDepartamentSteps = async (lesson_id: number, id_kafedra: number) => {
+    try {
+        const res = await axiosInstance.get(`/v1/teacher/controls/department/course/views?lesson_id=${lesson_id}&id_kafedra=${id_kafedra}`);
+        const data = await res.data;
+
+        return data;
+    } catch (err) {
+        console.log('Ошибка загрузки:', err);
         return err;
     }
 };
