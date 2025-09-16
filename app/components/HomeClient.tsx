@@ -10,15 +10,19 @@ import FancyLinkBtn from './buttons/FancyLinkBtn';
 import { LayoutContext } from '@/layout/context/layoutcontext';
 
 export default function HomeClient() {
-    const { user } = useContext(LayoutContext);
+    const { user, setGlobalLoading } = useContext(LayoutContext);
 
     useEffect(() => {
+        setGlobalLoading(true);
+        setTimeout(() => {
+            setGlobalLoading(false);
+        }, 800);
         AOS.init();
     }, []);
 
     return (
         <div className="relative mt-[98px] px-2 py-[50px] z-[1]">
-          {/* <Link href={`/pdf/1757146212.pdf`}>{"Уроки"}</Link> */}
+            {/* <Link href={`/pdf/1757146212.pdf`}>{"Уроки"}</Link> */}
             <div className="w-full">
                 <div className="flex flex-column md:flex-row items-center justify-between">
                     <div className="lg:w-1/2">
@@ -39,11 +43,11 @@ export default function HomeClient() {
                                     <li>ачык онлайн курстар</li>
                                     <li>жогорку билим берүү программалары</li>
                                 </ul>
-                                {user &&
-                                  <Link href={user.is_working ? '/course' : user.is_student ? '/teaching' : ''}>
-                                      <FancyLinkBtn btnWidth={'200px'} backround={'--mainColor'} effectBg={'--titleColor'} title={user.is_working ? 'Окутуучу' : user.is_student ? 'Студент' : ''} />
-                                  </Link>
-                                }
+                                {user && (
+                                    <Link href={user.is_working ? '/course' : user.is_student ? '/teaching' : ''}>
+                                        <FancyLinkBtn btnWidth={'200px'} backround={'--mainColor'} effectBg={'--titleColor'} title={user.is_working ? 'Окутуучу' : user.is_student ? 'Студент' : ''} />
+                                    </Link>
+                                )}
                             </div>
                         </div>
                     </div>

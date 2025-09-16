@@ -43,7 +43,10 @@ const AppMenu = () => {
     const pathname = location;
     const { studentThemeCourse } = useParams();
     const params = useParams();
+    console.log(params);
+    
     const course_Id = params.course_Id;
+    const id_kafedra = params?.id_kafedra ? params.id_kafedra : null;
 
     const [courseList, setCourseList] = useState<test[]>([]);
     const [selectId, setSelectId] = useState<number | null>(null);
@@ -147,7 +150,7 @@ const AppMenu = () => {
         console.log(data);
 
         if (data?.success) {
-            contextFetchThemes(Number(course_Id));
+            contextFetchThemes(Number(course_Id), id_kafedra ? Number(id_kafedra) : null);
             clearValues();
             setMessage({
                 state: true,
@@ -168,7 +171,7 @@ const AppMenu = () => {
     const handleDeleteTheme = async (id: number) => {
         const data = await deleteTheme(id);
         if (data.success) {
-            contextFetchThemes(Number(course_Id));
+            contextFetchThemes(Number(course_Id), id_kafedra ? Number(id_kafedra) : null);
             setDeleteQuery(true);
             setMessage({
                 state: true,
@@ -190,7 +193,7 @@ const AppMenu = () => {
         const data = await updateTheme(Number(course_Id), selectId, editingLesson?.title ? editingLesson?.title : '', editingLesson?.sequence_number ? editingLesson?.sequence_number : null);
         if (data?.success) {
             setUpdateeQuery(true);
-            contextFetchThemes(Number(course_Id));
+            contextFetchThemes(Number(course_Id), id_kafedra ? Number(id_kafedra) : null);
             clearValues();
             setMessage({
                 state: true,

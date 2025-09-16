@@ -18,7 +18,7 @@ export default function Faculty() {
     }
 
     const showError = useErrorMessage();
-    const { setMessage } = useContext(LayoutContext);
+    const { setMessage, setGlobalLoading } = useContext(LayoutContext);
 
     const [selected, setSelected] = useState<City | null>(null);
     const [faculty, setFaculty] = useState<City[]>([{ name_ru: '', id: null }]);
@@ -68,6 +68,10 @@ export default function Faculty() {
 
     useEffect(() => {
         handleFetchFaculty();
+        setGlobalLoading(true);
+        setTimeout(() => {
+            setGlobalLoading(false);
+        }, 900);
     }, []);
 
     useEffect(() => {

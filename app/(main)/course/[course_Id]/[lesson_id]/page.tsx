@@ -6,32 +6,26 @@ import LessonPractica from '@/app/components/lessons/LessonPractica';
 import LessonTest from '@/app/components/lessons/LessonTest';
 import LessonVideo from '@/app/components/lessons/LessonVideo';
 import { NotFound } from '@/app/components/NotFound';
-import PDFViewer from '@/app/components/PDFBook';
-import FormModal from '@/app/components/popUp/FormModal';
 import GroupSkeleton from '@/app/components/skeleton/GroupSkeleton';
-import useBreadCrumbs from '@/hooks/useBreadCrumbs';
 import useErrorMessage from '@/hooks/useErrorMessage';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { LayoutContext } from '@/layout/context/layoutcontext';
-import { lessonSchema } from '@/schemas/lessonSchema';
 import { deleteLesson, fetchLessonShow } from '@/services/courses';
 import { addLesson, deleteStep, fetchElement, fetchSteps, fetchTypes } from '@/services/steps';
 import { lessonStateType } from '@/types/lessonStateType';
 import { mainStepsType } from '@/types/mainStepType';
 import { getConfirmOptions } from '@/utils/getConfirmOptions';
-import { yupResolver } from '@hookform/resolvers/yup';
 import { useParams, usePathname, useRouter } from 'next/navigation';
-import { BreadCrumb } from 'primereact/breadcrumb';
 import { Button } from 'primereact/button';
 import { confirmDialog } from 'primereact/confirmdialog';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { useForm } from 'react-hook-form';
 
 export default function LessonStep() {
     const param = useParams();
     const course_id = param.course_Id;
+    const scrollRef = useRef<HTMLDivElement>(null);
 
     const [lessonInfoState, setLessonInfoState] = useState<{ title: string; documents_count: string; usefullinks_count: string; videos_count: string } | null>(null);
     const media = useMediaQuery('(max-width: 640px)');
@@ -176,6 +170,105 @@ export default function LessonStep() {
         }
     };
 
+    useEffect(() => {
+        if (Array.isArray(steps) && steps.length > 0) {
+            const firstStep = steps[0]?.id;
+            // const firstStep = steps[steps.length - 1]?.id;
+            setSelectId(firstStep);
+            handleFetchElement(firstStep);
+        }
+    }, [steps]);
+
+    useEffect(() => {
+        if (lesson_id) {
+            console.warn('LESSONID ', lesson_id);
+            handleShow(lesson_id);
+            changeUrl(lesson_id);
+        }
+    }, [lesson_id]);
+
+    useEffect(() => {
+        setTestovy(true);
+        contextFetchThemes(Number(course_id), null);
+    }, [course_id]);
+
+    // useEffect(() => {
+    //     console.log('Тема ', contextThemes, lesson_id);
+    //     if (testovy || updateQuery || deleteQuery) {
+    //         setTestovy(false);
+    //         setUpdateeQuery(false);
+    //         if (contextThemes?.lessons?.data?.length > 0) {
+    //             setThemeNull(false);
+    //             if (param.lesson_id == 'null' || deleteQuery) {
+    //                 console.log(contextThemes.lessons.data[0].id);
+
+    //                 handleShow(contextThemes.lessons.data[0].id);
+    //                 console.log('variant 4', contextThemes.lessons.data[0].id);
+    //                 handleFetchSteps(contextThemes.lessons.data[0].id);
+    //                 setLesson_id(contextThemes.lessons.data[0].id);
+    //                 setDeleteQuery(false);
+    //             } else {
+    //                 console.log('variant 5');
+    //                 handleShow(Number(param.lesson_id));
+    //                 setLesson_id((param.lesson_id && Number(param.lesson_id)) || null);
+    //                 handleFetchSteps(Number(param.lesson_id));
+    //             }
+    //         } else {
+    //             setThemeNull(true);
+    //             console.log('variant 3');
+    //         }
+    //     }
+    // }, [contextThemes]);
+
+    useEffect(() => {
+        if (!contextThemes?.lessons?.data) return;
+
+        const lessons = contextThemes.lessons.data;
+
+        if (lessons.length > 0) {
+            setThemeNull(false);
+
+            let chosenId: number | null = null;
+
+            if (param.lesson_id === 'null' || deleteQuery) {
+                chosenId = lessons[0].id;
+                setDeleteQuery(false);
+            } else {
+                chosenId = param.lesson_id ? Number(param.lesson_id) : lessons[0].id;
+            }
+
+            setLesson_id(chosenId);
+        } else {
+            setThemeNull(true);
+        }
+
+        setTestovy(false);
+        setUpdateeQuery(false);
+    }, [contextThemes, deleteQuery, param.lesson_id]);
+
+    useEffect(() => {
+        if (!lesson_id) return;
+
+        handleShow(lesson_id);
+        handleFetchSteps(lesson_id);
+        changeUrl(lesson_id);
+    }, [lesson_id]);
+
+    useEffect(() => {
+        const el = scrollRef.current;
+        if (!el) return;
+
+        const onWheel = (e: WheelEvent) => {
+            if (e.deltaY !== 0) {
+                e.preventDefault();
+                el.scrollLeft += e.deltaY; // прокрутка по горизонтали
+            }
+        };
+
+        el.addEventListener('wheel', onWheel, { passive: false });
+        return () => el.removeEventListener('wheel', onWheel);
+    }, []);
+
     const lessonInfo = (
         <div>
             <div className="bg-[var(--titleColor)] relative flex flex-col justify-center items-center w-full text-white p-4 md:p-3 pb-4">
@@ -201,56 +294,6 @@ export default function LessonStep() {
         );
     };
 
-    useEffect(() => {
-        if (Array.isArray(steps) && steps.length > 0) {
-            const firstStep = steps[0]?.id;
-            // const firstStep = steps[steps.length - 1]?.id;
-            setSelectId(firstStep);
-            handleFetchElement(firstStep);
-        }
-    }, [steps]);
-
-    useEffect(() => {
-        if (lesson_id) {
-            console.warn('LESSONID ', lesson_id);
-            handleShow(lesson_id);
-            changeUrl(lesson_id);
-        }
-    }, [lesson_id]);
-
-    useEffect(() => {
-        setTestovy(true);
-        contextFetchThemes(Number(course_id));
-    }, [course_id]);
-
-    useEffect(() => {
-        console.log('Тема ', contextThemes, lesson_id);
-        if (testovy || updateQuery || deleteQuery) {
-            setTestovy(false);
-            setUpdateeQuery(false);
-            if (contextThemes?.lessons?.data?.length > 0) {
-                setThemeNull(false);
-                if (param.lesson_id == 'null' || deleteQuery) {
-                    console.log(contextThemes.lessons.data[0].id);
-
-                    handleShow(contextThemes.lessons.data[0].id);
-                    console.log('variant 4', contextThemes.lessons.data[0].id);
-                    handleFetchSteps(contextThemes.lessons.data[0].id);
-                    setLesson_id(contextThemes.lessons.data[0].id);
-                    setDeleteQuery(false);
-                } else {
-                    console.log('variant 5');
-                    handleShow(Number(param.lesson_id));
-                    setLesson_id((param.lesson_id && Number(param.lesson_id)) || null);
-                    handleFetchSteps(Number(param.lesson_id));
-                }
-            } else {
-                setThemeNull(true);
-                console.log('variant 3');
-            }
-        }
-    }, [contextThemes]);
-
     if (themeNull) {
         return (
             <div>
@@ -258,24 +301,7 @@ export default function LessonStep() {
             </div>
         );
     }
-
-    const scrollRef = useRef<HTMLDivElement>(null);
-
-    useEffect(() => {
-        const el = scrollRef.current;
-        if (!el) return;
-
-        const onWheel = (e: WheelEvent) => {
-            if (e.deltaY !== 0) {
-                e.preventDefault();
-                el.scrollLeft += e.deltaY; // прокрутка по горизонтали
-            }
-        };
-
-        el.addEventListener('wheel', onWheel, { passive: false });
-        return () => el.removeEventListener('wheel', onWheel);
-    }, []);
-
+    
     return (
         <div className="main-bg">
             {/* modal sectoin */}
@@ -333,7 +359,9 @@ export default function LessonStep() {
                 ) : (
                     <div ref={scrollRef} className="flex gap-2 max-w-[550px] sm:max-w-[800px] overflow-x-auto scrollbar-thin right-shadow">
                         {skeleton ? (
-                            <div className='w-[700px]'><GroupSkeleton count={1} size={{ width: '100%', height: '3rem' }} /></div>
+                            <div className="w-[700px]">
+                                <GroupSkeleton count={1} size={{ width: '100%', height: '3rem' }} />
+                            </div>
                         ) : (
                             steps.map((item, idx) => {
                                 return (

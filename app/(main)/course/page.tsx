@@ -36,7 +36,7 @@ import { SelectButton, SelectButtonChangeEvent } from 'primereact/selectbutton';
 import { mainStreamsType } from '@/types/mainStreamsType';
 
 export default function Course() {
-    const { setMessage, course, setCourses, contextFetchCourse, setMainCourseId } = useContext(LayoutContext);
+    const { setMessage, setGlobalLoading, course, setCourses, contextFetchCourse, setMainCourseId } = useContext(LayoutContext);
     const [coursesValue, setValueCourses] = useState<myMainCourseType[]>([]);
     const [hasCourses, setHasCourses] = useState(false);
     const [courseValue, setCourseValue] = useState<CourseCreateType>({ title: '', description: '', video_url: '', image: '' });
@@ -251,6 +251,10 @@ export default function Course() {
 
     useEffect(() => {
         contextFetchCourse(1);
+        setGlobalLoading(true);
+        setTimeout(() => {
+            setGlobalLoading(false);
+        }, 900);
     }, []);
 
     useEffect(() => {
@@ -320,7 +324,16 @@ export default function Course() {
                     {/* Заголовок */}
                     <div className={`w-full flex-1 ${tableMedia && 'flex items-center gap-1 justify-between'}`}>
                         <div className="font-bold text-md mb-2">
-                            <Link href={`/course/${shablonData.id}/${'null'}`} onClick={() => setMainCourseId(shablonData.id)}>
+                            <Link
+                                href={`/course/${shablonData.id}/${'null'}`}
+                                onClick={() => {
+                                    setMainCourseId(shablonData.id);
+                                    setGlobalLoading(true);
+                                    setTimeout(() => {
+                                        setGlobalLoading(false);
+                                    }, 900);
+                                }}
+                            >
                                 {shablonData.title} {/* Используем subject_name из вашего шаблона */}
                             </Link>
                         </div>
@@ -345,7 +358,9 @@ export default function Course() {
                                 }}
                                 checked={forStreamId?.id === shablonData.id}
                             />
-                            <span className="radio-course-mark" onClick={()=> setActiveIndex(1)}>Связать к потоку</span>
+                            <span className="radio-course-mark" onClick={() => setActiveIndex(1)}>
+                                Связать к потоку
+                            </span>
                         </label>
                     </>
 
@@ -620,7 +635,17 @@ export default function Course() {
                                                             header="Название"
                                                             // style={{ width: '80%' }}
                                                             body={(rowData) => (
-                                                                <Link href={`/course/${rowData.id}/${'null'}`} onClick={() => setMainCourseId(rowData.id)} key={rowData.id}>
+                                                                <Link
+                                                                    href={`/course/${rowData.id}/${'null'}`}
+                                                                    onClick={() => {
+                                                                        setGlobalLoading(true);
+                                                                        setTimeout(() => {
+                                                                            setGlobalLoading(false);
+                                                                        }, 1200);
+                                                                        setMainCourseId(rowData.id);
+                                                                    }}
+                                                                    key={rowData.id}
+                                                                >
                                                                     {rowData.title}
                                                                 </Link>
                                                             )}
@@ -629,7 +654,7 @@ export default function Course() {
                                                             header="Публикация"
                                                             style={{ margin: '0 3px', textAlign: 'center' }}
                                                             body={(rowData) =>
-                                                                rowData.is_published ? <i className="pi pi-check text-md sm:text-lg text-[var(--mainColor)]"></i> : <i className="pi pi-times text-md sm:text-lg text-[var(--mainColor)]"></i>
+                                                                rowData.is_published ? <i className="pi pi-check text-md sm:text-lg text-[var(--greenColor)]"></i> : <i className="pi pi-times text-md sm:text-lg text-[var(--redColor)]"></i>
                                                             }
                                                         ></Column>
                                                         <Column

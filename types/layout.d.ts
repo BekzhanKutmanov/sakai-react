@@ -61,7 +61,7 @@ export interface LayoutContextProps {
         data: myMainCourseType[] 
     };
     setCourses;
-    contextFetchThemes: (id: number)=> void;
+    contextFetchThemes: (id: number, id_kafedra:number | null)=> void;
     contextThemes;
     setContextThemes;
     deleteQuery: boolean;

@@ -118,11 +118,11 @@ export const addThemes = async (id: number, title: string, sequence_number: numb
     }
 };
 
-export const fetchThemes = async (id: number | null) => {
-    console.log('Вызываемая тема ', id);
+export const fetchThemes = async (id: number | null, id_kafedra: number | null) => {
+    console.log('Вызываемая тема ', id, id_kafedra);
 
     try {
-        const res = await axiosInstance(`/v1/teacher/lessons?course_id=${id}`);
+        const res = await axiosInstance.get(`/v1/teacher/lessons?course_id=${id}&id_kafedra=${id_kafedra ? id_kafedra : ''}`);
 
         const data = await res.data;
         return data;

@@ -66,7 +66,7 @@ const SessionManager = () => {
 
     useEffect(() => {
         if (!pathname.startsWith('/teaching/lesson/') && !pathname.startsWith('/course/')) {
-            setGlobalLoading(true);
+            // setGlobalLoading(true);
         }
 
         const token = getToken('access_token');
@@ -76,12 +76,11 @@ const SessionManager = () => {
 
             logout({ setUser, setGlobalLoading });
             window.location.href = '/auth/login';
-            setGlobalLoading(false);
             return;
         }
-        setTimeout(() => {
-            setGlobalLoading(false);
-        }, 900);
+        // setTimeout(() => {
+        //     setGlobalLoading(false);
+        // }, 900);
     }, [pathname]);
 
     return null;

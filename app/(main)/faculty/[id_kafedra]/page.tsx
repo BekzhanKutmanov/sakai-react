@@ -38,7 +38,7 @@ export default function Kafedra() {
     const [contentShow, setContentShow] = useState<boolean>(false);
     const [progressSpinner, setProgressSpinner] = useState(false);
 
-    const { setMessage } = useContext(LayoutContext);
+    const { setMessage, setGlobalLoading } = useContext(LayoutContext);
     const showError = useErrorMessage();
 
     const handleFetchKafedra = async () => {
@@ -109,6 +109,10 @@ export default function Kafedra() {
     };
 
     useEffect(() => {
+        setGlobalLoading(true);
+        setTimeout(() => {
+            setGlobalLoading(false);
+        }, 900);
         handleFetchKafedra();
     }, []);
 
@@ -136,7 +140,7 @@ export default function Kafedra() {
                                         <DataTable value={item.courses} dataKey="id" key={JSON.stringify(progressSpinner)} responsiveLayout="stack" breakpoint="960px" rows={5} className="my-custom-table">
                                             <Column body={(_, { rowIndex }) => rowIndex + 1} header="#" style={{ width: '20px' }}></Column>
                                             <Column body={imageBodyTemplate}></Column>
-                                            <Column field="title" header="Название" style={{ width: '80%' }} body={(rowData) => <p key={rowData.id}>{rowData.title}</p>}></Column>
+                                            <Column field="title" header="Название" style={{ width: '80%' }} body={(rowData) => <Link href={`/faculty/${id_kafedra}/${rowData.id}`} key={rowData.id}>{rowData.title}</Link>}></Column>
                                             <Column
                                                 header="Публикация"
                                                 body={(rowData) => (
