@@ -147,11 +147,7 @@ const AppMenu = () => {
 
     // add theme
     const handleAddTheme = async () => {
-        console.log(course_Id);
-
         const data = await addThemes(Number(course_Id), themeValue?.title ? themeValue?.title : '', themeValue.sequence_number);
-        console.log(data);
-
         if (data?.success) {
             contextFetchThemes(Number(course_Id), id_kafedra ? Number(id_kafedra) : null);
             clearValues();
@@ -174,6 +170,7 @@ const AppMenu = () => {
     const handleDeleteTheme = async (id: number) => {
         const data = await deleteTheme(id);
         if (data.success) {
+            console.warn('treu', data)
             contextFetchThemes(Number(course_Id), id_kafedra ? Number(id_kafedra) : null);
             setDeleteQuery(true);
             setMessage({

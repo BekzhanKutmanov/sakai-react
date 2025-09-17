@@ -36,14 +36,20 @@ export default function LessonInfoCard({
     const [practicaCall, setPracticaCall] = useState(false);
 
     const docCard = (
-        <div className="w-full flex items-center gap-2 border-t-1 border-[gray]">
+        <div className="w-full flex items-center gap-2 py-1">
             <div className="p-2 bg-[var(--mainColor)] w-[36px] h-[36px] flex justify-center items-center rounded">
                 <i className={`${icon} text-white`}></i>
             </div>
             <div className="flex flex-col justify-center gap-1">
                 {documentUrl?.document_path ? (
                     documentUrl?.document_path?.length > 0 ? (
-                        <a href={documentUrl?.document_path ? (documentUrl?.document_path?.length > 0 ? String(documentUrl?.document_path) : '#') : '#'} className="max-w-[800px] text-[16px] text-wrap break-all hover:underline" download target="_blank" rel="noopener noreferrer">
+                        <a
+                            href={documentUrl?.document_path ? (documentUrl?.document_path?.length > 0 ? String(documentUrl?.document_path) : '#') : '#'}
+                            className="max-w-[800px] text-[16px] text-wrap break-all hover:underline"
+                            download
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
                             {title}
                         </a>
                     ) : (
@@ -52,13 +58,13 @@ export default function LessonInfoCard({
                 ) : (
                     <span className="max-w-[800px] text-[16px] text-wrap break-all">{title}</span>
                 )}
-                <p className="max-w-[800px] text-wrap break-all text-[12px]">{description}</p>
+                <p className="max-w-[800px] text-wrap break-all text-[12px]">{description !== 'null' && description }</p>
             </div>
         </div>
     );
 
     const linkCard = (
-        <div className="w-full flex items-center gap-2 py-1 border-t-1 border-[gray]">
+        <div className="w-full flex items-center gap-2 py-1">
             <div className="p-2 bg-[var(--greenColor)] w-[36px] h-[36px] flex justify-center items-center rounded">
                 <i className={`${icon} text-white`}></i>
             </div>
@@ -67,13 +73,13 @@ export default function LessonInfoCard({
                     {title}
                 </a>
 
-                <p className="max-w-[800px] text-wrap break-all text-[12px]">{description}</p>
+                <p className="max-w-[800px] text-wrap break-all text-[12px]">{description !== 'null' && description }</p>
             </div>
         </div>
     );
 
     const videoCard = (
-        <div className="w-full flex items-center gap-2 py-1 border-t-1 border-[gray]">
+        <div className="w-full flex items-center gap-2 py-1">
             <div className="p-2 bg-[#f7634d] w-[36px] h-[36px] flex justify-center items-center rounded">
                 <i className={`${icon} text-white`}></i>
             </div>
@@ -82,13 +88,13 @@ export default function LessonInfoCard({
                     {title}
                 </span>
 
-                <p className="max-w-[800px] text-wrap break-all text-[12px]">{description}</p>
+                <p className="max-w-[800px] text-wrap break-all text-[12px]">{description !== 'null' && description }</p>
             </div>
         </div>
     );
 
     const testCard = (
-        <div className="w-full flex items-center gap-2 py-1 border-t-1 border-[gray]">
+        <div className="w-full flex items-center gap-2 py-1">
             <div className="p-2 bg-[#c38598] w-[36px] h-[36px] flex justify-center items-center rounded">
                 <i className={`${icon} text-white`}></i>
             </div>
@@ -130,7 +136,7 @@ export default function LessonInfoCard({
     );
 
     const practicaCard = (
-        <div className="w-full flex items-center gap-2 py-1 border-t-1 border-[gray]">
+        <div className="w-full flex items-center gap-2 py-1">
             <div className="p-2 bg-[var(--yellowColor)] w-[36px] h-[36px] flex justify-center items-center rounded">
                 <i className={`${icon} text-white`}></i>
             </div>
@@ -140,35 +146,29 @@ export default function LessonInfoCard({
         </div>
     );
 
-    const docuemntPath = documentUrl && documentUrl?.document_path;
-
     const practicaInfo = (
         <div className="flex flex-col justify-between gap-4">
-            <div className='flex flex-col justify-center gap-1'>
-                <b className="cursor-pointer max-w-[800px] sm:text-xl text-wrap break-all">{title}</b>
-                <p className="max-w-[800px] text-wrap break-all text-[12px]">{description}</p>
-            </div>
-            <div className="flex flex-col gap-2 justify-center">
+            <div className="flex flex-col gap-1">
                 {documentUrl ? (
-                    documentUrl.document && documentUrl.document?.length > 0 ? (
-                        <a className="flex gap-2" href={documentUrl.document} download target="_blank" rel="noopener noreferrer">
-                            <span className="text-[var(--mainColor)] text-[13px]">Документ: </span>
-                            <span className="max-w-[800px] text-wrap break-all text-[13px]">{docuemntPath}</span>
+                    documentUrl.document_path && documentUrl.document_path?.length > 0 ? (
+                        <a className="flex gap-2" href={documentUrl.document_path} download target="_blank" rel="noopener noreferrer">
+                            <span className="max-w-[800px] text-wrap break-all font-bold">{title}</span>
                         </a>
                     ) : (
                         <div className="flex gap-2">
-                            <span className="text-[var(--mainColor)] text-[13px]">Документ: </span>
-                            <span className="max-w-[800px] text-wrap break-all text-[13px]">{docuemntPath}</span>
+                            <span className="max-w-[800px] text-wrap break-all font-bold">{title}</span>
                         </div>
                     )
                 ) : (
                     <div className="flex gap-2">
-                        <span className="text-[var(--mainColor)] text-[13px]">Документ: </span>
-                        <span className="max-w-[800px] text-wrap break-all text-[13px]">{docuemntPath}</span>
+                        <span className="max-w-[800px] text-wrap break-all font-bold">{title}</span>
                     </div>
                 )}
+                <p className="max-w-[800px] text-wrap break-all">{description !== 'null' && description }</p>
+            </div>
+            <div className="flex flex-col gap-2">
                 <div className="flex gap-2">
-                    <span className="text-[var(--mainColor)] text-[13px]">Ссылка: </span>
+                    {link && <span className="text-[var(--mainColor)] text-[13px]">Ссылка: </span>}
                     <a href={link ? String(link) : '#'} className="max-w-[800px] text-[13px] text-wrap break-all" target="_blank">
                         {link}
                     </a>
@@ -188,7 +188,7 @@ export default function LessonInfoCard({
                     setTestCall(false);
                 }}
             >
-                <div className="flex justify-center items-center">{testInfo}</div>
+                <div className="flex items-center">{testInfo}</div>
             </Dialog>
             <Dialog
                 header={'Практическое задание'}
@@ -199,9 +199,9 @@ export default function LessonInfoCard({
                     setPracticaCall(false);
                 }}
             >
-                <div className="flex justify-center items-center">{practicaInfo}</div>
+                <div className="flex items-center">{practicaInfo}</div>
             </Dialog>
-            <div className="flex items-center">{type === "document" && docCard}</div>
+            <div className="flex items-center">{type === 'document' && docCard}</div>
             <div className="flex items-center">{type === 'link' && linkCard}</div>
             <div className="flex items-center">{type === 'video' && videoCard}</div>
             <div className="flex items-center">{type === 'test' && testCard}</div>

@@ -68,23 +68,6 @@ export const LayoutProvider = ({ children }: ChildContainerProps) => {
         return window.innerWidth > 991;
     };
 
-    useEffect(() => {
-        if (pathname === '/course') {
-            setLayoutState((prev) => ({
-                ...prev,
-                staticMenuDesktopInactive: true,
-                staticMenuMobileActive: false,
-                overlayMenuActive: false,
-                profileSidebarVisible: false
-            }));
-        } else {
-            setLayoutState((prev) => ({
-                ...prev,
-                staticMenuDesktopInactive: false
-            }));
-        }
-    }, [pathname]);
-
     // breadCrumb urls
     const isTopicsChildPage = /^\/teaching\/[^/]+\/[^/]+$/.test(pathname);
     const [crumbUrls, setCrumbUrls] = useState<{ type: string; crumbUrl: string }>({ type: '', crumbUrl: '' });
@@ -92,12 +75,6 @@ export const LayoutProvider = ({ children }: ChildContainerProps) => {
         const urlName = url.type === 'studentStream' ? 'studentStream' : '';
         setCrumbUrls((prev) => ({ ...prev, [urlName]: url.crumbUrl }));
     };
-
-    useEffect(() => {
-        if (isTopicsChildPage && crumbUrls) {
-            localStorage.setItem('currentBreadCrumb', JSON.stringify(crumbUrls));
-        }
-    }, [crumbUrls]);
 
     // fetch course
     const [mainCourseId, setMainCourseId] = useState<number | null>(null);
@@ -118,7 +95,7 @@ export const LayoutProvider = ({ children }: ChildContainerProps) => {
     const [contextThemes, setContextThemes] = useState([]);
     const contextFetchThemes = async (id: number | null, id_kafedra: number | null) => {
         const data = await fetchThemes(Number(id) || null, id_kafedra);
-        if(data){
+        if (data) {
             console.log(data);
             setContextThemes(data);
         }
@@ -133,8 +110,31 @@ export const LayoutProvider = ({ children }: ChildContainerProps) => {
     };
 
     // departament
-    const [departament, setDepartament] = useState<{last_name:string, name:string, father_name:string, info:string}>({last_name:'', name:'', father_name:'', info: ''});
-    
+    const [departament, setDepartament] = useState<{ last_name: string; name: string; father_name: string; info: string }>({ last_name: '', name: '', father_name: '', info: '' });
+
+    useEffect(() => {
+        if (pathname === '/course') {
+            setLayoutState((prev) => ({
+                ...prev,
+                staticMenuDesktopInactive: true,
+                staticMenuMobileActive: false,
+                overlayMenuActive: false,
+                profileSidebarVisible: false
+            }));
+        } else {
+            setLayoutState((prev) => ({
+                ...prev,
+                staticMenuDesktopInactive: false
+            }));
+        }
+    }, [pathname]);
+
+    useEffect(() => {
+        if (isTopicsChildPage && crumbUrls) {
+            localStorage.setItem('currentBreadCrumb', JSON.stringify(crumbUrls));
+        }
+    }, [crumbUrls]);
+
     const value: LayoutContextProps = {
         layoutConfig,
         setLayoutConfig,
@@ -171,7 +171,7 @@ export const LayoutProvider = ({ children }: ChildContainerProps) => {
         setMainCourseId,
 
         departament,
-        setDepartament,
+        setDepartament
     };
 
     return (

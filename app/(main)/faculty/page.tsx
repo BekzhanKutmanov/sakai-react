@@ -63,8 +63,12 @@ export default function Faculty() {
             console.log(data);
 
             if (data && Array.isArray(data)) {
-                setKafedra(data);
-                setFacultyShow(false);
+                if(data.length > 0){
+                    setKafedra(data);
+                    setFacultyShow(false);
+                } else {
+                    setFacultyShow(true);
+                }
             } else {
                 setFacultyShow(true);
             }
@@ -106,7 +110,7 @@ export default function Faculty() {
             ) : (
                 !selectShow && (
                     <div>
-                        <h3 className="text-[18px] pb-1 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">Кафедры</h3>
+                        <h3 className="text-xl pb-1 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">Кафедры</h3>
                         {facultyShow ? (
                             <NotFound titleMessage="Кафедры не доступны" />
                         ) : (

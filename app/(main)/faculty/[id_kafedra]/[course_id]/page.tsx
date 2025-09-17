@@ -4,6 +4,7 @@ import LessonInfoCard from '@/app/components/lessons/LessonInfoCard';
 import { NotFound } from '@/app/components/NotFound';
 import useErrorMessage from '@/hooks/useErrorMessage';
 import { LayoutContext } from '@/layout/context/layoutcontext';
+import { fetchCourseInfo } from '@/services/courses';
 import { fetchDepartamentSteps, fetchSteps } from '@/services/steps';
 import { mainStepsType } from '@/types/mainStepType';
 import { useParams } from 'next/navigation';
@@ -26,13 +27,21 @@ export default function LessonCheck() {
     const [steps, setSteps] = useState<mainStepsType[]>([]);
     const [activeIndex, setActiveIndex] = useState<number | number[]>(0);
     const [videoCall, setVideoCall] = useState(false);
-    const [video_link, setVideoLink] = useState('https://www.youtube.com/watch?v=TdrL3QxjyVw&list=RDTdrL3QxjyVw&start_radio=1');
+    const [video_link, setVideoLink] = useState('');
+
+    const handleCourseInfo = async () => {
+        if (course_id) {
+            const data = await fetchCourseInfo(Number(course_id));
+            console.log('info', data);
+
+            if (data) {
+            }
+        }
+    };
 
     const handleFetchSteps = async (lesson_id: number) => {
         setSkeleton(true);
         const data = await fetchDepartamentSteps(Number(lesson_id), Number(id_kafedra));
-        console.log('steps', data);
-
         if (data.success) {
             setSkeleton(false);
             if (data.steps.length < 1) {
@@ -91,9 +100,10 @@ export default function LessonCheck() {
         setVideoCall(true);
     };
 
-    // ПРОСИМ ТЕМЫ
+    // ПРОСИМ КУРС ДЛЯ НАЗВАНИЯ И ТЕМЫ
     useEffect(() => {
         contextFetchThemes(Number(course_id), id_kafedra ? Number(id_kafedra) : null);
+        // handleCourseInfo()
     }, []);
 
     // САМИ ТЕМЫ, присваиваем в локальные темы
@@ -112,17 +122,10 @@ export default function LessonCheck() {
         console.log('Лоакльные темы ', themes);
 
         if (themes.length > 0 && [activeIndex as number]) {
-            console.log(activeIndex);
+            console.log('active index ', activeIndex);
 
-            if (activeIndex) {
-                const lessonId = themes[activeIndex as number]?.id;
-                console.log(lessonId);
-
-                handleFetchSteps(lessonId);
-            } else {
-                const lessonId = themes[0]?.id;
-                console.log(lessonId);
-
+            const lessonId = themes[activeIndex as number]?.id;
+            if (lessonId) {
                 handleFetchSteps(lessonId);
             }
         }
@@ -160,54 +163,45 @@ export default function LessonCheck() {
             ) : (
                 <Accordion activeIndex={activeIndex} onTabChange={(e) => setActiveIndex(e.index)}>
                     {themes.map((item) => {
-                        console.log(item);
+                        const content = steps.filter((j) => {
+                            return j.content != null;
+                        });
 
                         return (
-                            <AccordionTab header={'Тема: ' + item.title}>
+                            <AccordionTab header={'Тема: ' + item.title} className='w-full p-accordion' style={{width: '100%'}}>
                                 <div className="flex flex-col gap-2">
-                                    {steps.length > 0 ? steps.map((i) => {
-                                        if(i.content){
-                                            return (
-                                                <>
-                                                    {
-                                                        <LessonInfoCard
-                                                            type={i.type.name}
-                                                            icon={i.type.logo}
-                                                            title={i.content?.title}
-                                                            description={i.content?.description || ''}
-                                                            documentUrl={{ document: i.content?.document, document_path: i.content?.document_path }}
-                                                            video_link={i.content?.link}
-                                                            link={i.content?.url}
-                                                            test={{content: i.content.content, answers: i.content.answers, score: i.content.score}}
-                                                            videoStart={handleVideoCall}
-                                                        />
-                                                    }
-                                                </>
-                                            );
-                                        }
-                                    }): 'Данных нет' }
+                                    {hasSteps ? (
+                                        <p className='text-center text-sm'>Данных нет</p>
+                                    ) : content.length > 0 ? (
+                                        content.map((i,idx) => {
+                                            if (i.content) {
+                                                return (
+                                                    <div className={`${idx !== 0 && idx !== content[content.length -1] ? 'border-t-1 border-[gray]' : ''}`}>
+                                                        {
+                                                            <LessonInfoCard
+                                                                type={i.type.name}
+                                                                icon={i.type.logo}
+                                                                title={i.content?.title}
+                                                                description={i.content?.description || ''}
+                                                                documentUrl={{ document: i.content?.document, document_path: i.content?.document_path }}
+                                                                video_link={i.content?.link}
+                                                                link={i.content?.url}
+                                                                test={{ content: i.content.content, answers: i.content.answers, score: i.content.score }}
+                                                                videoStart={handleVideoCall}
+                                                            />
+                                                        }
+                                                    </div>
+                                                );
+                                            }
+                                        })
+                                    ) : (
+                                        <p className='text-center text-sm'>Данных нет</p>
+                                    )}
                                 </div>
                             </AccordionTab>
                         );
                     })}
                 </Accordion>
-                // <>
-                //     {/* <LessonInfoCard type="document" icon={'pi pi-folder'} title="lorem lorem lorem" documentUrl={{document: "https://api.mooc.oshsu.kg/public/teacher/files/lesson/documents/198_87_1758007827.pdf", document_path: '198_87_1758007827.pdf'}} description="Книга из ЭБС Znanium znaniumcombook iconУчебное пособие: Исследования в менеджменте: пособие для магистров/ Т.Л. Короткова" />
-
-                //     <LessonInfoCard type="link" icon={'pi pi-link'} title="lfjsdfsdfs lorem lorem" description="Кв менеджменте: пособие для магистров/ Т.Л. Короткова" link="https://translate.google.com/?hl=ru&sl=auto&tl=ru&op=translate" />
-
-                //     <LessonInfoCard
-                //         type="video"
-                //         icon={'pi pi-video'}
-                //         title="lorem lorem lorem"
-                //         description="Кв менеджменте: пособие для магистров/ Т.Л. Короткова"
-                //         video_link={video_link}
-                //         videoStart={handleVideoCall}
-                //     />
-
-                //     <LessonInfoCard type="test" icon={'pi pi-pencil'} title="Кв менеджменте: пособие для магистров/ Т.Л. Короткова" link="https://translate.google.com/?hl=ru&sl=auto&tl=ru&op=translate" test={{content: 'lorem lroe jdfskljf sjfkdj fjkjkj  kkkkkkkkk k', answers: [{id: null, text: '1fjlkdsjfljs', is_correct: true},{id: null, text: 'lorem lorem lroem', is_correct: false}], score: 4}} />
-                //     <LessonInfoCard type="practical" icon={'pi pi-pencil'} title="lorem lorem lorem" documentUrl={{document: "https://api.mooc.oshsu.kg/public/teacher/files/lesson/documents/198_87_1758007827.pdf", document_path: '198_87_1758007827.pdf'}} description="Книга из ЭБС Znanium znaniumcombook iconУчебное пособие: Исследования в менеджменте: пособие для магистров/ Т.Л. Короткова" link='https://translate.google.com/?hl=ru&sl=auto&tl=ru&op=translate'/> */}
-                // </>
             )}
         </div>
     );

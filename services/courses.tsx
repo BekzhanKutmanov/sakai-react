@@ -125,6 +125,8 @@ export const fetchThemes = async (id: number | null, id_kafedra: number | null) 
         const res = await axiosInstance.get(`/v1/teacher/lessons?course_id=${id}&id_kafedra=${id_kafedra ? id_kafedra : ''}`);
 
         const data = await res.data;
+        console.log('COURSE', data);
+        
         return data;
     } catch (err) {
         console.log('Ошибка при получении темы', err);

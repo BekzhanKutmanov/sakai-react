@@ -39,18 +39,19 @@ export default function LessonStep() {
     const [selectedId, setSelectId] = useState<number | null>(null);
     const [hasSteps, setHasSteps] = useState(false);
     const [themeNull, setThemeNull] = useState(false);
-    const [lesson_id, setLesson_id] = useState<number | null>((param.lesson_id && Number(param.lesson_id)) || null);
+    // const [lesson_id, setLesson_id] = useState<number | null>(null);
+    const [lesson_id, setLesson_id] = useState<number | null>(null);
     const [sequence_number, setSequence_number] = useState<number | null>(null);
     const [skeleton, setSkeleton] = useState(false);
     const [testovy, setTestovy] = useState(false);
     const router = useRouter();
     const pathname = usePathname();
 
-    const changeUrl = (lessonId: number) => {
+    const changeUrl = (lessonId: number | null) => {
         router.replace(`/course/${course_id}/${lessonId ? lessonId : null}`);
     };
 
-    const handleShow = async (LessonId: number) => {
+    const handleShow = async (LessonId: number | null) => {
         const data = await fetchLessonShow(LessonId);
 
         if (data?.lesson) {
@@ -86,7 +87,7 @@ export default function LessonStep() {
         }
     };
 
-    const handleFetchSteps = async (lesson_id: number) => {
+    const handleFetchSteps = async (lesson_id: number | null) => {
         setSkeleton(true);
         const data = await fetchSteps(Number(lesson_id));
         console.log('steps', data);
@@ -189,6 +190,8 @@ export default function LessonStep() {
 
     useEffect(() => {
         setTestovy(true);
+        console.log('course-id', course_id);
+
         contextFetchThemes(Number(course_id), null);
     }, [course_id]);
 
@@ -220,38 +223,75 @@ export default function LessonStep() {
     //     }
     // }, [contextThemes]);
 
+    // useEffect(() => {
+    //     if (!contextThemes?.lessons?.data) return;
+
+    //     const lessons = contextThemes.lessons.data;
+
+    //     if (lessons.length > 0) {
+    //         setThemeNull(false);
+    //         console.warn(lessons, deleteQuery);
+    //         let chosenId: number | null = null;
+
+    //         if (param.lesson_id === 'null' || deleteQuery) {
+    //             console.log('var 1');
+    //             // alert(1);
+
+    //             chosenId = lessons[0].id;
+    //             setDeleteQuery(false);
+    //         } else {
+    //             console.log('var 2');
+    //             // alert(2);
+    //             chosenId = param.lesson_id ? Number(param.lesson_id) : lessons[0].id;
+    //         }
+    //         // alert(chosenId);
+    //         setLesson_id(chosenId);
+    //     } else {
+    //         setThemeNull(true);
+    //     }
+
+    //     setTestovy(false);
+    //     setUpdateeQuery(false);
+    // }, [contextThemes, deleteQuery, param.lesson_id]);
+
+    // useEffect(() => {
+    //     console.warn('LESSONID ', lesson_id);
+    //     if (!lesson_id) return;
+
+    //     handleShow(lesson_id);
+    //     handleFetchSteps(lesson_id);
+    //     changeUrl(lesson_id);
+    // }, [lesson_id]);
+
     useEffect(() => {
         if (!contextThemes?.lessons?.data) return;
 
         const lessons = contextThemes.lessons.data;
+        if (lessons.length === 0) return;
 
-        if (lessons.length > 0) {
-            setThemeNull(false);
+        let chosenId: number | null = null;
 
-            let chosenId: number | null = null;
-
-            if (param.lesson_id === 'null' || deleteQuery) {
-                chosenId = lessons[0].id;
-                setDeleteQuery(false);
-            } else {
-                chosenId = param.lesson_id ? Number(param.lesson_id) : lessons[0].id;
-            }
-
-            setLesson_id(chosenId);
+        if (param.lesson_id && param.lesson_id !== 'null') {
+            const urlId = Number(param.lesson_id);
+            const exists = lessons.some((l) => l.id === urlId);
+            chosenId = exists ? urlId : lessons[0].id;
         } else {
-            setThemeNull(true);
+            chosenId = lessons[0].id;
         }
 
-        setTestovy(false);
-        setUpdateeQuery(false);
+        if (lesson_id !== chosenId) {
+            setLesson_id(chosenId);
+        }
     }, [contextThemes, deleteQuery, param.lesson_id]);
-
+    
     useEffect(() => {
-        if (!lesson_id) return;
-
-        handleShow(lesson_id);
-        handleFetchSteps(lesson_id);
-        changeUrl(lesson_id);
+        if (lesson_id && param.lesson_id !== String(lesson_id)) {
+            changeUrl(lesson_id);
+        }
+        if (lesson_id) {
+            handleFetchSteps(lesson_id);
+            handleShow(lesson_id);
+        }
     }, [lesson_id]);
 
     useEffect(() => {
@@ -266,7 +306,10 @@ export default function LessonStep() {
         };
 
         el.addEventListener('wheel', onWheel, { passive: false });
-        return () => el.removeEventListener('wheel', onWheel);
+        return () => {
+            el.removeEventListener('wheel', onWheel);
+            setLesson_id(null);
+        };
     }, []);
 
     const lessonInfo = (
@@ -301,7 +344,7 @@ export default function LessonStep() {
             </div>
         );
     }
-    
+
     return (
         <div className="main-bg">
             {/* modal sectoin */}
