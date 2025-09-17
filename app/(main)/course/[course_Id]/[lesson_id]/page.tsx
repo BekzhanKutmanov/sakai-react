@@ -29,7 +29,7 @@ export default function LessonStep() {
 
     const [lessonInfoState, setLessonInfoState] = useState<{ title: string; documents_count: string; usefullinks_count: string; videos_count: string } | null>(null);
     const media = useMediaQuery('(max-width: 640px)');
-    const { setMessage, contextFetchThemes, contextThemes, setDeleteQuery, deleteQuery, updateQuery, setUpdateeQuery } = useContext(LayoutContext);
+    const { setMessage, contextFetchThemes, contextThemes, setContextThemes, setDeleteQuery, deleteQuery, updateQuery, setUpdateeQuery } = useContext(LayoutContext);
     const showError = useErrorMessage();
 
     const [formVisible, setFormVisible] = useState(false);
@@ -264,23 +264,40 @@ export default function LessonStep() {
     // }, [lesson_id]);
 
     useEffect(() => {
-        if (!contextThemes?.lessons?.data) return;
-
-        const lessons = contextThemes.lessons.data;
-        if (lessons.length === 0) return;
-
-        let chosenId: number | null = null;
-
-        if (param.lesson_id && param.lesson_id !== 'null') {
-            const urlId = Number(param.lesson_id);
-            const exists = lessons.some((l) => l.id === urlId);
-            chosenId = exists ? urlId : lessons[0].id;
+        console.warn(contextThemes, contextThemes.length);
+        
+        if (contextThemes?.length < 1 || !contextThemes?.lessons?.data) {
+            setThemeNull(true);
+            return;
         } else {
-            chosenId = lessons[0].id;
+            setThemeNull(false);
         }
 
-        if (lesson_id !== chosenId) {
-            setLesson_id(chosenId);
+        const lessons = contextThemes.lessons.data;
+        console.warn('SMOTRI ',lessons)
+        if (lessons.length < 1) {
+            setThemeNull(true);
+        } else {
+            setThemeNull(false);
+        }
+        console.log('contexttheme ',lessons);
+        
+        let chosenId: number | null = null;
+        if(lessons.length > 0) { 
+            setThemeNull(false);
+            if (param.lesson_id && param.lesson_id !== 'null') {
+                const urlId = Number(param.lesson_id);
+                const exists = lessons.some((l) => l.id === urlId);
+                chosenId = exists ? urlId : lessons[0].id;
+            } else {
+                chosenId = lessons[0].id;
+            }
+    
+            if (lesson_id !== chosenId) {
+                setLesson_id(chosenId);
+            }
+        } else {
+            setThemeNull(true);
         }
     }, [contextThemes, deleteQuery, param.lesson_id]);
     
@@ -309,6 +326,7 @@ export default function LessonStep() {
         return () => {
             el.removeEventListener('wheel', onWheel);
             setLesson_id(null);
+            setContextThemes([]);
         };
     }, []);
 
