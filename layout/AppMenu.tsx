@@ -44,7 +44,7 @@ const AppMenu = () => {
     const { studentThemeCourse } = useParams();
     const params = useParams();
     console.log(params);
-    
+
     const course_Id = params.course_Id;
     const id_kafedra = params?.id_kafedra ? params.id_kafedra : null;
 
@@ -55,7 +55,7 @@ const AppMenu = () => {
     const [editingLesson, setEditingLesson] = useState<{ title: string; sequence_number: number | null } | null>(null);
     const [themeValue, setThemeValue] = useState<{ title: string; sequence_number: number | null }>({ title: '', sequence_number: null });
 
-    const [themesStudentList, setThemesStudentList] = useState<{ label: string; id: number; to: string; items?: AppMenuItem[] }[]>([]);
+    const [themesStudentList, setThemesStudentList] = useState<{ key?: string; label: string; id: number; to: string; items?: AppMenuItem[] }[]>([]);
 
     const showError = useErrorMessage();
     const { setMessage } = useContext(LayoutContext);
@@ -63,6 +63,12 @@ const AppMenu = () => {
     const byStatus: AppMenuItem[] = user?.is_working
         ? pathname.startsWith('/course/')
             ? [
+                  {
+                      // key: 'prev',
+                      label: '',
+                      icon: 'pi pi-fw pi-arrow-left',
+                      to: '/course'
+                  },
                   {
                       label: 'Темалар',
                       icon: 'pi pi-fw pi-calendar-clock',
@@ -80,6 +86,15 @@ const AppMenu = () => {
     const forDepartament =
         !pathname.startsWith('/course/') && departament.info.length > 0
             ? [
+                  {
+                      // key: 'prev',
+                      label: '',
+                      icon: 'pi pi-fw pi-arrow-left',
+                      to: '#',
+                      command: () => {
+                          router.back();
+                      }
+                  },
                   {
                       label: 'Главная страница',
                       icon: 'pi pi-home',
@@ -100,19 +115,13 @@ const AppMenu = () => {
 
     const model: AppMenuItem[] = [
         {
-            label: '',
-            icon: 'pi pi-fw pi-arrow-left',
-            to: '#',
-            command: ()=> {
-                router.back();
-            }
-        },
-        {
-            label: '',
+            // key: 'Департамент',
+            label: ' ',
             items: forDepartament
         },
         {
-            label: '',
+            // key: 'Основной',
+            label: '  ',
             items: byStatus
         }
     ];
@@ -170,7 +179,7 @@ const AppMenu = () => {
     const handleDeleteTheme = async (id: number) => {
         const data = await deleteTheme(id);
         if (data.success) {
-            console.warn('treu', data)
+            console.warn('treu', data);
             contextFetchThemes(Number(course_Id), id_kafedra ? Number(id_kafedra) : null);
             setDeleteQuery(true);
             setMessage({

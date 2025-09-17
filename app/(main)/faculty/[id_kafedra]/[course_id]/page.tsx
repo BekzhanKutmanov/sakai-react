@@ -173,7 +173,7 @@ export default function LessonCheck() {
                             });
 
                             return (
-                                <AccordionTab header={'Тема: ' + item.title} className="w-full p-accordion" style={{ width: '100%' }}>
+                                <AccordionTab header={'Тема: ' + item.title} key={item.id} className="w-full p-accordion" style={{ width: '100%' }}>
                                     <div className="flex flex-col gap-2">
                                         {hasSteps ? (
                                             <p className="text-center text-sm">Данных нет</p>
@@ -181,7 +181,7 @@ export default function LessonCheck() {
                                             content.map((i, idx) => {
                                                 if (i.content) {
                                                     return (
-                                                        <div className={`${idx !== 0 && idx !== content[content.length - 1] ? 'border-t-1 border-[gray]' : ''}`}>
+                                                        <div className={`${idx !== 0 && idx !== content.length ? 'border-t-1 border-[gray]' : ''}`} key={i.id}>
                                                             {
                                                                 <LessonInfoCard
                                                                     type={i.type.name}

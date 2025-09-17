@@ -274,20 +274,18 @@ export default function LessonStep() {
         }
 
         const lessons = contextThemes.lessons.data;
-        console.warn('SMOTRI ',lessons)
         if (lessons.length < 1) {
             setThemeNull(true);
         } else {
             setThemeNull(false);
         }
-        console.log('contexttheme ',lessons);
         
         let chosenId: number | null = null;
         if(lessons.length > 0) { 
             setThemeNull(false);
             if (param.lesson_id && param.lesson_id !== 'null') {
                 const urlId = Number(param.lesson_id);
-                const exists = lessons.some((l) => l.id === urlId);
+                const exists = lessons.some((l:{id: number}) => l.id === urlId);
                 chosenId = exists ? urlId : lessons[0].id;
             } else {
                 chosenId = lessons[0].id;

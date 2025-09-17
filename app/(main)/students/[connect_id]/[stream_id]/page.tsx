@@ -156,7 +156,7 @@ export default function StudentList() {
                                     header="ФАА"
                                     style={{ width: '50%' }}
                                     body={(rowData) => (
-                                        <div className="flex gap-1">
+                                        <div className="flex gap-1" key={rowData.id}>
                                             <span>{rowData.last_name}</span>
                                             <span>{rowData.name}</span>
                                             <span>{rowData.father_name}</span>
