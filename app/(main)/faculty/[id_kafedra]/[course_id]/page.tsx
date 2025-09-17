@@ -5,6 +5,7 @@ import { NotFound } from '@/app/components/NotFound';
 import useErrorMessage from '@/hooks/useErrorMessage';
 import { LayoutContext } from '@/layout/context/layoutcontext';
 import { fetchCourseInfo } from '@/services/courses';
+import { depCourseInfo } from '@/services/faculty';
 import { fetchDepartamentSteps, fetchSteps } from '@/services/steps';
 import { mainStepsType } from '@/types/mainStepType';
 import { useParams } from 'next/navigation';
@@ -28,13 +29,15 @@ export default function LessonCheck() {
     const [activeIndex, setActiveIndex] = useState<number | number[]>(0);
     const [videoCall, setVideoCall] = useState(false);
     const [video_link, setVideoLink] = useState('');
+    const [courseInfo, setCourseInfo] = useState({title: ''});
 
     const handleCourseInfo = async () => {
         if (course_id) {
-            const data = await fetchCourseInfo(Number(course_id));
+            const data = await depCourseInfo(Number(course_id), Number(id_kafedra));
             console.log('info', data);
 
-            if (data) {
+            if (data.success) {
+                setCourseInfo({title: data.course.title})
             }
         }
     };
@@ -103,7 +106,7 @@ export default function LessonCheck() {
     // ПРОСИМ КУРС ДЛЯ НАЗВАНИЯ И ТЕМЫ
     useEffect(() => {
         contextFetchThemes(Number(course_id), id_kafedra ? Number(id_kafedra) : null);
-        // handleCourseInfo()
+        handleCourseInfo();
     }, []);
 
     // САМИ ТЕМЫ, присваиваем в локальные темы
@@ -161,47 +164,50 @@ export default function LessonCheck() {
             {themeShow ? (
                 <NotFound titleMessage="Темы отсуствуют или временно не доступны" />
             ) : (
-                <Accordion activeIndex={activeIndex} onTabChange={(e) => setActiveIndex(e.index)}>
-                    {themes.map((item) => {
-                        const content = steps.filter((j) => {
-                            return j.content != null;
-                        });
+                <div >
+                    <h3 className="text-lg pb-1 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]"><span className='text-[var(--mainColor)]'>Название курса:</span> {courseInfo.title}</h3>
+                    <Accordion activeIndex={activeIndex} onTabChange={(e) => setActiveIndex(e.index)}>
+                        {themes.map((item) => {
+                            const content = steps.filter((j) => {
+                                return j.content != null;
+                            });
 
-                        return (
-                            <AccordionTab header={'Тема: ' + item.title} className='w-full p-accordion' style={{width: '100%'}}>
-                                <div className="flex flex-col gap-2">
-                                    {hasSteps ? (
-                                        <p className='text-center text-sm'>Данных нет</p>
-                                    ) : content.length > 0 ? (
-                                        content.map((i,idx) => {
-                                            if (i.content) {
-                                                return (
-                                                    <div className={`${idx !== 0 && idx !== content[content.length -1] ? 'border-t-1 border-[gray]' : ''}`}>
-                                                        {
-                                                            <LessonInfoCard
-                                                                type={i.type.name}
-                                                                icon={i.type.logo}
-                                                                title={i.content?.title}
-                                                                description={i.content?.description || ''}
-                                                                documentUrl={{ document: i.content?.document, document_path: i.content?.document_path }}
-                                                                video_link={i.content?.link}
-                                                                link={i.content?.url}
-                                                                test={{ content: i.content.content, answers: i.content.answers, score: i.content.score }}
-                                                                videoStart={handleVideoCall}
-                                                            />
-                                                        }
-                                                    </div>
-                                                );
-                                            }
-                                        })
-                                    ) : (
-                                        <p className='text-center text-sm'>Данных нет</p>
-                                    )}
-                                </div>
-                            </AccordionTab>
-                        );
-                    })}
-                </Accordion>
+                            return (
+                                <AccordionTab header={'Тема: ' + item.title} className="w-full p-accordion" style={{ width: '100%' }}>
+                                    <div className="flex flex-col gap-2">
+                                        {hasSteps ? (
+                                            <p className="text-center text-sm">Данных нет</p>
+                                        ) : content.length > 0 ? (
+                                            content.map((i, idx) => {
+                                                if (i.content) {
+                                                    return (
+                                                        <div className={`${idx !== 0 && idx !== content[content.length - 1] ? 'border-t-1 border-[gray]' : ''}`}>
+                                                            {
+                                                                <LessonInfoCard
+                                                                    type={i.type.name}
+                                                                    icon={i.type.logo}
+                                                                    title={i.content?.title}
+                                                                    description={i.content?.description || ''}
+                                                                    documentUrl={{ document: i.content?.document, document_path: i.content?.document_path }}
+                                                                    video_link={i.content?.link}
+                                                                    link={i.content?.url}
+                                                                    test={{ content: i.content.content, answers: i.content.answers, score: i.content.score }}
+                                                                    videoStart={handleVideoCall}
+                                                                />
+                                                            }
+                                                        </div>
+                                                    );
+                                                }
+                                            })
+                                        ) : (
+                                            <p className="text-center text-sm">Данных нет</p>
+                                        )}
+                                    </div>
+                                </AccordionTab>
+                            );
+                        })}
+                    </Accordion>
+                </div>
             )}
         </div>
     );

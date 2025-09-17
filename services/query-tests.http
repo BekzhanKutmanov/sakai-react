@@ -1,4 +1,4 @@
-@token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2FwaS5teWVkdS5vc2hzdS5rZy9wdWJsaWMvYXBpL21vb2MvbG9naW4iLCJpYXQiOjE3NTc5ODE1MzQsImV4cCI6MTc1ODAxMDM5NCwibmJmIjoxNzU3OTgxNTM0LCJqdGkiOiJRY1FTNGdSSTZFRzRCc1NBIiwic3ViIjoiMTE4MjkyIiwicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyJ9.mhD-cf2IbMcImhwRIFkGkXZrlmRpM-f4GnpBnhNu8J8
+@token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2FwaS5teWVkdS5vc2hzdS5rZy9wdWJsaWMvYXBpL21vb2MvbG9naW4iLCJpYXQiOjE3NTgwOTk4NTEsImV4cCI6MTc1ODEyODcxMSwibmJmIjoxNzU4MDk5ODUxLCJqdGkiOiJ1RGxQMjdYMHFLa2NVbXVDIiwic3ViIjoiMTE4MjkyIiwicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyJ9.MMZZJ2d06qK5Emrl-hUvMOSQqzvGLmMIMaTAoXc2Jmk
 # ###
 
 # http://api.mooc.oshsu.kg/public/api/v1/open/video/types
@@ -8,9 +8,9 @@
 # ###
 # # STREAMS GET
 
-GET https://api.mooc.oshsu.kg/public/api/v1/teacher/lessons?course_id=32
-Authorization: Bearer {{token}}
-Content-Type: application/json  
+# GET https://api.mooc.oshsu.kg/public/api/v1/teacher/lessons?course_id=32
+# Authorization: Bearer {{token}}
+# Content-Type: application/json  
 
 # ###
 # test  
@@ -24,6 +24,6 @@ Content-Type: application/json
 
 # test  
 
-# GET https://api.mooc.oshsu.kg/public/api/v1/teacher/lessons?course_id=32
-# Authorization: Bearer {{token}}
-# Content-Type: application/json  
+GET https://api.mooc.oshsu.kg/public/api/v1/teacher/controls/department/course?course_id=34&id_kafedra=139
+Authorization: Bearer {{token}}
+Content-Type: application/json  
