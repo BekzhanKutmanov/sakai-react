@@ -693,7 +693,7 @@ export default function Course() {
                                                             )}
                                                         ></Column>
                                                         <Column
-                                                            header="На рассмотр"
+                                                            header="На рассмотр."
                                                             style={{ margin: '0 3px', textAlign: 'center' }}
                                                             body={(rowData) => (
                                                                 <>
@@ -710,13 +710,6 @@ export default function Course() {
                                                                     </label>
                                                                 </>
                                                             )}
-                                                        ></Column>
-                                                        <Column
-                                                            header="Публикация"
-                                                            style={{ margin: '0 3px', textAlign: 'center' }}
-                                                            body={(rowData) =>
-                                                                rowData.is_published ? <i className="pi pi-check text-md sm:text-lg text-[var(--greenColor)]"></i> : <i className="pi pi-times text-md sm:text-lg text-[var(--redColor)]"></i>
-                                                            }
                                                         ></Column>
                                                         <Column
                                                             header="Потоки"
@@ -738,6 +731,13 @@ export default function Course() {
                                                                     </label>
                                                                 </>
                                                             )}
+                                                        ></Column>
+                                                        <Column
+                                                            header="Публикация"
+                                                            style={{ margin: '0 3px', textAlign: 'center' }}
+                                                            body={(rowData) =>
+                                                                rowData.is_published ? <i className="pi pi-check text-md sm:text-lg text-[var(--greenColor)]"></i> : <i className="pi pi-times text-md sm:text-lg text-[var(--redColor)]"></i>
+                                                            }
                                                         ></Column>
                                                         <Column
                                                             className="flex items-center justify-center h-[60px] border-b-0"
