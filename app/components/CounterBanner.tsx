@@ -15,7 +15,7 @@ export default function CounterBanner() {
                 </div>
                 <div className='flex flex-col'>
                     <div className='text-[22px] sm:text-[30px]'><CountUp start={14.000} end={15000} duration={4} /><span>+</span></div>
-                    <span className='text-[12px] lg:text-[14px]'>Курстар & видеосабактар</span>
+                    <span className='text-[12px] lg:text-[14px]'>Курсы & видео уроки</span>
                 </div>
             </div>
 
@@ -26,7 +26,7 @@ export default function CounterBanner() {
                 </div>
                 <div className='flex flex-col'>
                     <div className='text-[22px] lg:text-[26px]'><CountUp start={130.000} end={145000} duration={4} /><span>+</span></div>
-                    <span className='text-[12px] lg:text-[14px]'>Катталган студенттер</span>
+                    <span className='text-[12px] lg:text-[14px]'>Зарегистрированные студенты</span>
                 </div>
             </div>
 
@@ -37,7 +37,7 @@ export default function CounterBanner() {
                 </div>
                 <div className='flex flex-col'>
                     <div className='text-[22px] lg:text-[26px]'><CountUp start={5000} end={10000} duration={4} /><span>+</span></div>
-                    <span className='text-[12px] lg:text-[14px]'>Окутуучулар</span>
+                    <span className='text-[12px] lg:text-[14px]'>Преподаватели</span>
                 </div>
             </div>
 
@@ -48,7 +48,7 @@ export default function CounterBanner() {
                 </div>
                 <div className='flex flex-col'>
                     <div className='text-[22px] lg:text-[26px]'><CountUp start={0} end={100} duration={4} /><span>%</span></div>
-                    <span className='text-[12px] lg:text-[14px]'>Канааттануу деңгээли</span>
+                    <span className='text-[12px] lg:text-[14px]'>Уровень удовлетворённости</span>
                 </div>
             </div>
             </div>

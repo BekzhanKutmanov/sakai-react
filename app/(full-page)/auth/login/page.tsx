@@ -78,7 +78,6 @@ const LoginPage = () => {
                 }
             }
         } else {
-            console.log('Ошибка при авторизации, повторите позже');
             setMessage({
                 state: true,
                 value: { severity: 'error', summary: 'Ошибка', detail: 'Введите корректные данные' }
@@ -94,11 +93,6 @@ const LoginPage = () => {
         }); // messege - Ошибка при авторизации
     };
 
-    useEffect(()=> {
-        console.log(departament);
-        
-    },[departament]);
-
     return (
         <div className={`flex flex-col gap-4 pt-4 h-[100vh] login-bg`}>
         {/* <div className={`flex flex-col gap-4 pt-4 h-[100vh] ${!media && 'login-bg'}`}> */}
@@ -110,7 +104,7 @@ const LoginPage = () => {
                 </div>
 
                 <div className={`w-[90%] sm:w-[500px] shadow-2xl bg-white py-6 px-3 md:py-8 sm:px-4 md:px-8 rounded`}>
-                    <h1 className='text-3xl sm:text-4xl font-bold inline-block border-b-2 pb-1 border-[var(--mainColor)]'>Кирүү</h1>
+                    <h1 className='text-3xl sm:text-4xl font-bold inline-block border-b-2 pb-1 border-[var(--mainColor)]'>Вход</h1>
                     <form onSubmit={handleSubmit(onSubmit, onError)} className="flex flex-col gap-4 md:gap-6">
                         <div className="flex flex-col">
                             {/* <label htmlFor="email1" className="block text-900 text-[16px] md:text-xl font-medium mb-1 md:mb-2">
@@ -128,7 +122,7 @@ const LoginPage = () => {
                             {errors.password && <b className="text-[red] text-[12px] ml-2">{errors.password.message}</b>}
                         </div>
 
-                        <FancyLinkBtn btnWidth={'90%'} backround={'--mainColor'} effectBg={'--titleColor'} title={'Кирүү'} />
+                        <FancyLinkBtn btnWidth={'90%'} backround={'--mainColor'} effectBg={'--titleColor'} title={'Вход'} />
                     </form>
                 </div>
             </div>

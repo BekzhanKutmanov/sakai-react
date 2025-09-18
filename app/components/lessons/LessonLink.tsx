@@ -103,7 +103,7 @@ export default function LessonLink({ element, content, fetchPropElement, clearPr
         } else {
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Катаа!', detail: 'Кийинчерээк кайталаныз' }
+                value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
             });
             if (data?.response?.status) {
                 showError(data.response.status);
@@ -118,12 +118,12 @@ export default function LessonLink({ element, content, fetchPropElement, clearPr
             fetchPropElement(element.id);
             setMessage({
                 state: true,
-                value: { severity: 'success', summary: 'Ийгиликтүү Кошулдуу!', detail: '' }
+                value: { severity: 'success', summary: 'Успешно добавлен!', detail: '' }
             });
         } else {
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Катаа!', detail: 'Кошуу учурунда катаа кетти' }
+                value: { severity: 'error', summary: 'Ошибка при добавлении!', detail: '' }
             });
             if (data.response.status) {
                 showError(data.response.status);
@@ -138,12 +138,12 @@ export default function LessonLink({ element, content, fetchPropElement, clearPr
             fetchPropElement(element.id);
             setMessage({
                 state: true,
-                value: { severity: 'success', summary: 'Ийгиликтүү өчүрүлдү!', detail: '' }
+                value: { severity: 'success', summary: 'Успешно удалено!', detail: '' }
             });
         } else {
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Катаа!', detail: 'Өчүрүүдө ката кетти' }
+                value: { severity: 'error', summary: 'Ошибка при удалении!', detail: '' }
             });
             if (data.response.status) {
                 showError(data.response.status);
@@ -159,14 +159,14 @@ export default function LessonLink({ element, content, fetchPropElement, clearPr
             clearValues();
             setMessage({
                 state: true,
-                value: { severity: 'success', summary: 'Ийгиликтүү өзгөртүлдү!', detail: '' }
+                value: { severity: 'success', summary: 'Успешно изменено!', detail: '' }
             });
         } else {
             setLinkValue({ title: '', description: '', url: '' });
             setEditingLesson({ title: '', description: '', url: '' });
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Катаа!', detail: 'Өзгөртүүдө ката кетти' }
+                value: { severity: 'error', summary: 'Ошибка при изменении!', detail: '' }
             });
             if (data?.response?.status) {
                 showError(data.response.status);
@@ -206,7 +206,7 @@ export default function LessonLink({ element, content, fetchPropElement, clearPr
                             <InputText
                                 id="usefulLink"
                                 type="url"
-                                placeholder={'Шилтеме жүктөө'}
+                                placeholder={'Загрузить ссылку'}
                                 value={linkValue.url}
                                 className="w-full"
                                 onChange={(e) => {
@@ -219,7 +219,7 @@ export default function LessonLink({ element, content, fetchPropElement, clearPr
                         <InputText
                             id="title"
                             type="text"
-                            placeholder={'Аталышы'}
+                            placeholder={'Название'}
                             value={linkValue.title}
                             onChange={(e) => {
                                 setLinkValue((prev) => ({ ...prev, title: e.target.value }));
@@ -227,18 +227,18 @@ export default function LessonLink({ element, content, fetchPropElement, clearPr
                             }}
                         />
                         <b style={{ color: 'red', fontSize: '12px' }}>{errors.title?.message}</b>
-                        {additional.link && <InputText placeholder="Мазмун" value={linkValue.description} onChange={(e) => setLinkValue((prev) => ({ ...prev, description: e.target.value }))} className="w-full" />}
+                        {additional.link && <InputText placeholder="Описание" value={linkValue.description} onChange={(e) => setLinkValue((prev) => ({ ...prev, description: e.target.value }))} className="w-full" />}
 
                         <div className="flex relative">
                             {/* <Button disabled={!!errors.title || !docValue.file} label="Сактоо" onClick={handleAddDoc} /> */}
                             <div className="absolute">
                                 <span className="cursor-pointer ml-1 text-sm text-[var(--mainColor)]" onClick={() => setAdditional((prev) => ({ ...prev, link: !prev.link }))}>
-                                    Кошумча {additional.link ? '-' : '+'}
+                                    Дополнительно {additional.link ? '-' : '+'}
                                 </span>
                             </div>
                             <div className="w-full flex gap-1 justify-center items-center">
                                 <Button
-                                    label="Сактоо"
+                                    label="Сохранить"
                                     disabled={progressSpinner || !linkValue.title.length || !!errors.title || !linkValue.url.length}
                                     onClick={() => handleAddLink()}
                                 />
@@ -252,7 +252,6 @@ export default function LessonLink({ element, content, fetchPropElement, clearPr
     };
 
     useEffect(() => {
-        console.log('content', content);
         if (content) {
             setContentShow(true);
             setLink(content);
@@ -262,18 +261,13 @@ export default function LessonLink({ element, content, fetchPropElement, clearPr
     }, [content]);
 
     useEffect(() => {
-        console.log('edititing', element);
         setLinkValue({ title: '', description: '', url: '' });
     }, [element]);
-
-    useEffect(() => {
-        console.log('value ', linkValue);
-    }, [linkValue]);
 
     return (
         <div>
             <FormModal
-                title={'Сабакты жаңылоо'}
+                title={'Обновить урок'}
                 fetchValue={() => handleUpdateLink()}
                 clearValues={clearValues}
                 visible={visible}
@@ -285,7 +279,7 @@ export default function LessonLink({ element, content, fetchPropElement, clearPr
                             <InputText
                                 id="usefulLink"
                                 type="url"
-                                placeholder={'Шилтеме жүктөө'}
+                                placeholder={'Загрузить ссылку'}
                                 value={editingLesson.url}
                                 className="w-full"
                                 onChange={(e) => {
@@ -298,7 +292,7 @@ export default function LessonLink({ element, content, fetchPropElement, clearPr
                         <InputText
                             id="title"
                             type="text"
-                            placeholder={'Аталышы'}
+                            placeholder={'Название'}
                             value={editingLesson.title}
                             onChange={(e) => {
                                 setEditingLesson((prev) => ({ ...prev, title: e.target.value }));
@@ -306,13 +300,13 @@ export default function LessonLink({ element, content, fetchPropElement, clearPr
                             }}
                         />
                         <b style={{ color: 'red', fontSize: '12px' }}>{errors.title?.message}</b>
-                        {additional.link && <InputText placeholder="Мазмун" value={editingLesson.description} onChange={(e) => setEditingLesson((prev) => ({ ...prev, description: e.target.value }))} className="w-full" />}
+                        {additional.link && <InputText placeholder="Описание" value={editingLesson.description} onChange={(e) => setEditingLesson((prev) => ({ ...prev, description: e.target.value }))} className="w-full" />}
 
                         <div className="flex relative">
-                            {/* <Button disabled={!!errors.title || !editingLesson.file} label="Сактоо" onClick={handleAddDoc} /> */}
+                            {/* <Button disabled={!!errors.title || !editingLesson.file} label="Сохранить" onClick={handleAddDoc} /> */}
                             <div className="absolute">
                                 <span className="cursor-pointer ml-1 text-sm text-[var(--mainColor)]" onClick={() => setAdditional((prev) => ({ ...prev, link: !prev.link }))}>
-                                    Кошумча {additional.link ? '-' : '+'}
+                                    Дополнительно {additional.link ? '-' : '+'}
                                 </span>
                             </div>
                         </div>

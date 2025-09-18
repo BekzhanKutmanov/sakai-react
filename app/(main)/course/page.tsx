@@ -27,12 +27,8 @@ import { TabViewChange } from '@/types/tabViewChange';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import useShortText from '@/hooks/useShortText';
 import { ProgressSpinner } from 'primereact/progressspinner';
-import { RadioButton } from 'primereact/radiobutton';
 import { DataView } from 'primereact/dataview';
-import { displayType } from '@/types/displayType';
 import { FileWithPreview } from '@/types/fileuploadPreview';
-import { InputSwitch, InputSwitchChangeEvent } from 'primereact/inputswitch';
-import { SelectButton, SelectButtonChangeEvent } from 'primereact/selectbutton';
 import { mainStreamsType } from '@/types/mainStreamsType';
 
 export default function Course() {
@@ -113,7 +109,7 @@ export default function Course() {
             setHasCourses(true);
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Катаа!', detail: 'Кийинчерээк кайталаныз' }
+                value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
             });
             if (data?.response?.status) {
                 showError(data.response.status);
@@ -128,12 +124,12 @@ export default function Course() {
             contextFetchCourse(1);
             setMessage({
                 state: true,
-                value: { severity: 'success', summary: 'Ийгиликтүү кошулду!', detail: '' }
+                value: { severity: 'success', summary: 'Успешно добавлен!', detail: '' }
             });
         } else {
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Катаа!', detail: 'Кошуу учурунда катаа кетти' }
+                value: { severity: 'error', summary: 'Ошибка при добавлении!', detail: '' }
             });
             if (data?.response?.status) {
                 showError(data.response.status);
@@ -149,12 +145,12 @@ export default function Course() {
             contextFetchCourse(1);
             setMessage({
                 state: true,
-                value: { severity: 'success', summary: 'Ийгиликтүү өчүрүлдү!', detail: '' }
+                value: { severity: 'success', summary: 'Успешно удалено!', detail: '' }
             }); // messege - Успех!
         } else {
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Катаа!', detail: 'Өчүрүүдө ката кетти' }
+                value: { severity: 'error', summary: 'Ошибка при удалении!', detail: '' }
             }); // messege - Ошибка при добавлении
             if (data?.response?.status) {
                 showError(data.response.status);
@@ -181,12 +177,12 @@ export default function Course() {
             setSelectedCourse(null);
             setMessage({
                 state: true,
-                value: { severity: 'success', summary: 'Ийгиликтүү өзгөртүлдү!', detail: '' }
+                value: { severity: 'success', summary: 'Успешно изменено!', detail: '' }
             }); // messege - Успех!
         } else {
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Катаа!', detail: 'Өзгөртүүдө ката кетти' }
+                value: { severity: 'error', summary: 'Ошибка при изменении!', detail: '' }
             }); // messege - Ошибка при изменении курса
             if (data?.response?.status) {
                 showError(data.response.status);
@@ -387,11 +383,11 @@ export default function Course() {
                 <div className="flex flex-col gap-1">
                     {/* <div className="flex flex-col lg:flex-row gap-1 justify-around items-center"> */}
                     <div className="flex flex-col gap-1 items-center justify-center">
-                        <label className="block text-900 font-medium text-[16px] md:text-xl mb-1 md:mb-2">Аталышы</label>
+                        <label className="block text-900 font-medium text-[16px] md:text-lg mb-1 md:mb-2">Название</label>
                         <div className="w-full flex gap-2 items-center">
                             <InputText
                                 value={editMode ? editingLesson.title || '' : courseValue.title}
-                                placeholder="Аталышы талап кылынат"
+                                placeholder="Название обязательно"
                                 disabled={progressSpinner === true ? true : false}
                                 className="w-full"
                                 onChange={(e) => {
@@ -410,12 +406,12 @@ export default function Course() {
                         </div>
                     </div>
                     <div className="flex flex-col gap-1 items-center justify-center">
-                        <label className="block text-900 font-medium text-[16px] md:text-xl mb-1 md:mb-2">Видео шилтеме</label>
+                        <label className="block text-900 font-medium text-[16px] md:text-lg mb-1 md:mb-2">Видео ссылка</label>
                         <div className="w-full flex gap-2 items-center">
                             <InputText
                                 value={editMode ? editingLesson.video_url || '' : courseValue.video_url}
                                 placeholder="https://..."
-                                title="Шилтеме https:// менен башталышы шарт!"
+                                title="Ссылка должна начинаться с https://!"
                                 disabled={progressSpinner === true ? true : false}
                                 className="w-full"
                                 onChange={(e) => {
@@ -437,7 +433,7 @@ export default function Course() {
 
                     {/* <div className="flex flex-col lg:flex-row gap-1 justify-around items-center"> */}
                     <div className="flex flex-col gap-1 items-center justify-center">
-                        <label className="block text-900 font-medium text-[16px] md:text-xl mb-1 md:mb-2">Мазмуну</label>
+                        <label className="block text-900 font-medium text-[16px] md:text-lg mb-1 md:mb-2">Описание</label>
                         <div className="w-full flex gap-2 justify-center items-center">
                             <InputTextarea
                                 autoResize
@@ -471,11 +467,11 @@ export default function Course() {
                         </div>
                         {/* )} */}
                         <div className={`flex flex-col pag-1 order-1 sm:order-2 items-center justify-center ${imageState && 'w-1/2'}`}>
-                            <label className="block text-900 font-medium text-[16px] md:text-xl mb-1 md:mb-2">Сүрөт кошуу</label>
+                            <label className="block text-900 font-medium text-[16px] md:text-lg mb-1 md:mb-2">Добавить фото</label>
                             <FileUpload
                                 ref={fileUploadRef}
                                 mode="basic"
-                                chooseLabel="Сүрөт"
+                                chooseLabel="Фото"
                                 style={{ fontSize: '12px', textWrap: 'wrap' }}
                                 className="max-w-[200px]"
                                 customUpload
@@ -537,7 +533,7 @@ export default function Course() {
                                                     }}
                                                 />
                                             </div>
-                                            <NotFound titleMessage={'Курс кошуу үчүн кошуу баскычты басыныз'} />
+                                            <NotFound titleMessage={'Нажмите на кнопку добавить курс'} />
                                         </>
                                     ) : (
                                         <>
@@ -618,7 +614,7 @@ export default function Course() {
 
                                 {/* table section */}
                                 {hasCourses ? (
-                                    <NotFound titleMessage={'Курс кошуу үчүн кошуу баскычты басыныз'} />
+                                    <NotFound titleMessage={'Нажмите на кнопку добавить курс'} />
                                 ) : (
                                     <>
                                         {skeleton ? (

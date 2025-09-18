@@ -17,7 +17,6 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { lessonSchema } from '@/schemas/lessonSchema';
 import useErrorMessage from '@/hooks/useErrorMessage';
 import { Button } from 'primereact/button';
-import Link from 'next/link';
 
 const AppMenu = () => {
     const { user, setDeleteQuery, setUpdateeQuery, contextFetchThemes, contextThemes, contextFetchStudentThemes, contextStudentThemes, departament } = useContext(LayoutContext);
@@ -43,8 +42,6 @@ const AppMenu = () => {
     const pathname = location;
     const { studentThemeCourse } = useParams();
     const params = useParams();
-    console.log(params);
-
     const course_Id = params.course_Id;
     const id_kafedra = params?.id_kafedra ? params.id_kafedra : null;
 
@@ -70,7 +67,7 @@ const AppMenu = () => {
                       to: '/course'
                   },
                   {
-                      label: 'Темалар',
+                      label: 'Темы',
                       icon: 'pi pi-fw pi-calendar-clock',
                       items: courseList?.length > 0 ? courseList : []
                   }
@@ -78,8 +75,8 @@ const AppMenu = () => {
             : []
         : user?.is_student
         ? [
-              { label: 'Окуу планы', icon: 'pi pi-fw pi-calendar-clock', to: '/teaching' },
-              pathname.startsWith('/teaching/lesson/') ? { label: 'Темалар', icon: 'pi pi-fw pi-book', items: themesStudentList?.length > 0 ? themesStudentList : [] } : { label: '' }
+              { label: 'План обучения', icon: 'pi pi-fw pi-calendar-clock', to: '/teaching' },
+              pathname.startsWith('/teaching/lesson/') ? { label: 'Темы', icon: 'pi pi-fw pi-book', items: themesStudentList?.length > 0 ? themesStudentList : [] } : { label: '' }
           ]
         : [];
 
@@ -134,13 +131,12 @@ const AppMenu = () => {
 
     const editing = async (id: number) => {
         const data = await fetchLessonShow(id);
-        console.log(data);
         if (data.lesson) {
             setEditingLesson({ title: data.lesson.title, sequence_number: data.lesson.sequence_number });
         } else {
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Катаа!', detail: 'Кийинчерээк кайталаныз' }
+                value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
             });
             if (data?.response?.status) {
                 showError(data.response.status);
@@ -162,13 +158,13 @@ const AppMenu = () => {
             clearValues();
             setMessage({
                 state: true,
-                value: { severity: 'success', summary: 'Ийгиликтүү кошулду!', detail: '' }
+                value: { severity: 'success', summary: 'Успешно добавлен!', detail: '' }
             });
         } else {
             setEditingLesson(null);
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Катаа!', detail: 'Кошуу учурунда катаа кетти' }
+                value: { severity: 'error', summary: 'Ошибка при добавлении!', detail: '' }
             });
             if (data?.response?.status) {
                 showError(data.response.status);
@@ -179,17 +175,16 @@ const AppMenu = () => {
     const handleDeleteTheme = async (id: number) => {
         const data = await deleteTheme(id);
         if (data.success) {
-            console.warn('treu', data);
             contextFetchThemes(Number(course_Id), id_kafedra ? Number(id_kafedra) : null);
             setDeleteQuery(true);
             setMessage({
                 state: true,
-                value: { severity: 'success', summary: 'Ийгиликтүү өчүрүлдү!', detail: '' }
+                value: { severity: 'success', summary: 'Успешно удалено!', detail: '' }
             });
         } else {
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Катаа!', detail: 'Өчүрүүдө ката кетти' }
+                value: { severity: 'error', summary: 'Ошибка при удалении!', detail: '' }
             });
             if (data?.response?.status) {
                 showError(data.response.status);
@@ -206,13 +201,13 @@ const AppMenu = () => {
             clearValues();
             setMessage({
                 state: true,
-                value: { severity: 'success', summary: 'Ийгиликтүү өзгөртүлдү!', detail: '' }
+                value: { severity: 'success', summary: 'Успешно удалено!', detail: '' }
             });
         } else {
             setEditingLesson(null);
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Катаа!', detail: 'Өзгөртүүдө ката кетти' }
+                value: { severity: 'error', summary: 'Ошибка при изменении!', detail: '' }
             });
             if (data?.response?.status) {
                 showError(data.response.status);
@@ -274,7 +269,7 @@ const AppMenu = () => {
     return (
         <MenuProvider>
             <FormModal
-                title={'Теманы жаңылоо'}
+                title={'Обновить тему'}
                 fetchValue={() => {
                     handleUpdate();
                 }}
@@ -298,7 +293,7 @@ const AppMenu = () => {
                     <div className="w-full flex flex-col gap-1 items-center justify-center">
                         <InputText
                             type="text"
-                            placeholder="Аталышы"
+                            placeholder="Название"
                             className="w-[90%]"
                             value={editingLesson?.title && editingLesson?.title}
                             onChange={(e) => {
@@ -313,7 +308,7 @@ const AppMenu = () => {
             </FormModal>
 
             <FormModal
-                title={'Тема кошуу'}
+                title={'Добавить тему'}
                 fetchValue={() => {
                     handleAddTheme();
                 }}
@@ -335,7 +330,7 @@ const AppMenu = () => {
                         />
                     </div>
                     <div className="w-full flex flex-col gap-1 items-center justify-center">
-                        <span>Аталышы</span>
+                        <span>Название</span>
                         <InputText
                             type="text"
                             className="w-[90%]"
@@ -358,7 +353,7 @@ const AppMenu = () => {
             </ul>
             {pathname.startsWith('/course/') && (
                 <div className="p-4 mt-auto">
-                    <Button label="Тема кошуу" icon={'pi pi-plus'} className="cursor-pointer w-full py-2 px-4 rounded-lg transition" onClick={() => setThemeAddVisisble(true)}></Button>
+                    <Button label="Добавить тему" icon={'pi pi-plus'} className="cursor-pointer w-full py-2 px-4 rounded-lg transition" onClick={() => setThemeAddVisisble(true)}></Button>
                 </div>
             )}
         </MenuProvider>

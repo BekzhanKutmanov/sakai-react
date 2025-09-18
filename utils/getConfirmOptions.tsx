@@ -12,13 +12,13 @@ type ConfirmDialogOptions = {
 };
 
 export const getConfirmOptions = (id: number, onDelete: (id: number)=> void ): ConfirmDialogOptions => ({
-    message: 'Сиз чын эле өчүрүүнү каалайсызбы?',
-    header: 'Өчүрүү',
+    message: 'Вы действительно хотите удалить?',
+    header: 'Удаление',
     icon: 'pi pi-info-circle',
     defaultFocus: 'reject',
     acceptClassName: 'p-button-danger',
-    acceptLabel: 'Өчүрүү',
-    rejectLabel: 'Артка',
+    acceptLabel: 'Удалить',
+    rejectLabel: 'Назад',
     rejectClassName: 'p-button-secondary reject-button',
     accept: () => onDelete(id)
 });

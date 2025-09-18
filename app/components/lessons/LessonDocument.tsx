@@ -152,7 +152,7 @@ export default function LessonDocument({ element, content, fetchPropElement, cle
         } else {
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Катаа!', detail: 'Кийинчерээк кайталаныз' }
+                value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
             });
             if (data?.response?.status) {
                 showError(data.response.status);
@@ -169,12 +169,12 @@ export default function LessonDocument({ element, content, fetchPropElement, cle
             fetchPropElement(element.id);
             setMessage({
                 state: true,
-                value: { severity: 'success', summary: 'Ийгиликтүү Кошулдуу!', detail: '' }
+                value: { severity: 'success', summary: 'Успешно добавлен!', detail: '' }
             });
         } else {
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Катаа!', detail: 'Кошуу учурунда катаа кетти' }
+                value: { severity: 'error', summary: 'Ошибка при добавлении!', detail: '' }
             });
             if (data.response.status) {
                 showError(data.response.status);
@@ -190,12 +190,12 @@ export default function LessonDocument({ element, content, fetchPropElement, cle
             fetchPropElement(element.id);
             setMessage({
                 state: true,
-                value: { severity: 'success', summary: 'Ийгиликтүү өчүрүлдү!', detail: '' }
+                value: { severity: 'success', summary: 'Успешно удалено!', detail: '' }
             });
         } else {
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Катаа!', detail: 'Өчүрүүдө ката кетти' }
+                value: { severity: 'error', summary: 'Ошибка при удалении!', detail: '' }
             });
             if (data.response.status) {
                 showError(data.response.status);
@@ -214,14 +214,14 @@ export default function LessonDocument({ element, content, fetchPropElement, cle
             clearValues();
             setMessage({
                 state: true,
-                value: { severity: 'success', summary: 'Ийгиликтүү өзгөртүлдү!', detail: '' }
+                value: { severity: 'success', summary: 'Успешно изменено!', detail: '' }
             });
         } else {
             setDocValue({ title: '', description: '', file: null });
             setEditingLesson(null);
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Катаа!', detail: 'Өзгөртүүдө ката кетти' }
+                value: { severity: 'error', summary: 'Ошибка при изменении!', detail: '' }
             });
             if (data?.response?.status) {
                 showError(data.response.status);
@@ -238,7 +238,7 @@ export default function LessonDocument({ element, content, fetchPropElement, cle
                     <div className="w-full flex flex-col items-center gap-4 py-2">
                         <div className="w-full flex flex-wrap gap-4">
                             {docShow ? (
-                                <NotFound titleMessage={'Сабак кошуу үчүн талааларды толтурунуз'} />
+                                <NotFound titleMessage={'Заполните поля для добавления урока'} />
                             ) : (
                                 document && (
                                     <LessonCard
@@ -297,7 +297,7 @@ export default function LessonDocument({ element, content, fetchPropElement, cle
                         <InputText
                             id="title"
                             type="text"
-                            placeholder={'Аталышы'}
+                            placeholder={'Название'}
                             value={docValue.title}
                             onChange={(e) => {
                                 setDocValue((prev) => ({ ...prev, title: e.target.value }));
@@ -305,18 +305,18 @@ export default function LessonDocument({ element, content, fetchPropElement, cle
                             }}
                         />
                         <b style={{ color: 'red', fontSize: '12px' }}>{errors.title?.message}</b>
-                        {additional.doc && <InputText placeholder="Мазмун" value={docValue.description} onChange={(e) => setDocValue((prev) => ({ ...prev, description: e.target.value }))} className="w-full" />}
+                        {additional.doc && <InputText placeholder="Описание" value={docValue.description} onChange={(e) => setDocValue((prev) => ({ ...prev, description: e.target.value }))} className="w-full" />}
 
                         <div className="flex relative">
-                            {/* <Button disabled={!!errors.title || !docValue.file} label="Сактоо" onClick={handleAddDoc} /> */}
+                            {/* <Button disabled={!!errors.title || !docValue.file} label="Сохранить" onClick={handleAddDoc} /> */}
                             <div className="absolute">
                                 <span className="cursor-pointer ml-1 text-sm text-[var(--mainColor)]" onClick={() => setAdditional((prev) => ({ ...prev, doc: !prev.doc }))}>
-                                    Кошумча {additional.doc ? '-' : '+'}
+                                    Дополнительно {additional.doc ? '-' : '+'}
                                 </span>
                             </div>
                             <div className="w-full flex gap-1 justify-center items-center">
                                 <Button
-                                    label="Сактоо"
+                                    label="Сохранить"
                                     disabled={progressSpinner || !docValue.title.length || !!errors.title || !docValue.file}
                                     onClick={() => {
                                         handleAddDoc();
@@ -332,7 +332,6 @@ export default function LessonDocument({ element, content, fetchPropElement, cle
     };
 
     useEffect(() => {
-        console.log('content', content);
         if (content) {
             setContentShow(true);
             setDocuments(content);
@@ -348,7 +347,7 @@ export default function LessonDocument({ element, content, fetchPropElement, cle
     return (
         <div>
             <FormModal
-                title={'Сабакты жаңылоо'}
+                title={'Обновить урок'}
                 fetchValue={() => {
                     handleUpdateDoc();
                 }}
@@ -397,7 +396,7 @@ export default function LessonDocument({ element, content, fetchPropElement, cle
                                 {/* <span>{String(editingLesson?.file[0].objectURL)}</span> */}
                                 <InputText
                                     type="text"
-                                    placeholder="Аталышы"
+                                    placeholder="Название"
                                     className="w-full"
                                     value={editingLesson?.title && editingLesson?.title}
                                     onChange={(e) => {
@@ -407,7 +406,7 @@ export default function LessonDocument({ element, content, fetchPropElement, cle
                                 />
                                 <b style={{ color: 'red', fontSize: '12px' }}>{errors.title?.message}</b>
                                 <InputText
-                                    placeholder="Мазмун"
+                                    placeholder="Описание"
                                     value={editingLesson?.description !== 'null' ? editingLesson?.description : ''}
                                     onChange={(e) => setEditingLesson((prev) => prev && { ...prev, description: e.target.value })}
                                     className="w-full"

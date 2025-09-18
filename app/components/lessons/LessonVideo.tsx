@@ -23,13 +23,6 @@ import { Dialog } from 'primereact/dialog';
 import { FileWithPreview } from '@/types/fileuploadPreview';
 
 export default function LessonVideo({ element, content, fetchPropElement, clearProp }: { element: mainStepsType; content: any; fetchPropElement: (id: number) => void; clearProp: boolean }) {
-    interface docValueType {
-        title: string;
-        description: string;
-        file: File | null;
-        document?: string;
-    }
-
     interface contentType {
         course_id: number | null;
         created_at: string;
@@ -52,13 +45,6 @@ export default function LessonVideo({ element, content, fetchPropElement, clearP
         id: number;
     }
 
-    interface videoInsideType {
-        id: number;
-        is_link: boolean;
-        short_title: string;
-        title: string;
-    }
-
     interface videoValueType {
         title: string;
         description: string | null; // вместо ? → строго string | null
@@ -69,17 +55,11 @@ export default function LessonVideo({ element, content, fetchPropElement, clearP
         cover: File | null;
     }
 
-    const { course_id } = useParams();
-
-    const router = useRouter();
-    const media = useMediaQuery('(max-width: 640px)');
     const fileUploadRef = useRef<FileUpload>(null);
 
     // videos
     const [video, setVideo] = useState<contentType>();
     const [selectedCity, setSelectedCity] = useState({ name: '', status: true, id: 1 });
-    const [videoSelect, setVideoSelect] = useState<videoType[]>([]);
-    const [videoTypes, setVideoTypes] = useState<videoInsideType[]>([]);
     const [videoCall, setVideoCall] = useState(false);
     const [videoLink, setVideoLink] = useState('');
     const [videoValue, setVideoValue] = useState<{ title: string; description: string; file: null; url: string; video_link: string; cover: File | null; link: null }>({
@@ -104,7 +84,6 @@ export default function LessonVideo({ element, content, fetchPropElement, clearP
     const [selectType, setSelectType] = useState('');
     const [selectId, setSelectId] = useState<number | null>(null);
     const [contentShow, setContentShow] = useState(false);
-    const [videoVisible, setVideoVisible] = useState(false);
 
     const clearFile = () => {
         fileUploadRef.current?.clear();
@@ -137,7 +116,7 @@ export default function LessonVideo({ element, content, fetchPropElement, clearP
         if (!value) {
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Видеону иштетүүдө ката', detail: '' }
+                value: { severity: 'error', summary: 'Ошибка при обработке видео', detail: '' }
             });
         }
 
@@ -155,7 +134,7 @@ export default function LessonVideo({ element, content, fetchPropElement, clearP
         if (!videoId) {
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Видеону иштетүүдө ката', detail: '' }
+                value: { severity: 'error', summary: 'Ошибка при обработке видео', detail: '' }
             });
             return null; // не удалось получить ID
         }
@@ -205,7 +184,7 @@ export default function LessonVideo({ element, content, fetchPropElement, clearP
         } else {
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Катаа!', detail: 'Кийинчерээк кайталаныз' }
+                value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
             });
             if (data?.response?.status) {
                 showError(data.response.status);
@@ -223,12 +202,12 @@ export default function LessonVideo({ element, content, fetchPropElement, clearP
             clearValues();
             setMessage({
                 state: true,
-                value: { severity: 'success', summary: 'Ийгиликтүү Кошулдуу!', detail: '' }
+                value: { severity: 'success', summary: 'Успешно добавлен!', detail: '' }
             });
         } else {
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Катаа!', detail: 'Кошуу учурунда катаа кетти' }
+                value: { severity: 'error', summary: 'Ошибка при добавлении!', detail: '' }
             });
             if (data.response.status) {
                 showError(data.response.status);
@@ -245,12 +224,12 @@ export default function LessonVideo({ element, content, fetchPropElement, clearP
             fetchPropElement(element.id);
             setMessage({
                 state: true,
-                value: { severity: 'success', summary: 'Ийгиликтүү өчүрүлдү!', detail: '' }
+                value: { severity: 'success', summary: 'Успешно удалено!', detail: '' }
             });
         } else {
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Катаа!', detail: 'Өчүрүүдө ката кетти' }
+                value: { severity: 'error', summary: 'Ошибка при удалении!', detail: '' }
             });
             if (data.response.status) {
                 showError(data.response.status);
@@ -268,13 +247,13 @@ export default function LessonVideo({ element, content, fetchPropElement, clearP
             clearValues();
             setMessage({
                 state: true,
-                value: { severity: 'success', summary: 'Ийгиликтүү өзгөртүлдү!', detail: '' }
+                value: { severity: 'success', summary: 'Успешно изменено!', detail: '' }
             });
         } else {
             setEditingLesson(null);
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Катаа!', detail: 'Өзгөртүүдө ката кетти' }
+                value: { severity: 'error', summary: 'Ошибка при изменении!', detail: '' }
             });
             if (data?.response?.status) {
                 showError(data.response.status);
@@ -293,7 +272,7 @@ export default function LessonVideo({ element, content, fetchPropElement, clearP
                                     <InputText
                                         id="usefulLink"
                                         type="url"
-                                        placeholder={'Шилтеме жүктөө'}
+                                        placeholder={'Загрузить ссылку'}
                                         value={videoValue.video_link}
                                         className="w-full"
                                         onChange={(e) => {
@@ -309,7 +288,7 @@ export default function LessonVideo({ element, content, fetchPropElement, clearP
                             <InputText
                                 id="title"
                                 type="text"
-                                placeholder={'Аталышы'}
+                                placeholder={'Название'}
                                 value={videoValue.title}
                                 onChange={(e) => {
                                     setVideoValue((prev) => ({ ...prev, title: e.target.value }));
@@ -319,7 +298,7 @@ export default function LessonVideo({ element, content, fetchPropElement, clearP
                             <b style={{ color: 'red', fontSize: '12px' }}>{errors.title?.message}</b>
                             {additional.video && (
                                 <div>
-                                    <InputText placeholder="Мазмун" value={videoValue.description} onChange={(e) => setVideoValue((prev) => ({ ...prev, description: e.target.value }))} className="w-full" />
+                                    <InputText placeholder="Описание" value={videoValue.description} onChange={(e) => setVideoValue((prev) => ({ ...prev, description: e.target.value }))} className="w-full" />
                                     <div className="flex flex-col sm:flex-row gap-2 items-center sm:w-xl h-[140px] my-2">
                                         <div className="flex items-center gap-1">
                                             <FileUpload ref={fileUploadRef} mode="basic" chooseLabel="Превью" style={{ fontSize: '12px' }} customUpload name="demo[]" accept="image/*" maxFileSize={1000000} onSelect={onSelect} />
@@ -333,14 +312,14 @@ export default function LessonVideo({ element, content, fetchPropElement, clearP
                             )}
 
                             <div className="flex relative">
-                                {/* <Button disabled={!!errors.title || !docValue.file} label="Сактоо" onClick={handleAddDoc} /> */}
+                                {/* <Button disabled={!!errors.title || !docValue.file} label="Добавить" onClick={handleAddDoc} /> */}
                                 <div className="absolute">
                                     <span className="cursor-pointer ml-1 text-sm text-[var(--mainColor)]" onClick={() => setAdditional((prev) => ({ ...prev, video: !prev.video }))}>
-                                        Кошумча {additional.video ? '-' : '+'}
+                                        Дополнительно {additional.video ? '-' : '+'}
                                     </span>
                                 </div>
                                 <div className="w-full flex gap-1 justify-center items-center">
-                                    <Button label="Сактоо" disabled={progressSpinner || !videoValue.title.length || !videoValue.video_link?.length || !!errors.title || !!errors.usefulLink} onClick={() => handleAddVideo()} />
+                                    <Button label="Добавить" disabled={progressSpinner || !videoValue.title.length || !videoValue.video_link?.length || !!errors.title || !!errors.usefulLink} onClick={() => handleAddVideo()} />
                                     {progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}
                                 </div>
                             </div>
@@ -371,7 +350,7 @@ export default function LessonVideo({ element, content, fetchPropElement, clearP
                                 </div>
                             </Dialog> */}
                             {videoShow ? (
-                                <NotFound titleMessage={'Сабак кошуу үчүн талааларды толтурунуз'} />
+                                <NotFound titleMessage={'Заполните поля для добавления урока'} />
                             ) : (
                                 <>
                                     {!videoCall ? (
@@ -383,7 +362,7 @@ export default function LessonVideo({ element, content, fetchPropElement, clearP
                                                 cardValue={{ title: video.title, id: video.id, desctiption: video?.description || '', type: 'video', photo: video?.cover_url }}
                                                 cardBg={'#ddc4f51a'}
                                                 type={{ typeValue: 'video', icon: 'pi pi-video' }}
-                                                typeColor={'va  r(--mainColor)'}
+                                                typeColor={'var(--mainColor)'}
                                                 lessonDate={new Date(video.created_at).toISOString().slice(0, 10)}
                                                 urlForPDF={() => ''}
                                                 urlForDownload=""
@@ -416,7 +395,6 @@ export default function LessonVideo({ element, content, fetchPropElement, clearP
     };
 
     useEffect(() => {
-        console.log('content', content);
         if (content) {
             setContentShow(true);
             setVideo(content);
@@ -426,17 +404,12 @@ export default function LessonVideo({ element, content, fetchPropElement, clearP
     }, [content]);
 
     useEffect(() => {
-        console.log('video', element);
         setVideoValue({ title: '', description: '', file: null, url: '', video_link: '', cover: null, link: null });
     }, [element]);
 
-    useEffect(() => {
-        console.log('edititing', editingLesson);
-    }, [editingLesson]);
-
     return (
         <div>
-            <FormModal title={'Сабакты жаңылоо'} fetchValue={() => handleUpdateVideo()} clearValues={clearValues} visible={visible} setVisible={setVisisble} start={false}>
+            <FormModal title={'Обновить урок'} fetchValue={() => handleUpdateVideo()} clearValues={clearValues} visible={visible} setVisible={setVisisble} start={false}>
                 <div className="flex flex-col gap-1">
                     <div className="flex flex-col gap-1 items-center justify-center">
                         {
@@ -445,7 +418,7 @@ export default function LessonVideo({ element, content, fetchPropElement, clearP
                                 <div className="w-full flex flex-col items-center">
                                     <InputText
                                         type="url"
-                                        placeholder="Шилтеме"
+                                        placeholder="Ссылка"
                                         value={String(editingLesson?.video_link)}
                                         className="w-full"
                                         onChange={(e) => {
@@ -479,7 +452,7 @@ export default function LessonVideo({ element, content, fetchPropElement, clearP
                                 {/* )} */}
                                 <InputText
                                     type="text"
-                                    placeholder="Аталышы"
+                                    placeholder="Название"
                                     className="w-full"
                                     value={editingLesson?.title && editingLesson?.title}
                                     onChange={(e) => {
@@ -488,7 +461,7 @@ export default function LessonVideo({ element, content, fetchPropElement, clearP
                                     }}
                                 />
                                 <b style={{ color: 'red', fontSize: '12px' }}>{errors.title?.message}</b>
-                                <InputText placeholder="Мазмун" value={editingLesson?.description && editingLesson?.description} onChange={(e) => setEditingLesson((prev) => prev && { ...prev, description: e.target.value })} className="w-full" />
+                                <InputText placeholder="Описание" value={editingLesson?.description && editingLesson?.description} onChange={(e) => setEditingLesson((prev) => prev && { ...prev, description: e.target.value })} className="w-full" />
                             </>
                         }
                     </div>

@@ -16,7 +16,7 @@ export default function VideoPlay() {
     return (
         <div className="relative my-4">
             <Dialog
-                header={'Аталышы'}
+                header={''}
                 className="w-[80%] h-[300px] md:h-[500px]"
                 visible={videoCall}
                 onHide={() => {

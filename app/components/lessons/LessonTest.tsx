@@ -12,11 +12,8 @@ import { ProgressSpinner } from 'primereact/progressspinner';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { NotFound } from '../NotFound';
-import { lessonType } from '@/types/lessonType';
 import LessonCard from '../cards/LessonCard';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
-import { log } from 'node:console';
-import { getToken } from '@/utils/auth';
 import { addDocument, addTest, deleteDocument, deleteTest, fetchElement, updateDocument, updateTest } from '@/services/steps';
 import { mainStepsType } from '@/types/mainStepType';
 import useErrorMessage from '@/hooks/useErrorMessage';
@@ -25,23 +22,6 @@ import FormModal from '../popUp/FormModal';
 import { InputTextarea } from 'primereact/inputtextarea';
 
 export default function LessonTest({ element, content, fetchPropElement, clearProp }: { element: mainStepsType; content: any; fetchPropElement: (id: number) => void; clearProp: boolean }) {
-    interface contentType {
-        course_id: number | null;
-        created_at: string;
-        description: string | null;
-        document: string;
-        id: number | null;
-        lesson_id: number;
-        status: true;
-        title: string;
-        updated_at: string;
-        user_id: number;
-        answers: { id: number | null; text: string; is_correct: boolean }[];
-        content: string;
-        score: number;
-        image: null | string;
-    }
-
     interface testType {
         answers: { id: number | null; text: string; is_correct: boolean }[];
         id: number | null;
@@ -52,8 +32,6 @@ export default function LessonTest({ element, content, fetchPropElement, clearPr
         created_at: string;
     }
 
-    const { course_id } = useParams();
-    const media = useMediaQuery('(max-width: 640px)');
     const showError = useErrorMessage();
     const { setMessage } = useContext(LayoutContext);
 
@@ -114,7 +92,7 @@ export default function LessonTest({ element, content, fetchPropElement, clearPr
         } else {
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Катаа!', detail: 'Кийинчерээк кайталаныз' }
+                value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
             });
             if (data?.response?.status) {
                 showError(data.response.status);
@@ -123,22 +101,20 @@ export default function LessonTest({ element, content, fetchPropElement, clearPr
     };
 
     const handleAddTest = async () => {
-        console.log(answer);
-
         const data = await addTest(answer, testValue.title, element?.lesson_id && Number(element?.lesson_id), element.type.id, element.id, testValue.score);
         if (data?.success) {
             fetchPropElement(element.id);
             clearValues();
             setMessage({
                 state: true,
-                value: { severity: 'success', summary: 'Ийгиликтүү кошулду!', detail: '' }
+                value: { severity: 'success', summary: 'Успешно добавлен!', detail: '' }
             });
         } else {
             setTestValue({ title: '', score: 0 });
             setEditingLesson(null);
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Катаа!', detail: 'Кошуу учурунда катаа кетти' }
+                value: { severity: 'error', summary: 'Ошибка при добавлении!', detail: '' }
             });
             if (data?.response?.status) {
                 showError(data.response.status);
@@ -164,14 +140,14 @@ export default function LessonTest({ element, content, fetchPropElement, clearPr
             clearValues();
             setMessage({
                 state: true,
-                value: { severity: 'success', summary: 'Ийгиликтүү өзгөртүлдү!', detail: '' }
+                value: { severity: 'success', summary: 'Успешно изменено!', detail: '' }
             });
         } else {
             // setDocValue({ title: '', description: '', file: null });
             setEditingLesson(null);
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Катаа!', detail: 'Өзгөртүүдө ката кетти' }
+                value: { severity: 'error', summary: 'Ошибка при изменении!', detail: '' }
             });
             if (data?.response?.status) {
                 showError(data.response.status);
@@ -191,12 +167,12 @@ export default function LessonTest({ element, content, fetchPropElement, clearPr
             fetchPropElement(element.id);
             setMessage({
                 state: true,
-                value: { severity: 'success', summary: 'Ийгиликтүү өчүрүлдү!', detail: '' }
+                value: { severity: 'success', summary: 'Успешно удалено!', detail: '' }
             });
         } else {
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Катаа!', detail: 'Өчүрүүдө ката кетти' }
+                value: { severity: 'error', summary: 'Ошибка при удалении!', detail: '' }
             });
             if (data.response.status) {
                 showError(data.response.status);
@@ -212,7 +188,7 @@ export default function LessonTest({ element, content, fetchPropElement, clearPr
                     <div className="w-full flex flex-col items-center gap-4 py-2">
                         <div className="w-full flex flex-wrap gap-4">
                             {testShow ? (
-                                <NotFound titleMessage={'Тест кошуу үчүн талааларды толтурунуз'} />
+                                <NotFound titleMessage={'Заполните поля для добавления теста'} />
                             ) : (
                                 test && (
                                     <LessonCard
@@ -240,7 +216,7 @@ export default function LessonTest({ element, content, fetchPropElement, clearPr
                                     <div className="w-full">
                                         <InputTextarea
                                             id="title"
-                                            placeholder={'Суроо...'}
+                                            placeholder={'Вопрос...'}
                                             value={testValue.title}
                                             style={{ resize: 'none', width: '100%' }}
                                             onChange={(e) => {
@@ -290,14 +266,14 @@ export default function LessonTest({ element, content, fetchPropElement, clearPr
                                         );
                                     })}
 
-                                    <Button label="Вариант кошуу" onClick={addOption} disabled={optionAddBtn} icon="pi pi-plus" className="p-1 ml-4" style={{ fontSize: '14px' }} />
+                                    <Button label="Добавить вариант" onClick={addOption} disabled={optionAddBtn} icon="pi pi-plus" className="p-1 ml-4" style={{ fontSize: '14px' }} />
                                 </div>
                             </div>
                         </div>
                         <div className="flex relative">
                             <div className="w-full flex gap-1 justify-center items-center">
                                 <Button
-                                    label="Сактоо"
+                                    label="Сохранить"
                                     disabled={progressSpinner || !testValue.title.length || !!errors.title}
                                     onClick={() => {
                                         handleAddTest();
@@ -313,11 +289,6 @@ export default function LessonTest({ element, content, fetchPropElement, clearPr
     };
 
     useEffect(() => {
-        console.log('ANSWER ', answer);
-    }, [answer]);
-
-    useEffect(() => {
-        console.log('content', content);
         if (content) {
             setContentShow(true);
             setTests(content);
@@ -327,14 +298,13 @@ export default function LessonTest({ element, content, fetchPropElement, clearPr
     }, [content]);
 
     useEffect(() => {
-        console.log('element', element);
         setTestValue({ title: '', score: 0 });
     }, [element]);
 
     return (
         <div>
             <FormModal
-                title={'Сабакты жаңылоо'}
+                title={'Обновить урок'}
                 fetchValue={() => {
                     handleUpdateTest();
                 }}
@@ -349,7 +319,7 @@ export default function LessonTest({ element, content, fetchPropElement, clearPr
                             <div className="w-full">
                                 <InputTextarea
                                     id="title"
-                                    placeholder={'Суроо...'}
+                                    placeholder={'Вопрос...'}
                                     value={editingLesson?.title && editingLesson.title}
                                     style={{ resize: 'none', width: '100%' }}
                                     onChange={(e) => {
@@ -396,7 +366,7 @@ export default function LessonTest({ element, content, fetchPropElement, clearPr
                                 );
                             })}
 
-                            <Button label="Вариант кошуу" onClick={addOption} disabled={optionAddBtn} icon="pi pi-plus" className="p-1 ml-4" style={{ fontSize: '14px' }} />
+                            <Button label="Добавить вариант" onClick={addOption} disabled={optionAddBtn} icon="pi pi-plus" className="p-1 ml-4" style={{ fontSize: '14px' }} />
                         </div>
                     </div>
                 </div>

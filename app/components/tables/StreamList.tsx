@@ -81,8 +81,6 @@ export default function StreamList({
         setPendingChanges([]);
 
         if (data) {
-            console.log(data);
-
             profilactor(data);
             setHasStreams(false);
             setStreams(data);
@@ -90,7 +88,7 @@ export default function StreamList({
             setHasStreams(true);
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Катаа!', detail: 'Байланыш менен көйгөй' }
+                value: { severity: 'error', summary: 'Ошибка!', detail: 'Проблема с соединением' }
             });
             if (data?.response?.status) {
                 showError(data.response.status);
@@ -106,12 +104,12 @@ export default function StreamList({
             handleFetchStreams();
             setMessage({
                 state: true,
-                value: { severity: 'success', summary: 'Ийгиликтүү кошулду!', detail: '' }
+                value: { severity: 'success', summary: 'Успешно добавлен!', detail: '' }
             });
         } else {
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Катаа!', detail: 'Кошуу учурунда катаа кетти' }
+                value: { severity: 'error', summary: 'Ошибка при добавлении', detail: '' }
             });
             if (data?.response?.status) {
                 showError(data.response.status);
@@ -157,7 +155,6 @@ export default function StreamList({
 
     useEffect(() => {
         setDisplayStreams(pendingChanges);
-        console.log(pendingChanges);
     }, [pendingChanges]);
 
     useEffect(() => {
@@ -305,7 +302,7 @@ export default function StreamList({
             >
                 {streams && streams.length > 0 ? (
                     <DataTable value={streams} className="w-full my-custom-table" dataKey="stream_id" key={JSON.stringify(pendingChanges)} responsiveLayout="stack" breakpoint="960px" rows={5}>
-                        <Column body={(_, { rowIndex }) => rowIndex + 1} header="Номер"></Column>
+                        <Column body={(_, { rowIndex }) => rowIndex + 1} header="#"></Column>
                         {/* <Column body={imageBodyTemplate}></Column> */}
 
                         <Column field="title" header="Название" body={(rowData) => <p key={rowData.id}>{rowData.subject_name.name_ru}</p>}></Column>
@@ -380,7 +377,7 @@ export default function StreamList({
 
                     {hasStreams ? (
                         <>
-                            <NotFound titleMessage={'Агымдар азырынча жок'} />
+                            <NotFound titleMessage={'Потоков пока нет'} />
                         </>
                     ) : (
                         <div className="flex flex-col gap-2 sm:gap-2">

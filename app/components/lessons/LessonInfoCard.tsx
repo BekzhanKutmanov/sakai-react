@@ -58,7 +58,7 @@ export default function LessonInfoCard({
                 ) : (
                     <span className="max-w-[800px] text-[16px] text-wrap break-all">{title}</span>
                 )}
-                <p className="max-w-[800px] text-wrap break-all text-[12px]">{description !== 'null' && description }</p>
+                <p className="max-w-[800px] text-wrap break-all text-[12px]">{description !== 'null' && description}</p>
             </div>
         </div>
     );
@@ -73,7 +73,7 @@ export default function LessonInfoCard({
                     {title}
                 </a>
 
-                <p className="max-w-[800px] text-wrap break-all text-[12px]">{description !== 'null' && description }</p>
+                <p className="max-w-[800px] text-wrap break-all text-[12px]">{description !== 'null' && description}</p>
             </div>
         </div>
     );
@@ -88,7 +88,7 @@ export default function LessonInfoCard({
                     {title}
                 </span>
 
-                <p className="max-w-[800px] text-wrap break-all text-[12px]">{description !== 'null' && description }</p>
+                <p className="max-w-[800px] text-wrap break-all text-[12px]">{description !== 'null' && description}</p>
             </div>
         </div>
     );
@@ -107,28 +107,28 @@ export default function LessonInfoCard({
     );
 
     const testInfo = (
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 w-full">
             {test?.answers && (
-                <div className="flex flex-col justify-center gap-2">
-                    <div className="flex gap-1 items-center flex-col md:flex-row">
-                        <b className="cursor-pointer max-w-[800px] sm:text-xl text-wrap break-all">{test?.content}</b>
-                        <div className="flex items-center justify-center">
-                            <span className="text-[var(--mainColor)]">{!media && '/'} Балл: </span>
-                            <b className="text-[16px] sm:text-[18px]">{`${test?.score}`}</b>
-                        </div>
+                <div className="flex flex-col justify-center gap-2 w-full">
+                    <div className="flex gap-1 items-center flex-col md:flex-row border-b-1 pb-1 border-[var(--borderBottomColor)]">
+                        <span className="cursor-pointer max-w-[800px] text-wrap break-all">{test?.content}</span>
                     </div>
-                    <div className="flex flex-wrap justify-center">
+                    <div className="flex flex-col gap-1 justify-center">
                         {test?.answers.map((item) => {
                             return (
                                 <div key={item.id}>
                                     <label className="custom-radio opacity-[60%]">
-                                        <input disabled type="radio" name="radio" checked={item.is_correct} />
+                                        <input disabled type="radio" name="radio" />
                                         <span className="radio-mark min-w-[18px]"></span>
                                         <span>{item.text}</span>
                                     </label>
                                 </div>
                             );
                         })}
+                    </div>
+                    <div className="flex items-center gap-1 justify-center w-full">
+                        <span className="text-[var(--mainColor)]">Балл за тест: </span>
+                        <b className="">{`${test?.score}`}</b>
                     </div>
                 </div>
             )}
@@ -147,12 +147,12 @@ export default function LessonInfoCard({
     );
 
     const practicaInfo = (
-        <div className="flex flex-col justify-between gap-4">
-            <div className="flex flex-col gap-1">
+        <div className="flex flex-col justify-between gap-4 w-full">
+            <div className="flex flex-col gap-1 w-full">
                 {documentUrl ? (
                     documentUrl.document_path && documentUrl.document_path?.length > 0 ? (
                         <a className="flex gap-2" href={documentUrl.document_path} download target="_blank" rel="noopener noreferrer">
-                            <span className="max-w-[800px] text-wrap break-all font-bold">{title}</span>
+                            <span className="max-w-[800px] text-wrap break-all font-bold hover:underline">{title}</span>
                         </a>
                     ) : (
                         <div className="flex gap-2">
@@ -164,14 +164,24 @@ export default function LessonInfoCard({
                         <span className="max-w-[800px] text-wrap break-all font-bold">{title}</span>
                     </div>
                 )}
-                <p className="max-w-[800px] text-wrap break-all">{description !== 'null' && description }</p>
+                <p className="max-w-[800px] text-wrap break-all">{description !== 'null' && description}</p>
             </div>
-            <div className="flex flex-col gap-2">
-                <div className="flex gap-2">
-                    {link && <span className="text-[var(--mainColor)] text-[13px]">Ссылка: </span>}
-                    <a href={link ? String(link) : '#'} className="max-w-[800px] text-[13px] text-wrap break-all" target="_blank">
-                        {link}
-                    </a>
+            <div className="flex flex-col gap-2 w-full">
+                <div className="flex items-center gap-1">
+                    <span className="text-[var(--mainColor)] text-[13px]">Документ: </span>
+                    {documentUrl && documentUrl.document_path && documentUrl.document_path?.length > 0 ? 
+                        <a className={`flex gap-2 pi pi-file-arrow-up text-xl text-white bg-[var(--mainColor)] p-1 rounded`} href={documentUrl && documentUrl.document_path} download target="_blank" rel="noopener noreferrer"></a>
+                        : <span className={`flex gap-2 pi pi-file-arrow-up text-xl text-white bg-[gray] p-1 rounded`} rel="noopener noreferrer"></span>
+                    }
+                </div>
+
+                <div className="flex gap-2 items-center">
+                    <span className="text-[var(--mainColor)] text-[13px]">Ссылка: </span>
+                    {link ? <a href={link ? String(link) : ''} className="max-w-[800px] text-[13px] text-wrap break-all" target="_blank">
+                            {link}
+                        </a>
+                        : <span className={``} rel="noopener noreferrer">?</span>
+                    }
                 </div>
             </div>
         </div>
@@ -181,18 +191,18 @@ export default function LessonInfoCard({
         <div>
             <Dialog
                 header={'Тест'}
-                className="p-2 sm:w-[500px] h-[300px]"
+                className="p-2 sm:w-[600px] max-h-[400px]"
                 visible={testCall}
                 onHide={() => {
                     if (!testCall) return;
                     setTestCall(false);
                 }}
             >
-                <div className="flex items-center">{testInfo}</div>
+                <div className="flex items-center w-full">{testInfo}</div>
             </Dialog>
             <Dialog
                 header={'Практическое задание'}
-                className="p-2 sm:w-[500px] h-[300px]"
+                className="p-2 sm:w-[600px] max-h-[400px]"
                 visible={practicaCall}
                 onHide={() => {
                     if (!practicaCall) return;

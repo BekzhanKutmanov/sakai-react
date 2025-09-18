@@ -48,7 +48,7 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                           )
                       },
                       {
-                          label: 'Чыгуу',
+                          label: 'Выход',
                           icon: 'pi pi-sign-out',
                           className: 'text-[12px]',
                           items: [],
@@ -60,7 +60,7 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                   ]
               }
             : {
-                  label: 'Кирүү',
+                  label: 'Вход',
                   icon: 'pi pi-sign-in',
                   items: [],
                   //   url: '/auth/login'
@@ -70,7 +70,7 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                   }
               },
         {
-            label: 'ОшМУнун сайты',
+            label: 'Сайт ОшГУ',
             icon: '',
             items: [],
             url: 'https://oshsu.kg'
@@ -92,7 +92,7 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
             )
         },
         {
-            label: 'Чыгуу',
+            label: 'Выход',
             icon: 'pi pi-sign-out',
             items: [],
             command: () => {
@@ -101,10 +101,6 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
             }
         }
     ];
-
-    useEffect(() => {
-        console.log('dep', departament);
-    }, [departament]);
 
     return (
         <div className="layout-topbar">
@@ -136,31 +132,8 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                     {media ? (
                         <></>
                     ) : (
-                        // <Tiered title={{ name: '', font: 'pi pi-ellipsis-v' }} insideColor={'--bodyColor'} items={mobileMenu} />
                         <div className={`flex items-center gap-3 ${!media ? 'order-2' : 'order-3'} `}>
-                            {/* <Tiered title={{ name: 'Каталог', font: 'pi pi-list' }} insideColor={'--titleColor'} items={items} />
-                            <Tiered
-                                title={{ name: 'Окуялар', font: 'pi pi-calendar' }}
-                                insideColor={'--titleColor'}
-                                items={[
-                                    {
-                                        label: 'event',
-                                        items: [],
-                                        link: '/login'
-                                    },
-                                    {
-                                        label: 'event details',
-                                        items: [],
-                                        link: '/login'
-                                    }
-                                ]}
-                            /> */}
-                            <Link className="text-[var(--titleColor)] hover:text-[var(--mainColor)]" href={'https://www.oshsu.kg/ru'}>
-                                ОшМУнун сайты
-                            </Link>
-                            {/* <Link className="text-[var(--titleColor)] hover:text-[var(--mainColor)]" href={'#'}>
-                                Байланыш
-                            </Link> */}
+                            <Link className="text-[var(--titleColor)] hover:text-[var(--mainColor)]" href={'https://www.oshsu.kg/ru'}>Сайт ОшГУ</Link>
                         </div>
                     )}
 
@@ -171,7 +144,7 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                     ) : (
                         <div className={`hidden lg:block ${media ? 'order-1' : 'order-2'}`}>
                             <Link href={'/auth/login'}>
-                                <FancyLinkBtn btnWidth={'100px'} backround={'--redColor'} effectBg={'--mainColor'} title={'Кирүү'} />
+                                <FancyLinkBtn btnWidth={'100px'} backround={'--redColor'} effectBg={'--mainColor'} title={'Вход'} />
                             </Link>
                         </div>
                     )} */}

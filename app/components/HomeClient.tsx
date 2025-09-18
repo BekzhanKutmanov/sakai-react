@@ -30,22 +30,22 @@ export default function HomeClient() {
                             <div className="relative">
                                 <img src={'/layout/images/shape1.png'} data-aos="fade-up" data-aos-delay="900" data-aos-duration="1000" data-aos-once="true" alt="Фото" className="hidden lg:block absolute top-[-100px] left-[-10px] animateContent" />
                                 <span data-aos="fade-up" data-aos-delay="900" data-aos-duration="1000" data-aos-once="true">
-                                    ЫҢГАЙЛУУ ОКУУ ҮЧҮН ОНЛАЙН МЕЙКИНДИК
+                                    УДОБНОЕ ОНЛАЙН-ПРОСТРАНСТВО ДЛЯ ОБУЧЕНИЯ
                                 </span>
                             </div>
                             <h2 data-aos="fade-down" data-aos-delay="900" data-aos-duration="1000" data-aos-once="true" className="text-[30px] sm:text-[50px]">
-                                Аралыктан окутуу порталына кош келиңиз!
+                                Добро пожаловать на портал дистанционного обучения!
                             </h2>
                             <div data-aos="fade-up" data-aos-delay="900" data-aos-duration="1000" data-aos-once="true" className="text-[var(--bodyColor)]">
                                 {' '}
-                                Университеттин онлайн билим берүү жаатындагы долбоорлорун бириктирүүдөбүз:
+                                Мы объединяем проекты университета в сфере онлайн-образования:
                                 <ul className="m-4 list-disc">
-                                    <li>ачык онлайн курстар</li>
-                                    <li>жогорку билим берүү программалары</li>
+                                    <li>открытые онлайн-курсы</li>
+                                    <li>программы высшего образования</li>
                                 </ul>
                                 {user && (
                                     <Link href={user.is_working ? '/course' : user.is_student ? '/teaching' : ''}>
-                                        <FancyLinkBtn btnWidth={'200px'} backround={'--mainColor'} effectBg={'--titleColor'} title={user.is_working ? 'Окутуучу' : user.is_student ? 'Студент' : ''} />
+                                        <FancyLinkBtn btnWidth={'200px'} backround={'--mainColor'} effectBg={'--titleColor'} title={user.is_working ? 'Преподаватель' : user.is_student ? 'Студент' : ''} />
                                     </Link>
                                 )}
                             </div>
@@ -55,18 +55,6 @@ export default function HomeClient() {
                     <div className="lg:w-1/2">
                         <div className="banner-img" data-speed="0.05" data-revert="true">
                             <div className="relative text-[14px]">
-                                {/* <div className="bg-shape -z-10">
-                  <img
-                    // src="/layout/images/home-banner-phone.png"
-                    data-aos="fade-down"
-                    data-aos-delay="900"
-                    data-aos-duration="1000"
-                    data-aos-once="true"
-                    className="absolute -z-10 w-20rem sm:w-full"
-                    alt="Shape"
-                  />
-                </div> */}
-
                                 <img src="/layout/images/home-two.png" data-aos="fade-up" data-aos-delay="900" data-aos-duration="1000" data-aos-once="true" alt="Пользователь" className="w-full z-10" />
 
                                 <div className="hidden sm:block absolute top-0 left-[-200px] animateContent" data-aos="fade-down" data-aos-delay="900" data-aos-duration="1000" data-aos-once="true">
@@ -76,48 +64,6 @@ export default function HomeClient() {
                                 <div className="hidden sm:block absolute top-0 right-0 animateContent" data-aos="fade-up" data-aos-delay="900" data-aos-duration="1000" data-aos-once="true">
                                     <img src="/layout/images/shape2.png" alt="Shape" />
                                 </div>
-
-                                {/* <div
-                  className="absolute bottom-[50%] animateFaster z-20"
-                  data-aos="fade-up"
-                  data-aos-delay="900"
-                  data-aos-duration="1000"
-                  data-aos-once="true"
-                >
-                  <div className="flex flex-col bg-white p-2 sm:p-4">
-                    <span className="text-[var(--titleColor)] sm:text-[16px]">13000</span>
-                    <p className="text-[12px] sm:text-[16px]">Студент</p>
-                  </div>
-                </div> */}
-
-                                {/* <div
-                  className="absolute bottom-[40%] right-0 animateFaster"
-                  data-aos="fade-down"
-                  data-aos-delay="900"
-                  data-aos-duration="1000"
-                  data-aos-once="true"
-                >
-                  <div className="flex flex-col bg-white p-2 sm:p-4">
-                    <span className="text-[var(--titleColor)] sm:text-[16px]">Куттуктайбыз!</span>
-                    <p className="text-[12px] sm:text-[16px]">Сиздин кабыл алуу ийгиликтүү аяктады</p>
-                  </div>
-                </div> */}
-
-                                {/* <div
-                  className="absolute bottom-[4%] animateFaster"
-                  data-aos="fade-up"
-                  data-aos-delay="900"
-                  data-aos-duration="1000"
-                  data-aos-once="true"
-                >
-                  <div className="flex flex-col bg-white p-2 sm:p-4">
-                    <span className="text-[var(--titleColor)] sm:text-[16px]">User experience className</span>
-                    <p className="text-[12px] sm:text-[16px]">Today at 12.00 PM</p>
-                  </div>
-                  <a href="signup.html" className="">
-                    Join now
-                  </a>
-                </div> */}
                             </div>
                         </div>
                     </div>

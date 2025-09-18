@@ -98,7 +98,7 @@ export default function LessonPractica({ element, content, fetchPropElement, cle
 
     const documentView = (
         <>
-            <div className=" flex flex-col gap-1">
+            <div className="flex flex-col gap-1">
                 <i className="pi pi-times text-2xl" onClick={() => setPDFVisible(false)}></i>
                 <div className="w-full flex flex-col gap-1 items-center justify-center">
                     <PDFViewer url={urlPDF || ''} />
@@ -154,7 +154,7 @@ export default function LessonPractica({ element, content, fetchPropElement, cle
         } else {
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Катаа!', detail: 'Кийинчерээк кайталаныз' }
+                value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
             });
             if (data?.response?.status) {
                 showError(data.response.status);
@@ -169,12 +169,12 @@ export default function LessonPractica({ element, content, fetchPropElement, cle
             fetchPropElement(element.id);
             setMessage({
                 state: true,
-                value: { severity: 'success', summary: 'Ийгиликтүү Кошулдуу!', detail: '' }
+                value: { severity: 'success', summary: 'Успешно добавлен!', detail: '' }
             });
         } else {
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Катаа!', detail: 'Кошуу учурунда катаа кетти' }
+                value: { severity: 'error', summary: 'Ошибка при добавлении!', detail: '' } 
             });
             if (data.response.status) {
                 showError(data.response.status);
@@ -189,12 +189,12 @@ export default function LessonPractica({ element, content, fetchPropElement, cle
             fetchPropElement(element.id);
             setMessage({
                 state: true,
-                value: { severity: 'success', summary: 'Ийгиликтүү өчүрүлдү!', detail: '' }
+                value: { severity: 'success', summary: 'Успешно удалено!', detail: '' }
             });
         } else {
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Катаа!', detail: 'Өчүрүүдө ката кетти' }
+                value: { severity: 'error', summary: 'Ошибка при удалении!', detail: '' }
             });
             if (data.response.status) {
                 showError(data.response.status);
@@ -210,14 +210,14 @@ export default function LessonPractica({ element, content, fetchPropElement, cle
             clearValues();
             setMessage({
                 state: true,
-                value: { severity: 'success', summary: 'Ийгиликтүү өзгөртүлдү!', detail: '' }
+                value: { severity: 'success', summary: 'Успешно изменено!', detail: '' }
             });
         } else {
             setDocValue({ title: '', description: '', document: null, url: '' });
             setEditingLesson({ title: '', description: '', document: null, url: '' });
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Катаа!', detail: 'Өзгөртүүдө ката кетти' }
+                value: { severity: 'error', summary: 'Ошибка при изменении!', detail: '' }
             });
             if (data?.response?.status) {
                 showError(data.response.status);
@@ -234,7 +234,7 @@ export default function LessonPractica({ element, content, fetchPropElement, cle
                     <div className="w-full flex flex-col items-center gap-4 py-2">
                         <div className="w-full flex flex-wrap gap-4">
                             {docShow ? (
-                                <NotFound titleMessage={'Сабак кошуу үчүн талааларды толтурунуз'} />
+                                <NotFound titleMessage={'Заполните поля для добавления урока'} />
                             ) : (
                                 document && (
                                     <LessonCard
@@ -256,7 +256,7 @@ export default function LessonPractica({ element, content, fetchPropElement, cle
                 ) : (
                     <div className="w-full flex flex-col justify-center gap-2">
                         <div className="flex gap-1 items-center">
-                            <InputTextarea value={docValue.title} id="title" placeholder='Суроо...' style={{resize: 'none', width: '100%'}} onChange={(e) => {
+                            <InputTextarea value={docValue.title} id="title" placeholder='Вопрос...' style={{resize: 'none', width: '100%'}} onChange={(e) => {
                                 setDocValue((prev) => ({ ...prev, title: e.target.value }));
                                 setValue('title', e.target.value, { shouldValidate: true });
                             }} />
@@ -303,7 +303,7 @@ export default function LessonPractica({ element, content, fetchPropElement, cle
                                 <InputText
                                     id="usefulLinkNotReq"
                                     type="url"
-                                    placeholder={'Шилтеме жүктөө'}
+                                    placeholder={'Загрузить ссылку'}
                                     value={docValue.url}
                                     className="w-full"
                                     onChange={(e) => {
@@ -314,22 +314,22 @@ export default function LessonPractica({ element, content, fetchPropElement, cle
                                 <b style={{ color: 'red', fontSize: '12px' }}>{errors.usefulLinkNotReq?.message}</b>
                             </div>
                         )}
-                        <InputText placeholder="Мазмун" id="title" value={docValue.description} onChange={(e) => {
+                        <InputText placeholder="Описание" id="title" value={docValue.description} onChange={(e) => {
                             setDocValue((prev) => ({ ...prev, description: e.target.value }))
                             setValue('title', e.target.value, { shouldValidate: true });
                         }} className="w-full" />
                         <b style={{ color: 'red', fontSize: '12px' }}>{errors.title?.message}</b>
 
                         <div className="flex relative">
-                            {/* <Button disabled={!!errors.title || !docValue.file} label="Сактоо" onClick={handleAddDoc} /> */}
+                            {/* <Button disabled={!!errors.title || !docValue.file} label="Сохранить" onClick={handleAddDoc} /> */}
                             <div className="absolute">
                                 <span className="cursor-pointer ml-1 text-sm text-[var(--mainColor)]" onClick={() => setAdditional((prev) => ({ ...prev, doc: !prev.doc }))}>
-                                    Кошумча {additional.doc ? '-' : '+'}
+                                    Дополнительно {additional.doc ? '-' : '+'}
                                 </span>
                             </div>
                             <div className="w-full flex gap-1 justify-center items-center">
                                 <Button
-                                    label="Сактоо"
+                                    label="Сохранить"
                                     disabled={progressSpinner || !docValue.title.length || !!errors.title || !docValue.description.length}
                                     onClick={() => {
                                         handleAddPracica();
@@ -345,7 +345,6 @@ export default function LessonPractica({ element, content, fetchPropElement, cle
     };
 
     useEffect(() => {
-        console.log('content', content);
         if (content) {
             setContentShow(true);
             setDocuments(content);
@@ -355,18 +354,13 @@ export default function LessonPractica({ element, content, fetchPropElement, cle
     }, [content]);
 
     useEffect(() => {
-        console.log('edititing', element);
         setDocValue({ title: '', description: '', document: null, url: '' });
     }, [element]);
-
-    useEffect(() => {
-        console.log('value ', editingLesson);
-    }, [editingLesson]);
 
     return (
         <div>
             <FormModal
-                title={'Сабакты жаңылоо'}
+                title={'Обновить урок'}
                 fetchValue={() => {
                     handleUpdateDoc();
                 }}
@@ -390,7 +384,7 @@ export default function LessonPractica({ element, content, fetchPropElement, cle
                                     <FileUpload
                                         className="text-[12px]"
                                         ref={fileUploadRef}
-                                        chooseLabel="Документ жүктөө"
+                                        chooseLabel="Загрузить документ"
                                         mode="basic"
                                         name="demo[]"
                                         customUpload
@@ -416,7 +410,7 @@ export default function LessonPractica({ element, content, fetchPropElement, cle
                                 <InputText
                                     id="usefulLink"
                                     type="url"
-                                    placeholder={'Шилтеме жүктөө'}
+                                    placeholder={'Загрузить ссылку'}
                                     value={editingLesson?.url}
                                     className="w-full"
                                     onChange={(e) => {
@@ -426,7 +420,7 @@ export default function LessonPractica({ element, content, fetchPropElement, cle
                                 />
                             </div>
                         )}
-                        <InputText placeholder="Мазмун" id="title" value={editingLesson?.description} onChange={(e) => {
+                        <InputText placeholder="Описание" id="title" value={editingLesson?.description} onChange={(e) => {
                             setEditingLesson((prev) => ({ ...prev, description: e.target.value }))
                             setValue('title', e.target.value, { shouldValidate: true });
                         }} className="w-full" />
@@ -435,7 +429,7 @@ export default function LessonPractica({ element, content, fetchPropElement, cle
                         <div className="flex relative">
                             <div className="">
                                 <span className="cursor-pointer ml-1 text-sm text-[var(--mainColor)]" onClick={() => setAdditional((prev) => ({ ...prev, doc: !prev.doc }))}>
-                                    Кошумча {additional.doc ? '-' : '+'}
+                                    Дополнительно {additional.doc ? '-' : '+'}
                                 </span>
                             </div>
                         </div>
