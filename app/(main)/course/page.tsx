@@ -1,7 +1,7 @@
 'use client';
 
 import FormModal from '@/app/components/popUp/FormModal';
-import { addCourse, deleteCourse, fetchCourseInfo, fetchCourses, publishCourse, updateCourse } from '@/services/courses';
+import { addCourse, deleteCourse, fetchCourseInfo, fetchCourses, publishCourse, updateCourse, veryfyCourse } from '@/services/courses';
 import { Button } from 'primereact/button';
 import { FileUpload, FileUploadSelectEvent } from 'primereact/fileupload';
 import { InputText } from 'primereact/inputtext';
@@ -30,6 +30,7 @@ import { ProgressSpinner } from 'primereact/progressspinner';
 import { DataView } from 'primereact/dataview';
 import { FileWithPreview } from '@/types/fileuploadPreview';
 import { mainStreamsType } from '@/types/mainStreamsType';
+import { InputSwitch } from 'primereact/inputswitch';
 
 export default function Course() {
     const { setMessage, setGlobalLoading, course, setCourses, contextFetchCourse, setMainCourseId } = useContext(LayoutContext);
@@ -50,6 +51,7 @@ export default function Course() {
     });
     const [activeIndex, setActiveIndex] = useState<number>(0);
     const [imageState, setImageState] = useState<string | null>(null);
+    const [pendingChanges, setPendingChanges] = useState<{ status: boolean }[]>([]);
     const [editingLesson, setEditingLesson] = useState<CourseCreateType>({
         title: '',
         description: '',
@@ -70,6 +72,33 @@ export default function Course() {
         setTimeout(() => {
             setSkeleton(false);
         }, 1000);
+    };
+
+    const handleEdit = async (e: { checked: boolean }, item: { status: boolean; id: number }) => {
+        setSkeleton(true);
+
+        const { id } = item;
+        const status = e.checked;
+
+        const forSentStreams = {
+            course_id: id,
+            status: status ? 1 : 0
+        };
+        console.log(forSentStreams);
+        const data = await veryfyCourse(forSentStreams);
+        if (data.success) {
+            contextFetchCourse(1);
+            setMessage({
+                state: true,
+                value: { severity: 'success', summary: 'Успешно добавлен!', detail: '' }
+            });
+        } else {
+            setSkeleton(false);
+            setMessage({
+                state: true,
+                value: { severity: 'error', summary: 'Не удалось добавить курс', detail: '' }
+            });
+        }
     };
 
     const fileUploadRef = useRef<FileUpload>(null);
@@ -307,10 +336,6 @@ export default function Course() {
         }
     }, [editMode]);
 
-    useEffect(() => {
-        console.log('forstream ', forStreamCount);
-    }, [forStreamCount]);
-
     const itemTemplate = (shablonData: any) => {
         return (
             <div className="col-12">
@@ -342,6 +367,27 @@ export default function Course() {
 
                     <div>{imageBodyTemplate(shablonData)}</div>
 
+                    <div>
+                        <div className='flex gap-1 items-center'>
+                            <span className='text-[var(--mainColor)] text-sm'>Публикация: </span>
+                            {shablonData.is_published ? <i className="pi pi-check text-md sm:text-lg text-[var(--greenColor)]"></i> : <i className="pi pi-times text-md sm:text-lg text-[var(--redColor)]"></i>}
+                        </div>
+                        <div className='flex gap-1 items-center'>
+                            <span className='text-[var(--mainColor)] text-sm'>На рассмотрение: </span>
+                            <label className="custom-radio">
+                                <input
+                                    type="checkbox"
+                                    className={`customCheckbox`}
+                                    checked={shablonData.status}
+                                    onChange={(e) => {
+                                        handleEdit(e.target, shablonData);
+                                    }}
+                                />
+                                <span className="checkbox-mark"></span>
+                            </label>
+                        </div>
+                    </div>
+
                     <>
                         <label className="custom-course-radio">
                             <input
@@ -355,7 +401,7 @@ export default function Course() {
                                 checked={forStreamId?.id === shablonData.id}
                             />
                             <span className="radio-course-mark" onClick={() => setActiveIndex(1)}>
-                                Связать к потоку
+                                Связать
                             </span>
                         </label>
                     </>
@@ -593,7 +639,7 @@ export default function Course() {
                         </>
                     ) : (
                         <div className="w-full flex justify-between items-start gap-2 xl:gap-5">
-                            <div className="py-4 w-1/2">
+                            <div className="py-4 w-2/3">
                                 {/* info section */}
                                 {skeleton ? (
                                     <GroupSkeleton count={1} size={{ width: '100%', height: '5rem' }} />
@@ -647,6 +693,25 @@ export default function Course() {
                                                             )}
                                                         ></Column>
                                                         <Column
+                                                            header="На рассмотр"
+                                                            style={{ margin: '0 3px', textAlign: 'center' }}
+                                                            body={(rowData) => (
+                                                                <>
+                                                                    <label className="custom-radio">
+                                                                        <input
+                                                                            type="checkbox"
+                                                                            className={`customCheckbox`}
+                                                                            checked={rowData.status}
+                                                                            onChange={(e) => {
+                                                                                handleEdit(e.target, rowData);
+                                                                            }}
+                                                                        />
+                                                                        <span className="checkbox-mark"></span>
+                                                                    </label>
+                                                                </>
+                                                            )}
+                                                        ></Column>
+                                                        <Column
                                                             header="Публикация"
                                                             style={{ margin: '0 3px', textAlign: 'center' }}
                                                             body={(rowData) =>
@@ -654,7 +719,7 @@ export default function Course() {
                                                             }
                                                         ></Column>
                                                         <Column
-                                                            header="Связь с потоком"
+                                                            header="Потоки"
                                                             style={{ margin: '0 3px', textAlign: 'center' }}
                                                             body={(rowData) => (
                                                                 <>
@@ -669,7 +734,7 @@ export default function Course() {
                                                                             }}
                                                                             checked={forStreamId?.id === rowData.id}
                                                                         />
-                                                                        <span className="radio-course-mark">Связать</span>
+                                                                        <span className="radio-course-mark rounded">Связать</span>
                                                                     </label>
                                                                 </>
                                                             )}

@@ -1,12 +1,8 @@
 import { streamsType } from '@/types/streamType';
 import axiosInstance from '@/utils/axiosInstance';
 
-let url = '';
-
 // streams
 export const fetchStreams = async (id: number | null) => {
-    console.log(id);
-    
     try {
         const res = await axiosInstance.get(`v1/teacher/stream?course_id=${id}`);
         const data = await res.data;
@@ -19,16 +15,6 @@ export const fetchStreams = async (id: number | null) => {
 
 // export const connectStreams = async (value: {stream: streamsType[]}) => {
 export const connectStreams = async (value: {course_id: number | null, stream: streamsType[]}) => {
-    console.log(value);
-    
-    // const formData = new FormData();
-    // formData.append('title', value.title);
-    // formData.append('description', value.description);
-    // if (value.image instanceof File) {
-    //     formData.append('image', value.image);
-    // }
-    // formData.append('video_url', value.video_url);
-
     try {
         const res = await axiosInstance.post(`/v1/teacher/stream/store`, value);
 
@@ -41,9 +27,7 @@ export const connectStreams = async (value: {course_id: number | null, stream: s
 
 // students stream
 
-export const fetchStreamStudents = async (connect_id: number | null, stream_id: number | null) => {    
-    console.log(connect_id, stream_id);
-    
+export const fetchStreamStudents = async (connect_id: number | null, stream_id: number | null) => {        
     try {
         const res = await axiosInstance.get(`v1/teacher/stream/students?connect_id=${connect_id}&stream_id=${stream_id}`);
         const data = await res.data;

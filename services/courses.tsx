@@ -361,7 +361,23 @@ export const publishCourse = async (id_kafedra: number, id_teacher: number, cour
 
         return res.data;
     } catch (err) {
-        console.log('Ошибка при добавлении курса', err);
+        console.log('Ошибка', err);
         return err;
     }
 };
+
+export const veryfyCourse = async (value: {course_id: number, status: number}) => {
+    const formData = new FormData();
+    formData.append('course_id', String(value.course_id))
+    formData.append('status', String(value.status))
+    
+    try {
+        const res = await axiosInstance.post(`/v1/teacher/courses/send/verify`, formData);
+
+        return res.data;
+    } catch (err) {
+        console.log('Ошибка', err);
+        return err;
+    }
+};
+

@@ -348,7 +348,7 @@ export default function StreamList({
                 )}
             </Dialog>
             {callIndex === 1 && (
-                <div className="p-1 sm:py-4 px-2">
+                <div className="sm:py-2">
                     {skeleton ? (
                         <GroupSkeleton count={10} size={{ width: '100%', height: '5rem' }} />
                     ) : (
