@@ -30,6 +30,7 @@ export default function LessonPractica({ element, content, fetchPropElement, cle
         description: string;
         document: File | null;
         url: string;
+        score: number | null;
     }
 
     interface contentType {
@@ -47,26 +48,19 @@ export default function LessonPractica({ element, content, fetchPropElement, cle
         url: string;
     }
 
-    const { course_id } = useParams();
-
     const router = useRouter();
     const media = useMediaQuery('(max-width: 640px)');
     const fileUploadRef = useRef<FileUpload>(null);
     const showError = useErrorMessage();
     const { setMessage } = useContext(LayoutContext);
 
-    const [editingLesson, setEditingLesson] = useState<docValueType>({ title: '', description: '', document: null, url: '' });
+    const [editingLesson, setEditingLesson] = useState<docValueType>({ title: '', description: '', document: null, url: '',score: 0 });
     const [visible, setVisisble] = useState(false);
     const [imageState, setImageState] = useState<string | null>(null);
     const [contentShow, setContentShow] = useState(false);
     // doc
     const [document, setDocuments] = useState<contentType>();
-    const [docValue, setDocValue] = useState<docValueType>({
-        title: '',
-        description: '',
-        document: null,
-        url: ''
-    });
+    const [docValue, setDocValue] = useState<docValueType>({ title: '', description: '', document: null, url: '',score: 0 });
     const [docShow, setDocShow] = useState<boolean>(false);
     const [urlPDF, setUrlPDF] = useState('');
     const [PDFVisible, setPDFVisible] = useState<boolean>(false);
@@ -109,8 +103,8 @@ export default function LessonPractica({ element, content, fetchPropElement, cle
 
     const clearValues = () => {
         clearFile();
-        setDocValue({ title: '', description: '', document: null, url: '' });
-        setEditingLesson({ title: '', description: '', document: null, url: '' });
+        setDocValue({ title: '', description: '', document: null, url: '', score: 0 });
+        setEditingLesson({ title: '', description: '', document: null, url: '', score: 0 });
         setSelectId(null);
         setSelectType('');
     };
@@ -149,8 +143,10 @@ export default function LessonPractica({ element, content, fetchPropElement, cle
 
     const editing = async () => {
         const data = await fetchElement(element.lesson_id, element.id);
+        console.log(data);
+        
         if (data.success) {
-            setEditingLesson({ title: data.content.title, document: null, description: data.content.description, url: '' });
+            setEditingLesson({ title: data.content.title, document: null, description: data.content.description, url: '', score: data.step.score});
         } else {
             setMessage({
                 state: true,
@@ -174,7 +170,7 @@ export default function LessonPractica({ element, content, fetchPropElement, cle
         } else {
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка при добавлении!', detail: '' } 
+                value: { severity: 'error', summary: 'Ошибка при добавлении!', detail: '' }
             });
             if (data.response.status) {
                 showError(data.response.status);
@@ -213,8 +209,8 @@ export default function LessonPractica({ element, content, fetchPropElement, cle
                 value: { severity: 'success', summary: 'Успешно изменено!', detail: '' }
             });
         } else {
-            setDocValue({ title: '', description: '', document: null, url: '' });
-            setEditingLesson({ title: '', description: '', document: null, url: '' });
+            setDocValue({ title: '', description: '', document: null, url: '', score:0 });
+            setEditingLesson({ title: '', description: '', document: null, url: '', score:0 });
             setMessage({
                 state: true,
                 value: { severity: 'error', summary: 'Ошибка при изменении!', detail: '' }
@@ -256,47 +252,34 @@ export default function LessonPractica({ element, content, fetchPropElement, cle
                 ) : (
                     <div className="w-full flex flex-col justify-center gap-2">
                         <div className="flex gap-1 items-center">
-                            <InputTextarea value={docValue.title} id="title" placeholder='Вопрос...' style={{resize: 'none', width: '100%'}} onChange={(e) => {
-                                setDocValue((prev) => ({ ...prev, title: e.target.value }));
-                                setValue('title', e.target.value, { shouldValidate: true });
-                            }} />
+                            <InputTextarea
+                                value={docValue.title}
+                                id="title"
+                                placeholder="Вопрос..."
+                                style={{ resize: 'none', width: '100%' }}
+                                onChange={(e) => {
+                                    setDocValue((prev) => ({ ...prev, title: e.target.value }));
+                                    setValue('title', e.target.value, { shouldValidate: true });
+                                }}
+                            />
                         </div>
                         <b style={{ color: 'red', fontSize: '12px' }}>{errors.title?.message}</b>
                         {additional.doc && (
-                            // <div className="flex gap-1 items-center">
-                            //     <FileUpload
-                            //         className="text-[12px]"
-                            //         ref={fileUploadRef}
-                            //         chooseLabel="Документ жүктөө"
-                            //         mode="basic"
-                            //         name="demo[]"
-                            //         customUpload
-                            //         uploadHandler={() => {}}
-                            //         accept="application/pdf"
-                            //         onSelect={(e) =>
-                            //             setDocValue((prev) => ({
-                            //                 ...prev,
-                            //                 document: e.files[0]
-                            //             }))
-                            //         }
-                            //     />
-                            //     <Button icon={'pi pi-trash'} onClick={clearFile} />
-                            // </div>
                             <input
-                            type="file"
-                            accept="application/pdf"
-                            className='border rounded p-1'
-                            onChange={(e) => {
-                                console.log(e.target.files);
-                                const file = e.target.files?.[0]; 
-                                if(file){
-                                    setDocValue((prev) => ({
-                                        ...prev,
-                                        document: file
-                                    }))
-                                }
-                            }}
-                        />
+                                type="file"
+                                accept="application/pdf"
+                                className="border rounded p-1"
+                                onChange={(e) => {
+                                    console.log(e.target.files);
+                                    const file = e.target.files?.[0];
+                                    if (file) {
+                                        setDocValue((prev) => ({
+                                            ...prev,
+                                            document: file
+                                        }));
+                                    }
+                                }}
+                            />
                         )}
                         {additional.doc && (
                             <div className="w-full flex flex-col items-center">
@@ -314,11 +297,28 @@ export default function LessonPractica({ element, content, fetchPropElement, cle
                                 <b style={{ color: 'red', fontSize: '12px' }}>{errors.usefulLinkNotReq?.message}</b>
                             </div>
                         )}
-                        <InputText placeholder="Описание" id="title" value={docValue.description} onChange={(e) => {
-                            setDocValue((prev) => ({ ...prev, description: e.target.value }))
-                            setValue('title', e.target.value, { shouldValidate: true });
-                        }} className="w-full" />
+                        <InputText
+                            placeholder="Описание"
+                            id="title"
+                            value={docValue.description}
+                            onChange={(e) => {
+                                setDocValue((prev) => ({ ...prev, description: e.target.value }));
+                                setValue('title', e.target.value, { shouldValidate: true });
+                            }}
+                            className="w-full"
+                        />
                         <b style={{ color: 'red', fontSize: '12px' }}>{errors.title?.message}</b>
+
+                        <div className="w-full flex flex-col">
+                            <span>Максимальный балл</span>
+                            <InputText
+                                type="number"
+                                value={String(docValue?.score)}
+                                onChange={(e) => {
+                                    setDocValue((prev) => prev && { ...prev, score: Number(e.target.value) });
+                                }}
+                            />
+                        </div>
 
                         <div className="flex relative">
                             {/* <Button disabled={!!errors.title || !docValue.file} label="Сохранить" onClick={handleAddDoc} /> */}
@@ -330,7 +330,7 @@ export default function LessonPractica({ element, content, fetchPropElement, cle
                             <div className="w-full flex gap-1 justify-center items-center">
                                 <Button
                                     label="Сохранить"
-                                    disabled={progressSpinner || !docValue.title.length || !!errors.title || !docValue.description.length}
+                                    disabled={progressSpinner || !docValue.title.length || !!errors.title || !docValue.description.length || !docValue.score}
                                     onClick={() => {
                                         handleAddPracica();
                                     }}
@@ -354,7 +354,7 @@ export default function LessonPractica({ element, content, fetchPropElement, cle
     }, [content]);
 
     useEffect(() => {
-        setDocValue({ title: '', description: '', document: null, url: '' });
+        setDocValue({ title: '', description: '', document: null, url: '', score: 0 });
     }, [element]);
 
     return (
@@ -372,15 +372,20 @@ export default function LessonPractica({ element, content, fetchPropElement, cle
                 <div className="flex flex-col gap-1">
                     <div className="flex flex-col gap-1 items-center justify-center">
                         <div className="w-full flex gap-1 items-center">
-                            <InputTextarea id="title" style={{resize: 'none', width: '100%'}} value={editingLesson?.title && editingLesson.title} onChange={(e) => {
-                                setEditingLesson((prev) => prev && { ...prev, title: e.target.value })
-                                setValue('title', e.target.value, { shouldValidate: true });
-                            }} />
+                            <InputTextarea
+                                id="title"
+                                style={{ resize: 'none', width: '100%' }}
+                                value={editingLesson?.title && editingLesson.title}
+                                onChange={(e) => {
+                                    setEditingLesson((prev) => prev && { ...prev, title: e.target.value });
+                                    setValue('title', e.target.value, { shouldValidate: true });
+                                }}
+                            />
                         </div>
                         <b style={{ color: 'red', fontSize: '12px' }}>{errors.title?.message}</b>
                         {additional.doc && (
                             <div className="flex gap-1 flex-col items-center">
-                                <div className='flex  gap-1'>
+                                <div className="flex  gap-1">
                                     <FileUpload
                                         className="text-[12px]"
                                         ref={fileUploadRef}
@@ -420,11 +425,29 @@ export default function LessonPractica({ element, content, fetchPropElement, cle
                                 />
                             </div>
                         )}
-                        <InputText placeholder="Описание" id="title" value={editingLesson?.description} onChange={(e) => {
-                            setEditingLesson((prev) => ({ ...prev, description: e.target.value }))
-                            setValue('title', e.target.value, { shouldValidate: true });
-                        }} className="w-full" />
+                        <InputText
+                            placeholder="Описание"
+                            id="title"
+                            value={editingLesson?.description}
+                            onChange={(e) => {
+                                setEditingLesson((prev) => ({ ...prev, description: e.target.value }));
+                                setValue('title', e.target.value, { shouldValidate: true });
+                            }}
+                            className="w-full"
+                        />
                         <b style={{ color: 'red', fontSize: '12px' }}>{errors.title?.message}</b>
+
+                        <div className="w-full flex flex-col justify-center">
+                            <span>Максимальный балл</span>
+                            <InputText
+                                type="number"
+                                className="w-[70px]"
+                                value={String(editingLesson?.score)}
+                                onChange={(e) => {
+                                    setEditingLesson((prev) => prev && { ...prev, score: Number(e.target.value) });
+                                }}
+                            />
+                        </div>
 
                         <div className="flex relative">
                             <div className="">

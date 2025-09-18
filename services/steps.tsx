@@ -51,8 +51,6 @@ export const addLesson = async (value: { lesson_id: number; type_id: number }, s
 // fetch steps content
 
 export const fetchElement = async (lesson_id: number, step_id: number) => {
-    console.log(lesson_id, step_id);
-
     try {
         const res = await axiosInstance.get(`/v1/teacher/lessons/step/content?lesson_id=${lesson_id}&step_id=${step_id}`);
         const data = await res.data;
@@ -289,17 +287,18 @@ export const deleteTest = async (lesson_id: number, test_id: number, type_id: nu
 };
 
 // practica
-export const addPractica = async (value: { url: string | null; title: string; description: string | null; document: File | null }, lesson_id: number, type_id: number, step_id: number) => {
+export const addPractica = async (value: { url: string | null; title: string; description: string | null; document: File | null, score: number | null }, lesson_id: number, type_id: number, step_id: number) => {
     console.log(value);
 
     const formData = new FormData();
-    url = `/v1/teacher/practice-lesson/store?lesson_id=${lesson_id}&title=${value.title}&description=${value.description}&url=${value.url}&document=${value.document}&video_type_id=${type_id}&step_id=${step_id}`;
+    url = `/v1/teacher/practice-lesson/store?lesson_id=${lesson_id}&title=${value.title}&description=${value.description}&url=${value.url}&document=${value.document}&score=${value.score}&video_type_id=${type_id}&step_id=${step_id}`;
     formData.append('type_id', String(type_id));
     formData.append('step_id', String(step_id));
     formData.append('lesson_id', String(lesson_id));
     formData.append('url', String(value?.url));
     formData.append('title', String(value?.title));
     formData.append('description', String(value?.description));
+    formData.append('score', String(value?.score));
     if (value.document) formData.append('document', value?.document && value?.document);
     else formData.append('document', '');
 

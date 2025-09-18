@@ -13,42 +13,42 @@ export default function useErrorMessage() {
             case 400:
                 setMessage({
                     state: true,
-                    value: { severity: 'error', summary: 'Катаа!', detail: 'Суроо туура эмес' }
+                    value: { severity: 'error', summary: 'Ошибка!', detail: 'Суроо туура эмес' }
                 });
                 break;
 
             case 403:
                 setMessage({
                     state: true,
-                    value: { severity: 'error', summary: 'Катаа!', detail: 'Кирүү укугу жок' }
+                    value: { severity: 'error', summary: 'Ошибка!', detail: 'Кирүү укугу жок' }
                 });
                 break;
 
             case 409:
                 setMessage({
                     state: true,
-                    value: { severity: 'error', summary: 'Катаа!', detail: 'Маалыматтарда карама-каршылык бар' }
+                    value: { severity: 'error', summary: 'Ошибка!', detail: 'Маалыматтарда карама-каршылык бар' }
                 });
                 break;
 
             case 422:
                 setMessage({
                     state: true,
-                    value: { severity: 'error', summary: 'Катаа!', detail: 'Текшерүү катасы. Киргизилген маалыматтарды текшериңиз' }
+                    value: { severity: 'error', summary: 'Ошибка!', detail: 'Текшерүү катасы. Киргизилген маалыматтарды текшериңиз' }
                 });
                 break;
 
             case 500:
                 setMessage({
                     state: true,
-                    value: { severity: 'error', summary: 'Катаа!', detail: 'Сервер катасы. Кийинчерээк кайра аракет кылыңыз' }
+                    value: { severity: 'error', summary: 'Ошибка!', detail: 'Сервер катасы. Кийинчерээк кайра аракет кылыңыз' }
                 });
                 break;
 
             case 503:
                 setMessage({
                     state: true,
-                    value: { severity: 'error', summary: 'Катаа!', detail: 'Сервер убактылуу жеткиликсиз' }
+                    value: { severity: 'error', summary: 'Ошибка!', detail: 'Сервер убактылуу жеткиликсиз' }
                 });
                 break;
 
