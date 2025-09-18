@@ -93,11 +93,19 @@ export default function Course() {
                 value: { severity: 'success', summary: 'Успешно добавлен!', detail: '' }
             });
         } else {
+            console.log(data);
             setSkeleton(false);
-            setMessage({
-                state: true,
-                value: { severity: 'error', summary: 'Не удалось добавить курс', detail: '' }
-            });
+            if(data.response.data.cause){
+                setMessage({
+                    state: true,
+                    value: { severity: 'error', summary: 'Ошибка!', detail: data.response.data.cause}
+                });
+            } else {
+                setMessage({
+                    state: true,
+                    value: { severity: 'error', summary: 'Не удалось добавить курс', detail: '' }
+                });
+            }
         }
     };
 
@@ -339,7 +347,7 @@ export default function Course() {
     const itemTemplate = (shablonData: any) => {
         return (
             <div className="col-12">
-                <div className={`w-full flex flex-column sm:flex-row align-items-center p-3 gap-3 `}>
+                <div className={`w-full flex flex-col align-items-center p-3 gap-3 `}>
                     {/* Номер (rowIndex) можно добавить через внешний счетчик или props, но для DataView это сложнее */}
 
                     {/* Заголовок */}
@@ -368,12 +376,12 @@ export default function Course() {
                     <div>{imageBodyTemplate(shablonData)}</div>
 
                     <div>
-                        <div className='flex gap-1 items-center'>
-                            <span className='text-[var(--mainColor)] text-sm'>Публикация: </span>
+                        <div className="flex gap-1 items-center">
+                            <span className="text-[var(--mainColor)] text-sm">Публикация: </span>
                             {shablonData.is_published ? <i className="pi pi-check text-md sm:text-lg text-[var(--greenColor)]"></i> : <i className="pi pi-times text-md sm:text-lg text-[var(--redColor)]"></i>}
                         </div>
-                        <div className='flex gap-1 items-center'>
-                            <span className='text-[var(--mainColor)] text-sm'>На рассмотрение: </span>
+                        <div className="flex gap-1 items-center">
+                            <span className="text-[var(--mainColor)] text-sm">На рассмотрение: </span>
                             <label className="custom-radio">
                                 <input
                                     type="checkbox"
