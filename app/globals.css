@@ -398,8 +398,15 @@ h1, h2, h3, h4, h5, h6 {
 
 .my-custom-table td,
 .my-custom-table th {
-  /* border: 1px solid #ccc; */
   padding: 6px;
+}
+
+@media screen and (max-width: 440px) {
+  .my-custom-table td,
+  .my-custom-table th {
+  padding: 3px;
+}
+
 }
 
 .my-custom-table thead {
@@ -675,8 +682,8 @@ h1, h2, h3, h4, h5, h6 {
 
 
 :root {
-  --size-w: 60px;
-  --size-h: 25px;
+  --size-w: 55px;
+  --size-h: 23px;
   --track-radius: 999px;
   --accent: #047d4b;    /* насыщенный зелёный */
   --accent-soft: var(--greenBgColor);/* фон-оттенок для зелёного */
@@ -808,7 +815,7 @@ h1, h2, h3, h4, h5, h6 {
 
 /* маленькая адаптация */
 @media (max-width: 380px){
-  :root { --size-w: 50px; --size-h: 20px }
+  :root { --size-w: 40px; --size-h: 20px }
 }
 
 @media (max-width: 640px){

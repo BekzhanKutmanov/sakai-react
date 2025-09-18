@@ -701,7 +701,7 @@ export default function Course() {
                                                             )}
                                                         ></Column>
                                                         <Column
-                                                            header="На рассмотр."
+                                                            header={()=> <div className='text-[13px]'>На рассмотр.</div>}
                                                             style={{ margin: '0 3px', textAlign: 'center' }}
                                                             body={(rowData) => (
                                                                 <>

@@ -3,17 +3,17 @@ import * as yup from 'yup';
 export const lessonSchema = yup.object().shape({
     videoReq: yup
         .string()
-        .required('Талап кылынат!')
-        .matches(/^https?:\/\/.+/, 'Видео шилтеме  "http://" "https://" форматында болуш керек')
-        .max(200, 'Узундугу макс 200 тамга'),
+        .required('Требуется!')
+        .matches(/^https?:\/\/.+/, 'Формат видео ссылки "http://" "https://"')
+        .max(200, 'Максимальная длина 200 символов'),
     usefulLink: yup
         .string()
-        .required('Талап кылынат!')
-        .matches(/^https?:\/\/.+/, 'Шилтеме "http://" "https://" форматында болуш керек')
-        .max(200, 'Узундугу макс 200 тамга'),
+        .required('Требуется!')
+        .matches(/^https?:\/\/.+/, 'Формат ссылки "http://" "https://"')
+        .max(200, 'Максимальная длина 200 символов'),
     usefulLinkNotReq: yup
         .string()
-        .matches(/^https?:\/\/.+/, 'Шилтеме "http://" "https://" форматында болуш керек'),
-    title: yup.string().required('Талап кылынат!')
+        .matches(/^https?:\/\/.+/, 'Формат ссылки "http://" "https://"'),
+    title: yup.string().required('Требуется!')
     // .max(50, 'Аталыштын узундугу макс 50 тамга')
 });

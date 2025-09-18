@@ -80,8 +80,8 @@ const LoginPage = () => {
         } else {
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка', detail: 'Введите корректные данные' }
-            }); // messege - Ошибка при авторизации
+                value: { severity: 'error', summary: 'Ошибка при авторизации', detail: 'Повторите позже' }
+            }); // messege - Ошибка при авторизации при авторизации
         }
     };
 
@@ -89,7 +89,7 @@ const LoginPage = () => {
         console.log('Ошибки формы:', errors);
         setMessage({
             state: true,
-            value: { severity: 'error', summary: 'Ошибка', detail: 'Введите корректные данные' }
+            value: { severity: 'error', summary: 'Ошибка при авторизации', detail: 'Введите корректные данные' }
         }); // messege - Ошибка при авторизации
     };
 
@@ -117,6 +117,7 @@ const LoginPage = () => {
                             <Controller
                                 name="password"
                                 control={control}
+                                defaultValue=''
                                 render={({ field }) => <Password {...field} toggleMask className={`w-[100%]`} inputClassName="w-[90%] p-2 sm:p-3" inputStyle={{ marginRight: '15px' }} feedback={false} />}
                             />
                             {errors.password && <b className="text-[red] text-[12px] ml-2">{errors.password.message}</b>}

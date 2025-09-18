@@ -316,11 +316,11 @@ export const addPractica = async (value: { url: string | null; title: string; de
     }
 };
 
-export const updatePractica = async (value: { url: string | null; title: string; description: string | null; document: File | null }, lesson_id: number | null, practice_id: number, type_id: number, step_id: number) => {
+export const updatePractica = async (value: { url: string | null; title: string; description: string | null; document: File | null , score: number | null}, lesson_id: number | null, practice_id: number, type_id: number, step_id: number) => {
     console.log(value);
 
     let formData = new FormData();
-    url = `/v1/teacher/practice-lesson/update?lesson_id=${lesson_id}&title=${value.title}&description=${value.description}&url=${value.url}&document=${value.document}&practice_id=${practice_id}&video_type_id=${type_id}&step_id=${step_id}`;
+    url = `/v1/teacher/practice-lesson/update?lesson_id=${lesson_id}&title=${value.title}&description=${value.description}&url=${value.url}&document=${value.document}&score=${value.score}&practice_id=${practice_id}&video_type_id=${type_id}&step_id=${step_id}`;
     formData.append('type_id', String(type_id));
     formData.append('step_id', String(step_id));
     formData.append('lesson_id', String(lesson_id));
@@ -328,6 +328,7 @@ export const updatePractica = async (value: { url: string | null; title: string;
     formData.append('url', value?.url || '');
     formData.append('title', String(value?.title));
     formData.append('description', String(value?.description));
+    formData.append('score', String(value?.score));
     if (value.document) formData.append('document', value?.document && value?.document);
     else formData.append('document', '');
 

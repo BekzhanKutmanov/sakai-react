@@ -3,6 +3,6 @@ import * as yup from 'yup';
 export const baseSchema = yup.object().shape({
     title: yup
         .string()
-        .required('Талап кылынат!')
-        .max(20, 'Аталыштын узундугу макс 20 тамга')
+        .required('Требуется!')
+        .max(20, 'Максимальная длина 20 символов')
 });
