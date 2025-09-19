@@ -154,10 +154,6 @@ export default function StreamList({
     };
 
     useEffect(() => {
-        setDisplayStreams(pendingChanges);
-    }, [pendingChanges]);
-
-    useEffect(() => {
         setDisplayStreams([]);
         toggleSkeleton();
         if (courseValue?.id) {
@@ -169,7 +165,7 @@ export default function StreamList({
         console.log('streams', streams);
         
         if (streams.length < 1) {
-            insideDisplayStreams(streams);
+            // insideDisplayStreams(streams);
             setHasStreams(true);
         } else {
             setHasStreams(false);
@@ -177,17 +173,18 @@ export default function StreamList({
     }, [streams]);
 
     useEffect(() => {
-        // insideDisplayStreams(displayStreams);
+        insideDisplayStreams(displayStreams);
+        console.log(displayStreams);
+        
     }, [displayStreams]);
 
     const itemTemplate = (item: mainStreamsType, index: number) => {
-        const bgClass = item.connect_id ? 'bg-[var(--greenBgColor)] border-b border-[gray]' : index % 2 == 1 ? 'bg-[#f5f5f5]' : '';
-
+        const bgClass = index % 2 == 0 ? 'bg-[#f5f5f5]' : '';
         return (
             <div className={`w-full ${bgClass}`} key={item?.stream_id}>
                 <div className={`flex flex-column p-2 gap-2`}>
                     <div className="flex justify-between gap-1 items-center">
-                        <h3 className="m-0">{item?.subject_name.name_ru}</h3>
+                        <h3 className="m-0 text-lg">{item?.subject_name.name_ru}</h3>
                         {/* <label className="custom-radio">
                             <input
                                 type="checkbox"
@@ -244,14 +241,18 @@ export default function StreamList({
 
     const listTemplate = (items: mainStreamsType[]) => {
         if (!items || items.length === 0) return null;
-
+        
         const hasData = items.some((item) => item.connect_id !== null);
         if (hasData) {
+            const forCourse = items.filter((item)=> item.connect_id !== null);
+            console.log(forCourse);
+            
             let list = items.map((product, index: number) => {
                 if (product.connect_id !== null) {
                     return itemTemplate(product, index);
                 }
             });
+            
             return <div className="grid grid-nogutter shadow-[0_2px_2px_0px_rgba(0,0,0,0.2)]">{list}</div>;
         }
         return (

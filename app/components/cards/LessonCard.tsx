@@ -1,5 +1,3 @@
-import Redacting from '../popUp/Redacting';
-import { getRedactor } from '@/utils/getRedactor';
 import { getConfirmOptions } from '@/utils/getConfirmOptions';
 import { Button } from 'primereact/button';
 import { faPlay } from '@fortawesome/free-solid-svg-icons';
@@ -99,18 +97,18 @@ export default function LessonCard({
                 style={{ backgroundColor: cardBg }}
             >
                 <div className={`flex flex-col items-center ${type.typeValue !== 'video' ? 'gap-3' : 'gap-1'}`}>
-                    <div className="flex flex-col gap-1 justify-between rounded-2xl p-2">
+                    <div className="w-full flex flex-col gap-1 justify-between rounded-2xl p-2">
                         {/* <div className=''>{!cardValue.photo && <img className="cover" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSweN5K2yaBwZpz5W9CxY9S41DI-2LawmjzYw&s" alt="" />}</div> */}
-                        <div className={`flex gap-1 ${cardValue.score ? 'items-center gap-2 flex-col sm:flex-row' : 'justify-center'}`}>
-                            <b className={`flex items-center justify-center text-[16px] sm:text-[18px] mt-1 text-wrap break-all ${type.typeValue === 'practica' && ' shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]'}`}>{shortTitle}</b>
+                        <div className={`flex gap-1 ${cardValue.score ? 'items-center gap-2 flex-col' : 'justify-center'}`}>
                             {cardValue.score ? (
-                                <div className="flex items-center justify-center">
-                                    <span className="text-[var(--mainColor)] ">{!media && '/'} Балл: </span>
+                                <div className="flex items-center justify-center gap-1">
+                                    <span className="text-[var(--mainColor)] sm:text-lg">Балл: </span>
                                     <b className="text-[16px] sm:text-[18px]">{`${cardValue.score}`}</b>
                                 </div>
                             ) : (
                                 ''
                             )}
+                            <b className={`flex items-center justify-center text-[16px] sm:text-[18px] mt-1 text-wrap break-all ${type.typeValue === 'practica' && ' shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]'}`}>{shortTitle}</b>
                         </div>
 
                         {type.typeValue !== 'practica' && <div className="flex items-center justify-center text-[15px] sm:text-[17px] m-auto">{shortDoc}</div>}
@@ -130,7 +128,7 @@ export default function LessonCard({
                             )
                         )}
                         {answers && (
-                            <div className="flex flex-wrap">
+                            <div className="w-full flex flex-col gap-1">
                                 {answers.map((item) => {
                                     return (
                                         <div key={item.id}>

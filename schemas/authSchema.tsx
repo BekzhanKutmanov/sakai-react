@@ -2,7 +2,7 @@ import * as yup from 'yup';
 
 export const schema = yup.object().shape({
   email: yup.string()
-  .email('неправильный формат email')
+  .email('Неправильный формат email')
   .required('email требуется!')
   // .matches(
   //     /^[a-zA-Z0-9._%+-]+@oshsu\.kg$/,
@@ -11,7 +11,7 @@ export const schema = yup.object().shape({
   ,
   password: yup.string()
   .required('Пароль требуется!')
-  .max(20, 'Максимальная длина пароля 20 символов')
+  // .max(20, 'Максимальная длина пароля 20 символов')
   // .matches(
   //     /^[^!@#$%^&*()_+={}[\]:;"'`<>,.?/\\|]*$/,
   //     'Сырсөздө тыюу салынган символдор камтылбашы керек'

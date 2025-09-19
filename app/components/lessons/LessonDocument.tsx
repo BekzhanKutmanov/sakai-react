@@ -207,7 +207,6 @@ export default function LessonDocument({ element, content, fetchPropElement, cle
     const handleUpdateDoc = async () => {
         const token = getToken('access_token');
         const data = await updateDocument(token, document?.lesson_id ? Number(document?.lesson_id) : null, Number(selectId), element.type.id, element.type.id, editingLesson);
-        console.log(data);
 
         if (data?.success) {
             fetchPropElement(element.id);
@@ -281,7 +280,7 @@ export default function LessonDocument({ element, content, fetchPropElement, cle
                         <input
                             type="file"
                             accept="application/pdf"
-                            className='border rounded p-1'
+                            className="border rounded p-1"
                             onChange={(e) => {
                                 console.log(e.target.files);
                                 const file = e.target.files?.[0];
@@ -294,27 +293,30 @@ export default function LessonDocument({ element, content, fetchPropElement, cle
                             }}
                         />
 
-                        <InputText
-                            id="title"
-                            type="text"
-                            placeholder={'Название'}
-                            value={docValue.title}
-                            onChange={(e) => {
-                                setDocValue((prev) => ({ ...prev, title: e.target.value }));
-                                setValue('title', e.target.value, { shouldValidate: true });
-                            }}
-                        />
-                        <b style={{ color: 'red', fontSize: '12px' }}>{errors.title?.message}</b>
+                        <div className='w-full'>
+                            <InputText
+                                id="title"
+                                type="text"
+                                placeholder={'Название'}
+                                className='w-full'
+                                value={docValue.title}
+                                onChange={(e) => {
+                                    setDocValue((prev) => ({ ...prev, title: e.target.value }));
+                                    setValue('title', e.target.value, { shouldValidate: true });
+                                }}
+                            />
+                            <b style={{ color: 'red', fontSize: '12px' }}>{errors.title?.message}</b>
+                        </div>
                         {additional.doc && <InputText placeholder="Описание" value={docValue.description} onChange={(e) => setDocValue((prev) => ({ ...prev, description: e.target.value }))} className="w-full" />}
 
                         <div className="flex relative">
                             {/* <Button disabled={!!errors.title || !docValue.file} label="Сохранить" onClick={handleAddDoc} /> */}
                             <div className="absolute">
-                                <span className="cursor-pointer ml-1 text-sm text-[var(--mainColor)]" onClick={() => setAdditional((prev) => ({ ...prev, doc: !prev.doc }))}>
+                                <span className="cursor-pointer ml-1 text-[13px] sm:text-sm text-[var(--mainColor)]" onClick={() => setAdditional((prev) => ({ ...prev, doc: !prev.doc }))}>
                                     Дополнительно {additional.doc ? '-' : '+'}
                                 </span>
                             </div>
-                            <div className="w-full flex gap-1 justify-center items-center">
+                            <div className="w-full flex gap-1 justify-center items-center mt-4 sm:m-0">
                                 <Button
                                     label="Сохранить"
                                     disabled={progressSpinner || !docValue.title.length || !!errors.title || !docValue.file}
@@ -358,65 +360,44 @@ export default function LessonDocument({ element, content, fetchPropElement, cle
             >
                 <div className="flex flex-col gap-1">
                     <div className="flex flex-col gap-1 items-center justify-center">
-                        {selectType === 'doc' ? (
-                            <>
-                                {/* <div className="flex gap-1 items-center">
-                                    <FileUpload
-                                        ref={fileUploadRef}
-                                        chooseLabel="Жаңылоо"
-                                        mode="basic"
-                                        name="demo[]"
-                                        customUpload
-                                        uploadHandler={() => {}}
-                                        accept="application/pdf"
-                                        onSelect={(e) => {
-                                            if (e.files[0]) setEditingLesson((prev) => prev && { ...prev, file: e.files[0] });
-                                        }}
-                                    />
-                                    <Button icon={'pi pi-trash'} onClick={clearFile} />
-                                </div> */}
-                                <input
-                                    type="file"
-                                    accept="application/pdf"
-                                    className='border rounded p-1'
-                                    onChange={(e) => {
-                                        console.log(e.target.files);
-                                        const file = e.target.files?.[0];
-                                        if (file) {
-                                            setEditingLesson(
-                                                (prev) =>
-                                                    prev && {
-                                                        ...prev,
-                                                        file: file
-                                                    }
-                                            );
-                                        }
-                                    }}
-                                />
-                                {/* <span>{String(editingLesson?.file[0].objectURL)}</span> */}
-                                <InputText
-                                    type="text"
-                                    placeholder="Название"
-                                    className="w-full"
-                                    value={editingLesson?.title && editingLesson?.title}
-                                    onChange={(e) => {
-                                        setEditingLesson((prev) => prev && { ...prev, title: e.target.value });
-                                        setValue('title', e.target.value, { shouldValidate: true });
-                                    }}
-                                />
-                                <b style={{ color: 'red', fontSize: '12px' }}>{errors.title?.message}</b>
-                                <InputText
-                                    placeholder="Описание"
-                                    value={editingLesson?.description !== 'null' ? editingLesson?.description : ''}
-                                    onChange={(e) => setEditingLesson((prev) => prev && { ...prev, description: e.target.value })}
-                                    className="w-full"
-                                />
-                            </>
-                        ) : selectType === 'video' ? (
-                            <></>
-                        ) : (
-                            ''
-                        )}
+                        <input
+                            type="file"
+                            accept="application/pdf"
+                            className="border rounded p-1 w-full"
+                            onChange={(e) => {
+                                console.log(e.target.files);
+                                const file = e.target.files?.[0];
+                                if (file) {
+                                    setEditingLesson(
+                                        (prev) =>
+                                            prev && {
+                                                ...prev,
+                                                file: file
+                                            }
+                                    );
+                                }
+                            }}
+                        />
+                        {/* <span>{String(editingLesson?.file[0].objectURL)}</span> */}
+                        <div className="w-full">
+                            <InputText
+                                type="text"
+                                placeholder="Название"
+                                className="w-full"
+                                value={editingLesson?.title && editingLesson?.title}
+                                onChange={(e) => {
+                                    setEditingLesson((prev) => prev && { ...prev, title: e.target.value });
+                                    setValue('title', e.target.value, { shouldValidate: true });
+                                }}
+                            />
+                            <b style={{ color: 'red', fontSize: '12px' }}>{errors.title?.message}</b>
+                        </div>
+                        <InputText
+                            placeholder="Описание"
+                            value={editingLesson?.description !== 'null' ? editingLesson?.description : ''}
+                            onChange={(e) => setEditingLesson((prev) => prev && { ...prev, description: e.target.value })}
+                            className="w-full"
+                        />
                     </div>
                 </div>
             </FormModal>

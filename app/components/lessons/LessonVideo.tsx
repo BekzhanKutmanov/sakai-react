@@ -2,7 +2,6 @@
 
 import { lessonSchema } from '@/schemas/lessonSchema';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useParams, useRouter } from 'next/navigation';
 import { Button } from 'primereact/button';
 import { FileUpload, FileUploadSelectEvent } from 'primereact/fileupload';
 import { InputText } from 'primereact/inputtext';
@@ -18,8 +17,6 @@ import { mainStepsType } from '@/types/mainStepType';
 import useErrorMessage from '@/hooks/useErrorMessage';
 import { LayoutContext } from '@/layout/context/layoutcontext';
 import FormModal from '../popUp/FormModal';
-import { Dropdown } from 'primereact/dropdown';
-import { Dialog } from 'primereact/dialog';
 import { FileWithPreview } from '@/types/fileuploadPreview';
 
 export default function LessonVideo({ element, content, fetchPropElement, clearProp }: { element: mainStepsType; content: any; fetchPropElement: (id: number) => void; clearProp: boolean }) {
@@ -285,17 +282,20 @@ export default function LessonVideo({ element, content, fetchPropElement, clearP
                             </div>
                         </div>
                         <div className="w-full flex flex-col justify-center gap-2">
-                            <InputText
-                                id="title"
-                                type="text"
-                                placeholder={'Название'}
-                                value={videoValue.title}
-                                onChange={(e) => {
-                                    setVideoValue((prev) => ({ ...prev, title: e.target.value }));
-                                    setValue('title', e.target.value, { shouldValidate: true });
-                                }}
-                            />
-                            <b style={{ color: 'red', fontSize: '12px' }}>{errors.title?.message}</b>
+                            <div>
+                                <InputText
+                                    id="title"
+                                    type="text"
+                                    placeholder={'Название'}
+                                    className='w-full'
+                                    value={videoValue.title}
+                                    onChange={(e) => {
+                                        setVideoValue((prev) => ({ ...prev, title: e.target.value }));
+                                        setValue('title', e.target.value, { shouldValidate: true });
+                                    }}
+                                />
+                                <b style={{ color: 'red', fontSize: '12px' }}>{errors.title?.message}</b>
+                            </div>
                             {additional.video && (
                                 <div>
                                     <InputText placeholder="Описание" value={videoValue.description} onChange={(e) => setVideoValue((prev) => ({ ...prev, description: e.target.value }))} className="w-full" />
@@ -314,12 +314,12 @@ export default function LessonVideo({ element, content, fetchPropElement, clearP
                             <div className="flex relative">
                                 {/* <Button disabled={!!errors.title || !docValue.file} label="Добавить" onClick={handleAddDoc} /> */}
                                 <div className="absolute">
-                                    <span className="cursor-pointer ml-1 text-sm text-[var(--mainColor)]" onClick={() => setAdditional((prev) => ({ ...prev, video: !prev.video }))}>
+                                    <span className="cursor-pointer ml-1 text-[13px] sm:text-sm text-[var(--mainColor)]" onClick={() => setAdditional((prev) => ({ ...prev, video: !prev.video }))}>
                                         Дополнительно {additional.video ? '-' : '+'}
                                     </span>
                                 </div>
-                                <div className="w-full flex gap-1 justify-center items-center">
-                                    <Button label="Добавить" disabled={progressSpinner || !videoValue.title.length || !videoValue.video_link?.length || !!errors.title || !!errors.usefulLink} onClick={() => handleAddVideo()} />
+                                <div className="w-full flex gap-1 justify-center items-center mt-4 sm:m-0">
+                                    <Button label="Сохранить" disabled={progressSpinner || !videoValue.title.length || !videoValue.video_link?.length || !!errors.title || !!errors.usefulLink} onClick={() => handleAddVideo()} />
                                     {progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}
                                 </div>
                             </div>
@@ -371,7 +371,7 @@ export default function LessonVideo({ element, content, fetchPropElement, clearP
                                         )
                                     ) : (
                                         <div className="w-full flex flex-col justify-center items-center">
-                                            <div className='w-[90%] flex justify-start'>
+                                            <div className="w-[90%] flex justify-start">
                                                 <i className="pi pi-times sm:text-2xl my-2 cursor-pointer" onClick={() => setVideoCall(false)}></i>
                                             </div>
                                             <iframe

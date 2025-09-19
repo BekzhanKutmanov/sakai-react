@@ -95,10 +95,10 @@ export default function Course() {
         } else {
             console.log(data);
             setSkeleton(false);
-            if(data.response.data.cause){
+            if (data.response.data.cause) {
                 setMessage({
                     state: true,
-                    value: { severity: 'error', summary: 'Ошибка!', detail: data.response.data.cause}
+                    value: { severity: 'error', summary: 'Ошибка!', detail: data.response.data.cause }
                 });
             } else {
                 setMessage({
@@ -408,9 +408,7 @@ export default function Course() {
                                 }}
                                 checked={forStreamId?.id === shablonData.id}
                             />
-                            <span className="radio-course-mark" onClick={() => setActiveIndex(1)}>
-                                Связать
-                            </span>
+                            <span className="radio-course-mark rounded">Связан ({shablonData.connects_count})</span>
                         </label>
                     </>
 
@@ -426,6 +424,10 @@ export default function Course() {
             </div>
         );
     };
+
+    useEffect(()=> {
+        console.log(forStreamCount);
+    },[forStreamCount]);
 
     const imagestateStyle = imageState || editingLesson.image ? 'flex gap-1 items-center justify-between flex-col sm:flex-row' : '';
     const imageTitle = useShortText(typeof editingLesson.image === 'string' ? editingLesson.image : '', 20);
@@ -701,7 +703,7 @@ export default function Course() {
                                                             )}
                                                         ></Column>
                                                         <Column
-                                                            header={()=> <div className='text-[13px]'>На рассмотр.</div>}
+                                                            header={() => <div className="text-[13px]">На рассмотр.</div>}
                                                             style={{ margin: '0 3px', textAlign: 'center' }}
                                                             body={(rowData) => (
                                                                 <>
@@ -720,6 +722,13 @@ export default function Course() {
                                                             )}
                                                         ></Column>
                                                         <Column
+                                                            header="Публикация"
+                                                            style={{ margin: '0 3px', textAlign: 'center' }}
+                                                            body={(rowData) =>
+                                                                rowData.is_published ? <i className="pi pi-check text-md sm:text-lg text-[var(--greenColor)]"></i> : <i className="pi pi-times text-md sm:text-lg text-[var(--redColor)]"></i>
+                                                            }
+                                                        ></Column>
+                                                        <Column
                                                             header="Потоки"
                                                             style={{ margin: '0 3px', textAlign: 'center' }}
                                                             body={(rowData) => (
@@ -735,17 +744,10 @@ export default function Course() {
                                                                             }}
                                                                             checked={forStreamId?.id === rowData.id}
                                                                         />
-                                                                        <span className="radio-course-mark rounded">Связать</span>
+                                                                        <span className="radio-course-mark rounded">Связан ({rowData.connects_count})</span>
                                                                     </label>
                                                                 </>
                                                             )}
-                                                        ></Column>
-                                                        <Column
-                                                            header="Публикация"
-                                                            style={{ margin: '0 3px', textAlign: 'center' }}
-                                                            body={(rowData) =>
-                                                                rowData.is_published ? <i className="pi pi-check text-md sm:text-lg text-[var(--greenColor)]"></i> : <i className="pi pi-times text-md sm:text-lg text-[var(--redColor)]"></i>
-                                                            }
                                                         ></Column>
                                                         <Column
                                                             className="flex items-center justify-center h-[60px] border-b-0"

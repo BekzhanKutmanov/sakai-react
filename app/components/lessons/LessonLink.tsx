@@ -97,7 +97,7 @@ export default function LessonLink({ element, content, fetchPropElement, clearPr
     const editing = async () => {
         const data = await fetchElement(element.lesson_id, element.id);
         console.log(data);
-        
+
         if (data.success) {
             setEditingLesson({ title: data.content.title, description: data.content.description, url: data.content.url });
         } else {
@@ -113,7 +113,7 @@ export default function LessonLink({ element, content, fetchPropElement, clearPr
 
     const handleAddLink = async () => {
         toggleSpinner();
-        const data = await addLink(linkValue, element.lesson_id, element.type_id, element.id);        
+        const data = await addLink(linkValue, element.lesson_id, element.type_id, element.id);
         if (data.success) {
             fetchPropElement(element.id);
             setMessage({
@@ -216,32 +216,31 @@ export default function LessonLink({ element, content, fetchPropElement, clearPr
                             />
                             <b style={{ color: 'red', fontSize: '12px' }}>{errors.usefulLink?.message}</b>
                         </div>
-                        <InputText
-                            id="title"
-                            type="text"
-                            placeholder={'Название'}
-                            value={linkValue.title}
-                            onChange={(e) => {
-                                setLinkValue((prev) => ({ ...prev, title: e.target.value }));
-                                setValue('title', e.target.value, { shouldValidate: true });
-                            }}
-                        />
-                        <b style={{ color: 'red', fontSize: '12px' }}>{errors.title?.message}</b>
+                        <div>
+                            <InputText
+                                id="title"
+                                type="text"
+                                placeholder={'Название'}
+                                className='w-full'
+                                value={linkValue.title}
+                                onChange={(e) => {
+                                    setLinkValue((prev) => ({ ...prev, title: e.target.value }));
+                                    setValue('title', e.target.value, { shouldValidate: true });
+                                }}
+                            />
+                            <b style={{ color: 'red', fontSize: '12px' }}>{errors.title?.message}</b>
+                        </div>
                         {additional.link && <InputText placeholder="Описание" value={linkValue.description} onChange={(e) => setLinkValue((prev) => ({ ...prev, description: e.target.value }))} className="w-full" />}
 
                         <div className="flex relative">
                             {/* <Button disabled={!!errors.title || !docValue.file} label="Сактоо" onClick={handleAddDoc} /> */}
                             <div className="absolute">
-                                <span className="cursor-pointer ml-1 text-sm text-[var(--mainColor)]" onClick={() => setAdditional((prev) => ({ ...prev, link: !prev.link }))}>
+                                <span className="cursor-pointer ml-1 text-[13px] sm:text-sm text-[var(--mainColor)]" onClick={() => setAdditional((prev) => ({ ...prev, link: !prev.link }))}>
                                     Дополнительно {additional.link ? '-' : '+'}
                                 </span>
                             </div>
-                            <div className="w-full flex gap-1 justify-center items-center">
-                                <Button
-                                    label="Сохранить"
-                                    disabled={progressSpinner || !linkValue.title.length || !!errors.title || !linkValue.url.length}
-                                    onClick={() => handleAddLink()}
-                                />
+                            <div className="w-full flex gap-1 justify-center items-center mt-4 sm:m-0">
+                                <Button label="Сохранить" disabled={progressSpinner || !linkValue.title.length || !!errors.title || !linkValue.url.length} onClick={() => handleAddLink()} />
                                 {progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}
                             </div>
                         </div>
@@ -266,50 +265,43 @@ export default function LessonLink({ element, content, fetchPropElement, clearPr
 
     return (
         <div>
-            <FormModal
-                title={'Обновить урок'}
-                fetchValue={() => handleUpdateLink()}
-                clearValues={clearValues}
-                visible={visible}
-                setVisible={setVisisble}
-                start={false}
-            >
+            <FormModal title={'Обновить урок'} fetchValue={() => handleUpdateLink()} clearValues={clearValues} visible={visible} setVisible={setVisisble} start={false}>
                 <div className="flex flex-col gap-1">
                     <div className="w-full flex flex-col items-center">
-                            <InputText
-                                id="usefulLink"
-                                type="url"
-                                placeholder={'Загрузить ссылку'}
-                                value={editingLesson.url}
-                                className="w-full"
-                                onChange={(e) => {
-                                    setEditingLesson((prev) => ({ ...prev, url: e.target.value }));
-                                    setValue('usefulLink', e.target.value, { shouldValidate: true });
-                                }}
-                            />
-                            <b style={{ color: 'red', fontSize: '12px' }}>{errors.usefulLink?.message}</b>
-                        </div>
                         <InputText
-                            id="title"
-                            type="text"
-                            placeholder={'Название'}
-                            value={editingLesson.title}
+                            id="usefulLink"
+                            type="url"
+                            placeholder={'Загрузить ссылку'}
+                            value={editingLesson.url}
+                            className="w-full"
                             onChange={(e) => {
-                                setEditingLesson((prev) => ({ ...prev, title: e.target.value }));
-                                setValue('title', e.target.value, { shouldValidate: true });
+                                setEditingLesson((prev) => ({ ...prev, url: e.target.value }));
+                                setValue('usefulLink', e.target.value, { shouldValidate: true });
                             }}
                         />
-                        <b style={{ color: 'red', fontSize: '12px' }}>{errors.title?.message}</b>
-                        {additional.link && <InputText placeholder="Описание" value={editingLesson.description} onChange={(e) => setEditingLesson((prev) => ({ ...prev, description: e.target.value }))} className="w-full" />}
+                        <b style={{ color: 'red', fontSize: '12px' }}>{errors.usefulLink?.message}</b>
+                    </div>
+                    <InputText
+                        id="title"
+                        type="text"
+                        placeholder={'Название'}
+                        value={editingLesson.title}
+                        onChange={(e) => {
+                            setEditingLesson((prev) => ({ ...prev, title: e.target.value }));
+                            setValue('title', e.target.value, { shouldValidate: true });
+                        }}
+                    />
+                    <b style={{ color: 'red', fontSize: '12px' }}>{errors.title?.message}</b>
+                    {additional.link && <InputText placeholder="Описание" value={editingLesson.description} onChange={(e) => setEditingLesson((prev) => ({ ...prev, description: e.target.value }))} className="w-full" />}
 
-                        <div className="flex relative">
-                            {/* <Button disabled={!!errors.title || !editingLesson.file} label="Сохранить" onClick={handleAddDoc} /> */}
-                            <div className="absolute">
-                                <span className="cursor-pointer ml-1 text-sm text-[var(--mainColor)]" onClick={() => setAdditional((prev) => ({ ...prev, link: !prev.link }))}>
-                                    Дополнительно {additional.link ? '-' : '+'}
-                                </span>
-                            </div>
+                    <div className="flex relative">
+                        {/* <Button disabled={!!errors.title || !editingLesson.file} label="Сохранить" onClick={handleAddDoc} /> */}
+                        <div className="absolute">
+                            <span className="cursor-pointer ml-1 text-[13px] sm:text-sm text-[var(--mainColor)]" onClick={() => setAdditional((prev) => ({ ...prev, link: !prev.link }))}>
+                                Дополнительно {additional.link ? '-' : '+'}
+                            </span>
                         </div>
+                    </div>
                 </div>
             </FormModal>
             {!clearProp && linkSection()}

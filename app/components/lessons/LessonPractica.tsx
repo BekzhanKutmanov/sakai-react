@@ -46,6 +46,7 @@ export default function LessonPractica({ element, content, fetchPropElement, cle
         user_id: number;
         document_path: string;
         url: string;
+        score?: number | null;
     }
 
     const router = useRouter();
@@ -54,13 +55,13 @@ export default function LessonPractica({ element, content, fetchPropElement, cle
     const showError = useErrorMessage();
     const { setMessage } = useContext(LayoutContext);
 
-    const [editingLesson, setEditingLesson] = useState<docValueType>({ title: '', description: '', document: null, url: '',score: 0 });
+    const [editingLesson, setEditingLesson] = useState<docValueType>({ title: '', description: '', document: null, url: '', score: 0 });
     const [visible, setVisisble] = useState(false);
     const [imageState, setImageState] = useState<string | null>(null);
     const [contentShow, setContentShow] = useState(false);
     // doc
     const [document, setDocuments] = useState<contentType>();
-    const [docValue, setDocValue] = useState<docValueType>({ title: '', description: '', document: null, url: '',score: 0 });
+    const [docValue, setDocValue] = useState<docValueType>({ title: '', description: '', document: null, url: '', score: 0 });
     const [docShow, setDocShow] = useState<boolean>(false);
     const [urlPDF, setUrlPDF] = useState('');
     const [PDFVisible, setPDFVisible] = useState<boolean>(false);
@@ -144,9 +145,9 @@ export default function LessonPractica({ element, content, fetchPropElement, cle
     const editing = async () => {
         const data = await fetchElement(element.lesson_id, element.id);
         console.log(data);
-        
+
         if (data.success) {
-            setEditingLesson({ title: data.content.title, document: null, description: data.content.description, url: '', score: data.step.score});
+            setEditingLesson({ title: data.content.title, document: null, description: data.content.description, url: '', score: data.step.score });
         } else {
             setMessage({
                 state: true,
@@ -209,8 +210,8 @@ export default function LessonPractica({ element, content, fetchPropElement, cle
                 value: { severity: 'success', summary: 'Успешно изменено!', detail: '' }
             });
         } else {
-            setDocValue({ title: '', description: '', document: null, url: '', score:0 });
-            setEditingLesson({ title: '', description: '', document: null, url: '', score:0 });
+            setDocValue({ title: '', description: '', document: null, url: '', score: 0 });
+            setEditingLesson({ title: '', description: '', document: null, url: '', score: 0 });
             setMessage({
                 state: true,
                 value: { severity: 'error', summary: 'Ошибка при изменении!', detail: '' }
@@ -237,7 +238,7 @@ export default function LessonPractica({ element, content, fetchPropElement, cle
                                         status="working"
                                         onSelected={(id: number, type: string) => selectedForEditing(id, type)}
                                         onDelete={(id: number) => handleDeleteDoc(id)}
-                                        cardValue={{ title: document?.title, id: document.id, desctiption: document?.description || '', type: 'practica', url: document.url, document: document.document }}
+                                        cardValue={{ title: document?.title, id: document.id, desctiption: document?.description || '', type: 'practica', url: document.url, document: document.document, score: element?.score || 0 }}
                                         cardBg={'#ddc4f51a'}
                                         type={{ typeValue: 'practica', icon: 'pi pi-list' }}
                                         typeColor={'var(--mainColor)'}
@@ -252,18 +253,50 @@ export default function LessonPractica({ element, content, fetchPropElement, cle
                 ) : (
                     <div className="w-full flex flex-col justify-center gap-2">
                         <div className="flex gap-1 items-center">
-                            <InputTextarea
-                                value={docValue.title}
+                            <div className="w-full">
+                                <div className="w-full flex gap-1 items-center">
+                                    <InputTextarea
+                                        value={docValue.title}
+                                        id="title"
+                                        className="w-full"
+                                        placeholder="Вопрос..."
+                                        style={{ resize: 'none', width: '100%' }}
+                                        onChange={(e) => {
+                                            setDocValue((prev) => ({ ...prev, title: e.target.value }));
+                                            setValue('title', e.target.value, { shouldValidate: true });
+                                        }}
+                                    />
+                                </div>
+                                <b style={{ color: 'red', fontSize: '12px' }}>{errors.title?.message}</b>
+                            </div>
+                            <div className="flex flex-col">
+                                <span className="text-sm">Балл</span>
+                                <InputText
+                                    type="number"
+                                    id="title"
+                                    value={String(docValue?.score)}
+                                    className="w-[50px] sm:w-[70px]"
+                                    onChange={(e) => {
+                                        setDocValue((prev) => prev && { ...prev, score: Number(e.target.value) });
+                                        setValue('title', e.target.value, { shouldValidate: true });
+                                    }}
+                                />
+                                <b style={{ color: 'red', fontSize: '12px' }}>{errors.title?.message}</b>
+                            </div>
+                        </div>
+                        <div>
+                            <InputText
+                                placeholder="Описание"
                                 id="title"
-                                placeholder="Вопрос..."
-                                style={{ resize: 'none', width: '100%' }}
+                                value={docValue.description}
                                 onChange={(e) => {
-                                    setDocValue((prev) => ({ ...prev, title: e.target.value }));
+                                    setDocValue((prev) => ({ ...prev, description: e.target.value }));
                                     setValue('title', e.target.value, { shouldValidate: true });
                                 }}
+                                className="w-full"
                             />
+                            <b style={{ color: 'red', fontSize: '12px' }}>{errors.title?.message}</b>
                         </div>
-                        <b style={{ color: 'red', fontSize: '12px' }}>{errors.title?.message}</b>
                         {additional.doc && (
                             <input
                                 type="file"
@@ -297,37 +330,15 @@ export default function LessonPractica({ element, content, fetchPropElement, cle
                                 <b style={{ color: 'red', fontSize: '12px' }}>{errors.usefulLinkNotReq?.message}</b>
                             </div>
                         )}
-                        <InputText
-                            placeholder="Описание"
-                            id="title"
-                            value={docValue.description}
-                            onChange={(e) => {
-                                setDocValue((prev) => ({ ...prev, description: e.target.value }));
-                                setValue('title', e.target.value, { shouldValidate: true });
-                            }}
-                            className="w-full"
-                        />
-                        <b style={{ color: 'red', fontSize: '12px' }}>{errors.title?.message}</b>
-
-                        <div className="w-full flex flex-col">
-                            <span>Максимальный балл</span>
-                            <InputText
-                                type="number"
-                                value={String(docValue?.score)}
-                                onChange={(e) => {
-                                    setDocValue((prev) => prev && { ...prev, score: Number(e.target.value) });
-                                }}
-                            />
-                        </div>
 
                         <div className="flex relative">
                             {/* <Button disabled={!!errors.title || !docValue.file} label="Сохранить" onClick={handleAddDoc} /> */}
                             <div className="absolute">
-                                <span className="cursor-pointer ml-1 text-sm text-[var(--mainColor)]" onClick={() => setAdditional((prev) => ({ ...prev, doc: !prev.doc }))}>
+                                <span className="cursor-pointer ml-1 text-[13px] sm:text-sm text-[var(--mainColor)]" onClick={() => setAdditional((prev) => ({ ...prev, doc: !prev.doc }))}>
                                     Дополнительно {additional.doc ? '-' : '+'}
                                 </span>
                             </div>
-                            <div className="w-full flex gap-1 justify-center items-center">
+                            <div className="w-full flex gap-1 justify-center items-center mt-4 sm:m-0">
                                 <Button
                                     label="Сохранить"
                                     disabled={progressSpinner || !docValue.title.length || !!errors.title || !docValue.description.length || !docValue.score}
@@ -354,6 +365,8 @@ export default function LessonPractica({ element, content, fetchPropElement, cle
     }, [content]);
 
     useEffect(() => {
+        console.log(element);
+        
         setDocValue({ title: '', description: '', document: null, url: '', score: 0 });
     }, [element]);
 
@@ -372,42 +385,60 @@ export default function LessonPractica({ element, content, fetchPropElement, cle
                 <div className="flex flex-col gap-1">
                     <div className="flex flex-col gap-1 items-center justify-center">
                         <div className="w-full flex gap-1 items-center">
-                            <InputTextarea
-                                id="title"
-                                style={{ resize: 'none', width: '100%' }}
-                                value={editingLesson?.title && editingLesson.title}
-                                onChange={(e) => {
-                                    setEditingLesson((prev) => prev && { ...prev, title: e.target.value });
-                                    setValue('title', e.target.value, { shouldValidate: true });
-                                }}
-                            />
-                        </div>
-                        <b style={{ color: 'red', fontSize: '12px' }}>{errors.title?.message}</b>
-                        {additional.doc && (
-                            <div className="flex gap-1 flex-col items-center">
-                                <div className="flex  gap-1">
-                                    <FileUpload
-                                        className="text-[12px]"
-                                        ref={fileUploadRef}
-                                        chooseLabel="Загрузить документ"
-                                        mode="basic"
-                                        name="demo[]"
-                                        customUpload
-                                        uploadHandler={() => {}}
-                                        accept="application/pdf"
-                                        onSelect={(e) =>
-                                            setEditingLesson(
-                                                (prev) =>
-                                                    prev && {
-                                                        ...prev,
-                                                        document: e.files[0]
-                                                    }
-                                            )
-                                        }
+                            <div className="w-full">
+                                <div className="w-full flex gap-1 items-center">
+                                    <InputTextarea
+                                        id="title"
+                                        style={{ resize: 'none', width: '100%' }}
+                                        value={editingLesson?.title && editingLesson.title}
+                                        onChange={(e) => {
+                                            setEditingLesson((prev) => prev && { ...prev, title: e.target.value });
+                                            setValue('title', e.target.value, { shouldValidate: true });
+                                        }}
                                     />
-                                    <Button icon={'pi pi-trash'} onClick={clearFile} />
                                 </div>
-                                <span>{typeof editingLesson?.document === 'string' && String(editingLesson?.document)}</span>
+                                <b style={{ color: 'red', fontSize: '12px' }}>{errors.title?.message}</b>
+                            </div>
+                            <div className="flex flex-col justify-center">
+                                <span>Балл</span>
+                                <InputText
+                                    type="number"
+                                    className="w-[70px]"
+                                    value={String(editingLesson?.score)}
+                                    onChange={(e) => {
+                                        setEditingLesson((prev) => prev && { ...prev, score: Number(e.target.value) });
+                                    }}
+                                />
+                            </div>
+                        </div>
+                        <InputText
+                            placeholder="Описание"
+                            id="title"
+                            value={editingLesson?.description}
+                            onChange={(e) => {
+                                setEditingLesson((prev) => ({ ...prev, description: e.target.value }));
+                                setValue('title', e.target.value, { shouldValidate: true });
+                            }}
+                            className="w-full"
+                        />
+                        <b style={{ color: 'red', fontSize: '12px' }}>{errors.title?.message}</b>
+
+                        {additional.doc && (
+                            <div className="w-full flex gap-1 flex-col items-center">
+                                <input
+                                    type="file"
+                                    accept="application/pdf"
+                                    className="w-full border rounded p-1"
+                                    onChange={(e) => {
+                                        const file = e.target.files?.[0];
+                                        if (file) {
+                                            setEditingLesson((prev) => ({
+                                                ...prev,
+                                                document: file
+                                            }));
+                                        }
+                                    }}
+                                />
                             </div>
                         )}
                         {additional.doc && (
@@ -425,33 +456,10 @@ export default function LessonPractica({ element, content, fetchPropElement, cle
                                 />
                             </div>
                         )}
-                        <InputText
-                            placeholder="Описание"
-                            id="title"
-                            value={editingLesson?.description}
-                            onChange={(e) => {
-                                setEditingLesson((prev) => ({ ...prev, description: e.target.value }));
-                                setValue('title', e.target.value, { shouldValidate: true });
-                            }}
-                            className="w-full"
-                        />
-                        <b style={{ color: 'red', fontSize: '12px' }}>{errors.title?.message}</b>
-
-                        <div className="w-full flex flex-col justify-center">
-                            <span>Максимальный балл</span>
-                            <InputText
-                                type="number"
-                                className="w-[70px]"
-                                value={String(editingLesson?.score)}
-                                onChange={(e) => {
-                                    setEditingLesson((prev) => prev && { ...prev, score: Number(e.target.value) });
-                                }}
-                            />
-                        </div>
-
+                        
                         <div className="flex relative">
                             <div className="">
-                                <span className="cursor-pointer ml-1 text-sm text-[var(--mainColor)]" onClick={() => setAdditional((prev) => ({ ...prev, doc: !prev.doc }))}>
+                                <span className="cursor-pointer ml-1 text-[13px] sm:text-sm text-[var(--mainColor)]" onClick={() => setAdditional((prev) => ({ ...prev, doc: !prev.doc }))}>
                                     Дополнительно {additional.doc ? '-' : '+'}
                                 </span>
                             </div>

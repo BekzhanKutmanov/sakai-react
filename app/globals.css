@@ -540,15 +540,14 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 @media (max-width: 480px) {
-
   .p-button-label {
-    font-size: 14px !important;
+    font-size: 13px !important;
   }
   .p-button-icon{
-    width: 14px !important;
+    font-size: 13px !important;
+    width: 12px !important;
   }
 }
-
 /* styles/book.css */
 
 /* Стили для контейнера всей книги */
