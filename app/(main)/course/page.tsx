@@ -181,8 +181,8 @@ export default function Course() {
     const handleDeleteCourse = async (id: number) => {
         const data = await deleteCourse(id);
         if (data?.success) {
-            setGlobalCourseId(null);
             toggleSkeleton();
+            setGlobalCourseId(null);
             // handleFetchCourse();
             contextFetchCourse(1);
             setPageState(1);
@@ -273,8 +273,8 @@ export default function Course() {
     // Ручное управление пагинацией
     const handlePageChange = (page: number) => {
         setGlobalCourseId(null);
-        setPageState(page);
         contextFetchCourse(page);
+        setPageState(page);
     };
 
     const edit = (rowData: number | null) => {
@@ -323,9 +323,9 @@ export default function Course() {
         if (coursesValue?.length < 1) {
             setHasCourses(true);
         } else {
-            if(globalCourseId != null){
-                const exists = coursesValue.some((c:{id: number})=> c.id === globalCourseId.id)
-                if(exists){
+            if (globalCourseId != null) {
+                const exists = coursesValue.some((c: { id: number }) => c.id === globalCourseId.id);
+                if (exists) {
                     setForStreamId({ id: globalCourseId.id, title: globalCourseId.title || '' });
                 } else {
                     setForStreamId({ id: coursesValue[0].id, title: coursesValue[0].title });
@@ -333,7 +333,6 @@ export default function Course() {
             } else {
                 setForStreamId({ id: coursesValue[0].id, title: coursesValue[0].title });
             }
-            
             setHasCourses(false);
         }
     }, [coursesValue]);
@@ -441,6 +440,10 @@ export default function Course() {
             </div>
         );
     };
+
+    useEffect(() => {
+        console.log(forStreamCount);
+    }, [forStreamCount]);
 
     const imagestateStyle = imageState || editingLesson.image ? 'flex gap-1 items-center justify-between flex-col sm:flex-row' : '';
     const imageTitle = useShortText(typeof editingLesson.image === 'string' ? editingLesson.image : '', 20);
@@ -655,7 +658,14 @@ export default function Course() {
                                     className="p-tabview p-tabview-nav p-tabview-selected p-tabview-panels p-tabview-panel"
                                 >
                                     <div className="w-full sm:w-1/2">
-                                        <StreamList callIndex={activeIndex} courseValue={forStreamId} isMobile={true} insideDisplayStreams={(value) => setForStreamCount(value)} fetchprop={()=> contextFetchCourse(pageState)} toggleIndex={() => setActiveIndex(0)} />
+                                        <StreamList
+                                            callIndex={activeIndex}
+                                            courseValue={forStreamId}
+                                            isMobile={true}
+                                            insideDisplayStreams={(value) => setForStreamCount(value)}
+                                            fetchprop={() => contextFetchCourse(pageState)}
+                                            toggleIndex={() => setActiveIndex(0)}
+                                        />
                                     </div>
                                 </TabPanel>
                             </TabView>
@@ -789,7 +799,14 @@ export default function Course() {
                             </div>
                             {/* STREAMS SECTION */}
                             <div className="w-1/2">
-                                <StreamList isMobile={false} callIndex={1} courseValue={forStreamId?.id ? forStreamId : null} insideDisplayStreams={(value) => setForStreamCount(value)} fetchprop={()=> contextFetchCourse(pageState)} toggleIndex={() => {}} />
+                                <StreamList
+                                    isMobile={false}
+                                    callIndex={1}
+                                    courseValue={forStreamId?.id ? forStreamId : null}
+                                    insideDisplayStreams={(value) => setForStreamCount(value)}
+                                    fetchprop={() => contextFetchCourse(pageState)}
+                                    toggleIndex={() => {}}
+                                />
                             </div>
                         </div>
                     )}
