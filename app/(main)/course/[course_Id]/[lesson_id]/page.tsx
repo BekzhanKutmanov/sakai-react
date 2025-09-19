@@ -27,6 +27,7 @@ export default function LessonStep() {
     const scrollRef = useRef<HTMLDivElement>(null);
     const router = useRouter();
     const pathname = usePathname();
+    const prevLessonsRef = useRef<Array<{ id: number; title: string }> | null>(null);
 
     const [lessonInfoState, setLessonInfoState] = useState<{ title: string; documents_count: string; usefullinks_count: string; videos_count: string } | null>(null);
     const media = useMediaQuery('(max-width: 640px)');
@@ -141,7 +142,7 @@ export default function LessonStep() {
             const data = await fetchElement(Number(lesson_id), stepId);
             if (data.success) {
                 console.log(data);
-                
+
                 setSkeleton(false);
                 setElement({ content: data.content, step: data.step });
             } else {
@@ -246,39 +247,89 @@ export default function LessonStep() {
     //     changeUrl(lesson_id);
     // }, [lesson_id]);
 
+    // useEffect(() => {
+    //     if (contextThemes?.length < 1 || !contextThemes?.lessons?.data) {
+    //         setThemeNull(true);
+    //         return;
+    //     } else {
+    //         setThemeNull(false);
+    //     }
+
+    //     const lessons = contextThemes.lessons.data;
+    //     if (lessons.length < 1) {
+    //         setThemeNull(true);
+    //     } else {
+    //         setThemeNull(false);
+    //     }
+
+    //     let chosenId: number | null = null;
+    //     if (lessons.length > 0) {
+    //         setThemeNull(false);
+    //         if (param.lesson_id && param.lesson_id !== 'null') {
+    //             const urlId = Number(param.lesson_id);
+    //             const exists = lessons.some((l: { id: number }) => l.id === urlId);
+    //             chosenId = exists ? urlId : lessons[0].id;
+    //         } else {
+    //             chosenId = lessons[0].id;
+    //         }
+
+    //         if (lesson_id !== chosenId) {
+    //             setLesson_id(chosenId);
+    //         }
+    //     } else {
+    //         setThemeNull(true);
+    //     }
+    // }, [contextThemes, deleteQuery, param.lesson_id]);
+
+    // заменяем первый useEffect
     useEffect(() => {
-        if (contextThemes?.length < 1 || !contextThemes?.lessons?.data) {
+        const lessons = contextThemes?.lessons?.data ?? [];
+
+        // делаем "снимок" важных полей (id + title)
+        const snapshot = lessons.map((l: any) => ({ id: l.id, title: l.title ?? '' }));
+        const prev = prevLessonsRef.current;
+
+        const isSameSnapshot = prev && prev.length === snapshot.length && prev.every((p, i) => p.id === snapshot[i].id && p.title === snapshot[i].title);
+
+        // обновляем ref для следующего раза
+        prevLessonsRef.current = snapshot;
+
+        // если ничего по-сути не поменялось — ничего не делаем
+        if (isSameSnapshot) return;
+
+        // дальше — твоя логика, но чуть упрощённая и аккуратная
+        if (!lessons || lessons.length < 1) {
             setThemeNull(true);
+            setLesson_id(null);
             return;
         } else {
             setThemeNull(false);
         }
 
-        const lessons = contextThemes.lessons.data;
-        if (lessons.length < 1) {
-            setThemeNull(true);
-        } else {
-            setThemeNull(false);
-        }
-
         let chosenId: number | null = null;
-        if (lessons.length > 0) {
-            setThemeNull(false);
-            if (param.lesson_id && param.lesson_id !== 'null') {
-                const urlId = Number(param.lesson_id);
-                const exists = lessons.some((l: { id: number }) => l.id === urlId);
-                chosenId = exists ? urlId : lessons[0].id;
-            } else {
-                chosenId = lessons[0].id;
-            }
-
-            if (lesson_id !== chosenId) {
-                setLesson_id(chosenId);
-            }
+        if (param.lesson_id && param.lesson_id !== 'null') {
+            const urlId = Number(param.lesson_id);
+            const exists = lessons.some((l: { id: number }) => l.id === urlId);
+            chosenId = exists ? urlId : lessons[0].id;
         } else {
-            setThemeNull(true);
+            chosenId = lessons[0].id;
         }
-    }, [contextThemes, deleteQuery, param.lesson_id]);
+
+        // если выбор изменился — setLesson_id вызовет второй useEffect и всё остальное произойдёт там
+        if (lesson_id !== chosenId) {
+            setLesson_id(chosenId);
+        } else {
+            // если lesson_id не поменялся, но изменился контент выбранной темы (например, title),
+            // можно аккуратно обновить отображение (handleShow) — только если у нас реально поменялся title
+            const prevSelected = prev?.find((p) => p.id === lesson_id);
+            const currSelected = snapshot.find((p: {id: number}) => p.id === lesson_id);
+
+            if (lesson_id && prevSelected && currSelected && prevSelected.title !== currSelected.title) {
+                // вызываем только обновление показа — не трогаем fetchSteps, если id тот же
+                handleShow(lesson_id);
+            }
+        }
+    }, [contextThemes, deleteQuery, param.lesson_id /* оставил твои зависимости */]);
 
     useEffect(() => {
         if (lesson_id && param.lesson_id !== String(lesson_id)) {

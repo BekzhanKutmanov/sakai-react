@@ -61,6 +61,8 @@ export default function Course() {
     });
 
     const [forStreamId, setForStreamId] = useState<{ id: number | null; title: string } | null>(null);
+    const [globalCourseId, setGlobalCourseId] = useState<{ id: number | null; title: string | null } | null>(null);
+    const [pageState, setPageState] = useState<number>(1);
 
     const showError = useErrorMessage();
 
@@ -88,6 +90,7 @@ export default function Course() {
         const data = await veryfyCourse(forSentStreams);
         if (data.success) {
             contextFetchCourse(1);
+            setPageState(1);
             setMessage({
                 state: true,
                 value: { severity: 'success', summary: 'Успешно добавлен!', detail: '' }
@@ -159,6 +162,7 @@ export default function Course() {
         if (data?.success) {
             toggleSkeleton();
             contextFetchCourse(1);
+            setPageState(1);
             setMessage({
                 state: true,
                 value: { severity: 'success', summary: 'Успешно добавлен!', detail: '' }
@@ -177,9 +181,11 @@ export default function Course() {
     const handleDeleteCourse = async (id: number) => {
         const data = await deleteCourse(id);
         if (data?.success) {
+            setGlobalCourseId(null);
             toggleSkeleton();
             // handleFetchCourse();
             contextFetchCourse(1);
+            setPageState(1);
             setMessage({
                 state: true,
                 value: { severity: 'success', summary: 'Успешно удалено!', detail: '' }
@@ -209,6 +215,7 @@ export default function Course() {
             toggleSkeleton();
             // handleFetchCourse();
             contextFetchCourse(1);
+            setPageState(1);
             clearValues();
             setEditMode(false);
             setSelectedCourse(null);
@@ -265,7 +272,8 @@ export default function Course() {
 
     // Ручное управление пагинацией
     const handlePageChange = (page: number) => {
-        // handleFetchCourse(page);
+        setGlobalCourseId(null);
+        setPageState(page);
         contextFetchCourse(page);
     };
 
@@ -284,6 +292,7 @@ export default function Course() {
 
     useEffect(() => {
         contextFetchCourse(1);
+        setPageState(1);
         setGlobalLoading(true);
         setTimeout(() => {
             setGlobalLoading(false);
@@ -314,9 +323,17 @@ export default function Course() {
         if (coursesValue?.length < 1) {
             setHasCourses(true);
         } else {
-            if (coursesValue?.length > 0) {
+            if(globalCourseId != null){
+                const exists = coursesValue.some((c:{id: number})=> c.id === globalCourseId.id)
+                if(exists){
+                    setForStreamId({ id: globalCourseId.id, title: globalCourseId.title || '' });
+                } else {
+                    setForStreamId({ id: coursesValue[0].id, title: coursesValue[0].title });
+                }
+            } else {
                 setForStreamId({ id: coursesValue[0].id, title: coursesValue[0].title });
             }
+            
             setHasCourses(false);
         }
     }, [coursesValue]);
@@ -424,10 +441,6 @@ export default function Course() {
             </div>
         );
     };
-
-    useEffect(()=> {
-        console.log(forStreamCount);
-    },[forStreamCount]);
 
     const imagestateStyle = imageState || editingLesson.image ? 'flex gap-1 items-center justify-between flex-col sm:flex-row' : '';
     const imageTitle = useShortText(typeof editingLesson.image === 'string' ? editingLesson.image : '', 20);
@@ -642,7 +655,7 @@ export default function Course() {
                                     className="p-tabview p-tabview-nav p-tabview-selected p-tabview-panels p-tabview-panel"
                                 >
                                     <div className="w-full sm:w-1/2">
-                                        <StreamList callIndex={activeIndex} courseValue={forStreamId} isMobile={true} insideDisplayStreams={(value) => setForStreamCount(value)} toggleIndex={() => setActiveIndex(0)} />
+                                        <StreamList callIndex={activeIndex} courseValue={forStreamId} isMobile={true} insideDisplayStreams={(value) => setForStreamCount(value)} fetchprop={()=> contextFetchCourse(pageState)} toggleIndex={() => setActiveIndex(0)} />
                                     </div>
                                 </TabPanel>
                             </TabView>
@@ -740,6 +753,7 @@ export default function Course() {
                                                                             onChange={() => {
                                                                                 const newValue = forStreamId?.id === rowData.id ? null : { id: rowData.id, title: rowData.title };
                                                                                 // Устанавливаем состояние
+                                                                                setGlobalCourseId(newValue);
                                                                                 setForStreamId(newValue);
                                                                             }}
                                                                             checked={forStreamId?.id === rowData.id}
@@ -775,7 +789,7 @@ export default function Course() {
                             </div>
                             {/* STREAMS SECTION */}
                             <div className="w-1/2">
-                                <StreamList isMobile={false} callIndex={1} courseValue={forStreamId?.id ? forStreamId : null} insideDisplayStreams={(value) => setForStreamCount(value)} toggleIndex={() => {}} />
+                                <StreamList isMobile={false} callIndex={1} courseValue={forStreamId?.id ? forStreamId : null} insideDisplayStreams={(value) => setForStreamCount(value)} fetchprop={()=> contextFetchCourse(pageState)} toggleIndex={() => {}} />
                             </div>
                         </div>
                     )}

@@ -20,13 +20,15 @@ export default function StreamList({
     courseValue,
     isMobile,
     insideDisplayStreams,
-    toggleIndex
+    toggleIndex,
+    fetchprop
 }: {
     callIndex: number;
     courseValue: { id: number | null; title: string } | null;
     isMobile: boolean;
     insideDisplayStreams: (id: mainStreamsType[]) => void;
     toggleIndex: () => void;
+    fetchprop: () => void;
 }) {
     const [streams, setStreams] = useState<mainStreamsType[]>([]);
     const [displayStreams, setDisplayStreams] = useState<displayType[] | any>([]);
@@ -100,6 +102,7 @@ export default function StreamList({
         const data = await connectStreams({ course_id: courseValue?.id ? courseValue?.id : null, stream: pendingChanges });
 
         if (data?.success) {
+            fetchprop();
             toggleSkeleton();
             handleFetchStreams();
             setMessage({

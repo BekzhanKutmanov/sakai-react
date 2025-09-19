@@ -201,7 +201,7 @@ const AppMenu = () => {
             clearValues();
             setMessage({
                 state: true,
-                value: { severity: 'success', summary: 'Успешно удалено!', detail: '' }
+                value: { severity: 'success', summary: 'Успешно изменено!', detail: '' }
             });
         } else {
             setEditingLesson(null);
