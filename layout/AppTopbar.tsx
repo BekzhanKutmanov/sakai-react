@@ -133,7 +133,7 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                         <></>
                     ) : (
                         <div className={`flex items-center gap-3 ${!media ? 'order-2' : 'order-3'} `}>
-                            <Link className="text-[var(--titleColor)] hover:text-[var(--mainColor)]" href={'https://www.oshsu.kg/ru'}>Сайт ОшГУ</Link>
+                            <Link className="text-[var(--titleColor)] hover:text-[var(--mainColor)]" href={'https://www.oshsu.kg/ru'} target='_blank'>Сайт ОшГУ</Link>
                         </div>
                     )}
 

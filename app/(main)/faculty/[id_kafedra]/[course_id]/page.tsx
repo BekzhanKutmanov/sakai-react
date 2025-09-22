@@ -134,10 +134,6 @@ export default function LessonCheck() {
         }
     }, [themes, activeIndex]);
 
-    useEffect(() => {
-        console.log('Шаги', steps);
-    }, [steps]);
-
     return (
         <div className="main-bg">
             <Dialog

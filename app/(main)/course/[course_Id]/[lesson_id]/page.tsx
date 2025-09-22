@@ -322,7 +322,7 @@ export default function LessonStep() {
             // если lesson_id не поменялся, но изменился контент выбранной темы (например, title),
             // можно аккуратно обновить отображение (handleShow) — только если у нас реально поменялся title
             const prevSelected = prev?.find((p) => p.id === lesson_id);
-            const currSelected = snapshot.find((p: {id: number}) => p.id === lesson_id);
+            const currSelected = snapshot.find((p: { id: number }) => p.id === lesson_id);
 
             if (lesson_id && prevSelected && currSelected && prevSelected.title !== currSelected.title) {
                 // вызываем только обновление показа — не трогаем fetchSteps, если id тот же
@@ -362,13 +362,9 @@ export default function LessonStep() {
 
     const lessonInfo = (
         <div className="w-full">
-            {skeleton ? (
-                <GroupSkeleton count={1} size={{ width: '100%', height: '5rem' }} />
-            ) : (
-                <div className="bg-[var(--titleColor)] relative flex flex-col justify-center items-center w-full text-white p-4 md:p-3 pb-4">
-                    <h1 style={{ color: 'white', fontSize: media ? '24px' : '28px', textAlign: 'center' }}>{lessonInfoState?.title}</h1>
-                </div>
-            )}
+            <div className="bg-[var(--titleColor)] relative flex flex-col justify-center items-center w-full text-white p-4 md:p-3 pb-4">
+                <h1 style={{ color: 'white', fontSize: media ? '24px' : '28px', textAlign: 'center' }}>{lessonInfoState?.title}</h1>
+            </div>
         </div>
     );
 
@@ -453,19 +449,19 @@ export default function LessonStep() {
                     </div>
                 ) : (
                     <div ref={scrollRef} className={`flex gap-2 max-w-[550px] sm:max-w-[800px] overflow-x-auto scrollbar-thin ${media ? (steps.length >= 6 ? 'right-shadow' : '') : steps.length >= 12 ? 'right-shadow' : ''}`}>
-                        {skeleton ? (
+                        {/* {skeleton ? (
                             <div className="w-[700px]">
                                 <GroupSkeleton count={1} size={{ width: '100%', height: '3rem' }} />
                             </div>
-                        ) : (
-                            steps.map((item, idx) => {
+                        ) : ( */}
+                            {steps.map((item, idx) => {
                                 return (
                                     <div key={item.id} className="flex flex-col items-center">
                                         {step(item.type.logo, item.id, idx)}
                                     </div>
                                 );
-                            })
-                        )}
+                            })}
+                        {/* )} */}
                     </div>
                 )}
 
@@ -488,45 +484,26 @@ export default function LessonStep() {
                     <NotFound titleMessage="Шаги отсутствует" />
                 </div>
             )}
-            {skeleton ? (
-                <GroupSkeleton count={1} size={{ width: '100%', height: '20rem' }} />
-            ) : (
-                <>
-                    <div className="shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)] mt-3 pb-1 flex items-center justify-between flex-col sm:flex-row gap-1">
-                        {skeleton ? (
-                            <div className="w-full">
-                                <GroupSkeleton count={1} size={{ width: '100%', height: '3rem' }} />
-                            </div>
-                        ) : (
-                            !hasSteps && <b className="sm:text-[18px]">{element?.step.type.title}</b>
-                        )}
-                    </div>
-                    {element?.step.type.name === 'document' && <LessonDocument element={element?.step} content={element?.content} fetchPropElement={handleFetchElement} clearProp={hasSteps} />}
-                    {element?.step.type.name === 'video' && <LessonVideo element={element?.step} content={element?.content} fetchPropElement={handleFetchElement} clearProp={hasSteps} />}
-                    {element?.step.type.name === 'test' && <LessonTest element={element?.step} content={element?.content} fetchPropElement={handleFetchElement} clearProp={hasSteps} />}
-                    {element?.step.type.name === 'practical' && <LessonPractica element={element?.step} content={element?.content} fetchPropElement={handleFetchElement} clearProp={hasSteps} />}
-                    {element?.step.type.name === 'link' && <LessonLink element={element?.step} content={element?.content} fetchPropElement={handleFetchElement} clearProp={hasSteps} />}
-                    {skeleton ? (
-                        <div className="w-full">
-                            <GroupSkeleton count={1} size={{ width: '100%', height: '3rem' }} />
-                        </div>
-                    ) : (
-                        !hasSteps && (
-                            <div className="flex justify-end mt-1">
-                                <Button
-                                    icon={'pi pi-trash'}
-                                    label="Удалить шаг"
-                                    className="hover:bg-[var(--mainBorder)] transition"
-                                    onClick={() => {
-                                        const options = getConfirmOptions(Number(), () => handleDeleteStep());
-                                        confirmDialog(options);
-                                    }}
-                                />
-                            </div>
-                        )
-                    )}
-                </>
-            )}
+            <div className="shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)] mt-3 pb-1 flex items-center justify-between flex-col sm:flex-row gap-1">
+                <b className="sm:text-[18px]">{element?.step.type.title}</b>
+            </div>
+            {element?.step.type.name === 'document' && <LessonDocument element={element?.step} content={element?.content} fetchPropElement={handleFetchElement} clearProp={hasSteps} />}
+            {element?.step.type.name === 'video' && <LessonVideo element={element?.step} content={element?.content} fetchPropElement={handleFetchElement} clearProp={hasSteps} />}
+            {element?.step.type.name === 'test' && <LessonTest element={element?.step} content={element?.content} fetchPropElement={handleFetchElement} clearProp={hasSteps} />}
+            {element?.step.type.name === 'practical' && <LessonPractica element={element?.step} content={element?.content} fetchPropElement={handleFetchElement} clearProp={hasSteps} />}
+            {element?.step.type.name === 'link' && <LessonLink element={element?.step} content={element?.content} fetchPropElement={handleFetchElement} clearProp={hasSteps} />}
+
+            <div className="flex justify-end mt-1">
+                <Button
+                    icon={'pi pi-trash'}
+                    label="Удалить шаг"
+                    className="hover:bg-[var(--mainBorder)] transition trash-button"
+                    onClick={() => {
+                        const options = getConfirmOptions(Number(), () => handleDeleteStep());
+                        confirmDialog(options);
+                    }}
+                />
+            </div>
         </div>
     );
 }

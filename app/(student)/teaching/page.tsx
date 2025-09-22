@@ -6,6 +6,7 @@ import GroupSkeleton from '@/app/components/skeleton/GroupSkeleton';
 import useErrorMessage from '@/hooks/useErrorMessage';
 import { LayoutContext } from '@/layout/context/layoutcontext';
 import { fetchItemsConnect, fetchItemsLessons } from '@/services/studentMain';
+import Link from 'next/link';
 import { Dropdown } from 'primereact/dropdown';
 import { ReactElement, useContext, useEffect, useState } from 'react';
 
@@ -22,7 +23,7 @@ export default function Teaching() {
 
     const [lessonsDisplay, setLessonsDisplay] = useState<ReactElement[]>([]);
     const [hasLessons, setHasLessons] = useState(false);
-    const [selectedSort, setSelectedSort] = useState({ name: 'Баары', code: 0 });
+    const [selectedSort, setSelectedSort] = useState({ name: 'Все', code: 0 });
     const [sortOpt, setSortOpt] = useState<sortOptType[]>();
     const [connection, setConnection] = useState<[]>([]);
 
@@ -44,15 +45,15 @@ export default function Teaching() {
     // fetch lessons
     const handleFetchLessons = async () => {
         const data = await fetchItemsLessons();
-        setSkeleton(true)
+        setSkeleton(true);
         console.log(data);
-        
+
         if (data) {
             // валидность проверить
             console.log(data);
             setLessons(data);
             setHasLessons(false);
-            setSkeleton(false)
+            setSkeleton(false);
         } else {
             setHasLessons(true);
             setMessage({
@@ -88,7 +89,7 @@ export default function Teaching() {
         if (!lessons) return;
 
         // готовим опции для dropdown
-        let forSortSelect = [{ name: 'Баары', code: 0 }];
+        let forSortSelect = [{ name: 'Все', code: 0 }];
 
         Object.entries(lessons).forEach(([key, value]) => {
             if (value.semester) {
@@ -110,18 +111,23 @@ export default function Teaching() {
             displayData = selected && selected.semester ? [selected] : [];
         }
         console.log('streams', displayData);
-        console.log('connection', connection);
-        
+        // console.log('connection', connection);
+
         // превращаем в jsx
         const x = displayData.map((semester: any, sIdx: number) => (
             <div className="flex flex-col gap-2" key={sIdx}>
                 <h3 className="text-center text-[22px] sm:text-[26px] mb-1">{semester.semester.name_kg}</h3>
-                <div className="flex justify-around flex-wrap items-start gap-4">
+                <div className="flex flex-col gap-2">
                     {Object.values(semester)
-                        .filter((val: any) => val.subject) // только предметы
-                        .map((subj: any, subjIdx: number) => (
-                            <ItemCard key={subjIdx} lessonName={subj.subject} streams={subj.streams} connection={connection} />
-                        ))}
+                        .filter((val: any) => val.subject)
+                        .map((subj: any, subjIdx: number) => {
+                            
+                            return (
+                                <Link key={subjIdx} href={`/teaching/${subj.id_curricula}`}>
+                                    <ItemCard key={subjIdx} subject={subj} lessonName={subj.subject} streams={subj.streams} connection={connection} />
+                                </Link>
+                            );
+                        })}
                 </div>
             </div>
         ));
@@ -130,8 +136,6 @@ export default function Teaching() {
     }, [lessons, selectedSort]);
 
     useEffect(() => {
-        console.log('kfjlsdj;');
-        
         handleFetchLessons();
         handleFetchConnectId();
     }, []);
@@ -144,7 +148,7 @@ export default function Teaching() {
                     <GroupSkeleton count={1} size={{ width: '100%', height: '4rem' }} />
                 ) : (
                     <div className="flex flex-col sm:flex-row justify-between items-center gap-2 mb-4 py-2 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">
-                        <h3 className="text-[24px] sm:text-[28px] m-0">Менин окуу планым</h3>
+                        <h3 className="text-[24px] sm:text-[28px] m-0">План обучения</h3>
 
                         <Dropdown
                             value={selectedSort}

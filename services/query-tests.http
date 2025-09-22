@@ -30,6 +30,6 @@ Content-Type: application/json
 
 # test  
 
-GET https://api.mooc.oshsu.kg/public/api/v1/teacher/controls/department/course?course_id=34&id_kafedra=139
+GET https://api.mooc.oshsu.kg/public/api/v1/student/course/lessons
 Authorization: Bearer {{token}}
 Content-Type: application/json  

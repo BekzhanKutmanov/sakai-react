@@ -12,6 +12,21 @@ export const fetchItemsLessons = async () => {
     }
 };
 
+export const fetchSubjects = async (params: URLSearchParams) => {
+// export const fetchSubjects = async ( id_curricula:number, course_ids: number[], streams: number[]) => {
+    
+    try {
+        const res = await axiosInstance.get(`/v1/student/course/lessons?${params.toString()}`);
+        // const res = await axiosInstance.get(`/v1/student/course/lessons?id_curricula=${id_curricula}&course_ids=${course_ids}&streams=${streams}`);
+        const data = await res.data;
+        
+        return data;
+    } catch (err) {
+        console.log('Ошибка загрузки:', err);
+        return err;
+    }
+};
+
 export const fetchItemsConnect = async () => {
     try {
         const res = await axiosInstance.get(`v1/student/stream/connect`);
@@ -63,71 +78,3 @@ export const fetchMainLesson = async (lesson_id: number | null) => {
         return err;
     }
 };
-
-
-// export const addCourse = async (value: CourseCreateType) => {
-//     const formData = new FormData();
-//     formData.append('title', value.title);
-//     formData.append('description', value.description);
-//     if (value.image instanceof File) {
-//         formData.append('image', value.image);
-//     }
-//     formData.append('video_url', value.video_url);
-    
-//     try {
-//         const res = await axiosInstance.post(`/v1/teacher/courses/store`, formData, {
-//             headers: {
-//                 'Content-Type': 'multipart/form-data'
-//             }
-//         });
-
-//         return res.data;
-//     } catch (err) {
-//         console.log('Ошибка при добавлении курса', err);
-//         return err;
-//     }
-// };
-
-// export const deleteCourse = async (id: number) => {
-//     url = process.env.NEXT_PUBLIC_BASE_URL + `/v1/teacher/courses/delete?course_id=${id}`;
-
-//     try {
-//         const res = await axiosInstance.delete(`/v1/teacher/courses/delete?course_id=${id}`, {
-//             headers: {'Content-Type': 'multipart/form-data'}
-//         });
-
-//         console.log(res.data);
-//         return res.data;
-//     } catch (err) {
-//         console.log('Ошибка при удалении курса', err);
-//         return err;
-//     }
-// };
-
-// export const updateCourse = async (id: number | null, value: CourseCreateType) => {
-//     console.log(value);
-
-//     url = process.env.NEXT_PUBLIC_BASE_URL + `/v1/teacher/courses/update?course_id=${id}`;
-
-//     const formData = new FormData();
-//     formData.append('title', value.title);
-//     formData.append('description', value.description);
-//     if (value.image instanceof File) {
-//         formData.append('image', value.image);
-//     }
-//     formData.append('video_url', value.video_url);
-
-//     try {
-//         const res = await axiosInstance.post(`/v1/teacher/courses/update?course_id=${id}`, formData, {
-//             headers: {
-//                 'Content-Type': 'multipart/form-data'
-//             }
-//         });
-
-//         const data = await res.data;
-//         return data;
-//     } catch (err) {
-//         console.log('Ошибка при обновлении курса', err);
-//         return err;
-//     }
-// };

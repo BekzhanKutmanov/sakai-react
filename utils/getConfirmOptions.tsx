@@ -16,7 +16,7 @@ export const getConfirmOptions = (id: number, onDelete: (id: number)=> void ): C
     header: 'Удаление',
     icon: 'pi pi-info-circle',
     defaultFocus: 'reject',
-    acceptClassName: 'p-button-danger',
+    acceptClassName: 'p-button-danger trash-button',
     acceptLabel: 'Удалить',
     rejectLabel: 'Назад',
     rejectClassName: 'p-button-secondary reject-button',

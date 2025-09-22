@@ -380,6 +380,10 @@ h1, h2, h3, h4, h5, h6 {
   box-shadow: inset -18px 0px 9px -10px rgba(0, 0, 0, 0.1);
 }
 
+.my-border-top {
+  border-top: solid 1px rgb(208, 205, 205);
+}
+
 @keyframes shadowSkale {
   0% {
       box-shadow: 1px 1px 6px 1px ;
@@ -541,13 +545,16 @@ h1, h2, h3, h4, h5, h6 {
 
 @media (max-width: 480px) {
   .p-button-label {
-    font-size: 13px !important;
+    font-size: 14px !important;
   }
   .p-button-icon{
-    font-size: 13px !important;
-    width: 12px !important;
+    width: 14px !important;
+  }
+  .p-button{
+    padding: 4px 5px !important;
   }
 }
+
 /* styles/book.css */
 
 /* Стили для контейнера всей книги */
@@ -634,6 +641,23 @@ h1, h2, h3, h4, h5, h6 {
   .layout-menuitem-text{
     font-size: 13px !important;
   }
+}
+
+.mini-button {
+  padding: 3px 2px;
+}
+
+.trash-button {
+  background-color: red;
+}
+
+.p-button .p-button-danger{
+  background-color: red !important;
+}
+
+.p-column-header-content{
+  display: flex;
+  justify-content: center;
 }
 
 /* input */

@@ -703,12 +703,11 @@ export default function Course() {
                                                 <div ref={topRef}>
                                                     <DataTable value={coursesValue} dataKey="id" key={JSON.stringify(forStreamId)} responsiveLayout="stack" breakpoint="960px" rows={5} className="my-custom-table">
                                                         <Column body={(_, { rowIndex }) => rowIndex + 1} header="#" style={{ width: '20px' }}></Column>
-                                                        <Column body={imageBodyTemplate}></Column>
+                                                        <Column style={{width : '70px'}} header={()=> <div className='flex justify-center'><i className='pi pi-images text-xl'></i></div>} body={imageBodyTemplate}></Column>
 
                                                         <Column
                                                             field="title"
-                                                            header="Название"
-                                                            // style={{ width: '80%' }}
+                                                            header={()=> <div className="text-[13px]">Название</div>}
                                                             body={(rowData) => (
                                                                 <Link
                                                                     href={`/course/${rowData.id}/${'null'}`}
@@ -745,14 +744,14 @@ export default function Course() {
                                                             )}
                                                         ></Column>
                                                         <Column
-                                                            header="Публикация"
+                                                            header={()=> <div className="text-[13px]">Публикация</div> }
                                                             style={{ margin: '0 3px', textAlign: 'center' }}
                                                             body={(rowData) =>
                                                                 rowData.is_published ? <i className="pi pi-check text-md sm:text-lg text-[var(--greenColor)]"></i> : <i className="pi pi-times text-md sm:text-lg text-[var(--redColor)]"></i>
                                                             }
                                                         ></Column>
                                                         <Column
-                                                            header="Потоки"
+                                                            header={()=> <div className="text-[13px]">Потоки</div>}
                                                             style={{ margin: '0 3px', textAlign: 'center' }}
                                                             body={(rowData) => (
                                                                 <>

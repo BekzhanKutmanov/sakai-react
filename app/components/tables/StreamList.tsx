@@ -14,6 +14,7 @@ import { Dialog } from 'primereact/dialog';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { mainStreamsType } from '@/types/mainStreamsType';
+import Link from 'next/link';
 
 export default function StreamList({
     callIndex,
@@ -156,7 +157,7 @@ export default function StreamList({
         });
     };
 
-    useEffect(() => {
+    useEffect(() => {        
         setDisplayStreams([]);
         toggleSkeleton();
         if (courseValue?.id) {
@@ -279,7 +280,7 @@ export default function StreamList({
             {
                 <Button
                     label="Добавить"
-                    disabled={false}
+                    disabled={streams.length < 1}
                     icon="pi pi-check"
                     onClick={() => {
                         setVisible(false);

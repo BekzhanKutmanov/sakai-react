@@ -114,7 +114,7 @@ export const LayoutProvider = ({ children }: ChildContainerProps) => {
 
     useEffect(() => {
         setContextThemes([]);
-        if (pathname === '/course') {
+        if (pathname === '/course' && !departament.name) {
             setLayoutState((prev) => ({
                 ...prev,
                 staticMenuDesktopInactive: true,
@@ -128,7 +128,7 @@ export const LayoutProvider = ({ children }: ChildContainerProps) => {
                 staticMenuDesktopInactive: false
             }));
         }
-    }, [pathname]);
+    }, [pathname, departament]);
 
     useEffect(() => {
         if (isTopicsChildPage && crumbUrls) {

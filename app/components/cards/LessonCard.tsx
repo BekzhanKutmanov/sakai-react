@@ -207,9 +207,9 @@ export default function LessonCard({
                                                     }}
                                                 />
                                                 <Button
-                                                    className=""
+                                                    className="trash-button"
                                                     icon={'pi pi-trash'}
-                                                    label={!media ? 'Удаление' : ''}
+                                                    label={!media ? 'Удалить' : ''}
                                                     onClick={() => {
                                                         const options = getConfirmOptions(Number(cardValue.id), () => onDelete && onDelete(cardValue.id));
                                                         confirmDialog(options);

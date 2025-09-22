@@ -212,7 +212,7 @@ export default function LessonTest({ element, content, fetchPropElement, clearPr
                     <div className="w-full flex flex-col justify-center gap-2 my-2">
                         <div className="lesson-card-border shadow rounded p-2">
                             <div className="w-[99%] sm:w-[90%]  m-auto  flex flex-col gap-2 sm:items-center  p-1 sm:p-2">
-                                <div className="w-full flex items-start gap-1">
+                                <div className="w-full flex items-center gap-1">
                                     <div className="w-full">
                                         <InputTextarea
                                             id="title"
@@ -227,10 +227,9 @@ export default function LessonTest({ element, content, fetchPropElement, clearPr
                                         <b style={{ color: 'red', fontSize: '12px' }}>{errors.title?.message}</b>
                                     </div>
                                     <div className="flex flex-col justify-center items-center">
-                                        <span className='text-sm'>Балл</span>
                                         <InputText
                                             type="number"
-                                            placeholder="0"
+                                            placeholder="Балл"
                                             className="w-[50px] sm:w-[70px]"
                                             onChange={(e) => {
                                                 setTestValue((prev) => ({ ...prev, score: Number(e.target.value) }));
@@ -238,7 +237,7 @@ export default function LessonTest({ element, content, fetchPropElement, clearPr
                                         />
                                     </div>
                                 </div>
-                                <div className="flex flex-col justify-start items-start gap-2">
+                                <div className="w-full flex flex-col justify-start items-start gap-2">
                                     {answer.map((item, index) => {
                                         return (
                                             <div className="flex items-center gap-1" key={index}>
