@@ -231,11 +231,11 @@ export default function StreamList({
                         <div className="flex flex-col order-1 xl:order-2 align-items-center gap-2">
                             <span className="font-semibold">{item?.semester?.name_ru}</span>
                             <span className="bg-[var(--greenColor)] text-[12px] text-white p-1 rounded">{item?.edu_form?.name_ru}</span>
-                            {/* {item.connect_id && (
-                                <Link href={`/students/${item.connect_id}/${item.stream_id}`} className="underline">
+                            {item.connect_id && (
+                                <Link href={`/students/${item.connect_id}/${item.stream_id}`} className="underline text-sm">
                                     Студенттер
                                 </Link>
-                            )} */}
+                            )}
                         </div>
                     </div>
                 </div>
@@ -265,7 +265,7 @@ export default function StreamList({
             </div>
         );
     };
-
+    
     const footerContent = (
         <div>
             <Button
@@ -297,7 +297,7 @@ export default function StreamList({
             <Dialog
                 header={'Потоки'}
                 visible={visible}
-                className="w-[95%]"
+                className={`${streams.length < 1 ? '' : 'w-[95%]'}`}
                 onHide={() => {
                     if (!visible) return;
                     setVisible(false);

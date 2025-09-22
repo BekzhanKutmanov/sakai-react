@@ -39,14 +39,8 @@ export default function StudentInfoCard({
     const [practicaCall, setPracticaCall] = useState(false);
 
     const docCard = (
-        <div className="w-full flex items-start gap-2 py-1 flex-col sm:flex-row">
+        <div className="w-full flex items-end gap-2 py-1 flex-col sm:flex-row">
             <div className="w-full flex flex-col sm:flex-row gap-1">
-                <div className="block sm:hidden">
-                    <span className="text-center block text-sm w-full">Выполнено:</span>
-                    <div className="p-1 bg-white w-full sm:w-[140px]">
-                        <ProgressBar value={10} className="w-full sm:w-[140px]" style={{ backgroundColor: '', color: 'black', height: '20px', fontSize: '12px' }}></ProgressBar>
-                    </div>
-                </div>
                 <div className="w-full flex items-start gap-2">
                     <div className="p-2 bg-[var(--mainColor)] min-w-[38px] min-h-[38px] w-[38px] h-[38px] flex justify-center items-center rounded">
                         <i className={`${icon} text-white`}></i>
@@ -73,23 +67,19 @@ export default function StudentInfoCard({
                     </div>
                 </div>
             </div>
-            <div className='w-full flex flex-col'>
-                <div className="hidden sm:block w-[190px] p-1">
-                    <span className="text-center block text-sm w-full">Выполнено:</span>
-                    <div className="p-1 bg-white w-full sm:w-[140px]">
-                        <ProgressBar value={10} className="w-full sm:w-[140px]" style={{ backgroundColor: '', color: 'black', height: '', width: '130px',fontSize: '12px' }}></ProgressBar>
-                    </div>  
-                </div>
+            <div className='w-full flex gap-1 flex-col items-end'>
                 <div className="w-full flex justify-end gap-1 items-center">
                     <div className="">
-                        <Link href={`/pdf/${'documentUrl?.document_path'}`}><Button icon='pi pi-eye' className='mini-button'/></Link>
+                        <Link href={`/pdf/${documentUrl?.document}`}><Button icon='pi pi-eye' className='mini-button'/></Link>
                         {/* {progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />} */}
                     </div>
 
-                    <a href={'urlForDownload'} download target="_blank" rel="noopener noreferrer">
+                    {documentUrl?.document_path && <>
+                    <a href={documentUrl?.document_path} download target="_blank" rel="noopener noreferrer">
                         {' '}
                         <Button icon="pi pi-file-arrow-up" className="mini-button" />
                     </a>
+                    </>}
                 </div>
             </div>
         </div>

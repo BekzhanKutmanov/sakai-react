@@ -4,6 +4,7 @@ import LessonInfoCard from '@/app/components/lessons/LessonInfoCard';
 import StudentInfoCard from '@/app/components/lessons/StudentInfoCard';
 import { mainStepsType } from '@/types/mainStepType';
 import { Accordion, AccordionTab } from 'primereact/accordion';
+import { ProgressBar } from 'primereact/progressbar';
 import { useState } from 'react';
 
 export default function Test() {
@@ -49,19 +50,10 @@ export default function Test() {
                                                     test={{ content: i.content.content, answers: i.content.answers, score: i.content.score }}
                                                     // videoStart={handleVideoCall}
                                                 /> */}
-            {/* <StudentInfoCard
-                                                    type={'video'}
-                                                    icon={'pi pi-video'}
-                                                    title={'he he he baby'}
-                                                    description={'hyyyyyyyyyyyy ggg rrrrrrrr ffffff'}
-                                                    documentUrl={{ document: i.content?.document, document_path: i.content?.document_path }}
-                                                    video_link={'https://www.youtube.com/watch?v=LYigiwbaX_U&list=RDLYigiwbaX_U&start_radio=1'}
-                                                    link={''}
-                                                    test={{ content: i.content.content, answers: i.content.answers, score: i.content.score }}
-                                                    // videoStart={handleVideoCall}
-                                                /> */}
-            <h3 className="text-lg pb-1 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">
-                <span className="text-[var(--mainColor)]">Название курса:</span> {'oooo'}
+    
+            <h3 className="pb-1 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">
+                <span className="text-[var(--mainColor)] text-xl">Название курса:</span> 
+                <span className="text-xl">lll</span> 
             </h3>
             <Accordion activeIndex={activeIndex} onTabChange={(e) => setActiveIndex(e.index)}>
                 <AccordionTab header={'Тема: '} className="w-full p-accordion" style={{ width: '100%' }}>
@@ -70,25 +62,41 @@ export default function Test() {
                             <p className="text-center text-sm">Данных нет</p>
                         ) : content.length > 0 ? (
                             content.map((i, idx) => {
-                                console.log(i);
-                                // return ''
                                 if (i.content) {
                                     return (
                                         <div className={`${idx !== 0 && idx !== content.length ? 'border-t-1 border-[gray]' : ''}`} key={i.id}>
-                                            <>
+                                            <div>
+                                                <div className="flex flex-col sm:flex-row justify-center items-center sm:w-[500px] m-auto" >
+                                                    <h3 className="m-0 text-md">Завершено:</h3>
+                                                    <div className="p-1 bg-white w-full sm:w-[140px]">
+                                                        <ProgressBar value={10} className="w-full sm:w-[140px]" style={{ color: 'black', height: '15px', fontSize: '13px'}}></ProgressBar>
+                                                    </div>
+                                                </div>
                                                 <StudentInfoCard
                                                     type={i.type.name}
                                                     icon={i.type.logo}
                                                     title={i.content?.title}
                                                     description={i.content?.description || 'hyyyyyyyyyyyy ggg rrrrrrrr ffffff'}
-                                                    // documentUrl={{ document: '', document_path: '' }}
-                                                    documentUrl={{ document: i.content?.document, document_path: i.content?.document_path }}
+                                                    documentUrl={{ document: '2_9_1758527132.pdf', document_path: 'https://api.mooc.oshsu.kg/public/teacher/files/lesson/documents/2_9_1758527132.pdf' }}
+                                                    // documentUrl={{ document: i.content?.document, document_path: i.content?.document_path }}
                                                     video_link={i.content?.link}
                                                     link={i.content?.url}
                                                     test={{ content: i.content.content, answers: i.content.answers, score: i.content.score }}
                                                     // videoStart={handleVideoCall}
+
                                                 />
-                                            </>
+                                                <StudentInfoCard
+                                                    type={'video'}
+                                                    icon={'pi pi-video'}
+                                                    title={'he fdf'}
+                                                    description={'hyyyyyyyyyyyy ggg rrrrrrrr ffffff'}
+                                                    documentUrl={{ document: i.content?.document, document_path: i.content?.document_path }}
+                                                    video_link={'https://www.youtube.com/watch?v=LYigiwbaX_U&list=RDLYigiwbaX_U&start_radio=1'}
+                                                    link={''}
+                                                    test={{ content: i.content.content, answers: i.content.answers, score: i.content.score }}
+                                                    // videoStart={handleVideoCall}
+                                                />
+                                            </div>
                                         </div>
                                     );
                                 }

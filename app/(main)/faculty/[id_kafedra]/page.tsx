@@ -37,6 +37,7 @@ export default function Kafedra() {
     const [notCourse, setNoteCourse] = useState<kafedraInfoType[]>([]);
     const [contentShow, setContentShow] = useState<boolean>(false);
     const [progressSpinner, setProgressSpinner] = useState(false);
+    const [forDisabled, setForDisabled] = useState(false);
 
     const { setMessage, setGlobalLoading } = useContext(LayoutContext);
     const showError = useErrorMessage();
@@ -65,21 +66,17 @@ export default function Kafedra() {
     };
 
     const publish = async (id_kafedra: number, id_teacher: number, course_id: number, status: boolean) => {
-        setProgressSpinner(true);
-        console.log('privet');
-        
+        setForDisabled(true);
         const data = await publishCourse(id_kafedra, id_teacher, course_id, status);
-        console.log(data);
-
         if (data) {
-            setProgressSpinner(false);
+            setForDisabled(false);
             handleFetchKafedra();
             setMessage({
                 state: true,
                 value: { severity: 'success', summary: 'Успешно добавлен!', detail: '' }
             });
         } else {
-            setProgressSpinner(false);
+            setForDisabled(false);
             setMessage({
                 state: true,
                 value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
@@ -117,8 +114,6 @@ export default function Kafedra() {
     }, []);
 
     useEffect(() => {
-        console.log(courses);
-
         const forNotCourse = courses.filter((item) => item.courses.length < 1);
         setNoteCourse(forNotCourse);
     }, [courses]);
@@ -129,68 +124,69 @@ export default function Kafedra() {
                 <NotFound titleMessage="Данные не доступны" />
             ) : (
                 <>
-                    {courses.map((item) => {
-                        return (
-                            <div className="w-full flex flex-col justify-center gap-2" key={item.id}>
-                                {item.courses.length > 0 && (
-                                    <div className="w-full m-auto">
-                                        <h3 className="text-[18px] pb-1 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">
-                                            {item.last_name} {item.name} {item.father_name}
-                                        </h3>
-                                        <DataTable value={item.courses} dataKey="id" key={JSON.stringify(progressSpinner)} responsiveLayout="stack" breakpoint="960px" rows={5} className="my-custom-table">
-                                            <Column body={(_, { rowIndex }) => rowIndex + 1} header="#" style={{ width: '20px' }}></Column>
-                                            <Column body={imageBodyTemplate}></Column>
-                                            <Column field="title" header="Название" style={{ width: '80%' }} body={(rowData) => <Link href={`/faculty/${id_kafedra}/${rowData.id}`} key={rowData.id}>{rowData.title}</Link>}></Column>
-                                            <Column
-                                                header="Публикация"
-                                                body={(rowData) => (
-                                                    <div key={rowData.id}>
-                                                        {!rowData.is_published ? (
-                                                            <button className={`theme-toggle ${progressSpinner && 'opacity-5'}`} disabled={progressSpinner}  onClick={() => publish(Number(id_kafedra), item.id, rowData.id, true)} aria-pressed="false">
-                                                                <span className="right">
-                                                                    <span className="option option-left" aria-hidden></span>
-                                                                    <span className="option option-right" aria-hidden></span>
-                                                                    <span className="knob" aria-hidden></span>
-                                                                </span>
-                                                            </button>
-                                                        ) : (
-                                                            <button className={`theme-toggle ${progressSpinner && 'opacity-5'}`} disabled={progressSpinner}  onClick={() => publish(Number(id_kafedra), item.id, rowData.id, false)} aria-pressed="false">
-                                                                <span className="track">
-                                                                    <span className="option option-left" aria-hidden></span>
-
-                                                                    <span className="option option-right" aria-hidden>
-                                                                        <svg
-                                                                            xmlns="http://www.w3.org/2000/svg"
-                                                                            width="24"
-                                                                            height="24"
-                                                                            fill="none"
-                                                                            stroke="green"
-                                                                            stroke-width="2"
-                                                                            stroke-linecap="round"
-                                                                            stroke-linejoin="round"
-                                                                            viewBox="0 0 24 24"
-                                                                            aria-label="Опубликовано"
-                                                                        >
-                                                                            <circle cx="12" cy="12" r="10"></circle>
-                                                                            <path d="M9 12l2 2 4-4"></path>
-                                                                        </svg>
+                    <div className=''>
+                        {courses.map((item) => {
+                            return (
+                                <div className="w-full flex flex-col justify-center gap-2" key={item.id}>
+                                    {item.courses.length > 0 && (
+                                        <div className="w-full m-auto">
+                                            <h3 className="text-[18px] pb-1 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">
+                                                {item.last_name} {item.name} {item.father_name}
+                                            </h3>
+                                            <DataTable value={item.courses} dataKey="id" key={JSON.stringify(forDisabled)} responsiveLayout="stack" breakpoint="960px" rows={5} className="my-custom-table">
+                                                <Column body={(_, { rowIndex }) => rowIndex + 1} header="#" style={{ width: '20px' }}></Column>
+                                                <Column body={imageBodyTemplate}></Column>
+                                                <Column field="title" header="Название" style={{ width: '80%' }} body={(rowData) => <Link href={`/faculty/${id_kafedra}/${rowData.id}`} key={rowData.id}>{rowData.title}</Link>}></Column>
+                                                <Column
+                                                    header="Публикация"
+                                                    body={(rowData) => (
+                                                        <div key={rowData.id}>
+                                                            {!rowData.is_published ? (
+                                                                <button className={`theme-toggle ${forDisabled && 'opacity-5'}`} disabled={forDisabled}  onClick={() => publish(Number(id_kafedra), item.id, rowData.id, true)} aria-pressed="false">
+                                                                    <span className="right">
+                                                                        <span className="option option-left" aria-hidden></span>
+                                                                        <span className="option option-right" aria-hidden></span>
+                                                                        <span className="knob" aria-hidden></span>
                                                                     </span>
+                                                                </button>
+                                                            ) : (
+                                                                <button className={`theme-toggle ${forDisabled && 'opacity-5'}`} disabled={forDisabled}  onClick={() => publish(Number(id_kafedra), item.id, rowData.id, false)} aria-pressed="false">
+                                                                    <span className="track">
+                                                                        <span className="option option-left" aria-hidden></span>
 
-                                                                    <span className="knob" aria-hidden></span>
-                                                                </span>
-                                                            </button>
-                                                        )}
-                                                        {progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}
-                                                    </div>
-                                                )}
-                                            ></Column>
-                                        </DataTable>
-                                    </div>
-                                )}
-                            </div>
-                        );
-                    })}
+                                                                        <span className="option option-right" aria-hidden>
+                                                                            <svg
+                                                                                xmlns="http://www.w3.org/2000/svg"
+                                                                                width="24"
+                                                                                height="24"
+                                                                                fill="none"
+                                                                                stroke="green"
+                                                                                stroke-width="2"
+                                                                                stroke-linecap="round"
+                                                                                stroke-linejoin="round"
+                                                                                viewBox="0 0 24 24"
+                                                                                aria-label="Опубликовано"
+                                                                            >
+                                                                                <circle cx="12" cy="12" r="10"></circle>
+                                                                                <path d="M9 12l2 2 4-4"></path>
+                                                                            </svg>
+                                                                        </span>
 
+                                                                        <span className="knob" aria-hidden></span>
+                                                                    </span>
+                                                                </button>
+                                                            )}
+                                                            {progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}
+                                                        </div>
+                                                    )}
+                                                ></Column>
+                                            </DataTable>
+                                        </div>
+                                    )}
+                                </div>
+                            );
+                        })}
+                    </div>
                     {notCourse.length > 0 && (
                         <div className="mt-2">
                             <p className="text-[18px] font-bold">Курсы отсутствуют:</p>

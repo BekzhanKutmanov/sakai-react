@@ -105,6 +105,7 @@ export default function LessonCheck() {
 
     // ПРОСИМ КУРС ДЛЯ НАЗВАНИЯ И ТЕМЫ
     useEffect(() => {
+        console.warn('Вызов')   
         contextFetchThemes(Number(course_id), id_kafedra ? Number(id_kafedra) : null);
         handleCourseInfo();
     }, []);
@@ -118,7 +119,7 @@ export default function LessonCheck() {
         } else {
             setThemeShow(true);
         }
-    }, [contextThemes]);
+    }, [contextThemes]);    
 
     // просто посмотреть пока
     useEffect(() => {

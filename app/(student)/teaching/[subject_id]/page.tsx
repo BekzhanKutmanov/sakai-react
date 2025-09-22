@@ -18,7 +18,7 @@ export default function StudentLesson() {
     interface sortOptType {
         name: string;
         code: number;
-        user_id: number | null;
+        user_id?: number | null;
     }
 
     const { subject_id } = useParams();
@@ -34,7 +34,7 @@ export default function StudentLesson() {
     const [lessons, setLessons] = useState<Record<number, { semester: { name_kg: string } } | predmetType>>({
         1: { semester: { name_kg: '' } }
     });
-    const [courses, setCourses] = useState<{connections: {subject_type: string, id: number, user_id: number | null}[], title: string}[]>([]);
+    const [courses, setCourses] = useState<{ connections: { subject_type: string; id: number; user_id: number | null }[]; title: string }[]>([]);
     const [selectedSort, setSelectedSort] = useState({ name: 'Все', code: 0 });
     const [sortOpt, setSortOpt] = useState<sortOptType[]>();
 
@@ -134,24 +134,21 @@ export default function StudentLesson() {
     }, [main_id]);
 
     useEffect(() => {
-        console.log(courses);
-        let forDropdown: sortOptType[] = [];
-        // courses.forEach((opt: { connections: { subject_type: string; id: number }[] }) => {
-            courses[0]?.connections.forEach((element) => {
-                forDropdown.push({
-                    name: element.subject_type,
-                    code: element.id,
-                    user_id: element.user_id,
-                });
+        let forDropdown: sortOptType[] = [{ name: 'Все', code: 0 }];
+        courses[0]?.connections.forEach((element) => {
+            forDropdown.push({
+                name: element.subject_type,
+                code: element.id,
+                user_id: element.user_id
             });
-        // });
+        });
+
         setSortOpt(forDropdown);
-        setSortOpt((prev) => prev && [...prev, { name: 'Все', code: 0, user_id: null }]);
     }, [courses]);
 
     return (
         <div className="main-bg">
-            <div className='flex justify-between gap-1 items-center'>
+            <div className="flex justify-between gap-1 items-center">
                 <h3 className="text-lg pb-1 m-0">
                     <span className="text-[var(--mainColor)]">Название курса:</span> {courses[0]?.title}
                 </h3>
@@ -169,10 +166,8 @@ export default function StudentLesson() {
             <div>
                 {/* Данные придут с типами урока (лк, лб...) от туда и все отображу. С их юсер ид достану мой юсер ид тоже отображу */}
                 {/* Найду связь наверное с connectionc id и по порядку отображу с начало название из моего sortOpt и внутри новый рендер с новых данных */}
-                {sortOpt?.map((item)=> {
-                    return (
-                        item.name
-                    )
+                {sortOpt?.map((item) => {
+                    return item.name;
                 })}
             </div>
         </div>

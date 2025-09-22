@@ -121,11 +121,14 @@ export default function Teaching() {
                     {Object.values(semester)
                         .filter((val: any) => val.subject)
                         .map((subj: any, subjIdx: number) => {
-                            
-                            return (
+                            return subj.connect ? (
                                 <Link key={subjIdx} href={`/teaching/${subj.id_curricula}`}>
                                     <ItemCard key={subjIdx} subject={subj} lessonName={subj.subject} streams={subj.streams} connection={connection} />
                                 </Link>
+                            ) : (
+                                <span>
+                                    <ItemCard key={subjIdx} subject={subj} lessonName={subj.subject} streams={subj.streams} connection={connection} />
+                                </span>
                             );
                         })}
                 </div>

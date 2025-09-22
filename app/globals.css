@@ -369,6 +369,10 @@ h1, h2, h3, h4, h5, h6 {
   margin: 0;
 }
 
+.p-progressbar-value{
+  min-width: 25px !important; /* даже при 1% будет видно кусочек */
+}
+
 /* prototype effect */
 .shadowAnimate {
   box-shadow: 1px 1px 6px 1px ;

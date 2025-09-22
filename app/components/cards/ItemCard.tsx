@@ -1,6 +1,4 @@
 'use client';
-import Link from 'next/link';
-import { Button } from 'primereact/button';
 import React, { useEffect, useState } from 'react';
 
 export default function ItemCard({

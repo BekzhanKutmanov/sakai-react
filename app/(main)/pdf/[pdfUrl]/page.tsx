@@ -16,10 +16,10 @@ export default function PdfUrlViewer() {
     const router = useRouter();
 
     return (
-        <div>
-            <button onClick={()=> router.back()} className='flex items-center gap-1 bg-[]'>
-                <i className="pi pi-arrow-left text-[12px]" style={{fontSize: '12px'}}></i>
-                <button className="text-[12px]">Артка</button>
+        <div className='my-2'>
+            <button onClick={()=> router.back()} className='cursor-pointer flex items-center gap-1 bg-[]'>
+                <i className="pi pi-arrow-left text-[13px]" style={{fontSize: '13px'}}></i>
+                <button className="text-[13px]">Назад</button>
             </button>
             <div className="max-h-[800px] bg-red-500">
                 <PDFViewer url={pdfUrl || ''} />

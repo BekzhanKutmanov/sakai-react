@@ -378,7 +378,7 @@ export default function LessonStep() {
                 }}
             >
                 <span>{idx + 1}</span>
-                <div className={`w-[40px] h-[40px] sm:w-[57px] sm:h-[57px] rounded ${step === selectedId ? 'activeStep' : 'step'} flex justify-center items-center`}>
+                <div className={`w-[47px] h-[47px] sm:w-[57px] sm:h-[57px] rounded ${step === selectedId ? 'activeStep' : 'step'} flex justify-center items-center`}>
                     <i className={`${icon} text-xl sm:text-2xl text-white`}></i>
                 </div>
             </div>
@@ -467,11 +467,11 @@ export default function LessonStep() {
 
                 <div className="flex items-center gap-1">
                     {skeleton ? (
-                        <GroupSkeleton count={1} size={{ width: '40px', height: '3rem' }} />
+                        <GroupSkeleton count={1} size={{ width: '47px', height: '3rem' }} />
                     ) : (
                         <button
                             onClick={handleFetchTypes}
-                            className="cursor-pointer min-w-[40px] min-h-[40px] w-[40px] h-[40px] sm:w-[57px] sm:h-[57px] border rounded flex justify-center items-center text-4xl text-white bg-[var(--mainColor)] hover:bg-[var(--mainBorder)] transition"
+                            className="cursor-pointer min-w-[47px] min-h-[47px] w-[47px] h-[47px] sm:w-[57px] sm:h-[57px] border rounded flex justify-center items-center text-4xl text-white bg-[var(--mainColor)] hover:bg-[var(--mainBorder)] transition"
                         >
                             +
                         </button>
