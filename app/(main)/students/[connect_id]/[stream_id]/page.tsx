@@ -150,10 +150,10 @@ export default function StudentList() {
                     ) : (
                         <>
                             <DataTable value={studentList} dataKey="id" breakpoint="960px" rows={5} className="mini-table">
-                                <Column body={(_, { rowIndex }) => rowIndex + 1} header="Номер" style={{ width: '20px' }}></Column>
+                                <Column body={(_, { rowIndex }) => rowIndex + 1} header="#" style={{ width: '20px' }}></Column>
                                 <Column
                                     field="title"
-                                    header="ФАА"
+                                    header="ФИО"
                                     style={{ width: '50%' }}
                                     body={(rowData) => (
                                         <div className="flex gap-1" key={rowData.id}>
@@ -172,7 +172,7 @@ export default function StudentList() {
                                             {rowData?.point && rowData.point > 0 ? (
                                                 <div className="flex justify-between items-center gap-1 w-[120px]">
                                                     <span className={`${rowData.point > 30 ? 'bg-[var(--greenColor)] text-white p-1 w-[25px] text-center' : 'bg-amber-400 text-white p-1 w-[25px] text-center '}`}>{rowData.point}</span>
-                                                    <Button icon={'pi pi-arrow-right'} style={{ fontSize: '13px', padding: '5px 7px 5px 5px' }} label="Сактоо" />
+                                                    <Button icon={'pi pi-arrow-right'} style={{ fontSize: '13px', padding: '5px 7px 5px 5px' }} label="Сохранить" />
                                                 </div>
                                             ) : (
                                                 <span className={'bg-[var(--redColor)] p-1 w-[25px] text-white text-center'}>{rowData.point}</span>
@@ -182,7 +182,7 @@ export default function StudentList() {
                                 />
 
                                 <Column
-                                    header="Акыркы катышуусу"
+                                    header="Последнее посещение"
                                     // style={{ width: '20%' }}
                                     body={(rowData) => (
                                         <div className="flex items-center gap-2" key={rowData.id}>
@@ -192,11 +192,11 @@ export default function StudentList() {
                                 />
 
                                 <Column
-                                    header="Аткарган кадамдары"
+                                    header="Выполненные действия"
                                     className=""
                                     body={(rowData) => (
                                         <div className="flex items-center gap-2" key={rowData.id}>
-                                            {rowData.info && <Button label="Маалымат" />}
+                                            {rowData.info && <Button label="Данные" />}
                                         </div>
                                     )}
                                 />
