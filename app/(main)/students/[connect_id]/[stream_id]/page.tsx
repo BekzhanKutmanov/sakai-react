@@ -15,33 +15,33 @@ import { DataTable } from 'primereact/datatable';
 import React, { useContext, useEffect, useState } from 'react';
 
 export default function StudentList() {
-    const studentList = [
-        {
-            student_name: 'lesha',
-            point: 31,
-            last_visist: 'xx-xx',
-            info: true
-        },
-        {
-            student_name: 'evheni',
-            point: 0,
-            last_visist: false,
-            info: true
-        },
-        {
-            student_name: 'alesha',
-            point: 3,
-            last_visist: 'xx-xx',
-            info: false
-        },
-        {
-            student_name: 'lesha',
-            point: 3,
-            last_visist: 'xx-xx',
-            info: true
-        }
-    ];
-    // const [studentList, setStudentList] = useState([]);
+    // const studentList = [
+    //     {
+    //         student_name: 'lesha',
+    //         point: 31,
+    //         last_visist: 'xx-xx',
+    //         info: true
+    //     },
+    //     {
+    //         student_name: 'evheni',
+    //         point: 0,
+    //         last_visist: false,
+    //         info: true
+    //     },
+    //     {
+    //         student_name: 'alesha',
+    //         point: 3,
+    //         last_visist: 'xx-xx',
+    //         info: false
+    //     },
+    //     {
+    //         student_name: 'lesha',
+    //         point: 3,
+    //         last_visist: 'xx-xx',
+    //         info: true
+    //     }
+    // ];
+    const [studentList, setStudentList] = useState([]);
     const [hasList, setHasList] = useState(false);
     const [skeleton, setSkeleton] = useState(false);
 
@@ -102,9 +102,9 @@ export default function StudentList() {
         console.log(data);
 
         toggleSkeleton();
-        if (data && data.students) {
+        if (data) {
             setHasList(false);
-            // setStudentList(data.students);
+            setStudentList(data);
         } else {
             setHasList(true);
             setMessage({
@@ -133,8 +133,8 @@ export default function StudentList() {
                     {/* info section */}
                     <div className="bg-[var(--titleColor)] relative flex flex-col justify-center items-center w-full text-white p-[30px] md:p-[40px] pb-4">
                         <div>
-                            <h1 style={{ color: 'white', fontSize: media ? '24px' : '36px', textAlign: 'center' }}>{'Угуучулардын тизмеси'}</h1>
-                            <div className="w-full">{breadcrumb}</div>
+                            <h1 style={{ color: 'white', fontSize: media ? '24px' : '36px', textAlign: 'center' }}>{'Список студентов'}</h1>
+                            {/* <div className="w-full block sm:hidden">{breadcrumb}</div> */}
                         </div>
                     </div>
                 </>
@@ -142,7 +142,7 @@ export default function StudentList() {
 
             {/* table section */}
             {hasList ? (
-                <NotFound titleMessage={'  ?  '} />
+                <NotFound titleMessage={'Данные временно не доступны'} />
             ) : (
                 <div>
                     {skeleton ? (

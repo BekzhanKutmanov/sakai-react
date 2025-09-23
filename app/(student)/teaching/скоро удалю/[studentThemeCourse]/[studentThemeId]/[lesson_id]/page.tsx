@@ -125,7 +125,7 @@ export default function StudentLessons() {
     };
 
     const handleMainLesson = async () => {
-        const data = await fetchMainLesson(lesson_id ? Number(lesson_id) : null);
+        const data = await fetchMainLesson(lesson_id ? Number(lesson_id) : null, 0);
         if (data && data?.id) {
             if (data.next_id) {
                 setNavigation((prev) => ({ ...prev, next: data.next_id }));

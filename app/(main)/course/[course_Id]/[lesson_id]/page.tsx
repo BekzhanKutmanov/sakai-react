@@ -497,6 +497,7 @@ export default function LessonStep() {
                 <Button
                     icon={'pi pi-trash'}
                     label="Удалить шаг"
+                    disabled={hasSteps}
                     className="hover:bg-[var(--mainBorder)] transition trash-button"
                     onClick={() => {
                         const options = getConfirmOptions(Number(), () => handleDeleteStep());

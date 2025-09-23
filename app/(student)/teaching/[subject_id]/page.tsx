@@ -1,9 +1,12 @@
 'use client';
 
+import LessonInfoCard from '@/app/components/lessons/LessonInfoCard';
 import useErrorMessage from '@/hooks/useErrorMessage';
 import { LayoutContext } from '@/layout/context/layoutcontext';
-import { fetchItemsLessons, fetchSubjects } from '@/services/studentMain';
+import { fetchItemsLessons, fetchMainLesson, fetchSubjects } from '@/services/studentMain';
+import { lessonType } from '@/types/lessonType';
 import { useParams } from 'next/navigation';
+import { Accordion, AccordionTab } from 'primereact/accordion';
 import { Dropdown } from 'primereact/dropdown';
 import { useContext, useEffect, useState } from 'react';
 
@@ -29,14 +32,21 @@ export default function StudentLesson() {
 
     const [main_id, setMain_id] = useState<predmetType | null>(null);
 
+    const [steps, setMainSteps] = useState([]);
+    const [hasSteps, setHasSteps] = useState(false);
+
     const [skeleton, setSkeleton] = useState(false);
     const [hasLessons, setHasLessons] = useState(false);
     const [lessons, setLessons] = useState<Record<number, { semester: { name_kg: string } } | predmetType>>({
         1: { semester: { name_kg: '' } }
     });
-    const [courses, setCourses] = useState<{ connections: { subject_type: string; id: number; user_id: number | null }[]; title: string }[]>([]);
+    const [courses, setCourses] = useState<
+        { id: number; connections: { subject_type: string; id: number; user_id: number | null; id_stream: number }[]; title: string; description: string; user: { last_name: string; name: string; father_name: string }; lessons: lessonType[] }[]
+    >([]);
     const [selectedSort, setSelectedSort] = useState({ name: 'Все', code: 0 });
     const [sortOpt, setSortOpt] = useState<sortOptType[]>();
+    const [hasThemes, setHasThemes] = useState(false);
+    const [activeIndex, setActiveIndex] = useState<number | number[]>(0);
 
     const toggleSortSelect = (e: sortOptType) => {
         setSelectedSort(e);
@@ -65,7 +75,7 @@ export default function StudentLesson() {
         }
     };
 
-    // Запрос курса, темы
+    // Запрос курса, типа уроков (лк,лб)
     const handleFetchSubject = async (subject: subjectType) => {
         params.append('id_curricula', String(subject.id_curricula));
         subject.streams.forEach((i) => params.append('streams[]', String(i)));
@@ -92,6 +102,19 @@ export default function StudentLesson() {
             }
             setSkeleton(false);
         }
+    };
+
+    const handleMainLesson = async (lesson_id: number, stream_id: number) => {
+        const data = await fetchMainLesson(lesson_id, stream_id);
+        if (data) {
+            if (data.length > 0) {
+                setHasSteps(false);
+                setMainSteps(data);
+            } else {
+                setHasSteps(true);
+            }
+        }
+        console.log(data);
     };
 
     // НАХОДИМ ПО ИД КРУКЛА НУЖНЫЙ ЭЛЕМЕНТ МАССИВА И ПРИСВАИВАЕМ В main_id ОБЪЕКТ
@@ -134,6 +157,8 @@ export default function StudentLesson() {
     }, [main_id]);
 
     useEffect(() => {
+        console.log(courses);
+
         let forDropdown: sortOptType[] = [{ name: 'Все', code: 0 }];
         courses[0]?.connections.forEach((element) => {
             forDropdown.push({
@@ -144,15 +169,40 @@ export default function StudentLesson() {
         });
 
         setSortOpt(forDropdown);
-    }, [courses]);
+        if (courses.length > 0) {
+            const index = typeof activeIndex === 'number' ? Number(activeIndex) : 0;
+            if (courses[0].connections.length > 0 && courses[0].lessons.length > 0) {
+                const lesson_id = courses[0].lessons[index].id;
+                const stream_id = courses[0].connections[index].id_stream;
+                console.log(lesson_id, stream_id);
+
+                handleMainLesson(lesson_id, stream_id);
+            } else {
+                // ?
+            }
+        } else {
+            // ?
+        }
+    }, [courses, activeIndex]);
+
+    // useEffect(() => {
+    //     console.log('Лоакльные темы ', themes);
+
+    //     if (themes.length > 0 && [activeIndex as number]) {
+    //         console.log('active index ', activeIndex);
+
+    //         const lessonId = themes[activeIndex as number]?.id;
+    //         if (lessonId) {
+    //             handleFetchSteps(lessonId);
+    //         }
+    //     }
+    // }, [themes, activeIndex]);
+
+    const courseInfoClass = true;
 
     return (
         <div className="main-bg">
-            <div className="flex justify-between gap-1 items-center">
-                <h3 className="text-lg pb-1 m-0">
-                    <span className="text-[var(--mainColor)]">Название курса:</span> {courses[0]?.title}
-                </h3>
-                <Dropdown
+            {/* <Dropdown
                     value={selectedSort}
                     onChange={(e) => {
                         toggleSortSelect(e.value);
@@ -161,15 +211,72 @@ export default function StudentLesson() {
                     optionLabel="name"
                     placeholder=""
                     className="w-[213px] md:w-14rem"
-                />
-            </div>
-            <div>
-                {/* Данные придут с типами урока (лк, лб...) от туда и все отображу. С их юсер ид достану мой юсер ид тоже отображу */}
-                {/* Найду связь наверное с connectionc id и по порядку отображу с начало название из моего sortOpt и внутри новый рендер с новых данных */}
-                {sortOpt?.map((item) => {
-                    return item.name;
-                })}
-            </div>
+                /> */}
+            {courses.map((course) => {
+                return (
+                    <div key={course.id}>
+                        <div className="flex flex-col gap-4">
+                            <h3 className="m-0 text-lg pb-1 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">
+                                <span className="text-[var(--mainColor)]">Название курса:</span> {course?.title}
+                            </h3>
+                            <h3 className="m-0 pb-1">
+                                {course?.user.last_name} {course?.user.name} {course?.user.father_name}
+                            </h3>
+                        </div>
+                        <div>
+                            <Accordion activeIndex={activeIndex} onTabChange={(e) => setActiveIndex(e.index)}>
+                                {course.lessons.map((lesson, idx) => {
+                                    return (
+                                        <AccordionTab header={'Тема: ' + lesson.title} key={lesson.id} className="w-full p-accordion" style={{ width: '100%' }}>
+                                            <div className="flex flex-col gap-2">
+                                                {hasThemes ? (
+                                                    <p className="text-center text-sm">Данных нет</p>
+                                                ) : (
+                                                    <div className={`${idx !== 0 && idx !== course.lessons?.length ? 'border-t-1 border-[gray]' : ''}`} key={lesson.id}>
+                                                        {steps.map((item) => {
+                                                            return (
+                                                                ''
+                                                                // <div key={item.id}>
+                                                                //     <p>{item.content.title}</p>
+                                                                //     <LessonInfoCard
+                                                                //         type={item.type.name}
+                                                                //         icon={item.type.logo}
+                                                                //         title={item.content?.title}
+                                                                //         description={item.content?.description || ''}
+                                                                //         documentUrl={{ document: item.content?.document, document_path: item.content?.document_path }}
+                                                                //         video_link={item.content?.link}
+                                                                //         link={item.content?.url}
+                                                                //         test={{ content: item.content.content, answers: item.content.answers, score: item.content.score }}
+                                                                //         // videoStart={handleVideoCall}
+                                                                //     />
+                                                                // </div>
+                                                            );
+                                                        })}
+
+                                                        {/* {
+                                                        <LessonInfoCard
+                                                            type={i.type.name}
+                                                            icon={i.type.logo}
+                                                            title={i.content?.title}
+                                                            description={i.content?.description || ''}
+                                                            documentUrl={{ document: i.content?.document, document_path: i.content?.document_path }}
+                                                            video_link={i.content?.link}
+                                                            link={i.content?.url}
+                                                            test={{ content: i.content.content, answers: i.content.answers, score: i.content.score }}
+                                                            videoStart={handleVideoCall}
+                                                        />
+                                                    } */}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </AccordionTab>
+                                    );
+                                })}
+                            </Accordion>
+                        </div>
+                    </div>
+                );
+            })}
         </div>
     );
 }

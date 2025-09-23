@@ -72,6 +72,28 @@ const AppMenu = () => {
                       items: courseList?.length > 0 ? courseList : []
                   }
               ]
+            : user?.is_working && departament.info.length < 1 && pathname.startsWith('/students/')
+            ? [
+                  {
+                      // key: 'prev',
+                      label: '',
+                      icon: 'pi pi-fw pi-arrow-left',
+                      to: '#',
+                      command: () => {
+                          router.back();
+                      }
+                  },
+                  {
+                      label: 'Главная страница',
+                      icon: 'pi pi-home',
+                      to: '/'
+                  },
+                  {
+                      label: 'Курсы',
+                      icon: 'pi pi-fw pi-book',
+                      to: '/course'
+                  }
+              ]
             : []
         : user?.is_student
         ? [

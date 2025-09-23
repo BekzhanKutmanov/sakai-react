@@ -34,7 +34,7 @@ export default function LessonCheck() {
     const handleCourseInfo = async () => {
         if (course_id) {
             const data = await depCourseInfo(Number(course_id), Number(id_kafedra));
-            console.log('info', data);
+            console.log('info', data);  
 
             if (data.success) {
                 setCourseInfo({title: data.course.title})

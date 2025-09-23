@@ -97,9 +97,9 @@ export default function LessonCard({
                 style={{ backgroundColor: cardBg }}
             >
                 <div className={`flex flex-col items-center ${type.typeValue !== 'video' ? 'gap-3' : 'gap-1'}`}>
-                    <div className="w-full flex flex-col gap-1 justify-start rounded-2xl p-2">
+                    <div className="w-full flex flex-col gap-1 justify-center rounded-2xl p-2">
                         {/* <div className=''>{!cardValue.photo && <img className="cover" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSweN5K2yaBwZpz5W9CxY9S41DI-2LawmjzYw&s" alt="" />}</div> */}
-                        <div className={`flex justify-start gap-1 ${cardValue.score ? 'items-center gap-2 flex-col' : ''}`}>
+                        <div className={`flex justify-center gap-1 ${cardValue.score ? 'items-center gap-2 flex-col' : ''}`}>
                             {cardValue.score ? (
                                 <div className="flex items-center justify-start gap-1">
                                     <span className="text-[var(--mainColor)] sm:text-lg">Балл: </span>

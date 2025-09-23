@@ -65,11 +65,12 @@ export const fetchStudentThemes = async (course_id: number) => {
 };
 
 // fetch student lesson main info
-export const fetchMainLesson = async (lesson_id: number | null) => {    
+export const fetchMainLesson = async (lesson_id: number | null, stream_id: number) => {    
     console.log(lesson_id);
     
     try {
-        const res = await axiosInstance.get(`v1/student/course/lesson/show?lesson_id=${lesson_id}`);
+        const res = await axiosInstance.get(`v1/student/course/lesson/show?lesson_id=${lesson_id}&stream_id=${stream_id}`);
+        // const res = await axiosInstance.get(`v1/student/course/lesson/show?lesson_id=${lesson_id}`);
         const data = await res.data;
         
         return data;

@@ -380,4 +380,3 @@ export const veryfyCourse = async (value: {course_id: number, status: number}) =
         return err;
     }
 };
-
