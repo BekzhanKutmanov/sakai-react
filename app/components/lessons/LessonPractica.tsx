@@ -270,10 +270,10 @@ export default function LessonPractica({ element, content, fetchPropElement, cle
                                 <b style={{ color: 'red', fontSize: '12px' }}>{errors.title?.message}</b>
                             </div>
                             <div className="flex flex-col">
-                                <span className="text-sm">Балл</span>
                                 <InputText
                                     type="number"
                                     id="title"
+                                    placeholder='Балл'
                                     value={String(docValue?.score)}
                                     className="w-[50px] sm:w-[70px]"
                                     onChange={(e) => {

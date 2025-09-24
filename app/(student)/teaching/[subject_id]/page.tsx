@@ -1,6 +1,7 @@
 'use client';
 
 import LessonInfoCard from '@/app/components/lessons/LessonInfoCard';
+import StudentInfoCard from '@/app/components/lessons/StudentInfoCard';
 import useErrorMessage from '@/hooks/useErrorMessage';
 import { LayoutContext } from '@/layout/context/layoutcontext';
 import { fetchItemsLessons, fetchMainLesson, fetchSubjects } from '@/services/studentMain';
@@ -87,12 +88,10 @@ export default function StudentLesson() {
         setSkeleton(true);
         if (data) {
             setCourses(data);
-            // валидность проверить
-            // setLessons(data);
-            // setHasLessons(false);
+            setHasThemes(false);
             setSkeleton(false);
         } else {
-            setHasLessons(true);
+            setHasThemes(true);
             setMessage({
                 state: true,
                 value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
@@ -106,6 +105,8 @@ export default function StudentLesson() {
 
     const handleMainLesson = async (lesson_id: number, stream_id: number) => {
         const data = await fetchMainLesson(lesson_id, stream_id);
+        console.log(data);
+        
         if (data) {
             if (data.length > 0) {
                 setHasSteps(false);
@@ -113,8 +114,9 @@ export default function StudentLesson() {
             } else {
                 setHasSteps(true);
             }
+        } else {
+            setHasSteps(true);
         }
-        console.log(data);
     };
 
     // НАХОДИМ ПО ИД КРУКЛА НУЖНЫЙ ЭЛЕМЕНТ МАССИВА И ПРИСВАИВАЕМ В main_id ОБЪЕКТ
@@ -214,16 +216,17 @@ export default function StudentLesson() {
                 /> */}
             {courses.map((course) => {
                 return (
-                    <div key={course.id}>
-                        <div className="flex flex-col gap-4">
-                            <h3 className="m-0 text-lg pb-1 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">
+                    <div key={course.id} className="flex flex-col gap-4">
+                        <div className="flex flex-col gap-2">
+                            <h3 className="m-0 text-lg shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">
                                 <span className="text-[var(--mainColor)]">Название курса:</span> {course?.title}
-                            </h3>
-                            <h3 className="m-0 pb-1">
-                                {course?.user.last_name} {course?.user.name} {course?.user.father_name}
                             </h3>
                         </div>
                         <div>
+                            <h3 className="">
+                                {/* <span className="text-[var(--mainColor)]">Преподаватель:</span> */}
+                                 {course?.user.last_name} {course?.user.name}
+                            </h3>
                             <Accordion activeIndex={activeIndex} onTabChange={(e) => setActiveIndex(e.index)}>
                                 {course.lessons.map((lesson, idx) => {
                                     return (
@@ -232,24 +235,30 @@ export default function StudentLesson() {
                                                 {hasThemes ? (
                                                     <p className="text-center text-sm">Данных нет</p>
                                                 ) : (
-                                                    <div className={`${idx !== 0 && idx !== course.lessons?.length ? 'border-t-1 border-[gray]' : ''}`} key={lesson.id}>
-                                                        {steps.map((item) => {
+                                                    <div key={lesson.id}>
+                                                        {hasSteps ? <p className="text-center text-sm">Данных нет</p>
+                                                            : steps.map((item: {id: number, type: {name:string; logo:string}, content: {title: string}}, idx) => {
                                                             return (
-                                                                ''
-                                                                // <div key={item.id}>
-                                                                //     <p>{item.content.title}</p>
-                                                                //     <LessonInfoCard
-                                                                //         type={item.type.name}
-                                                                //         icon={item.type.logo}
-                                                                //         title={item.content?.title}
-                                                                //         description={item.content?.description || ''}
-                                                                //         documentUrl={{ document: item.content?.document, document_path: item.content?.document_path }}
-                                                                //         video_link={item.content?.link}
-                                                                //         link={item.content?.url}
-                                                                //         test={{ content: item.content.content, answers: item.content.answers, score: item.content.score }}
-                                                                //         // videoStart={handleVideoCall}
-                                                                //     />
-                                                                // </div>
+                                                                <div key={item.id} className={`${
+                                                                    idx > 0 ? 
+                                                                        'my-border-top'
+                                                                        : ''
+                                                                }`}>
+                                                                    <StudentInfoCard
+                                                                        type={item.type.name}
+                                                                        icon={item.type.logo}
+                                                                        title={item.content?.title}
+                                                                        // description={item.content?.description || ''}
+                                                                        // documentUrl={{ document: item.content?.document, document_path: item.content?.document_path }}
+                                                                        // video_link={item.content?.link}
+                                                                        // link={item.content?.url}
+                                                                        // test={{ content: item.content.content, answers: item.content.answers, score: item.content.score }}
+
+                                                                        stepId={item.id}
+                                                                        streams={course}
+                                                                        lesson={lesson.id}
+                                                                    />
+                                                                </div>
                                                             );
                                                         })}
 

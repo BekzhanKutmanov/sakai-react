@@ -840,6 +840,10 @@ h1, h2, h3, h4, h5, h6 {
   box-shadow: 0 8px 22px rgba(16,24,40,1.14), 0 0 0 4px rgba(38,194,129,1.12);
 }
 
+.stf__block{
+  /* height: 70% !important; */
+}
+
 /* маленькая адаптация */
 @media (max-width: 380px){
   :root { --size-w: 40px; --size-h: 20px }

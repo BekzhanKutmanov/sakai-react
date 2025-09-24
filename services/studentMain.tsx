@@ -79,3 +79,17 @@ export const fetchMainLesson = async (lesson_id: number | null, stream_id: numbe
         return err;
     }
 };
+
+// fetch student steps, lessons
+export const fetchStudentSteps = async (step_id: number | null, stream_id: number) => {    
+    
+    try {
+        const res = await axiosInstance.get(`/v1/student/course/lesson/step?step_id=${step_id}&stream_id=${stream_id}`);
+        const data = await res.data;
+        
+        return data;
+    } catch (err) {
+        console.log('Ошибка загрузки:', err);
+        return err;
+    }
+};

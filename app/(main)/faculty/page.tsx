@@ -92,7 +92,7 @@ export default function Faculty() {
     }, [kafedra]);
 
     return (
-        <div className="flex flex-col gap-4">
+        <div className="main-bg flex flex-col gap-4">
             <div>
                 {skeleton ? (
                     <GroupSkeleton count={1} size={{ width: '100%', height: '5rem' }} />
@@ -100,6 +100,7 @@ export default function Faculty() {
                     <p className="text-[16px] text-center font-bold my-2">Факультеты временно не доступны</p>
                 ) : (
                     <div className="w-full overflow-x-auto">
+                        <h3 className="text-xl pb-1 m-0">Выберите факультет</h3>
                         <Dropdown value={selected} onChange={(e: DropdownChangeEvent) => setSelected(e.value)} options={faculty} optionLabel="name_ru" className="w-[90%] overflow-x-auto" panelClassName="w-[50%] overflow-x-scroll" />
                     </div>
                 )}

@@ -20,18 +20,9 @@ import useErrorMessage from '@/hooks/useErrorMessage';
 import { LayoutContext } from '@/layout/context/layoutcontext';
 import FormModal from '../popUp/FormModal';
 import { InputTextarea } from 'primereact/inputtextarea';
+import { testType } from '@/types/testType';
 
 export default function LessonTest({ element, content, fetchPropElement, clearProp }: { element: mainStepsType; content: any; fetchPropElement: (id: number) => void; clearProp: boolean }) {
-    interface testType {
-        answers: { id: number | null; text: string; is_correct: boolean }[];
-        id: number | null;
-        content: string;
-        score: number;
-        image: string | null;
-        title: string;
-        created_at: string;
-    }
-
     const showError = useErrorMessage();
     const { setMessage } = useContext(LayoutContext);
 

@@ -30,8 +30,6 @@ export default function PDFViewer({ url }: { url: string }) {
 
     useEffect(() => {
         const renderPDF = async () => {
-            console.log(url);
-
             if (!url) return;
 
             setSkeleton(true);
@@ -79,7 +77,7 @@ export default function PDFViewer({ url }: { url: string }) {
                     const imageDataUrl = canvas.toDataURL();
                     tempPages.push(
                         <div key={i} className="page">
-                            <img src={imageDataUrl} alt={`Page ${i}`} style={{ width: '100%', height: 'auto' }} />
+                            <img src={imageDataUrl} alt={`Page ${i}`} style={{ width: '100%',  }} />
                         </div>
                     );
                 }
@@ -142,7 +140,8 @@ export default function PDFViewer({ url }: { url: string }) {
                 style={{
                     width: '100%', // или фиксированная ширина, например 800px
                     maxWidth: '800px', // не даём контейнеру быть бесконечно широким
-                    margin: '0 auto'
+                    margin: '0 auto',
+                    maxHeight: '1000px'
                 }}
             >
                 {hasPdf ? (

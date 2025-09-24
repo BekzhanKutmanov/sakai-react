@@ -1,4 +1,4 @@
-@token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2FwaS5teWVkdS5vc2hzdS5rZy9wdWJsaWMvYXBpL21vb2MvbG9naW4iLCJpYXQiOjE3NTgxODA4NTIsImV4cCI6MTc1ODIwOTcxMiwibmJmIjoxNzU4MTgwODUyLCJqdGkiOiJoQk85b0xFMGZqcTdUTVlxIiwic3ViIjoiMTE4MjkyIiwicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyJ9.T9LuBqZLazYsdQhKkx3O3oO67U-4WE7gtlghMheWNO8
+@token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2FwaS5teWVkdS5vc2hzdS5rZy9wdWJsaWMvYXBpL21vb2MvbG9naW4iLCJpYXQiOjE3NTg2ODI0MDQsImV4cCI6MTc1ODcxMTI2NCwibmJmIjoxNzU4NjgyNDA0LCJqdGkiOiJSMFZpRk5wdGw5dzFLMThLIiwic3ViIjoiOTUwNjAiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0._W2S4RYwX6_HaTfCuq4skEDUOzU60kZ-1l3t-AkscnI
 # ###
 
 # http://api.mooc.oshsu.kg/public/api/v1/open/video/types
@@ -14,14 +14,14 @@
 
 # ###
 # test  
-POST https://api.mooc.oshsu.kg/public/api/v1/teacher/courses/send/verify?course_id=41&status=0
-Authorization: Bearer {{token}}
-Content-Type: application/json  
+# POST https://api.mooc.oshsu.kg/public/api/v1/teacher/courses/send/verify?course_id=41&status=0
+# Authorization: Bearer {{token}}
+# Content-Type: application/json  
 
-{
-    "course_id" : 41,
-    "status" : 0
-}
+# {
+#     "course_id" : 41,
+#     "status" : 0
+# }
 
 # {
 #     "email": "ajaparkulov@oshsu.kg", 
@@ -30,6 +30,6 @@ Content-Type: application/json
 
 # test  
 
-GET https://api.mooc.oshsu.kg/public/api/v1/student/course/lessons
-Authorization: Bearer {{token}}
+GET https://api.mooc.oshsu.kg/public/api/v1/student/course/lesson/step?step_id=439&stream_id=186462
+Authorization: Bearer {{token}} 
 Content-Type: application/json  

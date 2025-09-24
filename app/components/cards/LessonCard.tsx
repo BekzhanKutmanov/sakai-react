@@ -114,7 +114,7 @@ export default function LessonCard({
                         {type.typeValue !== 'practica' && <div className="flex items-start justify-center text-[15px] sm:text-[17px] m-auto">{shortDoc}</div>}
 
                         {type.typeValue === 'practica' && cardValue.url ? (
-                            <div className="flex sm:items-center gap-2 flex-col sm:flex-row">
+                            <div className="flex sm:items-center justify-center gap-2 flex-col sm:flex-row">
                                 <Link href={cardValue?.url} target="_blank" className="underline">
                                     Ссылка:
                                 </Link>
