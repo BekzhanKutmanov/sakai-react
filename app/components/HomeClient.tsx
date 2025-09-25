@@ -55,7 +55,7 @@ export default function HomeClient() {
                     <div className="lg:w-1/2">
                         <div className="banner-img" data-speed="0.05" data-revert="true">
                             <div className="relative text-[14px]">
-                                <img src="/layout/images/home-two.png" data-aos="fade-up" data-aos-delay="900" data-aos-duration="1000" data-aos-once="true" alt="Пользователь" className="w-full z-10" />
+                                <img src="/layout/images/Главный.jpg" data-aos="fade-up" data-aos-delay="900" data-aos-duration="1000" data-aos-once="true" alt="Пользователь" className="w-full z-10" />
 
                                 <div className="hidden sm:block absolute top-0 left-[-200px] animateContent" data-aos="fade-down" data-aos-delay="900" data-aos-duration="1000" data-aos-once="true">
                                     <img src="/layout/images/shape.png" className="z-[-10]" alt="Shape" />

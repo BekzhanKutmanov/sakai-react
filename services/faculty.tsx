@@ -14,11 +14,10 @@ export const fetchFaculty = async () => {
     }
 };
 
-export const fetchKafedra = async (id_faculty: number | null) => {
+export const fetchKafedra = async () => {
     try {
-        const res = await axiosInstance.get(`/open/kafedra?id_faculty=${id_faculty}`, {
-            baseURL: process.env.NEXT_PUBLIC_FACULTY_API
-        });
+        // const res = await axiosInstance.get(`/open/kafedra?id_faculty=${id_faculty}`, {
+        const res = await axiosInstance.get(`/v1/teacher/controls/departments`);
         const data = await res.data;
 
         return data;
@@ -30,7 +29,7 @@ export const fetchKafedra = async (id_faculty: number | null) => {
 
 export const fetchDepartament = async (id_kafedra: number | null) => {
     try {
-        const res = await axiosInstance.get(`/v1/teacher/controls/department?id_kafedra=${id_kafedra}`);
+        const res = await axiosInstance.get(`/v1/teacher/controls?id_kafedra=${id_kafedra}`);
         const data = await res.data;
 
         return data;

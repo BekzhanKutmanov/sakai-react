@@ -18,7 +18,7 @@ import { InputTextarea } from 'primereact/inputtextarea';
 import { testType } from '@/types/testType';
 import GroupSkeleton from '../skeleton/GroupSkeleton';
 
-export default function LessonTest({ element, content, fetchPropElement, clearProp }: { element: mainStepsType; content: any; fetchPropElement: (id: number) => void; clearProp: boolean }) {
+export default function LessonTest({ element, content, fetchPropElement, fetchPropThemes, clearProp }: { element: mainStepsType; content: any; fetchPropElement: (id: number) => void; fetchPropThemes: ()=> void; clearProp: boolean }) {
     const showError = useErrorMessage();
     const { setMessage } = useContext(LayoutContext);
 
@@ -86,6 +86,7 @@ export default function LessonTest({ element, content, fetchPropElement, clearPr
         const data = await addTest(answer, testValue.title, element?.lesson_id && Number(element?.lesson_id), element.type.id, element.id, testValue.score);
         if (data?.success) {
             fetchPropElement(element.id);
+            fetchPropThemes()
             clearValues();
             setMessage({
                 state: true,
@@ -123,6 +124,7 @@ export default function LessonTest({ element, content, fetchPropElement, clearPr
         if (data?.success) {
             setSkeleton(false);
             fetchPropElement(element.id);
+            fetchPropThemes();
             clearValues();
             setMessage({
                 state: true,
@@ -150,6 +152,7 @@ export default function LessonTest({ element, content, fetchPropElement, clearPr
         if (data.success) {
             clearValues();
             fetchPropElement(element.id);
+            fetchPropThemes();
             setMessage({
                 state: true,
                 value: { severity: 'success', summary: 'Успешно удалено!', detail: '' }

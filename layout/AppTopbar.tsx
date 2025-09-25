@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 
 import Link from 'next/link';
-import React, { forwardRef, useContext, useEffect, useImperativeHandle, useRef } from 'react';
+import React, { forwardRef, useContext, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import Tiered from '@/app/components/popUp/Tiered';
 import FancyLinkBtn from '@/app/components/buttons/FancyLinkBtn';
 import { classNames } from 'primereact/utils';
@@ -10,6 +10,7 @@ import { LayoutContext } from './context/layoutcontext';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { usePathname, useRouter } from 'next/navigation';
 import { logout } from '@/utils/logout';
+import GroupSkeleton from '@/app/components/skeleton/GroupSkeleton';
 
 const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
     const { layoutConfig, layoutState, onMenuToggle, showProfileSidebar, user, setUser, setGlobalLoading, departament } = useContext(LayoutContext);
@@ -26,6 +27,8 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
 
     const pathName = usePathname();
     const media = useMediaQuery('(max-width: 1000px)');
+
+    const [skeleton, setSkeleton] = useState(true);
 
     const router = useRouter();
 
@@ -102,6 +105,12 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
         }
     ];
 
+    useEffect(()=> {
+        setTimeout(() => {
+            setSkeleton(false);
+        }, 1000);
+    },[]);
+
     return (
         <div className="layout-topbar">
             <Link href="/" className="layout-topbar-logo">
@@ -136,7 +145,8 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                         </div>
                     )}
 
-                    {user && user ? (
+                    {skeleton ? <div className="w-[150px]"><GroupSkeleton count={1} size={{ width: '100%', height: '3rem' }} /></div>
+                    : user ? (
                         <div className={`hidden lg:block ${media ? 'order-1' : 'order-2'}`}>
                             <Tiered title={{ name: '', font: 'pi pi-user' }} items={profileItems} insideColor={'--titleColor'} />
                         </div>

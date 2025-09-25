@@ -721,6 +721,17 @@ export default function Course() {
                                                             )}
                                                         ></Column>
                                                         <Column
+                                                            field="title"
+                                                            header={()=> <div className="text-[13px]">Балл</div>}
+                                                            body={(rowData) => (
+                                                                <span
+                                                                    key={rowData.id}
+                                                                >
+                                                                    {rowData.max_score}
+                                                                </span>
+                                                            )}
+                                                        ></Column>
+                                                        <Column
                                                             header={() => <div className="text-[13px]">На рассмотр.</div>}
                                                             style={{ margin: '0 3px', textAlign: 'center' }}
                                                             body={(rowData) => (

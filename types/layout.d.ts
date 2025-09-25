@@ -135,6 +135,7 @@ export interface AppMenuItem extends MenuModel {
     command?: ({ originalEvent, item }: CommandProps) => void;
 
     // 
+    score?: string
     onEdit?: () => void;
     onDelete?: () => void;
 }

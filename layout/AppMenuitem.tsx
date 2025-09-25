@@ -66,7 +66,6 @@ const AppMenuitem = (props: AppMenuItemProps) => {
                     <Ripple />
                 </a>
             ) : null}
-
             {/* {item!.to && !item!.items && item!.visible !== false ? (
                 <Link href={item!.to} replace={item!.replaceUrl} target={item!.target} onClick={(e) => itemClick(e)} className={classNames(item!.class, 'p-ripple', { 'active-route': isActiveRoute })} tabIndex={0}>
                     <i className={classNames('layout-menuitem-icon', item!.icon)}></i>
@@ -76,14 +75,14 @@ const AppMenuitem = (props: AppMenuItemProps) => {
                 </Link>
             ) : null} */}
             {item!.to && !item!.items && item!.visible !== false ? (
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div style={{ display: 'flex', columnGap:'2px', alignItems: 'center', justifyContent: 'space-between', textWrap: 'wrap', maxWidth: '340px', wordBreak: 'break-all' }}>
                     <Link href={item!.to} replace={item!.replaceUrl} target={item!.target} onClick={(e) => itemClick(e)} className={classNames(item!.class, 'p-ripple', { 'active-route': isActiveRoute })} tabIndex={0} style={{ flexGrow: 1 }}>
                         <i className={classNames('layout-menuitem-icon', item!.icon)}></i>
-                        <span className="layout-menuitem-text">{item!.label}</span>
+                        <span className="layout-menuitem-text max-w-[200px] text-wrap break-words">{item!.label}</span>
                         <Ripple />
                     </Link>
-
-                    <div className='flex gap-2 items-center'>
+                    <div className='text-sm text-[var(--mainColor)]'>{item?.score}</div> 
+                    <div className='flex gap-1 items-center'>
                         {/* Кнопки редактирования и удаления */}
                         {item!.onEdit && (
                             <button
@@ -92,7 +91,7 @@ const AppMenuitem = (props: AppMenuItemProps) => {
                                     e.stopPropagation();
                                     item?.onEdit?.();
                                 }}
-                                style={{ marginLeft: '0.3rem' }}
+                                style={{ marginLeft: '0.3rem', fontSize: '13px' }}
                                 title="Редактировать"
                                 className="pi pi-pencil cursor-pointer"
                             ></button>
@@ -104,7 +103,7 @@ const AppMenuitem = (props: AppMenuItemProps) => {
                                     e.stopPropagation();
                                     item?.onDelete?.();
                                 }}
-                                style={{ marginLeft: '0.3rem' }}
+                                style={{ marginLeft: '0.3rem', fontSize: '13px' }}
                                 title="Удалить"
                                 className="pi pi-trash cursor-pointer"
                             ></button>

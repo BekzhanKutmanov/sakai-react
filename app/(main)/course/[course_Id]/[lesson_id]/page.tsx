@@ -26,7 +26,6 @@ export default function LessonStep() {
     const course_id = param.course_Id;
     const scrollRef = useRef<HTMLDivElement>(null);
     const router = useRouter();
-    const pathname = usePathname();
     const prevLessonsRef = useRef<Array<{ id: number; title: string }> | null>(null);
 
     const [lessonInfoState, setLessonInfoState] = useState<{ title: string; documents_count: string; usefullinks_count: string; videos_count: string } | null>(null);
@@ -160,6 +159,7 @@ export default function LessonStep() {
     const handleDeleteStep = async () => {
         const data = await deleteStep(Number(lesson_id), Number(selectedId));
         if (data.success) {
+            contextFetchThemes(Number(course_id), null);
             handleFetchSteps(Number(lesson_id));
             setMessage({
                 state: true,
@@ -281,6 +281,8 @@ export default function LessonStep() {
 
     // заменяем первый useEffect
     useEffect(() => {
+        console.log('Обновился ', contextThemes);
+        
         const lessons = contextThemes?.lessons?.data ?? [];
 
         // делаем "снимок" важных полей (id + title)
@@ -361,7 +363,7 @@ export default function LessonStep() {
     const lessonInfo = (
         <div className="w-full">
             <div className="bg-[var(--titleColor)] relative flex flex-col justify-center items-center w-full text-white p-4 md:p-3 pb-4">
-                <h1 style={{ color: 'white', fontSize: media ? '24px' : '28px', textAlign: 'center' }}>{lessonInfoState?.title}</h1>
+                <h1 style={{ color: 'white', fontSize: media ? '24px' : '28px', textAlign: 'center' }} className='w-full text-wrap break-words'>{lessonInfoState?.title}</h1>
             </div>
         </div>
     );
@@ -483,8 +485,8 @@ export default function LessonStep() {
             </div>
             {element?.step.type.name === 'document' && <LessonDocument element={element?.step} content={element?.content} fetchPropElement={handleFetchElement} clearProp={hasSteps} />}
             {element?.step.type.name === 'video' && <LessonVideo element={element?.step} content={element?.content} fetchPropElement={handleFetchElement} clearProp={hasSteps} />}
-            {element?.step.type.name === 'test' && <LessonTest element={element?.step} content={element?.content} fetchPropElement={handleFetchElement} clearProp={hasSteps} />}
-            {element?.step.type.name === 'practical' && <LessonPractica element={element?.step} content={element?.content} fetchPropElement={handleFetchElement} clearProp={hasSteps} />}
+            {element?.step.type.name === 'test' && <LessonTest element={element?.step} content={element?.content} fetchPropElement={handleFetchElement} fetchPropThemes={()=> contextFetchThemes(Number(course_id), null)} clearProp={hasSteps} />}
+            {element?.step.type.name === 'practical' && <LessonPractica element={element?.step} content={element?.content} fetchPropElement={handleFetchElement} fetchPropThemes={()=> contextFetchThemes(Number(course_id), null)} clearProp={hasSteps} />}
             {element?.step.type.name === 'link' && <LessonLink element={element?.step} content={element?.content} fetchPropElement={handleFetchElement} clearProp={hasSteps} />}
 
             <div className="flex justify-end mt-1">

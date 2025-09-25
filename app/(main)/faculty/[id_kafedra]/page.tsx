@@ -33,6 +33,8 @@ export default function Kafedra() {
     }
 
     const { id_kafedra } = useParams();
+    console.log(id_kafedra);
+    
     const [courses, setCourses] = useState<kafedraInfoType[]>([]);
     const [notCourse, setNoteCourse] = useState<kafedraInfoType[]>([]);
     const [contentShow, setContentShow] = useState<boolean>(false);
@@ -114,8 +116,8 @@ export default function Kafedra() {
     }, []);
 
     useEffect(() => {
-        const forNotCourse = courses.filter((item) => item.courses.length < 1);
-        setNoteCourse(forNotCourse);
+        // const forNotCourse = courses.filter((item) => item.courses.length < 1);
+        // setNoteCourse(forNotCourse);
     }, [courses]);
 
     return (
@@ -124,25 +126,57 @@ export default function Kafedra() {
                 <NotFound titleMessage="Данные не доступны" />
             ) : (
                 <>
-                    <div className=''>
-                        {courses.map((item) => {
-                            return (
-                                <div className="w-full flex flex-col justify-center gap-2" key={item.id}>
-                                    {item.courses.length > 0 && (
+                    <div className="">
+                        <DataTable value={courses} dataKey="id_kafedra" key={JSON.stringify('forStreamId')} responsiveLayout="stack" breakpoint="960px" rows={5} className="my-custom-table">
+                                <Column body={(_, { rowIndex }) => rowIndex + 1} header="#"></Column>
+                                <Column
+                                    field="title"
+                                    header="Преподаватели"
+                                    body={(rowData) => (
+                                        <Link href={`/faculty/${id_kafedra}/${rowData.id}`} key={rowData.id} className="text-[16px] my-3 hover:underline">
+                                            {rowData.last_name} {rowData.name} {rowData.father_name}
+                                        </Link>
+                                    )}
+                                ></Column>
+                                {/* <Column
+                                    field="title"
+                                    header="Количество курсов"
+                                    // style={{width: '250px'}}
+                                    body={(rowData) => (
+                                        <div className="w-full flex justify-center">
+                                            <div className='w-[300px] flex jusctify-center items-center'>
+                                                <b className="w-full flex justify-end">4 всего </b>
+                                                <span className="w-full">(2 утверждённых)</span>
+                                            </div>
+                                        </div>
+                                    )}
+                                ></Column> */}
+                            </DataTable>
+                        {/* {courses.map((item) => { */}
+                            {/* // return ( */}
+                            {/* //     <div className="w-full flex flex-col justify-center gap-2" key={item.id}> */}
+                                    {/* {courses.length > 0 && (
                                         <div className="w-full m-auto">
-                                            <h3 className="text-[18px] pb-1 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">
-                                                {item.last_name} {item.name} {item.father_name}
-                                            </h3>
-                                            <DataTable value={item.courses} dataKey="id" key={JSON.stringify(forDisabled)} responsiveLayout="stack" breakpoint="960px" rows={5} className="my-custom-table">
+                                             */}
+                                            {/* <DataTable value={courses} dataKey="id" key={JSON.stringify(forDisabled)} responsiveLayout="stack" breakpoint="960px" rows={5} className="my-custom-table">
                                                 <Column body={(_, { rowIndex }) => rowIndex + 1} header="#" style={{ width: '20px' }}></Column>
                                                 <Column body={imageBodyTemplate}></Column>
-                                                <Column field="title" header="Название" style={{ width: '80%' }} body={(rowData) => <Link href={`/faculty/${id_kafedra}/${rowData.id}`} key={rowData.id}>{rowData.title}</Link>}></Column>
+                                                <Column
+                                                    field="title"
+                                                    header="Название"
+                                                    style={{ width: '80%' }}
+                                                    body={(rowData) => (
+                                                        <Link href={`/faculty/${id_kafedra}/${rowData.id}`} key={rowData.id}>
+                                                            {rowData.last_name} {rowData.name} {rowData.father_name}
+                                                        </Link>
+                                                    )}
+                                                ></Column>
                                                 <Column
                                                     header="Публикация"
                                                     body={(rowData) => (
                                                         <div key={rowData.id}>
                                                             {!rowData.is_published ? (
-                                                                <button className={`theme-toggle ${forDisabled && 'opacity-5'}`} disabled={forDisabled}  onClick={() => publish(Number(id_kafedra), item.id, rowData.id, true)} aria-pressed="false">
+                                                                <button className={`theme-toggle ${forDisabled && 'opacity-5'}`} disabled={forDisabled} onClick={() => publish(Number(id_kafedra), item.id, rowData.id, true)} aria-pressed="false">
                                                                     <span className="right">
                                                                         <span className="option option-left" aria-hidden></span>
                                                                         <span className="option option-right" aria-hidden></span>
@@ -150,7 +184,7 @@ export default function Kafedra() {
                                                                     </span>
                                                                 </button>
                                                             ) : (
-                                                                <button className={`theme-toggle ${forDisabled && 'opacity-5'}`} disabled={forDisabled}  onClick={() => publish(Number(id_kafedra), item.id, rowData.id, false)} aria-pressed="false">
+                                                                <button className={`theme-toggle ${forDisabled && 'opacity-5'}`} disabled={forDisabled} onClick={() => publish(Number(id_kafedra), item.id, rowData.id, false)} aria-pressed="false">
                                                                     <span className="track">
                                                                         <span className="option option-left" aria-hidden></span>
 
@@ -180,28 +214,41 @@ export default function Kafedra() {
                                                         </div>
                                                     )}
                                                 ></Column>
-                                            </DataTable>
-                                        </div>
-                                    )}
-                                </div>
-                            );
-                        })}
+                                            </DataTable> */}
+                                        {/* </div>
+                                    )} */}
+                                {/* </div>
+                            ); */}
+                        {/* })} */}
                     </div>
                     {notCourse.length > 0 && (
                         <div className="mt-2">
-                            <p className="text-[18px] font-bold">Курсы отсутствуют:</p>
-                            <DataTable value={notCourse} dataKey="id" key={JSON.stringify('forStreamId')} responsiveLayout="stack" breakpoint="960px" rows={5} className="my-custom-table">
+                            <h3 className="text-lg sm:text-xl pb-1 font-bold shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">Преподаватели</h3>
+                            {/* <DataTable value={notCourse} dataKey="id" key={JSON.stringify('forStreamId')} responsiveLayout="stack" breakpoint="960px" rows={5} className="my-custom-table">
                                 <Column body={(_, { rowIndex }) => rowIndex + 1} header="#"></Column>
                                 <Column
                                     field="title"
                                     header=""
                                     body={(rowData) => (
-                                        <h3 className="text-[16px] my-3">
+                                        <Link href={'#'} className="text-[16px] my-3 hover:underline">
                                             {rowData.last_name} {rowData.name} {rowData.father_name}
-                                        </h3>
+                                        </Link>
                                     )}
                                 ></Column>
-                            </DataTable>
+                                <Column
+                                    field="title"
+                                    header="Количество курсов"
+                                    // style={{width: '250px'}}
+                                    body={(rowData) => (
+                                        <div className="w-full flex justify-center">
+                                            <div className='w-[300px] flex jusctify-center items-center'>
+                                                <b className="w-full flex justify-end">4 всего </b>
+                                                <span className="w-full">(2 утверждённых)</span>
+                                            </div>
+                                        </div>
+                                    )}
+                                ></Column>
+                            </DataTable> */}
                         </div>
                     )}
                 </>

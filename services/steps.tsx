@@ -433,3 +433,15 @@ export const fetchDepartamentSteps = async (lesson_id: number, id_kafedra: numbe
         return err;
     }
 };
+
+export const fetchDepartamenCourses = async (id_kafedra: number, myedu_id: number) => {
+    try {
+        const res = await axiosInstance.get(`/v1/teacher/controls/department/courses?id_kafedra=${id_kafedra}&myedu_id=${myedu_id}`);
+        const data = await res.data;
+
+        return data;
+    } catch (err) {
+        console.log('Ошибка загрузки:', err);
+        return err;
+    }
+};

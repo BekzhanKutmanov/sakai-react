@@ -4,7 +4,6 @@ import LessonInfoCard from '@/app/components/lessons/LessonInfoCard';
 import { NotFound } from '@/app/components/NotFound';
 import useErrorMessage from '@/hooks/useErrorMessage';
 import { LayoutContext } from '@/layout/context/layoutcontext';
-import { fetchCourseInfo } from '@/services/courses';
 import { depCourseInfo } from '@/services/faculty';
 import { fetchDepartamentSteps, fetchSteps } from '@/services/steps';
 import { mainStepsType } from '@/types/mainStepType';

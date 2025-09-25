@@ -25,7 +25,7 @@ const PDFViewer = dynamic(() => import('../PDFBook'), {
     ssr: false
 });
 
-export default function LessonPractica({ element, content, fetchPropElement, clearProp }: { element: mainStepsType; content: any; fetchPropElement: (id: number) => void; clearProp: boolean }) {
+export default function LessonPractica({ element, content, fetchPropElement, fetchPropThemes, clearProp }: { element: mainStepsType; content: any; fetchPropElement: (id: number) => void; fetchPropThemes: ()=> void; clearProp: boolean }) {
     interface docValueType {
         title: string;
         description: string;
@@ -166,6 +166,7 @@ export default function LessonPractica({ element, content, fetchPropElement, cle
         const data = await addPractica(docValue, element.lesson_id, element.type_id, element.id);
         if (data.success) {
             fetchPropElement(element.id);
+            fetchPropThemes();
             setMessage({
                 state: true,
                 value: { severity: 'success', summary: 'Успешно добавлен!', detail: '' }
@@ -186,6 +187,7 @@ export default function LessonPractica({ element, content, fetchPropElement, cle
         const data = await deletePractica(Number(document?.lesson_id), id, element.type.id, element.id);
         if (data.success) {
             fetchPropElement(element.id);
+            fetchPropThemes();
             setMessage({
                 state: true,
                 value: { severity: 'success', summary: 'Успешно удалено!', detail: '' }
@@ -208,6 +210,7 @@ export default function LessonPractica({ element, content, fetchPropElement, cle
         if (data?.success) {
             setSkeleton(false);
             fetchPropElement(element.id);
+            fetchPropThemes();
             clearValues();
             setMessage({
                 state: true,

@@ -28,68 +28,63 @@ export default function Faculty() {
     const [facultyShow, setFacultyShow] = useState<boolean>(false);
     const [skeleton, setSkeleton] = useState(false);
 
-    const handleFetchFaculty = async () => {
-        setSkeleton(true);
-        const data = await fetchFaculty();
-        if (data && Array.isArray(data)) {
-            const newFaculty = data.map((item) => {
-                return { name_ru: item.name_ru, id: item.id };
-            });
-            setFaculty(newFaculty);
-            setSkeleton(false);
+    // const handleFetchFaculty = async () => {
+    //     setSkeleton(true);
+    //     const data = await fetchFaculty();
+    //     if (data && Array.isArray(data)) {
+    //         const newFaculty = data.map((item) => {
+    //             return { name_ru: item.name_ru, id: item.id };
+    //         });
+    //         setFaculty(newFaculty);
+    //         setSkeleton(false);
 
-            if (newFaculty.length > 0) {
-                setSelected(newFaculty[0]);
-                setSelectShow(false);
-            } else {
-                setSelectShow(true);
-            }
-        } else {
-            setSkeleton(false);
-            setSelectShow(true);
-            setMessage({
-                state: true,
-                value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
-            });
-            if (data?.response?.status) {
-                showError(data.response.status);
-            }
-        }
-    };
+    //         if (newFaculty.length > 0) {
+    //             setSelected(newFaculty[0]);
+    //             setSelectShow(false);
+    //         } else {
+    //             setSelectShow(true);
+    //         }
+    //     } else {
+    //         setSkeleton(false);
+    //         setSelectShow(true);
+    //         setMessage({
+    //             state: true,
+    //             value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
+    //         });
+    //         if (data?.response?.status) {
+    //             showError(data.response.status);
+    //         }
+    //     }
+    // };
 
     const handleFetchKafedra = async () => {
-        if (selected) {
-            const data = await fetchKafedra(selected && selected.id);
-            console.log(data);
+        const data = await fetchKafedra();
+        console.log(data);
 
-            if (data && Array.isArray(data)) {
-                if(data.length > 0){
-                    setKafedra(data);
-                    setFacultyShow(false);
-                } else {
-                    setFacultyShow(true);
-                }
+        if (data && Array.isArray(data)) {
+            if (data.length > 0) {
+                setKafedra(data);
+                setFacultyShow(false);
             } else {
                 setFacultyShow(true);
             }
+        } else {
+            setFacultyShow(true);
         }
     };
 
     useEffect(() => {
-        handleFetchFaculty();
+        handleFetchKafedra();
+
         setGlobalLoading(true);
         setTimeout(() => {
             setGlobalLoading(false);
         }, 900);
     }, []);
 
-    useEffect(() => {
-        handleFetchKafedra();
-    }, [selected]);
-
     return (
         <div className="main-bg flex flex-col gap-4">
-            <div>
+            {/* <div>
                 {skeleton ? (
                     <GroupSkeleton count={1} size={{ width: '100%', height: '5rem' }} />
                 ) : selectShow ? (
@@ -100,7 +95,7 @@ export default function Faculty() {
                         <Dropdown value={selected} onChange={(e: DropdownChangeEvent) => setSelected(e.value)} options={faculty} optionLabel="name_ru" className="w-[90%] overflow-x-auto" panelClassName="w-[50%] overflow-x-scroll" />
                     </div>
                 )}
-            </div>
+            </div> */}
             {/* data table */}
             {skeleton ? (
                 <GroupSkeleton count={5} size={{ width: '100%', height: '3rem' }} />

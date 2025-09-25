@@ -259,11 +259,14 @@ const AppMenu = () => {
     }, [user, studentThemeCourse]);
 
     useEffect(() => {
+        console.log(contextThemes);
+
         if (contextThemes && contextThemes.lessons) {
             const newThemes = contextThemes.lessons.data.map((item: any, idx: number) => ({
                 label: `${idx + 1}. ${item.title}`,
                 id: item.id,
                 to: `/course/${course_Id}/${item.id}`,
+                score: `Балл: ${item.steps_sum_score == null ? 0 : item.steps_sum_score}`,
                 onEdit: () => {
                     selectedForEditing(item.id);
                 },
@@ -374,9 +377,15 @@ const AppMenu = () => {
                 })}
             </ul>
             {pathname.startsWith('/course/') && (
-                <div className="p-4 mt-auto">
-                    <Button label="Добавить тему" icon={'pi pi-plus'} className="cursor-pointer w-full py-2 px-4 rounded-lg transition" onClick={() => setThemeAddVisisble(true)}></Button>
-                </div>
+                <>
+                    <div className="p-4 mt-auto">
+                        <Button label="Добавить тему" icon={'pi pi-plus'} className="cursor-pointer w-full py-2 px-4 rounded-lg transition" onClick={() => setThemeAddVisisble(true)}></Button>
+                    </div>
+                    <div className='flex justify-center gap-1 items-center'>
+                        <b>Всего баллов за курс</b>
+                        <span className='text-[var(--mainColor)]'>{contextThemes?.max_sum_score}</span>
+                    </div>
+                </>
             )}
         </MenuProvider>
     );

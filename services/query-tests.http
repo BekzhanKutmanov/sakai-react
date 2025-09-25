@@ -1,4 +1,4 @@
-@token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2FwaS5teWVkdS5vc2hzdS5rZy9wdWJsaWMvYXBpL21vb2MvbG9naW4iLCJpYXQiOjE3NTg2ODI0MDQsImV4cCI6MTc1ODcxMTI2NCwibmJmIjoxNzU4NjgyNDA0LCJqdGkiOiJSMFZpRk5wdGw5dzFLMThLIiwic3ViIjoiOTUwNjAiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0._W2S4RYwX6_HaTfCuq4skEDUOzU60kZ-1l3t-AkscnI
+@token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2FwaS5teWVkdS5vc2hzdS5rZy9wdWJsaWMvYXBpL21vb2MvbG9naW4iLCJpYXQiOjE3NTg3OTIzNDQsImV4cCI6MTc1ODgyMTIwNCwibmJmIjoxNzU4NzkyMzQ0LCJqdGkiOiJGZmdFOXZselM5bU5hOUFQIiwic3ViIjoiMTE4MjkyIiwicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyJ9.yqAlXc9ZYiwNOMJ31LIpYQgQwgJ45uvUB1wr8bdTdzE
 # ###
 
 # http://api.mooc.oshsu.kg/public/api/v1/open/video/types
@@ -30,6 +30,6 @@
 
 # test  
 
-GET https://api.mooc.oshsu.kg/public/api/v1/student/course/lesson/step?step_id=439&stream_id=186462
+GET https://api.mooc.oshsu.kg/public/api/v1/teacher/controls/departments
 Authorization: Bearer {{token}} 
 Content-Type: application/json  
