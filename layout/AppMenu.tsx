@@ -125,7 +125,7 @@ const AppMenu = () => {
                       to: '/'
                   },
                   {
-                      label: 'Факультет',
+                      label: 'Утвердить курсы',
                       icon: 'pi pi-graduation-cap',
                       to: '/faculty'
                   },
