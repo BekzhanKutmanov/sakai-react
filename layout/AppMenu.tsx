@@ -243,7 +243,6 @@ const AppMenu = () => {
     };
 
     const sentDelete = (item: any) => {
-        console.log('Delete theme ID:', item.id);
         const options = getConfirmOptions(Number(), () => handleDeleteTheme(item.id));
         confirmDialog(options);
     };
@@ -252,9 +251,7 @@ const AppMenu = () => {
         if (user?.is_student) {
             const isTopicsChildPage = pathname.startsWith('/teaching/');
             if (isTopicsChildPage) {
-                console.log('Вызов функции тем студента');
                 if (studentThemeCourse) {
-                    console.log(studentThemeCourse);
                     contextFetchStudentThemes(1);
                 }
             }
@@ -324,7 +321,6 @@ const AppMenu = () => {
                             className="w-[90%]"
                             value={editingLesson?.title && editingLesson?.title}
                             onChange={(e) => {
-                                console.log(editingLesson);
                                 setEditingLesson((prev) => prev && { ...prev, title: e.target.value });
                                 setValue('title', e.target.value, { shouldValidate: true });
                             }}
@@ -363,7 +359,6 @@ const AppMenu = () => {
                             className="w-[90%]"
                             value={themeValue?.title && themeValue?.title}
                             onChange={(e) => {
-                                console.log(e.target.value, themeValue);
                                 setThemeValue((prev) => prev && { ...prev, title: e.target.value });
                                 setValue('title', e.target.value, { shouldValidate: true });
                             }}

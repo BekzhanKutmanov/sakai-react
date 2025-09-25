@@ -141,7 +141,6 @@ export default function LessonStep() {
             setSkeleton(true);
             const data = await fetchElement(Number(lesson_id), stepId);
             if (data.success) {
-                console.log(data);
 
                 setSkeleton(false);
                 setElement({ content: data.content, step: data.step });
@@ -196,7 +195,6 @@ export default function LessonStep() {
 
     useEffect(() => {
         if (lesson_id) {
-            console.warn('LESSONID ', lesson_id);
             handleShow(lesson_id);
             changeUrl(lesson_id);
         }
@@ -214,17 +212,17 @@ export default function LessonStep() {
 
     //     if (lessons.length > 0) {
     //         setThemeNull(false);
-    //         console.warn(lessons, deleteQuery);
+    
     //         let chosenId: number | null = null;
 
     //         if (param.lesson_id === 'null' || deleteQuery) {
-    //             console.log('var 1');
+    
     //             // alert(1);
 
     //             chosenId = lessons[0].id;
     //             setDeleteQuery(false);
     //         } else {
-    //             console.log('var 2');
+    
     //             // alert(2);
     //             chosenId = param.lesson_id ? Number(param.lesson_id) : lessons[0].id;
     //         }
@@ -239,7 +237,7 @@ export default function LessonStep() {
     // }, [contextThemes, deleteQuery, param.lesson_id]);
 
     // useEffect(() => {
-    //     console.warn('LESSONID ', lesson_id);
+    
     //     if (!lesson_id) return;
 
     //     handleShow(lesson_id);
@@ -378,7 +376,7 @@ export default function LessonStep() {
                 }}
             >
                 <span>{idx + 1}</span>
-                <div className={`w-[47px] h-[47px] sm:w-[57px] sm:h-[57px] rounded ${step === selectedId ? 'activeStep' : 'step'} flex justify-center items-center`}>
+                <div className={`stepElement rounded ${step === selectedId ? 'activeStep' : 'step'} flex justify-center items-center`}>
                     <i className={`${icon} text-xl sm:text-2xl text-white`}></i>
                 </div>
             </div>
@@ -471,7 +469,7 @@ export default function LessonStep() {
                     ) : (
                         <button
                             onClick={handleFetchTypes}
-                            className="cursor-pointer min-w-[47px] min-h-[47px] w-[47px] h-[47px] sm:w-[57px] sm:h-[57px] border rounded flex justify-center items-center text-4xl text-white bg-[var(--mainColor)] hover:bg-[var(--mainBorder)] transition"
+                            className="stepElement cursor-pointer border rounded flex justify-center items-center text-4xl text-white bg-[var(--mainColor)] hover:bg-[var(--mainBorder)] transition"
                         >
                             +
                         </button>

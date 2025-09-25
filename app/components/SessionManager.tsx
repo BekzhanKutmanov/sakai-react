@@ -26,7 +26,7 @@ const SessionManager = () => {
                         setTimeout(() => {
                             setGlobalLoading(false);
                         }, 1000);
-                        console.log('Данные пользователя успешно пришли ', res);
+                        // console.log('Данные пользователя успешно пришли ', res);
                         if (res.roles && res.roles.length > 0) {
                             const roleCheck = res.roles.find((i: { id_role: number }) => i.id_role);
                             if (roleCheck) {

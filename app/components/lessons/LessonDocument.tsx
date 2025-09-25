@@ -48,8 +48,6 @@ export default function LessonDocument({ element, content, fetchPropElement, cle
         document_path: string;
     }
 
-    const { course_id } = useParams();
-
     const router = useRouter();
     const media = useMediaQuery('(max-width: 640px)');
     const fileUploadRef = useRef<FileUpload>(null);
@@ -141,11 +139,11 @@ export default function LessonDocument({ element, content, fetchPropElement, cle
 
     const sentToPDF = (url: string) => {
         setUrlPDF(url);
-        if (media) {
+        // if (media) {
             router.push(`/pdf/${url}`);
-        } else {
-            setPDFVisible(true);
-        }
+        // } else {
+            // setPDFVisible(true);
+        // }
     };
 
     const editing = async () => {
@@ -166,8 +164,6 @@ export default function LessonDocument({ element, content, fetchPropElement, cle
     const handleAddDoc = async () => {
         toggleSpinner();
         const data = await addDocument(docValue, element.lesson_id, element.type_id, element.id);
-        console.log(data);
-
         if (data.success) {
             fetchPropElement(element.id);
             setMessage({
@@ -274,9 +270,7 @@ export default function LessonDocument({ element, content, fetchPropElement, cle
                             type="file"
                             accept="application/pdf"
                             className="border rounded p-1"
-                            onChange={(e) => {
-                                console.log(e.target.files);
-                                const file = e.target.files?.[0];
+                            onChange={(e) => {                                const file = e.target.files?.[0];
                                 if (file) {
                                     setDocValue((prev) => ({
                                         ...prev,
@@ -357,9 +351,7 @@ export default function LessonDocument({ element, content, fetchPropElement, cle
                             type="file"
                             accept="application/pdf"
                             className="border rounded p-1 w-full"
-                            onChange={(e) => {
-                                console.log(e.target.files);
-                                const file = e.target.files?.[0];
+                            onChange={(e) => {                                const file = e.target.files?.[0];
                                 if (file) {
                                     setEditingLesson(
                                         (prev) =>

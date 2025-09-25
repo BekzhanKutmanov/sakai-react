@@ -86,7 +86,7 @@ export default function Course() {
             course_id: id,
             status: status ? 1 : 0
         };
-        console.log(forSentStreams);
+        
         const data = await veryfyCourse(forSentStreams);
         if (data.success) {
             contextFetchCourse(1);
@@ -96,7 +96,7 @@ export default function Course() {
                 value: { severity: 'success', summary: 'Успешно добавлен!', detail: '' }
             });
         } else {
-            console.log(data);
+            
             setSkeleton(false);
             if (data.response.data.cause) {
                 setMessage({
@@ -318,7 +318,7 @@ export default function Course() {
     }, [courseValue.title, editingLesson.title]);
 
     useEffect(() => {
-        console.log('Курсы ', coursesValue);
+        
 
         if (coursesValue?.length < 1) {
             setHasCourses(true);
@@ -440,10 +440,6 @@ export default function Course() {
             </div>
         );
     };
-
-    useEffect(() => {
-        console.log(forStreamCount);
-    }, [forStreamCount]);
 
     const imagestateStyle = imageState || editingLesson.image ? 'flex gap-1 items-center justify-between flex-col sm:flex-row' : '';
     const imageTitle = useShortText(typeof editingLesson.image === 'string' ? editingLesson.image : '', 20);

@@ -1,19 +1,14 @@
 'use client';
 
 import { lessonSchema } from '@/schemas/lessonSchema';
-import { EditableLesson } from '@/types/editableLesson';
-import { lessonStateType } from '@/types/lessonStateType';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useParams, useRouter } from 'next/navigation';
 import { Button } from 'primereact/button';
-import { FileUpload } from 'primereact/fileupload';
 import { InputText } from 'primereact/inputtext';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { NotFound } from '../NotFound';
 import LessonCard from '../cards/LessonCard';
-import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { addDocument, addTest, deleteDocument, deleteTest, fetchElement, updateDocument, updateTest } from '@/services/steps';
 import { mainStepsType } from '@/types/mainStepType';
 import useErrorMessage from '@/hooks/useErrorMessage';
@@ -41,7 +36,6 @@ export default function LessonTest({ element, content, fetchPropElement, clearPr
 
     const [progressSpinner, setProgressSpinner] = useState(false);
     const [testChecked, setTestChecked] = useState<{ idx: null | number; check: boolean }>({ idx: null, check: false });
-    const [answerOpt, setAnswerOpt] = useState(true);
     const [selectId, setSelectId] = useState<number | null>(null);
     const [skeleton, setSkeleton] = useState(false);
 
@@ -53,13 +47,6 @@ export default function LessonTest({ element, content, fetchPropElement, clearPr
         ]);
         setEditingLesson(null);
         setSelectId(null);
-    };
-
-    const toggleSpinner = () => {
-        setProgressSpinner(true);
-        setInterval(() => {
-            setProgressSpinner(false);
-        }, 1000);
     };
 
     // validate
@@ -160,8 +147,6 @@ export default function LessonTest({ element, content, fetchPropElement, clearPr
         console.log(element.lesson_id, id, element.type.id, element.id);
 
         const data = await deleteTest(element.lesson_id, id, element.type.id, element.id);
-        console.log(data);
-
         if (data.success) {
             clearValues();
             fetchPropElement(element.id);
@@ -309,21 +294,6 @@ export default function LessonTest({ element, content, fetchPropElement, clearPr
     useEffect(() => {
         setTestValue({ title: '', score: 0 });
     }, [element]);
-
-    useEffect(() => {
-        console.log(answer);
-
-        const answerCheck = answer.some((item) => item.is_correct);
-        console.log(answerCheck);
-
-        // if(answerCheck){
-        //     setAnswerOpt(false);
-        // } else {
-        //     setAnswerOpt(true);
-        // }
-    }, [answer]);
-
-    useEffect(() => {}, [answerOpt]);
 
     return (
         <div>

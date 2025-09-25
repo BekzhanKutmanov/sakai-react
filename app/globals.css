@@ -469,6 +469,21 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
+.stepElement {
+  min-width: 47px !important;
+  min-height: 47px !important;
+  width: 57px !important;
+  height: 57px !important;
+}
+
+@media screen and (max-width: 640px) {
+  .stepElement {
+    min-width: 47px !important;
+    min-height: 47px !important;
+    width: 47px !important;
+    height: 47px !important;
+}
+}
 
 .tab-custom-text{
   color: rgb(245, 206, 77) !important; 
@@ -491,6 +506,13 @@ h1, h2, h3, h4, h5, h6 {
     padding: 5px;
   }
 }
+
+@media screen and (max-width: 640px) {
+  .p-dialog .p-dialog-content{
+    padding: 6px;
+  }
+}
+
 
 .my-custom-dialog{
   width: 650px;
