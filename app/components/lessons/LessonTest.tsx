@@ -250,7 +250,8 @@ export default function LessonTest({ element, content, fetchPropElement, clearPr
                                                 <InputText
                                                     type="text"
                                                     value={item.text}
-                                                    className="w-[90%] sm:w-full"
+
+                                                    className="p-inputtext-sm w-[90%] sm:w-full"
                                                     onChange={(e) => {
                                                         setAnswer((prev) => prev.map((ans, i) => (i === index ? { ...ans, text: e.target.value } : ans)));
                                                     }}
