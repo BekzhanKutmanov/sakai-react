@@ -678,12 +678,12 @@ h1, h2, h3, h4, h5, h6 {
   padding: 3px 2px;
 }
 
-.trash-button {
+ .p-button-danger{
   background-color: red;
 }
 
-.p-button .p-button-danger{
-  background-color: red !important;
+.trash-button {
+  background-color: red;
 }
 
 .p-column-header-content{

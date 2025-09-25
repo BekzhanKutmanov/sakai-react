@@ -452,7 +452,7 @@ export default function LessonStep() {
                                 <GroupSkeleton count={1} size={{ width: '100%', height: '3rem' }} />
                             </div>
                         ) : ( */}
-                        
+
                             {steps.map((item, idx) => {
                                 return (
                                     <div key={item.id} className="flex flex-col items-center">
@@ -499,7 +499,8 @@ export default function LessonStep() {
                     icon={'pi pi-trash'}
                     label="Удалить шаг"
                     disabled={hasSteps}
-                    className="hover:bg-[var(--mainBorder)] transition trash-button"
+                    className="hover:bg-[var(--mainBorder)] transition"
+                    security="danger"
                     onClick={() => {
                         const options = getConfirmOptions(Number(), () => handleDeleteStep());
                         confirmDialog(options);
