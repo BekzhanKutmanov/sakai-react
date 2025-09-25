@@ -376,8 +376,8 @@ export default function LessonStep() {
                 }}
             >
                 <span>{idx + 1}</span>
-                <div className={`stepElement rounded ${step === selectedId ? 'activeStep' : 'step'} flex justify-center items-center`}>
-                    <i className={`${icon} text-xl sm:text-2xl text-white`}></i>
+                <div className={`rounded ${step === selectedId ? 'activeStep' : 'step'} flex justify-center items-center`}>
+                    <i className={`${icon} text-xl sm:text-2xl text-white`} style={{padding: '15px'}}></i>
                 </div>
             </div>
         );
@@ -469,9 +469,11 @@ export default function LessonStep() {
                     ) : (
                         <button
                             onClick={handleFetchTypes}
-                            className="stepElement cursor-pointer border rounded flex justify-center items-center text-4xl text-white bg-[var(--mainColor)] hover:bg-[var(--mainBorder)] transition"
+                            style={{padding: '15px'}}
+
+                            className="pi pi-plus text-xl sm:text-2xl text-white cursor-pointer border rounded flex justify-center items-center bg-[var(--mainColor)] hover:bg-[var(--mainBorder)] transition"
                         >
-                            +
+                            
                         </button>
                     )}
                 </div>
