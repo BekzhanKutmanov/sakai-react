@@ -452,6 +452,7 @@ export default function LessonStep() {
                                 <GroupSkeleton count={1} size={{ width: '100%', height: '3rem' }} />
                             </div>
                         ) : ( */}
+                        
                             {steps.map((item, idx) => {
                                 return (
                                     <div key={item.id} className="flex flex-col items-center">
