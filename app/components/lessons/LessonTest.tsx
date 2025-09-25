@@ -233,7 +233,7 @@ export default function LessonTest({ element, content, fetchPropElement, clearPr
                                 <div className="w-full flex flex-col justify-start items-start gap-2">
                                     {answer.map((item, index) => {
                                         return (
-                                            <div className="flex items-center gap-1" key={index}>
+                                            <div className="w-full flex items-center gap-1" key={index}>
                                                 <label className="custom-radio">
                                                     <input
                                                         type="radio"
@@ -255,7 +255,7 @@ export default function LessonTest({ element, content, fetchPropElement, clearPr
                                                         setAnswer((prev) => prev.map((ans, i) => (i === index ? { ...ans, text: e.target.value } : ans)));
                                                     }}
                                                 />
-                                                <Button icon="pi pi-trash" onClick={() => deleteOption(index)} className="p-[0px] w-2 " style={{ fontSize: '14px' }} />
+                                                <Button icon="pi pi-trash" onClick={() => deleteOption(index)} className="p-[0px] w-2 trash-button" style={{ fontSize: '14px', maxWidth: '50px' }} />
                                             </div>
                                         );
                                     })}

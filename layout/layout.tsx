@@ -129,7 +129,7 @@ const Layout = ({ children }: ChildContainerProps) => {
             if (!user?.is_working) {
                 // window.location.href = '/auth/login';
                 // setPermission(true);
-                console.log('Не имеете доступ! working');
+                // console.log('Не имеете доступ! working');
             }
             setPermission(false);
         }

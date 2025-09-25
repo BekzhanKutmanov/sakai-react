@@ -679,11 +679,11 @@ h1, h2, h3, h4, h5, h6 {
 }
 
  .p-button-danger{
-  background-color: red;
+  background-color: #ef4444;
 }
 
 .trash-button {
-  background-color: red;
+  background-color: #ef4444;
 }
 
 .p-column-header-content{
