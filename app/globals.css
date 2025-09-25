@@ -42,6 +42,11 @@ a:hover, a:focus {
 h1, h2, h3, h4, h5, h6 {
   color: var(--titleColor);
 }
+
+.layout-menu ul ul li a{
+  margin-left: 0;
+}
+
 .scrollbar-thin{
   scroll-snap-type: x mandatory;
 }

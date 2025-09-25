@@ -10,6 +10,7 @@ const PDFViewer = dynamic(() => import('@/app/components/PDFBook'), {
 });
 
 import { useParams, useRouter } from 'next/navigation';
+import { Button } from 'primereact/button';
 
 export default function PdfUrlViewer() {
     const { pdfUrl } = useParams();
@@ -17,11 +18,11 @@ export default function PdfUrlViewer() {
 
     return (
         <div className='my-2'>
-            <button onClick={()=> router.back()} className='cursor-pointer flex items-center gap-1 bg-[]'>
-                <i className="pi pi-arrow-left text-[13px]" style={{fontSize: '13px'}}></i>
-                <button className="text-[13px]">Назад</button>
-            </button>
-            <div className="max-h-[800px] bg-red-500">
+            <Button onClick={()=> router.back()} className='mini-button px-2 flex items-center gap-1 bg-[]'>
+                <i className="pi pi-arrow-left text-[13px] cursor-pointer" style={{fontSize: '13px'}}></i>
+                <button className="text-[13px] cursor-pointer ">Назад</button>
+            </Button>
+            <div className="max-h-[1000px] bg-red-500">
                 <PDFViewer url={pdfUrl || ''} />
             </div>
         </div>

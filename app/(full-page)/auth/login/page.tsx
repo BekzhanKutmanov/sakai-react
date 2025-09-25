@@ -58,7 +58,7 @@ const LoginPage = () => {
                             }
                         } 
                         if(res?.user.is_student){
-                            window.location.href = '/';
+                            window.location.href = '/teaching';
                         }
                     } else {
                         setMessage({

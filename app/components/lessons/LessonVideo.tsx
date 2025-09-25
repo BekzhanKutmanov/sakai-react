@@ -18,6 +18,7 @@ import useErrorMessage from '@/hooks/useErrorMessage';
 import { LayoutContext } from '@/layout/context/layoutcontext';
 import FormModal from '../popUp/FormModal';
 import { FileWithPreview } from '@/types/fileuploadPreview';
+import GroupSkeleton from '../skeleton/GroupSkeleton';
 
 export default function LessonVideo({ element, content, fetchPropElement, clearProp }: { element: mainStepsType; content: any; fetchPropElement: (id: number) => void; clearProp: boolean }) {
     interface contentType {
@@ -81,6 +82,7 @@ export default function LessonVideo({ element, content, fetchPropElement, clearP
     const [selectType, setSelectType] = useState('');
     const [selectId, setSelectId] = useState<number | null>(null);
     const [contentShow, setContentShow] = useState(false);
+    const [skeleton, setSkeleton] = useState(false);
 
     const clearFile = () => {
         fileUploadRef.current?.clear();
@@ -236,10 +238,12 @@ export default function LessonVideo({ element, content, fetchPropElement, clearP
 
     // update document
     const handleUpdateVideo = async () => {
+        setSkeleton(true)
         const token = getToken('access_token');
         const data = await updateVideo(token, editingLesson, video?.lesson_id ? Number(video?.lesson_id) : null, Number(selectId), 1, element.type.id, element.type.id);
 
         if (data?.success) {
+            setSkeleton(false);
             fetchPropElement(element.id);
             clearValues();
             setMessage({
@@ -247,6 +251,7 @@ export default function LessonVideo({ element, content, fetchPropElement, clearP
                 value: { severity: 'success', summary: 'Успешно изменено!', detail: '' }
             });
         } else {
+            setSkeleton(false);
             setEditingLesson(null);
             setMessage({
                 state: true,
@@ -287,7 +292,7 @@ export default function LessonVideo({ element, content, fetchPropElement, clearP
                                     id="title"
                                     type="text"
                                     placeholder={'Название'}
-                                    className='w-full'
+                                    className="w-full"
                                     value={videoValue.title}
                                     onChange={(e) => {
                                         setVideoValue((prev) => ({ ...prev, title: e.target.value }));
@@ -353,7 +358,11 @@ export default function LessonVideo({ element, content, fetchPropElement, clearP
                                 <NotFound titleMessage={'Заполните поля для добавления урока'} />
                             ) : (
                                 <>
-                                    {!videoCall ? (
+                                    {skeleton ? (
+                                        <div className="w-full">
+                                            <GroupSkeleton count={1} size={{ width: '100%', height: '20rem' }} />   
+                                        </div>
+                                    ) : !videoCall ? (
                                         video && (
                                             <LessonCard
                                                 status={'working'}

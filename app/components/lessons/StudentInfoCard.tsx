@@ -84,7 +84,7 @@ export default function StudentInfoCard({
             </div>
             <div className="flex flex-col justify-center gap-1 max-w-[800px] text-wrap break-all">
                 <Link
-                    href={`/teaching/lessonView/${lesson}/${streams.connections[0].id_stream}/${stepId}`}
+                    href={`/teaching/lessonView/${streams.connections[0].id_stream}/${stepId}`}
                     // onClick={() => videoStart && videoStart(video_link || '')}
                     className="cursor-pointer max-w-[800px] text-[16px] text-wrap break-all hover:underline"
                 >
@@ -101,7 +101,7 @@ export default function StudentInfoCard({
             </div>
             <div className="flex flex-col justify-center gap-1 max-w-[800px] text-wrap break-all">
                 <Link
-                    href={`/teaching/lessonView/${lesson}/${streams.connections[0].id_stream}/${stepId}`}
+                    href={`/teaching/lessonView/${streams.connections[0].id_stream}/${stepId}`}
                     // onClick={() => videoStart && videoStart(video_link || '')}
                     className="cursor-pointer max-w-[800px] text-[16px] text-wrap break-all hover:underline"
                 >
@@ -118,14 +118,7 @@ export default function StudentInfoCard({
             </div>
             <div className="flex flex-col justify-center gap-1 max-w-[800px] text-wrap break-all">
                 <Link
-                    href={`/teaching/lessonView/${lesson}/${streams.connections[0].id_stream}/${stepId}`}
-                    onClick={() => {
-                        // setTestCall(true)
-                        console.log(stepId);
-                        console.log(lesson);
-
-                        console.log(streams.connections[0].id_stream);
-                    }}
+                    href={`/teaching/lessonView/${streams.connections[0].id_stream}/${stepId}`}
                     className="cursor-pointer max-w-[800px] text-[16px] text-wrap break-all hover:underline"
                 >
                     Тест
@@ -169,15 +162,7 @@ export default function StudentInfoCard({
                 <i className={`${icon} text-white`}></i>
             </div>
             <Link
-                href={`/teaching/lessonView/${lesson}/${streams.connections[0].id_stream}/${stepId}`}
-                onClick={() => {
-                    console.log(stepId);
-                    console.log(lesson);
-
-                    console.log(streams.connections[0].id_stream);
-
-                    // setPracticaCall(true);
-                }}
+                href={`/teaching/lessonView/${streams.connections[0].id_stream}/${stepId}`} 
                 className="cursor-pointer max-w-[800px] text-[16px] text-wrap break-all hover:underline"
             >
                 Практическое задание

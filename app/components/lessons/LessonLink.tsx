@@ -16,6 +16,7 @@ import { mainStepsType } from '@/types/mainStepType';
 import useErrorMessage from '@/hooks/useErrorMessage';
 import { LayoutContext } from '@/layout/context/layoutcontext';
 import FormModal from '../popUp/FormModal';
+import GroupSkeleton from '../skeleton/GroupSkeleton';
 
 export default function LessonLink({ element, content, fetchPropElement, clearProp }: { element: mainStepsType; content: any; fetchPropElement: (id: number) => void; clearProp: boolean }) {
     interface linkValueType {
@@ -39,9 +40,6 @@ export default function LessonLink({ element, content, fetchPropElement, clearPr
         url: string;
     }
 
-    const { course_id } = useParams();
-
-    const media = useMediaQuery('(max-width: 640px)');
     const showError = useErrorMessage();
     const { setMessage } = useContext(LayoutContext);
 
@@ -60,6 +58,7 @@ export default function LessonLink({ element, content, fetchPropElement, clearPr
     const [progressSpinner, setProgressSpinner] = useState(false);
     const [additional, setAdditional] = useState<{ doc: boolean; link: boolean; video: boolean }>({ doc: false, link: false, video: false });
     const [selectId, setSelectId] = useState<number | null>(null);
+    const [skeleton, setSkeleton] = useState(false);
 
     const clearFile = () => {
         setAdditional((prev) => ({ ...prev, link: false }));
@@ -153,8 +152,10 @@ export default function LessonLink({ element, content, fetchPropElement, clearPr
 
     // update document
     const handleUpdateLink = async () => {
+        setSkeleton(true);
         const data = await updateLink(editingLesson, link?.lesson_id ? Number(link?.lesson_id) : null, Number(selectId), element.type.id, element.id);
         if (data?.success) {
+            setSkeleton(false);
             fetchPropElement(element.id);
             clearValues();
             setMessage({
@@ -162,6 +163,7 @@ export default function LessonLink({ element, content, fetchPropElement, clearPr
                 value: { severity: 'success', summary: 'Успешно изменено!', detail: '' }
             });
         } else {
+            setSkeleton(false);
             setLinkValue({ title: '', description: '', url: '' });
             setEditingLesson({ title: '', description: '', url: '' });
             setMessage({
@@ -181,7 +183,11 @@ export default function LessonLink({ element, content, fetchPropElement, clearPr
                     <div className="w-full flex flex-col items-center gap-4 py-2">
                         <div className="w-full flex flex-wrap gap-4">
                             {docShow ? (
-                                <NotFound titleMessage={'Сабак кошуу үчүн талааларды толтурунуз'} />
+                                <NotFound titleMessage={'Заполните поля для добавления урока'} />
+                            ) : skeleton ? (
+                                <div className="w-full">
+                                    <GroupSkeleton count={1} size={{ width: '100%', height: '6rem' }} />
+                                </div>
                             ) : (
                                 link && (
                                     <LessonCard
@@ -221,7 +227,7 @@ export default function LessonLink({ element, content, fetchPropElement, clearPr
                                 id="title"
                                 type="text"
                                 placeholder={'Название'}
-                                className='w-full'
+                                className="w-full"
                                 value={linkValue.title}
                                 onChange={(e) => {
                                     setLinkValue((prev) => ({ ...prev, title: e.target.value }));

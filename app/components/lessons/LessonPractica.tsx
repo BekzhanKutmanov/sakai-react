@@ -19,6 +19,7 @@ import { LayoutContext } from '@/layout/context/layoutcontext';
 import FormModal from '../popUp/FormModal';
 import { InputTextarea } from 'primereact/inputtextarea';
 import dynamic from 'next/dynamic';
+import GroupSkeleton from '../skeleton/GroupSkeleton';
 
 const PDFViewer = dynamic(() => import('../PDFBook'), {
     ssr: false
@@ -70,6 +71,7 @@ export default function LessonPractica({ element, content, fetchPropElement, cle
     const [additional, setAdditional] = useState<{ doc: boolean; link: boolean; video: boolean }>({ doc: false, link: false, video: false });
     const [selectType, setSelectType] = useState('');
     const [selectId, setSelectId] = useState<number | null>(null);
+    const [skeleton, setSkeleton] = useState(false);
 
     const clearFile = () => {
         fileUploadRef.current?.clear();
@@ -201,8 +203,10 @@ export default function LessonPractica({ element, content, fetchPropElement, cle
 
     // update document
     const handleUpdateDoc = async () => {
+        setSkeleton(true);
         const data = await updatePractica(editingLesson, document?.lesson_id ? Number(document?.lesson_id) : null, Number(selectId), element.type.id, element.id);
         if (data?.success) {
+            setSkeleton(false);
             fetchPropElement(element.id);
             clearValues();
             setMessage({
@@ -210,6 +214,7 @@ export default function LessonPractica({ element, content, fetchPropElement, cle
                 value: { severity: 'success', summary: 'Успешно изменено!', detail: '' }
             });
         } else {
+            setSkeleton(false);
             setDocValue({ title: '', description: '', document: null, url: '', score: 0 });
             setEditingLesson({ title: '', description: '', document: null, url: '', score: 0 });
             setMessage({
@@ -233,20 +238,26 @@ export default function LessonPractica({ element, content, fetchPropElement, cle
                             {docShow ? (
                                 <NotFound titleMessage={'Заполните поля для добавления урока'} />
                             ) : (
-                                document && (
-                                    <LessonCard
-                                        status="working"
-                                        onSelected={(id: number, type: string) => selectedForEditing(id, type)}
-                                        onDelete={(id: number) => handleDeleteDoc(id)}
-                                        cardValue={{ title: document?.title, id: document.id, desctiption: document?.description || '', type: 'practica', url: document.url, document: document.document, score: element?.score || 0 }}
-                                        cardBg={'#ddc4f51a'}
-                                        type={{ typeValue: 'practica', icon: 'pi pi-list' }}
-                                        typeColor={'var(--mainColor)'}
-                                        lessonDate={new Date(document.created_at).toISOString().slice(0, 10)}
-                                        urlForPDF={() => sentToPDF('')}
-                                        urlForDownload={document.document ? document.document_path : ''}
-                                    />
-                                )
+                                <>
+                                    {skeleton ? (
+                                        <div className="w-full"><GroupSkeleton count={1} size={{ width: '100%', height: '6rem' }} /></div>
+                                    ) : (
+                                        document && (
+                                            <LessonCard
+                                                status="working"
+                                                onSelected={(id: number, type: string) => selectedForEditing(id, type)}
+                                                onDelete={(id: number) => handleDeleteDoc(id)}
+                                                cardValue={{ title: document?.title, id: document.id, desctiption: document?.description || '', type: 'practica', url: document.url, document: document.document, score: element?.score || 0 }}
+                                                cardBg={'#ddc4f51a'}
+                                                type={{ typeValue: 'practica', icon: 'pi pi-list' }}
+                                                typeColor={'var(--mainColor)'}
+                                                lessonDate={new Date(document.created_at).toISOString().slice(0, 10)}
+                                                urlForPDF={() => sentToPDF('')}
+                                                urlForDownload={document.document ? document.document_path : ''}
+                                            />
+                                        )
+                                    )}
+                                </>
                             )}
                         </div>
                     </div>
@@ -273,8 +284,8 @@ export default function LessonPractica({ element, content, fetchPropElement, cle
                                 <InputText
                                     type="number"
                                     id="title"
-                                    placeholder='Балл'
-                                    value={String(docValue?.score)}
+                                    placeholder="Балл"
+                                    // value={String(docValue?.score)}
                                     className="w-[50px] sm:w-[70px]"
                                     onChange={(e) => {
                                         setDocValue((prev) => prev && { ...prev, score: Number(e.target.value) });
@@ -366,7 +377,7 @@ export default function LessonPractica({ element, content, fetchPropElement, cle
 
     useEffect(() => {
         console.log(element);
-        
+
         setDocValue({ title: '', description: '', document: null, url: '', score: 0 });
     }, [element]);
 
@@ -456,7 +467,7 @@ export default function LessonPractica({ element, content, fetchPropElement, cle
                                 />
                             </div>
                         )}
-                        
+
                         <div className="flex relative">
                             <div className="">
                                 <span className="cursor-pointer ml-1 text-[13px] sm:text-sm text-[var(--mainColor)]" onClick={() => setAdditional((prev) => ({ ...prev, doc: !prev.doc }))}>

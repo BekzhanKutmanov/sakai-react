@@ -130,18 +130,18 @@ export default function PDFViewer({ url }: { url: string }) {
                 position: 'relative',
                 overflow: 'hidden',
                 isolation: 'isolate',
-                maxWidth: '800px',
+                maxWidth: '900px',
                 margin: '0 auto'
             }}
         >
             <div
                 ref={containerRef}
-                className="w-[800px]"
+                className="w-[900px]"
                 style={{
                     width: '100%', // или фиксированная ширина, например 800px
-                    maxWidth: '800px', // не даём контейнеру быть бесконечно широким
+                    maxWidth: '900px', // не даём контейнеру быть бесконечно широким
                     margin: '0 auto',
-                    maxHeight: '1000px'
+                    // maxHeight: '1000px'
                 }}
             >
                 {hasPdf ? (
@@ -201,11 +201,11 @@ export default function PDFViewer({ url }: { url: string }) {
                         ) : (
                             <HTMLFlipBook
                                 // width={Math.min(bookSize.width, 600)} // ограничиваем ширину страницы
-                                width={Math.min(bookSize.width, 800)} // ограничиваем ширину страницы
+                                width={Math.min(bookSize.width, 1000)} // ограничиваем ширину страницы
                                 height={bookSize.height}
                                 size="stretch"
                                 minWidth={media ? 320 : 600}
-                                maxWidth={600} // ограничиваем maxWidth для PageFlip
+                                maxWidth={800} // ограничиваем maxWidth для PageFlip
                                 minHeight={420}
                                 maxHeight={bookSize.height}
                                 showCover={false}

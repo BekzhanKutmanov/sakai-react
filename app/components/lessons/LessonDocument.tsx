@@ -20,6 +20,7 @@ import { LayoutContext } from '@/layout/context/layoutcontext';
 import FormModal from '../popUp/FormModal';
 // import PDFViewer from '../PDFBook';
 import dynamic from 'next/dynamic';
+import GroupSkeleton from '../skeleton/GroupSkeleton';
 
 const PDFViewer = dynamic(() => import('../PDFBook'), {
     ssr: false
@@ -59,6 +60,8 @@ export default function LessonDocument({ element, content, fetchPropElement, cle
     const [visible, setVisisble] = useState(false);
     const [imageState, setImageState] = useState<string | null>(null);
     const [contentShow, setContentShow] = useState(false);
+    const [skeleton, setSkeleton] = useState(false);
+
     // doc
     const [document, setDocuments] = useState<contentType>();
     const [docValue, setDocValue] = useState<docValueType>({
@@ -205,10 +208,12 @@ export default function LessonDocument({ element, content, fetchPropElement, cle
 
     // update document
     const handleUpdateDoc = async () => {
+        setSkeleton(true);
         const token = getToken('access_token');
         const data = await updateDocument(token, document?.lesson_id ? Number(document?.lesson_id) : null, Number(selectId), element.type.id, element.type.id, editingLesson);
 
         if (data?.success) {
+            setSkeleton(false);
             fetchPropElement(element.id);
             clearValues();
             setMessage({
@@ -216,6 +221,7 @@ export default function LessonDocument({ element, content, fetchPropElement, cle
                 value: { severity: 'success', summary: 'Успешно изменено!', detail: '' }
             });
         } else {
+            setSkeleton(false);
             setDocValue({ title: '', description: '', file: null });
             setEditingLesson(null);
             setMessage({
@@ -239,44 +245,31 @@ export default function LessonDocument({ element, content, fetchPropElement, cle
                             {docShow ? (
                                 <NotFound titleMessage={'Заполните поля для добавления урока'} />
                             ) : (
-                                document && (
-                                    <LessonCard
-                                        status="working"
-                                        onSelected={(id: number, type: string) => selectedForEditing(id, type)}
-                                        onDelete={(id: number) => handleDeleteDoc(id)}
-                                        cardValue={{ title: document?.title, id: document.id, desctiption: document?.description || '', type: 'doc', document: document.document }}
-                                        cardBg={'#ddc4f51a'}
-                                        type={{ typeValue: 'doc', icon: 'pi pi-doc' }}
-                                        typeColor={'var(--mainColor)'}
-                                        lessonDate={new Date(document.created_at).toISOString().slice(0, 10)}
-                                        urlForPDF={() => sentToPDF(document.document || '')}
-                                        urlForDownload={document.document_path || ''}
-                                    />
-                                )
+                                <>
+                                    {skeleton ? (
+                                        <div className='w-full'><GroupSkeleton count={1} size={{ width: '100%', height: '6rem' }} /></div>
+                                    ) : (
+                                        document && (
+                                            <LessonCard
+                                                status="working"
+                                                onSelected={(id: number, type: string) => selectedForEditing(id, type)}
+                                                onDelete={(id: number) => handleDeleteDoc(id)}
+                                                cardValue={{ title: document?.title, id: document.id, desctiption: document?.description || '', type: 'doc', document: document.document }}
+                                                cardBg={'#ddc4f51a'}
+                                                type={{ typeValue: 'doc', icon: 'pi pi-doc' }}
+                                                typeColor={'var(--mainColor)'}
+                                                lessonDate={new Date(document.created_at).toISOString().slice(0, 10)}
+                                                urlForPDF={() => sentToPDF(document.document || '')}
+                                                urlForDownload={document.document_path || ''}
+                                            />
+                                        )
+                                    )}
+                                </>
                             )}
                         </div>
                     </div>
                 ) : (
                     <div className="w-full flex flex-col justify-center gap-2">
-                        {/* <div className="flex gap-1 items-center"> */}
-                        {/* <FileUpload
-                                className="text-[12px]"
-                                ref={fileUploadRef}
-                                chooseLabel="Документ жүктөө"
-                                mode="basic"
-                                name="demo[]"
-                                customUpload
-                                uploadHandler={() => {}}
-                                accept="application/pdf"
-                                onSelect={(e) =>
-                                    setDocValue((prev) => ({
-                                        ...prev,
-                                        file: e.files[0]
-                                    }))
-                                }
-                            />
-                            <Button icon={'pi pi-trash'} onClick={clearFile} />
-                        </div> */}
                         <input
                             type="file"
                             accept="application/pdf"
@@ -293,12 +286,12 @@ export default function LessonDocument({ element, content, fetchPropElement, cle
                             }}
                         />
 
-                        <div className='w-full'>
+                        <div className="w-full">
                             <InputText
                                 id="title"
                                 type="text"
                                 placeholder={'Название'}
-                                className='w-full'
+                                className="w-full"
                                 value={docValue.title}
                                 onChange={(e) => {
                                     setDocValue((prev) => ({ ...prev, title: e.target.value }));

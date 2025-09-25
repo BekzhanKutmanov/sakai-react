@@ -87,10 +87,6 @@ export default function Faculty() {
         handleFetchKafedra();
     }, [selected]);
 
-    useEffect(() => {
-        console.log(kafedra);
-    }, [kafedra]);
-
     return (
         <div className="main-bg flex flex-col gap-4">
             <div>
@@ -100,7 +96,7 @@ export default function Faculty() {
                     <p className="text-[16px] text-center font-bold my-2">Факультеты временно не доступны</p>
                 ) : (
                     <div className="w-full overflow-x-auto">
-                        <h3 className="text-xl pb-1 m-0">Выберите факультет</h3>
+                        <h3 className="text-xl mb-2 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)] ">Выберите факультет</h3>
                         <Dropdown value={selected} onChange={(e: DropdownChangeEvent) => setSelected(e.value)} options={faculty} optionLabel="name_ru" className="w-[90%] overflow-x-auto" panelClassName="w-[50%] overflow-x-scroll" />
                     </div>
                 )}

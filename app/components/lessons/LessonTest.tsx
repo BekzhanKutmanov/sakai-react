@@ -21,6 +21,7 @@ import { LayoutContext } from '@/layout/context/layoutcontext';
 import FormModal from '../popUp/FormModal';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { testType } from '@/types/testType';
+import GroupSkeleton from '../skeleton/GroupSkeleton';
 
 export default function LessonTest({ element, content, fetchPropElement, clearProp }: { element: mainStepsType; content: any; fetchPropElement: (id: number) => void; clearProp: boolean }) {
     const showError = useErrorMessage();
@@ -39,7 +40,10 @@ export default function LessonTest({ element, content, fetchPropElement, clearPr
     const [testShow, setTestShow] = useState<boolean>(false);
 
     const [progressSpinner, setProgressSpinner] = useState(false);
+    const [testChecked, setTestChecked] = useState<{ idx: null | number; check: boolean }>({ idx: null, check: false });
+    const [answerOpt, setAnswerOpt] = useState(true);
     const [selectId, setSelectId] = useState<number | null>(null);
+    const [skeleton, setSkeleton] = useState(false);
 
     const clearValues = () => {
         setTestValue({ title: '', score: 0 });
@@ -119,14 +123,18 @@ export default function LessonTest({ element, content, fetchPropElement, clearPr
 
     const deleteOption = (index: number) => {
         setAnswer((prev) => prev.filter((_, i) => i !== index));
+        if (index === testChecked.idx) {
+            setTestChecked({ idx: null, check: false });
+        }
     };
 
     // update test
     const handleUpdateTest = async () => {
+        setSkeleton(true)
         const data = await updateTest(answer, editingLesson?.title || '', element.lesson_id, Number(selectId), element.type.id, element.id, editingLesson?.score || 0);
-        console.log(data);
 
         if (data?.success) {
+            setSkeleton(false);
             fetchPropElement(element.id);
             clearValues();
             setMessage({
@@ -134,6 +142,7 @@ export default function LessonTest({ element, content, fetchPropElement, clearPr
                 value: { severity: 'success', summary: 'Успешно изменено!', detail: '' }
             });
         } else {
+            setSkeleton(false);
             // setDocValue({ title: '', description: '', file: null });
             setEditingLesson(null);
             setMessage({
@@ -181,21 +190,29 @@ export default function LessonTest({ element, content, fetchPropElement, clearPr
                             {testShow ? (
                                 <NotFound titleMessage={'Заполните поля для добавления теста'} />
                             ) : (
-                                test && (
-                                    <LessonCard
-                                        status="working"
-                                        onSelected={(id: number, type: string) => selectedForEditing(id)}
-                                        onDelete={(id: number) => handleDeleteTest(id)}
-                                        cardValue={{ title: test?.content || '', id: Number(test!.id), desctiption: '', type: 'test', score: test.score }}
-                                        cardBg={'#ddc4f51a'}
-                                        type={{ typeValue: 'test', icon: 'pi pi-doc' }}
-                                        typeColor={'var(--mainColor)'}
-                                        lessonDate={test.created_at && new Date(test.created_at).toISOString().slice(0, 10)}
-                                        urlForPDF={() => {}}
-                                        urlForDownload={''}
-                                        answers={test.answers}
-                                    />
-                                )
+                                <>
+                                    {skeleton ? (
+                                        <div className="w-full">
+                                            <GroupSkeleton count={1} size={{ width: '100%', height: '6rem' }} />
+                                        </div>
+                                    ) : (
+                                        test && (
+                                            <LessonCard
+                                                status="working"
+                                                onSelected={(id: number, type: string) => selectedForEditing(id)}
+                                                onDelete={(id: number) => handleDeleteTest(id)}
+                                                cardValue={{ title: test?.content || '', id: Number(test!.id), desctiption: '', type: 'test', score: test.score }}
+                                                cardBg={'#ddc4f51a'}
+                                                type={{ typeValue: 'test', icon: 'pi pi-doc' }}
+                                                typeColor={'var(--mainColor)'}
+                                                lessonDate={test.created_at && new Date(test.created_at).toISOString().slice(0, 10)}
+                                                urlForPDF={() => {}}
+                                                urlForDownload={''}
+                                                answers={test.answers}
+                                            />
+                                        )
+                                    )}
+                                </>
                             )}
                         </div>
                     </div>
@@ -236,8 +253,10 @@ export default function LessonTest({ element, content, fetchPropElement, clearPr
                                                     <input
                                                         type="radio"
                                                         name="testRadio"
+                                                        checked={testChecked.idx === index}
                                                         onChange={() => {
                                                             setAnswer((prev) => prev.map((ans, i) => (i === index ? { ...ans, is_correct: true } : { ...ans, is_correct: false })));
+                                                            setTestChecked({ idx: index, check: true });
                                                         }}
                                                     />
                                                     {/* <input type="radio" name="radio" /> */}
@@ -264,7 +283,7 @@ export default function LessonTest({ element, content, fetchPropElement, clearPr
                             <div className="w-full flex gap-1 justify-center items-center">
                                 <Button
                                     label="Сохранить"
-                                    disabled={progressSpinner || !testValue.title.length || !!errors.title}
+                                    disabled={progressSpinner || !testValue.title.length || !!errors.title || !testChecked.check}
                                     onClick={() => {
                                         handleAddTest();
                                     }}
@@ -290,6 +309,21 @@ export default function LessonTest({ element, content, fetchPropElement, clearPr
     useEffect(() => {
         setTestValue({ title: '', score: 0 });
     }, [element]);
+
+    useEffect(() => {
+        console.log(answer);
+
+        const answerCheck = answer.some((item) => item.is_correct);
+        console.log(answerCheck);
+
+        // if(answerCheck){
+        //     setAnswerOpt(false);
+        // } else {
+        //     setAnswerOpt(true);
+        // }
+    }, [answer]);
+
+    useEffect(() => {}, [answerOpt]);
 
     return (
         <div>
@@ -320,7 +354,7 @@ export default function LessonTest({ element, content, fetchPropElement, clearPr
                                 <b style={{ color: 'red', fontSize: '12px' }}>{errors.title?.message}</b>
                             </div>
                             <div className="flex flex-col justify-center items-center">
-                                <span className='text-sm'>Балл</span>
+                                <span className="text-sm">Балл</span>
                                 <InputText
                                     type="number"
                                     className="w-[70px]"

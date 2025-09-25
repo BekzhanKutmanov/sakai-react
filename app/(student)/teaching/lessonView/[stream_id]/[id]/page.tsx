@@ -47,22 +47,13 @@ export default function LessonTest() {
     // document
     const [document, setDocument] = useState<mainStepsType | null>(null);
 
+    // link
+    const [link, setLink] = useState<mainStepsType | null>(null);
+
     // video
     const [video, setVideo] = useState<mainStepsType | null>(null);
     const [preview, setPreview] = useState(false);
     const [videoLink, setVideoLink] = useState('');
-
-    const handleMainLesson = async () => {
-        // const data = await fetchMainLesson(Number(id), Number(stream_id));
-        // if (data) {
-        //     if (data.length > 0) {
-        //         setHasSteps(false);
-        //         setMainSteps(data);
-        //     } else {
-        //         setHasSteps(true);
-        //     }
-        // }
-    };
 
     const handleStep = async () => {
         const data = await fetchStudentSteps(Number(id), Number(stream_id));
@@ -114,7 +105,6 @@ export default function LessonTest() {
     };
 
     useEffect(() => {
-        // handleMainLesson();
         handleStep();
     }, []);
 
@@ -126,6 +116,9 @@ export default function LessonTest() {
         if (steps?.type.name === 'document') {
             setType(steps?.type.name);
             setDocument(steps);
+        } else if (steps?.type.name === 'link') {
+            setType(steps?.type.name);
+            setLink(steps);
         } else if (steps?.type.name === 'practical') {
             setType(steps?.type.name);
             setPractica(steps);
@@ -147,43 +140,11 @@ export default function LessonTest() {
 
     const courseInfoClass = true;
 
-    // doc section
-    // {documentUrl?.document_path ? (
-    //                         documentUrl?.document_path?.length > 0 ? (
-    //                             <a
-    //                                 href={documentUrl?.document_path ? (documentUrl?.document_path?.length > 0 ? String(documentUrl?.document_path) : '#') : '#'}
-    //                                 className="max-w-[800px] text-[16px] text-wrap break-all hover:underline"
-    //                                 download
-    //                                 target="_blank"
-    //                                 rel="noopener noreferrer"
-    //                             >
-    //                                 {title}
-    //                             </a>
-    //                         ) : (
-    //                             <span className="max-w-[800px] text-[16px] text-wrap break-all ">{title}</span>
-    //                         )
-    //                     ) : (
-    //                         <span className="max-w-[800px] text-[16px] text-wrap break-all">{title}</span>
-    //                     )}
-
-    // doc section
-
-    // link
-    // <a href={link ? String(link) : '#'} className="max-w-[800px] text-[16px] text-wrap break-all hover:underline" target="_blank">
-    //                 {title}
-    //             </a>
-    // <p className="max-w-[800px] text-wrap break-all text-[12px]">{description !== 'null' && description}</p>
-
-    // link
-
-    // video
-    // <p className="max-w-[800px] text-wrap break-all text-[12px]">{description !== 'null' && description}</p>
-    // video
-
     const hasPdf = /pdf/i.test(document?.content?.document || ''); // true
+
     const docSection = (
         <div className="lesson-card-border shadow rounded p-2 sm:p-4 mt-2 w-full flex flex-col gap-2 items-center">
-            <div>
+            <div className="w-full">
                 <b className="text-[16px] sm:text-[18px] text-wrap break-all">{document?.content?.title}</b>
                 {document?.content?.description && (
                     <div className="bg-[#ddc4f51a] p-2 relative sm:w-full md:w-[70%]">
@@ -208,15 +169,36 @@ export default function LessonTest() {
                 )}
                 {progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}
             </div>
-            <>
-                {hasPdf ? (
-                    <div className="max-h-[1000px] bg-red-500">
-                        <PDFViewer url={document?.content?.document || ''} />
+            {/* <div className='w-full'>
+                <div className='w-[90%] m-auto xl:w-[800px] h-[400px] lesson-card-border shadow rounded p-2 '>
+                    <i className='pi pi-folder text-5xl' ></i>
+                </div>
+            </div> */}
+        </div>
+    );
+
+    const linkSection = (
+        <div className="lesson-card-border shadow rounded p-2 sm:p-4 mt-2 w-full flex flex-col gap-2 items-center">
+            <div className="flex flex-col w-full gap-2">
+                <b className="text-[16px] sm:text-[18px] text-wrap break-all">{link?.content?.title}</b>
+
+                {link?.content?.description && (
+                    <div className="bg-[#ddc4f51a] p-2 relative sm:w-full md:w-[70%]">
+                        <p className="mt-1">
+                            <span className="w-[20px] h-[20px] bg-green-600 relative inline-block">
+                                <span className="pi pi-bookmark text-xl absolute top-[-2px]"></span>
+                            </span>{' '}
+                            {link?.content?.description}
+                        </p>
                     </div>
-                ) : (
-                    'Документ отсутствует'
                 )}
-            </>
+                <div className="flex gap-1 items-center">
+                    <span className="text-[var(--mainColor)]">Ссылка: </span>
+                    <a href={link ? String(link?.content?.url) : '#'} className="max-w-[800px] text-[16px] text-wrap break-all hover:underline" target="_blank">
+                        {link?.content?.url}
+                    </a>
+                </div>
+            </div>
         </div>
     );
 
@@ -224,14 +206,16 @@ export default function LessonTest() {
         <div className="lesson-card-border shadow rounded p-2 mt-2">
             <div className="flex flex-col gap-2">
                 <b className="text-[16px] sm:text-[18px] text-wrap break-all">{practica?.content?.title}</b>
-                <div className="bg-[#ddc4f51a] p-2 relative sm:w-full md:w-[70%]">
-                    <p className="mt-1">
-                        <span className="w-[20px] h-[20px] bg-green-600 relative inline-block">
-                            <span className="pi pi-bookmark text-xl absolute top-[-2px]"></span>
-                        </span>{' '}
-                        {practica?.content?.description}
-                    </p>
-                </div>
+                {practica?.content?.description && (
+                    <div className="bg-[#ddc4f51a] p-2 relative sm:w-full md:w-[70%]">
+                        <p className="mt-1">
+                            <span className="w-[20px] h-[20px] bg-green-600 mx-2 relative inline-block">
+                                <span className="pi pi-bookmark text-2xl absolute top-[-3px]"></span>
+                            </span>{' '}
+                            {practica?.content?.description}
+                        </p>
+                    </div>
+                )}
             </div>
 
             <div className="flex flex-col gap-2 w-full">
@@ -315,25 +299,40 @@ export default function LessonTest() {
 
     const videoSection = (
         <div className="lesson-card-border shadow rounded p-2 mt-2">
-            <div className="w-full flex flex-col justify-center items-center">
-                {!preview ? (
-                    <div className="relative bg-white shadow w-[90%] max-h-[400px] overflow-hidden rounded-2xl">
-                        <div className="w-full h-[100%] absolute flex justify-center items-center bg-[rgba(8,9,0,70%)]">
-                            <ProgressSpinner className="max-w-[70px] sm:max-w-[100px]" />
+            <div className='flex flex-col gap-2'>
+                <div className="flex flex-col gap-2">
+                    <b className="text-[16px] sm:text-[18px] text-wrap break-all">{video?.content?.title}</b>
+                    {video?.content?.description && (
+                        <div className="bg-[#ddc4f51a] p-2 relative sm:w-full md:w-[70%]">
+                            <p className="mt-1">
+                                <span className="w-[20px] h-[20px] bg-green-600 relative inline-block">
+                                    <span className="pi pi-bookmark text-xl absolute top-[-2px]"></span>
+                                </span>{' '}
+                                {video?.content?.description}
+                            </p>
                         </div>
-                        {/* <img src={(video?.content?.cover_url && video?.content?.cover_url) || '/layout/images/no-image.png'} className="w-full sm:w-[200px] max-h-[400px] object-cover" alt="Видео" /> */}
-                    </div>
-                ) : (
-                    <iframe
-                        className="w-[95%] h-[200px] md:h-[400px]"
-                        // src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1"
-                        src={videoLink}
-                        title="YouTube video player"
-                        frameBorder="0"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowFullScreen
-                    ></iframe>
-                )}
+                    )}
+                </div>
+                <div className="w-full flex flex-col justify-center items-center">
+                    {preview ? (
+                        <div className="relative bg-white shadow w-[90%] max-h-[400px] overflow-hidden rounded-2xl">
+                            <div className="w-full h-[100%] absolute flex justify-center items-center bg-[rgba(8,9,0,70%)]">
+                                <ProgressSpinner className="max-w-[70px] sm:max-w-[100px]" />
+                            </div>
+                            {/* <img src={(video?.content?.cover_url && video?.content?.cover_url) || '/layout/images/no-image.png'} className="w-full sm:w-[200px] max-h-[400px] object-cover" alt="Видео" /> */}
+                        </div>
+                    ) : (
+                        <iframe
+                            className="w-[95%] h-[200px] md:h-[400px]"
+                            // src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1"
+                            src={videoLink}
+                            title="YouTube video player"
+                            frameBorder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowFullScreen
+                        ></iframe>
+                    )}
+                </div>
             </div>
         </div>
     );
@@ -343,18 +342,19 @@ export default function LessonTest() {
             <div className={`w-full bg-[var(--titleColor)] relative text-white p-4 md:p-3 pb-4`}>
                 <div className="flex flex-col gap-2 items-center">
                     <div className={`w-full flex items-center gap-1 ${courseInfoClass ? 'justify-around flex-col sm:flex-row' : 'justify-center'}  items-center`}>
-                        <h1 style={{ color: 'white', fontSize: media ? '24px' : '28px', textAlign: 'center', margin: '0' }}>{'course'}</h1>
-                        {courseInfoClass && <span className="text-white">babt</span>}
+                        <h1 style={{ color: 'white', fontSize: media ? '24px' : '28px', textAlign: 'center', margin: '0' }}>{"Название курса"}</h1>
+                        {/* {courseInfoClass && <span className="text-white">babt</span>} */}
                     </div>
-                    <span>description description description description description descriptiondescription </span>
+                    <span>Описание курса ... </span>
                     <div className="flex items-center justify-end gap-1">
                         <b className="text-white sm:text-lg">Тема: </b>
-                        <b className="text-[16px] sm:text-[18px]">{'theme title'}</b>
+                        <b className="text-[16px] sm:text-[18px]">{'Физика...'}</b>
                     </div>
                 </div>
             </div>
-            {/* practica */}
+            
             {type === 'document' && docSection}
+            {type === 'link' && linkSection}
             {type === 'practical' && practicaSection}
             {type === 'test' && testSection}
             {type === 'video' && videoSection}
