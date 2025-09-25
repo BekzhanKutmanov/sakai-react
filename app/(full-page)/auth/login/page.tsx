@@ -15,6 +15,7 @@ import FancyLinkBtn from '@/app/components/buttons/FancyLinkBtn';
 import { logout } from '@/utils/logout';
 import { LoginType } from '@/types/login';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
+import Link from 'next/link';
 
 const LoginPage = () => {
     const { layoutConfig, setUser, setMessage, setGlobalLoading, setDepartament, departament } = useContext(LayoutContext);
@@ -36,26 +37,26 @@ const LoginPage = () => {
     const onSubmit = async (value: LoginType) => {
         const user = await login(value);
         if (user && user.success) {
-            document.cookie = `access_token=${user.token.access_token}; path=/; Secure; SameSite=Strict; expires=${user.token.expires_at}`;            
+            document.cookie = `access_token=${user.token.access_token}; path=/; Secure; SameSite=Strict; expires=${user.token.expires_at}`;
             const token = user.token.access_token;
             if (token) {
                 const res = await getUser();
                 try {
                     if (res?.success) {
                         if (res?.user.is_working) {
-                            if(res.roles && res.roles.length > 0){
-                                const roleCheck = res.roles.find((i:{id_role: number})=> i.id_role)
-                                if(roleCheck){
-                                    setDepartament({info: roleCheck.roles_name.info_ru, last_name:res.user?.last_name, name:res?.user.name, father_name:res.user?.father_name});
+                            if (res.roles && res.roles.length > 0) {
+                                const roleCheck = res.roles.find((i: { id_role: number }) => i.id_role);
+                                if (roleCheck) {
+                                    setDepartament({ info: roleCheck.roles_name.info_ru, last_name: res.user?.last_name, name: res?.user.name, father_name: res.user?.father_name });
                                     window.location.href = '/faculty';
                                 } else {
                                     window.location.href = '/course';
-                                }                                
+                                }
                             } else {
                                 window.location.href = '/course';
                             }
-                        } 
-                        if(res?.user.is_student){
+                        }
+                        if (res?.user.is_student) {
                             window.location.href = '/teaching';
                         }
                     } else {
@@ -93,17 +94,19 @@ const LoginPage = () => {
 
     return (
         <div className={`flex flex-col gap-4 pt-4 h-[100vh] login-bg`}>
-        {/* <div className={`flex flex-col gap-4 pt-4 h-[100vh] ${!media && 'login-bg'}`}> */}
+            {/* <div className={`flex flex-col gap-4 pt-4 h-[100vh] ${!media && 'login-bg'}`}> */}
             {/* <InfoBanner title="Кирүү" titleSize={{ default: '30px', sm: '40px' }} /> */}
             <div className="flex gap-4 flex-column lg:flex-row items-center justify-evenly px-4 mb-8">
-                <div className="user-img">
-                    {/* <img src="/layout/images/enrolled-img2.png" className="w-[450px] object-cover" alt="" /> */}
-                    <img src="/layout/images/no-image.png" className="w-[450px] object-cover" alt="" />
-                </div>
+                {!media && (
+                    <div className="user-img">
+                        {/* <img src="/layout/images/enrolled-img2.png" className="w-[450px] object-cover" alt="" /> */}
+                        <img src="/layout/images/no-image.png" className="w-[450px] object-cover" alt="" />
+                    </div>
+                )}
 
                 <div className={`w-[90%] sm:w-[500px] shadow-2xl bg-white py-6 px-3 md:py-8 sm:px-4 md:px-8 rounded`}>
-                    <h1 className='text-3xl sm:text-4xl font-bold inline-block border-b-2 pb-1 border-[var(--mainColor)]'>Вход</h1>
-                    <form onSubmit={handleSubmit(onSubmit, onError)} className="flex flex-col gap-4 md:gap-6">
+                    <h1 className="text-3xl sm:text-4xl font-bold inline-block border-b-2 pb-1 border-[var(--mainColor)]">Вход в mooc</h1>
+                    <form onSubmit={handleSubmit(onSubmit, onError)} className="flex flex-col gap-4">
                         <div className="flex flex-col">
                             {/* <label htmlFor="email1" className="block text-900 text-[16px] md:text-xl font-medium mb-1 md:mb-2">
                                 MyEdu email
@@ -115,14 +118,17 @@ const LoginPage = () => {
                             <Controller
                                 name="password"
                                 control={control}
-                                defaultValue=''
-                                render={({ field }) => <Password {...field} toggleMask className={`w-[100%]`} inputClassName="w-[90%] p-2 sm:p-3" inputStyle={{ marginRight: '15px' }} feedback={false} />}
+                                defaultValue=""
+                                render={({ field }) => <Password {...field} toggleMask placeholder='Пароль' className={`w-[100%]`} inputClassName="w-[90%] p-2 sm:p-3" inputStyle={{ marginRight: '8px' }} feedback={false} />}
                             />
                             {errors.password && <b className="text-[red] text-[12px] ml-2">{errors.password.message}</b>}
                         </div>
 
                         <FancyLinkBtn btnWidth={'90%'} backround={'--mainColor'} effectBg={'--titleColor'} title={'Войти'} />
                     </form>
+                    <Link href={'/'} className='mt-2 w-full'>
+                        <FancyLinkBtn btnWidth={'90%'} backround={'--mainColor'} effectBg={'--titleColor'} title={'В главную'} />
+                    </Link>
                 </div>
             </div>
         </div>

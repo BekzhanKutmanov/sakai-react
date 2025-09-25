@@ -35,8 +35,6 @@ export default function Tiered({ title, items, insideColor }: TieredProps) {
     }));
 
     const toggleMenu = (e: React.MouseEvent<HTMLButtonElement>) => {
-        console.log(e);
-
         menu.current?.toggle(e);
         // setMobile(prev => !prev);
     };

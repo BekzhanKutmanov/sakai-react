@@ -325,10 +325,10 @@ export default function LessonTest({ element, content, fetchPropElement, clearPr
                                 <b style={{ color: 'red', fontSize: '12px' }}>{errors.title?.message}</b>
                             </div>
                             <div className="flex flex-col justify-center items-center">
-                                <span className="text-sm">Балл</span>
                                 <InputText
                                     type="number"
                                     className="w-[70px]"
+                                    placeholder='Балл'
                                     value={String(editingLesson?.score)}
                                     onChange={(e) => {
                                         setEditingLesson((prev) => prev && { ...prev, score: Number(e.target.value) });

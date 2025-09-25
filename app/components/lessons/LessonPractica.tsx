@@ -286,7 +286,7 @@ export default function LessonPractica({ element, content, fetchPropElement, cle
                                     id="title"
                                     placeholder="Балл"
                                     // value={String(docValue?.score)}
-                                    className="w-[50px] sm:w-[70px]"
+                                    className="w-[50px] sm:w-[70px] h-auto"
                                     onChange={(e) => {
                                         setDocValue((prev) => prev && { ...prev, score: Number(e.target.value) });
                                         setValue('title', e.target.value, { shouldValidate: true });
@@ -411,10 +411,10 @@ export default function LessonPractica({ element, content, fetchPropElement, cle
                                 <b style={{ color: 'red', fontSize: '12px' }}>{errors.title?.message}</b>
                             </div>
                             <div className="flex flex-col justify-center">
-                                <span>Балл</span>
                                 <InputText
                                     type="number"
                                     className="w-[70px]"
+                                    placeholder='Балл'
                                     value={String(editingLesson?.score)}
                                     onChange={(e) => {
                                         setEditingLesson((prev) => prev && { ...prev, score: Number(e.target.value) });

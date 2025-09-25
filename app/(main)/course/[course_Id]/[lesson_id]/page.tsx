@@ -443,16 +443,10 @@ export default function LessonStep() {
             <div className="flex gap-2 mt-4 items-end">
                 {hasSteps ? (
                     <div className="flex items-center gap-4">
-                        <div onClick={handleFetchTypes} className="cursor-pointer w-[40px] h-[40px] sm:w-[57px] sm:h-[57px] rounded animate-step"></div>
+                        <div onClick={handleFetchTypes} className="cursor-pointer w-[54px] h-[54px] sm:w-[54px] sm:h-[54px] rounded animate-step"></div>
                     </div>
                 ) : (
                     <div ref={scrollRef} className={`flex gap-2 max-w-[550px] sm:max-w-[800px] overflow-x-auto scrollbar-thin ${media ? (steps.length >= 6 ? 'right-shadow' : '') : steps.length >= 12 ? 'right-shadow' : ''}`}>
-                        {/* {skeleton ? (
-                            <div className="w-[700px]">
-                                <GroupSkeleton count={1} size={{ width: '100%', height: '3rem' }} />
-                            </div>
-                        ) : ( */}
-
                             {steps.map((item, idx) => {
                                 return (
                                     <div key={item.id} className="flex flex-col items-center">
@@ -460,7 +454,6 @@ export default function LessonStep() {
                                     </div>
                                 );
                             })}
-                        {/* )} */}
                     </div>
                 )}
 
