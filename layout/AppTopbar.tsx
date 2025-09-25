@@ -129,7 +129,7 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
             <div ref={topbarmenuRef} className={classNames('layout-topbar-menu', { 'layout-topbar-menu-mobile-active': layoutState.profileSidebarVisible })}>
                 <div className="flex items-center gap-4">
                     {media ? (
-                        <></>
+                        <Tiered title={{ name: '', font: 'pi pi-ellipsis-v' }} insideColor={'--bodyColor'} items={mobileMenu} />
                     ) : (
                         <div className={`flex items-center gap-3 ${!media ? 'order-2' : 'order-3'} `}>
                             <Link className="text-[var(--titleColor)] hover:text-[var(--mainColor)]" href={'https://www.oshsu.kg/ru'} target='_blank'>Сайт ОшГУ</Link>
@@ -150,7 +150,7 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                 </div>
             </div>
 
-            <b className="text-[red] text-[14px] block sm:hidden ">(в разработке)</b>
+            {/* {media && mobileMenu} */}
         </div>
     );
 });
