@@ -74,8 +74,22 @@ h1, h2, h3, h4, h5, h6 {
   transition: .5s;
 }
 
-.login-bg{
+.login-bg {
   background: url('/layout/svg/login-bg.svg') repeat left/cover;
+}
+
+.home-bg {
+  /* position: absolute;
+  left: 0;
+  top: 0; */
+  /* right: 0; */
+  background: url('/layout/images/bg-home.jpg') no-repeat top/cover;
+  width: 100% !important;
+  /* height: 300px; */
+  /* min-height: 100vh; */
+  /* overflow: hidden; */
+  opacity: 20%;
+  z-index: -1;
 }
 
 /* animate */
