@@ -49,7 +49,7 @@ export default function HomeClient() {
                                 <h2 data-aos="fade-down" data-aos-delay="900" data-aos-duration="1000" data-aos-once="true" className="text-center text-[30px] sm:text-[50px]">
                                     Добро пожаловать на портал дистанционного обучения!
                                 </h2>
-                                <div data-aos="fade-up" data-aos-delay="900" data-aos-duration="1000" data-aos-once="true" className="text-center text-[var(--bodyColor)]">
+                                <div data-aos="fade-up" data-aos-delay="900" data-aos-duration="1000" data-aos-once="true" className="text-center text-[var(--titleColor)]">
                                     {' '}
                                     Мы объединяем проекты университета в сфере онлайн-образования:
                                     <ul className="list-disc text-center m-auto my-4 max-w-[300px]">

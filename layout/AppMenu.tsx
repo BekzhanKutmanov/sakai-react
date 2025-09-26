@@ -371,13 +371,13 @@ const AppMenu = () => {
                 </div>
             </FormModal>
 
-            <ul className="layout-menu">
+            <ul className="layout-menu max-h-[450px] overflow-y-auto scrollbar-thin-y">
                 {model.map((item, i) => {
                     return !item?.seperator ? <AppMenuitem item={item} root={true} index={i} key={item.label} /> : <li className="menu-separator"></li>;
                 })}
             </ul>
             {pathname.startsWith('/course/') && (
-                <>
+                <div className=''>
                     <div className="p-4 mt-auto">
                         <Button label="Добавить тему" icon={'pi pi-plus'} className="cursor-pointer w-full py-2 px-4 rounded-lg transition" onClick={() => setThemeAddVisisble(true)}></Button>
                     </div>
@@ -385,7 +385,7 @@ const AppMenu = () => {
                         <b>Всего баллов за курс</b>
                         <span className='text-[var(--mainColor)]'>{contextThemes?.max_sum_score}</span>
                     </div>
-                </>
+                </div>
             )}
         </MenuProvider>
     );

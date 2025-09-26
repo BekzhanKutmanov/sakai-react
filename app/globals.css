@@ -47,9 +47,29 @@ h1, h2, h3, h4, h5, h6 {
   margin-left: 0;
 }
 
+.scrollbar-thin-y {
+  scroll-snap-type: y mandatory;
+  cursor: grabbing;
+}
+
+.scrollbar-thin-y::-webkit-scrollbar {
+  height: 0px;
+  width: 6px;
+}
+
+.scrollbar-thin-y::-webkit-scrollbar-track {
+  background: transparent;  /* фон дорожки */
+}
+
+.scrollbar-thin-y::-webkit-scrollbar-thumb {
+  background: rgba(20, 152, 229, 0.4); /* сам ползунок */
+  border-radius: 9999px;
+}
+
 .scrollbar-thin{
   scroll-snap-type: x mandatory;
 }
+
 .scrollbar-thin::-webkit-scrollbar {
   height: 0px;
 }

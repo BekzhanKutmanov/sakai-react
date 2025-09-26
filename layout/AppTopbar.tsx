@@ -141,7 +141,8 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                         <Tiered title={{ name: '', font: 'pi pi-ellipsis-v' }} insideColor={'--bodyColor'} items={mobileMenu} />
                     ) : (
                         <div className={`flex items-center gap-3 ${!media ? 'order-2' : 'order-3'} `}>
-                            <Link className="text-[var(--titleColor)] hover:text-[var(--mainColor)]" href={'https://www.oshsu.kg/ru'} target='_blank'>Сайт ОшГУ</Link>
+                            <Link className="text-[var(--titleColor)] text-sm hover:text-[var(--mainColor)]" href={'https://oldmooc.oshsu.kg/'} target='_blank'>Старый Mooc</Link>
+                            <Link className="text-[var(--titleColor)] text-sm hover:text-[var(--mainColor)]" href={'https://www.oshsu.kg/ru'} target='_blank'>Сайт ОшГУ</Link>
                         </div>
                     )}
 

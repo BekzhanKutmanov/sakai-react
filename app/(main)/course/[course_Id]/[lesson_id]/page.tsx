@@ -10,7 +10,7 @@ import GroupSkeleton from '@/app/components/skeleton/GroupSkeleton';
 import useErrorMessage from '@/hooks/useErrorMessage';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { LayoutContext } from '@/layout/context/layoutcontext';
-import { deleteLesson, fetchLessonShow } from '@/services/courses';
+import { deleteLesson, fetchCourseInfo, fetchLessonShow } from '@/services/courses';
 import { addLesson, deleteStep, fetchElement, fetchSteps, fetchTypes } from '@/services/steps';
 import { mainStepsType } from '@/types/mainStepType';
 import { getConfirmOptions } from '@/utils/getConfirmOptions';
@@ -36,6 +36,7 @@ export default function LessonStep() {
     const [formVisible, setFormVisible] = useState(false);
     const [types, setTypes] = useState<{ id: number; title: string; name: string; logo: string }[]>([]);
     const [steps, setSteps] = useState<mainStepsType[]>([]);
+    const [courseInfo, setCourseInfo] = useState<{title: string} | null>(null);
     const [element, setElement] = useState<{ content: any | null; step: mainStepsType } | null>(null);
     const [selectedId, setSelectId] = useState<number | null>(null);
     const [hasSteps, setHasSteps] = useState(false);
@@ -49,6 +50,17 @@ export default function LessonStep() {
 
     const changeUrl = (lessonId: number | null) => {
         router.replace(`/course/${course_id}/${lessonId ? lessonId : null}`);
+    };
+
+    const handleCourseInfo = async () => {
+        setSkeleton(true);
+        const data = await fetchCourseInfo(Number(course_id));
+        console.log(data);
+        
+        if (data && data?.success) {
+            setSkeleton(false);
+            setCourseInfo(data.course);
+        }
     };
 
     const handleShow = async (LessonId: number | null) => {
@@ -140,7 +152,6 @@ export default function LessonStep() {
             setSkeleton(true);
             const data = await fetchElement(Number(lesson_id), stepId);
             if (data.success) {
-
                 setSkeleton(false);
                 setElement({ content: data.content, step: data.step });
             } else {
@@ -212,17 +223,17 @@ export default function LessonStep() {
 
     //     if (lessons.length > 0) {
     //         setThemeNull(false);
-    
+
     //         let chosenId: number | null = null;
 
     //         if (param.lesson_id === 'null' || deleteQuery) {
-    
+
     //             // alert(1);
 
     //             chosenId = lessons[0].id;
     //             setDeleteQuery(false);
     //         } else {
-    
+
     //             // alert(2);
     //             chosenId = param.lesson_id ? Number(param.lesson_id) : lessons[0].id;
     //         }
@@ -237,7 +248,7 @@ export default function LessonStep() {
     // }, [contextThemes, deleteQuery, param.lesson_id]);
 
     // useEffect(() => {
-    
+
     //     if (!lesson_id) return;
 
     //     handleShow(lesson_id);
@@ -282,7 +293,7 @@ export default function LessonStep() {
     // заменяем первый useEffect
     useEffect(() => {
         console.log('Обновился ', contextThemes);
-        
+
         const lessons = contextThemes?.lessons?.data ?? [];
 
         // делаем "снимок" важных полей (id + title)
@@ -342,6 +353,8 @@ export default function LessonStep() {
     }, [lesson_id]);
 
     useEffect(() => {
+        handleCourseInfo();
+
         const el = scrollRef.current;
         if (!el) return;
 
@@ -363,7 +376,10 @@ export default function LessonStep() {
     const lessonInfo = (
         <div className="w-full">
             <div className="bg-[var(--titleColor)] relative flex flex-col justify-center items-center w-full text-white p-4 md:p-3 pb-4">
-                <h1 style={{ color: 'white', fontSize: media ? '24px' : '28px', textAlign: 'center' }} className='w-full text-wrap break-words'>{lessonInfoState?.title}</h1>
+                <h1 style={{ color: 'white', fontSize: media ? '24px' : '28px', textAlign: 'center' }} className="m-0 w-full text-wrap break-words">{courseInfo?.title}</h1>
+                <h2 style={{ color: 'white', fontSize: media ? '22px' : '26px', textAlign: 'center' }} className="w-full text-wrap break-words">
+                    {lessonInfoState?.title}
+                </h2>
             </div>
         </div>
     );
@@ -379,7 +395,7 @@ export default function LessonStep() {
             >
                 <span>{idx + 1}</span>
                 <div className={`rounded ${step === selectedId ? 'activeStep' : 'step'} flex justify-center items-center`}>
-                    <i className={`${icon} text-xl sm:text-2xl text-white`} style={{padding: '15px'}}></i>
+                    <i className={`${icon} text-xl sm:text-2xl text-white`} style={{ padding: '15px' }}></i>
                 </div>
             </div>
         );
@@ -449,13 +465,13 @@ export default function LessonStep() {
                     </div>
                 ) : (
                     <div ref={scrollRef} className={`flex gap-2 max-w-[550px] sm:max-w-[800px] overflow-x-auto scrollbar-thin ${media ? (steps.length >= 6 ? 'right-shadow' : '') : steps.length >= 12 ? 'right-shadow' : ''}`}>
-                            {steps.map((item, idx) => {
-                                return (
-                                    <div key={item.id} className="flex flex-col items-center">
-                                        {step(item.type.logo, item.id, idx)}
-                                    </div>
-                                );
-                            })}
+                        {steps.map((item, idx) => {
+                            return (
+                                <div key={item.id} className="flex flex-col items-center">
+                                    {step(item.type.logo, item.id, idx)}
+                                </div>
+                            );
+                        })}
                     </div>
                 )}
 
@@ -465,12 +481,9 @@ export default function LessonStep() {
                     ) : (
                         <button
                             onClick={handleFetchTypes}
-                            style={{padding: '15px'}}
-
+                            style={{ padding: '15px' }}
                             className="pi pi-plus text-xl sm:text-2xl text-white cursor-pointer border rounded flex justify-center items-center bg-[var(--mainColor)] hover:bg-[var(--mainBorder)] transition"
-                        >
-                            
-                        </button>
+                        ></button>
                     )}
                 </div>
             </div>
@@ -485,8 +498,10 @@ export default function LessonStep() {
             </div>
             {element?.step.type.name === 'document' && <LessonDocument element={element?.step} content={element?.content} fetchPropElement={handleFetchElement} clearProp={hasSteps} />}
             {element?.step.type.name === 'video' && <LessonVideo element={element?.step} content={element?.content} fetchPropElement={handleFetchElement} clearProp={hasSteps} />}
-            {element?.step.type.name === 'test' && <LessonTest element={element?.step} content={element?.content} fetchPropElement={handleFetchElement} fetchPropThemes={()=> contextFetchThemes(Number(course_id), null)} clearProp={hasSteps} />}
-            {element?.step.type.name === 'practical' && <LessonPractica element={element?.step} content={element?.content} fetchPropElement={handleFetchElement} fetchPropThemes={()=> contextFetchThemes(Number(course_id), null)} clearProp={hasSteps} />}
+            {element?.step.type.name === 'test' && <LessonTest element={element?.step} content={element?.content} fetchPropElement={handleFetchElement} fetchPropThemes={() => contextFetchThemes(Number(course_id), null)} clearProp={hasSteps} />}
+            {element?.step.type.name === 'practical' && (
+                <LessonPractica element={element?.step} content={element?.content} fetchPropElement={handleFetchElement} fetchPropThemes={() => contextFetchThemes(Number(course_id), null)} clearProp={hasSteps} />
+            )}
             {element?.step.type.name === 'link' && <LessonLink element={element?.step} content={element?.content} fetchPropElement={handleFetchElement} clearProp={hasSteps} />}
 
             <div className="flex justify-end mt-1">
