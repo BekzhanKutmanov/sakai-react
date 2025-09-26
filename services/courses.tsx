@@ -344,7 +344,7 @@ export const fetchVideoType = async () => {
     }
 };
 
-export const publishCourse = async (id_kafedra: number, id_teacher: number, course_id: number, status: boolean) => {
+export const publishCourse = async (id_kafedra: number, id_teacher: number | null, course_id: number, status: boolean) => {
     const data = {
         id_kafedra: id_kafedra,
         status: [

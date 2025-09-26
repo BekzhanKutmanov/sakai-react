@@ -50,3 +50,15 @@ export const depCourseInfo = async (course_id:number | null, id_kafedra: number 
         return err;
     }
 };
+
+export const depCourse = async (myedu_id:number | null, id_kafedra: number | null) => {
+    try {
+        const res = await axiosInstance.get(`/v1/teacher/controls/department/courses?myedu_id=${myedu_id}&id_kafedra=${id_kafedra}`);
+        const data = await res.data;
+
+        return data;
+    } catch (err) {
+        console.log('Ошибка загрузки:', err);
+        return err;
+    }
+};

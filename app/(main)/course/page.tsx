@@ -235,7 +235,7 @@ export default function Course() {
     };
 
     const onSelect = (e: FileUploadSelectEvent & { files: FileWithPreview[] }) => {
-        if (e.files.length > 0) {
+        if (e.files?.length > 0) {
             editMode
                 ? setEditingLesson((prev) => ({
                       ...prev,
@@ -301,7 +301,7 @@ export default function Course() {
 
     useEffect(() => {
         handleFetchCourse();
-        if (course?.data.length > 5) {
+        if (course?.data?.length > 5) {
             setIsTall(true);
         } else {
             setIsTall(false);
@@ -310,7 +310,7 @@ export default function Course() {
 
     useEffect(() => {
         const title = editMode ? editingLesson.title.trim() : courseValue.title.trim();
-        if (title.length > 0) {
+        if (title?.length > 0) {
             setForStart(false);
         } else {
             setForStart(true);
@@ -732,7 +732,7 @@ export default function Course() {
                                                             )}
                                                         ></Column>
                                                         <Column
-                                                            header={() => <div className="text-[13px]">На рассмотр.</div>}
+                                                            header={() => <div className="text-[13px]">На рассмотрение</div>}
                                                             style={{ margin: '0 3px', textAlign: 'center' }}
                                                             body={(rowData) => (
                                                                 <>

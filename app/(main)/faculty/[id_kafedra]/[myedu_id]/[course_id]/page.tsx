@@ -46,7 +46,7 @@ export default function LessonCheck() {
         const data = await fetchDepartamentSteps(Number(lesson_id), Number(id_kafedra));
         if (data.success) {
             setSkeleton(false);
-            if (data.steps.length < 1) {
+            if (data.steps?.length < 1) {
                 setHasSteps(true);
             } else {
                 setHasSteps(false);
@@ -112,7 +112,7 @@ export default function LessonCheck() {
     // САМИ ТЕМЫ, присваиваем в локальные темы
     useEffect(() => {
         console.log('Темы', contextThemes);
-        if (contextThemes.lessons?.data && contextThemes.lessons.data.length > 0) {
+        if (contextThemes.lessons?.data && contextThemes.lessons.data?.length > 0) {
             setThemes(contextThemes?.lessons.data || []);
             setThemeShow(false);
         } else {
@@ -124,7 +124,7 @@ export default function LessonCheck() {
     useEffect(() => {
         console.log('Лоакльные темы ', themes);
 
-        if (themes.length > 0 && [activeIndex as number]) {
+        if (themes?.length > 0 && [activeIndex as number]) {
             console.log('active index ', activeIndex);
 
             const lessonId = themes[activeIndex as number]?.id;
@@ -173,11 +173,11 @@ export default function LessonCheck() {
                                     <div className="flex flex-col gap-2">
                                         {hasSteps ? (
                                             <p className="text-center text-sm">Данных нет</p>
-                                        ) : content.length > 0 ? (
+                                        ) : content?.length > 0 ? (
                                             content.map((i, idx) => {
                                                 if (i.content) {
                                                     return (
-                                                        <div className={`${idx !== 0 && idx !== content.length ? 'border-t-1 border-[gray]' : ''}`} key={i.id}>
+                                                        <div className={`${idx !== 0 && idx !== content?.length ? 'border-t-1 border-[gray]' : ''}`} key={i.id}>
                                                             {
                                                                 <LessonInfoCard
                                                                     type={i.type.name}

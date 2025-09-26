@@ -48,6 +48,7 @@ export default function HomeClient() {
                                         <FancyLinkBtn btnWidth={'200px'} backround={'--mainColor'} effectBg={'--titleColor'} title={user.is_working ? 'Преподаватель' : user.is_student ? 'Студент' : ''} />
                                     </Link>
                                 )}
+
                             </div>
                         </div>
                     </div>

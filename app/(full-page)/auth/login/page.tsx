@@ -93,16 +93,16 @@ const LoginPage = () => {
     };
 
     return (
-        <div className={`flex flex-col gap-4 pt-4 h-[100vh] login-bg`}>
+        <div className={`flex flex-col gap-4 pt-6 h-[100vh] login-bg`}>
             {/* <div className={`flex flex-col gap-4 pt-4 h-[100vh] ${!media && 'login-bg'}`}> */}
             {/* <InfoBanner title="Кирүү" titleSize={{ default: '30px', sm: '40px' }} /> */}
             <div className="flex gap-4 flex-column lg:flex-row items-center justify-evenly px-4 mb-8">
-                {!media && (
+                {/* {!media && (
                     <div className="user-img">
-                        {/* <img src="/layout/images/enrolled-img2.png" className="w-[450px] object-cover" alt="" /> */}
+                        <img src="/layout/images/enrolled-img2.png" className="w-[450px] object-cover" alt="" />
                         <img src="/layout/images/no-image.png" className="w-[450px] object-cover" alt="" />
                     </div>
-                )}
+                )} */}
 
                 <div className={`w-[90%] sm:w-[500px] shadow-2xl bg-white py-6 px-3 md:py-8 sm:px-4 md:px-8 rounded`}>
                     <h1 className="text-3xl sm:text-4xl font-bold inline-block border-b-2 pb-1 border-[var(--mainColor)]">Вход в mooc</h1>
