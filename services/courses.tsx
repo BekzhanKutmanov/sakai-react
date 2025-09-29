@@ -247,7 +247,7 @@ export const fetchLesson = async (type: string, courseId: number | null, lessonI
 
 export const fetchLessonShow = async (lessonId: number | null) => {
     try {
-        const res = await axiosInstance.get(`v1/teacher/lessons/show?lesson_id=${lessonId}`);
+        const res = await axiosInstance.get(`/v1/teacher/lessons/show?lesson_id=${lessonId}`);
         console.log('Info lesson: ', res.data);
         return res.data;
     } catch (err) {

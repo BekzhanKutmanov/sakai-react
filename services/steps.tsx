@@ -395,8 +395,6 @@ export const deleteLink = async (lesson_id: number, link_id: number, type_id: nu
 };
 
 export const updateLink = async (value: { url: string | null; title: string; description: string | null }, lesson_id: number | null, link_id: number, type_id: number, step_id: number) => {
-    console.log(value);
-
     let formData = new FormData();
     url = `/v1/teacher/usefullinks/update?lesson_id=${lesson_id}&title=${value.title}&description=${value.description}&url=${value.url}&link_id=${link_id}&type_id=${type_id}&step_id=${step_id}`;
     formData.append('type_id', String(type_id));
@@ -434,6 +432,7 @@ export const fetchDepartamentSteps = async (lesson_id: number, id_kafedra: numbe
     }
 };
 
+
 export const fetchDepartamenCourses = async (id_kafedra: number, myedu_id: number) => {
     try {
         const res = await axiosInstance.get(`/v1/teacher/controls/department/courses?id_kafedra=${id_kafedra}&myedu_id=${myedu_id}`);
@@ -442,6 +441,24 @@ export const fetchDepartamenCourses = async (id_kafedra: number, myedu_id: numbe
         return data;
     } catch (err) {
         console.log('Ошибка загрузки:', err);
+        return err;
+    }
+};
+
+export const stepSequenceUpdate = async (lesson_id: number | null, steps: {id: number | null; step: number | null}[]) => {
+    const body = {
+        lesson_id: lesson_id,
+        steps: steps
+    };
+
+    console.log(body);
+
+    try {
+        const res = await axiosInstance.post(`/v1/teacher/lessons/step/sequence`, body);
+
+        return res.data;
+    } catch (err) {
+        console.log('Ошибка при добавлении курса', err);
         return err;
     }
 };

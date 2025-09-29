@@ -7,12 +7,12 @@ import { Button } from 'primereact/button';
 import { FileUpload } from 'primereact/fileupload';
 import { InputText } from 'primereact/inputtext';
 import { ProgressSpinner } from 'primereact/progressspinner';
-import { useContext, useEffect, useRef, useState } from 'react';
+import { ReactElement, ReactHTML, useContext, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { NotFound } from '../NotFound';
 import LessonCard from '../cards/LessonCard';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
-import { addDocument, addPractica, deleteDocument, deletePractica, fetchElement, updateDocument, updatePractica } from '@/services/steps';
+import { addDocument, addPractica, deleteDocument, deletePractica, fetchElement, stepSequenceUpdate, updateDocument, updatePractica } from '@/services/steps';
 import { mainStepsType } from '@/types/mainStepType';
 import useErrorMessage from '@/hooks/useErrorMessage';
 import { LayoutContext } from '@/layout/context/layoutcontext';
@@ -20,18 +20,20 @@ import FormModal from '../popUp/FormModal';
 import { InputTextarea } from 'primereact/inputtextarea';
 import dynamic from 'next/dynamic';
 import GroupSkeleton from '../skeleton/GroupSkeleton';
+import { Editor, EditorTextChangeEvent } from 'primereact/editor';
 
 const PDFViewer = dynamic(() => import('../PDFBook'), {
     ssr: false
 });
 
-export default function LessonPractica({ element, content, fetchPropElement, fetchPropThemes, clearProp }: { element: mainStepsType; content: any; fetchPropElement: (id: number) => void; fetchPropThemes: ()=> void; clearProp: boolean }) {
+export default function LessonPractica({ element, content, fetchPropElement, fetchPropThemes, clearProp }: { element: mainStepsType; content: any; fetchPropElement: (id: number) => void; fetchPropThemes: () => void; clearProp: boolean }) {
     interface docValueType {
         title: string;
         description: string;
         document: File | null;
         url: string;
         score: number | null;
+        stepPos?: number;
     }
 
     interface contentType {
@@ -55,6 +57,20 @@ export default function LessonPractica({ element, content, fetchPropElement, fet
     const fileUploadRef = useRef<FileUpload>(null);
     const showError = useErrorMessage();
     const { setMessage } = useContext(LayoutContext);
+    const [editorDescription, setEditorDescription] = useState<ReactElement | null>(null);
+    const [editorUpdateState, setEditorUpdateState] = useState(false);
+
+    const renderHeader = () => {
+        return (
+            <span className="ql-formats">
+                <button className="ql-bold" aria-label="Bold"></button>
+                <button className="ql-italic" aria-label="Italic"></button>
+                <button className="ql-underline" aria-label="Underline"></button>
+            </span>
+        );
+    };
+
+    const header = renderHeader();
 
     const [editingLesson, setEditingLesson] = useState<docValueType>({ title: '', description: '', document: null, url: '', score: 0 });
     const [visible, setVisisble] = useState(false);
@@ -146,10 +162,9 @@ export default function LessonPractica({ element, content, fetchPropElement, fet
 
     const editing = async () => {
         const data = await fetchElement(element.lesson_id, element.id);
-        console.log(data);
 
         if (data.success) {
-            setEditingLesson({ title: data.content.title, document: null, description: data.content.description, url: '', score: data.step.score });
+            setEditingLesson({ title: data.content.title, document: null, description: data.content.description, url: '', score: data.step.score, stepPos: data?.step?.step });
         } else {
             setMessage({
                 state: true,
@@ -176,7 +191,7 @@ export default function LessonPractica({ element, content, fetchPropElement, fet
                 state: true,
                 value: { severity: 'error', summary: 'Ошибка при добавлении!', detail: '' }
             });
-            if (data.response.status) {
+            if (data?.response?.status) {
                 showError(data.response.status);
             }
         }
@@ -207,10 +222,13 @@ export default function LessonPractica({ element, content, fetchPropElement, fet
     const handleUpdateDoc = async () => {
         setSkeleton(true);
         const data = await updatePractica(editingLesson, document?.lesson_id ? Number(document?.lesson_id) : null, Number(selectId), element.type.id, element.id);
-        if (data?.success) {
+        const steps: { id: number; step: number | null }[] = [{ id: element?.id, step: editingLesson?.stepPos || 0 }];
+        const secuence = await stepSequenceUpdate(document?.lesson_id ? Number(document?.lesson_id) : null, steps);
+        
+        if (data?.success && secuence.success) {
             setSkeleton(false);
             fetchPropElement(element.id);
-            fetchPropThemes();
+            fetchPropThemes();  
             clearValues();
             setMessage({
                 state: true,
@@ -243,7 +261,9 @@ export default function LessonPractica({ element, content, fetchPropElement, fet
                             ) : (
                                 <>
                                     {skeleton ? (
-                                        <div className="w-full"><GroupSkeleton count={1} size={{ width: '100%', height: '6rem' }} /></div>
+                                        <div className="w-full">
+                                            <GroupSkeleton count={1} size={{ width: '100%', height: '6rem' }} />
+                                        </div>
                                     ) : (
                                         document && (
                                             <LessonCard
@@ -299,7 +319,7 @@ export default function LessonPractica({ element, content, fetchPropElement, fet
                             </div>
                         </div>
                         <div>
-                            <InputText
+                            {/* <InputText
                                 placeholder="Описание"
                                 id="title"
                                 value={docValue.description}
@@ -308,6 +328,15 @@ export default function LessonPractica({ element, content, fetchPropElement, fet
                                     setValue('title', e.target.value, { shouldValidate: true });
                                 }}
                                 className="w-full"
+                            /> */}
+                            <Editor
+                                value={docValue.description}
+                                onTextChange={(e: EditorTextChangeEvent) => {
+                                    setDocValue((prev) => ({ ...prev, description: String(e.htmlValue) }));
+                                    setValue('title', String(e.htmlValue), { shouldValidate: true });
+                                }}
+                                headerTemplate={header}
+                                style={{ height: '220px' }}
                             />
                             <b style={{ color: 'red', fontSize: '12px' }}>{errors.title?.message}</b>
                         </div>
@@ -379,8 +408,6 @@ export default function LessonPractica({ element, content, fetchPropElement, fet
     }, [content]);
 
     useEffect(() => {
-        console.log(element);
-
         setDocValue({ title: '', description: '', document: null, url: '', score: 0 });
     }, [element]);
 
@@ -395,9 +422,27 @@ export default function LessonPractica({ element, content, fetchPropElement, fet
                 visible={visible}
                 setVisible={setVisisble}
                 start={false}
+                footerValue={{ footerState: true, reject: 'Назад', next: 'Сохранить' }}
             >
                 <div className="flex flex-col gap-1">
                     <div className="flex flex-col gap-1 items-center justify-center">
+                        <div className="w-full flex flex-col">
+                            <span>Позиция шага:</span>
+                            <InputText
+                                type="number"
+                                value={String(editingLesson?.stepPos) || ''}
+                                className="w-full p-1"
+                                onChange={(e) => {
+                                    setEditingLesson(
+                                        (prev) =>
+                                            prev && {
+                                                ...prev,
+                                                stepPos: Number(e.target.value)
+                                            }
+                                    );
+                                }}
+                            />
+                        </div>
                         <div className="w-full flex gap-1 items-center">
                             <div className="w-full">
                                 <div className="w-full flex gap-1 items-center">
@@ -417,7 +462,7 @@ export default function LessonPractica({ element, content, fetchPropElement, fet
                                 <InputText
                                     type="number"
                                     className="w-[70px]"
-                                    placeholder='Балл'
+                                    placeholder="Балл"
                                     value={String(editingLesson?.score)}
                                     onChange={(e) => {
                                         setEditingLesson((prev) => prev && { ...prev, score: Number(e.target.value) });
@@ -425,18 +470,19 @@ export default function LessonPractica({ element, content, fetchPropElement, fet
                                 />
                             </div>
                         </div>
-                        <InputText
-                            placeholder="Описание"
-                            id="title"
-                            value={editingLesson?.description}
-                            onChange={(e) => {
-                                setEditingLesson((prev) => ({ ...prev, description: e.target.value }));
-                                setValue('title', e.target.value, { shouldValidate: true });
-                            }}
-                            className="w-full"
-                        />
-                        <b style={{ color: 'red', fontSize: '12px' }}>{errors.title?.message}</b>
-
+                        <div className="w-full">
+                            <Editor
+                                className="h-[200px]"
+                                value={editingLesson.description}
+                                onTextChange={(e: EditorTextChangeEvent) => {
+                                    setEditorUpdateState(false);
+                                    setEditingLesson((prev) => ({ ...prev, description: String(e.htmlValue) }));
+                                    setValue('title', String(e.htmlValue), { shouldValidate: true });
+                                }}
+                                headerTemplate={header}
+                            />
+                            <b style={{ color: 'red', fontSize: '12px' }}>{errors.title?.message}</b>
+                        </div>
                         {additional.doc && (
                             <div className="w-full flex gap-1 flex-col items-center">
                                 <input

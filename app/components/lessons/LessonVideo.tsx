@@ -12,7 +12,7 @@ import { NotFound } from '../NotFound';
 import LessonCard from '../cards/LessonCard';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { getToken } from '@/utils/auth';
-import { addDocument, addVideo, deleteDocument, deleteVideo, fetchElement, updateDocument, updateVideo } from '@/services/steps';
+import { addDocument, addVideo, deleteDocument, deleteVideo, fetchElement, stepSequenceUpdate, updateDocument, updateVideo } from '@/services/steps';
 import { mainStepsType } from '@/types/mainStepType';
 import useErrorMessage from '@/hooks/useErrorMessage';
 import { LayoutContext } from '@/layout/context/layoutcontext';
@@ -51,6 +51,7 @@ export default function LessonVideo({ element, content, fetchPropElement, clearP
         video_link: string;
         video_type_id: number; // без null
         cover: File | null;
+        stepPos?: number;
     }
 
     const fileUploadRef = useRef<FileUpload>(null);
@@ -152,11 +153,6 @@ export default function LessonVideo({ element, content, fetchPropElement, clearP
         mode: 'onChange'
     });
 
-    const toggleVideoType = (e: videoType) => {
-        setSelectedCity(e);
-        setVideoValue({ title: '', description: '', file: null, url: '', video_link: '', cover: null, link: null });
-    };
-
     const selectedForEditing = (id: number, type: string) => {
         console.log(id, type);
         setSelectType(type);
@@ -179,7 +175,7 @@ export default function LessonVideo({ element, content, fetchPropElement, clearP
         const data = await fetchElement(element.lesson_id, element.id);
         if (data.success) {
             // setElement({ content: data.content, step: data.step });
-            setEditingLesson({ title: data.content.title, video_type_id: data.content.video_type_id, video_link: data.content.link, cover: null, description: data.content.description });
+            setEditingLesson({ title: data.content.title, video_type_id: data.content.video_type_id, video_link: data.content.link, cover: null, description: data.content.description, stepPos: data?.step?.step });
         } else {
             setMessage({
                 state: true,
@@ -194,7 +190,6 @@ export default function LessonVideo({ element, content, fetchPropElement, clearP
     const handleAddVideo = async () => {
         toggleSpinner();
         const data = await addVideo(videoValue, element.lesson_id, 1, element.type_id, element.id);
-        console.log(data);
 
         if (data.success) {
             fetchPropElement(element.id);
@@ -217,7 +212,6 @@ export default function LessonVideo({ element, content, fetchPropElement, clearP
     // delete video
     const handleDeleteVideo = async (id: number) => {
         const data = await deleteVideo(element.lesson_id, id);
-        console.log(data);
 
         if (data.success) {
             fetchPropElement(element.id);
@@ -238,11 +232,14 @@ export default function LessonVideo({ element, content, fetchPropElement, clearP
 
     // update document
     const handleUpdateVideo = async () => {
-        setSkeleton(true)
+        setSkeleton(true);
         const token = getToken('access_token');
         const data = await updateVideo(token, editingLesson, video?.lesson_id ? Number(video?.lesson_id) : null, Number(selectId), 1, element.type.id, element.type.id);
 
-        if (data?.success) {
+        const steps: { id: number; step: number | null }[] = [{ id: element?.id, step: editingLesson?.stepPos || 0 }];
+        const secuence = await stepSequenceUpdate(video?.lesson_id ? Number(video?.lesson_id) : null, steps);
+
+        if (data?.success && secuence.success) {
             setSkeleton(false);
             fetchPropElement(element.id);
             clearValues();
@@ -360,7 +357,7 @@ export default function LessonVideo({ element, content, fetchPropElement, clearP
                                 <>
                                     {skeleton ? (
                                         <div className="w-full">
-                                            <GroupSkeleton count={1} size={{ width: '100%', height: '20rem' }} />   
+                                            <GroupSkeleton count={1} size={{ width: '100%', height: '20rem' }} />
                                         </div>
                                     ) : !videoCall ? (
                                         video && (
@@ -418,61 +415,51 @@ export default function LessonVideo({ element, content, fetchPropElement, clearP
 
     return (
         <div>
-            <FormModal title={'Обновить урок'} fetchValue={() => handleUpdateVideo()} clearValues={clearValues} visible={visible} setVisible={setVisisble} start={false}>
+            <FormModal title={'Обновить урок'} fetchValue={() => handleUpdateVideo()} clearValues={clearValues} visible={visible} setVisible={setVisisble} start={false} footerValue={{ footerState: true, reject: 'Назад', next: 'Сохранить' }}>
                 <div className="flex flex-col gap-1">
                     <div className="flex flex-col gap-1 items-center justify-center">
-                        {
-                            <>
-                                {/* {editingLesson?.video_type_id ? ( */}
-                                <div className="w-full flex flex-col items-center">
-                                    <InputText
-                                        type="url"
-                                        placeholder="Ссылка"
-                                        value={String(editingLesson?.video_link)}
-                                        className="w-full"
-                                        onChange={(e) => {
-                                            setEditingLesson((prev) => prev && { ...prev, video_link: e.target.value });
-                                            setValue('usefulLink', e.target.value, { shouldValidate: true });
-                                        }}
-                                    />
-                                    <b style={{ color: 'red', fontSize: '12px' }}>{errors.usefulLink?.message}</b>
-                                </div>
-                                {/* ) : ( */}
-                                <>
-                                    {/* <FileUpload
-                                            chooseLabel="Видео жүктөө"
-                                            mode="basic"
-                                            name="demo[]"
-                                            customUpload
-                                            uploadHandler={() => {}}
-                                            accept="video/"
-                                            onSelect={(e) =>
-                                                setEditingLesson(
-                                                    (prev) =>
-                                                        prev && {
-                                                            ...prev,
-                                                            file: e.files[0]
-                                                        }
-                                                )
+                        <div className="w-full flex flex-col">
+                            <span>Позиция шага:</span>
+                            <InputText
+                                type="number"
+                                value={String(editingLesson?.stepPos) || ''}
+                                className="w-full p-1"
+                                onChange={(e) => {
+                                    setEditingLesson(
+                                        (prev) =>
+                                            prev && {
+                                                ...prev,
+                                                stepPos: Number(e.target.value)
                                             }
-                                        />
-                                        <span>{String(editingLesson?.video_link)}</span> */}
-                                </>
-                                {/* )} */}
-                                <InputText
-                                    type="text"
-                                    placeholder="Название"
-                                    className="w-full"
-                                    value={editingLesson?.title && editingLesson?.title}
-                                    onChange={(e) => {
-                                        setEditingLesson((prev) => prev && { ...prev, title: e.target.value });
-                                        setValue('title', e.target.value, { shouldValidate: true });
-                                    }}
-                                />
-                                <b style={{ color: 'red', fontSize: '12px' }}>{errors.title?.message}</b>
-                                <InputText placeholder="Описание" value={editingLesson?.description && editingLesson?.description} onChange={(e) => setEditingLesson((prev) => prev && { ...prev, description: e.target.value })} className="w-full" />
-                            </>
-                        }
+                                    );
+                                }}
+                            />
+                        </div>
+                        <div className="w-full flex flex-col items-center">
+                            <InputText
+                                type="url"
+                                placeholder="Ссылка"
+                                value={String(editingLesson?.video_link)}
+                                className="w-full"
+                                onChange={(e) => {
+                                    setEditingLesson((prev) => prev && { ...prev, video_link: e.target.value });
+                                    setValue('usefulLink', e.target.value, { shouldValidate: true });
+                                }}
+                            />
+                            <b style={{ color: 'red', fontSize: '12px' }}>{errors.usefulLink?.message}</b>
+                        </div>
+                        <InputText
+                            type="text"
+                            placeholder="Название"
+                            className="w-full"
+                            value={editingLesson?.title && editingLesson?.title}
+                            onChange={(e) => {
+                                setEditingLesson((prev) => prev && { ...prev, title: e.target.value });
+                                setValue('title', e.target.value, { shouldValidate: true });
+                            }}
+                        />
+                        <b style={{ color: 'red', fontSize: '12px' }}>{errors.title?.message}</b>
+                        <InputText placeholder="Описание" value={editingLesson?.description && editingLesson?.description} onChange={(e) => setEditingLesson((prev) => prev && { ...prev, description: e.target.value })} className="w-full" />
                     </div>
                 </div>
             </FormModal>

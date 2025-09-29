@@ -26,7 +26,7 @@ export default function useShortText(text: string, textLength: number) {
                     <i className="pi pi-ellipsis-h"></i>
                 </div>
             ) : (
-                <div  className='flex justify-center'>{resultText}</div>
+                <div className='flex justify-center'>{resultText}</div>
             )}
         </>
     );

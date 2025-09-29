@@ -3,7 +3,7 @@ import { Button } from 'primereact/button';
 import { faPlay } from '@fortawesome/free-solid-svg-icons';
 import MyFontAwesome from '../MyFontAwesome';
 import useShortText from '@/hooks/useShortText';
-import { useEffect, useState } from 'react';
+import { ReactElement, useEffect, useState } from 'react';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import { confirmDialog } from 'primereact/confirmdialog';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
@@ -40,6 +40,7 @@ export default function LessonCard({
     const shortTitle = type.typeValue !== 'practica' ? forShortTitle : cardValue.title;
     const shortDoc = useShortText(cardValue?.document || '', 20);
     const shortDescription = useShortText(cardValue.desctiption ? cardValue.desctiption : '', 90);
+    
     const shortUrl = useShortText(cardValue?.url ? cardValue?.url : '', 100);
     const [progressSpinner, setProgressSpinner] = useState(false);
     const media = useMediaQuery('(max-width: 640px)');
@@ -62,7 +63,7 @@ export default function LessonCard({
         } else if (type.typeValue === 'link') {
             // window.location.href = cardValue?.url || '#';
             window.open(cardValue?.url || '#', '_blank');
-        }
+        }   
     };
 
     const videoPreviw = type.typeValue === 'video' && (
@@ -143,7 +144,9 @@ export default function LessonCard({
                             </div>
                         )}
                         <div className={`flex items-center justify-center text-[13px]`}>
-                            {cardValue?.desctiption && cardValue?.desctiption !== 'null' ? shortDescription : cardValue?.desctiption && cardValue?.desctiption !== 'null' && type.typeValue === 'practica' ? <div>{shortDescription}</div> : ''}
+                            {type.typeValue === 'practica' ? cardValue?.desctiption ? <div dangerouslySetInnerHTML={{__html: cardValue.desctiption}}/> 
+                                : cardValue?.desctiption && cardValue?.desctiption !== 'null' && shortDescription : ''
+                            }
                         </div>
 
                         {status === 'working' && (

@@ -21,8 +21,6 @@ export default function Faculty() {
     const showError = useErrorMessage();
     const { setMessage, setGlobalLoading } = useContext(LayoutContext);
 
-    const [selected, setSelected] = useState<City | null>(null);
-    const [faculty, setFaculty] = useState<City[]>([{ name_ru: '', id: null }]);
     const [kafedra, setKafedra] = useState<City[]>([{ name_ru: '', id: null }]);
     const [selectShow, setSelectShow] = useState<boolean>(false);
     const [facultyShow, setFacultyShow] = useState<boolean>(false);
@@ -59,7 +57,6 @@ export default function Faculty() {
 
     const handleFetchKafedra = async () => {
         const data = await fetchKafedra();
-        console.log(data);
 
         if (data && Array.isArray(data)) {
             if (data.length > 0) {
@@ -106,7 +103,7 @@ export default function Faculty() {
                         {facultyShow ? (
                             <NotFound titleMessage="Кафедры не доступны" />
                         ) : (
-                            <DataTable value={kafedra} dataKey="id" key={JSON.stringify('name_ru')} responsiveLayout="stack" breakpoint="960px" rows={5} className="my-custom-table">
+                            <DataTable value={kafedra} dataKey="id" emptyMessage="Нет данных" key={JSON.stringify('name_ru')} responsiveLayout="stack" breakpoint="960px" rows={5} className="my-custom-table">
                                 <Column body={(_, { rowIndex }) => rowIndex + 1} header="#" style={{ width: '20px' }}></Column>
                                 <Column
                                     field="name_ru"

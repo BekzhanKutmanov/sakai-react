@@ -13,7 +13,7 @@ import { NotFound } from '../NotFound';
 import LessonCard from '../cards/LessonCard';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { getToken } from '@/utils/auth';
-import { addDocument, deleteDocument, fetchElement, updateDocument } from '@/services/steps';
+import { addDocument, deleteDocument, fetchElement, stepSequenceUpdate, updateDocument } from '@/services/steps';
 import { mainStepsType } from '@/types/mainStepType';
 import useErrorMessage from '@/hooks/useErrorMessage';
 import { LayoutContext } from '@/layout/context/layoutcontext';
@@ -32,6 +32,7 @@ export default function LessonDocument({ element, content, fetchPropElement, cle
         description: string;
         file: File | null;
         document?: string;
+        stepPos?: number;
     }
 
     interface contentType {
@@ -140,16 +141,17 @@ export default function LessonDocument({ element, content, fetchPropElement, cle
     const sentToPDF = (url: string) => {
         setUrlPDF(url);
         // if (media) {
-            router.push(`/pdf/${url}`);
+        router.push(`/pdf/${url}`);
         // } else {
-            // setPDFVisible(true);
+        // setPDFVisible(true);
         // }
     };
 
     const editing = async () => {
         const data = await fetchElement(element.lesson_id, element.id);
+
         if (data.success) {
-            setEditingLesson({ title: data.content.title, file: null, document: data.content.document, description: data.content.description });
+            setEditingLesson({ title: data.content.title, file: null, document: data.content.document, description: data.content.description, stepPos: data?.step?.step });
         } else {
             setMessage({
                 state: true,
@@ -208,7 +210,10 @@ export default function LessonDocument({ element, content, fetchPropElement, cle
         const token = getToken('access_token');
         const data = await updateDocument(token, document?.lesson_id ? Number(document?.lesson_id) : null, Number(selectId), element.type.id, element.type.id, editingLesson);
 
-        if (data?.success) {
+        const steps: { id: number; step: number | null }[] = [{ id: element?.id, step: editingLesson?.stepPos || 0 }];
+        const secuence = await stepSequenceUpdate(document?.lesson_id ? Number(document?.lesson_id) : null, steps);
+
+        if (data?.success && secuence.success) {
             setSkeleton(false);
             fetchPropElement(element.id);
             clearValues();
@@ -243,7 +248,9 @@ export default function LessonDocument({ element, content, fetchPropElement, cle
                             ) : (
                                 <>
                                     {skeleton ? (
-                                        <div className='w-full'><GroupSkeleton count={1} size={{ width: '100%', height: '6rem' }} /></div>
+                                        <div className="w-full">
+                                            <GroupSkeleton count={1} size={{ width: '100%', height: '6rem' }} />
+                                        </div>
                                     ) : (
                                         document && (
                                             <LessonCard
@@ -270,7 +277,8 @@ export default function LessonDocument({ element, content, fetchPropElement, cle
                             type="file"
                             accept="application/pdf"
                             className="border rounded p-1"
-                            onChange={(e) => {                                const file = e.target.files?.[0];
+                            onChange={(e) => {
+                                const file = e.target.files?.[0];
                                 if (file) {
                                     setDocValue((prev) => ({
                                         ...prev,
@@ -344,14 +352,33 @@ export default function LessonDocument({ element, content, fetchPropElement, cle
                 visible={visible}
                 setVisible={setVisisble}
                 start={false}
+                footerValue={{ footerState: true, reject: 'Назад', next: 'Сохранить' }}
             >
                 <div className="flex flex-col gap-1">
                     <div className="flex flex-col gap-1 items-center justify-center">
+                        <div className="w-full flex flex-col">
+                            <span>Позиция шага:</span>
+                            <InputText
+                                type="number"
+                                value={String(editingLesson?.stepPos) || ''}
+                                className="w-full p-1"
+                                onChange={(e) => {
+                                    setEditingLesson(
+                                        (prev) =>
+                                            prev && {
+                                                ...prev,
+                                                stepPos: Number(e.target.value)
+                                            }
+                                    );
+                                }}
+                            />
+                        </div>
                         <input
                             type="file"
                             accept="application/pdf"
                             className="border rounded p-1 w-full"
-                            onChange={(e) => {                                const file = e.target.files?.[0];
+                            onChange={(e) => {
+                                const file = e.target.files?.[0];
                                 if (file) {
                                     setEditingLesson(
                                         (prev) =>

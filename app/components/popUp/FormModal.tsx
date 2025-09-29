@@ -12,7 +12,8 @@ export default function FormModal({
     clearValues,
     visible,
     setVisible,
-    start
+    start,
+    footerValue
 }: {
     children: ReactNode;
     title: string;
@@ -21,13 +22,13 @@ export default function FormModal({
     visible: boolean;
     setVisible: (params: boolean) => void;
     start: boolean;
+    footerValue?: { footerState: boolean; reject: string; next: string };
 }) {
-    const media = useMediaQuery('(max-width:640px)');
 
     const footerContent = (
         <div>
             <Button
-                label="Назад"
+                label={footerValue?.footerState ? footerValue.reject : 'Назад'}
                 className="reject-button"
                 icon="pi pi-times"
                 onClick={() => {
@@ -35,18 +36,17 @@ export default function FormModal({
                     clearValues();
                 }}
             />
-            {
-                <Button
-                    label="Добавить"
-                    disabled={start}
-                    icon="pi pi-check"
-                    onClick={() => {
-                        setVisible(false);
-                        fetchValue();
-                    }}
-                    autoFocus
-                />
-            }
+
+            <Button
+                label={footerValue?.footerState ? footerValue.next : 'Добавить'}
+                disabled={start}
+                icon="pi pi-check"
+                onClick={() => {
+                    setVisible(false);
+                    fetchValue();
+                }}
+                autoFocus
+            />
         </div>
     );
 

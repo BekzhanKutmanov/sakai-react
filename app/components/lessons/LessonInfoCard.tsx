@@ -20,23 +20,20 @@ export default function LessonInfoCard({
     type: string;
     icon: string;
     title?: string;
-    description?: string;
+    description?: string ;
     documentUrl?: { document: string | null; document_path: string };
     link?: string;
     video_link?: string;
     videoStart?: (id: string) => void;
     test?: { content: string; answers: { id: number | null; text: string; is_correct: boolean }[]; score: number | null };
 }) {
-    const { id_kafedra } = useParams();
-    // console.log(id_kafedra);
-
     const media = useMediaQuery('(max-width: 640px)');
 
     const [testCall, setTestCall] = useState(false);
     const [practicaCall, setPracticaCall] = useState(false);
 
     const docCard = (
-        <div className="w-full flex items-center gap-2 py-1">
+        <div className="w-full flex items-start sm:items-center gap-2 py-1">
             <div className="p-2 bg-[var(--mainColor)] min-w-[36px] min-h-[36px] w-[36px] h-[36px] flex justify-center items-center rounded">
                 <i className={`${icon} text-white`}></i>
             </div>
@@ -64,7 +61,7 @@ export default function LessonInfoCard({
     );
 
     const linkCard = (
-        <div className="w-full flex items-center gap-2 py-1">
+        <div className="w-full flex items-start sm:items-center gap-2 py-1">
             <div className="p-2 bg-[var(--greenColor)] w-[36px] h-[36px] flex justify-center items-center rounded">
                 <i className={`${icon} text-white`}></i>
             </div>
@@ -79,7 +76,7 @@ export default function LessonInfoCard({
     );
 
     const videoCard = (
-        <div className="w-full flex items-center gap-2 py-1">
+        <div className="w-full flex items-start sm:items-center gap-2 py-1">
             <div className="p-2 bg-[#f7634d] w-[36px] h-[36px] flex justify-center items-center rounded">
                 <i className={`${icon} text-white`}></i>
             </div>
@@ -94,7 +91,7 @@ export default function LessonInfoCard({
     );
 
     const testCard = (
-        <div className="w-full flex items-center gap-2 py-1">
+        <div className="w-full flex items-start sm:items-center gap-2 py-1">
             <div className="p-2 bg-[#c38598] w-[36px] h-[36px] flex justify-center items-center rounded">
                 <i className={`${icon} text-white`}></i>
             </div>
@@ -136,7 +133,7 @@ export default function LessonInfoCard({
     );
 
     const practicaCard = (
-        <div className="w-full flex items-center gap-2 py-1">
+        <div className="w-full flex items-start sm:items-center gap-2 py-1">
             <div className="p-2 bg-[var(--yellowColor)] w-[36px] h-[36px] flex justify-center items-center rounded">
                 <i className={`${icon} text-white`}></i>
             </div>
@@ -146,11 +143,13 @@ export default function LessonInfoCard({
         </div>
     );
 
+    const hasPdf = /pdf/i.test(documentUrl?.document_path || ''); // true
+    
     const practicaInfo = (
         <div className="flex flex-col justify-between gap-4 w-full">
             <div className="flex flex-col gap-1 w-full">
                 {documentUrl ? (
-                    documentUrl.document_path && documentUrl.document_path?.length > 0 ? (
+                    documentUrl.document_path && hasPdf ? (
                         <a className="flex gap-2" href={documentUrl.document_path} download target="_blank" rel="noopener noreferrer">
                             <span className="max-w-[800px] text-wrap break-all font-bold hover:underline">{title}</span>
                         </a>
@@ -164,12 +163,13 @@ export default function LessonInfoCard({
                         <span className="max-w-[800px] text-wrap break-all font-bold">{title}</span>
                     </div>
                 )}
-                <p className="max-w-[800px] text-wrap break-all">{description !== 'null' && description}</p>
+                {/* <p className="max-w-[800px] text-wrap break-all">{description}</p> */}
+                {description && description !== 'null' && <div dangerouslySetInnerHTML={{__html: description}}/>}
             </div>
             <div className="flex flex-col gap-2 w-full">
                 <div className="flex items-center gap-1">
                     <span className="text-[var(--mainColor)] text-[13px]">Документ: </span>
-                    {documentUrl && documentUrl.document_path && documentUrl.document_path?.length > 0 ? 
+                    {documentUrl && documentUrl.document_path && hasPdf ? 
                         <a className={`flex gap-2 pi pi-file-arrow-up text-xl text-white bg-[var(--mainColor)] p-1 rounded`} href={documentUrl && documentUrl.document_path} download target="_blank" rel="noopener noreferrer"></a>
                         : <span className={`flex gap-2 pi pi-file-arrow-up text-xl text-white bg-[gray] p-1 rounded`} rel="noopener noreferrer"></span>
                     }

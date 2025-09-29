@@ -7,7 +7,8 @@ import useBreadCrumbs from '@/hooks/useBreadCrumbs';
 import useErrorMessage from '@/hooks/useErrorMessage';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { LayoutContext } from '@/layout/context/layoutcontext';
-import { fetchStreamStudents } from '@/services/streams';
+import { fetchStreams, fetchStreamStudents } from '@/services/streams';
+import { mainStreamsType } from '@/types/mainStreamsType';
 import { useParams, usePathname } from 'next/navigation';
 import { Button } from 'primereact/button';
 import { Column } from 'primereact/column';
@@ -15,41 +16,16 @@ import { DataTable } from 'primereact/datatable';
 import React, { useContext, useEffect, useState } from 'react';
 
 export default function StudentList() {
-    // const studentList = [
-    //     {
-    //         student_name: 'lesha',
-    //         point: 31,
-    //         last_visist: 'xx-xx',
-    //         info: true
-    //     },
-    //     {
-    //         student_name: 'evheni',
-    //         point: 0,
-    //         last_visist: false,
-    //         info: true
-    //     },
-    //     {
-    //         student_name: 'alesha',
-    //         point: 3,
-    //         last_visist: 'xx-xx',
-    //         info: false
-    //     },
-    //     {
-    //         student_name: 'lesha',
-    //         point: 3,
-    //         last_visist: 'xx-xx',
-    //         info: true
-    //     }
-    // ];
     const [studentList, setStudentList] = useState([]);
     const [hasList, setHasList] = useState(false);
     const [skeleton, setSkeleton] = useState(false);
+    const [streams, setStreams] = useState<mainStreamsType[]>([]);
+    const [stream, setStream] = useState<mainStreamsType | null>(null);
 
     const { setMessage, setGlobalLoading } = useContext(LayoutContext);
     const showError = useErrorMessage();
 
-    const { connect_id, stream_id } = useParams();
-    console.log('params: ', connect_id, stream_id);
+    const { cource_id, connect_id, stream_id } = useParams();
 
     const media = useMediaQuery('(max-width: 640px)');
     const teachingBreadCrumb = [
@@ -97,10 +73,25 @@ export default function StudentList() {
         }, 1000);
     };
 
+    const handleFetchStreams = async () => {
+        if (cource_id) {
+            const data = await fetchStreams(cource_id ? Number(cource_id) : null);
+            if (data) {
+                setStreams(data);
+            } else {
+                setMessage({
+                    state: true,
+                    value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
+                });
+                if (data?.response?.status) {
+                    showError(data.response.status);
+                }
+            }
+        }
+    };
+
     const handleFetchStudents = async () => {
         const data = await fetchStreamStudents(connect_id ? Number(connect_id) : null, stream_id ? Number(stream_id) : null);
-        console.log(data);
-
         toggleSkeleton();
         if (data) {
             setHasList(false);
@@ -120,10 +111,20 @@ export default function StudentList() {
     // USEECFFECTS
 
     useEffect(() => {
+        handleFetchStreams();
         toggleSkeleton();
         handleFetchStudents();
     }, []);
 
+    useEffect(() => {
+        if (streams && streams?.length > 0 && stream_id) {
+            const forStream = streams.find((item) => item.stream_id === Number(stream_id));
+            if (forStream) {
+                setStream(forStream);
+            }
+        }
+    }, [streams]);
+    
     return (
         <div>
             {skeleton ? (
@@ -132,9 +133,32 @@ export default function StudentList() {
                 <>
                     {/* info section */}
                     <div className="bg-[var(--titleColor)] relative flex flex-col justify-center items-center w-full text-white p-[30px] md:p-[40px] pb-4">
-                        <div>
-                            <h1 style={{ color: 'white', fontSize: media ? '24px' : '36px', textAlign: 'center' }}>{'Список студентов'}</h1>
-                            {/* <div className="w-full block sm:hidden">{breadcrumb}</div> */}
+                        <h1 className="text-wrap break-words" style={{ color: 'white', fontSize: media ? '22px' : '26px', textAlign: 'center' }}>
+                            {stream?.subject_name.name_ru}
+                        </h1>
+
+                        <div className="w-full flex flex-wrap flex-col sm:flex-row gap-3 justify-center text-[12px] sm:text-[14px]">
+                            <span className="text-sm font-semibold">{stream?.semester?.name_ru}</span>
+
+                            <div className="flex gap-1 items-center">
+                                <span className="font-semibold">{stream?.subject_type_name?.name_ru}</span>
+                                {/* <span>{stream?.teacher?.name}</span> */}
+                            </div>
+                            <div className="flex gap-1 items-center">
+                                <span >Язык обучения: </span>
+                                <span className="font-semibold">{stream?.language?.name}</span>
+                            </div>
+                            <div className="flex gap-1 items-center">
+                                <span>Год обучения: </span>
+                                <span className="font-semibold">20{stream?.id_edu_year}</span>
+                            </div>
+                            <div className="flex gap-1 items-center">
+                                <span>Период: </span>
+                                <span className="font-semibold">{stream?.period.name_ru}</span>
+                            </div>
+                            <div>
+                                <span className="bg-[var(--greenColor)] text-[12px] text-center text-white p-1 rounded">{stream?.edu_form?.name_ru}</span>
+                            </div>
                         </div>
                     </div>
                 </>
@@ -149,7 +173,7 @@ export default function StudentList() {
                         <GroupSkeleton count={studentList.length} size={{ width: '100%', height: '4rem' }} />
                     ) : (
                         <>
-                            <DataTable value={studentList} dataKey="id" breakpoint="960px" rows={5} className="mini-table">
+                            <DataTable value={studentList} dataKey="id" emptyMessage="Нет данных" breakpoint="960px" rows={5} className="mini-table">
                                 <Column body={(_, { rowIndex }) => rowIndex + 1} header="#" style={{ width: '20px' }}></Column>
                                 <Column
                                     field="title"

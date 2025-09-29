@@ -10,10 +10,8 @@ import { CourseType } from '@/types/courseType';
 import { mainStepsType } from '@/types/mainStepType';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
-import { Accordion, AccordionTab } from 'primereact/accordion';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
-import { ProgressSpinner } from 'primereact/progressspinner';
 import { useContext, useEffect, useState } from 'react';
 
 export default function CoursesDep() {
@@ -36,17 +34,10 @@ export default function CoursesDep() {
     }
 
     const { id_kafedra, myedu_id } = useParams();
-    console.log(id_kafedra, myedu_id);
 
     const [courses, setCourses] = useState<kafedraInfoType[]>([]);
     const [contentShow, setContentShow] = useState<boolean>(false);
     const [teacher, setTeacher] = useState<{id: number; myedu_id: number;} | null>(null);
-
-    const [themes, setThemes] = useState<themeType[]>([]);
-    const [steps, setSteps] = useState<mainStepsType[]>([]);
-    const [hasSteps, setHasSteps] = useState(false);
-    const [skeleton, setSkeleton] = useState(false);
-    const [activeIndex, setActiveIndex] = useState<number | number[]>(0);
     const [forDisabled, setForDisabled] = useState(false);
 
     const { setMessage, setGlobalLoading } = useContext(LayoutContext);
@@ -54,7 +45,6 @@ export default function CoursesDep() {
 
     const fetchDepartamentCourse = async () => {
         const data = await depCourse(Number(myedu_id), Number(id_kafedra));
-        console.log(data);
 
         if (data && data.courses) {
             setTeacher(data);
@@ -116,19 +106,12 @@ export default function CoursesDep() {
         fetchDepartamentCourse();
     }, []);
 
-    useEffect(() => {
-        console.log(courses);
-    }, [courses]);
-
     return (
         <div>
             {contentShow ? (
                 <NotFound titleMessage="Курсы не доступны" />
             ) : (
-              // {  
-
-              // }
-                <DataTable value={courses} dataKey="id" key={JSON.stringify(forDisabled)} responsiveLayout="stack" breakpoint="960px" rows={5} className="my-custom-table">
+                <DataTable value={courses} dataKey="id" emptyMessage="Нет данных" key={JSON.stringify(forDisabled)} responsiveLayout="stack" breakpoint="960px" rows={5} className="my-custom-table">
                     <Column body={(_, { rowIndex }) => rowIndex + 1} header="#" style={{ width: '20px' }}></Column>
                     <Column body={imageBodyTemplate}></Column>
                     <Column
@@ -137,7 +120,6 @@ export default function CoursesDep() {
                         style={{ width: '80%' }}
                         body={(rowData) => (
                             <Link href={`/faculty/${id_kafedra}/${teacher?.myedu_id}/${rowData.id}`} key={rowData.id}>
-                                {/* {rowData.last_name} {rowData.name} {rowData.father_name} */}
                                 {rowData.title}
                             </Link>
                         )}

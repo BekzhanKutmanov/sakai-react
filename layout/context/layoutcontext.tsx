@@ -113,6 +113,8 @@ export const LayoutProvider = ({ children }: ChildContainerProps) => {
     const [departament, setDepartament] = useState<{ last_name: string; name: string; father_name: string; info: string }>({ last_name: '', name: '', father_name: '', info: '' });
 
     useEffect(() => {
+        console.log('Темы ', contextThemes);
+        
         if (pathname === '/course' && !departament.name) {
             setLayoutState((prev) => ({
                 ...prev,

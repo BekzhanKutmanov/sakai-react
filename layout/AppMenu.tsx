@@ -261,8 +261,8 @@ const AppMenu = () => {
     useEffect(() => {
         console.log(contextThemes);
 
-        if (contextThemes && contextThemes.lessons) {
-            const newThemes = contextThemes.lessons.data.map((item: any, idx: number) => ({
+        if (contextThemes && contextThemes?.lessons) {
+            const newThemes = contextThemes.lessons?.data?.map((item: any, idx: number) => ({
                 label: `${idx + 1}. ${item.title}`,
                 id: item.id,
                 to: `/course/${course_Id}/${item.id}`,
@@ -304,6 +304,7 @@ const AppMenu = () => {
                 visible={visible}
                 setVisible={setVisisble}
                 start={false}
+                footerValue={{ footerState: true, reject: 'Назад', next: 'Сохранить' }}
             >
                 <div className="flex flex-col w-full items-center gap-2">
                     <div className="w-full flex flex-col justify-center items-center">
@@ -377,13 +378,13 @@ const AppMenu = () => {
                 })}
             </ul>
             {pathname.startsWith('/course/') && (
-                <div className=''>
+                <div className="">
                     <div className="p-4 mt-auto">
                         <Button label="Добавить тему" icon={'pi pi-plus'} className="cursor-pointer w-full py-2 px-4 rounded-lg transition" onClick={() => setThemeAddVisisble(true)}></Button>
                     </div>
-                    <div className='flex justify-center gap-1 items-center'>
+                    <div className="flex justify-center gap-1 items-center">
                         <b>Всего баллов за курс</b>
-                        <span className='text-[var(--mainColor)]'>{contextThemes?.max_sum_score}</span>
+                        <span className="text-[var(--mainColor)]">{contextThemes?.max_sum_score}</span>
                     </div>
                 </div>
             )}

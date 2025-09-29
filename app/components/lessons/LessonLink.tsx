@@ -11,7 +11,7 @@ import { useForm } from 'react-hook-form';
 import { NotFound } from '../NotFound';
 import LessonCard from '../cards/LessonCard';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
-import { addDocument, addLink, addPractica, deleteDocument, deleteLink, deletePractica, fetchElement, updateDocument, updateLink, updatePractica } from '@/services/steps';
+import { addDocument, addLink, addPractica, deleteDocument, deleteLink, deletePractica, fetchElement, stepSequenceUpdate, updateDocument, updateLink, updatePractica } from '@/services/steps';
 import { mainStepsType } from '@/types/mainStepType';
 import useErrorMessage from '@/hooks/useErrorMessage';
 import { LayoutContext } from '@/layout/context/layoutcontext';
@@ -23,6 +23,7 @@ export default function LessonLink({ element, content, fetchPropElement, clearPr
         title: string;
         description: string;
         url: string;
+        stepPos?: number;
     }
 
     interface contentType {
@@ -95,10 +96,9 @@ export default function LessonLink({ element, content, fetchPropElement, clearPr
 
     const editing = async () => {
         const data = await fetchElement(element.lesson_id, element.id);
-        console.log(data);
 
         if (data.success) {
-            setEditingLesson({ title: data.content.title, description: data.content.description, url: data.content.url });
+            setEditingLesson({ title: data.content.title, description: data.content.description, url: data.content.url, stepPos: data?.step?.step });
         } else {
             setMessage({
                 state: true,
@@ -154,7 +154,10 @@ export default function LessonLink({ element, content, fetchPropElement, clearPr
     const handleUpdateLink = async () => {
         setSkeleton(true);
         const data = await updateLink(editingLesson, link?.lesson_id ? Number(link?.lesson_id) : null, Number(selectId), element.type.id, element.id);
-        if (data?.success) {
+
+        const steps: { id: number; step: number | null }[] = [{ id: element?.id, step: editingLesson?.stepPos || 0 }];
+        const secuence = await stepSequenceUpdate(link?.lesson_id ? Number(link?.lesson_id) : null, steps);
+        if (data?.success && secuence.success) {
             setSkeleton(false);
             fetchPropElement(element.id);
             clearValues();
@@ -271,8 +274,25 @@ export default function LessonLink({ element, content, fetchPropElement, clearPr
 
     return (
         <div>
-            <FormModal title={'Обновить урок'} fetchValue={() => handleUpdateLink()} clearValues={clearValues} visible={visible} setVisible={setVisisble} start={false}>
+            <FormModal title={'Обновить урок'} fetchValue={() => handleUpdateLink()} clearValues={clearValues} visible={visible} setVisible={setVisisble} start={false} footerValue={{ footerState: true, reject: 'Назад', next: 'Сохранить' }}>
                 <div className="flex flex-col gap-1">
+                    <div className="w-full flex flex-col">
+                        <span>Позиция шага:</span>
+                        <InputText
+                            type="number"
+                            value={String(editingLesson?.stepPos) || ''}
+                            className="w-full p-1"
+                            onChange={(e) => {
+                                setEditingLesson(
+                                    (prev) =>
+                                        prev && {
+                                            ...prev,
+                                            stepPos: Number(e.target.value)
+                                        }
+                                );
+                            }}
+                        />
+                    </div>
                     <div className="w-full flex flex-col items-center">
                         <InputText
                             id="usefulLink"

@@ -13,12 +13,10 @@ import { Dialog } from 'primereact/dialog';
 import { useContext, useEffect, useState } from 'react';
 
 export default function LessonCheck() {
-    const { setMessage, contextFetchThemes, contextThemes } = useContext(LayoutContext);
+    const { setMessage, contextFetchThemes,setContextThemes, contextThemes } = useContext(LayoutContext);
     const showError = useErrorMessage();
 
     const { id_kafedra, course_id } = useParams();
-    // const p = useParams();
-    // console.log(p);
 
     const [themes, setThemes] = useState<themeType[]>([]);
     const [themeShow, setThemeShow] = useState(false);
@@ -33,8 +31,6 @@ export default function LessonCheck() {
     const handleCourseInfo = async () => {
         if (course_id) {
             const data = await depCourseInfo(Number(course_id), Number(id_kafedra));
-            console.log('info', data);  
-
             if (data.success) {
                 setCourseInfo({title: data.course.title})
             }
@@ -66,8 +62,6 @@ export default function LessonCheck() {
     };
 
     const handleVideoCall = (value: string | null) => {
-        console.log(value);
-
         if (!value) {
             setMessage({
                 state: true,
@@ -77,7 +71,6 @@ export default function LessonCheck() {
 
         const url = new URL(typeof value === 'string' ? value : '');
         let videoId = null;
-        console.log(url);
 
         if (url.hostname === 'youtu.be') {
             // короткая ссылка, видео ID — в пути
@@ -86,7 +79,6 @@ export default function LessonCheck() {
             // стандартная ссылка, видео ID в параметре v
             videoId = url.searchParams.get('v');
         }
-        console.log(videoId);
 
         if (!videoId) {
             setMessage({
@@ -96,22 +88,21 @@ export default function LessonCheck() {
             return null; // не удалось получить ID
         }
         // return `https://www.youtube.com/embed/${videoId}`;
-
-        console.log('value', videoId);
         setVideoLink(`https://www.youtube.com/embed/${videoId}`);
         setVideoCall(true);
     };
 
     // ПРОСИМ КУРС ДЛЯ НАЗВАНИЯ И ТЕМЫ
     useEffect(() => {
-        console.warn('Вызов')   
         contextFetchThemes(Number(course_id), id_kafedra ? Number(id_kafedra) : null);
         handleCourseInfo();
+        return () => {
+            setContextThemes([]);
+        };
     }, []);
 
     // САМИ ТЕМЫ, присваиваем в локальные темы
     useEffect(() => {
-        console.log('Темы', contextThemes);
         if (contextThemes.lessons?.data && contextThemes.lessons.data?.length > 0) {
             setThemes(contextThemes?.lessons.data || []);
             setThemeShow(false);
@@ -122,11 +113,7 @@ export default function LessonCheck() {
 
     // просто посмотреть пока
     useEffect(() => {
-        console.log('Лоакльные темы ', themes);
-
         if (themes?.length > 0 && [activeIndex as number]) {
-            console.log('active index ', activeIndex);
-
             const lessonId = themes[activeIndex as number]?.id;
             if (lessonId) {
                 handleFetchSteps(lessonId);

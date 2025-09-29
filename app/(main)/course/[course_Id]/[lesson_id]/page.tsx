@@ -10,7 +10,7 @@ import GroupSkeleton from '@/app/components/skeleton/GroupSkeleton';
 import useErrorMessage from '@/hooks/useErrorMessage';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { LayoutContext } from '@/layout/context/layoutcontext';
-import { deleteLesson, fetchCourseInfo, fetchLessonShow } from '@/services/courses';
+import { fetchCourseInfo, fetchLessonShow } from '@/services/courses';
 import { addLesson, deleteStep, fetchElement, fetchSteps, fetchTypes } from '@/services/steps';
 import { mainStepsType } from '@/types/mainStepType';
 import { getConfirmOptions } from '@/utils/getConfirmOptions';
@@ -36,7 +36,7 @@ export default function LessonStep() {
     const [formVisible, setFormVisible] = useState(false);
     const [types, setTypes] = useState<{ id: number; title: string; name: string; logo: string }[]>([]);
     const [steps, setSteps] = useState<mainStepsType[]>([]);
-    const [courseInfo, setCourseInfo] = useState<{title: string} | null>(null);
+    const [courseInfo, setCourseInfo] = useState<{ title: string } | null>(null);
     const [element, setElement] = useState<{ content: any | null; step: mainStepsType } | null>(null);
     const [selectedId, setSelectId] = useState<number | null>(null);
     const [hasSteps, setHasSteps] = useState(false);
@@ -55,8 +55,6 @@ export default function LessonStep() {
     const handleCourseInfo = async () => {
         setSkeleton(true);
         const data = await fetchCourseInfo(Number(course_id));
-        console.log(data);
-        
         if (data && data?.success) {
             setSkeleton(false);
             setCourseInfo(data.course);
@@ -105,6 +103,7 @@ export default function LessonStep() {
     const handleFetchSteps = async (lesson_id: number | null) => {
         setSkeleton(true);
         const data = await fetchSteps(Number(lesson_id));
+
         if (data.success) {
             setSkeleton(false);
             if (data.steps.length < 1) {
@@ -149,6 +148,7 @@ export default function LessonStep() {
 
     const handleFetchElement = async (stepId: number) => {
         if (lesson_id) {
+
             setSkeleton(true);
             const data = await fetchElement(Number(lesson_id), stepId);
             if (data.success) {
@@ -376,7 +376,9 @@ export default function LessonStep() {
     const lessonInfo = (
         <div className="w-full">
             <div className="bg-[var(--titleColor)] relative flex flex-col justify-center items-center w-full text-white p-4 md:p-3 pb-4">
-                <h1 style={{ color: 'white', fontSize: media ? '24px' : '28px', textAlign: 'center' }} className="m-0 w-full text-wrap break-words">{courseInfo?.title}</h1>
+                <h1 style={{ color: 'white', fontSize: media ? '24px' : '28px', textAlign: 'center' }} className="m-0 w-full text-wrap break-words">
+                    {courseInfo?.title}
+                </h1>
                 <h2 style={{ color: 'white', fontSize: media ? '22px' : '26px', textAlign: 'center' }} className="w-full text-wrap break-words">
                     {lessonInfoState?.title}
                 </h2>
@@ -496,13 +498,63 @@ export default function LessonStep() {
             <div className="shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)] mt-3 pb-1 flex items-center justify-between flex-col sm:flex-row gap-1">
                 <b className="sm:text-[18px]">{element?.step.type.title}</b>
             </div>
-            {element?.step.type.name === 'document' && <LessonDocument element={element?.step} content={element?.content} fetchPropElement={handleFetchElement} clearProp={hasSteps} />}
-            {element?.step.type.name === 'video' && <LessonVideo element={element?.step} content={element?.content} fetchPropElement={handleFetchElement} clearProp={hasSteps} />}
-            {element?.step.type.name === 'test' && <LessonTest element={element?.step} content={element?.content} fetchPropElement={handleFetchElement} fetchPropThemes={() => contextFetchThemes(Number(course_id), null)} clearProp={hasSteps} />}
-            {element?.step.type.name === 'practical' && (
-                <LessonPractica element={element?.step} content={element?.content} fetchPropElement={handleFetchElement} fetchPropThemes={() => contextFetchThemes(Number(course_id), null)} clearProp={hasSteps} />
+            {element?.step.type.name === 'document' && (
+                <LessonDocument
+                    element={element?.step}
+                    content={element?.content}
+                    fetchPropElement={(stepId) => {
+                        handleFetchElement(stepId);
+                        handleFetchSteps(lesson_id);
+                    }}
+                    clearProp={hasSteps}
+                />
             )}
-            {element?.step.type.name === 'link' && <LessonLink element={element?.step} content={element?.content} fetchPropElement={handleFetchElement} clearProp={hasSteps} />}
+            {element?.step.type.name === 'video' && (
+                <LessonVideo
+                    element={element?.step}
+                    content={element?.content}
+                    fetchPropElement={(stepId) => {
+                        handleFetchElement(stepId);
+                        handleFetchSteps(lesson_id);
+                    }}
+                    clearProp={hasSteps}
+                />
+            )}
+            {element?.step.type.name === 'test' && (
+                <LessonTest
+                    element={element?.step}
+                    content={element?.content}
+                    fetchPropElement={(stepId) => {
+                        handleFetchElement(stepId);
+                        handleFetchSteps(lesson_id);
+                    }}
+                    fetchPropThemes={() => contextFetchThemes(Number(course_id), null)}
+                    clearProp={hasSteps}
+                />
+            )}
+            {element?.step.type.name === 'practical' && (
+                <LessonPractica
+                    element={element?.step}
+                    content={element?.content}
+                    fetchPropElement={(stepId) => {
+                        handleFetchElement(stepId);
+                        handleFetchSteps(lesson_id);
+                    }}
+                    fetchPropThemes={() => contextFetchThemes(Number(course_id), null)}
+                    clearProp={hasSteps}
+                />
+            )}
+            {element?.step.type.name === 'link' && (
+                <LessonLink
+                    element={element?.step}
+                    content={element?.content}
+                    fetchPropElement={(stepId) => {
+                        handleFetchElement(stepId);
+                        handleFetchSteps(lesson_id);
+                    }}
+                    clearProp={hasSteps}
+                />
+            )}
 
             <div className="flex justify-end mt-1">
                 <Button

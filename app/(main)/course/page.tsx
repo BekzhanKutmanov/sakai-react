@@ -318,8 +318,6 @@ export default function Course() {
     }, [courseValue.title, editingLesson.title]);
 
     useEffect(() => {
-        
-
         if (coursesValue?.length < 1) {
             setHasCourses(true);
         } else {
@@ -447,7 +445,7 @@ export default function Course() {
     return (
         <div className="main-bg">
             {/* modal window */}
-            <FormModal title={editMode ? 'Обновить курс' : 'Добавить'} fetchValue={editMode ? handleUpdateCourse : handleAddCourse} clearValues={clearValues} visible={formVisible} setVisible={setFormVisible} start={forStart}>
+            <FormModal title={editMode ? 'Обновить курс' : 'Добавить'} fetchValue={editMode ? handleUpdateCourse : handleAddCourse} clearValues={clearValues} visible={formVisible} setVisible={setFormVisible} start={forStart} footerValue={{ footerState: editMode, reject: 'Назад', next: 'Сохранить' }}>
                 <div className="flex flex-col gap-1">
                     {/* <div className="flex flex-col lg:flex-row gap-1 justify-around items-center"> */}
                     <div className="flex flex-col gap-1 items-center justify-center">
@@ -697,7 +695,7 @@ export default function Course() {
                                         ) : (
                                             <div>
                                                 <div ref={topRef}>
-                                                    <DataTable value={coursesValue} dataKey="id" key={JSON.stringify(forStreamId)} responsiveLayout="stack" breakpoint="960px" rows={5} className="my-custom-table">
+                                                    <DataTable value={coursesValue} dataKey="id" emptyMessage="Нет данных" key={JSON.stringify(forStreamId)} responsiveLayout="stack" breakpoint="960px" rows={5} className="my-custom-table">
                                                         <Column body={(_, { rowIndex }) => rowIndex + 1} header="#" style={{ width: '20px' }}></Column>
                                                         <Column style={{width : '70px'}} header={()=> <div className='flex justify-center'><i className='pi pi-images text-xl'></i></div>} body={imageBodyTemplate}></Column>
 

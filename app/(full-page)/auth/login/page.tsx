@@ -16,6 +16,7 @@ import { logout } from '@/utils/logout';
 import { LoginType } from '@/types/login';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import Link from 'next/link';
+import { Button } from 'primereact/button';
 
 const LoginPage = () => {
     const { layoutConfig, setUser, setMessage, setGlobalLoading, setDepartament, departament } = useContext(LayoutContext);
@@ -23,6 +24,7 @@ const LoginPage = () => {
     const router = useRouter();
     const media = useMediaQuery('(max-width: 1030px)');
     // const containerClassName = classNames('surface-ground flex align-items-center justify-content-center min-h-screen min-w-screen overflow-hidden', { 'p-input-filled': layoutConfig.inputStyle === 'filled' });
+    const [showPassword, setShowPassword] = useState(false);
 
     const {
         register,
@@ -106,28 +108,39 @@ const LoginPage = () => {
 
                 <div className={`w-[90%] sm:w-[500px] shadow-2xl bg-white py-6 px-3 md:py-8 sm:px-4 md:px-8 rounded`}>
                     <h1 className="text-3xl sm:text-4xl font-bold inline-block border-b-2 pb-1 border-[var(--mainColor)]">Вход в mooc</h1>
-                    <form onSubmit={handleSubmit(onSubmit, onError)} className="flex flex-col gap-4">
+                    <form onSubmit={handleSubmit(onSubmit, onError)} className="w-full flex flex-col gap-4">
                         <div className="flex flex-col">
                             {/* <label htmlFor="email1" className="block text-900 text-[16px] md:text-xl font-medium mb-1 md:mb-2">
                                 MyEdu email
                             </label> */}
-                            <InputText {...register('email')} id="email1" type="text" placeholder="email@oshsu.kg" className="w-[90%] p-2 sm:p-3" />
+                            <InputText {...register('email')} id="email1" type="text" placeholder="email@oshsu.kg" className="w-[100%] p-2 sm:p-3" />
                             {errors.email && <b className="text-[red] text-[12px] ml-2">{errors.email.message}</b>}
                         </div>
                         <div className="flex flex-col">
-                            <Controller
+                            {/* <Controller
                                 name="password"
                                 control={control}
                                 defaultValue=""
                                 render={({ field }) => <Password {...field} toggleMask placeholder='Пароль' className={`w-[100%]`} inputClassName="w-[90%] p-2 sm:p-3" inputStyle={{ marginRight: '8px' }} feedback={false} />}
+                            /> */}
+                            <Controller
+                                name="password"
+                                control={control}
+                                defaultValue=""
+                                render={({ field }) => (
+                                    <div className="p-inputgroup flex-1">
+                                        <InputText {...field} type={showPassword ? 'text' : 'password'} placeholder="Пароль" className="w-full p-2 sm:p-3" />
+                                        <Button type="button" icon={showPassword ? 'pi pi-eye-slash text-white' : 'pi pi-eye text-white'} onClick={() => setShowPassword((prev) => !prev)} className="p-button-text" />
+                                    </div>
+                                )}
                             />
                             {errors.password && <b className="text-[red] text-[12px] ml-2">{errors.password.message}</b>}
                         </div>
 
-                        <FancyLinkBtn btnWidth={'90%'} backround={'--mainColor'} effectBg={'--titleColor'} title={'Войти'} />
+                        <FancyLinkBtn btnWidth={'100%'} backround={'--mainColor'} effectBg={'--titleColor'} title={'Войти'} />
                     </form>
-                    <Link href={'/'} className='mt-2 w-full'>
-                        <FancyLinkBtn btnWidth={'90%'} backround={'--mainColor'} effectBg={'--titleColor'} title={'В главную'} />
+                    <Link href={'/'} className="mt-2 w-full">
+                        <FancyLinkBtn btnWidth={'100%'} backround={'--mainColor'} effectBg={'--titleColor'} title={'В главную'} />
                     </Link>
                 </div>
             </div>

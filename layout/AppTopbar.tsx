@@ -72,6 +72,13 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                       window.location.href = '/auth/login';
                   }
               },
+
+        {
+            label: 'Старый Mooc',
+            icon: '',
+            items: [],
+            url: 'https://oldmooc.oshsu.kg/'
+        },
         {
             label: 'Сайт ОшГУ',
             icon: '',
@@ -105,11 +112,11 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
         }
     ];
 
-    useEffect(()=> {
+    useEffect(() => {
         setTimeout(() => {
             setSkeleton(false);
         }, 1000);
-    },[]);
+    }, []);
 
     return (
         <div className="layout-topbar">
@@ -141,13 +148,20 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                         <Tiered title={{ name: '', font: 'pi pi-ellipsis-v' }} insideColor={'--bodyColor'} items={mobileMenu} />
                     ) : (
                         <div className={`flex items-center gap-3 ${!media ? 'order-2' : 'order-3'} `}>
-                            <Link className="text-[var(--titleColor)] text-sm hover:text-[var(--mainColor)]" href={'https://oldmooc.oshsu.kg/'} target='_blank'>Старый Mooc</Link>
-                            <Link className="text-[var(--titleColor)] text-sm hover:text-[var(--mainColor)]" href={'https://www.oshsu.kg/ru'} target='_blank'>Сайт ОшГУ</Link>
+                            <Link className="text-[var(--titleColor)] text-sm hover:text-[var(--mainColor)]" href={'https://oldmooc.oshsu.kg/'} target="_blank">
+                                Старый Mooc
+                            </Link>
+                            <Link className="text-[var(--titleColor)] text-sm hover:text-[var(--mainColor)]" href={'https://www.oshsu.kg/ru'} target="_blank">
+                                Сайт ОшГУ
+                            </Link>
                         </div>
                     )}
 
-                    {skeleton ? <div className="w-[150px]"><GroupSkeleton count={1} size={{ width: '100%', height: '3rem' }} /></div>
-                    : user ? (
+                    {skeleton ? (
+                        <div className="w-[150px]">
+                            <GroupSkeleton count={1} size={{ width: '100%', height: '3rem' }} />
+                        </div>
+                    ) : user ? (
                         <div className={`hidden lg:block ${media ? 'order-1' : 'order-2'}`}>
                             <Tiered title={{ name: '', font: 'pi pi-user' }} items={profileItems} insideColor={'--titleColor'} />
                         </div>

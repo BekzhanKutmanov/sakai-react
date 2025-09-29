@@ -20,10 +20,6 @@ export default function ItemCard({
         setActiveStreamIds(matchedIds);
     }, [streams, connection]);
 
-    useEffect(() => {
-        console.log(subject);
-    }, [subject]);
-
     return (
         <div className={`w-full shadow-md rounded p-3 ${subject.connect && 'bg-[var(--greenBgColor)] '}`}>
             <div className={`w-full`}>

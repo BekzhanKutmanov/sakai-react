@@ -177,9 +177,7 @@ export default function StreamList({
     }, [streams]);
 
     useEffect(() => {
-        insideDisplayStreams(displayStreams);
-        console.log(displayStreams);
-        
+        insideDisplayStreams(displayStreams);        
     }, [displayStreams]);
 
     const itemTemplate = (item: mainStreamsType, index: number) => {
@@ -232,8 +230,8 @@ export default function StreamList({
                             <span className="font-semibold">{item?.semester?.name_ru}</span>
                             <span className="bg-[var(--greenColor)] text-[12px] text-white p-1 rounded">{item?.edu_form?.name_ru}</span>
                             {item.connect_id && (
-                                <Link href={`/students/${item.connect_id}/${item.stream_id}`} className="underline text-sm">
-                                    Студенттер
+                                <Link href={`/students/${courseValue?.id}/${item.connect_id}/${item.stream_id}`} className="underline text-sm">
+                                    Студенты
                                 </Link>
                             )}
                         </div>

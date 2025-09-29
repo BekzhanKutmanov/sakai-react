@@ -9,7 +9,7 @@ import { useContext, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { NotFound } from '../NotFound';
 import LessonCard from '../cards/LessonCard';
-import { addDocument, addTest, deleteDocument, deleteTest, fetchElement, updateDocument, updateTest } from '@/services/steps';
+import { addDocument, addTest, deleteDocument, deleteTest, fetchElement, stepSequenceUpdate, updateDocument, updateTest } from '@/services/steps';
 import { mainStepsType } from '@/types/mainStepType';
 import useErrorMessage from '@/hooks/useErrorMessage';
 import { LayoutContext } from '@/layout/context/layoutcontext';
@@ -18,11 +18,11 @@ import { InputTextarea } from 'primereact/inputtextarea';
 import { testType } from '@/types/testType';
 import GroupSkeleton from '../skeleton/GroupSkeleton';
 
-export default function LessonTest({ element, content, fetchPropElement, fetchPropThemes, clearProp }: { element: mainStepsType; content: any; fetchPropElement: (id: number) => void; fetchPropThemes: ()=> void; clearProp: boolean }) {
+export default function LessonTest({ element, content, fetchPropElement, fetchPropThemes, clearProp }: { element: mainStepsType; content: any; fetchPropElement: (id: number) => void; fetchPropThemes: () => void; clearProp: boolean }) {
     const showError = useErrorMessage();
     const { setMessage } = useContext(LayoutContext);
 
-    const [editingLesson, setEditingLesson] = useState<{ title: string; score: number } | null>({ title: '', score: 0 });
+    const [editingLesson, setEditingLesson] = useState<{ title: string; score: number, stepPos?: number } | null>({ title: '', score: 0 });
     const [visible, setVisisble] = useState(false);
     const [contentShow, setContentShow] = useState(false);
     // doc
@@ -67,7 +67,7 @@ export default function LessonTest({ element, content, fetchPropElement, fetchPr
     const editing = async () => {
         const data = await fetchElement(element.lesson_id, element.id);
         if (data.success) {
-            setEditingLesson({ title: data.content.content, score: data.content.score });
+            setEditingLesson({ title: data.content.content, score: data.content.score, stepPos: data?.step?.step });
             if (data.content.answers && Array.isArray(data.content.answers)) {
                 setAnswer(data.content.answers);
             }
@@ -86,7 +86,7 @@ export default function LessonTest({ element, content, fetchPropElement, fetchPr
         const data = await addTest(answer, testValue.title, element?.lesson_id && Number(element?.lesson_id), element.type.id, element.id, testValue.score);
         if (data?.success) {
             fetchPropElement(element.id);
-            fetchPropThemes()
+            fetchPropThemes();
             clearValues();
             setMessage({
                 state: true,
@@ -118,10 +118,12 @@ export default function LessonTest({ element, content, fetchPropElement, fetchPr
 
     // update test
     const handleUpdateTest = async () => {
-        setSkeleton(true)
+        setSkeleton(true);
         const data = await updateTest(answer, editingLesson?.title || '', element.lesson_id, Number(selectId), element.type.id, element.id, editingLesson?.score || 0);
-
-        if (data?.success) {
+        const steps: { id: number; step: number | null }[] = [{ id: element?.id, step: editingLesson?.stepPos || 0 }];
+        const secuence = await stepSequenceUpdate(content?.lesson_id ? Number(content?.lesson_id) : null, steps);
+        
+        if (data?.success && secuence.success) {
             setSkeleton(false);
             fetchPropElement(element.id);
             fetchPropThemes();
@@ -146,8 +148,6 @@ export default function LessonTest({ element, content, fetchPropElement, fetchPr
 
     // delete document
     const handleDeleteTest = async (id: number) => {
-        console.log(element.lesson_id, id, element.type.id, element.id);
-
         const data = await deleteTest(element.lesson_id, id, element.type.id, element.id);
         if (data.success) {
             clearValues();
@@ -253,7 +253,6 @@ export default function LessonTest({ element, content, fetchPropElement, fetchPr
                                                 <InputText
                                                     type="text"
                                                     value={item.text}
-
                                                     className="p-inputtext-sm w-[90%] sm:w-full"
                                                     onChange={(e) => {
                                                         setAnswer((prev) => prev.map((ans, i) => (i === index ? { ...ans, text: e.target.value } : ans)));
@@ -310,9 +309,27 @@ export default function LessonTest({ element, content, fetchPropElement, fetchPr
                 visible={visible}
                 setVisible={setVisisble}
                 start={false}
+                footerValue={{ footerState: true, reject: 'Назад', next: 'Сохранить' }}
             >
                 <div className="flex flex-col gap-1">
                     <div className="w-[90%] m-auto lesson-card-border flex flex-col gap-2 sm:items-center shadow rounded p-1 sm:p-2">
+                        <div className="w-full flex flex-col">
+                            <span>Позиция шага:</span>
+                            <InputText
+                                type="number"
+                                value={String(editingLesson?.stepPos) || ''}
+                                className="w-full p-1"
+                                onChange={(e) => {
+                                    setEditingLesson(
+                                        (prev) =>
+                                            prev && {
+                                                ...prev,
+                                                stepPos: Number(e.target.value)
+                                            }
+                                    );
+                                }}
+                            />
+                        </div>
                         <div className="w-full flex items-center gap-1">
                             <div className="w-full">
                                 <InputTextarea
@@ -331,7 +348,7 @@ export default function LessonTest({ element, content, fetchPropElement, fetchPr
                                 <InputText
                                     type="number"
                                     className="w-[70px]"
-                                    placeholder='Балл'
+                                    placeholder="Балл"
                                     value={String(editingLesson?.score)}
                                     onChange={(e) => {
                                         setEditingLesson((prev) => prev && { ...prev, score: Number(e.target.value) });
