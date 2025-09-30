@@ -38,9 +38,9 @@ export default function LessonCard({
 }) {
     const forShortTitle = useShortText(cardValue.title, 200);
     const shortTitle = type.typeValue !== 'practica' ? forShortTitle : cardValue.title;
-    const shortDoc = useShortText(cardValue?.document || '', 20);
+    const shortDoc = useShortText(cardValue?.document || '', 100);
     const shortDescription = useShortText(cardValue.desctiption ? cardValue.desctiption : '', 90);
-    
+
     const shortUrl = useShortText(cardValue?.url ? cardValue?.url : '', 100);
     const [progressSpinner, setProgressSpinner] = useState(false);
     const media = useMediaQuery('(max-width: 640px)');
@@ -63,7 +63,7 @@ export default function LessonCard({
         } else if (type.typeValue === 'link') {
             // window.location.href = cardValue?.url || '#';
             window.open(cardValue?.url || '#', '_blank');
-        }   
+        }
     };
 
     const videoPreviw = type.typeValue === 'video' && (
@@ -102,29 +102,45 @@ export default function LessonCard({
                         {/* <div className=''>{!cardValue.photo && <img className="cover" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSweN5K2yaBwZpz5W9CxY9S41DI-2LawmjzYw&s" alt="" />}</div> */}
                         <div className={`flex justify-center gap-1 ${cardValue.score ? 'items-center gap-2 flex-col' : ''}`}>
                             {cardValue.score ? (
-                                <div className="flex items-center justify-start gap-1">
-                                    <span className="text-[var(--mainColor)] sm:text-lg">Балл: </span>
-                                    <b className="text-[16px] sm:text-[18px]">{`${cardValue.score}`}</b>
+                                <div className="w-full flex justify-between items-center">
+                                    <div className="flex items-center justify-start gap-1">
+                                        <span className="text-[var(--mainColor)] sm:text-lg">Балл: </span>
+                                        <b className="text-[16px] sm:text-[18px]">{`${cardValue.score}`}</b>
+                                    </div>
+                                    {status === 'working' && (
+                                        <div className={`bg-white p-2 flex gap-1 items-center justify-center mt-1`}>
+                                            <i className={`pi pi-calendar text-[var(--mainColor)]`}></i>
+                                            <span className="text-[12px]">{lessonDate}</span>
+                                        </div>
+                                    )}
                                 </div>
                             ) : (
                                 ''
                             )}
-                            <b className={`flex items-center justify-start text-[16px] sm:text-[18px] mt-1 text-wrap break-all ${type.typeValue === 'practica' && ' shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]'}`}>{shortTitle}</b>
+                            <div className="w-full flex justify-between items-center flex-col sm:flex-row">
+                                <b className={`flex items-center justify-start text-[16px] sm:text-[18px] mt-1 text-wrap break-all ${type.typeValue === 'practica' && ' shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]'}`}>{shortTitle}</b>
+                                {!cardValue.score && status === 'working' && (
+                                    <div className={`bg-white p-2 flex gap-1 items-center justify-center mt-1`}>
+                                        <i className={`pi pi-calendar text-[var(--mainColor)]`}></i>
+                                        <span className="text-[12px]">{lessonDate}</span>
+                                    </div>
+                                )}
+                            </div>
                         </div>
 
-                        {type.typeValue !== 'practica' && <div className="flex items-start justify-center text-[15px] sm:text-[17px] m-auto">{shortDoc}</div>}
+                        {type.typeValue !== 'practica' && <div className="flex items-start  text-[15px] sm:text-[17px]">{shortDoc}</div>}
 
                         {type.typeValue === 'practica' && cardValue.url ? (
-                            <div className="flex sm:items-center justify-center gap-2 flex-col sm:flex-row">
+                            <div className="flex sm:items-center  gap-2 flex-col sm:flex-row">
                                 <Link href={cardValue?.url} target="_blank" className="underline">
                                     Ссылка:
                                 </Link>
-                                <span className="flex justify-center max-w-[500px] text-wrap break-all">{cardValue?.url}</span>
+                                <span className="flex  max-w-[500px] text-wrap break-all">{cardValue?.url}</span>
                             </div>
                         ) : (
                             type.typeValue === 'link' && (
                                 <>
-                                    <span className="flex justify-center text-wrap break-all">{shortUrl}</span>
+                                    <span className="flex text-wrap break-all">{shortUrl}</span>
                                 </>
                             )
                         )}
@@ -143,18 +159,9 @@ export default function LessonCard({
                                 })}
                             </div>
                         )}
-                        <div className={`flex items-center justify-center text-[13px]`}>
-                            {type.typeValue === 'practica' ? cardValue?.desctiption ? <div dangerouslySetInnerHTML={{__html: cardValue.desctiption}}/> 
-                                : cardValue?.desctiption && cardValue?.desctiption !== 'null' && shortDescription : ''
-                            }
+                        <div className={`flex items-center text-[13px] w-full text-wrap break-words`}>
+                            {type.typeValue === 'practica' ? cardValue?.desctiption && <div className='w-full text-wrap break-words' dangerouslySetInnerHTML={{ __html: cardValue.desctiption }} /> : cardValue?.desctiption && cardValue?.desctiption !== 'null' && <div className='w-full text-wrap break-words'>{shortDescription}</div>}
                         </div>
-
-                        {status === 'working' && (
-                            <div className={`flex gap-1 items-center justify-center mt-1`}>
-                                <i className={`pi pi-calendar text-[var(--mainColor)]`}></i>
-                                <span className="text-[12px]">{lessonDate}</span>
-                            </div>
-                        )}
                     </div>
                     {/* video preview */}
                     {videoPreviw}
@@ -175,7 +182,12 @@ export default function LessonCard({
                                     {type.typeValue === 'doc' && (
                                         <div className="flex gap-1 items-center">
                                             <div className="flex gap-1 items-center">
-                                                <Button onClick={lessonCardEvents} className={`w-full ${btnLabel === 'Открыть' ? 'flex justify-center pi pi-eye h-[31px] sm:h-[38px]' : ''}`} label={btnLabel !== 'Открыть' ? btnLabel : ' '} disabled={progressSpinner === true ? true : false} />
+                                                <Button
+                                                    onClick={lessonCardEvents}
+                                                    className={`w-full ${btnLabel === 'Открыть' ? 'flex justify-center pi pi-eye h-[31px] sm:h-[38px]' : ''}`}
+                                                    label={btnLabel !== 'Открыть' ? btnLabel : ' '}
+                                                    disabled={progressSpinner === true ? true : false}
+                                                />
                                                 {progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}
                                             </div>
                                             <a href={urlForDownload} download target="_blank" rel="noopener noreferrer">
@@ -194,7 +206,12 @@ export default function LessonCard({
                                     )}
                                     {type.typeValue === 'link' && (
                                         <div className="flex gap-1 items-center">
-                                            <Button onClick={lessonCardEvents} className={`w-full ${btnLabel === 'Открыть' ? 'flex justify-center pi pi-eye h-[31px] sm:h-[38px]' : btnLabel === 'Перейти' ? 'flex justify-center pi pi-link h-[31px] sm:h-[38px]' : ' '}`} label={btnLabel !== 'Открыть' && btnLabel !== 'Перейти' ? btnLabel : ' '} disabled={progressSpinner === true ? true : false} />
+                                            <Button
+                                                onClick={lessonCardEvents}
+                                                className={`w-full ${btnLabel === 'Открыть' ? 'flex pi pi-eye h-[31px] sm:h-[38px]' : btnLabel === 'Перейти' ? 'flex pi pi-link h-[31px] sm:h-[38px]' : ' '}`}
+                                                label={btnLabel !== 'Открыть' && btnLabel !== 'Перейти' ? btnLabel : ' '}
+                                                disabled={progressSpinner === true ? true : false}
+                                            />
                                             {progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}
                                         </div>
                                     )}
@@ -204,7 +221,7 @@ export default function LessonCard({
                                                 <Button
                                                     className=""
                                                     icon={'pi pi-pencil'}
-                                                    label={!media ? 'Редактирование' : ''}
+                                                    label={!media ? 'Редактировать' : ''}
                                                     onClick={() => {
                                                         onSelected && onSelected(cardValue.id, cardValue?.type || '');
                                                     }}

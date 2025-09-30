@@ -2,6 +2,7 @@
 
 import LessonInfoCard from '@/app/components/lessons/LessonInfoCard';
 import { NotFound } from '@/app/components/NotFound';
+import GroupSkeleton from '@/app/components/skeleton/GroupSkeleton';
 import useErrorMessage from '@/hooks/useErrorMessage';
 import { LayoutContext } from '@/layout/context/layoutcontext';
 import { publishCourse } from '@/services/courses';
@@ -37,16 +38,24 @@ export default function CoursesDep() {
 
     const [courses, setCourses] = useState<kafedraInfoType[]>([]);
     const [contentShow, setContentShow] = useState<boolean>(false);
+    const [contentNull, setContentNull] = useState<boolean>(false);
     const [teacher, setTeacher] = useState<{id: number; myedu_id: number;} | null>(null);
     const [forDisabled, setForDisabled] = useState(false);
+    const [skeleton, setSkeleton] = useState(false);
 
     const { setMessage, setGlobalLoading } = useContext(LayoutContext);
     const showError = useErrorMessage();
 
     const fetchDepartamentCourse = async () => {
         const data = await depCourse(Number(myedu_id), Number(id_kafedra));
-
-        if (data && data.courses) {
+        console.log(data);
+        
+        if (data && data?.courses) {
+            if(data.courses?.length < 1){
+                setContentNull(true);
+            } else {
+                setContentNull(false);
+            }
             setTeacher(data);
             setCourses(data.courses);
             setContentShow(false);
@@ -106,56 +115,62 @@ export default function CoursesDep() {
         fetchDepartamentCourse();
     }, []);
 
+    if(contentNull) return <NotFound titleMessage="Курсы отсутствуют" />
+
     return (
         <div>
-            {contentShow ? (
+            {skeleton ? <div className="w-full"><GroupSkeleton count={5} size={{ width: '100%', height: '3rem' }} /></div>
+             : contentShow ? (
                 <NotFound titleMessage="Курсы не доступны" />
             ) : (
-                <DataTable value={courses} dataKey="id" emptyMessage="Нет данных" key={JSON.stringify(forDisabled)} responsiveLayout="stack" breakpoint="960px" rows={5} className="my-custom-table">
-                    <Column body={(_, { rowIndex }) => rowIndex + 1} header="#" style={{ width: '20px' }}></Column>
-                    <Column body={imageBodyTemplate}></Column>
-                    <Column
-                        field="title"
-                        header="Название"
-                        style={{ width: '80%' }}
-                        body={(rowData) => (
-                            <Link href={`/faculty/${id_kafedra}/${teacher?.myedu_id}/${rowData.id}`} key={rowData.id}>
-                                {rowData.title}
-                            </Link>
-                        )}
-                    ></Column>
-                    <Column
-                        header="Публикация"
-                        body={(rowData) => (
-                            <div key={rowData.id} className='flex justify-center items-center'>
-                                {!rowData.is_published ? (
-                                    <button className={`theme-toggle ${forDisabled && 'opacity-5'}`} disabled={forDisabled} onClick={() => publish(Number(id_kafedra), rowData.id, true)} aria-pressed="false">
-                                        <span className="right">
-                                            <span className="option option-left" aria-hidden></span>
-                                            <span className="option option-right" aria-hidden></span>
-                                            <span className="knob" aria-hidden></span>
-                                        </span>
-                                    </button>
-                                ) : (
-                                    <button className={`theme-toggle ${forDisabled && 'opacity-5'}`} disabled={forDisabled} onClick={() => publish(Number(id_kafedra), rowData.id, false)} aria-pressed="false">
-                                        <span className="track">
-                                            <span className="option option-left" aria-hidden></span>
-
-                                            <span className="option option-right" aria-hidden>
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="green" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-label="Опубликовано">
-                                                    <circle cx="12" cy="12" r="10"></circle>
-                                                    <path d="M9 12l2 2 4-4"></path>
-                                                </svg>
+                <>
+                    <h3 className="text-lg sm:text-xl pb-1 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">Преподаватели</h3>
+                    <DataTable value={courses} dataKey="id" emptyMessage="Загрузка" key={JSON.stringify(forDisabled)} responsiveLayout="stack" breakpoint="960px" rows={5} className="my-custom-table">
+                        <Column body={(_, { rowIndex }) => rowIndex + 1} header="#" style={{ width: '20px' }}></Column>
+                        <Column body={imageBodyTemplate}></Column>
+                        <Column
+                            field="title"
+                            header="Название"
+                            style={{ width: '80%' }}
+                            body={(rowData) => (
+                                <Link href={`/faculty/${id_kafedra}/${teacher?.myedu_id}/${rowData.id}`} key={rowData.id}>
+                                    {rowData.title}
+                                </Link>
+                            )}
+                        ></Column>
+                        <Column
+                            header="Публикация"
+                            body={(rowData) => (
+                                <div key={rowData.id} className='flex justify-center items-center'>
+                                    {!rowData.is_published ? (
+                                        <button className={`theme-toggle ${forDisabled && 'opacity-5'}`} disabled={forDisabled} onClick={() => publish(Number(id_kafedra), rowData.id, true)} aria-pressed="false">
+                                            <span className="right">
+                                                <span className="option option-left" aria-hidden></span>
+                                                <span className="option option-right" aria-hidden></span>
+                                                <span className="knob" aria-hidden></span>
                                             </span>
+                                        </button>
+                                    ) : (
+                                        <button className={`theme-toggle ${forDisabled && 'opacity-5'}`} disabled={forDisabled} onClick={() => publish(Number(id_kafedra), rowData.id, false)} aria-pressed="false">
+                                            <span className="track">
+                                                <span className="option option-left" aria-hidden></span>
 
-                                            <span className="knob" aria-hidden></span>
-                                        </span>
-                                    </button>
-                                )}
-                            </div>
-                        )}
-                    ></Column>
-                </DataTable>
+                                                <span className="option option-right" aria-hidden>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="green" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-label="Опубликовано">
+                                                        <circle cx="12" cy="12" r="10"></circle>
+                                                        <path d="M9 12l2 2 4-4"></path>
+                                                    </svg>
+                                                </span>
+
+                                                <span className="knob" aria-hidden></span>
+                                            </span>
+                                        </button>
+                                    )}
+                                </div>
+                            )}
+                        ></Column>
+                    </DataTable>
+                </>
             )}
         </div>
     );

@@ -25,6 +25,7 @@ export default function Faculty() {
     const [selectShow, setSelectShow] = useState<boolean>(false);
     const [facultyShow, setFacultyShow] = useState<boolean>(false);
     const [skeleton, setSkeleton] = useState(false);
+    const [contentNull, setContentNull] = useState<boolean>(false);
 
     // const handleFetchFaculty = async () => {
     //     setSkeleton(true);
@@ -56,16 +57,20 @@ export default function Faculty() {
     // };
 
     const handleFetchKafedra = async () => {
+        setSkeleton(true);
         const data = await fetchKafedra();
 
         if (data && Array.isArray(data)) {
+            setSkeleton(false);
             if (data.length > 0) {
                 setKafedra(data);
                 setFacultyShow(false);
+                setContentNull(false);
             } else {
-                setFacultyShow(true);
+                setContentNull(true);
             }
         } else {
+            setSkeleton(false);
             setFacultyShow(true);
         }
     };
@@ -79,21 +84,10 @@ export default function Faculty() {
         }, 900);
     }, []);
 
+    if(contentNull) return <NotFound titleMessage="Курсы отсутствуют" />
+
     return (
         <div className="main-bg flex flex-col gap-4">
-            {/* <div>
-                {skeleton ? (
-                    <GroupSkeleton count={1} size={{ width: '100%', height: '5rem' }} />
-                ) : selectShow ? (
-                    <p className="text-[16px] text-center font-bold my-2">Факультеты временно не доступны</p>
-                ) : (
-                    <div className="w-full overflow-x-auto">
-                        <h3 className="text-xl mb-2 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)] ">Выберите факультет</h3>
-                        <Dropdown value={selected} onChange={(e: DropdownChangeEvent) => setSelected(e.value)} options={faculty} optionLabel="name_ru" className="w-[90%] overflow-x-auto" panelClassName="w-[50%] overflow-x-scroll" />
-                    </div>
-                )}
-            </div> */}
-            {/* data table */}
             {skeleton ? (
                 <GroupSkeleton count={5} size={{ width: '100%', height: '3rem' }} />
             ) : (
@@ -103,7 +97,7 @@ export default function Faculty() {
                         {facultyShow ? (
                             <NotFound titleMessage="Кафедры не доступны" />
                         ) : (
-                            <DataTable value={kafedra} dataKey="id" emptyMessage="Нет данных" key={JSON.stringify('name_ru')} responsiveLayout="stack" breakpoint="960px" rows={5} className="my-custom-table">
+                            <DataTable value={kafedra} dataKey="id" emptyMessage="Загрузка" key={JSON.stringify('name_ru')} responsiveLayout="stack" breakpoint="960px" rows={5} className="my-custom-table">
                                 <Column body={(_, { rowIndex }) => rowIndex + 1} header="#" style={{ width: '20px' }}></Column>
                                 <Column
                                     field="name_ru"

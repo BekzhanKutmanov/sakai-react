@@ -86,7 +86,7 @@ export default function Course() {
             course_id: id,
             status: status ? 1 : 0
         };
-        
+
         const data = await veryfyCourse(forSentStreams);
         if (data.success) {
             contextFetchCourse(1);
@@ -96,7 +96,6 @@ export default function Course() {
                 value: { severity: 'success', summary: 'Успешно добавлен!', detail: '' }
             });
         } else {
-            
             setSkeleton(false);
             if (data.response.data.cause) {
                 setMessage({
@@ -136,9 +135,10 @@ export default function Course() {
     const handleFetchCourse = async (page = 1) => {
         const data = await fetchCourses(page, 0);
         toggleSkeleton();
-
+        setSkeleton(true);
         if (course) {
             setHasCourses(false);
+            setSkeleton(false);
             setValueCourses(course.data);
             setPagination({
                 currentPage: course.current_page,
@@ -147,6 +147,7 @@ export default function Course() {
             });
         } else {
             setHasCourses(true);
+            setSkeleton(false);
             setMessage({
                 state: true,
                 value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
@@ -290,74 +291,6 @@ export default function Course() {
         setActiveIndex(e.index);
     };
 
-    useEffect(() => {
-        contextFetchCourse(1);
-        setPageState(1);
-        setGlobalLoading(true);
-        setTimeout(() => {
-            setGlobalLoading(false);
-        }, 900);
-    }, []);
-
-    useEffect(() => {
-        handleFetchCourse();
-        if (course?.data?.length > 5) {
-            setIsTall(true);
-        } else {
-            setIsTall(false);
-        }
-    }, [course]);
-
-    useEffect(() => {
-        const title = editMode ? editingLesson.title.trim() : courseValue.title.trim();
-        if (title?.length > 0) {
-            setForStart(false);
-        } else {
-            setForStart(true);
-        }
-    }, [courseValue.title, editingLesson.title]);
-
-    useEffect(() => {
-        if (coursesValue?.length < 1) {
-            setHasCourses(true);
-        } else {
-            if (globalCourseId != null) {
-                const exists = coursesValue.some((c: { id: number }) => c.id === globalCourseId.id);
-                if (exists) {
-                    setForStreamId({ id: globalCourseId.id, title: globalCourseId.title || '' });
-                } else {
-                    setForStreamId({ id: coursesValue[0].id, title: coursesValue[0].title });
-                }
-            } else {
-                setForStreamId({ id: coursesValue[0].id, title: coursesValue[0].title });
-            }
-            setHasCourses(false);
-        }
-    }, [coursesValue]);
-
-    useEffect(() => {
-        const handleShow = async () => {
-            setProgressSpinner(true);
-            const data = await fetchCourseInfo(selectedCourse);
-
-            if (data?.success) {
-                setProgressSpinner(false);
-                setEditingLesson({
-                    title: data.course.title || '',
-                    video_url: data.course.video_url || '',
-                    description: data.course.description || '',
-                    image: data.course.image
-                });
-            } else {
-                setProgressSpinner(false);
-            }
-        };
-
-        if (editMode) {
-            handleShow();
-        }
-    }, [editMode]);
-
     const itemTemplate = (shablonData: any) => {
         return (
             <div className="col-12">
@@ -369,6 +302,7 @@ export default function Course() {
                         <div className="font-bold text-md mb-2">
                             <Link
                                 href={`/course/${shablonData.id}/${'null'}`}
+                                className="max-w-sm text-word break-all"
                                 onClick={() => {
                                     setMainCourseId(shablonData.id);
                                     setGlobalLoading(true);
@@ -442,10 +376,86 @@ export default function Course() {
     const imagestateStyle = imageState || editingLesson.image ? 'flex gap-1 items-center justify-between flex-col sm:flex-row' : '';
     const imageTitle = useShortText(typeof editingLesson.image === 'string' ? editingLesson.image : '', 20);
 
+    useEffect(() => {
+        contextFetchCourse(1);
+        setPageState(1);
+        setGlobalLoading(true);
+        setTimeout(() => {
+            setGlobalLoading(false);
+        }, 900);
+    }, []);
+
+    useEffect(() => {
+        handleFetchCourse();
+        if (course?.data?.length > 5) {
+            setIsTall(true);
+        } else {
+            setIsTall(false);
+        }
+    }, [course]);
+
+    useEffect(() => {
+        const title = editMode ? editingLesson.title.trim() : courseValue.title.trim();
+        if (title?.length > 0) {
+            setForStart(false);
+        } else {
+            setForStart(true);
+        }
+    }, [courseValue.title, editingLesson.title]);
+
+    useEffect(() => {
+        if (coursesValue?.length < 1) {
+            // setHasCourses(true);
+        } else {
+            if (globalCourseId != null) {
+                const exists = coursesValue.some((c: { id: number }) => c.id === globalCourseId.id);
+                if (exists) {
+                    setForStreamId({ id: globalCourseId.id, title: globalCourseId.title || '' });
+                } else {
+                    setForStreamId({ id: coursesValue[0].id, title: coursesValue[0].title });
+                }
+            } else {
+                setForStreamId({ id: coursesValue[0].id, title: coursesValue[0].title });
+            }
+            setHasCourses(false);
+        }
+    }, [coursesValue]);
+
+    useEffect(() => {
+        const handleShow = async () => {
+            setProgressSpinner(true);
+            const data = await fetchCourseInfo(selectedCourse);
+
+            if (data?.success) {
+                setProgressSpinner(false);
+                setEditingLesson({
+                    title: data.course.title || '',
+                    video_url: data.course.video_url || '',
+                    description: data.course.description || '',
+                    image: data.course.image
+                });
+            } else {
+                setProgressSpinner(false);
+            }
+        };
+
+        if (editMode) {
+            handleShow();
+        }
+    }, [editMode]);
+
     return (
         <div className="main-bg">
             {/* modal window */}
-            <FormModal title={editMode ? 'Обновить курс' : 'Добавить'} fetchValue={editMode ? handleUpdateCourse : handleAddCourse} clearValues={clearValues} visible={formVisible} setVisible={setFormVisible} start={forStart} footerValue={{ footerState: editMode, reject: 'Назад', next: 'Сохранить' }}>
+            <FormModal
+                title={editMode ? 'Обновить курс' : 'Добавить'}
+                fetchValue={editMode ? handleUpdateCourse : handleAddCourse}
+                clearValues={clearValues}
+                visible={formVisible}
+                setVisible={setFormVisible}
+                start={forStart}
+                footerValue={{ footerState: editMode, reject: 'Назад', next: 'Сохранить' }}
+            >
                 <div className="flex flex-col gap-1">
                     {/* <div className="flex flex-col lg:flex-row gap-1 justify-around items-center"> */}
                     <div className="flex flex-col gap-1 items-center justify-center">
@@ -599,7 +609,7 @@ export default function Course() {
                                                     }}
                                                 />
                                             </div>
-                                            <NotFound titleMessage={'Нажмите на кнопку добавить курс'} />
+                                            <NotFound titleMessage={'Курсы не доступны'} />
                                         </>
                                     ) : (
                                         <>
@@ -687,21 +697,31 @@ export default function Course() {
 
                                 {/* table section */}
                                 {hasCourses ? (
-                                    <NotFound titleMessage={'Нажмите на кнопку добавить курс'} />
+                                    <NotFound titleMessage={'Курсы не доступны'} />
                                 ) : (
                                     <>
                                         {skeleton ? (
-                                            <GroupSkeleton count={coursesValue?.length} size={{ width: '100%', height: '4rem' }} />
+                                            <div className="w-full">
+                                                <GroupSkeleton count={coursesValue?.length || 5} size={{ width: '100%', height: '4rem' }} />
+                                            </div>
                                         ) : (
                                             <div>
                                                 <div ref={topRef}>
                                                     <DataTable value={coursesValue} dataKey="id" emptyMessage="Нет данных" key={JSON.stringify(forStreamId)} responsiveLayout="stack" breakpoint="960px" rows={5} className="my-custom-table">
                                                         <Column body={(_, { rowIndex }) => rowIndex + 1} header="#" style={{ width: '20px' }}></Column>
-                                                        <Column style={{width : '70px'}} header={()=> <div className='flex justify-center'><i className='pi pi-images text-xl'></i></div>} body={imageBodyTemplate}></Column>
+                                                        <Column
+                                                            style={{ width: '70px' }}
+                                                            header={() => (
+                                                                <div className="flex justify-center">
+                                                                    <i className="pi pi-images text-xl"></i>
+                                                                </div>
+                                                            )}
+                                                            body={imageBodyTemplate}
+                                                        ></Column>
 
                                                         <Column
                                                             field="title"
-                                                            header={()=> <div className="text-[13px]">Название</div>}
+                                                            header={() => <div className="text-[13px]">Название</div>}
                                                             body={(rowData) => (
                                                                 <Link
                                                                     href={`/course/${rowData.id}/${'null'}`}
@@ -713,22 +733,13 @@ export default function Course() {
                                                                         setMainCourseId(rowData.id);
                                                                     }}
                                                                     key={rowData.id}
+                                                                    className="max-w-sm text-word break-all"
                                                                 >
                                                                     {rowData.title}
                                                                 </Link>
                                                             )}
                                                         ></Column>
-                                                        <Column
-                                                            field="title"
-                                                            header={()=> <div className="text-[13px]">Балл</div>}
-                                                            body={(rowData) => (
-                                                                <span
-                                                                    key={rowData.id}
-                                                                >
-                                                                    {rowData.max_score}
-                                                                </span>
-                                                            )}
-                                                        ></Column>
+                                                        <Column field="title" header={() => <div className="text-[13px]">Балл</div>} body={(rowData) => <span key={rowData.id}>{rowData.max_score}</span>}></Column>
                                                         <Column
                                                             header={() => <div className="text-[13px]">На рассмотрение</div>}
                                                             style={{ margin: '0 3px', textAlign: 'center' }}
@@ -749,14 +760,14 @@ export default function Course() {
                                                             )}
                                                         ></Column>
                                                         <Column
-                                                            header={()=> <div className="text-[13px]">Публикация</div> }
+                                                            header={() => <div className="text-[13px]">Публикация</div>}
                                                             style={{ margin: '0 3px', textAlign: 'center' }}
                                                             body={(rowData) =>
                                                                 rowData.is_published ? <i className="pi pi-check text-md sm:text-lg text-[var(--greenColor)]"></i> : <i className="pi pi-times text-md sm:text-lg text-[var(--redColor)]"></i>
                                                             }
                                                         ></Column>
                                                         <Column
-                                                            header={()=> <div className="text-[13px]">Потоки</div>}
+                                                            header={() => <div className="text-[13px]">Потоки</div>}
                                                             style={{ margin: '0 3px', textAlign: 'center' }}
                                                             body={(rowData) => (
                                                                 <>

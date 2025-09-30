@@ -224,11 +224,11 @@ export default function LessonPractica({ element, content, fetchPropElement, fet
         const data = await updatePractica(editingLesson, document?.lesson_id ? Number(document?.lesson_id) : null, Number(selectId), element.type.id, element.id);
         const steps: { id: number; step: number | null }[] = [{ id: element?.id, step: editingLesson?.stepPos || 0 }];
         const secuence = await stepSequenceUpdate(document?.lesson_id ? Number(document?.lesson_id) : null, steps);
-        
+
         if (data?.success && secuence.success) {
             setSkeleton(false);
             fetchPropElement(element.id);
-            fetchPropThemes();  
+            fetchPropThemes();
             clearValues();
             setMessage({
                 state: true,
@@ -470,59 +470,63 @@ export default function LessonPractica({ element, content, fetchPropElement, fet
                                 />
                             </div>
                         </div>
-                        <div className="w-full">
-                            <Editor
-                                className="h-[200px]"
-                                value={editingLesson.description}
-                                onTextChange={(e: EditorTextChangeEvent) => {
-                                    setEditorUpdateState(false);
-                                    setEditingLesson((prev) => ({ ...prev, description: String(e.htmlValue) }));
-                                    setValue('title', String(e.htmlValue), { shouldValidate: true });
-                                }}
-                                headerTemplate={header}
-                            />
-                            <b style={{ color: 'red', fontSize: '12px' }}>{errors.title?.message}</b>
-                        </div>
-                        {additional.doc && (
-                            <div className="w-full flex gap-1 flex-col items-center">
-                                <input
-                                    type="file"
-                                    accept="application/pdf"
-                                    className="w-full border rounded p-1"
-                                    onChange={(e) => {
-                                        const file = e.target.files?.[0];
-                                        if (file) {
-                                            setEditingLesson((prev) => ({
-                                                ...prev,
-                                                document: file
-                                            }));
-                                        }
+                        <div className='flex flex-col gap-1 w-full'>
+                            <div className="w-full">
+                                <Editor
+                                    // className="min-h-[150px]"
+                                    value={editingLesson.description}
+                                    onTextChange={(e: EditorTextChangeEvent) => {
+                                        setEditorUpdateState(false);
+                                        setEditingLesson((prev) => ({ ...prev, description: String(e.htmlValue) }));
+                                        setValue('title', String(e.htmlValue), { shouldValidate: true });
                                     }}
+                                    headerTemplate={header}
                                 />
+                                <b style={{ color: 'red', fontSize: '12px' }}>{errors.title?.message}</b>
                             </div>
-                        )}
-                        {additional.doc && (
-                            <div className="w-full flex flex-col items-center">
-                                <InputText
-                                    id="usefulLink"
-                                    type="url"
-                                    placeholder={'Загрузить ссылку'}
-                                    value={editingLesson?.url}
-                                    className="w-full"
-                                    onChange={(e) => {
-                                        setEditingLesson((prev) => prev && { ...prev, url: e.target.value });
-                                        setValue('usefulLink', e.target.value, { shouldValidate: true });
-                                    }}
-                                />
-                            </div>
-                        )}
+                            {additional.doc && (
+                                <div className="w-full flex gap-1 flex-col items-center">
+                                    <input
+                                        type="file"
+                                        accept="application/pdf"
+                                        className="w-full border rounded p-1"
+                                        onChange={(e) => {
+                                            const file = e.target.files?.[0];
+                                            if (file) {
+                                                setEditingLesson((prev) => ({
+                                                    ...prev,
+                                                    document: file
+                                                }));
+                                            }
+                                        }}
+                                    />
+                                </div>
+                            )}
 
-                        <div className="flex relative">
-                            <div className="">
-                                <span className="cursor-pointer ml-1 text-[13px] sm:text-sm text-[var(--mainColor)]" onClick={() => setAdditional((prev) => ({ ...prev, doc: !prev.doc }))}>
-                                    Дополнительно {additional.doc ? '-' : '+'}
-                                </span>
+                            {additional.doc && (
+                                <div className="w-full flex flex-col items-center">
+                                    <InputText
+                                        id="usefulLink"
+                                        type="url"
+                                        placeholder={'Загрузить ссылку'}
+                                        value={editingLesson?.url}
+                                        className="w-full"
+                                        onChange={(e) => {
+                                            setEditingLesson((prev) => prev && { ...prev, url: e.target.value });
+                                            setValue('usefulLink', e.target.value, { shouldValidate: true });
+                                        }}
+                                    />
+                                </div>
+                            )}
+
+                            <div className="flex justify-center relative">
+                                <div className="">
+                                    <span className="cursor-pointer ml-1 text-[13px] sm:text-sm text-[var(--mainColor)]" onClick={() => setAdditional((prev) => ({ ...prev, doc: !prev.doc }))}>
+                                        Дополнительно {additional.doc ? '-' : '+'}
+                                    </span>
+                                </div>
                             </div>
+
                         </div>
                     </div>
                 </div>

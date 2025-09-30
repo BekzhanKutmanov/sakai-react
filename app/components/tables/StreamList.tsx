@@ -15,6 +15,7 @@ import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { mainStreamsType } from '@/types/mainStreamsType';
 import Link from 'next/link';
+import useShortText from '@/hooks/useShortText';
 
 export default function StreamList({
     callIndex,
@@ -41,6 +42,7 @@ export default function StreamList({
 
     const { setMessage } = useContext(LayoutContext);
     const showError = useErrorMessage();
+    const shortTitle = useShortText(courseValue?.title ? courseValue?.title : '', 20, 'right');
 
     const toggleSkeleton = () => {
         setSkeleton(true);
@@ -246,9 +248,6 @@ export default function StreamList({
         
         const hasData = items.some((item) => item.connect_id !== null);
         if (hasData) {
-            const forCourse = items.filter((item)=> item.connect_id !== null);
-            console.log(forCourse);
-            
             let list = items.map((product, index: number) => {
                 if (product.connect_id !== null) {
                     return itemTemplate(product, index);
@@ -360,7 +359,7 @@ export default function StreamList({
                             {!isMobile && (
                                 <div className="flex flex-col md:flex-row justify-between md:items-center gap-1 mb-4 py-2 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">
                                     {/* <span className=" text-[var(--mainColor)] "> */}
-                                    <span className="lg:max-w-[300px] xl:max-w-[400px] text-[16px] sm:text-[16px] md:text-[18px] font-bold text-[#4B4563]">{courseValue?.title}</span>
+                                    <span className="lg:max-w-[300px] xl:max-w-[400px] text-[16px] sm:text-[16px] md:text-[18px] font-bold text-[#4B4563] max-w-sm text-word break-all">{shortTitle}</span>
                                     {/* </span> */}
                                     <div className="min-w-[110px]">
                                         <Button

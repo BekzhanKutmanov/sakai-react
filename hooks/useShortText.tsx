@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { Tooltip } from 'primereact/tooltip';
 
-export default function useShortText(text: string, textLength: number) {
+export default function useShortText(text: string, textLength: number, pos?:string) {
     const [resultText, setResultText] = useState('');
     const [isLength, setIsLength] = useState<boolean>(false);
 
@@ -21,12 +21,12 @@ export default function useShortText(text: string, textLength: number) {
         <>
             <Tooltip target=".hasTooltip" />
             {isLength ? (   
-                <div className="hasTooltip flex flex-col justify-center items-center gap-1 px-1" data-pr-tooltip={text} data-pr-position="right">
+                <div className={`hasTooltip flex ${pos && pos.length > 0 ? 'flex-row items-end' : 'flex-col items-center'} justify-center gap-1 px-1 max-w-md text-wrap break-all`} data-pr-tooltip={text} data-pr-position="right">
                     {resultText}
                     <i className="pi pi-ellipsis-h"></i>
                 </div>
             ) : (
-                <div className='flex justify-center'>{resultText}</div>
+                <div className='flex max-w-md text-wrap break-all'>{resultText}</div>
             )}
         </>
     );

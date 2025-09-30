@@ -41,6 +41,7 @@ export default function LessonStep() {
     const [selectedId, setSelectId] = useState<number | null>(null);
     const [hasSteps, setHasSteps] = useState(false);
     const [themeNull, setThemeNull] = useState(false);
+    const [themeContent, setThemeContent] = useState(false);
     // const [lesson_id, setLesson_id] = useState<number | null>(null);
     const [lesson_id, setLesson_id] = useState<number | null>(null);
     const [sequence_number, setSequence_number] = useState<number | null>(null);
@@ -148,9 +149,8 @@ export default function LessonStep() {
 
     const handleFetchElement = async (stepId: number) => {
         if (lesson_id) {
-
             setSkeleton(true);
-            const data = await fetchElement(Number(lesson_id), stepId);
+            const data = await fetchElement(Number(lesson_id), stepId);            
             if (data.success) {
                 setSkeleton(false);
                 setElement({ content: data.content, step: data.step });
@@ -309,9 +309,9 @@ export default function LessonStep() {
         if (isSameSnapshot) return;
 
         // дальше — твоя логика, но чуть упрощённая и аккуратная
-        if (!lessons || lessons.length < 1) {
-            setThemeNull(true);
+        if (!lessons || lessons?.length < 1) {
             setLesson_id(null);
+            setThemeNull(true);
             return;
         } else {
             setThemeNull(false);
@@ -323,7 +323,7 @@ export default function LessonStep() {
             const exists = lessons.some((l: { id: number }) => l.id === urlId);
             chosenId = exists ? urlId : lessons[0].id;
         } else {
-            chosenId = lessons[0].id;
+            chosenId = lessons[0]?.id;
         }
 
         // если выбор изменился — setLesson_id вызовет второй useEffect и всё остальное произойдёт там
@@ -382,11 +382,18 @@ export default function LessonStep() {
                 <h2 style={{ color: 'white', fontSize: media ? '22px' : '26px', textAlign: 'center' }} className="w-full text-wrap break-words">
                     {lessonInfoState?.title}
                 </h2>
+                {media && contextThemes && contextThemes?.max_sum_score ? 
+                    <div className="flex justify-center gap-1 items-center">
+                            <span>Балл за курс</span>
+                            <b className="font-semibold">{contextThemes?.max_sum_score}</b>
+                        </div>
+                    : ''
+                }
             </div>
         </div>
     );
 
-    const step = (icon: string, step: number, idx: number) => {
+    const step = (item: mainStepsType, icon: string, step: number, idx: number) => {
         return (
             <div
                 className="cursor-pointer flex flex-col items-center"
@@ -394,8 +401,10 @@ export default function LessonStep() {
                     setSelectId(step);
                     handleFetchElement(step);
                 }}
+
             >
-                <span>{idx + 1}</span>
+                <span className=''>{idx + 1} {item?.type?.name === 'practical' || item?.type?.name === 'test' ? <span title={`${item.score} балл`} className='text-[12px]'>({item.score})</span> : ''}</span>
+
                 <div className={`rounded ${step === selectedId ? 'activeStep' : 'step'} flex justify-center items-center`}>
                     <i className={`${icon} text-xl sm:text-2xl text-white`} style={{ padding: '15px' }}></i>
                 </div>
@@ -470,7 +479,7 @@ export default function LessonStep() {
                         {steps.map((item, idx) => {
                             return (
                                 <div key={item.id} className="flex flex-col items-center">
-                                    {step(item.type.logo, item.id, idx)}
+                                    {step(item, item.type.logo, item.id, idx)}
                                 </div>
                             );
                         })}
@@ -495,65 +504,73 @@ export default function LessonStep() {
                     <NotFound titleMessage="Шаги отсутствует" />
                 </div>
             )}
-            <div className="shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)] mt-3 pb-1 flex items-center justify-between flex-col sm:flex-row gap-1">
-                <b className="sm:text-[18px]">{element?.step.type.title}</b>
-            </div>
-            {element?.step.type.name === 'document' && (
-                <LessonDocument
-                    element={element?.step}
-                    content={element?.content}
-                    fetchPropElement={(stepId) => {
-                        handleFetchElement(stepId);
-                        handleFetchSteps(lesson_id);
-                    }}
-                    clearProp={hasSteps}
-                />
-            )}
-            {element?.step.type.name === 'video' && (
-                <LessonVideo
-                    element={element?.step}
-                    content={element?.content}
-                    fetchPropElement={(stepId) => {
-                        handleFetchElement(stepId);
-                        handleFetchSteps(lesson_id);
-                    }}
-                    clearProp={hasSteps}
-                />
-            )}
-            {element?.step.type.name === 'test' && (
-                <LessonTest
-                    element={element?.step}
-                    content={element?.content}
-                    fetchPropElement={(stepId) => {
-                        handleFetchElement(stepId);
-                        handleFetchSteps(lesson_id);
-                    }}
-                    fetchPropThemes={() => contextFetchThemes(Number(course_id), null)}
-                    clearProp={hasSteps}
-                />
-            )}
-            {element?.step.type.name === 'practical' && (
-                <LessonPractica
-                    element={element?.step}
-                    content={element?.content}
-                    fetchPropElement={(stepId) => {
-                        handleFetchElement(stepId);
-                        handleFetchSteps(lesson_id);
-                    }}
-                    fetchPropThemes={() => contextFetchThemes(Number(course_id), null)}
-                    clearProp={hasSteps}
-                />
-            )}
-            {element?.step.type.name === 'link' && (
-                <LessonLink
-                    element={element?.step}
-                    content={element?.content}
-                    fetchPropElement={(stepId) => {
-                        handleFetchElement(stepId);
-                        handleFetchSteps(lesson_id);
-                    }}
-                    clearProp={hasSteps}
-                />
+            {element?.step.type.title && <div className="shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)] mt-3 pb-1 flex items-center flex-col sm:flex-row gap-1">
+                <span className="sm:text-[18px]">{element?.step.type.title}</span> - 
+                <div>(<b className="mr-1">{element?.step?.step === 0 ? '1' : element?.step?.step}</b> позиция)</div>
+            </div>}
+
+            {skeleton ? (
+                <GroupSkeleton count={1} size={{ width: '100%', height: '10rem' }} />
+            ) : (
+                <>
+                    {element?.step.type.name === 'document' && (
+                        <LessonDocument
+                            element={element?.step}
+                            content={element?.content}
+                            fetchPropElement={(stepId) => {
+                                handleFetchElement(stepId);
+                                handleFetchSteps(lesson_id);
+                            }}
+                            clearProp={hasSteps}
+                        />
+                    )}
+                    {element?.step.type.name === 'video' && (
+                        <LessonVideo
+                            element={element?.step}
+                            content={element?.content}
+                            fetchPropElement={(stepId) => {
+                                handleFetchElement(stepId);
+                                handleFetchSteps(lesson_id);
+                            }}
+                            clearProp={hasSteps}
+                        />
+                    )}
+                    {element?.step.type.name === 'test' && (
+                        <LessonTest
+                            element={element?.step}
+                            content={element?.content}
+                            fetchPropElement={(stepId) => {
+                                handleFetchElement(stepId);
+                                handleFetchSteps(lesson_id);
+                            }}
+                            fetchPropThemes={() => contextFetchThemes(Number(course_id), null)}
+                            clearProp={hasSteps}
+                        />
+                    )}
+                    {element?.step.type.name === 'practical' && (
+                        <LessonPractica
+                            element={element?.step}
+                            content={element?.content}
+                            fetchPropElement={(stepId) => {
+                                handleFetchElement(stepId);
+                                handleFetchSteps(lesson_id);
+                            }}
+                            fetchPropThemes={() => contextFetchThemes(Number(course_id), null)}
+                            clearProp={hasSteps}
+                        />
+                    )}
+                    {element?.step.type.name === 'link' && (
+                        <LessonLink
+                            element={element?.step}
+                            content={element?.content}
+                            fetchPropElement={(stepId) => {
+                                handleFetchElement(stepId);
+                                handleFetchSteps(lesson_id);
+                            }}
+                            clearProp={hasSteps}
+                        />
+                    )}
+                </>
             )}
 
             <div className="flex justify-end mt-1">
