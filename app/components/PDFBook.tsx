@@ -23,10 +23,13 @@ export default function PDFViewer({ url }: { url: string }) {
     const [hasPdf, setHasPdf] = useState(false);
 
     const containerRef = useRef<HTMLDivElement>(null);
+    const bookRef = useRef<any>(null);
     const [bookSize, setBookSize] = useState({ width: 0, height: 0, aspectRatio: 0 });
 
     const FIXED_BOOK_HEIGHT = 800; // Фиксированная высота книги
     const media = useMediaQuery('(max-width: 640px)');
+    const [totalPages, setTotalPages] = useState<number>(0);
+    const [currentPage, setCurrentPage] = useState<number>(1);
 
     useEffect(() => {
         const renderPDF = async () => {
@@ -37,12 +40,14 @@ export default function PDFViewer({ url }: { url: string }) {
                 // Проверяем, одна ли страница в документе
                 let newUrl = `https://api.mooc.oshsu.kg/temprory-file/${url}`;
                 const pdf = await pdfjsLib.getDocument(newUrl).promise;
+                setTotalPages(pdf.numPages);
                 const tempPages = [];
                 const firstPage = await pdf.getPage(1);
 
                 // Получаем оригинальное соотношение сторон первой страницы
                 const viewport = firstPage.getViewport({ scale: 1.5 });
                 const aspectRatio = viewport.width / viewport.height;
+                console.log(pdf.numPages);
 
                 for (let i = 1; i <= pdf.numPages; i++) {
                     const page = await pdf.getPage(i);
@@ -76,7 +81,7 @@ export default function PDFViewer({ url }: { url: string }) {
                     const imageDataUrl = canvas.toDataURL();
                     tempPages.push(
                         <div key={i} className="page">
-                            <img src={imageDataUrl} alt={`Page ${i}`} style={{ width: '100%',  }} />
+                            <img src={imageDataUrl} alt={`Page ${i}`} style={{ width: '100%' }} />
                         </div>
                     );
                 }
@@ -123,6 +128,26 @@ export default function PDFViewer({ url }: { url: string }) {
         return () => window.removeEventListener('resize', updateBookSize);
     }, [bookSize.aspectRatio]);
 
+    useEffect(() => {
+        const container = containerRef.current;
+        if (!container) return;
+
+        const onScroll = () => {
+            const pageElements = container.querySelectorAll<HTMLDivElement>('.page');
+            let visiblePage = 1;
+
+            pageElements.forEach((page, index) => {
+                const rect = page.getBoundingClientRect();
+                if (rect.top >= 0 && rect.top < window.innerHeight / 2) {
+                    visiblePage = index + 1; // страницы начинаются с 1
+                }
+            });
+        };
+
+        container.addEventListener('scroll', onScroll);
+        return () => container.removeEventListener('scroll', onScroll);
+    }, [pages]);
+
     return (
         <div
             style={{
@@ -139,12 +164,12 @@ export default function PDFViewer({ url }: { url: string }) {
                 style={{
                     width: '100%', // или фиксированная ширина, например 800px
                     maxWidth: '900px', // не даём контейнеру быть бесконечно широким
-                    margin: '0 auto',
+                    margin: '0 auto'
                     // maxHeight: '1000px'
                 }}
             >
                 {hasPdf ? (
-                    <NotFound titleMessage={'Кийинчерээк кайра аракет кылыңыз'} />
+                    <NotFound titleMessage={'Повторите позже'} />
                 ) : (
                     <>
                         {skeleton ? (
@@ -153,7 +178,27 @@ export default function PDFViewer({ url }: { url: string }) {
                             </div>
                         ) : media ? (
                             <>
+                                <div className="w-full flex justify-center gap-1 items-center ">
+                                    <button
+                                        onClick={() => {
+                                            if (bookRef.current) {
+                                                bookRef.current.pageFlip().flipPrev();
+                                            }
+                                        }}
+                                        className="pi pi-chevron-left text-sm px-3 py-1 border rounded cursor-pointer hover:text-white hover:bg-[var(--mainColor)] transition"
+                                    ></button>
+                                    <span className='text-[13px]'>Страница {currentPage} / {totalPages}</span>
+                                    <button
+                                        onClick={() => {
+                                            if (bookRef.current) {
+                                                bookRef.current.pageFlip().flipNext();
+                                            }
+                                        }}
+                                        className="pi pi-chevron-right text-sm px-3 py-1 border rounded cursor-pointer hover:text-white hover:bg-[var(--mainColor)] transition"
+                                    ></button>
+                                </div>
                                 <HTMLFlipBook
+                                    ref={bookRef}
                                     // width={Math.min(bookSize.width, 600)} // ограничиваем ширину страницы
                                     width={300} // ограничиваем ширину страницы
                                     height={bookSize.height}
@@ -175,7 +220,13 @@ export default function PDFViewer({ url }: { url: string }) {
                                     renderOnlyPageLengthChange={false}
                                     className=""
                                     style={{}}
-                                    onFlip={() => {}}
+                                    // onFlip={() => {}}
+                                    onFlip={() => {
+                                        if (bookRef.current) {
+                                            const current = bookRef.current.pageFlip().getCurrentPageIndex();
+                                            setCurrentPage(current + 1);
+                                        }
+                                    }}
                                     onChangeOrientation={() => {}}
                                     onChangeState={() => {}}
                                     onInit={() => {}}
@@ -198,49 +249,77 @@ export default function PDFViewer({ url }: { url: string }) {
                                 </HTMLFlipBook>
                             </>
                         ) : (
-                            <HTMLFlipBook
-                                // width={Math.min(bookSize.width, 600)} // ограничиваем ширину страницы
-                                width={Math.min(bookSize.width, 1000)} // ограничиваем ширину страницы
-                                height={bookSize.height}
-                                size="stretch"
-                                minWidth={media ? 320 : 600}
-                                maxWidth={800} // ограничиваем maxWidth для PageFlip
-                                minHeight={420}
-                                maxHeight={bookSize.height}
-                                showCover={false}
-                                usePortrait={true}
-                                // news
-                                startZIndex={0}
-                                autoSize={true}
-                                maxShadowOpacity={0.5}
-                                mobileScrollSupport={true}
-                                swipeDistance={30}
-                                clickEventForward={true}
-                                useMouseEvents={true}
-                                renderOnlyPageLengthChange={false}
-                                className=""
-                                style={{}}
-                                onFlip={() => {}}
-                                onChangeOrientation={() => {}}
-                                onChangeState={() => {}}
-                                onInit={() => {}}
-                                onUpdate={() => {}}
-                                startPage={0}
-                                drawShadow={true}
-                                flippingTime={900}
-                                showPageCorners={true}
-                                disableFlipByClick={false}
-                            >
-                                {pages.map((page, index) => (
-                                    <div key={index} className="page">
-                                        <div className="page-content">
-                                            {' '}
-                                            {/* Добавляем класс для содержимого страницы */}
-                                            {page}
+                            <>
+                                <div className="w-full flex justify-center gap-1 items-center ">
+                                    <button
+                                        onClick={() => {
+                                            if (bookRef.current) {
+                                                bookRef.current.pageFlip().flipPrev();
+                                            }
+                                        }}
+                                        className="pi pi-chevron-left text-sm px-3 py-1 border rounded cursor-pointer hover:text-white hover:bg-[var(--mainColor)] transition"
+                                    ></button>
+                                    Страница {currentPage} / {totalPages}
+                                    <button
+                                        onClick={() => {
+                                            if (bookRef.current) {
+                                                bookRef.current.pageFlip().flipNext();
+                                            }
+                                        }}
+                                        className="pi pi-chevron-right text-sm px-3 py-1 border rounded cursor-pointer hover:text-white hover:bg-[var(--mainColor)] transition"
+                                    ></button>
+                                </div>
+                                <HTMLFlipBook
+                                    ref={bookRef}
+                                    // width={Math.min(bookSize.width, 600)} // ограничиваем ширину страницы
+                                    width={Math.min(bookSize.width, 1000)} // ограничиваем ширину страницы
+                                    height={bookSize.height}
+                                    size="stretch"
+                                    minWidth={media ? 320 : 600}
+                                    maxWidth={800} // ограничиваем maxWidth для PageFlip
+                                    minHeight={420}
+                                    maxHeight={bookSize.height}
+                                    showCover={false}
+                                    usePortrait={true}
+                                    // news
+                                    startZIndex={0}
+                                    autoSize={true}
+                                    maxShadowOpacity={0.5}
+                                    mobileScrollSupport={true}
+                                    swipeDistance={30}
+                                    clickEventForward={true}
+                                    useMouseEvents={true}
+                                    renderOnlyPageLengthChange={false}
+                                    className=""
+                                    style={{}}
+                                    // onFlip={() => {}}
+                                    onFlip={() => {
+                                        if (bookRef.current) {
+                                            const current = bookRef.current.pageFlip().getCurrentPageIndex();
+                                            setCurrentPage(current + 1);
+                                        }
+                                    }}
+                                    onChangeOrientation={() => {}}
+                                    onChangeState={() => {}}
+                                    onInit={() => {}}
+                                    onUpdate={() => {}}
+                                    startPage={0}
+                                    drawShadow={true}
+                                    flippingTime={900}
+                                    showPageCorners={true}
+                                    disableFlipByClick={false}
+                                >
+                                    {pages.map((page, index) => (
+                                        <div key={index} className="page">
+                                            <div className="page-content">
+                                                {' '}
+                                                {/* Добавляем класс для содержимого страницы */}
+                                                {page}
+                                            </div>
                                         </div>
-                                    </div>
-                                ))}
-                            </HTMLFlipBook>
+                                    ))}
+                                </HTMLFlipBook>
+                            </>
                         )}
                     </>
                 )}
