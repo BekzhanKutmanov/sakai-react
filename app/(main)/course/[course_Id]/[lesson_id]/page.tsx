@@ -27,6 +27,7 @@ export default function LessonStep() {
     const scrollRef = useRef<HTMLDivElement>(null);
     const router = useRouter();
     const prevLessonsRef = useRef<Array<{ id: number; title: string }> | null>(null);
+    const prevStepsRef = useRef<mainStepsType[]>([]);
 
     const [lessonInfoState, setLessonInfoState] = useState<{ title: string; documents_count: string; usefullinks_count: string; videos_count: string } | null>(null);
     const media = useMediaQuery('(max-width: 640px)');
@@ -42,12 +43,12 @@ export default function LessonStep() {
     const [hasSteps, setHasSteps] = useState(false);
     const [themeNull, setThemeNull] = useState(false);
     const [themeContent, setThemeContent] = useState(false);
-    // const [lesson_id, setLesson_id] = useState<number | null>(null);
     const [lesson_id, setLesson_id] = useState<number | null>(null);
     const [sequence_number, setSequence_number] = useState<number | null>(null);
     const [skeleton, setSkeleton] = useState(false);
     const [wasCreated, setWasCreated] = useState(false);
     const [testovy, setTestovy] = useState(false);
+    const [newStepId, setNewStepId] = useState<number | null>(null);
 
     const changeUrl = (lessonId: number | null) => {
         router.replace(`/course/${course_id}/${lessonId ? lessonId : null}`);
@@ -104,6 +105,7 @@ export default function LessonStep() {
     const handleFetchSteps = async (lesson_id: number | null) => {
         setSkeleton(true);
         const data = await fetchSteps(Number(lesson_id));
+        console.log(data);
 
         if (data.success) {
             setSkeleton(false);
@@ -130,6 +132,7 @@ export default function LessonStep() {
         setFormVisible(false);
         const data = await addLesson({ lesson_id: lessonId, type_id: typeId }, sequence_number);
         if (data.success) {
+            setSequence_number(null);
             setWasCreated(true);
             handleFetchSteps(lessonId);
             setMessage({
@@ -141,8 +144,18 @@ export default function LessonStep() {
                 state: true,
                 value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
             });
+
             if (data?.response?.status) {
-                showError(data.response.status);
+                console.log(data?.response?.status);
+
+                if (data?.response?.status == '400') {
+                    setMessage({
+                        state: true,
+                        value: { severity: 'error', summary: 'Ошибка!', detail: data?.response?.data?.message }
+                    });
+                } else {
+                    showError(data.response.status);
+                }
             }
         }
     };
@@ -150,7 +163,7 @@ export default function LessonStep() {
     const handleFetchElement = async (stepId: number) => {
         if (lesson_id) {
             setSkeleton(true);
-            const data = await fetchElement(Number(lesson_id), stepId);            
+            const data = await fetchElement(Number(lesson_id), stepId);
             if (data.success) {
                 setSkeleton(false);
                 setElement({ content: data.content, step: data.step });
@@ -176,6 +189,7 @@ export default function LessonStep() {
                 state: true,
                 value: { severity: 'success', summary: 'Успешно удалено!', detail: '' }
             });
+            setSelectId(null);
         } else {
             setMessage({
                 state: true,
@@ -195,11 +209,47 @@ export default function LessonStep() {
     //         handleFetchElement(firstStep);
     //     }
     // }, [steps]);
+
+    // РАБОЧИЙ ВАРИАНТ
+    // useEffect(() => {
+    //     if (Array.isArray(steps) && steps.length > 0) {
+    //         const stepId = wasCreated ? steps[steps.length - 1].id : steps[0].id;
+    //         setSelectId(stepId);
+    //         handleFetchElement(stepId);
+    //         setWasCreated(false);
+    //     }
+    // }, [steps]);
+    // РАБОЧИЙ ВАРИАНТ
+
     useEffect(() => {
         if (Array.isArray(steps) && steps.length > 0) {
-            const stepId = wasCreated ? steps[steps.length - 1].id : steps[0].id;
-            setSelectId(stepId);
-            handleFetchElement(stepId);
+            let stepId: number | null = null;
+
+            if (wasCreated) {
+                // находим шаг, которого не было в предыдущем массиве
+                const prevIds = prevStepsRef.current.map((s) => s.id);
+                const newStep = steps.find((s) => !prevIds.includes(s.id));
+
+                if (newStep) {
+                    stepId = newStep.id;
+                } else {
+                    stepId = steps[steps.length - 1].id; // fallback: берем последний
+                }
+            } else {
+                if (selectedId) {
+                    stepId = selectedId;
+                } else {
+                    stepId = steps[0].id; // если просто загрузка — берем первый
+                }
+            }
+
+            if (stepId !== null) {
+                setSelectId(stepId);
+                handleFetchElement(stepId);
+            }
+
+            // сохраняем текущие steps для следующего сравнения
+            prevStepsRef.current = steps;
             setWasCreated(false);
         }
     }, [steps]);
@@ -215,37 +265,6 @@ export default function LessonStep() {
         setTestovy(true);
         contextFetchThemes(Number(course_id), null);
     }, [course_id]);
-
-    // useEffect(() => {
-    //     if (!contextThemes?.lessons?.data) return;
-
-    //     const lessons = contextThemes.lessons.data;
-
-    //     if (lessons.length > 0) {
-    //         setThemeNull(false);
-
-    //         let chosenId: number | null = null;
-
-    //         if (param.lesson_id === 'null' || deleteQuery) {
-
-    //             // alert(1);
-
-    //             chosenId = lessons[0].id;
-    //             setDeleteQuery(false);
-    //         } else {
-
-    //             // alert(2);
-    //             chosenId = param.lesson_id ? Number(param.lesson_id) : lessons[0].id;
-    //         }
-    //         // alert(chosenId);
-    //         setLesson_id(chosenId);
-    //     } else {
-    //         setThemeNull(true);
-    //     }
-
-    //     setTestovy(false);
-    //     setUpdateeQuery(false);
-    // }, [contextThemes, deleteQuery, param.lesson_id]);
 
     // useEffect(() => {
 
@@ -382,13 +401,14 @@ export default function LessonStep() {
                 <h2 style={{ color: 'white', fontSize: media ? '22px' : '26px', textAlign: 'center' }} className="w-full text-wrap break-words">
                     {lessonInfoState?.title}
                 </h2>
-                {media && contextThemes && contextThemes?.max_sum_score ? 
+                {media && contextThemes && contextThemes?.max_sum_score ? (
                     <div className="flex justify-center gap-1 items-center">
-                            <span>Балл за курс</span>
-                            <b className="font-semibold">{contextThemes?.max_sum_score}</b>
-                        </div>
-                    : ''
-                }
+                        <span>Балл за курс</span>
+                        <b className="font-semibold">{contextThemes?.max_sum_score}</b>
+                    </div>
+                ) : (
+                    ''
+                )}
             </div>
         </div>
     );
@@ -401,12 +421,20 @@ export default function LessonStep() {
                     setSelectId(step);
                     handleFetchElement(step);
                 }}
-
             >
-                <span className=''>{idx + 1} {item?.type?.name === 'practical' || item?.type?.name === 'test' ? <span title={`${item.score} балл`} className='text-[12px]'>({item.score})</span> : ''}</span>
+                <span>
+                    <span className="text-sm">{idx + 1} </span>
+                    {item?.type?.name === 'practical' || item?.type?.name === 'test' ? (
+                        <span title={`${item.score} балл`} className="text-[11px]">
+                            ({item.score})
+                        </span>
+                    ) : (
+                        ''
+                    )}
+                </span>
 
                 <div className={`rounded ${step === selectedId ? 'activeStep' : 'step'} flex justify-center items-center`}>
-                    <i className={`${icon} text-xl sm:text-2xl text-white`} style={{ padding: '15px' }}></i>
+                    <i className={`${icon} text-xl sm:text-2xl text-white stepElement`}></i>
                 </div>
             </div>
         );
@@ -492,8 +520,7 @@ export default function LessonStep() {
                     ) : (
                         <button
                             onClick={handleFetchTypes}
-                            style={{ padding: '15px' }}
-                            className="pi pi-plus text-xl sm:text-2xl text-white cursor-pointer border rounded flex justify-center items-center bg-[var(--mainColor)] hover:bg-[var(--mainBorder)] transition"
+                            className="stepElement pi pi-plus text-xl sm:text-2xl text-white cursor-pointer border rounded flex justify-center items-center bg-[var(--mainColor)] hover:bg-[var(--mainBorder)] transition"
                         ></button>
                     )}
                 </div>
@@ -504,10 +531,14 @@ export default function LessonStep() {
                     <NotFound titleMessage="Шаги отсутствует" />
                 </div>
             )}
-            {element?.step.type.title && <div className="shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)] mt-3 pb-1 flex items-center flex-col sm:flex-row gap-1">
-                <span className="sm:text-[18px]">{element?.step.type.title}</span> - 
-                <div>(<b className="mr-1">{element?.step?.step === 0 ? '1' : element?.step?.step}</b> позиция)</div>
-            </div>}
+            {element?.step.type.title && (
+                <div className="shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)] mt-3 pb-1 flex items-center flex-col sm:flex-row gap-1">
+                    <span className="sm:text-[18px]">{element?.step.type.title}</span> -
+                    <div>
+                        (<b className="mr-1">{element?.step?.step === 0 ? '1' : element?.step?.step}</b> позиция)
+                    </div>
+                </div>
+            )}
 
             {skeleton ? (
                 <GroupSkeleton count={1} size={{ width: '100%', height: '10rem' }} />

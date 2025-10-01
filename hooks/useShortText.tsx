@@ -21,7 +21,7 @@ export default function useShortText(text: string, textLength: number, pos?:stri
         <>
             <Tooltip target=".hasTooltip" />
             {isLength ? (   
-                <div className={`hasTooltip flex ${pos && pos.length > 0 ? 'flex-row items-end' : 'flex-col items-center'} justify-center gap-1 px-1 max-w-md text-wrap break-all`} data-pr-tooltip={text} data-pr-position="right">
+                <div className={`hasTooltip flex ${pos && pos.length > 0 ? 'flex-row items-end' : 'flex-col items-center'} justify-start gap-1 px-1 max-w-md text-wrap break-all`} data-pr-tooltip={text} data-pr-position="right">
                     {resultText}
                     <i className="pi pi-ellipsis-h"></i>
                 </div>

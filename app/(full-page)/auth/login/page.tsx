@@ -59,7 +59,8 @@ const LoginPage = () => {
                             }
                         }
                         if (res?.user.is_student) {
-                            window.location.href = '/teaching';
+                            // window.location.href = '/teaching';
+                            document.cookie = 'access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;';
                         }
                     } else {
                         setMessage({

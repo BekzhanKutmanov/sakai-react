@@ -120,14 +120,14 @@ export default function Course() {
                 (prev) =>
                     prev && {
                         ...prev,
-                        image: ''
+                        image: null
                     }
             );
             // query
         } else {
             setCourseValue((prev) => ({
                 ...prev,
-                image: ''
+                image: null
             }));
         }
     };
@@ -567,7 +567,7 @@ export default function Course() {
                             ) : (
                                 <b className="text-[12px] text-red-500">jpeg, png, jpg</b>
                             )}
-                            <div className="flex items-center gap-1">{(editingLesson.image || imageState) && <Button icon={'pi pi-trash'} onClick={clearFile} />}</div>
+                            <div className="flex items-center gap-1">{(editingLesson.image || imageState) && <Button icon={'pi pi-trash'} className='trash-button' onClick={clearFile} />}</div>
                         </div>
                     </div>
                 </div>

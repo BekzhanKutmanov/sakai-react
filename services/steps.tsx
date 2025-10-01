@@ -27,8 +27,6 @@ export const fetchSteps = async (lesson_id: number) => {
 };
 
 export const addLesson = async (value: { lesson_id: number; type_id: number }, step: number | null) => {
-    console.log(step);
-
     const formData = new FormData();
     formData.append('lesson_id', String(value.lesson_id));
     formData.append('type_id', String(value.type_id));
@@ -88,8 +86,6 @@ export const addDocument = async (value: { file: File | null; title: string; des
 };
 
 export const deleteDocument = async (lesson_id: number, content_id: number) => {
-    console.log(lesson_id, content_id);
-
     try {
         const res = await axiosInstance.delete(`/v1/teacher/document/delete?lesson_id=${lesson_id}&document_id=${content_id}`);
 

@@ -304,7 +304,7 @@ export default function LessonVideo({ element, content, fetchPropElement, clearP
                                     <div className="flex flex-col sm:flex-row gap-2 items-center sm:w-xl h-[140px] my-2">
                                         <div className="flex items-center gap-1">
                                             <FileUpload ref={fileUploadRef} mode="basic" chooseLabel="Превью" style={{ fontSize: '12px' }} customUpload name="demo[]" accept="image/*" maxFileSize={1000000} onSelect={onSelect} />
-                                            {imageState && <Button icon={'pi pi-trash'} onClick={clearFile} />}
+                                            {imageState && <Button icon={'pi pi-trash'} className='trash-button' onClick={clearFile} />}
                                         </div>
                                         <div className="w-1/2 order-2 sm:order-1 max-h-[150px] max-w-[250px] border overflow-hidden flex justify-center items-center">
                                             {imageState ? <img className="w-full object-cover" src={imageState} alt="" /> : <img className="w-full object-cover" src={'/layout/images/no-image.png'} alt="" />}

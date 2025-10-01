@@ -280,10 +280,19 @@ export default function LessonDocument({ element, content, fetchPropElement, cle
                             onChange={(e) => {
                                 const file = e.target.files?.[0];
                                 if (file) {
-                                    setDocValue((prev) => ({
-                                        ...prev,
-                                        file: file
-                                    }));
+                                    const maxSize = 10 * 1024 * 1024;
+
+                                    if (file.size > maxSize) {
+                                        setMessage({
+                                            state: true,
+                                            value: { severity: 'error', summary: 'Файл слишком большой!', detail: 'Разрешено максимум 10 MB.' }
+                                        });
+                                    } else {
+                                        setDocValue((prev) => ({
+                                            ...prev,
+                                            file: file
+                                        }));
+                                    }
                                 }
                             }}
                         />
