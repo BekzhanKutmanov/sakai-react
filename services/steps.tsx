@@ -243,7 +243,7 @@ export const addTest = async (answers: { text: string; is_correct: boolean }[], 
     }
 };
 
-export const updateTest = async (answers: { text: string; is_correct: boolean }[], title: string, lesson_id: number, test_id: number, type_id: number, step_id: number, score: number) => {
+export const updateTest = async (answers: { text: string; is_correct: boolean; }[], title: string, lesson_id: number, test_id: number, type_id: number, step_id: number, score: number) => {
     url = `/v1/teacher/test/update`;
 
     const payload = {

@@ -32,6 +32,8 @@ const SessionManager = () => {
                         if (res.roles && res.roles.length > 0) {
                             const roleCheck = res.roles.find((i: { id_role: number }) => i.id_role);
                             if (roleCheck) {
+                                console.log(roleCheck);
+                                
                                 setDepartament({ info: roleCheck.roles_name.info_ru, last_name: res.user?.last_name, name: res?.user.name, father_name: res.user?.father_name });
                             }
                         }

@@ -117,7 +117,7 @@ export default function LessonTest({ element, content, fetchPropElement, fetchPr
     };
 
     // update test
-    const handleUpdateTest = async () => {
+    const handleUpdateTest = async () => {        
         setSkeleton(true);
         const data = await updateTest(answer, editingLesson?.title || '', element.lesson_id, Number(selectId), element.type.id, element.id, editingLesson?.score || 0);
         const steps: { id: number; step: number | null }[] = [{ id: element?.id, step: editingLesson?.stepPos || 0 }];

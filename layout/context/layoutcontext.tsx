@@ -114,7 +114,7 @@ export const LayoutProvider = ({ children }: ChildContainerProps) => {
 
     useEffect(() => {
         // if (pathname === '/course' && !departament.name) {
-        if (pathname.startsWith('/pdf') || pathname.startsWith('/students/') || pathname.startsWith('/videoInstruct') ) {
+        if (pathname.startsWith('/pdf')  || pathname.startsWith('/videoInstruct') ) {
             setLayoutState((prev) => ({
                 ...prev,
                 staticMenuDesktopInactive: true,

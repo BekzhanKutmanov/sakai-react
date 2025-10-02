@@ -72,7 +72,7 @@ const AppMenu = () => {
                       items: courseList?.length > 0 ? courseList : []
                   }
               ]
-            : (user?.is_working && departament.info.length < 1 && pathname.startsWith('/course')) || pathname.startsWith('/students/') || pathname.startsWith('/pdf/') || pathname.startsWith('/videoInstruct')
+            : (user?.is_working && departament.info.length < 1 && pathname.startsWith('/course')) || pathname.startsWith('/students/') || pathname.startsWith('/pdf/') || pathname.startsWith('/videoInstruct/')
             ? [
                   {
                       // key: 'prev',

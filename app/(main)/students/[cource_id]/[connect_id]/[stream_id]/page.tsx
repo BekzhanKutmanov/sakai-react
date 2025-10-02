@@ -126,7 +126,7 @@ export default function StudentList() {
     }, [streams]);
     
     return (
-        <div>
+        <div className='main-bg'>
             {skeleton ? (
                 <GroupSkeleton count={studentList.length} size={{ width: '100%', height: '5rem' }} />
             ) : (

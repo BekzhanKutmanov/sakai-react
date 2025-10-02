@@ -62,12 +62,12 @@ export default function VideoInstruct() {
 
     return (
         <div>
-            <div className='flex items-center'>
+            <div className='flex items-start flex-col sm:flex-row gap-1'>
                 <button onClick={() => router.back()} className="text-[var(--mainColor)] underline px-2 flex items-center gap-1">
                     <i className="pi pi-arrow-left text-[13px] cursor-pointer hover:shadow-2xl" style={{ fontSize: '13px' }}></i>
                     <span className="text-[13px] cursor-pointer">Назад</span>
                 </button>
-                <h2 className="text-center text-lg sm:text-xl w-full flex justify-center">Видеоуроки по использованию платформы Mooc</h2>
+                <h2 className="text-center text-lg sm:text-xl w-full m-0 mb-4 flex justify-center">Видеоуроки по использованию платформы Mooc</h2>
             </div>
             <div className="p-2 shadow">
                 <div className=" w-full flex flex-col justify-center items-center">
