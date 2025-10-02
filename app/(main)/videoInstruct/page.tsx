@@ -11,6 +11,7 @@ import 'primeicons/primeicons.css';
 import MyFontAwesome from '../../components/MyFontAwesome';
 import useErrorMessage from '@/hooks/useErrorMessage';
 import { LayoutContext } from '@/layout/context/layoutcontext';
+import { useRouter } from 'next/navigation';
 
 export default function VideoInstruct() {
     const showError = useErrorMessage();
@@ -18,6 +19,8 @@ export default function VideoInstruct() {
 
     const [videoCall, setVideoCall] = useState(false);
     const [videoLink, setVideoLink] = useState('');
+
+    const router = useRouter();
 
     const handleVideoCall = (value: string | null) => {
         console.log(value);
@@ -59,9 +62,14 @@ export default function VideoInstruct() {
 
     return (
         <div>
-            <h2 className="text-center text-lg sm:text-xl">Видеоуроки по использованию платформы Mooc</h2>
-
-            <div className='p-2 shadow'>
+            <div className='flex items-center'>
+                <button onClick={() => router.back()} className="text-[var(--mainColor)] underline px-2 flex items-center gap-1">
+                    <i className="pi pi-arrow-left text-[13px] cursor-pointer hover:shadow-2xl" style={{ fontSize: '13px' }}></i>
+                    <span className="text-[13px] cursor-pointer">Назад</span>
+                </button>
+                <h2 className="text-center text-lg sm:text-xl w-full flex justify-center">Видеоуроки по использованию платформы Mooc</h2>
+            </div>
+            <div className="p-2 shadow">
                 <div className=" w-full flex flex-col justify-center items-center">
                     <iframe
                         className="w-[90%] h-[200px] md:h-[400px]"
@@ -73,7 +81,7 @@ export default function VideoInstruct() {
                         allowFullScreen
                     ></iframe>
                 </div>
-                <p className='text-center mt-4'>Видеоинструкция по использованию образовательного портала Mooc</p>
+                <p className="text-center mt-4">Видеоинструкция по использованию образовательного портала Mooc</p>
             </div>
         </div>
     );

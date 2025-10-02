@@ -114,19 +114,20 @@ export const LayoutProvider = ({ children }: ChildContainerProps) => {
 
     useEffect(() => {
         // if (pathname === '/course' && !departament.name) {
-        //     setLayoutState((prev) => ({
-        //         ...prev,
-        //         staticMenuDesktopInactive: true,
-        //         staticMenuMobileActive: false,
-        //         overlayMenuActive: false,
-        //         profileSidebarVisible: false
-        //     }));
-        // } else {
+        if (pathname.startsWith('/pdf') || pathname.startsWith('/students/') || pathname.startsWith('/videoInstruct') ) {
+            setLayoutState((prev) => ({
+                ...prev,
+                staticMenuDesktopInactive: true,
+                staticMenuMobileActive: false,
+                overlayMenuActive: false,
+                profileSidebarVisible: false
+            }));
+        } else {
             setLayoutState((prev) => ({
                 ...prev,
                 staticMenuDesktopInactive: false
             }));
-        // }
+        }
     }, [pathname, departament]);
 
     useEffect(() => {

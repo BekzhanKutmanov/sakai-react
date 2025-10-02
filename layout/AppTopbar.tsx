@@ -128,19 +128,23 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
 
             {pathName !== '/' ? (
                 // departament.name.length > 0 ? (
+                !pathName.startsWith('/pdf') && !pathName.startsWith('/students/') && !pathName.startsWith('/videoInstruct') ? (
                     <button ref={menubuttonRef} type="button" className="p-link layout-menu-button layout-topbar-button" onClick={onMenuToggle}>
                         <i className="pi pi-bars text-[var(--mainColor)]" />
                     </button>
-                // ) 
+                ) : (
+                    ''
+                )
+            ) : (
+                // )
                 // : pathName !== '/course' ? (
                 //     <button ref={menubuttonRef} type="button" className="p-link layout-menu-button layout-topbar-button" onClick={onMenuToggle}>
                 //         <i className="pi pi-bars text-[var(--mainColor)]" />
                 //     </button>
-                // ) 
+                // )
                 // : (
                 //     ''
                 // )
-            ) : (
                 ''
             )}
 

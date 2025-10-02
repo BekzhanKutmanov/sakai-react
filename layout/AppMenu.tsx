@@ -113,7 +113,7 @@ const AppMenu = () => {
         : [];
 
     const forDepartament =
-        !pathname.startsWith('/course/') && departament.info.length > 0
+        !pathname.startsWith('/course/') && departament.info.length > 0 && !pathname.startsWith('/students/') && !pathname.startsWith('/pdf/') 
             ? [
                   {
                       // key: 'prev',
