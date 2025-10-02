@@ -72,7 +72,7 @@ const AppMenu = () => {
                       items: courseList?.length > 0 ? courseList : []
                   }
               ]
-            : user?.is_working && departament.info.length < 1 && (pathname.startsWith('/students/') || pathname.startsWith('/pdf/'))
+            : (user?.is_working && departament.info.length < 1 && pathname.startsWith('/course')) || pathname.startsWith('/students/') || pathname.startsWith('/pdf/') || pathname.startsWith('/videoInstruct')
             ? [
                   {
                       // key: 'prev',
@@ -92,6 +92,11 @@ const AppMenu = () => {
                       label: 'Курсы',
                       icon: 'pi pi-fw pi-book',
                       to: '/course'
+                  },
+                  {
+                      label: 'Видеоинструкция о платформе',
+                      icon: 'pi pi-fw pi-video',
+                      to: '/videoInstruct'
                   }
               ]
             : []
@@ -133,6 +138,11 @@ const AppMenu = () => {
                       label: 'Курсы',
                       icon: 'pi pi-fw pi-book',
                       to: '/course'
+                  },
+                  {
+                      label: 'Видеоинструкция о платформе',
+                      icon: 'pi pi-fw pi-video',
+                      to: '/videoInstruct'
                   }
               ]
             : [];

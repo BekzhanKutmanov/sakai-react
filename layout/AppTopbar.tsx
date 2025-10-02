@@ -127,17 +127,19 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
             </Link>
 
             {pathName !== '/' ? (
-                departament.name.length > 0 ? (
+                // departament.name.length > 0 ? (
                     <button ref={menubuttonRef} type="button" className="p-link layout-menu-button layout-topbar-button" onClick={onMenuToggle}>
                         <i className="pi pi-bars text-[var(--mainColor)]" />
                     </button>
-                ) : pathName !== '/course' ? (
-                    <button ref={menubuttonRef} type="button" className="p-link layout-menu-button layout-topbar-button" onClick={onMenuToggle}>
-                        <i className="pi pi-bars text-[var(--mainColor)]" />
-                    </button>
-                ) : (
-                    ''
-                )
+                // ) 
+                // : pathName !== '/course' ? (
+                //     <button ref={menubuttonRef} type="button" className="p-link layout-menu-button layout-topbar-button" onClick={onMenuToggle}>
+                //         <i className="pi pi-bars text-[var(--mainColor)]" />
+                //     </button>
+                // ) 
+                // : (
+                //     ''
+                // )
             ) : (
                 ''
             )}

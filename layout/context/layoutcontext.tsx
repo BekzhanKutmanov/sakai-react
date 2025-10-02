@@ -113,20 +113,20 @@ export const LayoutProvider = ({ children }: ChildContainerProps) => {
     const [departament, setDepartament] = useState<{ last_name: string; name: string; father_name: string; info: string }>({ last_name: '', name: '', father_name: '', info: '' });
 
     useEffect(() => {
-        if (pathname === '/course' && !departament.name) {
-            setLayoutState((prev) => ({
-                ...prev,
-                staticMenuDesktopInactive: true,
-                staticMenuMobileActive: false,
-                overlayMenuActive: false,
-                profileSidebarVisible: false
-            }));
-        } else {
+        // if (pathname === '/course' && !departament.name) {
+        //     setLayoutState((prev) => ({
+        //         ...prev,
+        //         staticMenuDesktopInactive: true,
+        //         staticMenuMobileActive: false,
+        //         overlayMenuActive: false,
+        //         profileSidebarVisible: false
+        //     }));
+        // } else {
             setLayoutState((prev) => ({
                 ...prev,
                 staticMenuDesktopInactive: false
             }));
-        }
+        // }
     }, [pathname, departament]);
 
     useEffect(() => {
