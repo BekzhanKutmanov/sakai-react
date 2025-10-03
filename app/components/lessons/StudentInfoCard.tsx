@@ -14,15 +14,18 @@ export default function StudentInfoCard({
     type,
     icon,
     title,
+    description,
+    documentUrl,
     streams,
     lesson,
-    stepId
+    stepId,
+    subjectId
 }: {
     type: string;
     icon: string;
     title?: string;
-    // description?: string;
-    // documentUrl?: { document: string | null; document_path: string };
+    description?: string;
+    documentUrl?: { document: string | null; document_path: string };
     // link?: string;
     // video_link?: string;
     // videoStart?: (id: string) => void;
@@ -30,6 +33,7 @@ export default function StudentInfoCard({
     streams: { id: number; connections: { subject_type: string; id: number; user_id: number | null; id_stream: number }[]; title: string; description: string; user: { last_name: string; name: string; father_name: string }; lessons: lessonType[] };
     lesson: number;
     stepId: number;
+    subjectId?: string;
 }) {
     const { id_kafedra } = useParams();
     // console.log(id_kafedra);
@@ -38,6 +42,7 @@ export default function StudentInfoCard({
 
     const [testCall, setTestCall] = useState(false);
     const [practicaCall, setPracticaCall] = useState(false);
+    const [progressSpinner, setProgressSpinner] = useState(false);
 
     const docCard = (
         <div className="w-full flex items-end gap-2 py-1 flex-col sm:flex-row">
@@ -46,32 +51,30 @@ export default function StudentInfoCard({
                     <div className="p-2 bg-[var(--mainColor)] min-w-[38px] min-h-[38px] w-[38px] h-[38px] flex justify-center items-center rounded">
                         <i className={`${icon} text-white`}></i>
                     </div>
-                    <Link
-                        href={`/teaching/lessonView/${streams.connections[0].id_stream}/${stepId}`}
-                        // onClick={() => videoStart && videoStart(video_link || '')}
-                        className="cursor-pointer max-w-[800px] text-[16px] text-wrap break-all hover:underline"
-                    >
+                    <a href={documentUrl?.document_path || '#'} download target="_blank" className="max-w-[800px] text-[16px] text-wrap break-all hover:underline" rel="noopener noreferrer">
                         {title}
-                    </Link>
+                    </a>
                 </div>
             </div>
             <div className="w-full flex gap-1 flex-col items-end">
                 <div className="w-full flex justify-end gap-1 items-center">
-                    <div className="">
-                        {/* <Link href={`/pdf/${documentUrl?.document}`}>
-                            <Button icon="pi pi-eye" className="mini-button" />
-                        </Link> */}
-                        {/* {progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />} */}
-                    </div>
+                    {documentUrl?.document && (
+                        <div>
+                            <Link href={`/pdf/${documentUrl?.document}`}>
+                                <Button icon="pi pi-eye" className="mini-button" />
+                            </Link>
+                            {progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}
+                        </div>
+                    )}
 
-                    {/* {documentUrl?.document_path && (
+                    {documentUrl?.document_path && (
                         <>
                             <a href={documentUrl?.document_path} download target="_blank" rel="noopener noreferrer">
                                 {' '}
                                 <Button icon="pi pi-file-arrow-up" className="mini-button" />
                             </a>
                         </>
-                    )} */}
+                    )}
                 </div>
             </div>
         </div>
@@ -101,7 +104,7 @@ export default function StudentInfoCard({
             </div>
             <div className="flex flex-col justify-center gap-1 max-w-[800px] text-wrap break-all">
                 <Link
-                    href={`/teaching/lessonView/${streams.connections[0].id_stream}/${stepId}`}
+                    href={`/teaching/lessonView/${lesson}/${subjectId}/${streams.connections[0].id_stream}/${stepId}`}
                     // onClick={() => videoStart && videoStart(video_link || '')}
                     className="cursor-pointer max-w-[800px] text-[16px] text-wrap break-all hover:underline"
                 >
@@ -117,10 +120,7 @@ export default function StudentInfoCard({
                 <i className={`${icon} text-white`}></i>
             </div>
             <div className="flex flex-col justify-center gap-1 max-w-[800px] text-wrap break-all">
-                <Link
-                    href={`/teaching/lessonView/${streams.connections[0].id_stream}/${stepId}`}
-                    className="cursor-pointer max-w-[800px] text-[16px] text-wrap break-all hover:underline"
-                >
+                <Link href={`/teaching/lessonView/${lesson}/${subjectId}/${streams.connections[0].id_stream}/${stepId}`} className="cursor-pointer max-w-[800px] text-[16px] text-wrap break-all hover:underline">
                     Тест
                 </Link>
             </div>
@@ -161,10 +161,7 @@ export default function StudentInfoCard({
             <div className="p-2 bg-[var(--yellowColor)] w-[38px] h-[38px] flex justify-center items-center rounded">
                 <i className={`${icon} text-white`}></i>
             </div>
-            <Link
-                href={`/teaching/lessonView/${streams.connections[0].id_stream}/${stepId}`} 
-                className="cursor-pointer max-w-[800px] text-[16px] text-wrap break-all hover:underline"
-            >
+            <Link href={`/teaching/lessonView/${lesson}/${subjectId}/${streams.connections[0].id_stream}/${stepId}`} className="cursor-pointer max-w-[800px] text-[16px] text-wrap break-all hover:underline">
                 Практическое задание
             </Link>
         </div>

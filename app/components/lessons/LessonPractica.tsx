@@ -289,12 +289,22 @@ export default function LessonPractica({ element, content, fetchPropElement, fet
                         <div className="flex gap-1 items-center">
                             <div className="w-full">
                                 <div className="w-full flex gap-1 items-center">
-                                    <InputTextarea
+                                    {/* <InputTextarea
                                         value={docValue.title}
                                         id="title"
                                         className="w-full"
                                         placeholder="Вопрос..."
                                         style={{ resize: 'none', width: '100%' }}
+                                        onChange={(e) => {
+                                            setDocValue((prev) => ({ ...prev, title: e.target.value }));
+                                            setValue('title', e.target.value, { shouldValidate: true });
+                                        }}
+                                    /> */}
+                                    <InputText
+                                        value={docValue.title}
+                                        id="title"
+                                        className="w-full"
+                                        placeholder="Вопрос..."
                                         onChange={(e) => {
                                             setDocValue((prev) => ({ ...prev, title: e.target.value }));
                                             setValue('title', e.target.value, { shouldValidate: true });
@@ -446,9 +456,18 @@ export default function LessonPractica({ element, content, fetchPropElement, fet
                         <div className="w-full flex gap-1 items-center">
                             <div className="w-full">
                                 <div className="w-full flex gap-1 items-center">
-                                    <InputTextarea
+                                    {/* <InputTextarea
                                         id="title"
                                         style={{ resize: 'none', width: '100%' }}
+                                        value={editingLesson?.title && editingLesson.title}
+                                        onChange={(e) => {
+                                            setEditingLesson((prev) => prev && { ...prev, title: e.target.value });
+                                            setValue('title', e.target.value, { shouldValidate: true });
+                                        }}
+                                    /> */}
+                                    <InputText
+                                        id="title"
+                                        className='w-full'
                                         value={editingLesson?.title && editingLesson.title}
                                         onChange={(e) => {
                                             setEditingLesson((prev) => prev && { ...prev, title: e.target.value });

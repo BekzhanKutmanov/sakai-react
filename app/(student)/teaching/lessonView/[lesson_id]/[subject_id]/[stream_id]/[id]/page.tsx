@@ -3,7 +3,7 @@
 import useErrorMessage from '@/hooks/useErrorMessage';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { LayoutContext } from '@/layout/context/layoutcontext';
-import { fetchMainLesson, fetchStudentSteps } from '@/services/studentMain';
+import { fetchItemsLessons, fetchMainLesson, fetchStudentSteps, fetchSubjects } from '@/services/studentMain';
 import { lessonType } from '@/types/lessonType';
 import { mainStepsType } from '@/types/mainStepType';
 import { testType } from '@/types/testType';
@@ -20,8 +20,16 @@ const PDFViewer = dynamic(() => import('@/app/components/PDFBook'), {
 });
 
 export default function LessonTest() {
-    const { stream_id, id } = useParams();
-    console.log(stream_id, id);
+    // types
+    interface subjectType {
+        id_curricula: number;
+        course_ids: number[];
+        streams: number[];
+    }
+    
+    const { lesson_id, subject_id, stream_id, id } = useParams();
+    console.log(lesson_id, subject_id, stream_id, id);
+    const params = new URLSearchParams();
 
     const { pdfUrl } = useParams();
     const media = useMediaQuery('(max-width: 640px)');
@@ -43,6 +51,15 @@ export default function LessonTest() {
         { text: '', is_correct: false, id: null },
         { text: '', is_correct: false, id: null }
     ]);
+    const [skeleton, setSkeleton] = useState(false);
+    const [hasLessons, setHasLessons] = useState(false);
+    const [lessons, setLessons] = useState<Record<number, { semester: { name_kg: string } } | predmetType>>({
+        1: { semester: { name_kg: '' } }
+    });
+    const [main_id, setMain_id] = useState<predmetType | null>(null);
+    const [courses, setCourses] = useState<
+        { id: number; connections: { subject_type: string; id: number; user_id: number | null; id_stream: number }[]; title: string; description: string; user: { last_name: string; name: string; father_name: string }; lessons: lessonType[] }[]
+    >([]);
 
     // document
     const [document, setDocument] = useState<mainStepsType | null>(null);
@@ -55,6 +72,29 @@ export default function LessonTest() {
     const [preview, setPreview] = useState(false);
     const [videoLink, setVideoLink] = useState('');
 
+    // fetch lessons
+    const handleFetchLessons = async () => {
+        const data = await fetchItemsLessons();
+        setSkeleton(true);
+        if (data) {
+            // валидность проверить
+            console.log(data);
+            setLessons(data);
+            setHasLessons(false);
+            setSkeleton(false);
+        } else {
+            setHasLessons(true);
+            setMessage({
+                state: true,
+                value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
+            });
+            if (data?.response?.status) {
+                showError(data.response.status);
+            }
+            setSkeleton(false);
+        }
+    };
+
     const handleStep = async () => {
         const data = await fetchStudentSteps(Number(id), Number(stream_id));
         console.log(data);
@@ -64,6 +104,33 @@ export default function LessonTest() {
             setMainSteps(data.step);
         } else {
             setHasSteps(true);
+        }
+    };
+
+    // Запрос курса, типа уроков (лк,лб)
+    const handleFetchSubject = async (subject: subjectType) => {
+        params.append('id_curricula', String(subject.id_curricula));
+        subject.streams.forEach((i) => params.append('streams[]', String(i)));
+        subject.course_ids.forEach((i) => params.append('course_ids[]', String(i)));
+
+        const data = await fetchSubjects(params);
+        console.log(data);
+
+        setSkeleton(true);
+        if (data) {
+            setCourses(data);
+            // setHasThemes(false);
+            setSkeleton(false);
+        } else {
+            // setHasThemes(true);
+            setMessage({
+                state: true,
+                value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
+            });
+            if (data?.response?.status) {
+                showError(data.response.status);
+            }
+            setSkeleton(false);
         }
     };
 
@@ -105,6 +172,7 @@ export default function LessonTest() {
     };
 
     useEffect(() => {
+        handleFetchLessons();
         handleStep();
     }, []);
 
@@ -130,6 +198,36 @@ export default function LessonTest() {
             setVideo(steps);
         }
     }, [steps]);
+
+    // Из предметов получаю выбранный курс в main_id
+    useEffect(() => {
+        const lessonArray = Object.values(lessons);
+        // console.log(lessonArray)
+        let search_id: predmetType | null = null;
+        if (lessonArray && Array.isArray(lessonArray)) {
+            for (let i = 0; i < lessonArray.length; i++) {
+                const lessonItemArray = Object.values(lessonArray[i]);
+                // console.log(lessonItemArray);
+
+                search_id = lessonItemArray.find((item: any) => item.id_curricula == subject_id);
+                if (search_id && search_id != null) {
+                    break;
+                }
+            }
+            if (search_id) {
+                setMain_id(search_id);
+            }
+        }
+    }, [lessons]);
+
+    useEffect(() => {
+        console.log('Главный курс ', main_id);
+
+        if (main_id && main_id != null) {
+            const forSubject: subjectType = { id_curricula: main_id?.id_curricula, course_ids: main_id?.course_ids, streams: main_id?.streams.map((i: { id: number }) => i.id) };
+            handleFetchSubject(forSubject);
+        }
+    }, [main_id]);
 
     useEffect(() => {
         console.log('practica ', video);
@@ -299,7 +397,7 @@ export default function LessonTest() {
 
     const videoSection = (
         <div className="lesson-card-border shadow rounded p-2 mt-2">
-            <div className='flex flex-col gap-2'>
+            <div className="flex flex-col gap-2">
                 <div className="flex flex-col gap-2">
                     <b className="text-[16px] sm:text-[18px] text-wrap break-all">{video?.content?.title}</b>
                     {video?.content?.description && (
@@ -342,7 +440,7 @@ export default function LessonTest() {
             <div className={`w-full bg-[var(--titleColor)] relative text-white p-4 md:p-3 pb-4`}>
                 <div className="flex flex-col gap-2 items-center">
                     <div className={`w-full flex items-center gap-1 ${courseInfoClass ? 'justify-around flex-col sm:flex-row' : 'justify-center'}  items-center`}>
-                        <h1 style={{ color: 'white', fontSize: media ? '24px' : '28px', textAlign: 'center', margin: '0' }}>{"Название курса"}</h1>
+                        <h1 style={{ color: 'white', fontSize: media ? '24px' : '28px', textAlign: 'center', margin: '0' }}>{'Название курса'}</h1>
                         {/* {courseInfoClass && <span className="text-white">babt</span>} */}
                     </div>
                     <span>Описание курса ... </span>
@@ -352,7 +450,7 @@ export default function LessonTest() {
                     </div>
                 </div>
             </div>
-            
+
             {type === 'document' && docSection}
             {type === 'link' && linkSection}
             {type === 'practical' && practicaSection}

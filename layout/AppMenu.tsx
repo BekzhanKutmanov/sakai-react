@@ -94,7 +94,7 @@ const AppMenu = () => {
                       to: '/course'
                   },
                   {
-                      label: 'Видеоинструкция о платформе',
+                      label: 'Видеоинструкция',
                       icon: 'pi pi-fw pi-video',
                       to: '/videoInstruct'
                   }
@@ -140,7 +140,7 @@ const AppMenu = () => {
                       to: '/course'
                   },
                   {
-                      label: 'Видеоинструкция о платформе',
+                      label: 'Видеоинструкция',
                       icon: 'pi pi-fw pi-video',
                       to: '/videoInstruct'
                   }

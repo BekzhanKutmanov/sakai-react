@@ -64,7 +64,7 @@ const LoginPage = () => {
                         }
                     } else {
                         setMessage({
-                            state: true,
+                            state: true,    
                             value: { severity: 'error', summary: 'Ошибка при авторизации', detail: 'Повторите позже' }
                         }); // messege - Ошибка при авторизации, повторите позже
                         logout({ setUser, setGlobalLoading });

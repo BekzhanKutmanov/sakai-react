@@ -84,7 +84,8 @@ export default function StreamList({
         const data = await fetchStreams(courseValue ? courseValue.id : null);
         // setStreamValues({ stream: [] });
         setPendingChanges([]);
-
+        console.log(data);
+        
         if (data) {
             profilactor(data);
             setHasStreams(false);

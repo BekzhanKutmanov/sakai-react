@@ -117,7 +117,7 @@ export default function LessonCard({
                             ) : (
                                 ''
                             )}
-                            <div className="w-full flex justify-between items-center flex-col sm:flex-row">
+                            <div className="w-full flex justify-between sm:items-start flex-col sm:flex-row">
                                 <b className={`flex items-center justify-start text-[16px] sm:text-[18px] mt-1 text-wrap break-all ${type.typeValue === 'practica' && ' shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]'}`}>{shortTitle}</b>
                                 {!cardValue.score && status === 'working' && (
                                     <div className={`bg-white p-2 flex gap-1 items-center justify-center`}>
@@ -135,7 +135,7 @@ export default function LessonCard({
                                 <Link href={cardValue?.url} target="_blank" className="underline">
                                     Ссылка:
                                 </Link>
-                                <span className="flex  max-w-[500px] text-wrap break-all">{cardValue?.url}</span>
+                                <span className="flex max-w-[500px] text-wrap break-all">{cardValue?.url}</span>
                             </div>
                         ) : (
                             type.typeValue === 'link' && (
@@ -159,7 +159,7 @@ export default function LessonCard({
                                 })}
                             </div>
                         )}
-                        <div className={`flex items-center text-[13px] w-full text-wrap break-words`}>
+                        <div className={`flex items-center text-sm w-full text-wrap break-words`}>
                             {type.typeValue === 'practica' ? cardValue?.desctiption && <div className='w-full text-wrap break-words' dangerouslySetInnerHTML={{ __html: cardValue.desctiption }} /> : cardValue?.desctiption && cardValue?.desctiption !== 'null' && <div className='w-full text-wrap break-words'>{cardValue.desctiption}</div>}
                         </div>
                     </div>

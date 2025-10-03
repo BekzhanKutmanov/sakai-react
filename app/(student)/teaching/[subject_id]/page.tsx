@@ -225,7 +225,7 @@ export default function StudentLesson() {
                         <div>
                             <h3 className="">
                                 {/* <span className="text-[var(--mainColor)]">Преподаватель:</span> */}
-                                 {course?.user.last_name} {course?.user.name}
+                                 {/* {course?.user.last_name} {course?.user.name} */}
                             </h3>
                             <Accordion activeIndex={activeIndex} onTabChange={(e) => setActiveIndex(e.index)}>
                                 {course.lessons.map((lesson, idx) => {
@@ -237,7 +237,7 @@ export default function StudentLesson() {
                                                 ) : (
                                                     <div key={lesson.id}>
                                                         {hasSteps ? <p className="text-center text-sm">Данных нет</p>
-                                                            : steps.map((item: {id: number, type: {name:string; logo:string}, content: {title: string}}, idx) => {
+                                                            : steps.map((item: {id: number, type: {name:string; logo:string}, content: {title: string, description: string, document: string, document_path: string}}, idx) => {
                                                             return (
                                                                 <div key={item.id} className={`${
                                                                     idx > 0 ? 
@@ -248,8 +248,8 @@ export default function StudentLesson() {
                                                                         type={item.type.name}
                                                                         icon={item.type.logo}
                                                                         title={item.content?.title}
-                                                                        // description={item.content?.description || ''}
-                                                                        // documentUrl={{ document: item.content?.document, document_path: item.content?.document_path }}
+                                                                        description={item.content?.description || ''}
+                                                                        documentUrl={{ document: item.content?.document, document_path: item.content?.document_path }}
                                                                         // video_link={item.content?.link}
                                                                         // link={item.content?.url}
                                                                         // test={{ content: item.content.content, answers: item.content.answers, score: item.content.score }}
@@ -257,6 +257,7 @@ export default function StudentLesson() {
                                                                         stepId={item.id}
                                                                         streams={course}
                                                                         lesson={lesson.id}
+                                                                        subjectId={subject_id}
                                                                     />
                                                                 </div>
                                                             );
