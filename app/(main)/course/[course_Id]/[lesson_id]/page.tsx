@@ -47,8 +47,8 @@ export default function LessonStep() {
     const [sequence_number, setSequence_number] = useState<number | null>(null);
     const [skeleton, setSkeleton] = useState(false);
     const [wasCreated, setWasCreated] = useState(false);
-    const [testovy, setTestovy] = useState(false);
     const [newStepId, setNewStepId] = useState<number | null>(null);
+    const [lastStep, setLastStep] = useState<number | null>(null);
 
     const changeUrl = (lessonId: number | null) => {
         router.replace(`/course/${course_id}/${lessonId ? lessonId : null}`);
@@ -130,7 +130,13 @@ export default function LessonStep() {
 
     const handleAddLesson = async (lessonId: number, typeId: number) => {
         setFormVisible(false);
-        const data = await addLesson({ lesson_id: lessonId, type_id: typeId }, sequence_number);
+        const forSequence_number = lastStep && lastStep > 0 ? 
+            !sequence_number || sequence_number < 1 ? 
+                lastStep + 1
+                : sequence_number
+                : sequence_number
+
+        const data = await addLesson({ lesson_id: lessonId, type_id: typeId }, forSequence_number || 0);
         if (data.success) {
             setSequence_number(null);
             setWasCreated(true);
@@ -223,6 +229,18 @@ export default function LessonStep() {
 
     useEffect(() => {
         if (Array.isArray(steps) && steps.length > 0) {
+            let max = 0;
+            steps?.forEach((item)=> {
+                if(item.step > max){
+                    max = item.step;
+                }
+            });
+
+            console.log(max);
+            if(max){
+                setLastStep(max);
+            }
+
             let stepId: number | null = null;
 
             if (wasCreated) {
@@ -262,7 +280,6 @@ export default function LessonStep() {
     }, [lesson_id]);
 
     useEffect(() => {
-        setTestovy(true);
         contextFetchThemes(Number(course_id), null);
     }, [course_id]);
 
@@ -471,7 +488,7 @@ export default function LessonStep() {
                         <span>Позиция:</span>
                         <InputText
                             type="number"
-                            // value={}
+                            placeholder={lastStep ? String(lastStep + 1) : ''}
                             className="w-full p-1"
                             onChange={(e) => {
                                 setSequence_number(Number(e.target.value));

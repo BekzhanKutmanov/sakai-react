@@ -93,12 +93,12 @@ const AppMenu = () => {
                       label: 'Курсы',
                       icon: 'pi pi-fw pi-book',
                       to: '/course'
+                  },
+                  {
+                      label: 'Видеоинструкция',
+                      icon: 'pi pi-fw pi-video',
+                      to: '/videoInstruct'
                   }
-                  //   {
-                  //       label: 'Видеоинструкция',
-                  //       icon: 'pi pi-fw pi-video',
-                  //       to: '/videoInstruct'
-                  //   }
               ]
             : []
         : user?.is_student
@@ -277,7 +277,6 @@ const AppMenu = () => {
     }, [user, studentThemeCourse]);
 
     useEffect(() => {
-
         if (contextThemes && contextThemes?.lessons) {
             const newThemes = contextThemes.lessons?.data?.map((item: any, idx: number) => ({
                 label: `${idx + 1}. ${item.title}`,
@@ -295,7 +294,7 @@ const AppMenu = () => {
     }, [contextThemes]);
 
     useEffect(() => {
-        if(course_Id){
+        if (course_Id) {
             handleCourseInfo();
         }
 
