@@ -612,9 +612,13 @@ input[type="password"]::-ms-clear {
   }
   .p-button-icon{
     width: 14px !important;
+    font-size: 14px !important;
   }
   .p-button{
     padding: 4px 5px !important;
+  }
+  .p-button.p-button-icon-only{
+    width: 2.5rem !important;
   }
 }
 
@@ -686,6 +690,10 @@ input[type="password"]::-ms-clear {
   word-break: break-all !important;
 }
 
+.small-p-button{
+  width: 2.5rem !important;
+}
+
 @media screen and (max-width: 640px) {
   .p-button-label .p-clickable{ 
     font-size: 14px !important;
@@ -710,7 +718,7 @@ input[type="password"]::-ms-clear {
   padding: 3px 2px;
 }
 
- .p-button-danger{
+.p-button-danger{
   background-color: #ef4444;
 }
 

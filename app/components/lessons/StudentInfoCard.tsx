@@ -16,6 +16,7 @@ export default function StudentInfoCard({
     title,
     description,
     documentUrl,
+    link,
     streams,
     lesson,
     stepId,
@@ -26,7 +27,7 @@ export default function StudentInfoCard({
     title?: string;
     description?: string;
     documentUrl?: { document: string | null; document_path: string };
-    // link?: string;
+    link?: string;
     // video_link?: string;
     // videoStart?: (id: string) => void;
     // test?: { content: string; answers: { id: number | null; text: string; is_correct: boolean }[]; score: number | null };
@@ -44,24 +45,34 @@ export default function StudentInfoCard({
     const [practicaCall, setPracticaCall] = useState(false);
     const [progressSpinner, setProgressSpinner] = useState(false);
 
+    const progressToggle = () => {
+        setProgressSpinner(true);
+        setTimeout(() => {
+            setProgressSpinner(false);
+        }, 5000);
+    };
+
     const docCard = (
-        <div className="w-full flex items-end gap-2 py-1 flex-col sm:flex-row">
+        <div className="w-full flex items-end gap-2 sm:gap-4 py-1 flex-col sm:flex-row">
             <div className="w-full flex flex-col sm:flex-row gap-1">
                 <div className="w-full flex items-start gap-2">
                     <div className="p-2 bg-[var(--mainColor)] min-w-[38px] min-h-[38px] w-[38px] h-[38px] flex justify-center items-center rounded">
                         <i className={`${icon} text-white`}></i>
                     </div>
-                    <a href={documentUrl?.document_path || '#'} download target="_blank" className="max-w-[800px] text-[16px] text-wrap break-all hover:underline" rel="noopener noreferrer">
-                        {title}
-                    </a>
+                    <div className='flex flex-col gap-1 '>
+                        <a href={documentUrl?.document_path || '#'} download target="_blank" className="max-w-[800px] text-[16px] text-wrap break-all hover:underline" rel="noopener noreferrer">
+                            {title}
+                        </a>
+                        <span className="text-[12px]">{description}</span>
+                    </div>
                 </div>
             </div>
-            <div className="w-full flex gap-1 flex-col items-end">
+            <div className="flex gap-1 flex-col items-end">
                 <div className="w-full flex justify-end gap-1 items-center">
                     {documentUrl?.document && (
-                        <div>
-                            <Link href={`/pdf/${documentUrl?.document}`}>
-                                <Button icon="pi pi-eye" className="mini-button" />
+                        <div className='flex items-center'>
+                            <Link onClick={() => progressToggle()} href={`${progressSpinner ? '#' : `/pdf/${documentUrl?.document}`}`} className={`${progressSpinner && 'opacity-50 '}`}>
+                                <Button icon="pi pi-eye" className="mini-button small-p-button" />
                             </Link>
                             {progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}
                         </div>
@@ -71,7 +82,7 @@ export default function StudentInfoCard({
                         <>
                             <a href={documentUrl?.document_path} download target="_blank" rel="noopener noreferrer">
                                 {' '}
-                                <Button icon="pi pi-file-arrow-up" className="mini-button" />
+                                <Button icon="pi pi-file-arrow-up" className="mini-button small-p-button text-[8px] " />
                             </a>
                         </>
                     )}
@@ -81,25 +92,26 @@ export default function StudentInfoCard({
     );
 
     const linkCard = (
-        <div className="w-full flex items-center gap-2 py-1">
-            <div className="p-2 bg-[var(--greenColor)] w-[38px] h-[38px] flex justify-center items-center rounded">
+        <div className="w-full flex items-start gap-2 py-1">
+            <div className="p-2 bg-[var(--greenColor)] min-w-[38px] w-[38px] min-h-[38px] h-[38px] flex justify-center items-center rounded">
                 <i className={`${icon} text-white`}></i>
             </div>
             <div className="flex flex-col justify-center gap-1 max-w-[800px] text-wrap break-all">
-                <Link
-                    href={`/teaching/lessonView/${streams.connections[0].id_stream}/${stepId}`}
-                    // onClick={() => videoStart && videoStart(video_link || '')}
-                    className="cursor-pointer max-w-[800px] text-[16px] text-wrap break-all hover:underline"
-                >
-                    {title}
-                </Link>
+                {link && link?.length > 0 ? (
+                    <Link href={link} target="_blank" className="cursor-pointer max-w-[800px] text-[16px] text-wrap break-all hover:underline">
+                        {title}
+                    </Link>
+                ) : (
+                    <p>{title}</p>
+                )}
+                <span className="text-[12px]">{description}</span>
             </div>
         </div>
     );
 
     const videoCard = (
         <div className="w-full flex items-center gap-2 py-1">
-            <div className="p-2 bg-[#f7634d] w-[38px] h-[38px] flex justify-center items-center rounded">
+            <div className="p-2 bg-[#f7634d] min-w-[38px] w-[38px] min-h-[38px] h-[38px] flex justify-center items-center rounded">
                 <i className={`${icon} text-white`}></i>
             </div>
             <div className="flex flex-col justify-center gap-1 max-w-[800px] text-wrap break-all">
@@ -116,7 +128,7 @@ export default function StudentInfoCard({
 
     const testCard = (
         <div className="w-full flex items-center gap-2 py-1">
-            <div className="p-2 bg-[#c38598] w-[38px] h-[38px] flex justify-center items-center rounded">
+            <div className="p-2 bg-[#c38598] min-w-[38px] w-[38px] min-h-[38px] h-[38px] flex justify-center items-center rounded">
                 <i className={`${icon} text-white`}></i>
             </div>
             <div className="flex flex-col justify-center gap-1 max-w-[800px] text-wrap break-all">
@@ -158,7 +170,7 @@ export default function StudentInfoCard({
 
     const practicaCard = (
         <div className="w-full flex items-center gap-2 py-1">
-            <div className="p-2 bg-[var(--yellowColor)] w-[38px] h-[38px] flex justify-center items-center rounded">
+            <div className="p-2 bg-[var(--yellowColor)] min-w-[38px] w-[38px] min-h-[38px] h-[38px] flex justify-center items-center rounded">
                 <i className={`${icon} text-white`}></i>
             </div>
             <Link href={`/teaching/lessonView/${lesson}/${subjectId}/${streams.connections[0].id_stream}/${stepId}`} className="cursor-pointer max-w-[800px] text-[16px] text-wrap break-all hover:underline">

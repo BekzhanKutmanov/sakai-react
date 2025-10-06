@@ -251,7 +251,7 @@ export default function Course() {
     };
 
     const imageBodyTemplate = (product: CourseType) => {
-        const image = product.image;
+        const image = product.image;        
 
         if (typeof image === 'string') {
             return (
@@ -302,7 +302,7 @@ export default function Course() {
                         <div className="font-bold text-md mb-2">
                             <Link
                                 href={`/course/${shablonData.id}/${'null'}`}
-                                className="max-w-sm text-word break-all"
+                                className="max-w-sm break-words"
                                 onClick={() => {
                                     setMainCourseId(shablonData.id);
                                     setGlobalLoading(true);

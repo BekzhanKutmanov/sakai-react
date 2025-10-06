@@ -107,8 +107,8 @@ export default function LessonCard({
                                         <span className="text-[var(--mainColor)] sm:text-lg">Балл: </span>
                                         <b className="text-[16px] sm:text-[18px]">{`${cardValue.score}`}</b>
                                     </div>
-                                    {status === 'working' && (
-                                        <div className={`bg-white p-2 flex gap-1 items-center justify-center`}>
+                                    {status === 'working' && lessonDate && (
+                                        <div className={`bg-white p-2 flex gap-1 items-center justify-center min-w-[120px] max-h-[25px]`}>
                                             <i className={`pi pi-calendar text-[var(--mainColor)]`}></i>
                                             <span className="text-[12px]">{lessonDate}</span>
                                         </div>
@@ -117,10 +117,10 @@ export default function LessonCard({
                             ) : (
                                 ''
                             )}
-                            <div className="w-full flex justify-between sm:items-start flex-col sm:flex-row">
-                                <b className={`flex items-center justify-start text-[16px] sm:text-[18px] mt-1 text-wrap break-all ${type.typeValue === 'practica' && ' shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]'}`}>{shortTitle}</b>
-                                {!cardValue.score && status === 'working' && (
-                                    <div className={`bg-white p-2 flex gap-1 items-center justify-center`}>
+                            <div className="w-full flex justify-between sm:items-start flex-col gap-1 sm:flex-row">
+                                <b className={`flex items-center justify-start text-[16px] sm:text-[18px] mt-1 break-words ${type.typeValue === 'practica' && 'shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]'}`}>{cardValue?.title}</b>
+                                {!cardValue.score && status === 'working' && lessonDate && (
+                                    <div className={`bg-white p-2 flex gap-1 items-center justify-center min-w-[120px] max-h-[25px]`}>
                                         <i className={`pi pi-calendar text-[var(--mainColor)]`}></i>
                                         <span className="text-[12px]">{lessonDate}</span>
                                     </div>
@@ -135,12 +135,12 @@ export default function LessonCard({
                                 <Link href={cardValue?.url} target="_blank" className="underline">
                                     Ссылка:
                                 </Link>
-                                <span className="flex max-w-[500px] text-wrap break-all">{cardValue?.url}</span>
+                                <span className="flex max-w-[500px] break-words">{cardValue?.url}</span>
                             </div>
                         ) : (
                             type.typeValue === 'link' && (
                                 <>
-                                    <Link href={cardValue?.url ? cardValue?.url : '#'} target='_blanc' className="flex text-wrap break-all">{shortUrl}</Link>
+                                    <Link href={cardValue?.url ? cardValue?.url : '#'} target='_blanc' className="flex break-words">{shortUrl}</Link>
                                 </>
                             )
                         )}
@@ -159,8 +159,8 @@ export default function LessonCard({
                                 })}
                             </div>
                         )}
-                        <div className={`flex items-center text-sm w-full text-wrap break-words`}>
-                            {type.typeValue === 'practica' ? cardValue?.desctiption && <div className='w-full text-wrap break-words' dangerouslySetInnerHTML={{ __html: cardValue.desctiption }} /> : cardValue?.desctiption && cardValue?.desctiption !== 'null' && <div className='w-full text-wrap break-words'>{cardValue.desctiption}</div>}
+                        <div className={`flex items-center text-sm w-full break-words`}>
+                            {type.typeValue === 'practica' ? cardValue?.desctiption && <div className='w-full break-words' dangerouslySetInnerHTML={{ __html: cardValue.desctiption }} /> : cardValue?.desctiption && cardValue?.desctiption !== 'null' && <div className='w-full break-words'>{cardValue.desctiption}</div>}
                         </div>
                     </div>
                     {/* video preview */}

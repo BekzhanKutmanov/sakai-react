@@ -63,7 +63,7 @@ export default function PDFViewer({ url }: { url: string }) {
                         setHasPdf(true);
                         setMessage({
                             state: true,
-                            value: { severity: 'error', summary: 'Ошибка', detail: 'Документти жүктөө же көрсөтүү катасы' }
+                            value: { severity: 'error', summary: 'Ошибка', detail: 'Ошибка загрузки или отображения документа' }
                         });
                         throw new Error('Canvas context is not supported.');
                     }
@@ -104,7 +104,7 @@ export default function PDFViewer({ url }: { url: string }) {
                 setSkeleton(false);
                 setMessage({
                     state: true,
-                    value: { severity: 'error', summary: 'Ошибка', detail: 'Документти жүктөө же көрсөтүү катасы' }
+                    value: { severity: 'error', summary: 'Ошибка', detail: 'Ошибка загрузки или отображения документа' }
                 });
             } finally {
                 setSkeleton(false);

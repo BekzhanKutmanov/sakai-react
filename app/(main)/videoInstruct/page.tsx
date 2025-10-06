@@ -57,7 +57,7 @@ export default function VideoInstruct() {
     };
 
     useEffect(() => {
-        handleVideoCall('https://www.youtube.com/watch?v=NJBG8DbTtJc');
+        handleVideoCall('https://youtu.be/9j9vUpNrgDM?si=nqk6tX5JPCyr7znv');
     }, []);
 
     return (

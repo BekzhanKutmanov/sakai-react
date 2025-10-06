@@ -75,14 +75,16 @@ const AppMenuitem = (props: AppMenuItemProps) => {
                 </Link>
             ) : null} */}
             {item!.to && !item!.items && item!.visible !== false ? (
-                <div style={{ display: 'flex', columnGap:'2px', alignItems: 'center', justifyContent: 'space-between', textWrap: 'wrap', maxWidth: '340px', wordBreak: 'break-all' }}>
+                <div style={{ display: 'flex', columnGap:'2px', alignItems: 'center', justifyContent: 'space-between', maxWidth: '340px', overflowWrap: 'break-word', wordBreak: 'normal' }}>
                     <Link href={item!.to} replace={item!.replaceUrl} target={item!.target} onClick={(e) => itemClick(e)} className={classNames(item!.class, 'p-ripple', { 'active-route': isActiveRoute })} tabIndex={0} style={{ flexGrow: 1 }}>
                         <i className={classNames('layout-menuitem-icon', item!.icon)}></i>
-                        <span className="layout-menuitem-text max-w-[200px] text-wrap break-words">{item!.label}</span>
+
+                        <span className="layout-menuitem-text max-w-[200px] ">{item!.label}</span>
+
                         <Ripple />
                     </Link>
                     <div className='text-sm text-[var(--mainColor)]'>{item?.score}</div> 
-                    <div className='flex gap-1 items-center'>
+                    <div className='flex gap-1 items-center py-1'>
                         {/* Кнопки редактирования и удаления */}
                         {item!.onEdit && (
                             <button

@@ -73,6 +73,12 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                   }
               },
 
+        // {
+        //     label: 'Видеоинструкция',
+        //     icon: '',
+        //     items: [],
+        //     url: '/videoInstruct'
+        // },
         {
             label: 'Старый Mooc',
             icon: '',
@@ -109,6 +115,18 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                 window.location.href = '/auth/login';
                 logout({ setUser, setGlobalLoading });
             }
+        }
+    ];
+
+    //
+    const notification = [
+        {
+            label: '',
+            template: (
+                <Link href={'/videoInstruct'} className="flex items-center flex-col gap-1 text-sm hover:text-white">
+                    Видеоинструкция
+                </Link>
+            )
         }
     ];
 
@@ -168,7 +186,8 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                             <GroupSkeleton count={1} size={{ width: '100%', height: '3rem' }} />
                         </div>
                     ) : user ? (
-                        <div className={`hidden lg:block ${media ? 'order-1' : 'order-2'}`}>
+                        <div className={`hidden lg:flex items-center ${media ? 'order-1' : 'order-2'} `}>
+                            <Tiered title={{ name: '', font: 'pi pi-bell' }} items={notification} insideColor={'--titleColor'} />
                             <Tiered title={{ name: '', font: 'pi pi-user' }} items={profileItems} insideColor={'--titleColor'} />
                         </div>
                     ) : (

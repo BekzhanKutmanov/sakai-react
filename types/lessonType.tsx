@@ -13,4 +13,6 @@ export interface lessonType {
     url?: string;
     cover_url?: string; 
     link?:string;
+    steps: { id: number; type: { name: string; logo: string }; content: { title: string; description: string; url: string; document: string; document_path: string } }[]
+    isLoadingSteps:boolean;
 }

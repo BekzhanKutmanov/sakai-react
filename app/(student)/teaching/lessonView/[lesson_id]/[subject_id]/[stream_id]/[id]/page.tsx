@@ -26,7 +26,7 @@ export default function LessonTest() {
         course_ids: number[];
         streams: number[];
     }
-    
+
     const { lesson_id, subject_id, stream_id, id } = useParams();
     console.log(lesson_id, subject_id, stream_id, id);
     const params = new URLSearchParams();
@@ -56,9 +56,18 @@ export default function LessonTest() {
     const [lessons, setLessons] = useState<Record<number, { semester: { name_kg: string } } | predmetType>>({
         1: { semester: { name_kg: '' } }
     });
+    const [lessonName, setLessonName] = useState('');
     const [main_id, setMain_id] = useState<predmetType | null>(null);
     const [courses, setCourses] = useState<
-        { id: number; connections: { subject_type: string; id: number; user_id: number | null; id_stream: number }[]; title: string; description: string; user: { last_name: string; name: string; father_name: string }; lessons: lessonType[] }[]
+        {
+            id: number;
+            connections: { subject_type: string; id: number; user_id: number | null; id_stream: number }[];
+            title: string;
+            description: string;
+            image: string;
+            user: { last_name: string; name: string; father_name: string };
+            lessons: lessonType[];
+        }[]
     >([]);
 
     // document
@@ -221,8 +230,6 @@ export default function LessonTest() {
     }, [lessons]);
 
     useEffect(() => {
-        console.log('Главный курс ', main_id);
-
         if (main_id && main_id != null) {
             const forSubject: subjectType = { id_curricula: main_id?.id_curricula, course_ids: main_id?.course_ids, streams: main_id?.streams.map((i: { id: number }) => i.id) };
             handleFetchSubject(forSubject);
@@ -236,7 +243,19 @@ export default function LessonTest() {
         }
     }, [video]);
 
-    const courseInfoClass = true;
+    useEffect(() => {
+        if (lesson_id) {
+            const forLesson = courses[0]?.lessons.find((item) => item.id === Number(lesson_id));
+            console.log(forLesson);
+            setLessonName(forLesson?.title || '');
+        }
+    }, [courses]);
+
+    useEffect(()=> {
+        console.log(practica);
+    },[practica])
+
+    const courseInfoClass = courses[0]?.image;
 
     const hasPdf = /pdf/i.test(document?.content?.document || ''); // true
 
@@ -301,19 +320,21 @@ export default function LessonTest() {
     );
 
     const practicaSection = (
-        <div className="lesson-card-border shadow rounded p-2 mt-2">
+        <div className="p-2 mt-2">
+            <div className='flex justify-between gap-1 items-center flex-col sm:flex-row'>
+                <div className="flex gap-1 items-center">
+                    <span className="sm:text-[18px]">{steps?.type?.title}</span>
+                    <i className={`${steps?.type?.logo} text-2xl`}></i>
+                </div>
+                <div className="flex items-center gap-1 my-2">
+                    <span className="text-[var(--mainColor)]">Балл за задание: </span>
+                    <b className="text-[16px] sm:text-[18px] ">{`${steps?.score}`}</b>
+                </div>
+            </div>
+
             <div className="flex flex-col gap-2">
                 <b className="text-[16px] sm:text-[18px] text-wrap break-all">{practica?.content?.title}</b>
-                {practica?.content?.description && (
-                    <div className="bg-[#ddc4f51a] p-2 relative sm:w-full md:w-[70%]">
-                        <p className="mt-1">
-                            <span className="w-[20px] h-[20px] bg-green-600 mx-2 relative inline-block">
-                                <span className="pi pi-bookmark text-2xl absolute top-[-3px]"></span>
-                            </span>{' '}
-                            {practica?.content?.description}
-                        </p>
-                    </div>
-                )}
+                {practica?.content?.description && <div className="lesson-card-border shadow rounded p-2 sm:w-full md:w-[70%]" dangerouslySetInnerHTML={{__html: practica?.content?.description}}/>}
             </div>
 
             <div className="flex flex-col gap-2 w-full">
@@ -436,17 +457,17 @@ export default function LessonTest() {
     );
 
     return (
-        <div className="main-bg">
+        <div className="main-bg min-h-[100vh]">
             <div className={`w-full bg-[var(--titleColor)] relative text-white p-4 md:p-3 pb-4`}>
                 <div className="flex flex-col gap-2 items-center">
-                    <div className={`w-full flex items-center gap-1 ${courseInfoClass ? 'justify-around flex-col sm:flex-row' : 'justify-center'}  items-center`}>
-                        <h1 style={{ color: 'white', fontSize: media ? '24px' : '28px', textAlign: 'center', margin: '0' }}>{'Название курса'}</h1>
-                        {/* {courseInfoClass && <span className="text-white">babt</span>} */}
+                    <div className={`w-full flex items-center gap-1 ${courseInfoClass && courseInfoClass.length > 0 ? 'justify-around flex-col sm:flex-row' : 'justify-center'}  items-center`}>
+                        <h1 style={{ color: 'white', fontSize: media ? '24px' : '28px', textAlign: 'center', margin: '0' }}>{courses[0]?.title}</h1>
+                        {courseInfoClass && courseInfoClass.length > 0 && <img src={courseInfoClass} />}
                     </div>
-                    <span>Описание курса ... </span>
-                    <div className="flex items-center justify-end gap-1">
+                    <span>{courses[0]?.description} </span>
+                    <div className="flex items-center justify-end gap-1 flex-col sm:flex-row mt-2">
                         <b className="text-white sm:text-lg">Тема: </b>
-                        <b className="text-[16px] sm:text-[18px]">{'Физика...'}</b>
+                        <b className="text-[16px] sm:text-[18px]">{lessonName}</b>
                     </div>
                 </div>
             </div>

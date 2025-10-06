@@ -54,14 +54,14 @@ export default function LessonStep() {
         router.replace(`/course/${course_id}/${lessonId ? lessonId : null}`);
     };
 
-    const handleCourseInfo = async () => {
-        setSkeleton(true);
-        const data = await fetchCourseInfo(Number(course_id));
-        if (data && data?.success) {
-            setSkeleton(false);
-            setCourseInfo(data.course);
-        }
-    };
+    // const handleCourseInfo = async () => {
+    //     setSkeleton(true);
+    //     const data = await fetchCourseInfo(Number(course_id));
+    //     if (data && data?.success) {
+    //         setSkeleton(false);
+    //         setCourseInfo(data.course);
+    //     }
+    // };
 
     const handleShow = async (LessonId: number | null) => {
         setSkeleton(true);
@@ -372,33 +372,39 @@ export default function LessonStep() {
     }, [lesson_id]);
 
     useEffect(() => {
-        handleCourseInfo();
+        const element = scrollRef.current;
+        if (element) {
+            const handleWheelScroll = (event: any) => {
+                // 1. Проверяем, что это вертикальный скролл (колесо мыши)
+                if (event.deltaY !== 0) {
+                    // 2. Отменяем стандартное вертикальное поведение прокрутки страницы
+                    event.preventDefault();
 
-        const el = scrollRef.current;
-        if (!el) return;
+                    // 3. Смещаем горизонтальную позицию (scrollLeft)
+                    // на величину вертикального сдвига (event.deltaY)
+                    element.scrollLeft += event.deltaY;
+                }
+            };
 
-        const onWheel = (e: WheelEvent) => {
-            if (e.deltaY !== 0) {
-                e.preventDefault();
-                el.scrollLeft += e.deltaY; // прокрутка по горизонтали
-            }
-        };
+            // Добавляем слушатель события 'wheel'
+            element.addEventListener('wheel', handleWheelScroll);
 
-        el.addEventListener('wheel', onWheel, { passive: false });
-        return () => {
-            el.removeEventListener('wheel', onWheel);
-            setLesson_id(null);
-            setContextThemes([]);
-        };
+            // Функция очистки: удаляем слушатель при демонтировании компонента
+            return () => {
+                element.removeEventListener('wheel', handleWheelScroll);
+            };
+        }
     }, []);
+
+    // ... остальная часть вашего компонента и JSX, где используется ref={scrollRef}
 
     const lessonInfo = (
         <div className="w-full">
             <div className="bg-[var(--titleColor)] relative flex flex-col justify-center items-center w-full text-white p-4 md:p-3 pb-4">
-                <h1 style={{ color: 'white', fontSize: media ? '24px' : '28px', textAlign: 'center' }} className="m-0 w-full text-wrap break-words">
+                {/* <h1 style={{ color: 'white', fontSize: media ? '24px' : '28px', textAlign: 'center' }} className="m-0 w-full break-words">
                     {courseInfo?.title}
-                </h1>
-                <h2 style={{ color: 'white', fontSize: media ? '22px' : '26px', textAlign: 'center' }} className="w-full text-wrap break-words">
+                </h1> */}
+                <h2 style={{ color: 'white', fontSize: media ? '22px' : '26px', textAlign: 'center' }} className="w-full break-words">
                     {lessonInfoState?.title}
                 </h2>
                 {media && contextThemes && contextThemes?.max_sum_score ? (

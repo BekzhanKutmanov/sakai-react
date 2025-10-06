@@ -9,7 +9,7 @@ import { AppMenuItem } from '@/types';
 import { useParams, usePathname, useRouter } from 'next/navigation';
 import { getConfirmOptions } from '@/utils/getConfirmOptions';
 import { confirmDialog } from 'primereact/confirmdialog';
-import { addThemes, deleteTheme, fetchLessonShow, updateTheme } from '@/services/courses';
+import { addThemes, deleteTheme, fetchCourseInfo, fetchLessonShow, updateTheme } from '@/services/courses';
 import FormModal from '@/app/components/popUp/FormModal';
 import { InputText } from 'primereact/inputtext';
 import { useForm } from 'react-hook-form';
@@ -51,6 +51,7 @@ const AppMenu = () => {
     const [themeAddvisible, setThemeAddVisisble] = useState(false);
     const [editingLesson, setEditingLesson] = useState<{ title: string; sequence_number: number | null } | null>(null);
     const [themeValue, setThemeValue] = useState<{ title: string; sequence_number: number | null }>({ title: '', sequence_number: null });
+    const [courseInfo, setCourseInfo] = useState<{ title: string } | null>(null);
 
     const [themesStudentList, setThemesStudentList] = useState<{ key?: string; label: string; id: number; to: string; items?: AppMenuItem[] }[]>([]);
 
@@ -62,7 +63,7 @@ const AppMenu = () => {
             ? [
                   {
                       // key: 'prev',
-                      label: '',
+                      label: `${courseInfo?.title}`,
                       icon: 'pi pi-fw pi-arrow-left',
                       to: '/course'
                   },
@@ -92,12 +93,12 @@ const AppMenu = () => {
                       label: 'Курсы',
                       icon: 'pi pi-fw pi-book',
                       to: '/course'
-                  },
-                  {
-                      label: 'Видеоинструкция',
-                      icon: 'pi pi-fw pi-video',
-                      to: '/videoInstruct'
                   }
+                  //   {
+                  //       label: 'Видеоинструкция',
+                  //       icon: 'pi pi-fw pi-video',
+                  //       to: '/videoInstruct'
+                  //   }
               ]
             : []
         : user?.is_student
@@ -113,7 +114,7 @@ const AppMenu = () => {
         : [];
 
     const forDepartament =
-        !pathname.startsWith('/course/') && departament.info.length > 0 && !pathname.startsWith('/students/') && !pathname.startsWith('/pdf/') 
+        !pathname.startsWith('/course/') && departament.info.length > 0 && !pathname.startsWith('/students/') && !pathname.startsWith('/pdf/')
             ? [
                   {
                       // key: 'prev',
@@ -138,12 +139,12 @@ const AppMenu = () => {
                       label: 'Курсы',
                       icon: 'pi pi-fw pi-book',
                       to: '/course'
-                  },
-                  {
-                      label: 'Видеоинструкция',
-                      icon: 'pi pi-fw pi-video',
-                      to: '/videoInstruct'
                   }
+                  //   {
+                  //       label: 'Видеоинструкция',
+                  //       icon: 'pi pi-fw pi-video',
+                  //       to: '/videoInstruct'
+                  //   }
               ]
             : [];
 
@@ -159,6 +160,13 @@ const AppMenu = () => {
             items: byStatus
         }
     ];
+
+    const handleCourseInfo = async () => {
+        const data = await fetchCourseInfo(Number(course_Id));
+        if (data && data?.success) {
+            setCourseInfo(data.course);
+        }
+    };
 
     const selectedForEditing = (id: number) => {
         setSelectId(id);
@@ -269,7 +277,6 @@ const AppMenu = () => {
     }, [user, studentThemeCourse]);
 
     useEffect(() => {
-        console.log(contextThemes);
 
         if (contextThemes && contextThemes?.lessons) {
             const newThemes = contextThemes.lessons?.data?.map((item: any, idx: number) => ({
@@ -288,6 +295,10 @@ const AppMenu = () => {
     }, [contextThemes]);
 
     useEffect(() => {
+        if(course_Id){
+            handleCourseInfo();
+        }
+
         if (contextStudentThemes?.lessons) {
             const forThemes: any = [];
             contextStudentThemes.lessons.data?.map((item: any) =>
