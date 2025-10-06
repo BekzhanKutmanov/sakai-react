@@ -139,12 +139,12 @@ const AppMenu = () => {
                       label: 'Курсы',
                       icon: 'pi pi-fw pi-book',
                       to: '/course'
-                  }
-                  //   {
-                  //       label: 'Видеоинструкция',
-                  //       icon: 'pi pi-fw pi-video',
-                  //       to: '/videoInstruct'
-                  //   }
+                  },
+                    {
+                        label: 'Видеоинструкция',
+                        icon: 'pi pi-fw pi-video',
+                        to: '/videoInstruct'
+                    }
               ]
             : [];
 
