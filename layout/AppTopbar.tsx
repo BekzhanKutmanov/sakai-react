@@ -187,7 +187,7 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                         </div>
                     ) : user ? (
                         <div className={`hidden lg:flex items-center ${media ? 'order-1' : 'order-2'} `}>
-                            <Tiered title={{ name: '', font: 'pi pi-bell' }} items={notification} insideColor={'--titleColor'} />
+                            {user?.is_working && <Tiered title={{ name: '', font: 'pi pi-bell' }} items={notification} insideColor={'--titleColor'} />}
                             <Tiered title={{ name: '', font: 'pi pi-user' }} items={profileItems} insideColor={'--titleColor'} />
                         </div>
                     ) : (

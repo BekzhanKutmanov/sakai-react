@@ -59,18 +59,19 @@ export default function StudentInfoCard({
                     <div className="p-2 bg-[var(--mainColor)] min-w-[38px] min-h-[38px] w-[38px] h-[38px] flex justify-center items-center rounded">
                         <i className={`${icon} text-white`}></i>
                     </div>
-                    <div className='flex flex-col gap-1 '>
-                        <a href={documentUrl?.document_path || '#'} download target="_blank" className="max-w-[800px] text-[16px] text-wrap break-all hover:underline" rel="noopener noreferrer">
-                            {title}
-                        </a>
-                        <span className="text-[12px]">{description}</span>
-                    </div>
+                    <Link
+                        href={`/teaching/lessonView/${lesson}/${subjectId}/${streams.connections[0].id_stream}/${stepId}`}
+                        // onClick={() => videoStart && videoStart(video_link || '')}
+                        className="cursor-pointer max-w-[800px] text-[16px] text-wrap break-all hover:underline"
+                    >
+                        {title}
+                    </Link>
                 </div>
             </div>
-            <div className="flex gap-1 flex-col items-end">
+            {/* <div className="flex gap-1 flex-col items-end">
                 <div className="w-full flex justify-end gap-1 items-center">
                     {documentUrl?.document && (
-                        <div className='flex items-center'>
+                        <div className="flex items-center">
                             <Link onClick={() => progressToggle()} href={`${progressSpinner ? '#' : `/pdf/${documentUrl?.document}`}`} className={`${progressSpinner && 'opacity-50 '}`}>
                                 <Button icon="pi pi-eye" className="mini-button small-p-button" />
                             </Link>
@@ -87,7 +88,7 @@ export default function StudentInfoCard({
                         </>
                     )}
                 </div>
-            </div>
+            </div> */}
         </div>
     );
 
@@ -97,14 +98,20 @@ export default function StudentInfoCard({
                 <i className={`${icon} text-white`}></i>
             </div>
             <div className="flex flex-col justify-center gap-1 max-w-[800px] text-wrap break-all">
-                {link && link?.length > 0 ? (
+                <Link
+                    href={`/teaching/lessonView/${lesson}/${subjectId}/${streams.connections[0].id_stream}/${stepId}`}
+                    // onClick={() => videoStart && videoStart(video_link || '')}
+                    className="cursor-pointer max-w-[800px] text-[16px] text-wrap break-all hover:underline"
+                >
+                    {title}
+                </Link>
+                {/* {link && link?.length > 0 ? (
                     <Link href={link} target="_blank" className="cursor-pointer max-w-[800px] text-[16px] text-wrap break-all hover:underline">
                         {title}
                     </Link>
                 ) : (
                     <p>{title}</p>
-                )}
-                <span className="text-[12px]">{description}</span>
+                )} */}
             </div>
         </div>
     );

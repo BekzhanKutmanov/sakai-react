@@ -319,7 +319,7 @@ export default function StudentLesson() {
                 return (
                     <div key={course.id} className="flex flex-col gap-4 lesson-card-border shadow rounded my-4 py-2 px-1">
                         <div className="flex flex-col gap-2">
-                            <h3 className="m-0">
+                            <h3 className="m-0 break-words">
                                 <span className="text-[var(--mainColor)]">Название курса:</span> {course?.title}
                             </h3>
                             <h3 className="m-0">

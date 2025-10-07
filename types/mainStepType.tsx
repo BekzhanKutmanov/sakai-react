@@ -7,6 +7,6 @@ export interface mainStepsType {
     step: number;
     type: { active: true; created_at: string; id: 1; logo: string; description?: string | null; modelName: string; name: string; title: string; updated_at: string };
     updated_at: string;
-    content?: {document: string, document_path: string, description: string | null, title: string, link: string, url: string, content: string, answers: [{text: string, is_correct: boolean, id: number | null}], score: number}
+    content?: {document: string, document_path: string, description: string | null, title: string, link: string, url: string,cover_url: string | null, content: string, answers: [{text: string, is_correct: boolean, id: number | null}], score: number}
     score?: number | null;
 }
