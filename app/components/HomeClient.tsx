@@ -52,7 +52,7 @@ export default function HomeClient() {
                                 <div data-aos="fade-up" data-aos-delay="900" data-aos-duration="1000" data-aos-once="true" className="text-center text-[var(--titleColor)]">
                                     {' '}
                                     Мы объединяем проекты университета в сфере онлайн-образования:
-                                    <ul className="list-disc text-center m-auto my-4 max-w-[300px]">
+                                    <ul className="list-disc m-auto my-4 max-w-[300px] flex flex-col items-start">
                                         <li>открытые онлайн-курсы</li>
                                         <li>программы высшего образования</li>
                                     </ul>

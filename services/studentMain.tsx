@@ -68,7 +68,6 @@ export const fetchStudentThemes = async (course_id: number) => {
 export const fetchMainLesson = async (lesson_id: number | null, stream_id: number) => {
     try {
         const res = await axiosInstance.get(`v1/student/course/lesson/show?lesson_id=${lesson_id}&stream_id=${stream_id}`);
-        // const res = await axiosInstance.get(`v1/student/course/lesson/show?lesson_id=${lesson_id}`);
         const data = await res.data;
 
         return data;
@@ -100,6 +99,42 @@ export const chillsUpdate = async (step_id: number | null, stream_id: number | n
 
     try {
         const res = await axiosInstance.post('/v1/student/course/lesson/step/update/chills', formData);
+
+        const data = await res.data;
+        return data;
+    } catch (err) {
+        console.log('Ошибка при добавлении урока', err);
+        return err;
+    }
+};
+
+export const stepTest = async (step_id: number | null, stream_id: number | null, answers_id: number | null) => {
+    let formData = new FormData();
+    formData.append('step_id', String(step_id));
+    formData.append('stream_id', String(stream_id));
+    formData.append('answers_id', String(answers_id));
+
+    try {
+        const res = await axiosInstance.post('/v1/student/course/lesson/step/test', formData);
+
+        const data = await res.data;
+        return data;
+    } catch (err) {
+        console.log('Ошибка при добавлении урока', err);
+        return err;
+    }
+};
+
+export const stepPractica = async (step_id: number | null, stream_id: number | null, file: File | null) => {
+    let formData = new FormData();
+    formData.append('step_id', String(step_id));
+    formData.append('stream_id', String(stream_id));
+    if (file) {
+        formData.append('file', file);
+    }
+
+    try {
+        const res = await axiosInstance.post('/v1/student/course/lesson/step/practice', formData);
 
         const data = await res.data;
         return data;

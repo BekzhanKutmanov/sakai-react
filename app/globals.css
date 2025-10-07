@@ -726,6 +726,10 @@ input[type="password"]::-ms-clear {
   background-color: #ef4444;
 }
 
+.success-button {
+  background-color: var(--greenColor);
+}
+
 .p-column-header-content{
   display: flex;
   justify-content: center;
@@ -909,6 +913,10 @@ input[type="password"]::-ms-clear {
 
 .stf__block{
   /* height: 70% !important; */
+}
+
+.fill_modal {
+  background-color: #cacaca;
 }
 
 /* маленькая адаптация */

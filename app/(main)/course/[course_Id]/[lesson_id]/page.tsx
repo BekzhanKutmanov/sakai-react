@@ -152,8 +152,6 @@ export default function LessonStep() {
             });
 
             if (data?.response?.status) {
-                console.log(data?.response?.status);
-
                 if (data?.response?.status == '400') {
                     setMessage({
                         state: true,

@@ -87,7 +87,6 @@ export default function StudentLesson() {
 
     const handleMainLesson = async (lesson_id: number, stream_id: number) => {
         const data = await fetchMainLesson(lesson_id, stream_id);
-        console.warn(data);
         // Возвращаем данные или null/пустой массив
         if (data && data.length > 0) {
             return data;

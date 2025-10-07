@@ -1,4 +1,5 @@
 export interface mainStepsType {
+    connections: any;
     id: number;
     id_parent: number | null;
     type_id: number;
@@ -9,4 +10,6 @@ export interface mainStepsType {
     updated_at: string;
     content?: {document: string, document_path: string, description: string | null, title: string, link: string, url: string,cover_url: string | null, content: string, answers: [{text: string, is_correct: boolean, id: number | null}], score: number}
     score?: number | null;
+    chills?: boolean;
+    count_attempt?: number;
 }

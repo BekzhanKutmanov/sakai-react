@@ -44,6 +44,7 @@ export default function AnotherLesson() {
     const [lessons, setLessons] = useState<Record<number, { semester: { name_kg: string } } | predmetType>>({
         1: { semester: { name_kg: '' } }
     });
+    const [mainLesson, setMainLesson] = useState<lessonType | null>(null);
     const [lessonName, setLessonName] = useState('');
     const [courseInfo, setCoursesInfo] = useState<{ title: string; description: string; image: string } | null>(null);
     const [main_id, setMain_id] = useState<predmetType | null>(null);
@@ -73,7 +74,7 @@ export default function AnotherLesson() {
     // fetch lessons
     const handleFetchLessons = async () => {
         const data = await fetchItemsLessons();
-        
+
         setSkeleton(true);
         if (data) {
             // валидность проверить
@@ -93,19 +94,18 @@ export default function AnotherLesson() {
         }
     };
 
-    // const handleStep = async () => {
-    //     const data = await fetchStudentSteps(Number(id), Number(stream_id));
-    //     console.log(data);
+    const handleStep = async () => {
+        const data = await fetchStudentSteps(Number(id), Number(stream_id));
+        console.log(data);
 
-    //     if (data.success) {
-    //         setHasSteps(false);
-    //         setMainSteps(data.step);
-    //     } else {
-    //         setHasSteps(true);
-    //     }
-    // };
+        if (data.success) {
+            setHasSteps(false);
+            setMainSteps(data.step);
+        } else {
+            setHasSteps(true);
+        }
+    };
 
-   
     // Запрос курса, типа уроков (лк,лб)
     const handleFetchSubject = async (subject: subjectType) => {
         params.append('id_curricula', String(subject.id_curricula));
@@ -174,6 +174,16 @@ export default function AnotherLesson() {
         // handleStep();
     }, []);
 
+    const handleMainLesson = async (lesson_id: number, stream_id: number) => {
+        const data = await fetchMainLesson(lesson_id, stream_id);
+        console.warn(data);
+        // Возвращаем данные или null/пустой массив
+        // if (data && data.length > 0) {
+        //     return data;
+        // }
+        // return [];
+    };
+
     useEffect(() => {
         console.log('Step ', steps);
 
@@ -217,6 +227,17 @@ export default function AnotherLesson() {
         }
     }, [lessons]);
 
+    useEffect(()=> {
+        if(mainLesson){
+            const course = courses.find((c) => c.id === mainLesson?.course_id);
+            const stream = course?.connections[0];
+            console.log(mainLesson, stream);
+            if(stream?.id_stream){
+                handleMainLesson(mainLesson?.id, stream?.id_stream);
+            }
+        }
+    },[mainLesson]);
+
     useEffect(() => {
         if (main_id && main_id != null) {
             const forSubject: subjectType = { id_curricula: main_id?.id_curricula, course_ids: main_id?.course_ids, streams: main_id?.streams.map((i: { id: number }) => i.id) };
@@ -232,15 +253,18 @@ export default function AnotherLesson() {
 
     useEffect(() => {
         if (lesson_id) {
+            console.log(lesson_id);
+
             const forLesson = courses?.find((item) => {
                 return item?.lessons.find((j) => {
-                    console.log(j.id, lesson_id);
                     if (j?.id === Number(lesson_id)) {
                         setLessonName(j?.title || '');
+                        setMainLesson(j);
                     }
                     return j?.id === Number(lesson_id);
                 });
             });
+            console.log(forLesson);
             setCoursesInfo(forLesson || null);
         }
     }, [courses]);
@@ -399,9 +423,7 @@ export default function AnotherLesson() {
                     {video?.content?.description && (
                         <div className="w-full flex flex-col gap-1">
                             <b className="text-[16px] sm:text-[18px] text-wrap break-words">{video?.content?.title}</b>
-                            {video?.content?.description && (
-                                <div className="flex flex-col gap-2">{video?.content?.description && <div className="lesson-card-border shadow rounded p-2 sm:w-full md:w-[70%]">{video?.content?.description}</div>}</div>
-                            )}
+                            {video?.content?.description && <div className="flex flex-col gap-2">{video?.content?.description && <div className="lesson-card-border shadow rounded p-2 sm:w-full md:w-[70%]">{video?.content?.description}</div>}</div>}
                         </div>
                     )}
                 </div>

@@ -301,9 +301,9 @@ const AppMenu = () => {
 
         if (contextNewStudentThemes) {
             const forThemes: any = [];
-            contextNewStudentThemes?.map((item: any) =>
+            contextNewStudentThemes?.map((item: any, idx) =>
                 forThemes.push({
-                    label: item.title || '',
+                    label: `${idx + 1}. ${item.title}` || '',
                     id: item.id,
                     to: `/teaching/lessonView/another/${subject_id}/${item.id}`
                 })

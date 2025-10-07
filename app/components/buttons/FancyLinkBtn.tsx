@@ -13,7 +13,7 @@ export default function FancyLinkBtn({ btnWidth, backround, effectBg, title }
             <button
                 onMouseEnter={() => setPosition(true)}
                 onMouseLeave={() => setPosition(false)}
-                className="default-btn p-[7px] md:p-[10px] font-bold"
+                className="default-btn p-[7px] md:p-[10px] font-bold text-sm sm:text-md"
                 onClick={() => setPosition((prev) => !prev)}
                 style={{
                     backgroundColor: `var(${backround})`,

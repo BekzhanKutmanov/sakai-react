@@ -3,7 +3,7 @@
 import useErrorMessage from '@/hooks/useErrorMessage';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { LayoutContext } from '@/layout/context/layoutcontext';
-import { fetchItemsLessons, fetchMainLesson, fetchStudentSteps, fetchSubjects } from '@/services/studentMain';
+import { fetchItemsLessons, fetchMainLesson, fetchStudentSteps, fetchSubjects, stepPractica, stepTest } from '@/services/studentMain';
 import { lessonType } from '@/types/lessonType';
 import { mainStepsType } from '@/types/mainStepType';
 import Link from 'next/link';
@@ -20,19 +20,22 @@ export default function LessonTest() {
         streams: number[];
     }
 
+    interface docValueType {
+        title: string;
+        description: string;
+        file: File | null;
+        document?: string;
+        stepPos?: number;
+    }
+
     const { lesson_id, subject_id, stream_id, id } = useParams();
-    console.log(lesson_id, subject_id, stream_id, id);
     const params = new URLSearchParams();
 
-    const { pdfUrl } = useParams();
     const media = useMediaQuery('(max-width: 640px)');
     const showError = useErrorMessage();
     const { setMessage, setContextNewStudentThemes } = useContext(LayoutContext);
 
     const [steps, setMainSteps] = useState<mainStepsType | null>(null);
-    const [bigSteps, setBigSteps] = useState<
-        { id: number; connections: { subject_type: string; id: number; user_id: number | null; id_stream: number }[]; title: string; description: string; user: { last_name: string; name: string; father_name: string }; lessons: lessonType[] }[]
-    >([]);
     const [hasSteps, setHasSteps] = useState(false);
     const [progressSpinner, setProgressSpinner] = useState(false);
     const [type, setType] = useState('');
@@ -40,12 +43,8 @@ export default function LessonTest() {
         content?: { document: string; document_path: string; description: string | null; title: string; link: string; url: string; content: string; answers: [{ text: string; is_correct: boolean; id: number | null }]; score: number };
     } | null>(null);
     const [test, setTests] = useState<mainStepsType | null>(null);
-    const [answer, setAnswer] = useState<{ id: number | null; text: string; is_correct: boolean }[]>([
-        { text: '', is_correct: false, id: null },
-        { text: '', is_correct: false, id: null }
-    ]);
-    const [skeleton, setSkeleton] = useState(false);
-    const [hasLessons, setHasLessons] = useState(false);
+    const [answer, setAnswer] = useState<{ id: number | null; text: string; is_correct: boolean }[] | null>(null);
+    const [answerCheck, setAnswerCheck] = useState(false);
     const [lessons, setLessons] = useState<Record<number, { semester: { name_kg: string } } | predmetType>>({
         1: { semester: { name_kg: '' } }
     });
@@ -63,6 +62,11 @@ export default function LessonTest() {
             lessons: lessonType[];
         }[]
     >([]);
+    const [docValue, setDocValue] = useState<docValueType>({
+        title: '',
+        description: '',
+        file: null
+    });
 
     // document
     const [document, setDocument] = useState<mainStepsType | null>(null);
@@ -78,15 +82,11 @@ export default function LessonTest() {
     // fetch lessons
     const handleFetchLessons = async () => {
         const data = await fetchItemsLessons();
-        
-        setSkeleton(true);
+
         if (data) {
             // валидность проверить
             setLessons(data);
-            setHasLessons(false);
-            setSkeleton(false);
         } else {
-            setHasLessons(true);
             setMessage({
                 state: true,
                 value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
@@ -94,7 +94,6 @@ export default function LessonTest() {
             if (data?.response?.status) {
                 showError(data.response.status);
             }
-            setSkeleton(false);
         }
     };
 
@@ -119,11 +118,9 @@ export default function LessonTest() {
         const data = await fetchSubjects(params);
         console.log(data);
 
-        setSkeleton(true);
         if (data) {
             setCourses(data);
             // setHasThemes(false);
-            setSkeleton(false);
         } else {
             // setHasThemes(true);
             setMessage({
@@ -133,7 +130,6 @@ export default function LessonTest() {
             if (data?.response?.status) {
                 showError(data.response.status);
             }
-            setSkeleton(false);
         }
     };
 
@@ -173,6 +169,69 @@ export default function LessonTest() {
         // setVisisble(true);
     };
 
+    const handleAddTest = async () => {
+        setProgressSpinner(true);
+        const isCorrect = answer?.filter((item) => item.is_correct);
+        const data = await stepTest(steps && steps?.id, steps?.connections?.id_stream, (isCorrect && isCorrect[0]?.id) || null);
+        console.log(data);
+
+        if (data?.success) {
+            setProgressSpinner(false);
+            setMessage({
+                state: true,
+                value: { severity: 'success', summary: '', detail: data?.message }
+            });
+        } else {
+            setProgressSpinner(false);
+            setMessage({
+                state: true,
+                value: { severity: 'error', summary: 'Ошибка при отправке ответа!', detail: '' }
+            });
+            handleStep();
+            if (data?.response?.status) {
+                if (data?.response?.status == '400') {
+                    setMessage({
+                        state: true,
+                        value: { severity: 'error', summary: 'Ошибка!', detail: data?.response?.data?.message }
+                    });
+                } else {
+                    showError(data.response.status);
+                }
+            }
+        }
+    };
+
+    const handleAddPractica = async () => {
+        setProgressSpinner(true);
+        const data = await stepPractica(steps && steps?.id, steps?.connections?.id_stream, docValue.file);
+        console.log(data);
+
+        if (data?.success) {
+            setProgressSpinner(false);
+            setMessage({
+                state: true,
+                value: { severity: 'success', summary: '', detail: data?.message }
+            });
+            handleStep();
+        } else {
+            setProgressSpinner(false);
+            setMessage({
+                state: true,
+                value: { severity: 'error', summary: 'Ошибка при отправке документа!', detail: '' }
+            });
+            if (data?.response?.status) {
+                if (data?.response?.status == '400') {
+                    setMessage({
+                        state: true,
+                        value: { severity: 'error', summary: 'Ошибка!', detail: data?.response?.data?.message }
+                    });
+                } else {
+                    showError(data.response.status);
+                }
+            }
+        }
+    };
+
     useEffect(() => {
         handleFetchLessons();
         handleStep();
@@ -193,6 +252,7 @@ export default function LessonTest() {
             setType(steps?.type.name);
             setPractica(steps);
         } else if (steps?.type.name === 'test') {
+            setAnswer(steps?.content?.answers || []);
             setType(steps?.type.name);
             setTests(steps);
         } else if (steps?.type.name === 'video') {
@@ -245,12 +305,21 @@ export default function LessonTest() {
                     return j?.id === Number(lesson_id);
                 });
             });
-            if(forLesson && forLesson?.lessons){
+            if (forLesson && forLesson?.lessons) {
                 setContextNewStudentThemes(forLesson?.lessons);
             }
             setCoursesInfo(forLesson || null);
         }
     }, [courses]);
+
+    useEffect(() => {
+        const check = answer?.find((item) => item?.is_correct);
+        if (check) {
+            setAnswerCheck(true);
+        } else {
+            setAnswerCheck(false);
+        }
+    }, [answer]);
 
     const hasPdf = /pdf/i.test(document?.content?.document || ''); // true
 
@@ -317,37 +386,89 @@ export default function LessonTest() {
 
             <div className="flex flex-col gap-2">
                 <b className="text-[16px] sm:text-[18px] break-words">{practica?.content?.title}</b>
-                {practica?.content?.description && <div className="lesson-card-border shadow rounded p-2 sm:w-full md:w-[70%]" dangerouslySetInnerHTML={{ __html: practica?.content?.description }} />}
-            </div>
 
-            <div className="flex flex-col gap-2 w-full">
-                <div className="flex items-center gap-1">
-                    {practica?.content?.document_path && practica?.content.document_path.toLowerCase().includes('pdf') && (
-                        <>
-                            <span className="text-[var(--mainColor)]">Документ: </span>
-                            <a className={`flex gap-2 pi pi-file-arrow-up text-xl text-white bg-[var(--mainColor)] p-1 rounded`} href={practica?.content.document_path} download target="_blank" rel="noopener noreferrer"></a>
-                        </>
-                    )}
-                </div>
+                <div className="lesson-card-border shadow rounded p-2">
+                    {practica?.content?.description && <div className="p-2 sm:w-full md:w-[70%]" dangerouslySetInnerHTML={{ __html: practica?.content?.description }} />}
 
-                <div className="flex gap-2 items-center">
-                    {practica?.content?.url && (
-                        <>
-                            <span className="text-[var(--mainColor)]">Ссылка: </span>
-                            {practica?.content.url && (
-                                <a href={practica?.content.url} className="max-w-[800px] break-words" target="_blank">
-                                    {practica?.content.url}
-                                </a>
+                    <div className="flex flex-col gap-2 w-full ">
+                        <div className="flex items-center gap-1">
+                            {practica?.content?.document_path && practica?.content.document_path.toLowerCase().includes('pdf') && (
+                                <>
+                                    <span className="text-[var(--mainColor)]">Документ: </span>
+                                    <a className={`flex gap-2 pi pi-file-arrow-up text-xl text-white bg-[var(--mainColor)] p-1 rounded`} href={practica?.content.document_path} download target="_blank" rel="noopener noreferrer"></a>
+                                </>
                             )}
-                        </>
-                    )}
+                        </div>
+
+                        <div className="flex gap-2 items-center">
+                            {practica?.content?.url && (
+                                <>
+                                    <span className="text-[var(--mainColor)]">Ссылка: </span>
+                                    {practica?.content.url && (
+                                        <a href={practica?.content.url} className="max-w-[800px] break-words" target="_blank">
+                                            {practica?.content.url}
+                                        </a>
+                                    )}
+                                </>
+                            )}
+                        </div>
+                    </div>
                 </div>
             </div>
+
+            {steps?.chills ? (
+                <span className="pi pi-check-circle text-xl mb-1 text-[var(--greenColor)]"> Задание выполнено</span>
+            ) : (
+                <div className="flex flex-col gap-2 items-start w-full mt-2">
+                    <span className="pi pi-check-circle text-md mb-1 text-[var(--mainColor)] shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)] pb-1"> Задание После изучения материала, загрузи свой файл с решением.</span>
+                    <div className="w-full">
+                        <input
+                            type="file"
+                            accept="application/pdf"
+                            className="border rounded p-1 max-w-[90%]"
+                            onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (file) {
+                                    const maxSize = 10 * 1024 * 1024;
+
+                                    if (file.size > maxSize) {
+                                        setMessage({
+                                            state: true,
+                                            value: { severity: 'error', summary: 'Файл слишком большой!', detail: 'Разрешено максимум 10 MB.' }
+                                        });
+                                    } else {
+                                        setDocValue((prev) => ({
+                                            ...prev,
+                                            file: file
+                                        }));
+                                    }
+                                }
+                            }}
+                        />
+                    </div>
+                    <div className="w-full">
+                        {progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}
+                        <Button
+                            label="Отправить"
+                            disabled={progressSpinner}
+                            className={`${progressSpinner ? 'opacity-50' : ''}`}
+                            onClick={() => {
+                                handleAddPractica();
+                            }}
+                        />
+                    </div>
+                </div>
+            )}
         </div>
     );
 
     const testSection = (
-        <div className="w-full flex flex-col justify-center gap-2 my-2">
+        <div className="w-full relative flex flex-col justify-center gap-2 my-2">
+            {progressSpinner && (
+                <div className="z-10 absolute top-0 bottom-0 bg-[rgba(0,0,0,99%)] opacity-50 w-full flex justify-center items-center">
+                    <ProgressSpinner style={{ width: '60px', height: '60px' }} />
+                </div>
+            )}
             <div className="lesson-card-border shadow rounded p-2">
                 <div className="flex justify-between gap-1 items-center flex-col sm:flex-row shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">
                     <div className="flex gap-1 items-center">
@@ -369,14 +490,14 @@ export default function LessonTest() {
                                         <input
                                             type="radio"
                                             name="testRadio"
+                                            disabled={steps?.count_attempt ? steps?.count_attempt >= 3 : false}
                                             onChange={() => {
-                                                setAnswer((prev) => prev.map((ans, i) => (i === index ? { ...ans, is_correct: true } : { ...ans, is_correct: false })));
+                                                setAnswer((prev) => prev && prev.map((ans, i) => (i === index ? { ...ans, is_correct: true } : { ...ans, is_correct: false })));
                                             }}
                                         />
                                         {/* <input type="radio" name="radio" /> */}
                                         <span className="radio-mark min-w-[18px]"></span>
                                     </label>
-
                                     <div className="bg-gray border border-[var(--borderBottomColor)] py-[5px] pl-1 w-full">{item.text}</div>
                                 </div>
                             );
@@ -384,18 +505,20 @@ export default function LessonTest() {
                     </div>
                 </div>
             </div>
-            <div className="flex relative">
-                <div className="w-full flex gap-1 justify-center items-center">
+
+            {steps?.count_attempt && steps?.count_attempt >= 3 ? (
+                <span className="pi pi-check-circle text-xl mb-1 text-[var(--greenColor)]"> Задание выполнено</span>
+            ) : (
+                <div className="w-full">
                     <Button
                         label="Отправить"
-                        // disabled={progressSpinner || !testValue.title.length || !!errors.title}
+                        disabled={progressSpinner || !answer || !answerCheck}
                         onClick={() => {
-                            // handleAddTest();
+                            handleAddTest();
                         }}
                     />
-                    {progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}
                 </div>
-            </div>
+            )}
         </div>
     );
 
@@ -406,9 +529,7 @@ export default function LessonTest() {
                     {video?.content?.description && (
                         <div className="w-full flex flex-col gap-1">
                             <b className="text-[16px] sm:text-[18px] text-wrap break-words">{video?.content?.title}</b>
-                            {video?.content?.description && (
-                                <div className="flex flex-col gap-2">{video?.content?.description && <div className="lesson-card-border shadow rounded p-2 sm:w-full md:w-[70%]">{video?.content?.description}</div>}</div>
-                            )}
+                            {video?.content?.description && <div className="flex flex-col gap-2">{video?.content?.description && <div className="lesson-card-border shadow rounded p-2 sm:w-full md:w-[70%]">{video?.content?.description}</div>}</div>}
                         </div>
                     )}
                 </div>

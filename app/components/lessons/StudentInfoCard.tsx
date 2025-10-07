@@ -68,17 +68,29 @@ export default function StudentInfoCard({
         }
     };
 
-    const cheelseBtn = (
+    const cheelseBtn = (type: string) => (
         <div>
             {chills ? (
                 <div className="flex items-center gap-1">
                     {progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}
-                    <Button disabled={progressSpinner} label="Выполнено" icon="pi pi-check" onClick={handleChills} size="small" className={`w-full px-2 py-1 ${progressSpinner && 'opacity-50'} ${media ? 'mini-button' : ''}`} />
+                    {type === 'test' || type === 'practical' ? (
+                        <Link href={`/teaching/lessonView/${lesson}/${subjectId}/${streams.connections[0].id_stream}/${stepId}`}>
+                            <Button disabled={progressSpinner} label="Выполнено" icon="pi pi-check" size="small" className={`w-full success-button px-2 py-1 ${progressSpinner && 'opacity-50'} ${media ? 'mini-button' : ''}`} />
+                        </Link>
+                    ) : (
+                        <Button disabled={progressSpinner} label="Выполнено" icon="pi pi-check" onClick={handleChills} size="small" className={`w-full success-button px-2 py-1 ${progressSpinner && 'opacity-50'} ${media ? 'mini-button' : ''}`} />
+                    )}
                 </div>
             ) : (
                 <div className="flex items-center gap-1">
                     {progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}
-                    <Button disabled={progressSpinner} label="Отметить как выполненный" onClick={handleChills} size="small" className={`w-full px-2 py-1 ${progressSpinner && 'opacity-50'} ${media ? 'mini-button' : ''}`} />
+                    {type === 'test' || type === 'practical' ? (
+                        <Link href={`/teaching/lessonView/${lesson}/${subjectId}/${streams.connections[0].id_stream}/${stepId}`}>
+                            <Button disabled={progressSpinner} label="Отметить как выполненный" size="small" className={`w-full px-2 py-1 ${progressSpinner && 'opacity-50'} ${media ? 'mini-button' : ''}`} />
+                        </Link>
+                    ) : (
+                        <Button disabled={progressSpinner} label="Отметить как выполненный" onClick={handleChills} size="small" className={`w-full px-2 py-1 ${progressSpinner && 'opacity-50'} ${media ? 'mini-button' : ''}`} />
+                    )}
                 </div>
             )}
         </div>
@@ -100,7 +112,7 @@ export default function StudentInfoCard({
                     </Link>
                 </div>
             </div>
-            <div className="w-full flex justify-center sm:justify-end">{cheelseBtn}</div>
+            <div className="w-full flex justify-center sm:justify-end">{cheelseBtn('')}</div>
             {/* <div className="flex gap-1 flex-col items-end">
                 <div className="w-full flex justify-end gap-1 items-center">
                     {documentUrl?.document && (
@@ -149,7 +161,7 @@ export default function StudentInfoCard({
                 )} */}
                 </div>
             </div>
-            <div className="w-full flex justify-center sm:justify-end">{cheelseBtn}</div>
+            <div className="w-full flex justify-center sm:justify-end">{cheelseBtn('')}</div>
         </div>
     );
 
@@ -169,7 +181,7 @@ export default function StudentInfoCard({
                     </Link>
                 </div>
             </div>
-            <div className="w-full flex justify-center sm:justify-end">{cheelseBtn}</div>
+            <div className="w-full flex justify-center sm:justify-end">{cheelseBtn('')}</div>
         </div>
     );
 
@@ -185,7 +197,7 @@ export default function StudentInfoCard({
                     </Link>
                 </div>
             </div>
-            <div className="w-full flex justify-center sm:justify-end">{cheelseBtn}</div>
+            <div className="w-full flex justify-center sm:justify-end">{cheelseBtn('test')}</div>
         </div>
     );
 
@@ -228,7 +240,7 @@ export default function StudentInfoCard({
                     Практическое задание
                 </Link>
             </div>
-            <div className="w-full flex justify-center sm:justify-end">{cheelseBtn}</div>
+            <div className="w-full flex justify-center sm:justify-end">{cheelseBtn('practical')}</div>
         </div>
     );
 
