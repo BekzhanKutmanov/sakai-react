@@ -81,6 +81,9 @@ export interface LayoutContextProps {
 
     departament: {last_name:string, name:string, father_name:string, info: string},
     setDepartament,
+
+    contextNewStudentThemes: lessonType[],
+    setContextNewStudentThemes,
     // message: { state: boolean; value: MessageType };
     // setMessage: React.Dispatch<React.SetStateAction<{ state: boolean; value: MessageType }>>;
 }

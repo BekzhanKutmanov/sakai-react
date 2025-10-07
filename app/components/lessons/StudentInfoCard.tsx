@@ -1,6 +1,9 @@
 'use client';
 
+import useErrorMessage from '@/hooks/useErrorMessage';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { LayoutContext } from '@/layout/context/layoutcontext';
+import { chillsUpdate } from '@/services/studentMain';
 import { lessonType } from '@/types/lessonType';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
@@ -8,7 +11,7 @@ import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 import { ProgressBar } from 'primereact/progressbar';
 import { ProgressSpinner } from 'primereact/progressspinner';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 
 export default function StudentInfoCard({
     type,
@@ -20,7 +23,9 @@ export default function StudentInfoCard({
     streams,
     lesson,
     stepId,
-    subjectId
+    subjectId,
+    chills,
+    fetchProp
 }: {
     type: string;
     icon: string;
@@ -35,39 +40,67 @@ export default function StudentInfoCard({
     lesson: number;
     stepId: number;
     subjectId?: string;
+    chills: boolean;
+    fetchProp: () => void;
 }) {
     const { id_kafedra } = useParams();
     // console.log(id_kafedra);
 
     const media = useMediaQuery('(max-width: 640px)');
 
+    const showError = useErrorMessage();
+    const { setMessage } = useContext(LayoutContext);
+
     const [testCall, setTestCall] = useState(false);
     const [practicaCall, setPracticaCall] = useState(false);
     const [progressSpinner, setProgressSpinner] = useState(false);
 
-    const progressToggle = () => {
+    const handleChills = async () => {
+        const newChills = !chills;
         setProgressSpinner(true);
-        setTimeout(() => {
+        const data = await chillsUpdate(stepId, streams?.connections[0]?.id_stream, newChills);
+        console.log(data);
+        if (data?.success) {
             setProgressSpinner(false);
-        }, 5000);
+            fetchProp();
+        } else {
+            setProgressSpinner(false);
+        }
     };
 
+    const cheelseBtn = (
+        <div>
+            {chills ? (
+                <div className="flex items-center gap-1">
+                    {progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}
+                    <Button disabled={progressSpinner} label="Выполнено" icon="pi pi-check" onClick={handleChills} size="small" className={`w-full px-2 py-1 ${progressSpinner && 'opacity-50'} ${media ? 'mini-button' : ''}`} />
+                </div>
+            ) : (
+                <div className="flex items-center gap-1">
+                    {progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}
+                    <Button disabled={progressSpinner} label="Отметить как выполненный" onClick={handleChills} size="small" className={`w-full px-2 py-1 ${progressSpinner && 'opacity-50'} ${media ? 'mini-button' : ''}`} />
+                </div>
+            )}
+        </div>
+    );
+
     const docCard = (
-        <div className="w-full flex items-end gap-2 sm:gap-4 py-1 flex-col sm:flex-row">
+        <div className="w-full flex items-end gap-2 sm:gap-1 py-1 flex-col">
             <div className="w-full flex flex-col sm:flex-row gap-1">
-                <div className="w-full flex items-start gap-2">
+                <div className="w-full flex items-center gap-2">
                     <div className="p-2 bg-[var(--mainColor)] min-w-[38px] min-h-[38px] w-[38px] h-[38px] flex justify-center items-center rounded">
                         <i className={`${icon} text-white`}></i>
                     </div>
                     <Link
                         href={`/teaching/lessonView/${lesson}/${subjectId}/${streams.connections[0].id_stream}/${stepId}`}
                         // onClick={() => videoStart && videoStart(video_link || '')}
-                        className="cursor-pointer max-w-[800px] text-[16px] text-wrap break-all hover:underline"
+                        className="cursor-pointer max-w-[800px] text-[16px] break-words hover:underline"
                     >
                         {title}
                     </Link>
                 </div>
             </div>
+            <div className="w-full flex justify-center sm:justify-end">{cheelseBtn}</div>
             {/* <div className="flex gap-1 flex-col items-end">
                 <div className="w-full flex justify-end gap-1 items-center">
                     {documentUrl?.document && (
@@ -93,56 +126,66 @@ export default function StudentInfoCard({
     );
 
     const linkCard = (
-        <div className="w-full flex items-start gap-2 py-1">
-            <div className="p-2 bg-[var(--greenColor)] min-w-[38px] w-[38px] min-h-[38px] h-[38px] flex justify-center items-center rounded">
-                <i className={`${icon} text-white`}></i>
-            </div>
-            <div className="flex flex-col justify-center gap-1 max-w-[800px] text-wrap break-all">
-                <Link
-                    href={`/teaching/lessonView/${lesson}/${subjectId}/${streams.connections[0].id_stream}/${stepId}`}
-                    // onClick={() => videoStart && videoStart(video_link || '')}
-                    className="cursor-pointer max-w-[800px] text-[16px] text-wrap break-all hover:underline"
-                >
-                    {title}
-                </Link>
-                {/* {link && link?.length > 0 ? (
+        <div className="w-full py-1 flex items-center flex-col gap-1">
+            <div className="w-full flex sm:flex-row gap-2">
+                <div className="p-2 bg-[var(--greenColor)] min-w-[38px] w-[38px] min-h-[38px] h-[38px] flex justify-center items-center rounded">
+                    <i className={`${icon} text-white`}></i>
+                </div>
+                <div className="flex flex-col justify-center gap-1 max-w-[800px] break-words">
+                    <Link
+                        href={`/teaching/lessonView/${lesson}/${subjectId}/${streams.connections[0].id_stream}/${stepId}`}
+                        // onClick={() => videoStart && videoStart(video_link || '')}
+                        className="cursor-pointer max-w-[800px] text-[16px] text-wrap break-all hover:underline"
+                    >
+                        {title}
+                    </Link>
+
+                    {/* {link && link?.length > 0 ? (
                     <Link href={link} target="_blank" className="cursor-pointer max-w-[800px] text-[16px] text-wrap break-all hover:underline">
                         {title}
                     </Link>
                 ) : (
                     <p>{title}</p>
                 )} */}
+                </div>
             </div>
+            <div className="w-full flex justify-center sm:justify-end">{cheelseBtn}</div>
         </div>
     );
 
     const videoCard = (
-        <div className="w-full flex items-center gap-2 py-1">
-            <div className="p-2 bg-[#f7634d] min-w-[38px] w-[38px] min-h-[38px] h-[38px] flex justify-center items-center rounded">
-                <i className={`${icon} text-white`}></i>
+        <div className="w-full flex items-center flex-col gap-2 py-1">
+            <div className="w-full flex items-center gap-2">
+                <div className="p-2 bg-[#f7634d] min-w-[38px] w-[38px] min-h-[38px] h-[38px] flex justify-center items-center rounded">
+                    <i className={`${icon} text-white`}></i>
+                </div>
+                <div className="flex flex-col justify-center gap-1 max-w-[800px] text-wrap break-all">
+                    <Link
+                        href={`/teaching/lessonView/${lesson}/${subjectId}/${streams.connections[0].id_stream}/${stepId}`}
+                        // onClick={() => videoStart && videoStart(video_link || '')}
+                        className="cursor-pointer max-w-[800px] text-[16px] text-wrap break-all hover:underline"
+                    >
+                        {title}
+                    </Link>
+                </div>
             </div>
-            <div className="flex flex-col justify-center gap-1 max-w-[800px] text-wrap break-all">
-                <Link
-                    href={`/teaching/lessonView/${lesson}/${subjectId}/${streams.connections[0].id_stream}/${stepId}`}
-                    // onClick={() => videoStart && videoStart(video_link || '')}
-                    className="cursor-pointer max-w-[800px] text-[16px] text-wrap break-all hover:underline"
-                >
-                    {title}
-                </Link>
-            </div>
+            <div className="w-full flex justify-center sm:justify-end">{cheelseBtn}</div>
         </div>
     );
 
     const testCard = (
-        <div className="w-full flex items-center gap-2 py-1">
-            <div className="p-2 bg-[#c38598] min-w-[38px] w-[38px] min-h-[38px] h-[38px] flex justify-center items-center rounded">
-                <i className={`${icon} text-white`}></i>
+        <div className="w-full flex items-center flex-col gap-2 py-1">
+            <div className="w-full flex items-center gap-2">
+                <div className="p-2 bg-[#c38598] min-w-[38px] w-[38px] min-h-[38px] h-[38px] flex justify-center items-center rounded">
+                    <i className={`${icon} text-white`}></i>
+                </div>
+                <div className="flex flex-col justify-center gap-1 max-w-[800px] text-wrap break-all">
+                    <Link href={`/teaching/lessonView/${lesson}/${subjectId}/${streams.connections[0].id_stream}/${stepId}`} className="cursor-pointer max-w-[800px] text-[16px] text-wrap break-all hover:underline">
+                        Тест
+                    </Link>
+                </div>
             </div>
-            <div className="flex flex-col justify-center gap-1 max-w-[800px] text-wrap break-all">
-                <Link href={`/teaching/lessonView/${lesson}/${subjectId}/${streams.connections[0].id_stream}/${stepId}`} className="cursor-pointer max-w-[800px] text-[16px] text-wrap break-all hover:underline">
-                    Тест
-                </Link>
-            </div>
+            <div className="w-full flex justify-center sm:justify-end">{cheelseBtn}</div>
         </div>
     );
 
@@ -176,13 +219,16 @@ export default function StudentInfoCard({
     );
 
     const practicaCard = (
-        <div className="w-full flex items-center gap-2 py-1">
-            <div className="p-2 bg-[var(--yellowColor)] min-w-[38px] w-[38px] min-h-[38px] h-[38px] flex justify-center items-center rounded">
-                <i className={`${icon} text-white`}></i>
+        <div className="w-full flex items-center flex-col gap-2 py-1">
+            <div className="w-full flex items-center gap-2">
+                <div className="p-2 bg-[var(--yellowColor)] min-w-[38px] w-[38px] min-h-[38px] h-[38px] flex justify-center items-center rounded">
+                    <i className={`${icon} text-white`}></i>
+                </div>
+                <Link href={`/teaching/lessonView/${lesson}/${subjectId}/${streams.connections[0].id_stream}/${stepId}`} className="cursor-pointer max-w-[800px] text-[16px] text-wrap break-all hover:underline">
+                    Практическое задание
+                </Link>
             </div>
-            <Link href={`/teaching/lessonView/${lesson}/${subjectId}/${streams.connections[0].id_stream}/${stepId}`} className="cursor-pointer max-w-[800px] text-[16px] text-wrap break-all hover:underline">
-                Практическое задание
-            </Link>
+            <div className="w-full flex justify-center sm:justify-end">{cheelseBtn}</div>
         </div>
     );
 

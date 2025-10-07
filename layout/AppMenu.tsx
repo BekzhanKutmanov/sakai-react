@@ -19,7 +19,7 @@ import useErrorMessage from '@/hooks/useErrorMessage';
 import { Button } from 'primereact/button';
 
 const AppMenu = () => {
-    const { user, setDeleteQuery, setUpdateeQuery, contextFetchThemes, contextThemes, contextFetchStudentThemes, contextStudentThemes, departament } = useContext(LayoutContext);
+    const { user, setDeleteQuery, setUpdateeQuery, contextFetchThemes, contextThemes, contextFetchStudentThemes, contextStudentThemes, departament, contextNewStudentThemes } = useContext(LayoutContext);
     interface test {
         label: string;
         id: number;
@@ -40,7 +40,7 @@ const AppMenu = () => {
     const router = useRouter();
     const location = usePathname();
     const pathname = location;
-    const { studentThemeCourse } = useParams();
+    const { studentThemeCourse, subject_id } = useParams();
     const params = useParams();
     const course_Id = params.course_Id;
     const id_kafedra = params?.id_kafedra ? params.id_kafedra : null;
@@ -109,7 +109,8 @@ const AppMenu = () => {
                   to: '/'
               },
               { label: 'План обучения', icon: 'pi pi-fw pi-calendar-clock', to: '/teaching' },
-              pathname.startsWith('/teaching/lesson/') ? { label: 'Темы', icon: 'pi pi-fw pi-book', items: themesStudentList?.length > 0 ? themesStudentList : [] } : { label: '' }
+              //   pathname.startsWith('/teaching/lesson/') ? { label: 'Темы', icon: 'pi pi-fw pi-book', items: themesStudentList?.length > 0 ? themesStudentList : [] } : { label: '' },
+              pathname.startsWith('/teaching/lessonView/') ? { label: 'Темы', icon: 'pi pi-fw pi-book', items: themesStudentList?.length > 0 ? themesStudentList : [] } : { label: '' }
           ]
         : [];
 
@@ -140,11 +141,11 @@ const AppMenu = () => {
                       icon: 'pi pi-fw pi-book',
                       to: '/course'
                   },
-                    {
-                        label: 'Видеоинструкция',
-                        icon: 'pi pi-fw pi-video',
-                        to: '/videoInstruct'
-                    }
+                  {
+                      label: 'Видеоинструкция',
+                      icon: 'pi pi-fw pi-video',
+                      to: '/videoInstruct'
+                  }
               ]
             : [];
 
@@ -298,20 +299,20 @@ const AppMenu = () => {
             handleCourseInfo();
         }
 
-        if (contextStudentThemes?.lessons) {
+        if (contextNewStudentThemes) {
             const forThemes: any = [];
-            contextStudentThemes.lessons.data?.map((item: any) =>
+            contextNewStudentThemes?.map((item: any) =>
                 forThemes.push({
                     label: item.title || '',
                     id: item.id,
-                    to: `/teaching/${studentThemeCourse}/${item.id}`
+                    to: `/teaching/lessonView/another/${subject_id}/${item.id}`
                 })
             );
             if (forThemes.length > 0) {
                 setThemesStudentList(forThemes || []);
             }
         }
-    }, [contextStudentThemes, pathname]);
+    }, [contextNewStudentThemes, pathname]);
 
     return (
         <MenuProvider>
@@ -392,22 +393,24 @@ const AppMenu = () => {
                 </div>
             </FormModal>
 
-            <ul className="layout-menu max-h-[80%] overflow-y-auto scrollbar-thin-y">
-                {model.map((item, i) => {
-                    return !item?.seperator ? <AppMenuitem item={item} root={true} index={i} key={item.label} /> : <li className="menu-separator"></li>;
-                })}
-            </ul>
-            {pathname.startsWith('/course/') && (
-                <div className="">
-                    <div className="p-4 mt-auto">
-                        <Button label="Добавить тему" icon={'pi pi-plus'} className="cursor-pointer w-full py-2 px-4 rounded-lg transition" onClick={() => setThemeAddVisisble(true)}></Button>
+            {/* <div className="flex flex-col h-screen"> */}
+                <ul className="layout-menu max-h-[80%] overflow-y-auto scrollbar-thin-y">
+                    {model.map((item, i) => {
+                        return !item?.seperator ? <AppMenuitem item={item} root={true} index={i} key={item.label} /> : <li className="menu-separator"></li>;
+                    })}
+                </ul>
+                {pathname.startsWith('/course/') && (
+                    <div className="">
+                        <div className="p-4 mt-auto">
+                            <Button label="Добавить тему" icon={'pi pi-plus'} className="cursor-pointer w-full py-2 px-4 rounded-lg transition" onClick={() => setThemeAddVisisble(true)}></Button>
+                        </div>
+                        <div className="flex justify-center gap-1 items-center">
+                            <b>Всего баллов за курс</b>
+                            <span className="text-[var(--mainColor)]">{contextThemes?.max_sum_score}</span>
+                        </div>
                     </div>
-                    <div className="flex justify-center gap-1 items-center">
-                        <b>Всего баллов за курс</b>
-                        <span className="text-[var(--mainColor)]">{contextThemes?.max_sum_score}</span>
-                    </div>
-                </div>
-            )}
+                )}
+            {/* </div> */}
         </MenuProvider>
     );
 };

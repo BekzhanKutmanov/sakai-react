@@ -12,7 +12,7 @@ import { Button } from 'primereact/button';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import { useContext, useEffect, useState } from 'react';
 
-export default function LessonTest() {
+export default function AnotherLesson() {
     // types
     interface subjectType {
         id_curricula: number;
@@ -23,16 +23,11 @@ export default function LessonTest() {
     const { lesson_id, subject_id, stream_id, id } = useParams();
     console.log(lesson_id, subject_id, stream_id, id);
     const params = new URLSearchParams();
-
-    const { pdfUrl } = useParams();
     const media = useMediaQuery('(max-width: 640px)');
     const showError = useErrorMessage();
-    const { setMessage, setContextNewStudentThemes } = useContext(LayoutContext);
+    const { setMessage } = useContext(LayoutContext);
 
     const [steps, setMainSteps] = useState<mainStepsType | null>(null);
-    const [bigSteps, setBigSteps] = useState<
-        { id: number; connections: { subject_type: string; id: number; user_id: number | null; id_stream: number }[]; title: string; description: string; user: { last_name: string; name: string; father_name: string }; lessons: lessonType[] }[]
-    >([]);
     const [hasSteps, setHasSteps] = useState(false);
     const [progressSpinner, setProgressSpinner] = useState(false);
     const [type, setType] = useState('');
@@ -98,18 +93,19 @@ export default function LessonTest() {
         }
     };
 
-    const handleStep = async () => {
-        const data = await fetchStudentSteps(Number(id), Number(stream_id));
-        console.log(data);
+    // const handleStep = async () => {
+    //     const data = await fetchStudentSteps(Number(id), Number(stream_id));
+    //     console.log(data);
 
-        if (data.success) {
-            setHasSteps(false);
-            setMainSteps(data.step);
-        } else {
-            setHasSteps(true);
-        }
-    };
+    //     if (data.success) {
+    //         setHasSteps(false);
+    //         setMainSteps(data.step);
+    //     } else {
+    //         setHasSteps(true);
+    //     }
+    // };
 
+   
     // Запрос курса, типа уроков (лк,лб)
     const handleFetchSubject = async (subject: subjectType) => {
         params.append('id_curricula', String(subject.id_curricula));
@@ -175,7 +171,7 @@ export default function LessonTest() {
 
     useEffect(() => {
         handleFetchLessons();
-        handleStep();
+        // handleStep();
     }, []);
 
     useEffect(() => {
@@ -209,7 +205,6 @@ export default function LessonTest() {
         if (lessonArray && Array.isArray(lessonArray)) {
             for (let i = 0; i < lessonArray.length; i++) {
                 const lessonItemArray = Object.values(lessonArray[i]);
-                // console.log(lessonItemArray);
 
                 search_id = lessonItemArray.find((item: any) => item.id_curricula == subject_id);
                 if (search_id && search_id != null) {
@@ -239,15 +234,13 @@ export default function LessonTest() {
         if (lesson_id) {
             const forLesson = courses?.find((item) => {
                 return item?.lessons.find((j) => {
+                    console.log(j.id, lesson_id);
                     if (j?.id === Number(lesson_id)) {
                         setLessonName(j?.title || '');
                     }
                     return j?.id === Number(lesson_id);
                 });
             });
-            if(forLesson && forLesson?.lessons){
-                setContextNewStudentThemes(forLesson?.lessons);
-            }
             setCoursesInfo(forLesson || null);
         }
     }, [courses]);

@@ -109,6 +109,9 @@ export const LayoutProvider = ({ children }: ChildContainerProps) => {
         setContextStudentThemes(data);
     };
 
+    // fetch themes for student
+    const [contextNewStudentThemes, setContextNewStudentThemes] = useState([]);
+
     // departament
     const [departament, setDepartament] = useState<{ last_name: string; name: string; father_name: string; info: string }>({ last_name: '', name: '', father_name: '', info: '' });
 
@@ -172,7 +175,10 @@ export const LayoutProvider = ({ children }: ChildContainerProps) => {
         setMainCourseId,
 
         departament,
-        setDepartament
+        setDepartament,
+        contextNewStudentThemes,
+        setContextNewStudentThemes,
+
     };
 
     return (

@@ -51,7 +51,7 @@ export default function StudentLesson() {
     const [activeIndex, setActiveIndex] = useState<number | number[]>(0);
 
     const [activeIndexes, setActiveIndexes] = useState<Record<number, number | null>>({});
-    const [isLoadingSteps, setLoadingSteps] = useState<boolean>(false);
+    const [accordionIndex, setAccordionIndex] = useState({index: null});
 
     // types
     type Lesson = { id: number; title: string /* ... */ };
@@ -87,12 +87,12 @@ export default function StudentLesson() {
 
     const handleMainLesson = async (lesson_id: number, stream_id: number) => {
         const data = await fetchMainLesson(lesson_id, stream_id);
-
+        console.warn(data);
         // Возвращаем данные или null/пустой массив
         if (data && data.length > 0) {
             return data;
         }
-        return []; // Возвращаем пустой массив, если данных нет
+        return [];
     };
 
     // old tabchange
@@ -129,6 +129,7 @@ export default function StudentLesson() {
             ...prev,
             [courseId]: e.index // e.index - это индекс темы (AccordionTab)
         }));
+        setAccordionIndex({index: e.index});
 
         const course = courses.find((c) => c.id === courseId);
 
@@ -158,6 +159,7 @@ export default function StudentLesson() {
                 );
 
                 const newSteps = await handleMainLesson(lessonId, stream.id_stream);
+                console.warn(newSteps);
                 if (newSteps) {
                     // 3. Обновляем состояние courses: добавляем steps к нужному уроку
                     setCourses((prevCourses) =>
@@ -272,50 +274,14 @@ export default function StudentLesson() {
         }
     }, [main_id]);
 
-    // useEffect(() => {
-    //     courses.forEach((course) => {
-    //         const idx = activeIndexes[course.id]; // выбранный индекс у конкретного курса
-    //         console.log(idx);
-    //         console.log(courses, course);
-
-    //         if (typeof idx === 'number') {
-    //             const lesson = course.lessons[idx];
-    //             const stream = course.connections[idx];
-
-    //             if (lesson && stream) {
-    //                 console.log('lesson_id:', lesson.id, 'stream_id:', stream.id_stream);
-    //                 handleMainLesson(lesson.id, stream.id_stream);
-    //             }
-    //         }
-    //     });
-
-    //     // if (courses.length > 0) {
-    //     //     const index = typeof activeIndex === 'number' ? Number(activeIndex) : 0;
-    //     //     if (courses[index]?.connections?.length > 0 && courses[index]?.lessons?.length > 0) {
-    //     //         const lesson_id = courses[index].lessons[index]?.id;
-    //     //         const stream_id = courses[index].connections[index]?.id_stream;
-    //     //         console.log(lesson_id, stream_id);
-
-    //     //         handleMainLesson(lesson_id, stream_id);
-    //     //     }
-    //     //     else {
-    //     //         // ?
-    //     //     }
-    //     // } else {
-    //     //     // ?
-    //     // }
-    // }, [courses, activeIndexes]);
-
     useEffect(() => {
         console.log(courses);
     }, [courses]);
 
-    const courseInfoClass = true;
-
     return (
         <div className="main-bg">
             <h1 className="text-xl shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">Список курсов</h1>
-            {courses.map((course, idx) => {
+            {courses.map((course) => {
                 return (
                     <div key={course.id} className="flex flex-col gap-4 lesson-card-border shadow rounded my-4 py-2 px-1">
                         <div className="flex flex-col gap-2">
@@ -337,7 +303,7 @@ export default function StudentLesson() {
                                                 {lesson?.isLoadingSteps ? (
                                                     <ProgressSpinner style={{ width: '50px', height: '50px' }} />
                                                 ) : steps ? (
-                                                    lesson.steps.map((item: { id: number; type: { name: string; logo: string }; content: { title: string; description: string; url: string; document: string; document_path: string } }, idx) => {
+                                                    lesson.steps.map((item: { id: number; chills: boolean; type: { name: string; logo: string }; content: { title: string; description: string; url: string; document: string; document_path: string } }, idx) => {
                                                         if (item.content == null) {
                                                             return null;
                                                         }
@@ -355,6 +321,8 @@ export default function StudentLesson() {
                                                                     streams={course}
                                                                     lesson={lesson.id}
                                                                     subjectId={subject_id}
+                                                                    chills={item?.chills}
+                                                                    fetchProp={()=> handleTabChange(course.id, accordionIndex)}
                                                                 />
                                                             </div>
                                                         );
