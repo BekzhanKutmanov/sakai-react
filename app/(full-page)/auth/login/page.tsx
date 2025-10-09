@@ -38,14 +38,12 @@ const LoginPage = () => {
 
     const onSubmit = async (value: LoginType) => {
         const user = await login(value);
-        console.log(user);
         
         if (user && user.success) {
             document.cookie = `access_token=${user.token.access_token}; path=/; Secure; SameSite=Strict; expires=${user.token.expires_at}`;
             const token = user.token.access_token;
             if (token) {
                 const res = await getUser();
-                console.log(res);
                 
                 try {
                     if (res?.success) {
@@ -63,8 +61,8 @@ const LoginPage = () => {
                             }
                         }
                         if (res?.user.is_student) {
-                            window.location.href = '/teaching';
-                            // document.cookie = 'access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;';
+                            // window.location.href = '/teaching';
+                            document.cookie = 'access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;';
                         }
                     } else {
                         setMessage({
