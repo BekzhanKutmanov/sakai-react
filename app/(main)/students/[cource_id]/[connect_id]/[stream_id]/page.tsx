@@ -93,6 +93,8 @@ export default function StudentList() {
     const handleFetchStudents = async () => {
         const data = await fetchStreamStudents(connect_id ? Number(connect_id) : null, stream_id ? Number(stream_id) : null);
         toggleSkeleton();
+        console.log(data);
+        
         if (data) {
             setHasList(false);
             setStudentList(data);
@@ -193,13 +195,14 @@ export default function StudentList() {
                                     className="flex items-center border-b-0"
                                     body={(rowData) => (
                                         <div className="flex items-center gap-2" key={rowData.id}>
-                                            {rowData?.point && rowData.point > 0 ? (
-                                                <div className="flex justify-between items-center gap-1 w-[120px]">
-                                                    <span className={`${rowData.point > 30 ? 'bg-[var(--greenColor)] text-white p-1 w-[25px] text-center' : 'bg-amber-400 text-white p-1 w-[25px] text-center '}`}>{rowData.point}</span>
-                                                    <Button icon={'pi pi-arrow-right'} style={{ fontSize: '13px', padding: '5px 7px 5px 5px' }} label="Сохранить" />
+                                            {rowData?.score && rowData.score > 0 ? (
+                                                <div className="flex justify-between items-center gap-2 ">
+                                                    <b className={`${rowData.score > 30 ? 'text-[var(--greenColor)] p-1 w-[25px] text-center' : 'text-amber-400 p-1 w-[25px] text-center '}`}>{rowData.score}</b>
+                                                    <i className='cursor-pointer pi pi-arrow-right-arrow-left bg-[var(--mainColor)] text-white p-2 px-3 rounded' title='Сохранить в myedu'></i>
+                                                    {/* <Button icon={'pi pi-arrow-right'} size='small' style={{ fontSize: '13px', padding: '4px 4px'}} label="myedu" /> */}
                                                 </div>
                                             ) : (
-                                                <span className={'bg-[var(--redColor)] p-1 w-[25px] text-white text-center'}>{rowData.point}</span>
+                                                <b className={'text-[var(--redColor)] p-1 w-[25px]text-center'}>{rowData?.score}</b>
                                             )}
                                         </div>
                                     )}
@@ -210,7 +213,7 @@ export default function StudentList() {
                                     // style={{ width: '20%' }}
                                     body={(rowData) => (
                                         <div className="flex items-center gap-2" key={rowData.id}>
-                                            <span>{rowData.last_visist || <i className="pi pi-minus"></i>}</span>
+                                            {rowData?.last_movement ? new Date(rowData.last_movement).toISOString().slice(0, 19).replace('T', ' ') : <i className="pi pi-minus"></i>}
                                         </div>
                                     )}
                                 />
