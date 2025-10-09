@@ -81,7 +81,7 @@ export default function StreamList({
     };
 
     const handleFetchStreams = async () => {
-        const data = await fetchStreams(courseValue ? courseValue.id : null);
+        const data = await fetchStreams(courseValue ? courseValue?.id : null);
         // setStreamValues({ stream: [] });
         setPendingChanges([]);
         console.log(data);
@@ -94,7 +94,7 @@ export default function StreamList({
             setHasStreams(true);
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка!', detail: 'Проблема с соединением' }
+                value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
             });
             if (data?.response?.status) {
                 showError(data.response.status);

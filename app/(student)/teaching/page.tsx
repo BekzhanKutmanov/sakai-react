@@ -44,8 +44,8 @@ export default function Teaching() {
 
     // fetch lessons
     const handleFetchLessons = async () => {
-        const data = await fetchItemsLessons();
         setSkeleton(true);
+        const data = await fetchItemsLessons();
         console.log(data);
 
         if (data) {
@@ -58,7 +58,7 @@ export default function Teaching() {
             setHasLessons(true);
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Катаа!', detail: 'Байланышы менен көйгөй' }
+                value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
             });
             if (data?.response?.status) {
                 showError(data.response.status);
@@ -77,7 +77,7 @@ export default function Teaching() {
             setHasLessons(true);
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Катаа!', detail: '' }
+                value: { severity: 'error', summary: 'Ошибка!', detail: '' }
             });
             if (data?.response?.status) {
                 showError(data.response.status);
@@ -110,8 +110,6 @@ export default function Teaching() {
             const selected = lessons[selectedSort.code];
             displayData = selected && selected.semester ? [selected] : [];
         }
-        console.log('streams', displayData);
-        // console.log('connection', connection);
 
         // превращаем в jsx
         const x = displayData.map((semester: any, sIdx: number) => (
@@ -160,14 +158,13 @@ export default function Teaching() {
                             }}
                             options={sortOpt}
                             optionLabel="name"
-                            placeholder=""
-                            className="w-[213px]  md:w-14rem"
+                            className="w-full sm:w-14rem"
                         />
                     </div>
                 )}
 
                 {/* lesson section */}
-                {hasLessons ? <NotFound titleMessage={'Сабактар убактылуу жетклиликсиз'} /> : skeleton ? <GroupSkeleton count={10} size={{ width: '100%', height: '3rem' }} /> : <div className="flex gap-4 sm:gap-6 flex-col">{lessonsDisplay}</div>}
+                {hasLessons ? <NotFound titleMessage={'Данные временно не доступны'} /> : skeleton ? <GroupSkeleton count={10} size={{ width: '100%', height: '4rem' }} /> : <div className="flex gap-4 sm:gap-6 flex-col">{lessonsDisplay}</div>}
             </div>
         </div>
     );

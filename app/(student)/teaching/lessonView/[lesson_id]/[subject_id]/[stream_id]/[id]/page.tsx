@@ -1,9 +1,11 @@
 'use client';
 
+import { NotFound } from '@/app/components/NotFound';
 import useErrorMessage from '@/hooks/useErrorMessage';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { LayoutContext } from '@/layout/context/layoutcontext';
 import { fetchItemsLessons, fetchMainLesson, fetchStudentSteps, fetchSubjects, stepPractica, stepTest } from '@/services/studentMain';
+import { docValueType } from '@/types/docValueType';
 import { lessonType } from '@/types/lessonType';
 import { mainStepsType } from '@/types/mainStepType';
 import Link from 'next/link';
@@ -18,14 +20,6 @@ export default function LessonTest() {
         id_curricula: number;
         course_ids: number[];
         streams: number[];
-    }
-
-    interface docValueType {
-        title: string;
-        description: string;
-        file: File | null;
-        document?: string;
-        stepPos?: number;
     }
 
     const { lesson_id, subject_id, stream_id, id } = useParams();
@@ -101,9 +95,13 @@ export default function LessonTest() {
         const data = await fetchStudentSteps(Number(id), Number(stream_id));
         console.log(data);
 
-        if (data.success) {
-            setHasSteps(false);
-            setMainSteps(data.step);
+        if (data?.success) {
+            if(!data?.step?.content || data?.step?.content == null){
+                setHasSteps(true);
+            } else {
+                setHasSteps(false);
+                setMainSteps(data.step);
+            }
         } else {
             setHasSteps(true);
         }
@@ -495,8 +493,7 @@ export default function LessonTest() {
                                                 setAnswer((prev) => prev && prev.map((ans, i) => (i === index ? { ...ans, is_correct: true } : { ...ans, is_correct: false })));
                                             }}
                                         />
-                                        {/* <input type="radio" name="radio" /> */}
-                                        <span className="radio-mark min-w-[18px]"></span>
+                                        <span className={`radio-mark min-w-[18px] ${steps?.count_attempt && steps?.count_attempt >= 3 ? 'opacity-50' : ''}`}></span>
                                     </label>
                                     <div className="bg-gray border border-[var(--borderBottomColor)] py-[5px] pl-1 w-full">{item.text}</div>
                                 </div>
@@ -575,11 +572,12 @@ export default function LessonTest() {
                     <span className="text-center">{courseInfo?.description} </span>
                     <div className="flex items-center justify-end gap-1 flex-col sm:flex-row mt-2">
                         <b className="text-white sm:text-lg">Тема: </b>
-                        <b className="text-[16px] sm:text-[18px]">{lessonName}</b>
+                        <b className="text-[16px] sm:text-[18px]">{lessonName ? lessonName : '------'}</b>
                     </div>
                 </div>
             </div>
 
+            {hasSteps && <NotFound titleMessage='Данные не доступны' />}
             {type === 'document' && docSection}
             {type === 'link' && linkSection}
             {type === 'practical' && practicaSection}

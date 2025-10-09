@@ -457,7 +457,6 @@ export default function Course() {
                 footerValue={{ footerState: editMode, reject: 'Назад', next: 'Сохранить' }}
             >
                 <div className="flex flex-col gap-1">
-                    {/* <div className="flex flex-col lg:flex-row gap-1 justify-around items-center"> */}
                     <div className="flex flex-col gap-1 items-center justify-center">
                         <label className="block text-900 font-medium text-[16px] md:text-lg mb-1 md:mb-2">Название</label>
                         <div className="w-full flex gap-2 items-center">
@@ -505,14 +504,12 @@ export default function Course() {
                             {progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}
                         </div>
                     </div>
-                    {/* </div> */}
 
-                    {/* <div className="flex flex-col lg:flex-row gap-1 justify-around items-center"> */}
                     <div className="flex flex-col gap-1 items-center justify-center">
                         <label className="block text-900 font-medium text-[16px] md:text-lg mb-1 md:mb-2">Описание</label>
                         <div className="w-full flex gap-2 justify-center items-center">
                             <InputTextarea
-                                autoResize
+                                // autoResize
                                 value={editMode ? editingLesson.description || '' : courseValue.description}
                                 disabled={progressSpinner === true ? true : false}
                                 rows={3}
@@ -533,15 +530,11 @@ export default function Course() {
                             {progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}
                         </div>
                     </div>
-                    {/* </div> */}
 
                     <div className={imagestateStyle}>
-                        {/* {imagestateStyle && ( */}
                         <div className="w-1/2 order-2 sm:order-1 max-h-[170px] max-w-[300px] overflow-hidden flex justify-center items-center">
-                            {/* {typeof imageState === 'string' && <img className="w-full object-cover" src={editMode ? typeof editingLesson.image === 'string' ? editingLesson.image : '' : imageState} alt="" />} */}
                             {typeof imageState === 'string' ? <img className="w-full object-cover" src={imageState} /> : <img className="w-full object-cover" src={typeof editingLesson.image === 'string' ? editingLesson.image : ''} />}
                         </div>
-                        {/* )} */}
                         <div className={`flex flex-col pag-1 order-1 sm:order-2 items-center justify-center ${imageState && 'w-1/2'}`}>
                             <label className="block text-900 font-medium text-[16px] md:text-lg mb-1 md:mb-2">Добавить фото</label>
                             <FileUpload
@@ -571,6 +564,7 @@ export default function Course() {
                         </div>
                     </div>
                 </div>
+                {/* lorem */}
             </FormModal>
 
             <div className="flex justify-between gap-3">

@@ -2,6 +2,8 @@
 
 import LessonInfoCard from '@/app/components/lessons/LessonInfoCard';
 import StudentInfoCard from '@/app/components/lessons/StudentInfoCard';
+import { NotFound } from '@/app/components/NotFound';
+import GroupSkeleton from '@/app/components/skeleton/GroupSkeleton';
 import useErrorMessage from '@/hooks/useErrorMessage';
 import { LayoutContext } from '@/layout/context/layoutcontext';
 import { fetchItemsLessons, fetchMainLesson, fetchSubjects } from '@/services/studentMain';
@@ -19,12 +21,6 @@ export default function StudentLesson() {
         streams: number[];
     }
 
-    interface sortOptType {
-        name: string;
-        code: number;
-        user_id?: number | null;
-    }
-
     const { subject_id } = useParams();
     const params = new URLSearchParams();
 
@@ -32,9 +28,6 @@ export default function StudentLesson() {
     const showError = useErrorMessage();
 
     const [main_id, setMain_id] = useState<predmetType | null>(null);
-
-    const [steps, setMainSteps] = useState([]);
-    const [hasSteps, setHasSteps] = useState(false);
 
     const [skeleton, setSkeleton] = useState(false);
     const [hasLessons, setHasLessons] = useState(false);
@@ -44,31 +37,14 @@ export default function StudentLesson() {
     const [courses, setCourses] = useState<
         { id: number; connections: { subject_type: string; id: number; user_id: number | null; id_stream: number }[]; title: string; description: string; user: { last_name: string; name: string; father_name: string }; lessons: lessonType[] }[]
     >([]);
-    const [selectedSort, setSelectedSort] = useState({ name: 'Все', code: 0 });
-    const [sortOpt, setSortOpt] = useState<sortOptType[]>();
     const [hasThemes, setHasThemes] = useState(false);
     const [activeAccordion, setActiveAccordion] = useState<number>(0);
     const [activeIndex, setActiveIndex] = useState<number | number[]>(0);
 
     const [activeIndexes, setActiveIndexes] = useState<Record<number, number | null>>({});
-    const [accordionIndex, setAccordionIndex] = useState({index: null});
+    const [accordionIndex, setAccordionIndex] = useState({ index: null });
 
     // types
-    type Lesson = { id: number; title: string /* ... */ };
-    type Connection = { subject_type: string; id: number; user_id: number | null; id_stream: number };
-    type Course = {
-        id: number;
-        title: string;
-        lessons: Lesson[];
-        connections: Connection[];
-        // ...
-    };
-
-    // type Props = {
-    //     course: Course;
-    //     handleMainLesson: (lessonId: number, streamId: number) => void;
-    // };
-
     // old mainlesson
     // const handleMainLesson = async (lesson_id: number, stream_id: number) => {
     //     const data = await fetchMainLesson(lesson_id, stream_id);
@@ -94,28 +70,6 @@ export default function StudentLesson() {
         return [];
     };
 
-    // old tabchange
-    // const handleTabChange = (courseId: number, e: any) => {
-    //     setActiveIndexes((prev) => ({
-    //         ...prev,
-    //         [courseId]: e.index
-    //     }));
-
-    //     const course = courses.find((c) => c.id === courseId);
-    //     console.log(course, e.index);
-
-    //     if (course) {
-    //         const lesson = course.lessons[e.index];
-    //         const stream = course.connections[0];
-    //         console.log(lesson, stream);
-    //         if (lesson && stream) {
-    //             handleMainLesson(lesson.id, stream.id_stream);
-    //         }
-    //     } else {
-    //         console.warn(course);
-    //     }
-    // };
-
     // Вам понадобится эта функция для получения ID урока
     const getLessonIdByCourseAndIndex = (course: any, index: number) => {
         // Убедитесь, что lessonType включает поле steps: any[]
@@ -128,7 +82,7 @@ export default function StudentLesson() {
             ...prev,
             [courseId]: e.index // e.index - это индекс темы (AccordionTab)
         }));
-        setAccordionIndex({index: e.index});
+        setAccordionIndex({ index: e.index });
 
         const course = courses.find((c) => c.id === courseId);
 
@@ -139,7 +93,7 @@ export default function StudentLesson() {
             const stream = course.connections[0];
 
             // 2. Вызываем новую handleMainLesson и получаем данные
-            if (lessonId && stream) {   
+            if (lessonId && stream) {
                 // Ожидаем массив данных или пустой массив
 
                 // 1. Устанавливаем статус загрузки для конкретного урока
@@ -181,18 +135,12 @@ export default function StudentLesson() {
         }
     };
 
-    const toggleSortSelect = (e: sortOptType) => {
-        setSelectedSort(e);
-    };
-
     // fetch lessons
     const handleFetchLessons = async () => {
-        const data = await fetchItemsLessons();
-
         setSkeleton(true);
+        const data = await fetchItemsLessons();
         if (data) {
             // валидность проверить
-            // console.log(data);
             setLessons(data);
             setHasLessons(false);
             setSkeleton(false);
@@ -273,71 +221,78 @@ export default function StudentLesson() {
         }
     }, [main_id]);
 
-    useEffect(() => {
-        console.log(courses);
-    }, [courses]);
-
     return (
         <div className="main-bg">
             <h1 className="text-xl shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">Список курсов</h1>
-            {courses.map((course) => {
-                return (
-                    <div key={course.id} className="flex flex-col gap-4 lesson-card-border shadow rounded my-4 py-2 px-1">
-                        <div className="flex flex-col gap-2">
-                            <h3 className="m-0 break-words">
-                                <span className="text-[var(--mainColor)]">Название курса:</span> {course?.title}
-                            </h3>
-                            <h3 className="m-0">
-                                <span className="text-[var(--mainColor)]">Преподаватель:</span> {course?.user.last_name} {course?.user.name}
-                            </h3>
-                        </div>
-                        <div>
-                            <Accordion key={`${course.id}`} activeIndex={activeIndexes[course.id]} onTabChange={(e) => handleTabChange(course.id, e)} multiple={false}>
-                                {course.lessons.map((lesson) => {                                    
-                                    const steps = lesson.steps && lesson.steps?.length > 0;
-                                    return (
-                                        <AccordionTab header={'Тема: ' + lesson.title} key={lesson.id} className="w-full p-accordion" style={{ width: '100%' }}>
-                                            <div className="flex flex-col gap-2">
-                                                {/* Используем lesson.steps, который был обновлен в handleTabChange */}
-                                                {lesson?.isLoadingSteps ? (
-                                                    <ProgressSpinner style={{ width: '50px', height: '50px' }} />
-                                                ) : steps ? (
-                                                    lesson.steps.map((item: { id: number; chills: boolean; type: { name: string; logo: string }; content: { title: string; description: string; url: string; document: string; document_path: string } }, idx) => {
-                                                        if (item.content == null) {
-                                                            return null;
-                                                        }
 
-                                                        return (
-                                                            <div key={item.id} className={`${idx > 0 ? 'my-border-top' : ''}`}>
-                                                                <StudentInfoCard
-                                                                    type={item.type.name}
-                                                                    icon={item.type.logo}
-                                                                    title={item.content?.title}
-                                                                    description={item.content?.description || ''}
-                                                                    documentUrl={{ document: item.content?.document, document_path: item.content?.document_path }}
-                                                                    link={item.content?.url}
-                                                                    stepId={item.id}
-                                                                    streams={course}
-                                                                    lesson={lesson.id}
-                                                                    subjectId={subject_id}
-                                                                    chills={item?.chills}
-                                                                    fetchProp={()=> handleTabChange(course.id, accordionIndex)}
-                                                                />
-                                                            </div>
-                                                        );
-                                                    })
-                                                ) : (
-                                                    <p className="text-center text-sm">Данных нет</p>
-                                                )}
-                                            </div>
-                                        </AccordionTab>
-                                    );
-                                })}
-                            </Accordion>
+            {skeleton ? (
+                <div className="w-full">
+                    <GroupSkeleton count={1} size={{ width: '100%', height: '10rem' }} />
+                </div>
+            ) : hasThemes ? (
+                <NotFound titleMessage="Данные не доступны" />
+            ) : (
+                courses.map((course) => {
+                    return (
+                        <div key={course.id} className="flex flex-col gap-4 shadow-sm rounded my-4 py-2 px-1">
+                            <div className="flex flex-col gap-2">
+                                <h3 className="m-0 break-words">
+                                    <span className="text-[var(--mainColor)]">Название курса:</span> {course?.title}
+                                </h3>
+                                <h3 className="m-0">
+                                    <span className="text-[var(--mainColor)]">Преподаватель:</span> {course?.user.last_name} {course?.user.name}
+                                </h3>
+                            </div>
+                            <div>
+                                <Accordion key={`${course.id}`} activeIndex={activeIndexes[course.id]} onTabChange={(e) => handleTabChange(course.id, e)} multiple={false} expandIcon="" collapseIcon="">
+                                    {course.lessons.map((lesson) => {
+                                        const steps = lesson.steps && lesson.steps?.length > 0;
+                                        return (
+                                            <AccordionTab header={'Тема: ' + lesson.title} key={lesson.id} className="w-full p-accordion" style={{ width: '100%', backgroundColor: 'white' }}>
+                                                <div className="flex flex-col gap-2">
+                                                    {/* Используем lesson.steps, который был обновлен в handleTabChange */}
+                                                    {lesson?.isLoadingSteps ? (
+                                                        <ProgressSpinner style={{ width: '50px', height: '50px' }} />
+                                                    ) : steps ? (
+                                                        lesson.steps.map(
+                                                            (item: { id: number; chills: boolean; type: { name: string; logo: string }; content: { title: string; description: string; url: string; document: string; document_path: string } }, idx) => {
+                                                                if (item.content == null) {
+                                                                    return null;
+                                                                }
+
+                                                                return (
+                                                                    <div key={item.id} className={`${idx > 0 ? 'my-border-top' : ''}`}>
+                                                                        <StudentInfoCard
+                                                                            type={item.type.name}
+                                                                            icon={item.type.logo}
+                                                                            title={item.content?.title}
+                                                                            description={item.content?.description || ''}
+                                                                            documentUrl={{ document: item.content?.document, document_path: item.content?.document_path }}
+                                                                            link={item.content?.url}
+                                                                            stepId={item.id}
+                                                                            streams={course}
+                                                                            lesson={lesson.id}
+                                                                            subjectId={subject_id}
+                                                                            chills={item?.chills}
+                                                                            fetchProp={() => handleTabChange(course.id, accordionIndex)}
+                                                                        />
+                                                                    </div>
+                                                                );
+                                                            }
+                                                        )
+                                                    ) : (
+                                                        <p className="text-center text-sm">Данных нет</p>
+                                                    )}
+                                                </div>
+                                            </AccordionTab>
+                                        );
+                                    })}
+                                </Accordion>
+                            </div>
                         </div>
-                    </div>
-                );
-            })}
+                    );
+                })
+            )}
         </div>
     );
 }

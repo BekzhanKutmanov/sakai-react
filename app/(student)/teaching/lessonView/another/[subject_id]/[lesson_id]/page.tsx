@@ -1,9 +1,11 @@
 'use client';
 
+import { NotFound } from '@/app/components/NotFound';
 import useErrorMessage from '@/hooks/useErrorMessage';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { LayoutContext } from '@/layout/context/layoutcontext';
-import { fetchItemsLessons, fetchMainLesson, fetchStudentSteps, fetchSubjects } from '@/services/studentMain';
+import { fetchItemsLessons, fetchMainLesson, fetchStudentSteps, fetchSubjects, stepPractica, stepTest } from '@/services/studentMain';
+import { docValueType } from '@/types/docValueType';
 import { lessonType } from '@/types/lessonType';
 import { mainStepsType } from '@/types/mainStepType';
 import Link from 'next/link';
@@ -25,7 +27,7 @@ export default function AnotherLesson() {
     const params = new URLSearchParams();
     const media = useMediaQuery('(max-width: 640px)');
     const showError = useErrorMessage();
-    const { setMessage } = useContext(LayoutContext);
+    const { setMessage, setContextNewStudentThemes } = useContext(LayoutContext);
 
     const [steps, setMainSteps] = useState<mainStepsType | null>(null);
     const [hasSteps, setHasSteps] = useState(false);
@@ -39,6 +41,7 @@ export default function AnotherLesson() {
         { text: '', is_correct: false, id: null },
         { text: '', is_correct: false, id: null }
     ]);
+    const [answerCheck, setAnswerCheck] = useState(false);
     const [skeleton, setSkeleton] = useState(false);
     const [hasLessons, setHasLessons] = useState(false);
     const [lessons, setLessons] = useState<Record<number, { semester: { name_kg: string } } | predmetType>>({
@@ -59,6 +62,11 @@ export default function AnotherLesson() {
             lessons: lessonType[];
         }[]
     >([]);
+    const [docValue, setDocValue] = useState<docValueType>({
+        title: '',
+        description: '',
+        file: null
+    });
 
     // document
     const [document, setDocument] = useState<mainStepsType | null>(null);
@@ -94,17 +102,17 @@ export default function AnotherLesson() {
         }
     };
 
-    const handleStep = async () => {
-        const data = await fetchStudentSteps(Number(id), Number(stream_id));
-        console.log(data);
+    // const handleStep = async () => {
+    //     const data = await fetchStudentSteps(Number(id), Number(stream_id));
+    //     console.log(data);
 
-        if (data.success) {
-            setHasSteps(false);
-            setMainSteps(data.step);
-        } else {
-            setHasSteps(true);
-        }
-    };
+    //     if (data.success) {
+    //         setHasSteps(false);
+    //         setMainSteps(data.step);
+    //     } else {
+    //         setHasSteps(true);
+    //     }
+    // };
 
     // Запрос курса, типа уроков (лк,лб)
     const handleFetchSubject = async (subject: subjectType) => {
@@ -169,19 +177,99 @@ export default function AnotherLesson() {
         // setVisisble(true);
     };
 
+    const handleAddTest = async () => {
+        setProgressSpinner(true);
+        const isCorrect = answer?.filter((item) => item.is_correct);
+        const data = await stepTest(steps && steps?.id, steps?.connections?.id_stream, (isCorrect && isCorrect[0]?.id) || null);
+        console.log(data);
+
+        if (data?.success) {
+            setProgressSpinner(false);
+            setMessage({
+                state: true,
+                value: { severity: 'success', summary: '', detail: data?.message }
+            });
+        } else {
+            setProgressSpinner(false);
+            setMessage({
+                state: true,
+                value: { severity: 'error', summary: 'Ошибка при отправке ответа!', detail: '' }
+            });
+            forMainLesson();
+            if (data?.response?.status) {
+                if (data?.response?.status == '400') {
+                    setMessage({
+                        state: true,
+                        value: { severity: 'error', summary: 'Ошибка!', detail: data?.response?.data?.message }
+                    });
+                } else {
+                    showError(data.response.status);
+                }
+            }
+        }
+    };
+
+    const handleAddPractica = async () => {
+        setProgressSpinner(true);
+        const data = await stepPractica(steps && steps?.id, steps?.connections?.id_stream, docValue.file);
+        console.log(data);
+
+        if (data?.success) {
+            setProgressSpinner(false);
+            setMessage({
+                state: true,
+                value: { severity: 'success', summary: '', detail: data?.message }
+            });
+            forMainLesson();
+        } else {
+            setProgressSpinner(false);
+            setMessage({
+                state: true,
+                value: { severity: 'error', summary: 'Ошибка при отправке документа!', detail: '' }
+            });
+            if (data?.response?.status) {
+                if (data?.response?.status == '400') {
+                    setMessage({
+                        state: true,
+                        value: { severity: 'error', summary: 'Ошибка!', detail: data?.response?.data?.message }
+                    });
+                } else {
+                    showError(data.response.status);
+                }
+            }
+        }
+    };
+
     useEffect(() => {
         handleFetchLessons();
         // handleStep();
     }, []);
 
+    // альтернатива handleStep()
     const handleMainLesson = async (lesson_id: number, stream_id: number) => {
-        const data = await fetchMainLesson(lesson_id, stream_id);
-        console.warn(data);
+        const data:{step: {content: any}} = await fetchMainLesson(lesson_id, stream_id);
         // Возвращаем данные или null/пустой массив
-        // if (data && data.length > 0) {
-        //     return data;
-        // }
-        // return [];
+        if (data && Array.isArray(data)) {
+            if(!data?.step?.content || data?.step?.content == null){
+                setHasSteps(true);
+            } else {
+                setHasSteps(false);
+                setMainSteps(data[0]);
+            }
+        } else {
+            setHasSteps(true);
+        }
+    };
+
+    const forMainLesson = () => {
+        if (mainLesson) {
+            const course = courses.find((c) => c.id === mainLesson?.course_id);
+            const stream = course?.connections[0];
+            console.log(mainLesson, stream);
+            if (stream?.id_stream) {
+                handleMainLesson(mainLesson?.id, stream?.id_stream);
+            }
+        }
     };
 
     useEffect(() => {
@@ -227,16 +315,11 @@ export default function AnotherLesson() {
         }
     }, [lessons]);
 
-    useEffect(()=> {
-        if(mainLesson){
-            const course = courses.find((c) => c.id === mainLesson?.course_id);
-            const stream = course?.connections[0];
-            console.log(mainLesson, stream);
-            if(stream?.id_stream){
-                handleMainLesson(mainLesson?.id, stream?.id_stream);
-            }
+    useEffect(() => {
+        if (mainLesson) {
+            forMainLesson();
         }
-    },[mainLesson]);
+    }, [mainLesson]);
 
     useEffect(() => {
         if (main_id && main_id != null) {
@@ -264,10 +347,21 @@ export default function AnotherLesson() {
                     return j?.id === Number(lesson_id);
                 });
             });
-            console.log(forLesson);
+            if (forLesson && forLesson?.lessons) {
+                setContextNewStudentThemes(forLesson?.lessons);
+            }
             setCoursesInfo(forLesson || null);
         }
     }, [courses]);
+
+    useEffect(() => {
+        const check = answer?.find((item) => item?.is_correct);
+        if (check) {
+            setAnswerCheck(true);
+        } else {
+            setAnswerCheck(false);
+        }
+    }, [answer]);
 
     const hasPdf = /pdf/i.test(document?.content?.document || ''); // true
 
@@ -360,6 +454,49 @@ export default function AnotherLesson() {
                     )}
                 </div>
             </div>
+            {steps?.chills ? (
+                <span className="pi pi-check-circle text-xl mb-1 text-[var(--greenColor)]"> Задание выполнено</span>
+            ) : (
+                <div className="flex flex-col gap-2 items-start w-full mt-2">
+                    <span className="pi pi-check-circle text-md mb-1 text-[var(--mainColor)] shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)] pb-1"> Задание После изучения материала, загрузи свой файл с решением.</span>
+                    <div className="w-full">
+                        <input
+                            type="file"
+                            accept="application/pdf"
+                            className="border rounded p-1 max-w-[90%]"
+                            onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (file) {
+                                    const maxSize = 10 * 1024 * 1024;
+
+                                    if (file.size > maxSize) {
+                                        setMessage({
+                                            state: true,
+                                            value: { severity: 'error', summary: 'Файл слишком большой!', detail: 'Разрешено максимум 10 MB.' }
+                                        });
+                                    } else {
+                                        setDocValue((prev) => ({
+                                            ...prev,
+                                            file: file
+                                        }));
+                                    }
+                                }
+                            }}
+                        />
+                    </div>
+                    <div className="w-full">
+                        {progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}
+                        <Button
+                            label="Отправить"
+                            disabled={progressSpinner}
+                            className={`${progressSpinner ? 'opacity-50' : ''}`}
+                            onClick={() => {
+                                handleAddPractica();
+                            }}
+                        />
+                    </div>
+                </div>
+            )}
         </div>
     );
 
@@ -386,12 +523,12 @@ export default function AnotherLesson() {
                                         <input
                                             type="radio"
                                             name="testRadio"
+                                            disabled={steps?.count_attempt ? steps?.count_attempt >= 3 : false}
                                             onChange={() => {
                                                 setAnswer((prev) => prev.map((ans, i) => (i === index ? { ...ans, is_correct: true } : { ...ans, is_correct: false })));
                                             }}
                                         />
-                                        {/* <input type="radio" name="radio" /> */}
-                                        <span className="radio-mark min-w-[18px]"></span>
+                                        <span className={`radio-mark min-w-[18px] ${steps?.count_attempt && steps?.count_attempt >= 3 ? 'opacity-50' : ''}`}></span>
                                     </label>
 
                                     <div className="bg-gray border border-[var(--borderBottomColor)] py-[5px] pl-1 w-full">{item.text}</div>
@@ -401,18 +538,19 @@ export default function AnotherLesson() {
                     </div>
                 </div>
             </div>
-            <div className="flex relative">
-                <div className="w-full flex gap-1 justify-center items-center">
+            {steps?.count_attempt && steps?.count_attempt >= 3 ? (
+                <span className="pi pi-check-circle text-xl mb-1 text-[var(--greenColor)]"> Задание выполнено</span>
+            ) : (
+                <div className="w-full">
                     <Button
                         label="Отправить"
-                        // disabled={progressSpinner || !testValue.title.length || !!errors.title}
+                        disabled={progressSpinner || !answer || !answerCheck}
                         onClick={() => {
-                            // handleAddTest();
+                            handleAddTest();
                         }}
                     />
-                    {progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}
                 </div>
-            </div>
+            )}
         </div>
     );
 
@@ -469,11 +607,12 @@ export default function AnotherLesson() {
                     <span className="text-center">{courseInfo?.description} </span>
                     <div className="flex items-center justify-end gap-1 flex-col sm:flex-row mt-2">
                         <b className="text-white sm:text-lg">Тема: </b>
-                        <b className="text-[16px] sm:text-[18px]">{lessonName}</b>
+                        <b className="text-[16px] sm:text-[18px]">{lessonName ? lessonName : '------'}</b>
                     </div>
                 </div>
             </div>
 
+            {hasSteps && <NotFound titleMessage='Данные не доступны' />}
             {type === 'document' && docSection}
             {type === 'link' && linkSection}
             {type === 'practical' && practicaSection}

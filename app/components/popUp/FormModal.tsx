@@ -60,7 +60,7 @@ export default function FormModal({
                     if (!visible) return;
                     setVisible(false);
                     clearValues();
-                }}
+                }}  
                 footer={footerContent}
             >
                 {children}
