@@ -11,9 +11,11 @@ const PDFViewer = dynamic(() => import('@/app/components/PDFBook'), {
 import { useParams, useRouter } from 'next/navigation';
 
 export default function PdfUrlViewer() {
+    
     const { pdfUrl } = useParams();
     const router = useRouter();
-
+    
+    console.log(pdfUrl);
     return (
         <div className='my-2'>
             <div className='max-w-4xl m-auto'>

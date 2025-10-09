@@ -38,6 +38,7 @@ export default function LessonTest() {
     } | null>(null);
     const [test, setTests] = useState<mainStepsType | null>(null);
     const [answer, setAnswer] = useState<{ id: number | null; text: string; is_correct: boolean }[] | null>(null);
+    const [selectedAnswer, setSelectedAnswer] = useState(false);
     const [answerCheck, setAnswerCheck] = useState(false);
     const [lessons, setLessons] = useState<Record<number, { semester: { name_kg: string } } | predmetType>>({
         1: { semester: { name_kg: '' } }
@@ -96,7 +97,7 @@ export default function LessonTest() {
         console.log(data);
 
         if (data?.success) {
-            if(!data?.step?.content || data?.step?.content == null){
+            if (!data?.step?.content || data?.step?.content == null) {
                 setHasSteps(true);
             } else {
                 setHasSteps(false);
@@ -311,6 +312,8 @@ export default function LessonTest() {
     }, [courses]);
 
     useEffect(() => {
+        console.log(answer);
+        
         const check = answer?.find((item) => item?.is_correct);
         if (check) {
             setAnswerCheck(true);
@@ -318,6 +321,19 @@ export default function LessonTest() {
             setAnswerCheck(false);
         }
     }, [answer]);
+
+    useEffect(()=> {
+        if(test?.answer_id && test?.answer_id != null){
+            setSelectedAnswer(true);
+        } else {
+            setSelectedAnswer(false);
+        }
+    },[test]);
+
+    useEffect(()=> {
+        console.log(selectedAnswer);
+        
+    },[selectedAnswer]);
 
     const hasPdf = /pdf/i.test(document?.content?.document || ''); // true
 
@@ -329,7 +345,7 @@ export default function LessonTest() {
             </div>
             <div className="w-full flex flex-col gap-1">
                 <b className="text-[16px] sm:text-[18px] break-words">{document?.content?.title}</b>
-                {document?.content?.description && <div className="flex flex-col gap-2">{document?.content?.description && <div className="lesson-card-border shadow rounded p-2 sm:w-full md:w-[70%]">{document?.content?.description}</div>}</div>}
+                {document?.content?.description && <div className="flex flex-col gap-2 ">{document?.content?.description && <div className="lesson-card-border shadow rounded p-2 sm:w-full md:w-[70%]">{document?.content?.description}</div>}</div>}
             </div>
             <div className="w-full flex gap-2">
                 <Link href={`/pdf/${document?.content?.document}`}>
@@ -355,9 +371,7 @@ export default function LessonTest() {
                 </div>
                 <div className="w-full flex flex-col gap-1">
                     <b className="text-[16px] sm:text-[18px] break-words">{link?.content?.title}</b>
-                    {link?.content?.description && (
-                        <div className="flex flex-col gap-2">{link?.content?.description && <div className="lesson-card-border bg-[#ddc4f51a] shadow rounded p-2 sm:w-full md:w-[70%]">{link?.content?.description}</div>}</div>
-                    )}
+                    {link?.content?.description && <div className="flex flex-col gap-2">{link?.content?.description && <div className="lesson-card-border shadow rounded p-2 sm:w-full md:w-[70%]">{link?.content?.description}</div>}</div>}
                 </div>
                 <div className="flex gap-1 items-start flex-col sm:flex-row">
                     <span className="text-[var(--mainColor)]">Ссылка: </span>
@@ -418,7 +432,7 @@ export default function LessonTest() {
                 <span className="pi pi-check-circle text-xl mb-1 text-[var(--greenColor)]"> Задание выполнено</span>
             ) : (
                 <div className="flex flex-col gap-2 items-start w-full mt-2">
-                    <span className="pi pi-check-circle text-md mb-1 text-[var(--mainColor)] shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)] pb-1"> Задание После изучения материала, загрузи свой файл с решением.</span>
+                    <span className="pi pi-check-circle sm:text-lg mb-1 text-[var(--mainColor)] shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)] pb-1"> Задание после изучения материала, загрузи свой файл с решением.</span>
                     <div className="w-full">
                         <input
                             type="file"
@@ -484,18 +498,41 @@ export default function LessonTest() {
                         {test?.content?.answers.map((item, index) => {
                             return (
                                 <div className="w-full flex items-center" key={index}>
-                                    <label className="custom-radio border border-[var(--borderBottomColor)] p-2">
-                                        <input
-                                            type="radio"
-                                            name="testRadio"
-                                            disabled={steps?.count_attempt ? steps?.count_attempt >= 3 : false}
-                                            onChange={() => {
-                                                setAnswer((prev) => prev && prev.map((ans, i) => (i === index ? { ...ans, is_correct: true } : { ...ans, is_correct: false })));
-                                            }}
-                                        />
-                                        <span className={`radio-mark min-w-[18px] ${steps?.count_attempt && steps?.count_attempt >= 3 ? 'opacity-50' : ''}`}></span>
-                                    </label>
-                                    <div className="bg-gray border border-[var(--borderBottomColor)] py-[5px] pl-1 w-full">{item.text}</div>
+                                    {selectedAnswer ? (
+                                        <>
+                                            <label className="custom-radio border border-[var(--borderBottomColor)] p-2">
+                                                <input
+                                                    type="radio"
+                                                    name="testRadio"
+                                                    checked={item.id == test?.answer_id}
+                                                    disabled={steps?.count_attempt ? steps?.count_attempt >= 3 : false}
+                                                    onChange={() => {
+                                                        setSelectedAnswer(false);
+                                                        console.log('fkjs');
+                                                        
+                                                        setAnswer((prev) => prev && prev.map((ans, i) => (i === index ? { ...ans, is_correct: true } : { ...ans, is_correct: false })));
+                                                    }}
+                                                />
+                                                <span className={`radio-mark min-w-[18px] ${steps?.count_attempt && steps?.count_attempt >= 3 ? 'opacity-50' : ''}`}></span>
+                                            </label>
+                                            <div className="bg-gray border border-[var(--borderBottomColor)] py-[5px] pl-1 w-full">{item.text}</div>
+                                        </>
+                                    ) : (
+                                        <>  
+                                            <label className="custom-radio border border-[var(--borderBottomColor)] p-2">
+                                                <input
+                                                    type="radio"
+                                                    name="testRadio"
+                                                    disabled={steps?.count_attempt ? steps?.count_attempt >= 3 : false}
+                                                    onChange={() => {
+                                                        setAnswer((prev) => prev && prev.map((ans, i) => (i === index ? { ...ans, is_correct: true } : { ...ans, is_correct: false })));
+                                                    }}
+                                                />
+                                                <span className={`radio-mark min-w-[18px] ${steps?.count_attempt && steps?.count_attempt >= 3 ? 'opacity-50' : ''}`}></span>
+                                            </label>
+                                            <div className="bg-gray border border-[var(--borderBottomColor)] py-[5px] pl-1 w-full">{item.text}</div>
+                                        </>
+                                    )}
                                 </div>
                             );
                         })}
@@ -522,6 +559,10 @@ export default function LessonTest() {
     const videoSection = (
         <div className="lesson-card-border shadow rounded p-2 mt-2">
             <div className="flex flex-col gap-2">
+                <div className="w-full flex gap-1 items-center mb-2 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">
+                    <span className="sm:text-[18px]">{steps?.type?.title}</span>
+                    <i className={`${steps?.type?.logo} text-2xl`}></i>
+                </div>
                 <div className="flex flex-col gap-2">
                     {video?.content?.description && (
                         <div className="w-full flex flex-col gap-1">
@@ -577,7 +618,7 @@ export default function LessonTest() {
                 </div>
             </div>
 
-            {hasSteps && <NotFound titleMessage='Данные не доступны' />}
+            {hasSteps && <NotFound titleMessage="Данные не доступны" />}
             {type === 'document' && docSection}
             {type === 'link' && linkSection}
             {type === 'practical' && practicaSection}

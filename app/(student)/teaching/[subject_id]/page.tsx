@@ -236,12 +236,17 @@ export default function StudentLesson() {
                     return (
                         <div key={course.id} className="flex flex-col gap-4 shadow-sm rounded my-4 py-2 px-1">
                             <div className="flex flex-col gap-2">
-                                <h3 className="m-0 break-words">
+                                <h3 className="m-0  text-md break-words">
                                     <span className="text-[var(--mainColor)]">Название курса:</span> {course?.title}
                                 </h3>
-                                <h3 className="m-0">
+                                <h3 className="m-0 text-md ">
                                     <span className="text-[var(--mainColor)]">Преподаватель:</span> {course?.user.last_name} {course?.user.name}
                                 </h3>
+                                {course?.connections[0]?.subject_type && 
+                                    <h3 className="m-0 text-md ">
+                                        <span className="text-[var(--mainColor)]">Тип обучения:</span> {course?.connections[0]?.subject_type === 'Лк' ? 'Лекция' : course?.connections[0]?.subject_type === 'Лб' ? 'Лабораторные занятия' : ''}
+                                    </h3>
+                                }
                             </div>
                             <div>
                                 <Accordion key={`${course.id}`} activeIndex={activeIndexes[course.id]} onTabChange={(e) => handleTabChange(course.id, e)} multiple={false} expandIcon="" collapseIcon="">

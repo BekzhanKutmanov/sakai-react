@@ -142,8 +142,8 @@ export default function Teaching() {
     }, []);
 
     return (
-        <div className="w-full flex justify-between items-start gap-2 xl:gap-5">
-            <div className="py-4 w-full">
+        <div className="main-bg w-full flex justify-between items-start gap-2 xl:gap-5">
+            <div className="w-full">
                 {/* info section */}
                 {skeleton ? (
                     <GroupSkeleton count={1} size={{ width: '100%', height: '4rem' }} />
@@ -161,7 +161,7 @@ export default function Teaching() {
                             className="w-full sm:w-14rem"
                         />
                     </div>
-                )}
+                )}  
 
                 {/* lesson section */}
                 {hasLessons ? <NotFound titleMessage={'Данные временно не доступны'} /> : skeleton ? <GroupSkeleton count={10} size={{ width: '100%', height: '4rem' }} /> : <div className="flex gap-4 sm:gap-6 flex-col">{lessonsDisplay}</div>}

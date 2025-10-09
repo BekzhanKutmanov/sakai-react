@@ -248,13 +248,14 @@ export default function AnotherLesson() {
     // альтернатива handleStep()
     const handleMainLesson = async (lesson_id: number, stream_id: number) => {
         const data:{step: {content: any}} = await fetchMainLesson(lesson_id, stream_id);
-        // Возвращаем данные или null/пустой массив
+        
         if (data && Array.isArray(data)) {
-            if(!data?.step?.content || data?.step?.content == null){
-                setHasSteps(true);
-            } else {
+            const forSteps = data.filter((item)=> item?.content);
+            if(forSteps && forSteps?.length > 0){
                 setHasSteps(false);
-                setMainSteps(data[0]);
+                setMainSteps(forSteps[0]);
+            } else {
+                setHasSteps(true);
             }
         } else {
             setHasSteps(true);
@@ -458,7 +459,7 @@ export default function AnotherLesson() {
                 <span className="pi pi-check-circle text-xl mb-1 text-[var(--greenColor)]"> Задание выполнено</span>
             ) : (
                 <div className="flex flex-col gap-2 items-start w-full mt-2">
-                    <span className="pi pi-check-circle text-md mb-1 text-[var(--mainColor)] shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)] pb-1"> Задание После изучения материала, загрузи свой файл с решением.</span>
+                    <span className="pi pi-check-circle sm:text-lg mb-1 text-[var(--mainColor)] shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)] pb-1"> Задание после изучения материала, загрузи свой файл с решением.</span>
                     <div className="w-full">
                         <input
                             type="file"
