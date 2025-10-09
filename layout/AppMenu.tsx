@@ -102,16 +102,34 @@ const AppMenu = () => {
               ]
             : []
         : user?.is_student
-        ? [
-              {
-                  label: 'Главная страница',
-                  icon: 'pi pi-home',
-                  to: '/'
-              },
-              { label: 'План обучения', icon: 'pi pi-fw pi-calendar-clock', to: '/teaching' },
-              //   pathname.startsWith('/teaching/lesson/') ? { label: 'Темы', icon: 'pi pi-fw pi-book', items: themesStudentList?.length > 0 ? themesStudentList : [] } : { label: '' },
-              pathname.startsWith('/teaching/lessonView/') ? { label: 'Темы', icon: 'pi pi-fw pi-book', items: themesStudentList?.length > 0 ? themesStudentList : [] } : { label: '' }
-          ]
+        ? pathname.startsWith('/teaching/lessonView/')
+            ? [
+                  {
+                      label: '',
+                      icon: 'pi pi-fw pi-arrow-left',
+                      to: '#',
+                      command: () => {
+                          router.back();
+                      }
+                  },
+                  {
+                      label: 'Главная страница',
+                      icon: 'pi pi-home',
+                      to: '/'
+                  },
+                  { label: 'План обучения', icon: 'pi pi-fw pi-calendar-clock', to: '/teaching' },
+                  //   pathname.startsWith('/teaching/lesson/') ? { label: 'Темы', icon: 'pi pi-fw pi-book', items: themesStudentList?.length > 0 ? themesStudentList : [] } : { label: '' },
+                  pathname.startsWith('/teaching/lessonView/') ? { label: 'Темы', icon: 'pi pi-fw pi-book', items: themesStudentList?.length > 0 ? themesStudentList : [] } : { label: '' }
+              ]
+            : [
+                  {
+                      label: 'Главная страница',
+                      icon: 'pi pi-home',
+                      to: '/'
+                  },
+                  { label: 'План обучения', icon: 'pi pi-fw pi-calendar-clock', to: '/teaching' }
+                  //   pathname.startsWith('/teaching/lesson/') ? { label: 'Темы', icon: 'pi pi-fw pi-book', items: themesStudentList?.length > 0 ? themesStudentList : [] } : { label: '' },
+              ]
         : [];
 
     const forDepartament =
@@ -213,7 +231,14 @@ const AppMenu = () => {
                 value: { severity: 'error', summary: 'Ошибка при добавлении!', detail: '' }
             });
             if (data?.response?.status) {
-                showError(data.response.status);
+                if (data?.response?.status == '400') {
+                    setMessage({
+                        state: true,
+                        value: { severity: 'error', summary: 'Ошибка!', detail: data?.response?.data?.message }
+                    });
+                } else {
+                    showError(data.response.status);
+                }
             }
         }
     };
@@ -233,7 +258,14 @@ const AppMenu = () => {
                 value: { severity: 'error', summary: 'Ошибка при удалении!', detail: '' }
             });
             if (data?.response?.status) {
-                showError(data.response.status);
+                if (data?.response?.status == '400') {
+                    setMessage({
+                        state: true,
+                        value: { severity: 'error', summary: 'Ошибка!', detail: data?.response?.data?.message }
+                    });
+                } else {
+                    showError(data.response.status);
+                }
             }
         }
     };
@@ -256,7 +288,14 @@ const AppMenu = () => {
                 value: { severity: 'error', summary: 'Ошибка при изменении!', detail: '' }
             });
             if (data?.response?.status) {
-                showError(data.response.status);
+                if (data?.response?.status == '400') {
+                    setMessage({
+                        state: true,
+                        value: { severity: 'error', summary: 'Ошибка!', detail: data?.response?.data?.message }
+                    });
+                } else {
+                    showError(data.response.status);
+                }
             }
         }
     };
@@ -394,22 +433,22 @@ const AppMenu = () => {
             </FormModal>
 
             {/* <div className="flex flex-col h-screen"> */}
-                <ul className="layout-menu max-h-[80%] overflow-y-auto scrollbar-thin-y">
-                    {model.map((item, i) => {
-                        return !item?.seperator ? <AppMenuitem item={item} root={true} index={i} key={item.label} /> : <li className="menu-separator"></li>;
-                    })}
-                </ul>
-                {pathname.startsWith('/course/') && (
-                    <div className="">
-                        <div className="p-4 mt-auto">
-                            <Button label="Добавить тему" icon={'pi pi-plus'} className="cursor-pointer w-full py-2 px-4 rounded-lg transition" onClick={() => setThemeAddVisisble(true)}></Button>
-                        </div>
-                        <div className="flex justify-center gap-1 items-center">
-                            <b>Всего баллов за курс</b>
-                            <span className="text-[var(--mainColor)]">{contextThemes?.max_sum_score}</span>
-                        </div>
+            <ul className="layout-menu max-h-[80%] overflow-y-auto scrollbar-thin-y">
+                {model.map((item, i) => {
+                    return !item?.seperator ? <AppMenuitem item={item} root={true} index={i} key={item.label} /> : <li className="menu-separator"></li>;
+                })}
+            </ul>
+            {pathname.startsWith('/course/') && (
+                <div className="">
+                    <div className="p-4 mt-auto">
+                        <Button label="Добавить тему" icon={'pi pi-plus'} className="cursor-pointer w-full py-2 px-4 rounded-lg transition" onClick={() => setThemeAddVisisble(true)}></Button>
                     </div>
-                )}
+                    <div className="flex justify-center gap-1 items-center">
+                        <b>Всего баллов за курс</b>
+                        <span className="text-[var(--mainColor)]">{contextThemes?.max_sum_score}</span>
+                    </div>
+                </div>
+            )}
             {/* </div> */}
         </MenuProvider>
     );

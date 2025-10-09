@@ -13,7 +13,11 @@ export const login = async (value:LoginType) => {
     url = process.env.NEXT_PUBLIC_BASE_URL + '/login?';
     
     try {
+        console.log(url);
+        
         const res = await axiosInstance.post('/login?', value);
+        console.log(res);
+        
         const data = res.data;
         return data;
     } catch (err) {

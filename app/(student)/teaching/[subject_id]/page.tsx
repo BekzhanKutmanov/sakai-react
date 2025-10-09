@@ -162,11 +162,11 @@ export default function StudentLesson() {
         params.append('id_curricula', String(subject.id_curricula));
         subject.streams.forEach((i) => params.append('streams[]', String(i)));
         subject.course_ids.forEach((i) => params.append('course_ids[]', String(i)));
-
         const data = await fetchSubjects(params);
-        console.log(data);
 
         setSkeleton(true);
+        console.log(data);
+        
         if (data) {
             setCourses(data);
             setHasThemes(false);
@@ -252,6 +252,8 @@ export default function StudentLesson() {
                                 <Accordion key={`${course.id}`} activeIndex={activeIndexes[course.id]} onTabChange={(e) => handleTabChange(course.id, e)} multiple={false} expandIcon="" collapseIcon="">
                                     {course.lessons.map((lesson) => {
                                         const steps = lesson.steps && lesson.steps?.length > 0;
+                                        const newLesson = lesson?.steps?.filter((content)=> content.content)
+
                                         return (
                                             <AccordionTab header={'Тема: ' + lesson.title} key={lesson.id} className="w-full p-accordion" style={{ width: '100%', backgroundColor: 'white' }}>
                                                 <div className="flex flex-col gap-2">
@@ -259,7 +261,8 @@ export default function StudentLesson() {
                                                     {lesson?.isLoadingSteps ? (
                                                         <ProgressSpinner style={{ width: '50px', height: '50px' }} />
                                                     ) : steps ? (
-                                                        lesson.steps.map(
+                                                        // lesson.steps.map(
+                                                        newLesson.map(
                                                             (item: { id: number; chills: boolean; type: { name: string; logo: string }; content: { title: string; description: string; url: string; document: string; document_path: string } }, idx) => {
                                                                 if (item.content == null) {
                                                                     return null;

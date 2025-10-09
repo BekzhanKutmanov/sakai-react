@@ -197,7 +197,14 @@ export default function Course() {
                 value: { severity: 'error', summary: 'Ошибка при удалении!', detail: '' }
             }); // messege - Ошибка при добавлении
             if (data?.response?.status) {
-                showError(data.response.status);
+                if (data?.response?.status == '400') {
+                    setMessage({
+                        state: true,
+                        value: { severity: 'error', summary: 'Ошибка!', detail: data?.response?.data?.message }
+                    });
+                } else {
+                    showError(data.response.status);
+                }
             }
         }
     };
@@ -230,7 +237,14 @@ export default function Course() {
                 value: { severity: 'error', summary: 'Ошибка при изменении!', detail: '' }
             }); // messege - Ошибка при изменении курса
             if (data?.response?.status) {
-                showError(data.response.status);
+                if (data?.response?.status == '400') {
+                    setMessage({
+                        state: true,
+                        value: { severity: 'error', summary: 'Ошибка!', detail: data?.response?.data?.message }
+                    });
+                } else {
+                    showError(data.response.status);
+                }
             }
         }
     };
@@ -251,7 +265,7 @@ export default function Course() {
     };
 
     const imageBodyTemplate = (product: CourseType) => {
-        const image = product.image;        
+        const image = product.image;
 
         if (typeof image === 'string') {
             return (
@@ -560,7 +574,7 @@ export default function Course() {
                             ) : (
                                 <b className="text-[12px] text-red-500">jpeg, png, jpg</b>
                             )}
-                            <div className="flex items-center gap-1">{(editingLesson.image || imageState) && <Button icon={'pi pi-trash'} className='trash-button' onClick={clearFile} />}</div>
+                            <div className="flex items-center gap-1">{(editingLesson.image || imageState) && <Button icon={'pi pi-trash'} className="trash-button" onClick={clearFile} />}</div>
                         </div>
                     </div>
                 </div>

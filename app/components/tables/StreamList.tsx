@@ -119,7 +119,14 @@ export default function StreamList({
                 value: { severity: 'error', summary: 'Ошибка при добавлении', detail: '' }
             });
             if (data?.response?.status) {
-                showError(data.response.status);
+                if (data?.response?.status == '400') {
+                    setMessage({
+                        state: true,
+                        value: { severity: 'error', summary: 'Ошибка!', detail: data?.response?.data?.message }
+                    });
+                } else {
+                    showError(data.response.status);
+                }
             }
         }
     };
@@ -304,7 +311,7 @@ export default function StreamList({
                 footer={footerContent}
             >
                 {streams && streams.length > 0 ? (
-                    <DataTable value={streams} className="w-full my-custom-table" dataKey="stream_id" key={JSON.stringify(pendingChanges)} responsiveLayout="stack" breakpoint="960px" rows={5}>
+                    <DataTable value={streams} className="w-full my-custom-table" dataKey="stream_id" emptyMessage="Нет данных" key={JSON.stringify(pendingChanges)} responsiveLayout="stack" breakpoint="960px" rows={5}>
                         <Column body={(_, { rowIndex }) => rowIndex + 1} header="#"></Column>
                         {/* <Column body={imageBodyTemplate}></Column> */}
 
@@ -413,7 +420,7 @@ export default function StreamList({
                                 ) : (
                                     <>
                                         <div>
-                                            <DataView value={streams} listTemplate={listTemplate} />
+                                            <DataView value={streams} listTemplate={listTemplate} emptyMessage="Нет данных"/>
                                         </div>
                                     </>
                                 )}

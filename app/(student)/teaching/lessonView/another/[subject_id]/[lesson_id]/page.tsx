@@ -23,7 +23,6 @@ export default function AnotherLesson() {
     }
 
     const { lesson_id, subject_id, stream_id, id } = useParams();
-    console.log(lesson_id, subject_id, stream_id, id);
     const params = new URLSearchParams();
     const media = useMediaQuery('(max-width: 640px)');
     const showError = useErrorMessage();
@@ -41,6 +40,7 @@ export default function AnotherLesson() {
         { text: '', is_correct: false, id: null },
         { text: '', is_correct: false, id: null }
     ]);
+    const [selectedAnswer, setSelectedAnswer] = useState(false);
     const [answerCheck, setAnswerCheck] = useState(false);
     const [skeleton, setSkeleton] = useState(false);
     const [hasLessons, setHasLessons] = useState(false);
@@ -247,11 +247,11 @@ export default function AnotherLesson() {
 
     // альтернатива handleStep()
     const handleMainLesson = async (lesson_id: number, stream_id: number) => {
-        const data:{step: {content: any}} = await fetchMainLesson(lesson_id, stream_id);
-        
+        const data: { step: { content: any } } = await fetchMainLesson(lesson_id, stream_id);
+
         if (data && Array.isArray(data)) {
-            const forSteps = data.filter((item)=> item?.content);
-            if(forSteps && forSteps?.length > 0){
+            const forSteps = data.filter((item) => item?.content);
+            if (forSteps && forSteps?.length > 0) {
                 setHasSteps(false);
                 setMainSteps(forSteps[0]);
             } else {
@@ -363,6 +363,14 @@ export default function AnotherLesson() {
             setAnswerCheck(false);
         }
     }, [answer]);
+
+    useEffect(() => {
+        if (test?.answer_id && test?.answer_id != null) {
+            setSelectedAnswer(true);
+        } else {
+            setSelectedAnswer(false);
+        }
+    }, [test]);
 
     const hasPdf = /pdf/i.test(document?.content?.document || ''); // true
 
@@ -520,19 +528,41 @@ export default function AnotherLesson() {
                         {test?.content?.answers.map((item, index) => {
                             return (
                                 <div className="w-full flex items-center" key={index}>
-                                    <label className="custom-radio border border-[var(--borderBottomColor)] p-2">
-                                        <input
-                                            type="radio"
-                                            name="testRadio"
-                                            disabled={steps?.count_attempt ? steps?.count_attempt >= 3 : false}
-                                            onChange={() => {
-                                                setAnswer((prev) => prev.map((ans, i) => (i === index ? { ...ans, is_correct: true } : { ...ans, is_correct: false })));
-                                            }}
-                                        />
-                                        <span className={`radio-mark min-w-[18px] ${steps?.count_attempt && steps?.count_attempt >= 3 ? 'opacity-50' : ''}`}></span>
-                                    </label>
+                                    {selectedAnswer ? (
+                                        <>
+                                            <label className="custom-radio border border-[var(--borderBottomColor)] p-2">
+                                                <input
+                                                    type="radio"
+                                                    name="testRadio"
+                                                    checked={item.id == test?.answer_id}
+                                                    disabled={steps?.count_attempt ? steps?.count_attempt >= 3 : false}
+                                                    onChange={() => {
+                                                        setSelectedAnswer(false);
+                                                        console.log('fkjs');
 
-                                    <div className="bg-gray border border-[var(--borderBottomColor)] py-[5px] pl-1 w-full">{item.text}</div>
+                                                        setAnswer((prev) => prev && prev.map((ans, i) => (i === index ? { ...ans, is_correct: true } : { ...ans, is_correct: false })));
+                                                    }}
+                                                />
+                                                <span className={`radio-mark min-w-[18px] ${steps?.count_attempt && steps?.count_attempt >= 3 ? 'opacity-50' : ''}`}></span>
+                                            </label>
+                                            <div className="bg-gray border border-[var(--borderBottomColor)] py-[5px] pl-1 w-full">{item.text}</div>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <label className="custom-radio border border-[var(--borderBottomColor)] p-2">
+                                                <input
+                                                    type="radio"
+                                                    name="testRadio"
+                                                    disabled={steps?.count_attempt ? steps?.count_attempt >= 3 : false}
+                                                    onChange={() => {
+                                                        setAnswer((prev) => prev && prev.map((ans, i) => (i === index ? { ...ans, is_correct: true } : { ...ans, is_correct: false })));
+                                                    }}
+                                                />
+                                                <span className={`radio-mark min-w-[18px] ${steps?.count_attempt && steps?.count_attempt >= 3 ? 'opacity-50' : ''}`}></span>
+                                            </label>
+                                            <div className="bg-gray border border-[var(--borderBottomColor)] py-[5px] pl-1 w-full">{item.text}</div>
+                                        </>
+                                    )}
                                 </div>
                             );
                         })}
@@ -613,7 +643,7 @@ export default function AnotherLesson() {
                 </div>
             </div>
 
-            {hasSteps && <NotFound titleMessage='Данные не доступны' />}
+            {hasSteps && <NotFound titleMessage="Данные не доступны" />}
             {type === 'document' && docSection}
             {type === 'link' && linkSection}
             {type === 'practical' && practicaSection}

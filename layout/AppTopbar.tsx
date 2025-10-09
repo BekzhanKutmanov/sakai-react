@@ -72,7 +72,11 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                       window.location.href = '/auth/login';
                   }
               },
-
+        {
+            label: 'Уведомления',
+            icon: 'pi pi-bell',
+            items: [{ label: ''}]
+        },
         // {
         //     label: 'Видеоинструкция',
         //     icon: '',
@@ -119,7 +123,7 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
     ];
 
     //
-    const notification = [
+    const working_notification = [
         {
             label: '',
             template: (
@@ -127,6 +131,12 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                     Видеоинструкция
                 </Link>
             )
+        }
+    ];
+
+    const student_notification = [
+        {
+            // label: ''
         }
     ];
 
@@ -187,7 +197,7 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                         </div>
                     ) : user ? (
                         <div className={`hidden lg:flex items-center ${media ? 'order-1' : 'order-2'} `}>
-                            {user?.is_working && <Tiered title={{ name: '', font: 'pi pi-bell' }} items={notification} insideColor={'--titleColor'} />}
+                            <Tiered title={{ name: '', font: 'pi pi-bell' }} items={user?.is_working ? working_notification : user?.is_student ? student_notification : []} insideColor={'--titleColor'} />
                             <Tiered title={{ name: '', font: 'pi pi-user' }} items={profileItems} insideColor={'--titleColor'} />
                         </div>
                     ) : (

@@ -100,7 +100,14 @@ export default function LessonTest({ element, content, fetchPropElement, fetchPr
                 value: { severity: 'error', summary: 'Ошибка при добавлении!', detail: '' }
             });
             if (data?.response?.status) {
-                showError(data.response.status);
+                if (data?.response?.status == '400') {
+                    setMessage({
+                        state: true,
+                        value: { severity: 'error', summary: 'Ошибка!', detail: data?.response?.data?.message }
+                    });
+                } else {
+                    showError(data.response.status);
+                }
             }
         }
     };
@@ -141,7 +148,14 @@ export default function LessonTest({ element, content, fetchPropElement, fetchPr
                 value: { severity: 'error', summary: 'Ошибка при изменении!', detail: '' }
             });
             if (data?.response?.status) {
-                showError(data.response.status);
+                if (data?.response?.status == '400') {
+                    setMessage({
+                        state: true,
+                        value: { severity: 'error', summary: 'Ошибка!', detail: data?.response?.data?.message }
+                    });
+                } else {
+                    showError(data.response.status);
+                }
             }
         }
     };
@@ -162,8 +176,15 @@ export default function LessonTest({ element, content, fetchPropElement, fetchPr
                 state: true,
                 value: { severity: 'error', summary: 'Ошибка при удалении!', detail: '' }
             });
-            if (data.response.status) {
-                showError(data.response.status);
+            if (data?.response?.status) {
+                if (data?.response?.status == '400') {
+                    setMessage({
+                        state: true,
+                        value: { severity: 'error', summary: 'Ошибка!', detail: data?.response?.data?.message }
+                    });
+                } else {
+                    showError(data.response.status);
+                }
             }
         }
     };

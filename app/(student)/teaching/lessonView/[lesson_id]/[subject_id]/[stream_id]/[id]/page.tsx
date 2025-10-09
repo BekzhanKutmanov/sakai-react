@@ -172,7 +172,6 @@ export default function LessonTest() {
         setProgressSpinner(true);
         const isCorrect = answer?.filter((item) => item.is_correct);
         const data = await stepTest(steps && steps?.id, steps?.connections?.id_stream, (isCorrect && isCorrect[0]?.id) || null);
-        console.log(data);
 
         if (data?.success) {
             setProgressSpinner(false);
@@ -329,11 +328,6 @@ export default function LessonTest() {
             setSelectedAnswer(false);
         }
     },[test]);
-
-    useEffect(()=> {
-        console.log(selectedAnswer);
-        
-    },[selectedAnswer]);
 
     const hasPdf = /pdf/i.test(document?.content?.document || ''); // true
 

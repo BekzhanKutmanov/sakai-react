@@ -62,9 +62,23 @@ export default function StudentInfoCard({
         console.log(data);
         if (data?.success) {
             setProgressSpinner(false);
+            setMessage({
+                state: true,
+                value: { severity: 'success', summary: '', detail: data?.message }
+            });
             fetchProp();
         } else {
             setProgressSpinner(false);
+            if (data?.response?.status) {
+                if (data?.response?.status == '400') {
+                    setMessage({
+                        state: true,
+                        value: { severity: 'error', summary: 'Ошибка!', detail: data?.response?.data?.message }
+                    });
+                } else {
+                    showError(data.response.status);
+                }
+            }
         }
     };
 

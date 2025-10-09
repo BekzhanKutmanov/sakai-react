@@ -38,7 +38,7 @@ export default function PDFViewer({ url }: { url: string }) {
             setSkeleton(true);
             try {
                 // Проверяем, одна ли страница в документе
-                let newUrl = `https://api.mooc.oshsu.kg/temprory-file/${url}`;
+                let newUrl = `https://api-dev.mooc.oshsu.kg/public/temprory-file/${url}`;
                 const pdf = await pdfjsLib.getDocument(newUrl).promise;
                 setTotalPages(pdf.numPages);
                 const tempPages = [];
