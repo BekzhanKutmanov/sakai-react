@@ -1,6 +1,5 @@
 'use client';
 
-import InfoBanner from '@/app/components/InfoBanner';
 import { NotFound } from '@/app/components/NotFound';
 import GroupSkeleton from '@/app/components/skeleton/GroupSkeleton';
 import useBreadCrumbs from '@/hooks/useBreadCrumbs';
