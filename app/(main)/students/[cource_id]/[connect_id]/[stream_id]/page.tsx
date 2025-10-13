@@ -8,6 +8,7 @@ import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { LayoutContext } from '@/layout/context/layoutcontext';
 import { fetchStreams, fetchStreamStudents } from '@/services/streams';
 import { mainStreamsType } from '@/types/mainStreamsType';
+import Link from 'next/link';
 import { useParams, usePathname } from 'next/navigation';
 import { Button } from 'primereact/button';
 import { Column } from 'primereact/column';
@@ -27,42 +28,7 @@ export default function StudentList() {
     const { cource_id, connect_id, stream_id } = useParams();
 
     const media = useMediaQuery('(max-width: 640px)');
-    const teachingBreadCrumb = [
-        {
-            id: 1,
-            url: '/',
-            title: '',
-            icon: true,
-            parent_id: null
-        },
-        {
-            id: 2,
-            url: '/course',
-            title: 'Курстар',
-            parent_id: 1
-        },
-        {
-            id: 3,
-            url: `/course/:id`,
-            title: 'Темалар',
-            parent_id: 2
-        },
-        {
-            id: 4,
-            url: '/course/:course_id/:lesson_id',
-            title: 'Сабактар',
-            parent_id: 3
-        },
-        {
-            id: 5,
-            url: `/students/${connect_id}/${stream_id}`,
-            title: 'Студенттер',
-            parent_id: 2
-        }
-    ];
-
     const pathname = usePathname();
-    const breadcrumb = useBreadCrumbs(teachingBreadCrumb, pathname);
 
     // functions
     const toggleSkeleton = () => {
@@ -101,7 +67,7 @@ export default function StudentList() {
             setHasList(true);
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка', detail: 'Проблема с соединением. Повторите заново' }
+                value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
             });
             if (data?.response?.status) {
                 showError(data.response.status);
@@ -181,10 +147,10 @@ export default function StudentList() {
                                     header="ФИО"
                                     style={{ width: '50%' }}
                                     body={(rowData) => (
-                                        <div className="flex gap-1" key={rowData.id}>
-                                            <span>{rowData.last_name}</span>
-                                            <span>{rowData.name}</span>
-                                            <span>{rowData.father_name}</span>
+                                        <div className="flex gap-1" key={rowData?.id}>
+                                            <span>{rowData?.last_name}</span>
+                                            <span>{rowData?.name}</span>
+                                            <span>{rowData?.father_name}</span>
                                         </div>
                                     )}
                                 ></Column>
@@ -193,7 +159,7 @@ export default function StudentList() {
                                     header="Балл"
                                     className="flex items-center border-b-0"
                                     body={(rowData) => (
-                                        <div className="flex items-center gap-2" key={rowData.id}>
+                                        <div className="flex items-center gap-2" key={rowData?.id}>
                                             {rowData?.score && rowData.score > 0 ? (
                                                 <div className="flex justify-between items-center gap-2 ">
                                                     <b className={`${rowData.score > 30 ? 'text-[var(--greenColor)] p-1 w-[25px] text-center' : 'text-amber-400 p-1 w-[25px] text-center '}`}>{rowData.score}</b>
@@ -211,7 +177,7 @@ export default function StudentList() {
                                     header="Последнее посещение"
                                     // style={{ width: '20%' }}
                                     body={(rowData) => (
-                                        <div className="flex items-center gap-2" key={rowData.id}>
+                                        <div className="flex items-center gap-2" key={rowData?.id}>
                                             {rowData?.last_movement ? new Date(rowData.last_movement).toISOString().slice(0, 19).replace('T', ' ') : <i className="pi pi-minus"></i>}
                                         </div>
                                     )}
@@ -219,10 +185,9 @@ export default function StudentList() {
 
                                 <Column
                                     header="Выполненные действия"
-                                    className=""
                                     body={(rowData) => (
-                                        <div className="flex items-center gap-2" key={rowData.id}>
-                                            {rowData.info && <Button label="Данные" />}
+                                        <div className="flex items-center gap-2" key={rowData?.id}>
+                                            {rowData?.last_movement && <Link href={`/students/${cource_id}/${connect_id}/${stream_id}/${rowData?.id}`}><Button label="Данные" /></Link>}
                                         </div>
                                     )}
                                 />

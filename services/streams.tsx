@@ -37,3 +37,16 @@ export const fetchStreamStudents = async (connect_id: number | null, stream_id: 
         console.error('Ошибка загрузки:', error);
     }
 };
+
+// student detail
+ 
+export const fetchStudentDetail = async (connect_id: number | null, stream_id: number | null, student_id: number | null) => {        
+    try {
+        const res = await axiosInstance.get(`/v1/teacher/stream/student/details?connect_id=${connect_id}&id_stream=${stream_id}&id_student=${student_id}`);
+        const data = await res.data;
+
+        return data;
+    } catch (error) {
+        console.error('Ошибка загрузки:', error);
+    }
+};

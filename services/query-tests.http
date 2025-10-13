@@ -1,4 +1,4 @@
-@token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2FwaS5teWVkdS5vc2hzdS5rZy9wdWJsaWMvYXBpL21vb2MvbG9naW4iLCJpYXQiOjE3NTg3OTIzNDQsImV4cCI6MTc1ODgyMTIwNCwibmJmIjoxNzU4NzkyMzQ0LCJqdGkiOiJGZmdFOXZselM5bU5hOUFQIiwic3ViIjoiMTE4MjkyIiwicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyJ9.yqAlXc9ZYiwNOMJ31LIpYQgQwgJ45uvUB1wr8bdTdzE
+@token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2FwaS5teWVkdS5vc2hzdS5rZy9wdWJsaWMvYXBpL21vb2MvbG9naW4iLCJpYXQiOjE3NjAzMjUwOTAsImV4cCI6MTc2MDM1Mzk1MCwibmJmIjoxNzYwMzI1MDkwLCJqdGkiOiI2VWtsVDRxakJEMmNpcjZjIiwic3ViIjoiNDY0NTYiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.LFotYUOhozksGylU8ZeIUULuDhwJ8fQUv-RTYXV06pQ
 # ###
 
 # http://api.mooc.oshsu.kg/public/api/v1/open/video/types
@@ -30,6 +30,12 @@
 
 # test  
 
-GET https://api.mooc.oshsu.kg/public/api/v1/teacher/controls/departments
+GET https://api-dev.mooc.oshsu.kg/public/api/v1/teacher/stream/student/details?connect_id=3&id_stream=186462&id_student=95060
 Authorization: Bearer {{token}} 
-Content-Type: application/json  
+Content-Type: application/json 
+
+{
+    "connect_id": 3,
+    "id_stream" : 186462,
+    "id_student" : 95060
+}
