@@ -111,7 +111,7 @@ export default function StudentInfoCard({
     );
 
     const docCard = (
-        <div className="w-full flex items-end gap-2 sm:gap-1 py-1 flex-col">
+        <div className="w-full flex items-end py-1 flex-col sm:flex-row">
             <div className="w-full flex flex-col sm:flex-row gap-1">
                 <div className="w-full flex items-center gap-2">
                     <div className="p-2 bg-[var(--mainColor)] min-w-[38px] min-h-[38px] w-[38px] h-[38px] flex justify-center items-center rounded">
@@ -126,33 +126,12 @@ export default function StudentInfoCard({
                     </Link>
                 </div>
             </div>
-            <div className="w-full flex justify-center sm:justify-end">{cheelseBtn('')}</div>
-            {/* <div className="flex gap-1 flex-col items-end">
-                <div className="w-full flex justify-end gap-1 items-center">
-                    {documentUrl?.document && (
-                        <div className="flex items-center">
-                            <Link onClick={() => progressToggle()} href={`${progressSpinner ? '#' : `/pdf/${documentUrl?.document}`}`} className={`${progressSpinner && 'opacity-50 '}`}>
-                                <Button icon="pi pi-eye" className="mini-button small-p-button" />
-                            </Link>
-                            {progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}
-                        </div>
-                    )}
-
-                    {documentUrl?.document_path && (
-                        <>
-                            <a href={documentUrl?.document_path} download target="_blank" rel="noopener noreferrer">
-                                {' '}
-                                <Button icon="pi pi-file-arrow-up" className="mini-button small-p-button text-[8px] " />
-                            </a>
-                        </>
-                    )}
-                </div>
-            </div> */}
+            <div className="w-full flex justify-end">{cheelseBtn('')}</div>
         </div>
     );
 
     const linkCard = (
-        <div className="w-full py-1 flex items-center flex-col gap-1">
+        <div className="w-full py-1 flex items-center flex-col sm:flex-row">
             <div className="w-full flex sm:flex-row gap-2">
                 <div className="p-2 bg-[var(--greenColor)] min-w-[38px] w-[38px] min-h-[38px] h-[38px] flex justify-center items-center rounded">
                     <i className={`${icon} text-white`}></i>
@@ -175,12 +154,12 @@ export default function StudentInfoCard({
                 )} */}
                 </div>
             </div>
-            <div className="w-full flex justify-center sm:justify-end">{cheelseBtn('')}</div>
+            <div className="w-full flex justify-end">{cheelseBtn('')}</div>
         </div>
     );
 
     const videoCard = (
-        <div className="w-full flex items-center flex-col gap-2 py-1">
+        <div className="w-full flex items-center flex-col sm:flex-row py-1">
             <div className="w-full flex items-center gap-2">
                 <div className="p-2 bg-[#f7634d] min-w-[38px] w-[38px] min-h-[38px] h-[38px] flex justify-center items-center rounded">
                     <i className={`${icon} text-white`}></i>
@@ -195,12 +174,12 @@ export default function StudentInfoCard({
                     </Link>
                 </div>
             </div>
-            <div className="w-full flex justify-center sm:justify-end">{cheelseBtn('')}</div>
+            <div className="w-full flex justify-end">{cheelseBtn('')}</div>
         </div>
     );
 
     const testCard = (
-        <div className="w-full flex items-center flex-col gap-2 py-1">
+        <div className="w-full flex items-center flex-col sm:flex-row py-1">
             <div className="w-full flex items-center gap-2">
                 <div className="p-2 bg-[#c38598] min-w-[38px] w-[38px] min-h-[38px] h-[38px] flex justify-center items-center rounded">
                     <i className={`${icon} text-white`}></i>
@@ -211,7 +190,7 @@ export default function StudentInfoCard({
                     </Link>
                 </div>
             </div>
-            <div className="w-full flex justify-center sm:justify-end">{cheelseBtn('test')}</div>
+            <div className="w-full flex justify-end">{cheelseBtn('test')}</div>
         </div>
     );
 
@@ -245,7 +224,7 @@ export default function StudentInfoCard({
     );
 
     const practicaCard = (
-        <div className="w-full flex items-center flex-col gap-2 py-1">
+        <div className="w-full flex items-center flex-col sm:flex-row py-1">
             <div className="w-full flex items-center gap-2">
                 <div className="p-2 bg-[var(--yellowColor)] min-w-[38px] w-[38px] min-h-[38px] h-[38px] flex justify-center items-center rounded">
                     <i className={`${icon} text-white`}></i>
@@ -254,7 +233,7 @@ export default function StudentInfoCard({
                     Практическое задание
                 </Link>
             </div>
-            <div className="w-full flex justify-center sm:justify-end">{cheelseBtn('practical')}</div>
+            <div className="w-full flex justify-end">{cheelseBtn('practical')}</div>
         </div>
     );
 

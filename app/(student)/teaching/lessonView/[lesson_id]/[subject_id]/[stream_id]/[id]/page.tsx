@@ -94,7 +94,7 @@ export default function LessonTest() {
 
     const handleStep = async () => {
         const data = await fetchStudentSteps(Number(id), Number(stream_id));
-        console.log(data);
+        // console.log(data);
 
         if (data?.success) {
             if (!data?.step?.content || data?.step?.content == null) {
@@ -115,7 +115,7 @@ export default function LessonTest() {
         subject.course_ids.forEach((i) => params.append('course_ids[]', String(i)));
 
         const data = await fetchSubjects(params);
-        console.log(data);
+        // console.log(data);
 
         if (data) {
             setCourses(data);
@@ -202,8 +202,6 @@ export default function LessonTest() {
     const handleAddPractica = async () => {
         setProgressSpinner(true);
         const data = await stepPractica(steps && steps?.id, steps?.connections?.id_stream, docValue.file);
-        console.log(data);
-
         if (data?.success) {
             setProgressSpinner(false);
             setMessage({
@@ -310,9 +308,7 @@ export default function LessonTest() {
         }
     }, [courses]);
 
-    useEffect(() => {
-        console.log(answer);
-        
+    useEffect(() => {        
         const check = answer?.find((item) => item?.is_correct);
         if (check) {
             setAnswerCheck(true);
@@ -406,16 +402,16 @@ export default function LessonTest() {
                             )}
                         </div>
 
-                        <div className="flex gap-2 items-center">
+                        <div>
                             {practica?.content?.url && (
-                                <>
+                                <div className="flex gap-2 flex-col sm:flex-row">
                                     <span className="text-[var(--mainColor)]">Ссылка: </span>
                                     {practica?.content.url && (
-                                        <a href={practica?.content.url} className="max-w-[800px] break-words" target="_blank">
+                                        <a href={practica?.content.url} className="max-w-[800px] overflow-x-auto text-[12px] sm:text-sm text-wrap break-all" target="_blank">
                                             {practica?.content.url}
                                         </a>
                                     )}
-                                </>
+                                </div>
                             )}
                         </div>
                     </div>
@@ -502,8 +498,6 @@ export default function LessonTest() {
                                                     disabled={steps?.count_attempt ? steps?.count_attempt >= 3 : false}
                                                     onChange={() => {
                                                         setSelectedAnswer(false);
-                                                        console.log('fkjs');
-                                                        
                                                         setAnswer((prev) => prev && prev.map((ans, i) => (i === index ? { ...ans, is_correct: true } : { ...ans, is_correct: false })));
                                                     }}
                                                 />
@@ -598,13 +592,10 @@ export default function LessonTest() {
                             {courseInfo?.title}
                         </h1>
                         {courseInfo?.image && courseInfo?.image.length > 0 && (
-                            <div className="sm:w-1/2">
-                                {' '}
-                                <img src={courseInfo?.image} />
-                            </div>
+                            <div className="sm:w-1/2"><img src={courseInfo?.image} /></div>
                         )}
                     </div>
-                    <span className="text-center">{courseInfo?.description} </span>
+                    <span className="w-[90%] break-words text-center">{courseInfo?.description} </span>
                     <div className="flex items-center justify-end gap-1 flex-col sm:flex-row mt-2">
                         <b className="text-white sm:text-lg">Тема: </b>
                         <b className="text-[16px] sm:text-[18px]">{lessonName ? lessonName : '------'}</b>

@@ -29,6 +29,7 @@ export default function AnotherLesson() {
     const { setMessage, setContextNewStudentThemes } = useContext(LayoutContext);
 
     const [steps, setMainSteps] = useState<mainStepsType | null>(null);
+    const [forSteps, setForSteps] = useState<mainStepsType | null>(null);
     const [hasSteps, setHasSteps] = useState(false);
     const [progressSpinner, setProgressSpinner] = useState(false);
     const [type, setType] = useState('');
@@ -67,6 +68,7 @@ export default function AnotherLesson() {
         description: '',
         file: null
     });
+    const [idStream, setIdStream] = useState<number | null>(null);
 
     // document
     const [document, setDocument] = useState<mainStepsType | null>(null);
@@ -121,8 +123,6 @@ export default function AnotherLesson() {
         subject.course_ids.forEach((i) => params.append('course_ids[]', String(i)));
 
         const data = await fetchSubjects(params);
-        console.log(data);
-
         setSkeleton(true);
         if (data) {
             setCourses(data);
@@ -180,8 +180,7 @@ export default function AnotherLesson() {
     const handleAddTest = async () => {
         setProgressSpinner(true);
         const isCorrect = answer?.filter((item) => item.is_correct);
-        const data = await stepTest(steps && steps?.id, steps?.connections?.id_stream, (isCorrect && isCorrect[0]?.id) || null);
-        console.log(data);
+        const data = await stepTest(steps && steps?.id, idStream, (isCorrect && isCorrect[0]?.id) || null);
 
         if (data?.success) {
             setProgressSpinner(false);
@@ -211,8 +210,7 @@ export default function AnotherLesson() {
 
     const handleAddPractica = async () => {
         setProgressSpinner(true);
-        const data = await stepPractica(steps && steps?.id, steps?.connections?.id_stream, docValue.file);
-        console.log(data);
+        const data = await stepPractica(steps && steps?.id, idStream, docValue.file);
 
         if (data?.success) {
             setProgressSpinner(false);
@@ -240,10 +238,20 @@ export default function AnotherLesson() {
         }
     };
 
-    useEffect(() => {
-        handleFetchLessons();
-        // handleStep();
-    }, []);
+    const handleStep = async (id: number, stream_id: number) => {
+        const data = await fetchStudentSteps(Number(id), Number(stream_id));
+
+        if (data?.success) {
+            if (!data?.step?.content || data?.step?.content == null) {
+                setHasSteps(true);
+            } else {
+                setHasSteps(false);                
+                setMainSteps(data.step);
+            }
+        } else {
+            setHasSteps(true);
+        }
+    };
 
     // альтернатива handleStep()
     const handleMainLesson = async (lesson_id: number, stream_id: number) => {
@@ -253,7 +261,10 @@ export default function AnotherLesson() {
             const forSteps = data.filter((item) => item?.content);
             if (forSteps && forSteps?.length > 0) {
                 setHasSteps(false);
-                setMainSteps(forSteps[0]);
+                // setMainSteps(forSteps[0]);
+                if (stream_id && forSteps[0] && forSteps[0]?.id) {
+                    handleStep(forSteps[0]?.id, stream_id);
+                }
             } else {
                 setHasSteps(true);
             }
@@ -266,9 +277,9 @@ export default function AnotherLesson() {
         if (mainLesson) {
             const course = courses.find((c) => c.id === mainLesson?.course_id);
             const stream = course?.connections[0];
-            console.log(mainLesson, stream);
             if (stream?.id_stream) {
-                handleMainLesson(mainLesson?.id, stream?.id_stream);
+                setIdStream(stream.id_stream);
+                handleMainLesson(mainLesson?.id, stream.id_stream);
             }
         }
     };
@@ -288,6 +299,7 @@ export default function AnotherLesson() {
             setType(steps?.type.name);
             setPractica(steps);
         } else if (steps?.type.name === 'test') {
+            setAnswer(steps?.content?.answers || []);
             setType(steps?.type.name);
             setTests(steps);
         } else if (steps?.type.name === 'video') {
@@ -337,7 +349,6 @@ export default function AnotherLesson() {
 
     useEffect(() => {
         if (lesson_id) {
-            console.log(lesson_id);
 
             const forLesson = courses?.find((item) => {
                 return item?.lessons.find((j) => {
@@ -371,6 +382,11 @@ export default function AnotherLesson() {
             setSelectedAnswer(false);
         }
     }, [test]);
+
+    useEffect(() => {
+        handleFetchLessons();
+        // handleStep();
+    }, []);
 
     const hasPdf = /pdf/i.test(document?.content?.document || ''); // true
 
@@ -538,8 +554,6 @@ export default function AnotherLesson() {
                                                     disabled={steps?.count_attempt ? steps?.count_attempt >= 3 : false}
                                                     onChange={() => {
                                                         setSelectedAnswer(false);
-                                                        console.log('fkjs');
-
                                                         setAnswer((prev) => prev && prev.map((ans, i) => (i === index ? { ...ans, is_correct: true } : { ...ans, is_correct: false })));
                                                     }}
                                                 />
@@ -635,7 +649,7 @@ export default function AnotherLesson() {
                             </div>
                         )}
                     </div>
-                    <span className="text-center">{courseInfo?.description} </span>
+                    <span className="w-[90%] break-words text-center">{courseInfo?.description} </span>
                     <div className="flex items-center justify-end gap-1 flex-col sm:flex-row mt-2">
                         <b className="text-white sm:text-lg">Тема: </b>
                         <b className="text-[16px] sm:text-[18px]">{lessonName ? lessonName : '------'}</b>

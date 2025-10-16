@@ -49,6 +49,8 @@ export default function Kafedra() {
         setSkeleton(true);
         const data = await fetchDepartament(Number(id_kafedra));
         if (data && Array.isArray(data)) {
+            console.log(data);
+            
             setSkeleton(false);
             if (data.length > 0) {
                 setCourses(data);

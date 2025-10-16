@@ -89,7 +89,7 @@ input[type="password"]::-ms-clear {
 
 @media screen and (max-width: 440px) {
  .scrollbar-thin::-webkit-scrollbar {
-    height: 2px;              /* толщина */
+    height: 4px;              /* толщина */
   } 
 }
 
@@ -541,10 +541,12 @@ input[type="password"]::-ms-clear {
 
 @media screen and (max-width: 640px) {
   .p-dialog .p-dialog-content{
-    padding: 6px;
+    padding: 10px;
+  }
+  .p-dialog .p-dialog-header {
+    padding: 10px;
   }
 }
-
 
 .my-custom-dialog{
   width: 650px;

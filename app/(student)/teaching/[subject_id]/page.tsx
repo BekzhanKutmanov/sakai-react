@@ -165,8 +165,7 @@ export default function StudentLesson() {
         const data = await fetchSubjects(params);
 
         setSkeleton(true);
-        console.log(data);
-        
+
         if (data) {
             setCourses(data);
             setHasThemes(false);
@@ -242,17 +241,17 @@ export default function StudentLesson() {
                                 <h3 className="m-0 text-md ">
                                     <span className="text-[var(--mainColor)]">Преподаватель:</span> {course?.user.last_name} {course?.user.name}
                                 </h3>
-                                {course?.connections[0]?.subject_type && 
+                                {course?.connections[0]?.subject_type && (
                                     <h3 className="m-0 text-md ">
                                         <span className="text-[var(--mainColor)]">Тип обучения:</span> {course?.connections[0]?.subject_type === 'Лк' ? 'Лекция' : course?.connections[0]?.subject_type === 'Лб' ? 'Лабораторные занятия' : ''}
                                     </h3>
-                                }
+                                )}
                             </div>
                             <div>
                                 <Accordion key={`${course.id}`} activeIndex={activeIndexes[course.id]} onTabChange={(e) => handleTabChange(course.id, e)} multiple={false} expandIcon="" collapseIcon="">
                                     {course.lessons.map((lesson) => {
                                         const steps = lesson.steps && lesson.steps?.length > 0;
-                                        const newLesson = lesson?.steps?.filter((content)=> content.content)
+                                        const newLesson = lesson?.steps?.filter((content) => content.content);
 
                                         return (
                                             <AccordionTab header={'Тема: ' + lesson.title} key={lesson.id} className="w-full p-accordion" style={{ width: '100%', backgroundColor: 'white' }}>
@@ -260,8 +259,7 @@ export default function StudentLesson() {
                                                     {/* Используем lesson.steps, который был обновлен в handleTabChange */}
                                                     {lesson?.isLoadingSteps ? (
                                                         <ProgressSpinner style={{ width: '50px', height: '50px' }} />
-                                                    ) : steps ? (
-                                                        // lesson.steps.map(
+                                                    ) : newLesson && newLesson?.length > 0 ? (
                                                         newLesson.map(
                                                             (item: { id: number; chills: boolean; type: { name: string; logo: string }; content: { title: string; description: string; url: string; document: string; document_path: string } }, idx) => {
                                                                 if (item.content == null) {

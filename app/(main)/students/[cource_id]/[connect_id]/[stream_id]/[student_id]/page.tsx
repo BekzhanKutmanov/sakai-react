@@ -1,11 +1,13 @@
 'use client';
 
+import ActivityPage from '@/app/components/Contribution';
 import LessonInfoCard from '@/app/components/lessons/LessonInfoCard';
 import GroupSkeleton from '@/app/components/skeleton/GroupSkeleton';
 import useErrorMessage from '@/hooks/useErrorMessage';
 import { LayoutContext } from '@/layout/context/layoutcontext';
 import { fetchElement } from '@/services/steps';
-import { fetchStudentDetail } from '@/services/streams';
+import { fetchStudentCalendar, fetchStudentDetail, pacticaScoreAdd } from '@/services/streams';
+import { ContributionDay } from '@/types/ContributionDay';
 import { lessonType } from '@/types/lessonType';
 import { mainStepsType } from '@/types/mainStepType';
 import { studentType } from '@/types/studentType';
@@ -18,18 +20,17 @@ export default function StudentCheck() {
     interface mainStep {}
 
     const { connect_id, stream_id, student_id } = useParams();
-    console.log(connect_id, stream_id, student_id);
 
     const { setMessage } = useContext(LayoutContext);
     const showError = useErrorMessage();
 
-    const [hasInfo, setHasInfo] = useState(false);
     const [mainSkeleton, mainSetSkeleton] = useState(false);
     const [lessons, setLessons] = useState<lessonType[] | null>(null);
     const [student, setStudent] = useState<studentType | null>(null);
-    const [stepsList, setStepList] = useState(false);
     const [hasSteps, setHasSteps] = useState(false);
     const [element, setElement] = useState<{ content: any | null; step: mainStepsType } | null>(null);
+    const [contribution, setContribution] = useState<ContributionDay[] | null>(null);
+    const [skeleton, setSkeleton] = useState(false);
 
     const [activeIndex, setActiveIndex] = useState<number | number[]>(0);
 
@@ -37,16 +38,14 @@ export default function StudentCheck() {
         mainSetSkeleton(true);
         const data = await fetchStudentDetail(connect_id ? Number(connect_id) : null, stream_id ? Number(stream_id) : null, student_id ? Number(student_id) : null);
 
-        console.log(data);
-
         if (data?.success) {
-            setHasInfo(false);
+            setHasSteps(false);
             mainSetSkeleton(false);
             setStudent(data?.student);
             setLessons(data?.lessons);
         } else {
             mainSetSkeleton(false);
-            setHasInfo(true);
+            setHasSteps(true);
             setMessage({
                 state: true,
                 value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
@@ -59,15 +58,13 @@ export default function StudentCheck() {
 
     const handleFetchElement = async (lesson_id: number, stepId: number) => {
         if (lesson_id) {
-            // setSkeleton(true);
+            setSkeleton(true);
             const data = await fetchElement(Number(lesson_id), stepId);
-            console.log(data);
-            
             if (data.success) {
-                // setSkeleton(false);
+                setSkeleton(false);
                 setElement({ content: data.content, step: data.step });
             } else {
-                // setSkeleton(false);
+                setSkeleton(false);
                 setMessage({
                     state: true,
                     value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
@@ -79,7 +76,58 @@ export default function StudentCheck() {
         }
     };
 
+    const handleFetchCalendar = async () => {
+        mainSetSkeleton(true);
+        const data = await fetchStudentCalendar(connect_id ? Number(connect_id) : null, stream_id ? Number(stream_id) : null, student_id ? Number(student_id) : null);
+
+        if (data && Array.isArray(data)) {
+            setContribution(data);
+            // setHasInfo(false);
+            // mainSetSkeleton(false);
+            // setStudent(data?.student);
+            // setLessons(data?.lessons);
+        } else {
+            // mainSetSkeleton(false);
+            // setHasInfo(true);
+            setMessage({
+                state: true,
+                value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
+            });
+            if (data?.response?.status) {
+                showError(data.response.status);
+            }
+        }
+    };
+
+    const handlePracticaScoreAdd = async (stepId: number, score: number) => {
+        const data = await pacticaScoreAdd(connect_id ? Number(connect_id) : null, stream_id ? Number(stream_id) : null, student_id ? Number(student_id) : null, stepId, score);
+
+        if (data?.success) {
+            setMessage({
+                state: true,
+                value: { severity: 'success', summary: 'Успешно добавлен!', detail: '' }
+            });
+            handleFetchStreams();
+        } else {
+            setMessage({
+                state: true,
+                value: { severity: 'error', summary: 'Ошибка при добавлении!', detail: '' }
+            });
+            if (data?.response?.status) {
+                if (data?.response?.status == '400') {
+                    setMessage({
+                        state: true,
+                        value: { severity: 'error', summary: 'Ошибка!', detail: data?.response?.data?.message }
+                    });
+                } else {
+                    showError(data.response.status);
+                }
+            }
+        }
+    };
+
     useEffect(() => {
+        handleFetchCalendar();
         handleFetchStreams();
     }, []);
 
@@ -91,6 +139,7 @@ export default function StudentCheck() {
                 </div>
             ) : (
                 <div>
+                    <ActivityPage value={contribution} />
                     <h3 className="text-lg pb-1 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">{/* <span className="text-[var(--mainColor)]">Название курса:</span> {courseInfo.title} */}</h3>
                     <Accordion activeIndex={activeIndex} onTabChange={(e) => setActiveIndex(e.index)}>
                         {lessons?.map((item) => {
@@ -98,12 +147,10 @@ export default function StudentCheck() {
                                 return j?.id_parent != null;
                             });
 
-                            console.log(content);
-
                             return (
                                 <AccordionTab header={'Тема: ' + item.title} key={item.id} className="w-full p-accordion" style={{ width: '100%' }}>
                                     <div className="flex flex-col gap-2">
-                                        {hasSteps ? (
+                                        {content?.length < 1 || hasSteps ? (
                                             <p className="text-center text-sm">Данных нет</p>
                                         ) : (
                                             content?.map((i, idx) => {
@@ -116,19 +163,19 @@ export default function StudentCheck() {
                                                                     totalScore={i?.score}
                                                                     type={i.type.name}
                                                                     icon={i.type.logo}
-                                                                    title={
-                                                                        i.type.name === 'document' || i.type.name === 'video' || i.type.name === 'link' ? 
-                                                                          i?.type?.title  
-                                                                        : element?.content?.title
-                                                                    } 
+                                                                    title={element?.content?.title}
+                                                                    checkTitle={i?.type?.title}
                                                                     description={element?.content?.description || ''}
                                                                     documentUrl={{ document: element?.content?.document, document_path: element?.content?.document_path }}
-                                                                    video_link={i.content?.link}
+                                                                    video_link={element?.content?.link}
                                                                     link={element?.content?.url}
                                                                     test={{ content: element?.content.content, answers: element?.content.answers, score: element?.content.score }}
                                                                     answerList={i?.ListAnswer}
-                                                                    // videoStart={handleVideoCall}
+                                                                    videoStart={() => {}}
+                                                                    skeleton={skeleton}
                                                                     getValues={() => handleFetchElement(i?.lesson_id, i?.id)}
+                                                                    addPracticaScore={(score) => handlePracticaScoreAdd(i?.id, score)}
+                                                                    item={i}
                                                                 />
                                                             }
                                                         </div>

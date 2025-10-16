@@ -58,8 +58,6 @@ export default function StudentList() {
     const handleFetchStudents = async () => {
         const data = await fetchStreamStudents(connect_id ? Number(connect_id) : null, stream_id ? Number(stream_id) : null);
         toggleSkeleton();
-        console.log(data);
-        
         if (data) {
             setHasList(false);
             setStudentList(data);
@@ -163,7 +161,7 @@ export default function StudentList() {
                                             {rowData?.score && rowData.score > 0 ? (
                                                 <div className="flex justify-between items-center gap-2 ">
                                                     <b className={`${rowData.score > 30 ? 'text-[var(--greenColor)] p-1 w-[25px] text-center' : 'text-amber-400 p-1 w-[25px] text-center '}`}>{rowData.score}</b>
-                                                    <i className='cursor-pointer pi pi-arrow-right-arrow-left bg-[var(--mainColor)] text-white p-2 px-3 rounded' title='Сохранить в myedu'></i>
+                                                    <i className='cursor-pointer pi pi-upload bg-[var(--mainColor)] text-white p-2 px-3 rounded' title='Сохранить в myedu'></i>
                                                     {/* <Button icon={'pi pi-arrow-right'} size='small' style={{ fontSize: '13px', padding: '4px 4px'}} label="myedu" /> */}
                                                 </div>
                                             ) : (

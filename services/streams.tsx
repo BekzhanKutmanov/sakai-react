@@ -50,3 +50,28 @@ export const fetchStudentDetail = async (connect_id: number | null, stream_id: n
         console.error('Ошибка загрузки:', error);
     }
 };
+
+// student calendar contribution
+export const fetchStudentCalendar = async (connect_id: number | null, stream_id: number | null, student_id: number | null) => {        
+    try {
+        const res = await axiosInstance.get(`/v1/teacher/stream/student/calendar/movements?connect_id=${connect_id}&id_stream=${stream_id}&id_student=${student_id}`);
+        const data = await res.data;
+
+        return data;
+    } catch (error) {
+        console.error('Ошибка загрузки:', error);
+    }
+};
+
+// student calendar contribution
+export const pacticaScoreAdd = async (connect_id: number | null, stream_id: number | null, student_id: number | null, step_id:number, score: number | null) => {        
+    try {
+        const res = await axiosInstance.get(`/v1/teacher/stream/student/step/record/score?connect_id=${connect_id}&id_stream=${stream_id}&id_student=${student_id}&step_id=${step_id}&score=${score}`);
+        const data = await res.data;
+
+        return data;
+    } catch (error) {
+        console.error('Ошибка загрузки:', error);
+        return error;
+    }
+};

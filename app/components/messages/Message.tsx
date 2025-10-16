@@ -12,7 +12,7 @@ export default function Message() {
     const toast = useRef<ToastRef>(null);
 
     const showError = () => {
-        toast.current?.show({ severity: message.value.severity as SeverityType, summary: message.value.summary, detail: message.value.detail, life: 2000 });
+        toast.current?.show({ severity: message.value.severity as SeverityType, summary: message.value.summary, detail: message.value.detail, life: 3000 });
     };
 
     useEffect(() => {

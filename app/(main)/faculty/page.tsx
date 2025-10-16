@@ -4,11 +4,10 @@ import { NotFound } from '@/app/components/NotFound';
 import GroupSkeleton from '@/app/components/skeleton/GroupSkeleton';
 import useErrorMessage from '@/hooks/useErrorMessage';
 import { LayoutContext } from '@/layout/context/layoutcontext';
-import { fetchFaculty, fetchKafedra } from '@/services/faculty';
+import { fetchKafedra } from '@/services/faculty';
 import Link from 'next/link';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
-import { Dropdown, DropdownChangeEvent } from 'primereact/dropdown';
 import { useContext, useEffect, useState } from 'react';
 
 export default function Faculty() {
@@ -27,40 +26,16 @@ export default function Faculty() {
     const [skeleton, setSkeleton] = useState(false);
     const [contentNull, setContentNull] = useState<boolean>(false);
 
-    // const handleFetchFaculty = async () => {
-    //     setSkeleton(true);
-    //     const data = await fetchFaculty();
-    //     if (data && Array.isArray(data)) {
-    //         const newFaculty = data.map((item) => {
-    //             return { name_ru: item.name_ru, id: item.id };
-    //         });
-    //         setFaculty(newFaculty);
-    //         setSkeleton(false);
-
-    //         if (newFaculty.length > 0) {
-    //             setSelected(newFaculty[0]);
-    //             setSelectShow(false);
-    //         } else {
-    //             setSelectShow(true);
-    //         }
-    //     } else {
-    //         setSkeleton(false);
-    //         setSelectShow(true);
-    //         setMessage({
-    //             state: true,
-    //             value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
-    //         });
-    //         if (data?.response?.status) {
-    //             showError(data.response.status);
-    //         }
-    //     }
-    // };
-
     const handleFetchKafedra = async () => {
         setSkeleton(true);
         const data = await fetchKafedra();
-
+        console.log(data);
+        
         if (data && Array.isArray(data)) {
+            const r = data?.find((item)=> item?.short_name_kg === 'МИОТжББМ' );
+            console.warn(r);
+            // data?.forEach((item)=> console.log(item?.short_name_kg));
+            
             setSkeleton(false);
             if (data.length > 0) {
                 setKafedra(data);
