@@ -96,7 +96,6 @@ export const LayoutProvider = ({ children }: ChildContainerProps) => {
     const contextFetchThemes = async (id: number | null, id_kafedra: number | null) => {
         const data = await fetchThemes(Number(id) || null, id_kafedra);
         if (data) {
-            console.log(data);
             setContextThemes(data);
         }
     };

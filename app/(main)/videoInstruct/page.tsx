@@ -70,9 +70,9 @@ export default function VideoInstruct() {
                 <h2 className="text-center text-lg sm:text-xl w-full m-0 mb-4 flex justify-center">Видеоуроки по использованию платформы Mooc</h2>
             </div>
             <div className="p-2 shadow">
-                <div className=" w-full flex flex-col justify-center items-center">
+                <div className="w-full flex flex-col justify-center items-center">
                     <iframe
-                        className="w-[90%] h-[200px] md:h-[400px]"
+                        className="w-[70%] h-[200px] md:h-[400px]"
                         // src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1"
                         src={videoLink}
                         title="YouTube video player"

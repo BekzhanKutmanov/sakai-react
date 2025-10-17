@@ -105,7 +105,6 @@ export default function LessonStep() {
     const handleFetchSteps = async (lesson_id: number | null) => {
         setSkeleton(true);
         const data = await fetchSteps(Number(lesson_id));
-        console.log(data);
 
         if (data.success) {
             setSkeleton(false);

@@ -11,6 +11,11 @@ import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { usePathname, useRouter } from 'next/navigation';
 import { logout } from '@/utils/logout';
 import GroupSkeleton from '@/app/components/skeleton/GroupSkeleton';
+import { getNotifications } from '@/services/notifications';
+import { mainNotification } from '@/types/mainNotification';
+import { TieredMenu } from 'primereact/tieredmenu';
+import type { TieredMenu as TieredMenuRef } from 'primereact/tieredmenu';
+import { Button } from 'primereact/button';
 
 const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
     const { layoutConfig, layoutState, onMenuToggle, showProfileSidebar, user, setUser, setGlobalLoading, departament } = useContext(LayoutContext);
@@ -27,10 +32,20 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
 
     const pathName = usePathname();
     const media = useMediaQuery('(max-width: 1000px)');
+    const menu = useRef<TieredMenuRef>(null);
 
     const [skeleton, setSkeleton] = useState(true);
+    const [notification, setNotification] = useState<mainNotification[]>([]);
 
     const router = useRouter();
+
+    const handleNotifications = async () => {
+        const data = await getNotifications();
+        if (data && Array.isArray(data)) {
+            setNotification(data);
+        }
+        console.log(data);
+    };
 
     const mobileMenu = [
         user
@@ -75,7 +90,7 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
         {
             label: 'Уведомления',
             icon: 'pi pi-bell',
-            items: [{ label: ''}]
+            items: [{ label: '' }]
         },
         // {
         //     label: 'Видеоинструкция',
@@ -131,6 +146,20 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                     Видеоинструкция
                 </Link>
             )
+        },
+        {
+            label: '',
+            template: (
+                <div className="flex flex-col justify-center p-2">
+                    {notification?.map((item, idx) => {
+                        return (
+                            <div key={idx} className="cursor-pointer flex justify-center shadow">
+                                {item?.title}
+                            </div>
+                        );
+                    })}
+                </div>
+            )
         }
     ];
 
@@ -140,11 +169,22 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
         }
     ];
 
+    const toggleMenu = (e: React.MouseEvent<HTMLButtonElement>) => {
+        menu.current?.toggle(e);
+        // setMobile(prev => !prev);
+    };
+
     useEffect(() => {
         setTimeout(() => {
             setSkeleton(false);
         }, 1000);
     }, []);
+
+    useEffect(() => {
+        if (user?.is_working) {
+            handleNotifications();
+        }
+    }, [user]);
 
     return (
         <div className="layout-topbar">
@@ -196,8 +236,34 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                             <GroupSkeleton count={1} size={{ width: '100%', height: '3rem' }} />
                         </div>
                     ) : user ? (
-                        <div className={`hidden lg:flex items-center ${media ? 'order-1' : 'order-2'} `}>
-                            <Tiered title={{ name: '', font: 'pi pi-bell' }} items={user?.is_working ? working_notification : user?.is_student ? student_notification : []} insideColor={'--titleColor'} />
+                        <div className={`hidden lg:flex items-center gap-3 ${media ? 'order-1' : 'order-2'} `}>
+                            {user?.is_working && (
+                                // <Tiered title={{ name: '', font: 'pi pi-bell' }} items={user?.is_working ? working_notification : user?.is_student ? student_notification : []} insideColor={'--titleColor'} />
+                                <div>
+                                    <button
+                                        // icon={title.font}
+                                        onClick={(e) => toggleMenu(e)}
+                                        style={{ color: 'black', fontSize: media ? '16px' : '20px' }}
+                                        className={`cursor-pointer flex gap-2 items-center px-0 bg-white text-blue-300 p-2 pi pi-bell font-bold`}
+                                    />
+                                    <TieredMenu
+                                        model={working_notification}
+                                        popup
+                                        ref={menu}
+                                        breakpoint="1000px"
+                                        style={{ width: media ? '290px' : '220px', left: '10px' }}
+                                        className={`pointer mt-4 max-h-[200px] overflow-y-scroll`}
+                                        pt={{
+                                            root: { className: `bg-white border w-[500px] border-gray-300 rounded-md shadow-md` },
+                                            menu: { className: 'transition-all' },
+                                            menuitem: { className: 'text-[var(--titleColor)] text-[14px] py-1 hover:shadow-xl border-gray-200 hover:text-white hover:bg-[var(--mainColor)]' },
+                                            action: { className: `flex justify-center items-center gap-2` }, // для иконки + текста не работает :)
+                                            icon: { className: 'text-[var(--titleColor)] mx-1 hover:text-white' }
+                                            // submenuIcon: { className: 'text-gray-400 ml-auto' }
+                                        }}
+                                    />
+                                </div>
+                            )}
                             <Tiered title={{ name: '', font: 'pi pi-user' }} items={profileItems} insideColor={'--titleColor'} />
                         </div>
                     ) : (

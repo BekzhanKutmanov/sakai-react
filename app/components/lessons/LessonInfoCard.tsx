@@ -238,7 +238,7 @@ export default function LessonInfoCard({
     const videoCard = (
         <div className="w-full flex justify-between flex-col sm:flex-row">
             <div className="w-full flex items-start sm:items-center gap-2 py-1">
-                <div className="p-2 bg-[#f7634d] w-[36px] h-[36px] flex justify-center items-center rounded">
+                <div className="p-2 bg-[var(--amberColor)] w-[36px] h-[36px] flex justify-center items-center rounded">
                     <i className={`${icon} text-white`}></i>
                 </div>
                 <div className="flex flex-col justify-center gap-1 max-w-[800px] text-wrap break-all">
@@ -302,7 +302,11 @@ export default function LessonInfoCard({
                     <i className={`${icon} text-white`}></i>
                 </div>
                 <div className="flex flex-col justify-center gap-1 max-w-[800px] text-wrap break-all">
-                    <span onClick={() => setTestCall(true)} className="cursor-pointer max-w-[800px] text-[16px] text-wrap break-all hover:underline">
+                    <span onClick={() => {
+                        setTestCall(true)
+                        getValues && getValues();
+                    }} 
+                        className="cursor-pointer max-w-[800px] text-[16px] text-wrap break-all hover:underline">
                         Тест
                     </span>
                 </div>
@@ -368,6 +372,7 @@ export default function LessonInfoCard({
                         <GroupSkeleton count={1} size={{ width: '100%', height: '5rem' }} />
                     </div>
                 ) : (
+                    
                     test?.answers && (
                         <div className="flex flex-col justify-center gap-2 w-full">
                             <div className="flex gap-1 items-center flex-col md:flex-row border-b-1 pb-1 border-[var(--borderBottomColor)]">
@@ -403,7 +408,10 @@ export default function LessonInfoCard({
                 <div className="p-2 bg-[var(--yellowColor)] w-[36px] h-[36px] flex justify-center items-center rounded">
                     <i className={`${icon} text-white`}></i>
                 </div>
-                <span onClick={() => setPracticaCall(true)} className="cursor-pointer max-w-[800px] text-[16px] text-wrap break-all hover:underline">
+                <span onClick={() => {
+                    setPracticaCall(true);
+                    getValues && getValues();
+                }} className="cursor-pointer max-w-[800px] text-[16px] text-wrap break-all hover:underline">
                     Практическое задание
                 </span>
             </div>

@@ -17,8 +17,18 @@
   --bodyColor: #555555;
   --whiteColor: #ffffff;
   --borderBottomColor: #e5e7eb;
+  --amberColor: #f7634d;
   --fontSize: 16px;
   --transition: 0.5s;
+
+  --size-w: 55px;
+  --size-h: 23px;
+  --track-radius: 999px;
+  --accent: #047d4b;    /* насыщенный зелёный */
+  --accent-soft: var(--greenBgColor);/* фон-оттенок для зелёного */
+  --bg: #ffffff;
+  --track-shadow: 0 6px 18px rgba(33,33,33,0.08);
+  --knob-shadow: 0 6px 14px rgba(16,24,40,0.12);
 }
 
 p {
@@ -778,18 +788,6 @@ input[type="password"]::-ms-clear {
   .p-inputtextarea{
     /* padding: 3px; */
   }
-}
-
-
-:root {
-  --size-w: 55px;
-  --size-h: 23px;
-  --track-radius: 999px;
-  --accent: #047d4b;    /* насыщенный зелёный */
-  --accent-soft: var(--greenBgColor);/* фон-оттенок для зелёного */
-  --bg: #ffffff;
-  --track-shadow: 0 6px 18px rgba(33,33,33,0.08);
-  --knob-shadow: 0 6px 14px rgba(16,24,40,0.12);
 }
 
 * {box-sizing: border-box}

@@ -84,7 +84,6 @@ export default function StreamList({
         const data = await fetchStreams(courseValue ? courseValue?.id : null);
         // setStreamValues({ stream: [] });
         setPendingChanges([]);
-        console.log(data);
         
         if (data) {
             profilactor(data);
@@ -176,8 +175,6 @@ export default function StreamList({
     }, [courseValue]);
 
     useEffect(() => {
-        console.log('streams', streams);
-        
         if (streams.length < 1) {
             // insideDisplayStreams(streams);
             setHasStreams(true);
@@ -209,7 +206,6 @@ export default function StreamList({
                                 // }}
                                 checked={pendingChanges.some((s) => s.stream_id === item.stream_id)}
                                 onChange={(e) => {
-                                    // console.log();
 
                                     handleEdit(e.target, item);
                                 }}

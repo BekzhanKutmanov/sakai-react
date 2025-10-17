@@ -88,8 +88,8 @@ export default function Kafedra() {
                     </div>
 
                     <div className="flex flex-col w-full gap-1 items-start">
-                        <div className='flex gap-1 items-center justify-between w-full'><span className='text-[var(--mainColor)] text-sm'>Количество курсов:</span><span className="">{rowData.courses}</span></div>
-                        <div className='flex gap-1 items-center justify-between w-full'><span className='text-[var(--mainColor)] text-sm'>Утверждённых:</span><span>{rowData.courses_published}</span></div>
+                        <div className='flex gap-1 items-center sm:justify-between w-full'><span className='text-[var(--mainColor)] text-sm'>Количество курсов:</span><span className="">{rowData.courses}</span></div>
+                        <div className='flex gap-1 items-center sm:justify-between w-full'><span className='text-[var(--mainColor)] text-sm'>Утверждённых:</span><span>{rowData.courses_published}</span></div>
                     </div>
 
                     {/* <div>{imageBodyTemplate(rowData)}</div> */}

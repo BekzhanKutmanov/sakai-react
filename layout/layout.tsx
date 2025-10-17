@@ -1,14 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 
-import { useRouter } from 'next/navigation';
 import { useEventListener, useMountEffect, useUnmountEffect } from 'primereact/hooks';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { classNames } from 'primereact/utils';
-import AppFooter from './AppFooter';
 import AppSidebar from './AppSidebar';
 import AppTopbar from './AppTopbar';
-import AppConfig from './AppConfig';
 import { LayoutContext } from './context/layoutcontext';
 import { PrimeReactContext } from 'primereact/api';
 import { ChildContainerProps, LayoutState, AppTopbarRef } from '@/types';
@@ -124,7 +121,6 @@ const Layout = ({ children }: ChildContainerProps) => {
     });
 
     const requireRole = () => {
-        console.log('Ваш статус: ', user?.is_working);
         if (user) {
             if (!user?.is_working) {
                 // window.location.href = '/auth/login';

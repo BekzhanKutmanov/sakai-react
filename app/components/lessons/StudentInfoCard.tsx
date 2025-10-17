@@ -161,7 +161,7 @@ export default function StudentInfoCard({
     const videoCard = (
         <div className="w-full flex items-center flex-col sm:flex-row py-1">
             <div className="w-full flex items-center gap-2">
-                <div className="p-2 bg-[#f7634d] min-w-[38px] w-[38px] min-h-[38px] h-[38px] flex justify-center items-center rounded">
+                <div className="p-2 bg-[var(--amberColor)] min-w-[38px] w-[38px] min-h-[38px] h-[38px] flex justify-center items-center rounded">
                     <i className={`${icon} text-white`}></i>
                 </div>
                 <div className="flex flex-col justify-center gap-1 max-w-[800px] text-wrap break-all">

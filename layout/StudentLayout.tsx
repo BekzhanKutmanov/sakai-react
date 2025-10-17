@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 
-import { useEventListener, useMountEffect, useUnmountEffect } from 'primereact/hooks';
+import { useEventListener, useUnmountEffect } from 'primereact/hooks';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { classNames } from 'primereact/utils';
 import AppSidebar from './AppSidebar';
@@ -121,8 +121,6 @@ const StudentLayout = ({ children }: ChildContainerProps) => {
     });
 
     const requireRole = () => {
-        console.log('Ваш статус: ', user?.is_student);
-        
         if(user){
             if(!user?.is_student){
                 console.warn('Не имеете доступ! student');
