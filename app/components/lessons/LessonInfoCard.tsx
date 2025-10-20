@@ -46,7 +46,7 @@ export default function LessonInfoCard({
     skeleton?: boolean;
     getValues?: () => void;
     addPracticaScore?: (id: number) => void;
-    isOpened: boolean,
+    isOpened?: boolean,
     item?: {};
 }) {
     const media = useMediaQuery('(max-width: 640px)');
