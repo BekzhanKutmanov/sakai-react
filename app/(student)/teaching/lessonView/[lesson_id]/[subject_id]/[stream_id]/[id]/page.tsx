@@ -179,6 +179,7 @@ export default function LessonTest() {
                 state: true,
                 value: { severity: 'success', summary: '', detail: data?.message }
             });
+            handleStep();
         } else {
             setProgressSpinner(false);
             setMessage({
@@ -248,9 +249,9 @@ export default function LessonTest() {
             setType(steps?.type.name);
             setPractica(steps);
         } else if (steps?.type.name === 'test') {
-            setAnswer(steps?.content?.answers || []);
             setType(steps?.type.name);
             setTests(steps);
+            setAnswer(steps?.content?.answers || []);
         } else if (steps?.type.name === 'video') {
             setType(steps?.type.name);
             setVideo(steps);
@@ -496,6 +497,7 @@ export default function LessonTest() {
                                                     name="testRadio"
                                                     checked={item.id == test?.answer_id}
                                                     disabled={steps?.count_attempt ? steps?.count_attempt >= 3 : false}
+                                                    className='bg-[var(--greenBgColor)]'
                                                     onChange={() => {
                                                         setSelectedAnswer(false);
                                                         setAnswer((prev) => prev && prev.map((ans, i) => (i === index ? { ...ans, is_correct: true } : { ...ans, is_correct: false })));
