@@ -17,6 +17,8 @@ import { TieredMenu } from 'primereact/tieredmenu';
 import type { TieredMenu as TieredMenuRef } from 'primereact/tieredmenu';
 
 const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
+    type OptionsType = Intl.DateTimeFormatOptions;
+
     const { layoutState, onMenuToggle, user, setUser, setGlobalLoading, setContextNotificationId } = useContext(LayoutContext);
 
     const menubuttonRef = useRef(null);
@@ -36,25 +38,49 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
     const [skeleton, setSkeleton] = useState(true);
     const [notification, setNotification] = useState<mainNotification[]>([]);
 
-    const router = useRouter();
-
     const handleNotifications = async () => {
         const data = await getNotifications();
         if (data && Array.isArray(data)) {
             setNotification(data);
         }
-        console.log(data);
+    };
+
+    const dateTime = (createdAt: string | null) => {
+        const invalidDate = <div>---</div>;
+        if (notification && createdAt) {
+            const dateObject = new Date(createdAt);
+            if (dateObject) {
+                const options: OptionsType = {
+                    month: 'short', // 'long', 'short', 'numeric'
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: false // 24-часовой формат
+                };
+                const formattedString = dateObject.toLocaleString('ru-RU', options);
+                const result = formattedString?.replace(/,/g, '');
+                if (formattedString) {
+                    return <div>{result}</div>;
+                } else {
+                    return invalidDate;
+                }
+            } else {
+                return invalidDate;
+            }
+        } else {
+            return invalidDate;
+        }
     };
 
     const working_notification = [
-        {
-            label: '',
-            template: (
-                <Link href={'/videoInstruct'} className="flex items-center flex-col gap-1 text-sm">
-                    Видеоинструкция
-                </Link>
-            )
-        },
+        // {
+        //     label: '',
+        //     template: (
+        //         <Link href={'/videoInstruct'} className="flex items-center flex-col gap-1 text-sm">
+        //             Видеоинструкция
+        //         </Link>
+        //     )
+        // },
         {
             label: '',
             template: (
@@ -75,9 +101,9 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                                     {item?.from_user?.father_name} {item?.from_user?.name} {item?.from_user?.birth_date}
                                 </p>
                                 <div className="w-full relative flex">
-                                    <p className="absolute right-0 -top-4 text-[12px] m-0">2ч 29м</p>
+                                    <p className="absolute right-0 -top-3 text-[12px] m-0">{dateTime(item?.created_at)}</p>
                                 </div>
-                            </div>
+                            </div>  
                         );
                     })}
                 </div>
@@ -134,9 +160,7 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                     {/* Условное отображение красного кружка (бэйджа) */}
                     {notification?.length > 0 && (
                         // <div className='w-full relative'>
-                            <span
-                                className="absolute w-[10px] h-[10px] right-[10px] top-[5px] bg-[var(--amberColor)] rounded-full "
-                            ></span>
+                        <span className="absolute w-[10px] h-[10px] right-[10px] top-[5px] bg-[var(--amberColor)] rounded-full "></span>
                         // </div>
                     )}
                 </div>
@@ -154,15 +178,15 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                                                 onClick={() => setContextNotificationId(item?.id)}
                                                 href={`/students/${item?.meta?.course_id}/${item?.meta?.connect_id}/${item?.meta?.stream_id}/${item?.meta?.student_id}/${item?.meta?.lesson_id}/${item?.meta?.step_id}`}
                                             >
-                                                <b className="text-[var(--mainColor)]">{item?.type?.title}</b>
+                                                <b className="text-[var(--mainColor)] text-[13px]">{item?.type?.title}</b>
                                             </Link>
-                                            <span className="text-sm w-[13px] h-[13px] rounded-full bg-[var(--amberColor)]"></span>
+                                            <span className="text-sm w-[12px] h-[12px] text-[13px] rounded-full bg-[var(--amberColor)]"></span>
                                         </div>
-                                        <p className="m-0 text-[13px]">
-                                            {item?.from_user?.father_name} {item?.from_user?.name} {item?.from_user?.birth_date}
+                                        <p className="m-0 text-[12px]">
+                                            {item?.from_user?.last_name} {item?.from_user?.name}
                                         </p>
                                         <div className="w-full relative flex">
-                                            <p className="absolute right-0 -top-4 text-[12px] m-0">2ч 29м</p>
+                                            <p className="absolute right-0 -top-3 text-[11px] m-0">{dateTime(item?.created_at)}</p>
                                         </div>
                                     </div>
                                 );
@@ -275,12 +299,10 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
             <div ref={topbarmenuRef} className={classNames('layout-topbar-menu', { 'layout-topbar-menu-mobile-active': layoutState.profileSidebarVisible })}>
                 <div className="flex items-center gap-4">
                     {media ? (
-                        <div className='relative'>
-                            <div
-                                className="absolute w-[10px] h-[10px] right-[10px] top-[5px] bg-[var(--amberColor)] rounded-full "
-                            ></div>
+                        <div className="relative">
+                            <div className="absolute w-[10px] h-[10px] right-[10px] top-[5px] bg-[var(--amberColor)] rounded-full "></div>
                             <Tiered title={{ name: '', font: 'pi pi-ellipsis-v' }} insideColor={'--bodyColor'} items={mobileMenu} />
-                        </div> 
+                        </div>
                     ) : (
                         <div className={`flex items-center gap-3 ${!media ? 'order-2' : 'order-3'} `}>
                             <Link className="text-[var(--titleColor)] text-sm hover:text-[var(--mainColor)]" href={'https://oldmooc.oshsu.kg/'} target="_blank">

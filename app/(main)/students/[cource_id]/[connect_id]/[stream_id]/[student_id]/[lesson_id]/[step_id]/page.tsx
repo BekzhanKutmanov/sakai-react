@@ -153,11 +153,11 @@ export default function StudentCheck() {
         if(lessons && lessons?.length) {
             lessons.forEach((item, idx)=> {
                 if(item?.is_opened){
-                    setActiveIndex(idx );
+                    setActiveIndex(idx);
                     console.warn('опен есть ',idx )
                     return null;
                 } else {
-                    console.warn('опен нет')
+                    console.warn('опен нет');
                 }
             });
         }
