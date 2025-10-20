@@ -85,7 +85,7 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
             label: '',
             template: (
                 <div className="flex flex-col justify-center p-2 gap-1">
-                    {notification?.map((item, idx) => {
+                    {notification?.length > 0 ? notification?.map((item, idx) => {
                         return (
                             <div key={item?.id} className="w-full cursor-pointer flex flex-col justify-center shadow p-2 gap-2">
                                 <div className="w-full flex justify-between">
@@ -105,7 +105,7 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                                 </div>
                             </div>  
                         );
-                    })}
+                    }) : <p className='text-center'>Сообщений нет</p>}
                 </div>
             )
         }
@@ -170,7 +170,7 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                     label: '',
                     template: (
                         <div className="flex flex-col items-center justify-center p-2 gap-1">
-                            {notification?.map((item, idx) => {
+                            {notification?.length > 0 ? notification?.map((item) => {
                                 return (
                                     <div key={item?.id} className="w-full cursor-pointer flex flex-col justify-center shadow p-2 gap-2">
                                         <div className="w-full flex justify-between">
@@ -190,7 +190,7 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                                         </div>
                                     </div>
                                 );
-                            })}
+                            }) : <p className='text-center text-[12px]'>Сообщений нет</p>}
                         </div>
                     )
                 }
