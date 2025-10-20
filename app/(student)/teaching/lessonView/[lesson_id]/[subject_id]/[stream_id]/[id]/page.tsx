@@ -497,13 +497,12 @@ export default function LessonTest() {
                                                     name="testRadio"
                                                     checked={item.id == test?.answer_id}
                                                     disabled={steps?.count_attempt ? steps?.count_attempt >= 3 : false}
-                                                    className='bg-[var(--greenBgColor)]'
                                                     onChange={() => {
                                                         setSelectedAnswer(false);
                                                         setAnswer((prev) => prev && prev.map((ans, i) => (i === index ? { ...ans, is_correct: true } : { ...ans, is_correct: false })));
                                                     }}
                                                 />
-                                                <span className={`radio-mark min-w-[18px] ${steps?.count_attempt && steps?.count_attempt >= 3 ? 'opacity-50' : ''}`}></span>
+                                                <span className={`radio-mark  min-w-[18px] ${steps?.count_attempt && steps?.count_attempt >= 3 ? 'opacity-50' : ''}`}></span>
                                             </label>
                                             <div className="bg-gray border border-[var(--borderBottomColor)] py-[5px] pl-1 w-full">{item.text}</div>
                                         </>
@@ -514,6 +513,7 @@ export default function LessonTest() {
                                                     type="radio"
                                                     name="testRadio"
                                                     disabled={steps?.count_attempt ? steps?.count_attempt >= 3 : false}
+                                                    className='bg-[var(--greenBgColor)] none'
                                                     onChange={() => {
                                                         setAnswer((prev) => prev && prev.map((ans, i) => (i === index ? { ...ans, is_correct: true } : { ...ans, is_correct: false })));
                                                     }}

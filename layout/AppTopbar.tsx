@@ -85,27 +85,31 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
             label: '',
             template: (
                 <div className="flex flex-col justify-center p-2 gap-1">
-                    {notification?.length > 0 ? notification?.map((item, idx) => {
-                        return (
-                            <div key={item?.id} className="w-full cursor-pointer flex flex-col justify-center shadow p-2 gap-2">
-                                <div className="w-full flex justify-between">
-                                    <Link
-                                        onClick={() => setContextNotificationId(item?.id)}
-                                        href={`/students/${item?.meta?.course_id}/${item?.meta?.connect_id}/${item?.meta?.stream_id}/${item?.meta?.student_id}/${item?.meta?.lesson_id}/${item?.meta?.step_id}`}
-                                    >
-                                        <b className="text-[var(--mainColor)]">{item?.type?.title}</b>
-                                    </Link>
-                                    <span className="text-sm w-[13px] h-[13px] rounded-full bg-[var(--amberColor)]"></span>
+                    {notification?.length > 0 ? (
+                        notification?.map((item, idx) => {
+                            return (
+                                <div key={item?.id} className="w-full cursor-pointer flex flex-col justify-center shadow p-2 gap-2">
+                                    <div className="w-full flex justify-between">
+                                        <Link
+                                            onClick={() => setContextNotificationId(item?.id)}
+                                            href={`/students/${item?.meta?.course_id}/${item?.meta?.connect_id}/${item?.meta?.stream_id}/${item?.meta?.student_id}/${item?.meta?.lesson_id}/${item?.meta?.step_id}`}
+                                        >
+                                            <b className="text-[var(--mainColor)]">{item?.type?.title}</b>
+                                        </Link>
+                                        <span className="text-sm w-[13px] h-[13px] rounded-full bg-[var(--amberColor)]"></span>
+                                    </div>
+                                    <p className="m-0 text-[13px]">
+                                        {item?.from_user?.father_name} {item?.from_user?.name} {item?.from_user?.birth_date}
+                                    </p>
+                                    <div className="w-full relative flex">
+                                        <p className="absolute right-0 -top-3 text-[12px] m-0">{dateTime(item?.created_at)}</p>
+                                    </div>
                                 </div>
-                                <p className="m-0 text-[13px]">
-                                    {item?.from_user?.father_name} {item?.from_user?.name} {item?.from_user?.birth_date}
-                                </p>
-                                <div className="w-full relative flex">
-                                    <p className="absolute right-0 -top-3 text-[12px] m-0">{dateTime(item?.created_at)}</p>
-                                </div>
-                            </div>  
-                        );
-                    }) : <p className='text-center'>Сообщений нет</p>}
+                            );
+                        })
+                    ) : (
+                        <p className="text-center">Сообщений нет</p>
+                    )}
                 </div>
             )
         }
@@ -170,38 +174,97 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                     label: '',
                     template: (
                         <div className="flex flex-col items-center justify-center p-2 gap-1">
-                            {notification?.length > 0 ? notification?.map((item) => {
-                                return (
-                                    <div key={item?.id} className="w-full cursor-pointer flex flex-col justify-center shadow p-2 gap-2">
-                                        <div className="w-full flex justify-between">
-                                            <Link
-                                                onClick={() => setContextNotificationId(item?.id)}
-                                                href={`/students/${item?.meta?.course_id}/${item?.meta?.connect_id}/${item?.meta?.stream_id}/${item?.meta?.student_id}/${item?.meta?.lesson_id}/${item?.meta?.step_id}`}
-                                            >
-                                                <b className="text-[var(--mainColor)] text-[13px]">{item?.type?.title}</b>
-                                            </Link>
-                                            <span className="text-sm w-[12px] h-[12px] text-[13px] rounded-full bg-[var(--amberColor)]"></span>
+                            {notification?.length > 0 ? (
+                                notification?.map((item) => {
+                                    return (
+                                        <div key={item?.id} className="w-full cursor-pointer flex flex-col justify-center shadow p-2 gap-2">
+                                            <div className="w-full flex justify-between">
+                                                <Link
+                                                    onClick={() => setContextNotificationId(item?.id)}
+                                                    href={`/students/${item?.meta?.course_id}/${item?.meta?.connect_id}/${item?.meta?.stream_id}/${item?.meta?.student_id}/${item?.meta?.lesson_id}/${item?.meta?.step_id}`}
+                                                >
+                                                    <b className="text-[var(--mainColor)] text-[13px]">{item?.type?.title}</b>
+                                                </Link>
+                                                <span className="text-sm w-[12px] h-[12px] text-[13px] rounded-full bg-[var(--amberColor)]"></span>
+                                            </div>
+                                            <p className="m-0 text-[12px]">
+                                                {item?.from_user?.last_name} {item?.from_user?.name}
+                                            </p>
+                                            <div className="w-full relative flex">
+                                                <p className="absolute right-0 -top-3 text-[11px] m-0">{dateTime(item?.created_at)}</p>
+                                            </div>
                                         </div>
-                                        <p className="m-0 text-[12px]">
-                                            {item?.from_user?.last_name} {item?.from_user?.name}
-                                        </p>
-                                        <div className="w-full relative flex">
-                                            <p className="absolute right-0 -top-3 text-[11px] m-0">{dateTime(item?.created_at)}</p>
-                                        </div>
-                                    </div>
-                                );
-                            }) : <p className='text-center text-[12px]'>Сообщений нет</p>}
+                                    );
+                                })
+                            ) : (
+                                <p className="text-center text-[12px]">Сообщений нет</p>
+                            )}
                         </div>
                     )
                 }
             ]
         },
+        {
+            label: 'Старый Mooc',
+            icon: '',
+            items: [],
+            url: 'https://oldmooc.oshsu.kg/'
+        },
+        {
+            label: 'Сайт ОшГУ',
+            icon: '',
+            items: [],
+            url: 'https://oshsu.kg'
+        }
         // {
         //     label: 'Видеоинструкция',
         //     icon: '',
         //     items: [],
         //     url: '/videoInstruct'
         // },
+    ];
+
+    const mobileStudentMenu = [
+        user
+            ? {
+                  label: 'Профиль',
+                  icon: 'pi pi-user',
+                  items: [
+                      {
+                          label: '',
+                          template: (
+                              <div className="flex items-center flex-col gap-1 text-sm">
+                                  <div className="flex gap-1">
+                                      <span className="text-[var(--titleColor)]">{user?.last_name}</span>
+                                      <span className="text-[var(--titleColor)]">{user?.name}</span>
+                                  </div>
+                                  <span className="text-gray-500 text-[12px]">{user?.email}</span>
+                              </div>
+                          )
+                      },
+                      {
+                          label: 'Выход',
+                          icon: 'pi pi-sign-out',
+                          className: 'text-[12px]',
+                          items: [],
+                          command: () => {
+                              window.location.href = '/auth/login';
+                              logout({ setUser, setGlobalLoading });
+                          }
+                      }
+                  ]
+              }
+            : {
+                  label: 'Вход',
+                  icon: 'pi pi-sign-in',
+                  items: [],
+                  //   url: '/auth/login'
+                  command: () => {
+                      // router.push('/auth/login');
+                      window.location.href = '/auth/login';
+                  }
+              },
+
         {
             label: 'Старый Mooc',
             icon: '',
@@ -301,7 +364,7 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                     {media ? (
                         <div className="relative">
                             <div className="absolute w-[10px] h-[10px] right-[10px] top-[5px] bg-[var(--amberColor)] rounded-full "></div>
-                            <Tiered title={{ name: '', font: 'pi pi-ellipsis-v' }} insideColor={'--bodyColor'} items={mobileMenu} />
+                            <Tiered title={{ name: '', font: 'pi pi-ellipsis-v' }} insideColor={'--bodyColor'} items={user?.is_student ? mobileStudentMenu : user?.is_working ? mobileMenu : []} />
                         </div>
                     ) : (
                         <div className={`flex items-center gap-3 ${!media ? 'order-2' : 'order-3'} `}>

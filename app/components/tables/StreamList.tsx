@@ -383,7 +383,7 @@ export default function StreamList({
 
                     {hasStreams ? (
                         <>
-                            <NotFound titleMessage={'Потоков пока нет'} />
+                            <p className="text-[16px] text-center font-bold">Потоков пока нет</p>
                         </>
                     ) : (
                         <div className="flex flex-col gap-2 sm:gap-2">

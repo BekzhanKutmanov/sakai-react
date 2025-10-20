@@ -30,10 +30,9 @@ import { ProgressSpinner } from 'primereact/progressspinner';
 import { DataView } from 'primereact/dataview';
 import { FileWithPreview } from '@/types/fileuploadPreview';
 import { mainStreamsType } from '@/types/mainStreamsType';
-import { InputSwitch } from 'primereact/inputswitch';
 
 export default function Course() {
-    const { setMessage, setGlobalLoading, course, setCourses, contextFetchCourse, setMainCourseId } = useContext(LayoutContext);
+    const { setMessage, setGlobalLoading, course, contextFetchCourse, setMainCourseId } = useContext(LayoutContext);
     const [coursesValue, setValueCourses] = useState<myMainCourseType[]>([]);
     const [hasCourses, setHasCourses] = useState(false);
     const [courseValue, setCourseValue] = useState<CourseCreateType>({ title: '', description: '', video_url: '', image: '' });
@@ -51,7 +50,6 @@ export default function Course() {
     });
     const [activeIndex, setActiveIndex] = useState<number>(0);
     const [imageState, setImageState] = useState<string | null>(null);
-    const [pendingChanges, setPendingChanges] = useState<{ status: boolean }[]>([]);
     const [editingLesson, setEditingLesson] = useState<CourseCreateType>({
         title: '',
         description: '',
@@ -419,7 +417,7 @@ export default function Course() {
 
     useEffect(() => {
         if (coursesValue?.length < 1) {
-            // setHasCourses(true);
+            setHasCourses(true);
         } else {
             if (globalCourseId != null) {
                 const exists = coursesValue.some((c: { id: number }) => c.id === globalCourseId.id);
@@ -494,7 +492,7 @@ export default function Course() {
                             {progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}
                         </div>
                     </div>
-                    <div className="flex flex-col gap-1 items-center justify-center">
+                    {/* <div className="flex flex-col gap-1 items-center justify-center">
                         <label className="block text-900 font-medium text-[16px] md:text-lg mb-1 md:mb-2">Видео ссылка</label>
                         <div className="w-full flex gap-2 items-center">
                             <InputText
@@ -517,7 +515,7 @@ export default function Course() {
                             />
                             {progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}
                         </div>
-                    </div>
+                    </div> */}
 
                     <div className="flex flex-col gap-1 items-center justify-center">
                         <label className="block text-900 font-medium text-[16px] md:text-lg mb-1 md:mb-2">Описание</label>
@@ -617,7 +615,7 @@ export default function Course() {
                                                     }}
                                                 />
                                             </div>
-                                            <NotFound titleMessage={'Курсы не доступны'} />
+                                            <NotFound titleMessage={'Курсы отсутствуют'} />
                                         </>
                                     ) : (
                                         <>
@@ -705,7 +703,7 @@ export default function Course() {
 
                                 {/* table section */}
                                 {hasCourses ? (
-                                    <NotFound titleMessage={'Курсы не доступны'} />
+                                    <p className="text-[16px] text-center font-bold">{'Курсы отсутствуют'}</p>
                                 ) : (
                                     <>
                                         {skeleton ? (

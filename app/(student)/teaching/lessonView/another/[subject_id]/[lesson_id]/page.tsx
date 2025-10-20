@@ -188,6 +188,7 @@ export default function AnotherLesson() {
                 state: true,
                 value: { severity: 'success', summary: '', detail: data?.message }
             });
+            forMainLesson();
         } else {
             setProgressSpinner(false);
             setMessage({
