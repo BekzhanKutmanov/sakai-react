@@ -5,6 +5,7 @@ import LessonInfoCard from '@/app/components/lessons/LessonInfoCard';
 import GroupSkeleton from '@/app/components/skeleton/GroupSkeleton';
 import useErrorMessage from '@/hooks/useErrorMessage';
 import { LayoutContext } from '@/layout/context/layoutcontext';
+import { statusView } from '@/services/notifications';
 import { fetchElement } from '@/services/steps';
 import { fetchStudentCalendar, fetchStudentDetail, pacticaScoreAdd } from '@/services/streams';
 import { ContributionDay } from '@/types/ContributionDay';
@@ -19,9 +20,11 @@ export default function StudentCheck() {
     // type
     interface mainStep {}
 
-    const { connect_id, stream_id, student_id } = useParams();
+    const { connect_id, stream_id, student_id, lesson_id, step_id } = useParams();
+    const params = useParams();
+    console.log(params);
 
-    const { setMessage } = useContext(LayoutContext);
+    const { setMessage, contextNotificationId, setContextNotificationId } = useContext(LayoutContext);
     const showError = useErrorMessage();
 
     const [mainSkeleton, mainSetSkeleton] = useState(false);
@@ -36,9 +39,11 @@ export default function StudentCheck() {
 
     const handleFetchStreams = async () => {
         mainSetSkeleton(true);
-        const data = await fetchStudentDetail(connect_id ? Number(connect_id) : null, stream_id ? Number(stream_id) : null, student_id ? Number(student_id) : null);
+        const data = await fetchStudentDetail(lesson_id ? Number(lesson_id) : null, connect_id ? Number(connect_id) : null, stream_id ? Number(stream_id) : null, student_id ? Number(student_id) : null, step_id ? Number(step_id) : null);
+        console.log(data);
 
         if (data?.success) {
+            // handleStatusView();
             setHasSteps(false);
             mainSetSkeleton(false);
             setStudent(data?.student);
@@ -53,6 +58,15 @@ export default function StudentCheck() {
             if (data?.response?.status) {
                 showError(data.response.status);
             }
+        }
+    };
+
+    const handleStatusView = async (notification_id: number | null) => {
+        if (notification_id) {
+            const data = await statusView(Number(notification_id));
+            console.log(data);
+            
+            setContextNotificationId(null);
         }
     };
 
@@ -129,7 +143,25 @@ export default function StudentCheck() {
     useEffect(() => {
         handleFetchCalendar();
         handleFetchStreams();
+
+        if (contextNotificationId && contextNotificationId != null) {
+            handleStatusView(contextNotificationId);
+        }
     }, []);
+
+    useEffect(()=> {
+        if(lessons && lessons?.length) {
+            lessons.forEach((item, idx)=> {
+                if(item?.is_opened){
+                    setActiveIndex(idx );
+                    console.warn('опен есть ',idx )
+                    return null;
+                } else {
+                    console.warn('опен нет')
+                }
+            });
+        }
+    },[lessons]);
 
     return (
         <div className="main-bg">
@@ -175,6 +207,7 @@ export default function StudentCheck() {
                                                                     skeleton={skeleton}
                                                                     getValues={() => handleFetchElement(i?.lesson_id, i?.id)}
                                                                     addPracticaScore={(score) => handlePracticaScoreAdd(i?.id, score)}
+                                                                    isOpened={i?.is_opened || false}
                                                                     item={i}
                                                                 />
                                                             }

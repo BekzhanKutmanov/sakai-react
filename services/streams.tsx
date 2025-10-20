@@ -40,9 +40,9 @@ export const fetchStreamStudents = async (connect_id: number | null, stream_id: 
 
 // student detail
  
-export const fetchStudentDetail = async (connect_id: number | null, stream_id: number | null, student_id: number | null) => {        
+export const fetchStudentDetail = async (lesson_id: number | null, connect_id: number | null, stream_id: number | null, student_id: number | null, step_id: number | null) => {        
     try {
-        const res = await axiosInstance.get(`/v1/teacher/stream/student/details?connect_id=${connect_id}&id_stream=${stream_id}&id_student=${student_id}`);
+        const res = await axiosInstance.get(`/v1/teacher/stream/student/details?lesson_id=${lesson_id}&connect_id=${connect_id}&id_stream=${stream_id}&step_id=${step_id}&id_student=${student_id}`);
         const data = await res.data;
 
         return data;

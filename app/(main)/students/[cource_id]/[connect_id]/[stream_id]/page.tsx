@@ -60,7 +60,7 @@ export default function StudentList() {
         toggleSkeleton();
         if (data) {
             setHasList(false);
-            setStudentList(data);
+            setStudentList(data);            
         } else {
             setHasList(true);
             setMessage({
@@ -185,7 +185,9 @@ export default function StudentList() {
                                     header="Выполненные действия"
                                     body={(rowData) => (
                                         <div className="flex items-center gap-2" key={rowData?.id}>
-                                            {rowData?.last_movement && <Link href={`/students/${cource_id}/${connect_id}/${stream_id}/${rowData?.id}`}><Button label="Данные" /></Link>}
+                                            {rowData?.last_movement && <Link href={{
+                                                pathname: `/students/${cource_id}/${connect_id}/${stream_id}/${rowData?.id}/optional/optional`,
+                                            }}><Button label="Данные" /></Link>}
                                         </div>
                                     )}
                                 />

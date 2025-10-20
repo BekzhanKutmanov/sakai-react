@@ -8,6 +8,7 @@ import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
 import { useContext, useEffect, useState } from 'react';
 import GroupSkeleton from '../skeleton/GroupSkeleton';
+import { lessonType } from '@/types/lessonType';
 
 export default function LessonInfoCard({
     contentType,
@@ -26,6 +27,7 @@ export default function LessonInfoCard({
     answerList,
     addPracticaScore,
     skeleton,
+    isOpened,
     item
 }: {
     type: string;
@@ -44,6 +46,7 @@ export default function LessonInfoCard({
     skeleton?: boolean;
     getValues?: () => void;
     addPracticaScore?: (id: number) => void;
+    isOpened: boolean,
     item?: {};
 }) {
     const media = useMediaQuery('(max-width: 640px)');
@@ -178,6 +181,7 @@ export default function LessonInfoCard({
             </>
         );
     };
+
     const linkCard = (
         <div className="w-full flex justify-between  flex-col sm:flex-row">
             <div className="w-full flex items-start sm:items-center gap-2 py-1">
@@ -403,7 +407,7 @@ export default function LessonInfoCard({
     };
 
     const practicaCard = (
-        <div className="w-full flex justify-between flex-col sm:flex-row ">
+        <div className={`w-full flex justify-between flex-col sm:flex-row ${isOpened ? 'bg-[var(--greenBgColor)] rounded' : ''}`}>
             <div className="w-full flex items-start sm:items-center gap-2 py-1">
                 <div className="p-2 bg-[var(--yellowColor)] w-[36px] h-[36px] flex justify-center items-center rounded">
                     <i className={`${icon} text-white`}></i>
@@ -411,7 +415,7 @@ export default function LessonInfoCard({
                 <span onClick={() => {
                     setPracticaCall(true);
                     getValues && getValues();
-                }} className="cursor-pointer max-w-[800px] text-[16px] text-wrap break-all hover:underline">
+                }} className={`cursor-pointer max-w-[800px] text-[16px] text-wrap ${isOpened ? 'underline' : ''} break-all hover:underline`}>
                     Практическое задание
                 </span>
             </div>

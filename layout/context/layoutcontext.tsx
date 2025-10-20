@@ -114,6 +114,8 @@ export const LayoutProvider = ({ children }: ChildContainerProps) => {
     // departament
     const [departament, setDepartament] = useState<{ last_name: string; name: string; father_name: string; info: string }>({ last_name: '', name: '', father_name: '', info: '' });
 
+    const [contextNotificationId, setContextNotificationId] = useState<number | null>(null);
+
     useEffect(() => {
         // if (pathname === '/course' && !departament.name) {
         if (pathname.startsWith('/pdf')  || pathname.startsWith('/videoInstruct') ) {
@@ -177,7 +179,9 @@ export const LayoutProvider = ({ children }: ChildContainerProps) => {
         setDepartament,
         contextNewStudentThemes,
         setContextNewStudentThemes,
-
+        
+        contextNotificationId, 
+        setContextNotificationId
     };
 
     return (

@@ -84,6 +84,9 @@ export interface LayoutContextProps {
 
     contextNewStudentThemes: lessonType[],
     setContextNewStudentThemes,
+
+    contextNotificationId: number | null, 
+    setContextNotificationId
     // message: { state: boolean; value: MessageType };
     // setMessage: React.Dispatch<React.SetStateAction<{ state: boolean; value: MessageType }>>;
 }

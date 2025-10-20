@@ -15,10 +15,9 @@ import { getNotifications } from '@/services/notifications';
 import { mainNotification } from '@/types/mainNotification';
 import { TieredMenu } from 'primereact/tieredmenu';
 import type { TieredMenu as TieredMenuRef } from 'primereact/tieredmenu';
-import { Button } from 'primereact/button';
 
 const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
-    const { layoutConfig, layoutState, onMenuToggle, showProfileSidebar, user, setUser, setGlobalLoading, departament } = useContext(LayoutContext);
+    const { layoutState, onMenuToggle, user, setUser, setGlobalLoading, setContextNotificationId } = useContext(LayoutContext);
 
     const menubuttonRef = useRef(null);
     const topbarmenuRef = useRef(null);
@@ -46,6 +45,45 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
         }
         console.log(data);
     };
+
+    const working_notification = [
+        {
+            label: '',
+            template: (
+                <Link href={'/videoInstruct'} className="flex items-center flex-col gap-1 text-sm">
+                    Видеоинструкция
+                </Link>
+            )
+        },
+        {
+            label: '',
+            template: (
+                <div className="flex flex-col justify-center p-2 gap-1">
+                    {notification?.map((item, idx) => {
+                        return (
+                            <div key={item?.id} className="w-full cursor-pointer flex flex-col justify-center shadow p-2 gap-2">
+                                <div className="w-full flex justify-between">
+                                    <Link
+                                        onClick={() => setContextNotificationId(item?.id)}
+                                        href={`/students/${item?.meta?.course_id}/${item?.meta?.connect_id}/${item?.meta?.stream_id}/${item?.meta?.student_id}/${item?.meta?.lesson_id}/${item?.meta?.step_id}`}
+                                    >
+                                        <b className="text-[var(--mainColor)]">{item?.type?.title}</b>
+                                    </Link>
+                                    <span className="text-sm w-[13px] h-[13px] rounded-full bg-[var(--amberColor)]"></span>
+                                </div>
+                                <p className="m-0 text-[13px]">
+                                    {item?.from_user?.father_name} {item?.from_user?.name} {item?.from_user?.birth_date}
+                                </p>
+                                <div className="w-full relative flex">
+                                    <p className="absolute right-0 -top-4 text-[12px] m-0">2ч 29м</p>
+                                </div>
+                            </div>
+                        );
+                    })}
+                </div>
+            )
+        }
+    ];
 
     const mobileMenu = [
         user
@@ -87,10 +125,52 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                       window.location.href = '/auth/login';
                   }
               },
+
         {
-            label: 'Уведомления',
-            icon: 'pi pi-bell',
-            items: [{ label: '' }]
+            label: 'Уведомление',
+            icon: (
+                <div className="p-overlay-badge">
+                    <i className="pi pi-bell p-menuitem-icon" style={{ fontSize: '1.5rem' }}></i>
+                    {/* Условное отображение красного кружка (бэйджа) */}
+                    {notification?.length > 0 && (
+                        // <div className='w-full relative'>
+                            <span
+                                className="absolute w-[10px] h-[10px] right-[10px] top-[5px] bg-[var(--amberColor)] rounded-full "
+                            ></span>
+                        // </div>
+                    )}
+                </div>
+            ),
+            items: [
+                {
+                    label: '',
+                    template: (
+                        <div className="flex flex-col items-center justify-center p-2 gap-1">
+                            {notification?.map((item, idx) => {
+                                return (
+                                    <div key={item?.id} className="w-full cursor-pointer flex flex-col justify-center shadow p-2 gap-2">
+                                        <div className="w-full flex justify-between">
+                                            <Link
+                                                onClick={() => setContextNotificationId(item?.id)}
+                                                href={`/students/${item?.meta?.course_id}/${item?.meta?.connect_id}/${item?.meta?.stream_id}/${item?.meta?.student_id}/${item?.meta?.lesson_id}/${item?.meta?.step_id}`}
+                                            >
+                                                <b className="text-[var(--mainColor)]">{item?.type?.title}</b>
+                                            </Link>
+                                            <span className="text-sm w-[13px] h-[13px] rounded-full bg-[var(--amberColor)]"></span>
+                                        </div>
+                                        <p className="m-0 text-[13px]">
+                                            {item?.from_user?.father_name} {item?.from_user?.name} {item?.from_user?.birth_date}
+                                        </p>
+                                        <div className="w-full relative flex">
+                                            <p className="absolute right-0 -top-4 text-[12px] m-0">2ч 29м</p>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    )
+                }
+            ]
         },
         // {
         //     label: 'Видеоинструкция',
@@ -138,30 +218,6 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
     ];
 
     //
-    const working_notification = [
-        {
-            label: '',
-            template: (
-                <Link href={'/videoInstruct'} className="flex items-center flex-col gap-1 text-sm hover:text-white">
-                    Видеоинструкция
-                </Link>
-            )
-        },
-        {
-            label: '',
-            template: (
-                <div className="flex flex-col justify-center p-2">
-                    {notification?.map((item, idx) => {
-                        return (
-                            <div key={idx} className="cursor-pointer flex justify-center shadow">
-                                {item?.title}
-                            </div>
-                        );
-                    })}
-                </div>
-            )
-        }
-    ];
 
     const student_notification = [
         {
@@ -219,7 +275,12 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
             <div ref={topbarmenuRef} className={classNames('layout-topbar-menu', { 'layout-topbar-menu-mobile-active': layoutState.profileSidebarVisible })}>
                 <div className="flex items-center gap-4">
                     {media ? (
-                        <Tiered title={{ name: '', font: 'pi pi-ellipsis-v' }} insideColor={'--bodyColor'} items={mobileMenu} />
+                        <div className='relative'>
+                            <div
+                                className="absolute w-[10px] h-[10px] right-[10px] top-[5px] bg-[var(--amberColor)] rounded-full "
+                            ></div>
+                            <Tiered title={{ name: '', font: 'pi pi-ellipsis-v' }} insideColor={'--bodyColor'} items={mobileMenu} />
+                        </div> 
                     ) : (
                         <div className={`flex items-center gap-3 ${!media ? 'order-2' : 'order-3'} `}>
                             <Link className="text-[var(--titleColor)] text-sm hover:text-[var(--mainColor)]" href={'https://oldmooc.oshsu.kg/'} target="_blank">
@@ -240,25 +301,29 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                             {user?.is_working && (
                                 // <Tiered title={{ name: '', font: 'pi pi-bell' }} items={user?.is_working ? working_notification : user?.is_student ? student_notification : []} insideColor={'--titleColor'} />
                                 <div>
-                                    <button
-                                        // icon={title.font}
-                                        onClick={(e) => toggleMenu(e)}
-                                        style={{ color: 'black', fontSize: media ? '16px' : '20px' }}
-                                        className={`cursor-pointer flex gap-2 items-center px-0 bg-white text-blue-300 p-2 pi pi-bell font-bold`}
-                                    />
+                                    <div className="relative">
+                                        {notification?.length > 0 ? <div className={`absolute -right-1 -top-1 px-1 bg-[var(--amberColor)] rounded text-white text-[12px]`}>{notification.length}</div> : ''}
+                                        <button
+                                            // icon={title.font}
+                                            onClick={(e) => toggleMenu(e)}
+                                            style={{ color: 'black', fontSize: media ? '16px' : '20px' }}
+                                            className={`cursor-pointer flex gap-2 items-center px-0 bg-white text-blue-300 p-2 pi pi-bell font-bold`}
+                                        />
+                                    </div>
                                     <TieredMenu
                                         model={working_notification}
                                         popup
                                         ref={menu}
                                         breakpoint="1000px"
-                                        style={{ width: media ? '290px' : '220px', left: '10px' }}
-                                        className={`pointer mt-4 max-h-[200px] overflow-y-scroll`}
+                                        // style={{ maxWidth: media ? '300px' : '500px', left: '10px' }}
+                                        style={{ maxWidth: '600px', left: '8px' }}
+                                        className={`min-w-[380px] mt-4 overflow-y-scroll`}
                                         pt={{
                                             root: { className: `bg-white border w-[500px] border-gray-300 rounded-md shadow-md` },
                                             menu: { className: 'transition-all' },
-                                            menuitem: { className: 'text-[var(--titleColor)] text-[14px] py-1 hover:shadow-xl border-gray-200 hover:text-white hover:bg-[var(--mainColor)]' },
+                                            menuitem: { className: 'text-[var(--titleColor)] text-[14px] py-1 hover:shadow-xl border-gray-200' },
                                             action: { className: `flex justify-center items-center gap-2` }, // для иконки + текста не работает :)
-                                            icon: { className: 'text-[var(--titleColor)] mx-1 hover:text-white' }
+                                            icon: { className: 'text-[var(--titleColor)] mx-1' }
                                             // submenuIcon: { className: 'text-gray-400 ml-auto' }
                                         }}
                                     />

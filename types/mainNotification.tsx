@@ -11,6 +11,7 @@ export interface mainNotification {
         stream_id: number;
         student_id: number;
         lesson_id: number;
+        step_id: number;
     };
     redirect_url: string;
     is_view: boolean;

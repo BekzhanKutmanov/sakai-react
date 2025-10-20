@@ -11,3 +11,7 @@
 .p-progressbar .p-progressbar-value {
   background-color: var(--greenColor) !important;
 }
+
+.p-menuitem-active > .p-submenu-list {
+  padding: 0 !important;
+}
