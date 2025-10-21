@@ -2,7 +2,6 @@
 'use client';
 import { useRouter } from 'next/navigation';
 import React, { useContext, useEffect, useState } from 'react';
-import { Password } from 'primereact/password';
 import { LayoutContext } from '../../../../layout/context/layoutcontext';
 import { InputText } from 'primereact/inputtext';
 
@@ -17,6 +16,8 @@ import { LoginType } from '@/types/login';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import Link from 'next/link';
 import { Button } from 'primereact/button';
+import { getToken } from '@/utils/auth';
+import { ProgressSpinner } from 'primereact/progressspinner';
 
 const LoginPage = () => {
     const { layoutConfig, setUser, setMessage, setGlobalLoading, setDepartament, departament } = useContext(LayoutContext);
@@ -25,6 +26,7 @@ const LoginPage = () => {
     const media = useMediaQuery('(max-width: 1030px)');
     // const containerClassName = classNames('surface-ground flex align-items-center justify-content-center min-h-screen min-w-screen overflow-hidden', { 'p-input-filled': layoutConfig.inputStyle === 'filled' });
     const [showPassword, setShowPassword] = useState(false);
+    const [progressSpinner, setProgressSpinner] = useState(true);
 
     const {
         register,
@@ -96,6 +98,20 @@ const LoginPage = () => {
             value: { severity: 'error', summary: 'Ошибка при авторизации', detail: 'Введите корректные данные' }
         }); // messege - Ошибка при авторизации
     };
+
+    useEffect(()=> {
+        const token = getToken("access_token");
+        if(token){
+            window.location.href = '/';
+            setProgressSpinner(false);
+        } else {
+            setProgressSpinner(false);
+        }
+    },[]);
+
+    if(progressSpinner) return <div className='flex justify-center items-center h-[100vh]'>
+        <ProgressSpinner style={{ width: '100px', height: '100px' }} />
+    </div>
 
     return (
         <div className={`flex flex-col gap-4 pt-6 h-[100vh] login-bg`}>

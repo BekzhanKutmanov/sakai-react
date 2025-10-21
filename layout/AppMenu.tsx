@@ -75,7 +75,7 @@ const AppMenu = () => {
                   }
               ]
             : 
-            !forDepartamentLength ? (user?.is_working && pathname.startsWith('/course')) || pathname.startsWith('/students/') || pathname.startsWith('/unVerifed') || pathname.startsWith('/pdf/') || pathname.startsWith('/videoInstruct/')
+            !forDepartamentLength ? (user?.is_working && pathname.startsWith('/course')) || pathname.startsWith('/students/') || pathname.startsWith('/unVerifed') || pathname.startsWith('/pdf/') || pathname.startsWith('/videoInstruct/') || pathname.startsWith('/notification')
             ? [
                   {
                       // key: 'prev',

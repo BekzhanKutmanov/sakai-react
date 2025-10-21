@@ -98,7 +98,7 @@ export default function UnVerifed() {
                                             href={`/students/${item?.answer?.course_id}/${item?.connect_id}/${item?.answer?.id_stream}/${item?.answer?.student?.myedu_id}/${item?.answer?.lesson_id}/${item?.answer?.steps_id}`}
                                         >
                                             <b className="text-[var(--mainColor)] underline">
-                                                {item?.answer?.student?.father_name} {item?.answer?.student?.name}
+                                                {item?.answer?.student?.last_name} {item?.answer?.student?.name}
                                             </b>
                                         </Link>
                                         <span className="text-sm w-[13px] h-[13px] rounded-full bg-[var(--amberColor)]"></span>
@@ -113,7 +113,7 @@ export default function UnVerifed() {
                                         </Link>
                                     </div>
                                     <div className="w-full relative flex">
-                                        <p className="absolute right-0 -top-3 text-[12px] m-0">{dateTime(item?.answer?.created_at)}</p>
+                                        <p className="absolute right-0 -top-3 text-[10px] m-0">{dateTime(item?.answer?.created_at)}</p>
                                     </div>
                                 </div>
                             </div>

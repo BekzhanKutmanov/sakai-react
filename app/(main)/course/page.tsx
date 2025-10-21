@@ -713,7 +713,7 @@ export default function Course() {
                                         ) : (
                                             <div>
                                                 <div ref={topRef}>
-                                                    <DataTable value={coursesValue} dataKey="id" emptyMessage="Нет данных" key={JSON.stringify(forStreamId)} responsiveLayout="stack" breakpoint="960px" rows={5} className="my-custom-table">
+                                                    <DataTable value={coursesValue} dataKey="id" emptyMessage="..." key={JSON.stringify(forStreamId)} responsiveLayout="stack" breakpoint="960px" rows={5} className="my-custom-table">
                                                         <Column body={(_, { rowIndex }) => rowIndex + 1} header="#" style={{ width: '20px' }}></Column>
                                                         <Column
                                                             style={{ width: '70px' }}
@@ -739,7 +739,7 @@ export default function Course() {
                                                                         setMainCourseId(rowData.id);
                                                                     }}
                                                                     key={rowData.id}
-                                                                    className="max-w-sm text-word break-all"
+                                                                    className="max-w-sm break-words"
                                                                 >
                                                                     {rowData.title}
                                                                 </Link>

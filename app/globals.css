@@ -747,6 +747,11 @@ input[type="password"]::-ms-clear {
   justify-content: center;
 }
 
+.p-column-header-content .start{
+  display: flex;
+  justify-content: start;
+}
+
 /* input */
 
 @media screen and (max-width: 640px) {

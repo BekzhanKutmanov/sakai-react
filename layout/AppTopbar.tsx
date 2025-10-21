@@ -177,21 +177,21 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                             {notification?.length > 0 ? (
                                 notification?.map((item) => {
                                     return (
-                                        <div key={item?.id} className="w-full cursor-pointer flex flex-col justify-center shadow p-2 gap-2">
+                                        <div key={item?.id} className="w-full cursor-pointer flex flex-col justify-center shadow p-1 gap-1">
                                             <div className="w-full flex justify-between">
                                                 <Link
                                                     onClick={() => setContextNotificationId(item?.id)}
                                                     href={`/students/${item?.meta?.course_id}/${item?.meta?.connect_id}/${item?.meta?.stream_id}/${item?.meta?.student_id}/${item?.meta?.lesson_id}/${item?.meta?.step_id}`}
                                                 >
-                                                    <b className="text-[var(--mainColor)] text-[13px]">{item?.type?.title}</b>
+                                                    <b className="text-[var(--mainColor)] text-[12px]">{item?.type?.title}</b>
                                                 </Link>
                                                 <span className="text-sm w-[12px] h-[12px] text-[13px] rounded-full bg-[var(--amberColor)]"></span>
                                             </div>
-                                            <p className="m-0 text-[12px]">
+                                            <p className="m-0 text-[11px]">
                                                 {item?.from_user?.last_name} {item?.from_user?.name}
                                             </p>
                                             <div className="w-full relative flex">
-                                                <p className="absolute right-0 -top-3 text-[11px] m-0">{dateTime(item?.created_at)}</p>
+                                                <p className="absolute right-0 -top-3 text-[10px] m-0">{dateTime(item?.created_at)}</p>
                                             </div>
                                         </div>
                                     );

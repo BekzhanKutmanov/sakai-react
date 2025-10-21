@@ -416,7 +416,7 @@ export default function StreamList({
                                 ) : (
                                     <>
                                         <div>
-                                            <DataView value={streams} listTemplate={listTemplate} emptyMessage="Нет данных"/>
+                                            <DataView value={streams} listTemplate={listTemplate} emptyMessage="..."/>
                                         </div>
                                     </>
                                 )}

@@ -73,11 +73,12 @@ export default function Faculty() {
                             <NotFound titleMessage="Кафедры не доступны" />
                         ) : (
                             <DataTable value={kafedra} dataKey="id" emptyMessage="Загрузка" key={JSON.stringify('name_ru')} responsiveLayout="stack" breakpoint="960px" rows={5} className="my-custom-table">
-                                <Column body={(_, { rowIndex }) => rowIndex + 1} header="#" style={{ width: '20px' }}></Column>
+                                <Column body={(_, { rowIndex }) => rowIndex + 1} header="#" style={{ width: '20px', display: 'flex', justifyContent: 'center' }} className='start'></Column>
                                 <Column
                                     field="name_ru"
                                     header="Название"
                                     style={{ width: '80%' }}
+                                    className='start'
                                     body={(rowData) => (
                                         <Link href={`/faculty/${rowData.id}`} key={rowData.id}>
                                             {rowData.name_ru}
