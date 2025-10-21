@@ -86,7 +86,7 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
             template: (
                 <div className="flex flex-col justify-center p-2 gap-1">
                     {notification?.length > 0 ? (
-                        notification?.map((item, idx) => {
+                        notification?.map((item) => {
                             return (
                                 <div key={item?.id} className="w-full cursor-pointer flex flex-col justify-center shadow p-2 gap-2">
                                     <div className="w-full flex justify-between">
@@ -99,7 +99,7 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                                         <span className="text-sm w-[13px] h-[13px] rounded-full bg-[var(--amberColor)]"></span>
                                     </div>
                                     <p className="m-0 text-[13px]">
-                                        {item?.from_user?.father_name} {item?.from_user?.name} {item?.from_user?.birth_date}
+                                        {item?.from_user?.father_name} {item?.from_user?.name}
                                     </p>
                                     <div className="w-full relative flex">
                                         <p className="absolute right-0 -top-3 text-[12px] m-0">{dateTime(item?.created_at)}</p>

@@ -34,10 +34,7 @@
 # Authorization: Bearer {{token}} 
 # Content-Type: application/json 
 
-GET https://api-dev.mooc.oshsu.kg/public/api/v1/notifications/read
+GET https://api-dev.mooc.oshsu.kg/public/api/v1/teacher/stream/unverified/practical/steps
 Authorization: Bearer {{token}} 
 Content-Type: application/json 
 
-{
-    "id": 1
-}

@@ -23,3 +23,17 @@ export const statusView = async (notification_id: number | null) => {
         return err;
     }
 };
+
+// un verifed tasks
+
+export const unVerifedSteps = async () => {
+    try {
+        const res = await axiosInstance.get(`/v1/teacher/stream/unverified/practical/steps`);
+        const data = await res.data;
+
+        return data;
+    } catch (err) {
+        console.log('Ошибка загрузки:', err);
+        return err;
+    }
+};

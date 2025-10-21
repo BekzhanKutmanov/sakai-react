@@ -52,7 +52,8 @@ const AppMenu = () => {
     const [editingLesson, setEditingLesson] = useState<{ title: string; sequence_number: number | null } | null>(null);
     const [themeValue, setThemeValue] = useState<{ title: string; sequence_number: number | null }>({ title: '', sequence_number: null });
     const [courseInfo, setCourseInfo] = useState<{ title: string } | null>(null);
-
+    const [forDepartamentLength, setForDepartamentLength] = useState(false);
+    
     const [themesStudentList, setThemesStudentList] = useState<{ key?: string; label: string; id: number; to: string; items?: AppMenuItem[] }[]>([]);
 
     const showError = useErrorMessage();
@@ -73,7 +74,8 @@ const AppMenu = () => {
                       items: courseList?.length > 0 ? courseList : []
                   }
               ]
-            : (user?.is_working && departament.info.length < 1 && pathname.startsWith('/course')) || pathname.startsWith('/students/') || pathname.startsWith('/pdf/') || pathname.startsWith('/videoInstruct/')
+            : 
+            !forDepartamentLength ? (user?.is_working && pathname.startsWith('/course')) || pathname.startsWith('/students/') || pathname.startsWith('/unVerifed') || pathname.startsWith('/pdf/') || pathname.startsWith('/videoInstruct/')
             ? [
                   {
                       // key: 'prev',
@@ -98,9 +100,14 @@ const AppMenu = () => {
                       label: 'Видеоинструкция',
                       icon: 'pi pi-fw pi-video',
                       to: '/videoInstruct'
+                  },
+                  {
+                      label: 'Непроверенные задания',
+                      icon: 'pi pi-fw pi-clock',
+                      to: '/unVerifed'
                   }
-              ]
-            : []
+              ] 
+            : [] : []
         : user?.is_student
         ? pathname.startsWith('/teaching/lessonView/')
             ? [
@@ -133,7 +140,7 @@ const AppMenu = () => {
         : [];
 
     const forDepartament =
-        !pathname.startsWith('/course/') && departament.info.length > 0 && !pathname.startsWith('/students/') && !pathname.startsWith('/pdf/')
+        forDepartamentLength ? !pathname.startsWith('/course/') && !pathname.startsWith('/students/') && !pathname.startsWith('/pdf/')
             ? [
                   {
                       // key: 'prev',
@@ -163,9 +170,14 @@ const AppMenu = () => {
                       label: 'Видеоинструкция',
                       icon: 'pi pi-fw pi-video',
                       to: '/videoInstruct'
+                  },
+                  {
+                      label: 'Непроверенные задания',
+                      icon: 'pi pi-fw pi-clock',
+                      to: '/unVerifed'
                   }
               ]
-            : [];
+            : [] : [];
 
     const model: AppMenuItem[] = [
         {
@@ -178,6 +190,7 @@ const AppMenu = () => {
             label: '  ',
             items: byStatus
         }
+
     ];
 
     const handleCourseInfo = async () => {
@@ -352,6 +365,19 @@ const AppMenu = () => {
             }
         }
     }, [contextNewStudentThemes, pathname]);
+
+    useEffect(()=> {
+        if(departament.info.length < 1){
+            setForDepartamentLength(false);
+        } else {
+            setForDepartamentLength(true);
+        }
+    },[departament, pathname]);
+
+    useEffect(()=> {
+        console.warn(forDepartamentLength);
+        
+    },[forDepartamentLength]);
 
     return (
         <MenuProvider>
