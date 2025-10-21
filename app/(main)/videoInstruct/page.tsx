@@ -1,14 +1,9 @@
 'use client';
 
-import { faPlay } from '@fortawesome/free-solid-svg-icons';
-
-import Image from 'next/image';
 import { useContext, useEffect, useState } from 'react';
-import { Dialog } from 'primereact/dialog';
-// import 'primereact/resources/themes/lara-light-blue/theme.css'; // или другая тема
+
 import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
-import MyFontAwesome from '../../components/MyFontAwesome';
 import useErrorMessage from '@/hooks/useErrorMessage';
 import { LayoutContext } from '@/layout/context/layoutcontext';
 import { useRouter } from 'next/navigation';

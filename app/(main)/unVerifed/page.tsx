@@ -1,5 +1,7 @@
 'use client';
 
+import { NotFound } from '@/app/components/NotFound';
+import GroupSkeleton from '@/app/components/skeleton/GroupSkeleton';
 import useErrorMessage from '@/hooks/useErrorMessage';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { LayoutContext } from '@/layout/context/layoutcontext';
@@ -15,6 +17,7 @@ export default function UnVerifed() {
     const { setMessage } = useContext(LayoutContext);
 
     const [skeleton, setSkeleton] = useState(false);
+    const [hasThemes, setHasThemes] = useState(false);
     const [tasks, setTasks] = useState<answerListType[] | null>(null);
 
     const fetchVerifedSteps = async () => {
@@ -23,11 +26,16 @@ export default function UnVerifed() {
 
         setSkeleton(true);
         if (data?.success) {
-            setTasks(data?.lists);
-            // setHasThemes(false);
+            if (data?.lists?.length < 1) {
+                setHasThemes(true);
+            } else {
+                setTasks(data?.lists);
+                setHasThemes(false);
+            }
+
             setSkeleton(false);
         } else {
-            // setHasThemes(true);
+            setHasThemes(true);
             setMessage({
                 state: true,
                 value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
@@ -73,35 +81,46 @@ export default function UnVerifed() {
 
     return (
         <div className="main-bg">
-            <h3 className="text-xl pb-1 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">Непроверенные практические задания</h3>
-            {tasks?.map((item) => {
-                return (
-                    <div key={item?.answer?.id}>
-                        <div key={item?.answer?.id} className="w-full flex flex-col justify-center shadow p-2 gap-2">
-                            <div className="w-full flex justify-between">
-                                <Link
-                                    className="cursor-pointer"
-                                    href={`/students/${item?.answer?.course_id}/${item?.connect_id}/${item?.answer?.id_stream}/${item?.answer?.student?.myedu_id}/${item?.answer?.lesson_id}/${item?.answer?.steps_id}`}
-                                >
-                                    <b className="text-[var(--mainColor)] underline">
-                                        {item?.answer?.student?.father_name} {item?.answer?.student?.name}
-                                    </b>
-                                </Link>
-                                <span className="text-sm w-[13px] h-[13px] rounded-full bg-[var(--amberColor)]"></span>
+            {hasThemes ? (
+                <NotFound titleMessage="Данных нет" />
+            ) : skeleton ? (
+                <div className="w-full"><GroupSkeleton count={2} size={{ width: '100%', height: '5rem' }} /></div>
+            ) : (
+                <>
+                    <h3 className="text-xl pb-1 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">Непроверенные практические задания</h3>
+                    {tasks?.map((item) => {
+                        return (
+                            <div key={item?.answer?.id}>
+                                <div key={item?.answer?.id} className="w-full flex flex-col justify-center shadow p-2 gap-2">
+                                    <div className="w-full flex justify-between">
+                                        <Link
+                                            className="cursor-pointer"
+                                            href={`/students/${item?.answer?.course_id}/${item?.connect_id}/${item?.answer?.id_stream}/${item?.answer?.student?.myedu_id}/${item?.answer?.lesson_id}/${item?.answer?.steps_id}`}
+                                        >
+                                            <b className="text-[var(--mainColor)] underline">
+                                                {item?.answer?.student?.father_name} {item?.answer?.student?.name}
+                                            </b>
+                                        </Link>
+                                        <span className="text-sm w-[13px] h-[13px] rounded-full bg-[var(--amberColor)]"></span>
+                                    </div>
+                                    <div className="flex items-center justify-between w-[85%]">
+                                        <p className="m-0 text-[13px]">Практическое задание</p>
+                                        <Link
+                                            href={`/students/${item?.answer?.course_id}/${item?.connect_id}/${item?.answer?.id_stream}/${item?.answer?.student?.myedu_id}/${item?.answer?.lesson_id}/${item?.answer?.steps_id}`}
+                                            className="cursor-pointer m-0 text-[13px] text-[var(--mainColor)] flex items-center gap-1"
+                                        >
+                                            <span className="text-[var(--mainColor)]">Перейти</span> <i className="pi pi-arrow-right text-[var(--mainColor)] text-sm"></i>
+                                        </Link>
+                                    </div>
+                                    <div className="w-full relative flex">
+                                        <p className="absolute right-0 -top-3 text-[12px] m-0">{dateTime(item?.answer?.created_at)}</p>
+                                    </div>
+                                </div>
                             </div>
-                            <div className='flex items-center justify-between w-[85%]'>
-                                <p className="m-0 text-[13px]">Практическое задание</p>
-                                <Link href={`/students/${item?.answer?.course_id}/${item?.connect_id}/${item?.answer?.id_stream}/${item?.answer?.student?.myedu_id}/${item?.answer?.lesson_id}/${item?.answer?.steps_id}`} className="cursor-pointer m-0 text-[13px] text-[var(--mainColor)] flex items-center gap-1">
-                                    <span className="text-[var(--mainColor)]">Перейти</span> <i className="pi pi-arrow-right text-[var(--mainColor)] text-sm"></i>
-                                </Link>
-                            </div>
-                            <div className="w-full relative flex">
-                                <p className="absolute right-0 -top-3 text-[12px] m-0">{dateTime(item?.answer?.created_at)}</p>
-                            </div>
-                        </div>
-                    </div>
-                );
-            })}
+                        );
+                    })}
+                </>
+            )}
         </div>
     );
 }
