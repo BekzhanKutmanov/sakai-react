@@ -8,9 +8,12 @@ import Link from 'next/link';
 import VideoPlay from './VideoPlay';
 import FancyLinkBtn from './buttons/FancyLinkBtn';
 import { LayoutContext } from '@/layout/context/layoutcontext';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 
 export default function HomeClient() {
     const { user, setGlobalLoading } = useContext(LayoutContext);
+
+    const media = useMediaQuery('(max-width: 640px)');
 
     useEffect(() => {
         setGlobalLoading(true);
@@ -60,9 +63,9 @@ export default function HomeClient() {
                                         <Link href={user.is_working ? '/course' : user.is_student ? '/teaching' : ''}>
                                             <FancyLinkBtn btnWidth={'200px'} backround={'--mainColor'} effectBg={'--titleColor'} title={user.is_working ? 'Преподаватель' : user.is_student ? 'Студент' : ''} />
                                         </Link>
-                                    ) : <Link href={'/auth/login'}>
+                                    ) : media ? <Link href={'/auth/login'}>
                                             <FancyLinkBtn btnWidth={'200px'} backround={'--mainColor'} effectBg={'--titleColor'} title={'Вход'} />
-                                        </Link>}
+                                        </Link> : ''}
                                 </div>
                             </div>
                         </div>

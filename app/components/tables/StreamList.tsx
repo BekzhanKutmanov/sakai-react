@@ -319,6 +319,8 @@ export default function StreamList({
                         <Column field="title" header="Период" body={(rowData) => <p key={rowData.id}>{rowData.period.name_ru}</p>}></Column>
 
                         <Column field="title" header="Семестр" body={(rowData) => <p key={rowData.id}>{rowData.semester.name_ru}</p>}></Column>
+                        
+                        <Column field="title" header="Форма обучения" body={(rowData) => <p key={rowData.id}>{rowData.edu_form.name_ru}</p>}></Column>
 
                         <Column field="title" header="Тип обучения" body={(rowData) => <p key={rowData.id}>{rowData.subject_type_name.short_name_ru}</p>}></Column>
 

@@ -92,7 +92,7 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                                     <div className="w-full flex justify-between">
                                         <Link
                                             onClick={() => setContextNotificationId(item?.id)}
-                                            className='cursor-pointer hover:underline'
+                                            className="cursor-pointer hover:underline"
                                             href={`/students/${item?.meta?.course_id}/${item?.meta?.connect_id}/${item?.meta?.stream_id}/${item?.meta?.student_id}/${item?.meta?.lesson_id}/${item?.meta?.step_id}`}
                                         >
                                             <b className="text-[var(--mainColor)]">{item?.type?.title}</b>
@@ -156,7 +156,6 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                       window.location.href = '/auth/login';
                   }
               },
-
         {
             label: 'Уведомление',
             icon: (
@@ -175,34 +174,34 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                     label: '',
                     template: (
                         // <div className='max-h-[100px] overflow-y-auto'>
-                            <div className="flex flex-col items-center max-h-[200px] overflow-y-auto p-2 gap-1"> 
-                                {notification?.length > 0 ? (
-                                    notification?.map((item) => {
-                                        return (
-                                            <div key={item?.id} className="w-full cursor-pointer flex flex-col justify-center shadow p-1 gap-1">
-                                                <div className="w-full flex justify-between">
-                                                    <Link
-                                                        onClick={() => setContextNotificationId(item?.id)}
-                                                        href={`/students/${item?.meta?.course_id}/${item?.meta?.connect_id}/${item?.meta?.stream_id}/${item?.meta?.student_id}/${item?.meta?.lesson_id}/${item?.meta?.step_id}`}
-                                                    >
-                                                        <b className="text-[var(--mainColor)] text-[12px]">{item?.type?.title}</b>
-                                                    </Link>
-                                                    <span className="text-sm w-[12px] h-[12px] text-[13px] rounded-full bg-[var(--amberColor)]"></span>
-                                                </div>
-                                                <p className="m-0 text-[11px]">
-                                                    {item?.from_user?.last_name} {item?.from_user?.name}
-                                                </p>
-                                                <div className="w-full relative flex">
-                                                    <p className="absolute right-0 -top-3 text-[10px] m-0">{dateTime(item?.created_at)}</p>
-                                                </div>
+                        <div className="flex flex-col items-center max-h-[200px] overflow-y-auto p-2 gap-1">
+                            {notification?.length > 0 ? (
+                                notification?.map((item) => {
+                                    return (
+                                        <div key={item?.id} className="w-full cursor-pointer flex flex-col justify-center shadow p-1 gap-1">
+                                            <div className="w-full flex justify-between">
+                                                <Link
+                                                    onClick={() => setContextNotificationId(item?.id)}
+                                                    href={`/students/${item?.meta?.course_id}/${item?.meta?.connect_id}/${item?.meta?.stream_id}/${item?.meta?.student_id}/${item?.meta?.lesson_id}/${item?.meta?.step_id}`}
+                                                >
+                                                    <b className="text-[var(--mainColor)] text-[12px]">{item?.type?.title}</b>
+                                                </Link>
+                                                <span className="text-sm w-[12px] h-[12px] text-[13px] rounded-full bg-[var(--amberColor)]"></span>
                                             </div>
-                                        );
-                                    })
-                                ) : (
-                                    <p className="text-center text-[12px]">Сообщений нет</p>
-                                )}
-                            </div>
-                        // </div>   
+                                            <p className="m-0 text-[11px]">
+                                                {item?.from_user?.last_name} {item?.from_user?.name}
+                                            </p>
+                                            <div className="w-full relative flex">
+                                                <p className="absolute right-0 -top-3 text-[10px] m-0">{dateTime(item?.created_at)}</p>
+                                            </div>
+                                        </div>
+                                    );
+                                })
+                            ) : (
+                                <p className="text-center text-[12px]">Сообщений нет</p>
+                            )}
+                        </div>
+                        // </div>
                     )
                 }
             ]
@@ -367,7 +366,32 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                     {media ? (
                         <div className="relative">
                             <div className="absolute w-[10px] h-[10px] right-[10px] top-[5px] bg-[var(--amberColor)] rounded-full"></div>
-                            <div className='max-h-[100px] overflow-hidden'><Tiered title={{ name: '', font: 'pi pi-ellipsis-v' }} insideColor={'--bodyColor'} items={user?.is_student ? mobileStudentMenu : user?.is_working ? mobileMenu : []} /></div>
+                            <div className="max-h-[100px] overflow-hidden">
+                                <Tiered
+                                    title={{ name: '', font: 'pi pi-ellipsis-v' }}
+                                    insideColor={'--bodyColor'}
+                                    items={
+                                        !user
+                                            ? [
+                                                  {
+                                                      label: 'Вход',
+                                                      icon: 'pi pi-sign-in',
+                                                      items: [],
+                                                      //   url: '/auth/login'
+                                                      command: () => {
+                                                          // router.push('/auth/login');
+                                                          window.location.href = '/auth/login';
+                                                      }
+                                                  }
+                                              ]
+                                            : user?.is_student
+                                            ? mobileStudentMenu
+                                            : user?.is_working
+                                            ? mobileMenu
+                                            : []
+                                    }
+                                />
+                            </div>
                         </div>
                     ) : (
                         <div className={`flex items-center gap-3 ${!media ? 'order-2' : 'order-3'} `}>
