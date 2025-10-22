@@ -1,6 +1,7 @@
 'use client';
 
 import LessonDocument from '@/app/components/lessons/LessonDocument';
+import LessonForum from '@/app/components/lessons/LessonForum';
 import LessonLink from '@/app/components/lessons/LessonLink';
 import LessonPractica from '@/app/components/lessons/LessonPractica';
 import LessonTest from '@/app/components/lessons/LessonTest';
@@ -129,11 +130,7 @@ export default function LessonStep() {
 
     const handleAddLesson = async (lessonId: number, typeId: number) => {
         setFormVisible(false);
-        const forSequence_number = lastStep && lastStep > 0 ? 
-            !sequence_number || sequence_number < 1 ? 
-                lastStep + 1
-                : sequence_number
-                : sequence_number
+        const forSequence_number = lastStep && lastStep > 0 ? (!sequence_number || sequence_number < 1 ? lastStep + 1 : sequence_number) : sequence_number;
 
         const data = await addLesson({ lesson_id: lessonId, type_id: typeId }, forSequence_number || 0);
         if (data.success) {
@@ -227,14 +224,13 @@ export default function LessonStep() {
     useEffect(() => {
         if (Array.isArray(steps) && steps.length > 0) {
             let max = 0;
-            steps?.forEach((item)=> {
-                if(item.step > max){
+            steps?.forEach((item) => {
+                if (item.step > max) {
                     max = item.step;
                 }
             });
 
-            console.log(max);
-            if(max){
+            if (max) {
                 setLastStep(max);
             }
 
@@ -621,6 +617,26 @@ export default function LessonStep() {
                             clearProp={hasSteps}
                         />
                     )}
+                    {element?.step.type.name === 'forum' && (
+                        <LessonLink
+                            element={element?.step}
+                            content={element?.content}
+                            fetchPropElement={(stepId) => {
+                                handleFetchElement(stepId);
+                                handleFetchSteps(lesson_id);
+                            }}
+                            clearProp={hasSteps}
+                        />
+                    )}
+                    <LessonForum
+                        element={element?.step}
+                        content={element?.content}
+                        fetchPropElement={(stepId) => {
+                            handleFetchElement(stepId);
+                            handleFetchSteps(lesson_id);
+                        }}
+                        clearProp={hasSteps}
+                    />
                 </>
             )}
 

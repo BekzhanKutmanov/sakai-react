@@ -56,11 +56,13 @@ export default function HomeClient() {
                                         <li>открытые онлайн-курсы</li>
                                         <li>программы высшего образования</li>
                                     </ul>
-                                    {user && (
+                                    {user ? (
                                         <Link href={user.is_working ? '/course' : user.is_student ? '/teaching' : ''}>
                                             <FancyLinkBtn btnWidth={'200px'} backround={'--mainColor'} effectBg={'--titleColor'} title={user.is_working ? 'Преподаватель' : user.is_student ? 'Студент' : ''} />
                                         </Link>
-                                    )}
+                                    ) : <Link href={'/auth/login'}>
+                                            <FancyLinkBtn btnWidth={'200px'} backround={'--mainColor'} effectBg={'--titleColor'} title={'Вход'} />
+                                        </Link>}
                                 </div>
                             </div>
                         </div>
