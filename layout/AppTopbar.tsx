@@ -202,7 +202,7 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                                     <p className="text-center text-[12px]">Сообщений нет</p>
                                 )}
                             </div>
-                        // </div>
+                        // </div>   
                     )
                 }
             ]

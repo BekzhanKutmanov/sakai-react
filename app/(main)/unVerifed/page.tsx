@@ -22,7 +22,6 @@ export default function UnVerifed() {
 
     const fetchVerifedSteps = async () => {
         const data = await unVerifedSteps();
-        console.log(data);
 
         setSkeleton(true);
         if (data?.success) {

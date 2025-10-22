@@ -374,11 +374,6 @@ const AppMenu = () => {
         }
     },[departament, pathname]);
 
-    useEffect(()=> {
-        console.warn(forDepartamentLength);
-        
-    },[forDepartamentLength]);
-
     return (
         <MenuProvider>
             <FormModal

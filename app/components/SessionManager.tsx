@@ -16,8 +16,6 @@ const SessionManager = () => {
 
     useEffect(() => {
         const init = async () => {
-            console.log(user);
-            
             console.log('проверяем токен...');
             const token = getToken('access_token');
             if (token) {
