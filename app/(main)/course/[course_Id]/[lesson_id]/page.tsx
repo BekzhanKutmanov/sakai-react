@@ -628,7 +628,7 @@ export default function LessonStep() {
                             clearProp={hasSteps}
                         />
                     )}
-                    <LessonForum
+                    {/* <LessonForum
                         element={element?.step}
                         content={element?.content}
                         fetchPropElement={(stepId) => {
@@ -636,7 +636,7 @@ export default function LessonStep() {
                             handleFetchSteps(lesson_id);
                         }}
                         clearProp={hasSteps}
-                    />
+                    /> */}
                 </>
             )}
 
