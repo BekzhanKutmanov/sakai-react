@@ -85,7 +85,7 @@ input[type="password"]::-ms-clear {
 }
 
 .scrollbar-thin::-webkit-scrollbar {
-  height: 0px;
+  height: 4px;
 }
 
 .scrollbar-thin::-webkit-scrollbar-track {
@@ -433,8 +433,40 @@ input[type="password"]::-ms-clear {
   animation: shadowSkale 2s ease-in infinite;
 }
 
-.right-shadow{
-  box-shadow: inset -18px 0px 9px -10px rgba(0, 0, 0, 0.1);
+.right-shadow {
+  box-shadow: inset -30px 0px 20px -10px rgba(0, 0, 0, 0.1);
+}
+
+.right-arrow-animate-1 {
+  animation: arrow-right-1 .5s infinite linear;
+}
+
+.right-arrow-animate-2 {
+  animation: arrow-right-2 .5s infinite linear;
+}
+
+@keyframes arrow-right-1 {
+  0% {
+    opacity: 0;
+  } 
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes arrow-right-2 {
+  0% {
+    opacity: 0;
+  } 
+  50%{
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
 }
 
 .my-border-top {

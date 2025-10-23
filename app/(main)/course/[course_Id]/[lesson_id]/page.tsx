@@ -17,9 +17,11 @@ import { mainStepsType } from '@/types/mainStepType';
 import { getConfirmOptions } from '@/utils/getConfirmOptions';
 import { useParams, usePathname, useRouter } from 'next/navigation';
 import { Button } from 'primereact/button';
+import { Carousel, CarouselResponsiveOption } from 'primereact/carousel';
 import { confirmDialog } from 'primereact/confirmdialog';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
+import { Tag } from 'primereact/tag';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 
 export default function LessonStep() {
@@ -50,6 +52,29 @@ export default function LessonStep() {
     const [wasCreated, setWasCreated] = useState(false);
     const [newStepId, setNewStepId] = useState<number | null>(null);
     const [lastStep, setLastStep] = useState<number | null>(null);
+
+    const responsiveOptions: CarouselResponsiveOption[] = [
+        {
+            breakpoint: '1400px',
+            numVisible: 2,
+            numScroll: 1
+        },
+        {
+            breakpoint: '1199px',
+            numVisible: 3,
+            numScroll: 1
+        },
+        {
+            breakpoint: '767px',
+            numVisible: 2,
+            numScroll: 1
+        },
+        {
+            breakpoint: '575px',
+            numVisible: 1,
+            numScroll: 1
+        }
+    ];
 
     const changeUrl = (lessonId: number | null) => {
         router.replace(`/course/${course_id}/${lessonId ? lessonId : null}`);
@@ -519,14 +544,16 @@ export default function LessonStep() {
                         <div onClick={handleFetchTypes} className="cursor-pointer w-[54px] h-[54px] sm:w-[54px] sm:h-[54px] rounded animate-step"></div>
                     </div>
                 ) : (
-                    <div ref={scrollRef} className={`flex gap-2 max-w-[550px] sm:max-w-[800px] overflow-x-auto scrollbar-thin ${media ? (steps.length >= 6 ? 'right-shadow' : '') : steps.length >= 12 ? 'right-shadow' : ''}`}>
-                        {steps.map((item, idx) => {
-                            return (
-                                <div key={item.id} className="flex flex-col items-center">
-                                    {step(item, item.type.logo, item.id, idx)}
-                                </div>
-                            );
-                        })}
+                    <div className="flex items-center relative max-w-[550px] sm:max-w-[800px] overflow-x-auto scrollbar-thin">
+                        <div ref={scrollRef} className={`flex gap-2 max-w-[550px] sm:max-w-[800px] overflow-x-auto scrollbar-thin ${media ? (steps.length >= 6 ? 'right-shadow' : '') : steps.length >= 12 ? 'right-shadow' : ''}`}>
+                            {steps.map((item, idx) => {
+                                return (
+                                    <div key={item.id} className="flex flex-col items-center">
+                                        {step(item, item.type.logo, item.id, idx)}
+                                    </div>
+                                );
+                            })}
+                        </div>
                     </div>
                 )}
 
@@ -536,7 +563,7 @@ export default function LessonStep() {
                     ) : (
                         <button
                             onClick={handleFetchTypes}
-                            className="stepElement pi pi-plus text-xl sm:text-2xl text-white cursor-pointer border rounded flex justify-center items-center bg-[var(--mainColor)] hover:bg-[var(--mainBorder)] transition"
+                            className="stepElement pi pi-plus text-xl mb-1 sm:text-2xl text-white cursor-pointer border rounded flex justify-center items-center bg-[var(--mainColor)] hover:bg-[var(--mainBorder)] transition"
                         ></button>
                     )}
                 </div>
