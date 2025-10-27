@@ -15,3 +15,12 @@
 .p-menuitem-active > .p-submenu-list {
   padding: 0 !important;
 }
+
+/* В вашем глобальном или локальном CSS-файле */
+.p-accordion .p-accordion-header .p-accordion-toggle-icon {
+    display: none !important; /* Скрыть иконку */
+}
+/* Возможно, также потребуется скорректировать отступ, если он остается */
+.p-accordion .p-accordion-header-link {
+    padding-left: 1rem; /* Пример: добавьте padding, если он пропал из-за иконки */
+}

@@ -553,10 +553,18 @@ input[type="password"]::-ms-clear {
   padding: 15px;
 }
 
+.stepAi {
+  padding: 13px;
+}
+
 @media screen and (max-width: 640px) {
   .stepElement {
     padding: 10px;
-}
+  }
+
+  .stepAi {
+    padding: 8px;
+  }
 }
 
 .tab-custom-text{

@@ -183,7 +183,7 @@ export default function LessonInfoCard({
     };
 
     const linkCard = (
-        <div className="w-full flex justify-between  flex-col sm:flex-row">
+        <div className="w-full flex justify-between flex-col sm:flex-row">
             <div className="w-full flex items-start sm:items-center gap-2 py-1">
                 <div className="p-2 bg-[var(--greenColor)] w-[36px] h-[36px] flex justify-center items-center rounded">
                     <i className={`${icon} text-white`}></i>

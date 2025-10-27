@@ -10,7 +10,7 @@ import { useContext, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { NotFound } from '../NotFound';
 import LessonCard from '../cards/LessonCard';
-import { addDocument, addLink, addPractica, deleteDocument, deleteLink, deletePractica, fetchElement, stepSequenceUpdate, updateDocument, updateLink, updatePractica } from '@/services/steps';
+import { addDocument, addForum, addLink, addPractica, deleteDocument, deleteForum, deleteLink, deletePractica, fetchElement, stepSequenceUpdate, updateDocument, updateForum, updateLink, updatePractica } from '@/services/steps';
 import { mainStepsType } from '@/types/mainStepType';
 import useErrorMessage from '@/hooks/useErrorMessage';
 import { LayoutContext } from '@/layout/context/layoutcontext';
@@ -109,9 +109,9 @@ export default function LessonForum({ element, content, fetchPropElement, clearP
         }
     };
 
-    const handleAddLink = async () => {
+    const handleAddForum = async () => {
         toggleSpinner();
-        const data = await addLink(forumValue, element.lesson_id, element.type_id, element.id);
+        const data = await addForum(forumValue?.title, element.lesson_id, element.type_id, element.id);
         if (data.success) {
             fetchPropElement(element.id);
             setMessage({
@@ -131,7 +131,9 @@ export default function LessonForum({ element, content, fetchPropElement, clearP
 
     // delete forum
     const handleDeleteForum = async (id: number) => {
-        const data = await deleteLink(Number(forum?.lesson_id), id, element.type.id, element.id);
+        console.log('he he ');
+        
+        const data = await deleteForum(Number(forum?.lesson_id), id, element.type.id, element.id);
         if (data.success) {
             fetchPropElement(element.id);
             setMessage({
@@ -152,7 +154,7 @@ export default function LessonForum({ element, content, fetchPropElement, clearP
     // update forum
     const handleUpdateForum = async () => {
         setSkeleton(true);
-        const data = await updateLink(editingLesson, forum?.lesson_id ? Number(forum?.lesson_id) : null, Number(selectId), element.type.id, element.id);
+        const data = await updateForum(editingLesson?.title, forum?.lesson_id ? Number(forum?.lesson_id) : null, content?.id, element.type.id, element.id);
 
         const steps: { id: number; step: number | null }[] = [{ id: element?.id, step: editingLesson?.stepPos || 0 }];
         const secuence = await stepSequenceUpdate(forum?.lesson_id ? Number(forum?.lesson_id) : null, steps);
@@ -181,7 +183,6 @@ export default function LessonForum({ element, content, fetchPropElement, clearP
     const forumSection = () => {
         return (
             <div className="py-1 sm:py-3 flex flex-col items-center gap-4">
-                
                 {contentShow ? (
                     <div className="w-full flex flex-col items-center gap-4 py-2">
                         <div className="w-full flex flex-wrap gap-4">
@@ -197,7 +198,7 @@ export default function LessonForum({ element, content, fetchPropElement, clearP
                                         status="working"
                                         onSelected={(id: number, type: string) => selectedForEditing(id, type)}
                                         onDelete={(id: number) => handleDeleteForum(id)}
-                                        cardValue={{ title: forum?.title, id: forum.id, desctiption: forum?.description || '', type: 'forum', url: forum.url, document: forum.document }}
+                                        cardValue={{ title: forum?.title, id: content?.id, type: 'forum' }}
                                         cardBg={'#ddc4f51a'}
                                         type={{ typeValue: 'forum', icon: 'pi pi-link' }}
                                         typeColor={'var(--mainColor)'}
@@ -205,7 +206,6 @@ export default function LessonForum({ element, content, fetchPropElement, clearP
                                         urlForPDF={() => {}}
                                         urlForDownload={''}
                                     />
-
                                 )
                             )}
                         </div>
@@ -216,7 +216,7 @@ export default function LessonForum({ element, content, fetchPropElement, clearP
                             <InputText
                                 id="title"
                                 type="text"
-                                placeholder={'Название'}
+                                placeholder={'Название темы для обсуждения'}
                                 className="w-full"
                                 value={forumValue.title}
                                 onChange={(e) => {
@@ -226,6 +226,10 @@ export default function LessonForum({ element, content, fetchPropElement, clearP
                             />
                             <b style={{ color: 'red', fontSize: '12px' }}>{errors.title?.message}</b>
                         </div>
+                        <div className="w-full flex gap-1 justify-center items-center mt-4 sm:m-0">
+                            <Button label="Сохранить" disabled={progressSpinner || !forumValue.title.length || !!errors.title} onClick={() => handleAddForum()} />
+                            {progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}
+                        </div>
                     </div>
                 )}
             </div>
@@ -233,6 +237,8 @@ export default function LessonForum({ element, content, fetchPropElement, clearP
     };
 
     useEffect(() => {
+        console.log(content);
+        
         if (content) {
             setContentShow(true);
             setForum(content);
@@ -247,7 +253,7 @@ export default function LessonForum({ element, content, fetchPropElement, clearP
 
     return (
         <div>
-            <FormModal title={'Обновить урок'} fetchValue={() => handleUpdateForum()} clearValues={clearValues} visible={visible} setVisible={setVisisble} start={false} footerValue={{ footerState: true, reject: 'Назад', next: 'Сохранить' }}>
+            <FormModal title={'Обновить форум'} fetchValue={() => handleUpdateForum()} clearValues={clearValues} visible={visible} setVisible={setVisisble} start={false} footerValue={{ footerState: true, reject: 'Назад', next: 'Сохранить' }}>
                 <div className="flex flex-col gap-1">
                     <div className="w-full flex flex-col">
                         <span>Позиция шага:</span>
@@ -266,23 +272,10 @@ export default function LessonForum({ element, content, fetchPropElement, clearP
                             }}
                         />
                     </div>
-                    <div className="w-full flex flex-col items-center">
-                        <InputText
-                            id="usefulLink"
-                            type="url"
-                            placeholder={'Загрузить ссылку'}
-                            value={editingLesson.url}
-                            className="w-full"
-                            onChange={(e) => {
-                                setEditingLesson((prev) => ({ ...prev, url: e.target.value }));
-                                setValue('usefulLink', e.target.value, { shouldValidate: true });
-                            }}
-                        />
-                        <b style={{ color: 'red', fontSize: '12px' }}>{errors.usefulLink?.message}</b>
-                    </div>
+
                     <InputText
                         id="title"
-                        type="text"
+                        type="text" 
                         placeholder={'Название'}
                         value={editingLesson.title}
                         onChange={(e) => {
@@ -291,16 +284,6 @@ export default function LessonForum({ element, content, fetchPropElement, clearP
                         }}
                     />
                     <b style={{ color: 'red', fontSize: '12px' }}>{errors.title?.message}</b>
-                    {additional.link && <InputText placeholder="Описание" value={editingLesson.description} onChange={(e) => setEditingLesson((prev) => ({ ...prev, description: e.target.value }))} className="w-full" />}
-
-                    <div className="flex relative">
-                        {/* <Button disabled={!!errors.title || !editingLesson.file} label="Сохранить" onClick={handleAddDoc} /> */}
-                        <div className="absolute">
-                            <span className="cursor-pointer ml-1 text-[13px] sm:text-sm text-[var(--mainColor)]" onClick={() => setAdditional((prev) => ({ ...prev, link: !prev.link }))}>
-                                Дополнительно {additional.link ? '-' : '+'}
-                            </span>
-                        </div>
-                    </div>
                 </div>
             </FormModal>
             {!clearProp && forumSection()}

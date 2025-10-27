@@ -140,7 +140,9 @@ export default function LessonCard({
                         ) : (
                             type.typeValue === 'link' && (
                                 <>
-                                    <Link href={cardValue?.url ? cardValue?.url : '#'} target='_blanc' className="flex break-words">{shortUrl}</Link>
+                                    <Link href={cardValue?.url ? cardValue?.url : '#'} target="_blanc" className="flex break-words">
+                                        {shortUrl}
+                                    </Link>
                                 </>
                             )
                         )}
@@ -160,7 +162,9 @@ export default function LessonCard({
                             </div>
                         )}
                         <div className={`flex items-center text-sm w-full break-words`}>
-                            {type.typeValue === 'practica' ? cardValue?.desctiption && <div className='w-full break-words' dangerouslySetInnerHTML={{ __html: cardValue.desctiption }} /> : cardValue?.desctiption && cardValue?.desctiption !== 'null' && <div className='w-full break-words'>{cardValue.desctiption}</div>}
+                            {type.typeValue === 'practica'
+                                ? cardValue?.desctiption && <div className="w-full break-words" dangerouslySetInnerHTML={{ __html: cardValue.desctiption }} />
+                                : cardValue?.desctiption && cardValue?.desctiption !== 'null' && <div className="w-full break-words">{cardValue.desctiption}</div>}
                         </div>
                     </div>
                     {/* video preview */}
@@ -217,9 +221,13 @@ export default function LessonCard({
                                     )}
                                     {status === 'working' && (
                                         <div className="flex items-center">
-                                            <div className="flex gap-2">
+                                            <div className="flex gap-2 items-center">
+                                                {type.typeValue === 'forum' && (
+                                                    <Link href={'/students/forum'}>
+                                                        <Button icon={'pi pi-comments'} />
+                                                    </Link>
+                                                )}
                                                 <Button
-                                                    className=""
                                                     icon={'pi pi-pencil'}
                                                     label={!media ? 'Редактировать' : ''}
                                                     onClick={() => {

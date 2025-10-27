@@ -283,6 +283,22 @@ export default function StudentInfoCard({
         </div>
     );
 
+    const forumCard = (
+        <div className="w-full flex items-center flex-col sm:flex-row py-1">
+            <div className="w-full flex items-center gap-2">
+                <div className="p-2 bg-[#6099a8] min-w-[38px] w-[38px] min-h-[38px] h-[38px] flex justify-center items-center rounded">
+                    <i className={`${icon} text-white`}></i>
+                </div>
+                <div className="flex flex-col justify-center gap-1 max-w-[1000px]">
+                    <Link href={`/students/forum`} className="cursor-pointer max-w-[1000px] text-[14px] sm:text-[16px] hover:underline">
+                        Оставьте отзыв или задайте вопрос по материалам урока
+                    </Link>
+                </div>
+            </div>
+            <div className="flex justify-end"></div>
+        </div>
+    );
+
     return (
         <div className="w-full">
             <Dialog
@@ -312,6 +328,7 @@ export default function StudentInfoCard({
             <div className="flex items-center">{type === 'video' && videoCard}</div>
             <div className="flex items-center">{type === 'test' && testCard}</div>
             <div className="flex items-center">{type === 'practical' && practicaCard}</div>
+            <div className="flex items-center">{type === 'forum' && forumCard}</div>
         </div>
     );
 }

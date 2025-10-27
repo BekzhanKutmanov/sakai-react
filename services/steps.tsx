@@ -107,8 +107,8 @@ export const updateDocument = async (token: string | null, lesson_id: number | n
     formData.append('type_id', String(type_id));
     formData.append('step_id', String(step_id));
     formData.append('lesson_id', String(lesson_id));
-    if(value.file){
-        formData.append('document', value.file)
+    if (value.file) {
+        formData.append('document', value.file);
     } else {
         formData.append('document', '');
     }
@@ -243,7 +243,7 @@ export const addTest = async (answers: { text: string; is_correct: boolean }[], 
     }
 };
 
-export const updateTest = async (answers: { text: string; is_correct: boolean; }[], title: string, lesson_id: number, test_id: number, type_id: number, step_id: number, score: number) => {
+export const updateTest = async (answers: { text: string; is_correct: boolean }[], title: string, lesson_id: number, test_id: number, type_id: number, step_id: number, score: number) => {
     url = `/v1/teacher/test/update`;
 
     const payload = {
@@ -283,7 +283,7 @@ export const deleteTest = async (lesson_id: number, test_id: number, type_id: nu
 };
 
 // practica
-export const addPractica = async (value: { url: string | null; title: string; description: string | null; document: File | null, score: number | null }, lesson_id: number, type_id: number, step_id: number) => {
+export const addPractica = async (value: { url: string | null; title: string; description: string | null; document: File | null; score: number | null }, lesson_id: number, type_id: number, step_id: number) => {
     console.log(value);
 
     const formData = new FormData();
@@ -312,7 +312,7 @@ export const addPractica = async (value: { url: string | null; title: string; de
     }
 };
 
-export const updatePractica = async (value: { url: string | null; title: string; description: string | null; document: File | null , score: number | null}, lesson_id: number | null, practice_id: number, type_id: number, step_id: number) => {
+export const updatePractica = async (value: { url: string | null; title: string; description: string | null; document: File | null; score: number | null }, lesson_id: number | null, practice_id: number, type_id: number, step_id: number) => {
     let formData = new FormData();
     url = `/v1/teacher/practice-lesson/update?lesson_id=${lesson_id}&title=${value.title}&description=${value.description}&url=${value.url}&document=${value.document}&score=${value.score}&practice_id=${practice_id}&video_type_id=${type_id}&step_id=${step_id}`;
     formData.append('type_id', String(type_id));
@@ -378,7 +378,7 @@ export const addLink = async (value: { url: string; title: string; description: 
     }
 };
 
-export const deleteLink = async (lesson_id: number, link_id: number, type_id: number, step_id: number) => {   
+export const deleteLink = async (lesson_id: number, link_id: number, type_id: number, step_id: number) => {
     try {
         const res = await axiosInstance.delete(`/v1/teacher/usefullinks/delete?lesson_id=${lesson_id}&link_id=${link_id}&step_id=${step_id}&type_id=${type_id}`);
 
@@ -416,6 +416,63 @@ export const updateLink = async (value: { url: string | null; title: string; des
     }
 };
 
+export const addForum = async (title: string, lesson_id: number, type_id: number, step_id: number) => {
+    const formData = new FormData();
+    formData.append('lesson_id', String(lesson_id));
+    formData.append('type_id', String(type_id));
+    formData.append('step_id', String(step_id));
+    formData.append('title', String(title));
+
+    try {
+        const res = await axiosInstance.post(`/v1/teacher/forum/store`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        });
+
+        return res.data;
+    } catch (err) {
+        console.log('Ошибка при добавлении курса', err);
+        return err;
+    }
+};
+
+export const updateForum = async (title: string, lesson_id: number | null, forum_id: number, type_id: number, step_id: number) => {
+    let formData = new FormData();
+    url = `/v1/teacher/forum/update?lesson_id=${lesson_id}&title=${title}&forum_id=${forum_id}&type_id=${type_id}&step_id=${step_id}`;
+    formData.append('type_id', String(type_id));
+    formData.append('step_id', String(step_id));
+    formData.append('lesson_id', String(lesson_id));
+    formData.append('forum_id', String(forum_id));
+    formData.append('title', String(title));
+
+    try {
+        const res = await axiosInstance.post(url, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        });
+
+        const data = await res.data;
+        return data;
+    } catch (err) {
+        console.log('Ошибка при обновлении форума', err);
+        return err;
+    }
+};
+
+export const deleteForum = async (lesson_id: number, forum_d: number, type_id: number, step_id: number) => {
+    try {
+        const res = await axiosInstance.delete(`/v1/teacher/forum/destroy?lesson_id=${lesson_id}&forum_id=${forum_d}&step_id=${step_id}&type_id=${type_id}`);
+
+        const data = await res.data;
+        return data;
+    } catch (err) {
+        console.log('Ошибка при удалении темы', err);
+        return err;
+    }
+};
+
 export const fetchDepartamentSteps = async (lesson_id: number, id_kafedra: number) => {
     try {
         const res = await axiosInstance.get(`/v1/teacher/controls/department/course/views?lesson_id=${lesson_id}&id_kafedra=${id_kafedra}`);
@@ -427,7 +484,6 @@ export const fetchDepartamentSteps = async (lesson_id: number, id_kafedra: numbe
         return err;
     }
 };
-
 
 export const fetchDepartamenCourses = async (id_kafedra: number, myedu_id: number) => {
     try {
@@ -441,7 +497,7 @@ export const fetchDepartamenCourses = async (id_kafedra: number, myedu_id: numbe
     }
 };
 
-export const stepSequenceUpdate = async (lesson_id: number | null, steps: {id: number | null; step: number | null}[]) => {
+export const stepSequenceUpdate = async (lesson_id: number | null, steps: { id: number | null; step: number | null }[]) => {
     const body = {
         lesson_id: lesson_id,
         steps: steps

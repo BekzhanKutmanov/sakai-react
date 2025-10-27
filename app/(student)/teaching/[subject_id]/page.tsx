@@ -8,6 +8,7 @@ import useErrorMessage from '@/hooks/useErrorMessage';
 import { LayoutContext } from '@/layout/context/layoutcontext';
 import { fetchItemsLessons, fetchMainLesson, fetchSubjects } from '@/services/studentMain';
 import { lessonType } from '@/types/lessonType';
+import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { Accordion, AccordionTab, AccordionTabChangeEvent } from 'primereact/accordion';
 import { ProgressSpinner } from 'primereact/progressspinner';
@@ -250,8 +251,20 @@ export default function StudentLesson() {
                             <div>
                                 <Accordion key={`${course.id}`} activeIndex={activeIndexes[course.id]} onTabChange={(e) => handleTabChange(course.id, e)} multiple={false} expandIcon="" collapseIcon="">
                                     {course.lessons.map((lesson) => {
-                                        const steps = lesson.steps && lesson.steps?.length > 0;
-                                        const newLesson = lesson?.steps?.filter((content) => content.content);
+                                        const contentPresence = lesson?.steps?.filter((content) => content.content);
+                                        // console.warn(newLesson);
+                                        const sortedSteps = contentPresence?.sort((a, b) => {
+                                            const isAForum = a?.type?.name === 'forum';
+                                            const isBForum = b?.type?.name === 'forum';
+
+                                            if (isAForum && !isBForum) {
+                                                return 1; // 'a' (форум) идет после 'b'
+                                            }
+                                            if (!isAForum && isBForum) {
+                                                return -1; // 'b' (форум) идет после 'a'
+                                            }
+                                            return 0; // Сохраняем относительный порядок
+                                        });
 
                                         return (
                                             <AccordionTab header={'Тема: ' + lesson.title} key={lesson.id} className="w-full p-accordion" style={{ width: '100%', backgroundColor: 'white' }}>
@@ -259,10 +272,10 @@ export default function StudentLesson() {
                                                     {/* Используем lesson.steps, который был обновлен в handleTabChange */}
                                                     {lesson?.isLoadingSteps ? (
                                                         <ProgressSpinner style={{ width: '50px', height: '50px' }} />
-                                                    ) : newLesson && newLesson?.length > 0 ? (
-                                                        newLesson.map(
+                                                    ) : sortedSteps && sortedSteps?.length > 0 ? (
+                                                        sortedSteps.map(
                                                             (item: { id: number; chills: boolean; type: { name: string; logo: string }; content: { title: string; description: string; url: string; document: string; document_path: string } }, idx) => {
-                                                                if (item.content == null) {
+                                                                if (item.content == null || item.type?.name === 'forum') {
                                                                     return null;
                                                                 }
 
