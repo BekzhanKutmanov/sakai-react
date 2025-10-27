@@ -563,7 +563,7 @@ export default function LessonStep() {
                     ) : (
                         <button
                             onClick={handleFetchTypes}
-                            className="stepElement pi pi-plus text-xl mb-1 sm:text-2xl text-white cursor-pointer border rounded flex justify-center items-center bg-[var(--mainColor)] hover:bg-[var(--mainBorder)] transition"
+                            className={`stepElement pi pi-plus text-xl ${media ? steps?.length >= 6 && 'mb-1' : steps?.length >= 12 && 'mb-1'} sm:text-2xl text-white cursor-pointer border rounded flex justify-center items-center bg-[var(--mainColor)] hover:bg-[var(--mainBorder)] transition`}
                         ></button>
                     )}
                 </div>
@@ -670,7 +670,7 @@ export default function LessonStep() {
             <div className="flex justify-end mt-1">
                 <Button
                     icon={'pi pi-trash'}
-                    label="Удалить шаг"
+                    label="Удалить шаг" 
                     disabled={hasSteps}
                     className="hover:bg-[var(--mainBorder)] transition trash-button"
                     onClick={() => {

@@ -212,20 +212,6 @@ export default function LessonForum({ element, content, fetchPropElement, clearP
                     </div>
                 ) : (
                     <div className="w-full flex flex-col justify-center gap-2">
-                        <div className="w-full flex flex-col items-center">
-                            <InputText
-                                id="usefulLink"
-                                type="url"
-                                placeholder={'Загрузить ссылку'}
-                                value={forumValue.url}
-                                className="w-full"
-                                onChange={(e) => {
-                                    setForumValue((prev) => ({ ...prev, url: e.target.value }));
-                                    setValue('usefulLink', e.target.value, { shouldValidate: true });
-                                }}
-                            />
-                            <b style={{ color: 'red', fontSize: '12px' }}>{errors.usefulLink?.message}</b>
-                        </div>
                         <div>
                             <InputText
                                 id="title"
@@ -239,20 +225,6 @@ export default function LessonForum({ element, content, fetchPropElement, clearP
                                 }}
                             />
                             <b style={{ color: 'red', fontSize: '12px' }}>{errors.title?.message}</b>
-                        </div>
-                        {additional.link && <InputText placeholder="Описание" value={forumValue.description} onChange={(e) => setForumValue((prev) => ({ ...prev, description: e.target.value }))} className="w-full" />}
-
-                        <div className="flex relative">
-                            {/* <Button disabled={!!errors.title || !docValue.file} label="Сактоо" onClick={handleAddDoc} /> */}
-                            <div className="absolute">
-                                <span className="cursor-pointer ml-1 text-[13px] sm:text-sm text-[var(--mainColor)]" onClick={() => setAdditional((prev) => ({ ...prev, link: !prev.link }))}>
-                                    Дополнительно {additional.link ? '-' : '+'}
-                                </span>
-                            </div>
-                            <div className="w-full flex gap-1 justify-center items-center mt-4 sm:m-0">
-                                <Button label="Сохранить" disabled={progressSpinner || !forumValue.title.length || !!errors.title || !forumValue.url.length} onClick={() => handleAddLink()} />
-                                {progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}
-                            </div>
                         </div>
                     </div>
                 )}
