@@ -18,6 +18,7 @@ import { InputTextarea } from 'primereact/inputtextarea';
 import { testType } from '@/types/testType';
 import GroupSkeleton from '../skeleton/GroupSkeleton';
 import { Dialog } from 'primereact/dialog';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 
 export default function LessonTest({
     preparation,
@@ -44,6 +45,7 @@ export default function LessonTest({
 }) {
     const showError = useErrorMessage();
     const { setMessage } = useContext(LayoutContext);
+    const media = useMediaQuery('(max-width: 640px)');
 
     const [editingLesson, setEditingLesson] = useState<{ title: string; score: number; stepPos?: number } | null>({ title: '', score: 0 });
     const [visible, setVisisble] = useState(false);
@@ -234,12 +236,6 @@ export default function LessonTest({
         }
     };
 
-    // const preparation = () => {
-    //     setPreparationVisible(true);
-    //                             console.log(steps);
-
-    // };
-
     const aiOptionsSection = () => {
         return (
             <div className="flex flex-col gap-2">
@@ -259,8 +255,6 @@ export default function LessonTest({
 
                             <div className="w-full flex flex-col gap-1">
                                 {item?.answers?.map((opt) => {
-                                    console.log(opt);
-
                                     return (
                                         <div key={opt?.id}>
                                             <label className="custom-radio opacity-[60%]">
@@ -281,6 +275,12 @@ export default function LessonTest({
                                     onClick={() => {
                                         setTestValue((prev) => ({ ...prev, title: item?.content, score: item?.score }));
                                         setAnswer(item.answers);
+                                        const correctIndex = item.answers?.findIndex((answer) => answer?.is_correct);
+
+                                        if (correctIndex !== -1) {
+                                            // findIndex возвращает -1, если элемент не найден
+                                            setTestChecked({ check: true, idx: correctIndex });
+                                        }
                                         aiTestSet();
                                     }}
                                 />
@@ -291,10 +291,6 @@ export default function LessonTest({
             </div>
         );
     };
-
-    useEffect(() => {
-        console.log(testValue);
-    }, [testValue]);
 
     const optionAddBtn = answer.length > 2 && answer[answer.length - 1].text.length < 1;
     const testSection = () => {
@@ -313,7 +309,22 @@ export default function LessonTest({
                                 className="flex flex-col gap-2 items-center"
                             >
                                 <b>Далее вам будет предложено несколько вариантов теста</b>
-                                <div className="lesson-card-border shadow rounded p-2 onDropAnimate flex gap-1 items-center"><i className='pi pi-file-export'></i> <span>Перетащите документ сюда</span></div>
+                                {media ? (
+                                    forAiTestId ? (
+                                        <Button icon="pi pi-play" iconPos="right" size="small" onClick={handleDrop}>
+                                            Начать генерацию
+                                        </Button>
+                                    ) : (
+                                        <div className="lesson-card-border shadow rounded p-1 text-sm flex gap-1 items-center">
+                                            <i className="pi pi-file-export"></i>
+                                            <span>Выберите документ из списка</span>
+                                        </div>
+                                    )
+                                ) : (
+                                    <div className="lesson-card-border shadow rounded p-2 onDropAnimate flex gap-1 items-center">
+                                        <i className="pi pi-file-export"></i> <span>Перетащите документ сюда</span>
+                                    </div>
+                                )}
                                 <Button icon="pi pi-play" iconPos="right" size="small" onClick={handleDrop}>
                                     Начать генерацию без документа
                                 </Button>
@@ -457,31 +468,6 @@ export default function LessonTest({
 
     return (
         <div>
-            <Dialog
-                header={'Создание теста с ИИ'}
-                visible={preparationVisible}
-                className="w-[90%] sm:w-[400px]"
-                onHide={() => {
-                    if (!preparationVisible) return;
-                    setPreparationVisible(false);
-                }}
-            >
-                <div className="flex flex-col gap-1">
-                    {skeleton ? (
-                        <GroupSkeleton count={1} size={{ width: '100%', height: '5rem' }} />
-                    ) : (
-                        <div className="w-full flex flex-col mt-1">
-                            {/* {steps?.map((item)=>{
-                                
-                                return <div key={item?.id}>
-
-                                </div>
-                            })} */}
-                        </div>
-                    )}
-                </div>
-            </Dialog>
-
             <FormModal
                 title={'Обновить урок'}
                 fetchValue={() => {
@@ -494,13 +480,13 @@ export default function LessonTest({
                 footerValue={{ footerState: true, reject: 'Назад', next: 'Сохранить' }}
             >
                 <div className="flex flex-col gap-1">
-                    <div className="w-[90%] m-auto lesson-card-border flex flex-col gap-2 sm:items-center shadow rounded p-1 sm:p-2">
+                    <div className="w-full lesson-card-border flex flex-col gap-2 sm:items-center shadow rounded p-1 sm:p-2">
                         <div className="w-full flex flex-col">
                             <span>Позиция шага:</span>
                             <InputText
                                 type="number"
                                 value={String(editingLesson?.stepPos) || ''}
-                                className="w-full p-1"
+                                className="sm:w-full p-1"
                                 onChange={(e) => {
                                     setEditingLesson(
                                         (prev) =>

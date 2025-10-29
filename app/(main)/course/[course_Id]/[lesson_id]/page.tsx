@@ -464,59 +464,18 @@ export default function LessonStep() {
         });
     };
 
-    const Confirm = () => (
-        <>
-            <ConfirmDialog
-                group="headless"
-                content={({ headerRef, contentRef, footerRef, hide, message }) => (
-                    <div className="flex flex-column align-items-center p-5 surface-overlay border-round" style={{ backgroundColor: 'white' }}>
-                        <div className="border-circle bg-[var(--mainColor)] text-white inline-flex justify-content-center align-items-center h-6rem w-6rem -mt-8">
-                            <i className="pi pi-question text-5xl"></i>
-                        </div>
-                        <p className="mb-0">{message.message}</p>
-                        <div className="flex align-items-center gap-2 mt-4">
-                            <Button
-                                label="Создать с ИИ"
-                                onClick={(event) => {
-                                    hide(event);
-                                    setFormVisible(false);
-                                    accept();
-                                }}
-                                size="small"
-                                className="w-8rem text-sm"
-                            ></Button>
-                            <Button
-                                label="В ручную"
-                                outlined
-                                onClick={(event) => {
-                                    hide(event);
-                                    if (lastTestStepId) {
-                                        handleAddLesson(Number(lesson_id), lastTestStepId);
-                                    } else {
-                                        setMessage({
-                                            state: true,
-                                            value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
-                                        });
-                                    }
-                                    // reject();
-                                }}
-                                size="small"
-                                className="w-8rem text-sm text-white"
-                            ></Button>
-                        </div>
-                    </div>
-                )}
-            />
-        </>
-    );
 
     const step = (item: mainStepsType, icon: string, step: number, idx: number) => {
         return (
             <div
                 className="cursor-pointer flex flex-col items-center"
                 onClick={() => {
-                    setSelectId(step);
-                    handleFetchElement(step);
+                    if(toggleDragSteps){
+                        setDraggedId(item?.id);
+                    } else {
+                        setSelectId(step);
+                        handleFetchElement(step);
+                    }
                 }}
             >
                 <span className="flex gap-1 items-center">
@@ -623,7 +582,6 @@ export default function LessonStep() {
                 </div>
             </Dialog>
 
-            <Confirm />
             {/* info section */}
             {lessonInfo}
 
@@ -668,7 +626,7 @@ export default function LessonStep() {
                             <div ref={scrollRef} className={`flex gap-2 max-w-[550px] sm:max-w-[800px] overflow-x-auto scrollbar-thin ${media ? (steps.length >= 6 ? 'right-shadow' : '') : steps.length >= 12 ? 'right-shadow' : ''}`}>
                                 {steps.map((item, idx) => {
                                     return (
-                                        <div key={item.id} className="flex flex-col items-center" draggable onDragStart={() => handleDragStart(item.id)}>
+                                        <div key={item.id} className="flex flex-col items-center">
                                             {step(item, item.type.logo, item.id, idx)}
                                         </div>
                                     );

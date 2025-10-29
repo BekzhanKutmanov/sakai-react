@@ -540,7 +540,7 @@ export default function LessonInfoCard({
                                                         </div>
                                                     </div>
 
-                                                    <div className='flex flex-col gap-1'>
+                                                    {/* <div className='flex flex-col gap-1'>
                                                         <b className="text-sm">Оставьте комментарий студенту (необязательно)</b>
                                                         <div className="w-full flex items-center gap-1">
                                                             <InputText
@@ -559,7 +559,7 @@ export default function LessonInfoCard({
                                                                 }}
                                                             />
                                                         </div>
-                                                    </div>
+                                                    </div> */}
                                                 </div>
                                             )}
                                         </div>
