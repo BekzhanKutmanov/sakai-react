@@ -154,10 +154,7 @@ export default function StudentCheck() {
             lessons.forEach((item, idx)=> {
                 if(item?.is_opened){
                     setActiveIndex(idx);
-                    console.warn('опен есть ',idx )
                     return null;
-                } else {
-                    console.warn('опен нет');
                 }
             });
         }

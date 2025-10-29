@@ -18,7 +18,7 @@
 
 /* В вашем глобальном или локальном CSS-файле */
 .p-accordion .p-accordion-header .p-accordion-toggle-icon {
-    display: none !important; /* Скрыть иконку */
+    display: none !important; 
 }
 /* Возможно, также потребуется скорректировать отступ, если он остается */
 .p-accordion .p-accordion-header-link {

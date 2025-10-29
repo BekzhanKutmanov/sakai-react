@@ -9,7 +9,7 @@ import { useContext, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { NotFound } from '../NotFound';
 import LessonCard from '../cards/LessonCard';
-import { addDocument, addTest, deleteDocument, deleteTest, fetchElement, stepSequenceUpdate, updateDocument, updateTest } from '@/services/steps';
+import { addDocument, addTest, deleteDocument, deleteTest, fetchElement, generageQuiz, stepSequenceUpdate, updateDocument, updateTest } from '@/services/steps';
 import { mainStepsType } from '@/types/mainStepType';
 import useErrorMessage from '@/hooks/useErrorMessage';
 import { LayoutContext } from '@/layout/context/layoutcontext';
@@ -17,12 +17,35 @@ import FormModal from '../popUp/FormModal';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { testType } from '@/types/testType';
 import GroupSkeleton from '../skeleton/GroupSkeleton';
+import { Dialog } from 'primereact/dialog';
 
-export default function LessonTest({ element, content, fetchPropElement, fetchPropThemes, clearProp }: { element: mainStepsType; content: any; fetchPropElement: (id: number) => void; fetchPropThemes: () => void; clearProp: boolean }) {
+export default function LessonTest({
+    preparation,
+    aiTestStat,
+    aiTestSet,
+    forAiTestId,
+    aiTestSteps,
+    element,
+    content,
+    fetchPropElement,
+    fetchPropThemes,
+    clearProp
+}: {
+    preparation: () => void;
+    aiTestStat: boolean;
+    aiTestSet: () => void;
+    forAiTestId: number | string;
+    aiTestSteps: mainStepsType[];
+    element: mainStepsType;
+    content: any;
+    fetchPropElement: (id: number) => void;
+    fetchPropThemes: () => void;
+    clearProp: boolean;
+}) {
     const showError = useErrorMessage();
     const { setMessage } = useContext(LayoutContext);
 
-    const [editingLesson, setEditingLesson] = useState<{ title: string; score: number, stepPos?: number } | null>({ title: '', score: 0 });
+    const [editingLesson, setEditingLesson] = useState<{ title: string; score: number; stepPos?: number } | null>({ title: '', score: 0 });
     const [visible, setVisisble] = useState(false);
     const [contentShow, setContentShow] = useState(false);
     // doc
@@ -31,6 +54,7 @@ export default function LessonTest({ element, content, fetchPropElement, fetchPr
         { text: '', is_correct: false, id: null }
     ]);
     const [test, setTests] = useState<testType>({ answers: [{ id: null, text: '', is_correct: false }], id: null, content: '', score: 0, image: null, title: '', created_at: '' });
+    const [aiOptions, setAiOptions] = useState<testType[]>([]);
     const [testValue, setTestValue] = useState<{ title: string; score: number }>({ title: '', score: 0 });
     const [testShow, setTestShow] = useState<boolean>(false);
 
@@ -38,6 +62,7 @@ export default function LessonTest({ element, content, fetchPropElement, fetchPr
     const [testChecked, setTestChecked] = useState<{ idx: null | number; check: boolean }>({ idx: null, check: false });
     const [selectId, setSelectId] = useState<number | null>(null);
     const [skeleton, setSkeleton] = useState(false);
+    const [preparationVisible, setPreparationVisible] = useState(false);
 
     const clearValues = () => {
         setTestValue({ title: '', score: 0 });
@@ -124,12 +149,12 @@ export default function LessonTest({ element, content, fetchPropElement, fetchPr
     };
 
     // update test
-    const handleUpdateTest = async () => {        
+    const handleUpdateTest = async () => {
         setSkeleton(true);
         const data = await updateTest(answer, editingLesson?.title || '', element.lesson_id, Number(selectId), element.type.id, element.id, editingLesson?.score || 0);
         const steps: { id: number; step: number | null }[] = [{ id: element?.id, step: editingLesson?.stepPos || 0 }];
         const secuence = await stepSequenceUpdate(content?.lesson_id ? Number(content?.lesson_id) : null, steps);
-        
+
         if (data?.success && secuence.success) {
             setSkeleton(false);
             fetchPropElement(element.id);
@@ -189,11 +214,120 @@ export default function LessonTest({ element, content, fetchPropElement, fetchPr
         }
     };
 
+    const handleDrop = async () => {
+        setProgressSpinner(true);
+        console.log('Был перетащен элемент с id:', forAiTestId);
+        const data = await generageQuiz(element?.lesson_id && Number(element?.lesson_id), forAiTestId);
+        console.log(data);
+        if (data.status === 'success') {
+            setProgressSpinner(false);
+            setAiOptions(data?.quiz?.questions);
+        } else {
+            setProgressSpinner(false);
+            setMessage({
+                state: true,
+                value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
+            });
+            if (data?.response?.status) {
+                showError(data.response.status);
+            }
+        }
+    };
+
+    // const preparation = () => {
+    //     setPreparationVisible(true);
+    //                             console.log(steps);
+
+    // };
+
+    const aiOptionsSection = () => {
+        return (
+            <div className="flex flex-col gap-2">
+                <h3 className="text-lg text-center">Выберите один тест для дальнейшей работы </h3>
+                {aiOptions?.map((item) => {
+                    console.log(item);
+
+                    return (
+                        <div key={item?.id} className="lesson-card-border shadow rounded p-2">
+                            <div className="flex items-start justify-between gap-2">
+                                <b className="text-[14px] sm:text-[16px]">{item?.content}</b>
+                                <div className="flex items-center justify-start gap-1">
+                                    <span className="text-[var(--mainColor)]">Балл: </span>
+                                    <b className="text-[16px]">{`${item?.score}`}</b>
+                                </div>
+                            </div>
+
+                            <div className="w-full flex flex-col gap-1">
+                                {item?.answers?.map((opt) => {
+                                    console.log(opt);
+
+                                    return (
+                                        <div key={opt?.id}>
+                                            <label className="custom-radio opacity-[60%]">
+                                                <input disabled type="radio" checked={opt.is_correct} />
+                                                <span className="radio-mark min-w-[18px]"></span>
+                                                <span>{opt?.text}</span>
+                                            </label>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+
+                            <div className="flex justify-end">
+                                <Button
+                                    label="Выбрать и редактировать"
+                                    size="small"
+                                    className="text-sm"
+                                    onClick={() => {
+                                        setTestValue((prev) => ({ ...prev, title: item?.content, score: item?.score }));
+                                        setAnswer(item.answers);
+                                        aiTestSet();
+                                    }}
+                                />
+                            </div>
+                        </div>
+                    );
+                })}
+            </div>
+        );
+    };
+
+    useEffect(() => {
+        console.log(testValue);
+    }, [testValue]);
+
     const optionAddBtn = answer.length > 2 && answer[answer.length - 1].text.length < 1;
     const testSection = () => {
         return (
             <div className="py-1 sm:py-3 flex flex-col items-center gap-4">
-                {contentShow ? (
+                {aiTestStat ? (
+                    <div className="">
+                        {aiOptions && aiOptions?.length > 0 ? (
+                            aiOptionsSection()
+                        ) : progressSpinner ? (
+                            <ProgressSpinner className="max-w-[50px] sm:max-w-[70px]" />
+                        ) : aiTestSteps?.length > 0 ? (
+                            <div
+                                onDrop={handleDrop}
+                                onDragOver={(e) => e.preventDefault()} // обязательно!
+                                className="flex flex-col gap-2 items-center"
+                            >
+                                <b>Далее вам будет предложено несколько вариантов теста</b>
+                                <div className="lesson-card-border shadow rounded p-2 onDropAnimate flex gap-1 items-center"><i className='pi pi-file-export'></i> <span>Перетащите документ сюда</span></div>
+                                <Button icon="pi pi-play" iconPos="right" size="small" onClick={handleDrop}>
+                                    Начать генерацию без документа
+                                </Button>
+                            </div>
+                        ) : (
+                            <div className="flex flex-col gap-2 items-center lesson-card-border shadow rounded p-3">
+                                <b>Далее вам будет предложено несколько вариантов теста</b>
+                                <Button icon="pi pi-play" iconPos="right" size="small" onClick={handleDrop}>
+                                    Начать генерацию
+                                </Button>
+                            </div>
+                        )}
+                    </div>
+                ) : contentShow ? (
                     <div className="w-full flex flex-col items-center gap-4 py-2">
                         <div className="w-full flex flex-wrap gap-4">
                             {testShow ? (
@@ -228,8 +362,8 @@ export default function LessonTest({ element, content, fetchPropElement, fetchPr
                 ) : (
                     <div className="w-full flex flex-col justify-center gap-2 my-2">
                         <div className="lesson-card-border shadow rounded p-2">
-                            <div className="w-[99%] sm:w-[90%]  m-auto  flex flex-col gap-2 sm:items-center  p-1 sm:p-2">
-                                <div className="w-full flex items-center gap-1">
+                            <div className="w-[99%] sm:w-[90%] flex flex-col gap-2 sm:items-center  p-1 sm:p-2">
+                                <div className="w-full flex items-start gap-1">
                                     <div className="w-full">
                                         <InputTextarea
                                             id="title"
@@ -283,8 +417,10 @@ export default function LessonTest({ element, content, fetchPropElement, fetchPr
                                             </div>
                                         );
                                     })}
-
-                                    <Button label="Добавить вариант" onClick={addOption} disabled={optionAddBtn} icon="pi pi-plus" className="p-1 ml-4" style={{ fontSize: '14px' }} />
+                                    <div className="w-full flex gap-3 items-end sm:items-center flex-col sm:flex-row">
+                                        <Button label="Добавить вариант" onClick={addOption} disabled={optionAddBtn} icon="pi pi-plus" className="sm:ml-4 text-sm" size="small" />
+                                        <Button label="Создать с ИИ" size="small" className="text-sm" icon="pi pi-microchip-ai" onClick={preparation} />
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -292,7 +428,7 @@ export default function LessonTest({ element, content, fetchPropElement, fetchPr
                             <div className="w-full flex gap-1 justify-center items-center">
                                 <Button
                                     label="Сохранить"
-                                    disabled={progressSpinner || !testValue.title.length || !!errors.title || !testChecked.check}
+                                    disabled={progressSpinner || !testValue.title?.length || !!errors.title || !testChecked.check}
                                     onClick={() => {
                                         handleAddTest();
                                     }}
@@ -321,6 +457,31 @@ export default function LessonTest({ element, content, fetchPropElement, fetchPr
 
     return (
         <div>
+            <Dialog
+                header={'Создание теста с ИИ'}
+                visible={preparationVisible}
+                className="w-[90%] sm:w-[400px]"
+                onHide={() => {
+                    if (!preparationVisible) return;
+                    setPreparationVisible(false);
+                }}
+            >
+                <div className="flex flex-col gap-1">
+                    {skeleton ? (
+                        <GroupSkeleton count={1} size={{ width: '100%', height: '5rem' }} />
+                    ) : (
+                        <div className="w-full flex flex-col mt-1">
+                            {/* {steps?.map((item)=>{
+                                
+                                return <div key={item?.id}>
+
+                                </div>
+                            })} */}
+                        </div>
+                    )}
+                </div>
+            </Dialog>
+
             <FormModal
                 title={'Обновить урок'}
                 fetchValue={() => {
@@ -351,7 +512,7 @@ export default function LessonTest({ element, content, fetchPropElement, fetchPr
                                 }}
                             />
                         </div>
-                        <div className="w-full flex items-center gap-1">
+                        <div className="w-full flex items-start gap-1">
                             <div className="w-full">
                                 <InputTextarea
                                     id="title"

@@ -251,7 +251,7 @@ export default function StudentLesson() {
                             <div>
                                 <Accordion key={`${course.id}`} activeIndex={activeIndexes[course.id]} onTabChange={(e) => handleTabChange(course.id, e)} multiple={false} expandIcon="" collapseIcon="">
                                     {course.lessons.map((lesson) => {
-                                        const contentPresence = lesson?.steps?.filter((content) => content.content);
+                                        const contentPresence = lesson?.steps?.filter((content) => content.content && content?.type?.name !== 'forum');
                                         // console.warn(newLesson);
                                         const sortedSteps = contentPresence?.sort((a, b) => {
                                             const isAForum = a?.type?.name === 'forum';

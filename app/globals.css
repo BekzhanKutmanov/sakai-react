@@ -426,6 +426,10 @@ input[type="password"]::-ms-clear {
   min-width: 25px !important; /* даже при 1% будет видно кусочек */
 }
 
+.surface-overlay {
+  background-color: #fff !important;
+}
+
 /* prototype effect */
 .shadowAnimate {
   box-shadow: 1px 1px 6px 1px ;
@@ -482,6 +486,19 @@ input[type="password"]::-ms-clear {
   }
   100%{
       box-shadow: 1px 1px 6px 1px ;
+  }
+}
+
+.onDropAnimate {
+  animation: onDrop 3s ease-in-out infinite;
+  border: solid 2px var(--greenBgColor);
+}
+
+@keyframes onDrop {
+  0% {
+    border: solid 2px var(--amberColor);
+  } 100% {
+    border: solid 2px var(--greenBgColor);
   }
 }
 
@@ -956,12 +973,13 @@ input[type="password"]::-ms-clear {
   box-shadow: 0 8px 22px rgba(16,24,40,1.14), 0 0 0 4px rgba(38,194,129,1.12);
 }
 
-.stf__block{
-  /* height: 70% !important; */
-}
-
 .fill_modal {
   background-color: #cacaca;
+}
+
+.send-rotate {
+  transform: rotate(180deg);
+  background-color: red;
 }
 
 /* маленькая адаптация */

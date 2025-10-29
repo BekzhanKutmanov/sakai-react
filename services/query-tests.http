@@ -1,4 +1,4 @@
-@token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2FwaS5teWVkdS5vc2hzdS5rZy9wdWJsaWMvYXBpL21vb2MvbG9naW4iLCJpYXQiOjE3NjA2ODI5MDYsImV4cCI6MTc2MDcxMTc2NiwibmJmIjoxNzYwNjgyOTA2LCJqdGkiOiJTM3RLckpqODZOT215VjZtIiwic3ViIjoiNDY0NTYiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.F8g9HTxOm1MXjAlRQXKxzPygxQ3jlaQOhhjZeqCUGTo
+@token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2FwaS5teWVkdS5vc2hzdS5rZy9wdWJsaWMvYXBpL21vb2MvbG9naW4iLCJpYXQiOjE3NjE2NDA2OTMsImV4cCI6MTc2MTY2OTU1MywibmJmIjoxNzYxNjQwNjkzLCJqdGkiOiJ3UXNzYlNIM3htbFNzSXd6Iiwic3ViIjoiNDY0NTYiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.mBYAXzy89MrhdLt75lfXKh5RG2JoVLHVz7reXKsHf2I
 # ###
 
 # http://api.mooc.oshsu.kg/public/api/v1/open/video/types
@@ -34,7 +34,11 @@
 # Authorization: Bearer {{token}} 
 # Content-Type: application/json 
 
-GET https://api-dev.mooc.oshsu.kg/public/api/v1/teacher/stream/unverified/practical/steps
+GET https://api-dev.mooc.oshsu.kg/public/api/v1/teacher/lessons/generate-quiz?step_id=81&lesson_id=96
 Authorization: Bearer {{token}} 
 Content-Type: application/json 
 
+{
+    "step_id" : 81,
+    "lesson_id" : 96
+}

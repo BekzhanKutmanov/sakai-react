@@ -47,7 +47,7 @@ export default function UnVerifed() {
     };
 
     const dateTime = (createdAt: string | null) => {
-        const invalidDate = <div>---</div>;
+        const invalidDate = <span>---</span>;
         if (tasks && createdAt) {
             const dateObject = new Date(createdAt);
             if (dateObject) {
@@ -62,7 +62,7 @@ export default function UnVerifed() {
                 const formattedString = dateObject.toLocaleString('ru-RU', options);
                 const result = formattedString?.replace(/,/g, '');
                 if (formattedString) {
-                    return <div>{result}</div>;
+                    return <span>{result}</span>;
                 } else {
                     return invalidDate;
                 }

@@ -15,13 +15,12 @@ import { fetchCourseInfo, fetchLessonShow } from '@/services/courses';
 import { addLesson, deleteStep, fetchElement, fetchSteps, fetchTypes } from '@/services/steps';
 import { mainStepsType } from '@/types/mainStepType';
 import { getConfirmOptions } from '@/utils/getConfirmOptions';
-import { useParams, usePathname, useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { Button } from 'primereact/button';
-import { Carousel, CarouselResponsiveOption } from 'primereact/carousel';
-import { confirmDialog } from 'primereact/confirmdialog';
+import { CarouselResponsiveOption } from 'primereact/carousel';
+import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
-import { Tag } from 'primereact/tag';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 
 export default function LessonStep() {
@@ -32,6 +31,7 @@ export default function LessonStep() {
     const prevLessonsRef = useRef<Array<{ id: number; title: string }> | null>(null);
     const prevStepsRef = useRef<mainStepsType[]>([]);
 
+    const [courseInfo, setCourseInfo] = useState<{ title: string } | null>(null);
     const [lessonInfoState, setLessonInfoState] = useState<{ title: string; documents_count: string; usefullinks_count: string; videos_count: string } | null>(null);
     const media = useMediaQuery('(max-width: 640px)');
     const { setMessage, contextFetchThemes, contextThemes, setContextThemes, setDeleteQuery, deleteQuery, updateQuery, setUpdateeQuery } = useContext(LayoutContext);
@@ -40,54 +40,34 @@ export default function LessonStep() {
     const [formVisible, setFormVisible] = useState(false);
     const [types, setTypes] = useState<{ id: number; title: string; name: string; logo: string }[]>([]);
     const [steps, setSteps] = useState<mainStepsType[]>([]);
-    const [courseInfo, setCourseInfo] = useState<{ title: string } | null>(null);
     const [element, setElement] = useState<{ content: any | null; step: mainStepsType } | null>(null);
     const [selectedId, setSelectId] = useState<number | null>(null);
     const [hasSteps, setHasSteps] = useState(false);
     const [themeNull, setThemeNull] = useState(false);
-    const [themeContent, setThemeContent] = useState(false);
     const [lesson_id, setLesson_id] = useState<number | null>(null);
     const [sequence_number, setSequence_number] = useState<number | null>(null);
     const [skeleton, setSkeleton] = useState(false);
     const [wasCreated, setWasCreated] = useState(false);
-    const [newStepId, setNewStepId] = useState<number | null>(null);
     const [lastStep, setLastStep] = useState<number | null>(null);
-
-    const responsiveOptions: CarouselResponsiveOption[] = [
-        {
-            breakpoint: '1400px',
-            numVisible: 2,
-            numScroll: 1
-        },
-        {
-            breakpoint: '1199px',
-            numVisible: 3,
-            numScroll: 1
-        },
-        {
-            breakpoint: '767px',
-            numVisible: 2,
-            numScroll: 1
-        },
-        {
-            breakpoint: '575px',
-            numVisible: 1,
-            numScroll: 1
-        }
-    ];
+    const [lastTestStepId, setLastTestStepId] = useState<number | null>(null);
+    const [draggedId, setDraggedId] = useState<number | string>('');
+    const [toggleDragSteps, setToggleDragSteps] = useState<boolean>(false);
+    const [documentSteps, setDocumentSteps] = useState<mainStepsType[]>([]);
 
     const changeUrl = (lessonId: number | null) => {
         router.replace(`/course/${course_id}/${lessonId ? lessonId : null}`);
     };
 
-    // const handleCourseInfo = async () => {
-    //     setSkeleton(true);
-    //     const data = await fetchCourseInfo(Number(course_id));
-    //     if (data && data?.success) {
-    //         setSkeleton(false);
-    //         setCourseInfo(data.course);
-    //     }
-    // };
+    const handleCourseInfo = async () => {
+        setSkeleton(true);
+        const data = await fetchCourseInfo(Number(course_id));
+        console.log(data);
+
+        if (data && data?.success) {
+            setSkeleton(false);
+            setCourseInfo(data.course);
+        }
+    };
 
     const handleShow = async (LessonId: number | null) => {
         setSkeleton(true);
@@ -302,6 +282,7 @@ export default function LessonStep() {
     }, [steps]);
 
     useEffect(() => {
+        handleCourseInfo();
         if (lesson_id) {
             handleShow(lesson_id);
             changeUrl(lesson_id);
@@ -465,11 +446,69 @@ export default function LessonStep() {
         </div>
     );
 
-    const test = () => {
-        console.log(steps);
-        const documents = steps?.filter((item)=> item.type.name === 'document' && item.content?.content);
-        console.log(documents);
-    }
+    const accept = () => {
+        console.log(courseInfo, lessonInfoState, steps);
+    };
+
+    // const reject = () => {};
+
+    const confirm1 = () => {
+        confirmDialog({
+            group: 'headless',
+            message: 'Выберите метод создания теста',
+            header: '',
+            icon: 'pi pi-exclamation-triangle',
+            defaultFocus: 'accept',
+            accept
+            // reject
+        });
+    };
+
+    const Confirm = () => (
+        <>
+            <ConfirmDialog
+                group="headless"
+                content={({ headerRef, contentRef, footerRef, hide, message }) => (
+                    <div className="flex flex-column align-items-center p-5 surface-overlay border-round" style={{ backgroundColor: 'white' }}>
+                        <div className="border-circle bg-[var(--mainColor)] text-white inline-flex justify-content-center align-items-center h-6rem w-6rem -mt-8">
+                            <i className="pi pi-question text-5xl"></i>
+                        </div>
+                        <p className="mb-0">{message.message}</p>
+                        <div className="flex align-items-center gap-2 mt-4">
+                            <Button
+                                label="Создать с ИИ"
+                                onClick={(event) => {
+                                    hide(event);
+                                    setFormVisible(false);
+                                    accept();
+                                }}
+                                size="small"
+                                className="w-8rem text-sm"
+                            ></Button>
+                            <Button
+                                label="В ручную"
+                                outlined
+                                onClick={(event) => {
+                                    hide(event);
+                                    if (lastTestStepId) {
+                                        handleAddLesson(Number(lesson_id), lastTestStepId);
+                                    } else {
+                                        setMessage({
+                                            state: true,
+                                            value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
+                                        });
+                                    }
+                                    // reject();
+                                }}
+                                size="small"
+                                className="w-8rem text-sm text-white"
+                            ></Button>
+                        </div>
+                    </div>
+                )}
+            />
+        </>
+    );
 
     const step = (item: mainStepsType, icon: string, step: number, idx: number) => {
         return (
@@ -480,8 +519,8 @@ export default function LessonStep() {
                     handleFetchElement(step);
                 }}
             >
-                <span>
-                    <span className="text-sm">{idx + 1} </span>
+                <span className="flex gap-1 items-center">
+                    <span className="text-[13px] sm:text-sm">{idx + 1} </span>
                     {item?.type?.name === 'practical' || item?.type?.name === 'test' ? (
                         <span title={`${item.score} балл`} className="text-[11px]">
                             ({item.score})
@@ -498,10 +537,29 @@ export default function LessonStep() {
         );
     };
 
+    const handleDragStart = (id: number | string) => {
+        console.log('Перетаскивается элемент с id:', id);
+        // здесь можно, например, сохранить id в состояние
+        setDraggedId(id);
+    };
+
+    const handlePreparation = (steps: mainStepsType[]) => {
+        const forSteps = steps?.filter((item) => item?.type?.name === 'document' && item?.id_parent);
+        if (forSteps && forSteps?.length > 0) {
+            setToggleDragSteps(true);
+            setDocumentSteps(forSteps);
+            return true;
+        } else {
+            setToggleDragSteps(true);
+            setDocumentSteps([]);
+            return true;
+        }
+    };
+
     if (themeNull) {
         return (
             <div>
-                <NotFound titleMessage="Темы отсутствует" />
+                <NotFound titleMessage="Темы отсутствуют" />
             </div>
         );
     }
@@ -538,12 +596,22 @@ export default function LessonStep() {
                                 if(item?.name === 'forum'){
                                     return null;
                                 }
-                                
+
                                 return (
-                                    <React.Fragment key={item.id}>
+                                    <React.Fragment key={item?.id}>
                                         <div className="flex-1 py-2 px-2 shadow flex gap-1 items-center">
-                                            <i className={`${item.logo}`}></i>
-                                            <b className="cursor-pointer" onClick={() => handleAddLesson(Number(lesson_id), item.id)}>
+                                            <i className={`${item?.logo}`}></i>
+                                            <b
+                                                className="cursor-pointer"
+                                                onClick={() => {
+                                                    // if (item?.name === 'test') {
+                                                    //     confirm1();
+                                                    //     setLastTestStepId(item?.id);
+                                                    // } else {
+                                                    handleAddLesson(Number(lesson_id), item?.id);
+                                                    // }
+                                                }}
+                                            >
                                                 {item.title}
                                             </b>
                                         </div>
@@ -555,6 +623,7 @@ export default function LessonStep() {
                 </div>
             </Dialog>
 
+            <Confirm />
             {/* info section */}
             {lessonInfo}
 
@@ -566,15 +635,46 @@ export default function LessonStep() {
                     </div>
                 ) : (
                     <div className="flex items-center relative max-w-[550px] sm:max-w-[800px] overflow-x-auto scrollbar-thin">
-                        <div ref={scrollRef} className={`flex gap-2 max-w-[550px] sm:max-w-[800px] overflow-x-auto scrollbar-thin ${media ? (steps.length >= 6 ? 'right-shadow' : '') : steps.length >= 12 ? 'right-shadow' : ''}`}>
-                            {steps.map((item, idx) => {
-                                return (
-                                    <div key={item.id} className="flex flex-col items-center">
-                                        {step(item, item.type.logo, item.id, idx)}
+                        {toggleDragSteps ? (
+                            <div className="flex flex-col gap-2 items-start">
+                                <div className='flex flex-col gap-2'>
+                                    <div className='flex flex-col sm:flex-row gap-2 items-start sm:items-center '>
+                                        <b className="pi pi-times cursor-pointer sm:text-xl text-[var(--mainColor)]" onClick={() => setToggleDragSteps(false)}></b>
+                                        <div className="flex items-center gap-1">
+                                            <b className="">Тест генерируется искусственным интеллектом</b>
+                                            <i className="pi pi-microchip-ai text-xl"></i>
+                                        </div>
                                     </div>
-                                );
-                            })}
-                        </div>
+                                    <div className="flex items-center gap-2">
+                                        <span className='text-sm text-black'>Варианты тестов будут более продуманными если передать ваш документ <span className='opacity-60 text-[13px]'>(необязательно)</span></span>
+                                        {/* <span className="text-[13px]">Кол-о документов: {documentSteps?.length || 0}</span> */}
+                                    </div>
+                                </div>
+                                {documentSteps?.length > 0 && (
+                                    <div ref={scrollRef} className={`flex gap-2 max-w-[550px] sm:max-w-[800px] overflow-x-auto scrollbar-thin ${media ? (steps.length >= 6 ? 'right-shadow' : '') : steps.length >= 12 ? 'right-shadow' : ''}`}>
+                                        {documentSteps?.map((item, idx) => {
+                                            return (
+                                                <div key={item.id}>
+                                                    <div className="flex flex-col items-center" draggable onDragStart={() => handleDragStart(item.id)}>
+                                                        {step(item, item.type.logo, item.id, idx)}
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                )}
+                            </div>
+                        ) : (
+                            <div ref={scrollRef} className={`flex gap-2 max-w-[550px] sm:max-w-[800px] overflow-x-auto scrollbar-thin ${media ? (steps.length >= 6 ? 'right-shadow' : '') : steps.length >= 12 ? 'right-shadow' : ''}`}>
+                                {steps.map((item, idx) => {
+                                    return (
+                                        <div key={item.id} className="flex flex-col items-center" draggable onDragStart={() => handleDragStart(item.id)}>
+                                            {step(item, item.type.logo, item.id, idx)}
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        )}
                     </div>
                 )}
 
@@ -582,29 +682,16 @@ export default function LessonStep() {
                     {skeleton ? (
                         <GroupSkeleton count={1} size={{ width: '47px', height: '3rem' }} />
                     ) : (
-                        <button
-                            onClick={handleFetchTypes}
-                            className={`stepElement pi pi-plus text-xl ${
-                                media ? steps?.length >= 6 && 'mb-1' : steps?.length >= 12 && 'mb-1'
-                            } sm:text-2xl text-white cursor-pointer border rounded flex justify-center items-center bg-[var(--mainColor)] hover:bg-[var(--mainBorder)] transition`}
-                        ></button>
+                        !toggleDragSteps && (
+                            <button
+                                onClick={handleFetchTypes}
+                                className={`stepElement pi pi-plus text-xl ${
+                                    media ? steps?.length >= 6 && 'mb-1' : steps?.length >= 12 && 'mb-1'
+                                } sm:text-2xl text-white cursor-pointer border rounded flex justify-center items-center bg-[var(--mainColor)] hover:bg-[var(--mainBorder)] transition`}
+                            ></button>
+                        )
                     )}
                 </div>
-
-                {/* <input type="text" /> */}
-
-                {/* <div className="flex items-center gap-1">
-                    {skeleton ? (
-                        <GroupSkeleton count={1} size={{ width: '47px', height: '3rem' }} />
-                    ) : (
-                        <button
-                            onClick={test}
-                            className={`stepAi text-md ${
-                                media ? steps?.length >= 6 && 'mb-1' : steps?.length >= 12 && 'mb-1'
-                            } sm:text-xl text-white cursor-pointer border rounded flex justify-center items-center bg-[var(--mainColor)] hover:bg-[var(--mainBorder)] transition`}
-                        >ИИ</button>
-                    )}
-                </div> */}
             </div>
 
             {hasSteps && (
@@ -647,8 +734,14 @@ export default function LessonStep() {
                             clearProp={hasSteps}
                         />
                     )}
+
                     {element?.step.type.name === 'test' && (
                         <LessonTest
+                            preparation={() => handlePreparation(steps)}
+                            aiTestStat={toggleDragSteps}
+                            aiTestSet={()=> setToggleDragSteps(false)}
+                            forAiTestId={draggedId}
+                            aiTestSteps={documentSteps}
                             element={element?.step}
                             content={element?.content}
                             fetchPropElement={(stepId) => {
@@ -682,7 +775,7 @@ export default function LessonStep() {
                             clearProp={hasSteps}
                         />
                     )}
-                    {/* {element?.step.type.name === 'forum' && (
+                    {element?.step.type.name === 'forum' && (
                         <LessonForum
                             element={element?.step}
                             content={element?.content}
@@ -692,7 +785,7 @@ export default function LessonStep() {
                             }}
                             clearProp={hasSteps}
                         />
-                    )} */}
+                    )}
                 </>
             )}
 
@@ -700,7 +793,7 @@ export default function LessonStep() {
                 <Button
                     icon={'pi pi-trash'}
                     label="Удалить шаг"
-                    disabled={hasSteps}
+                    disabled={hasSteps || toggleDragSteps}
                     className="hover:bg-[var(--mainBorder)] transition trash-button"
                     onClick={() => {
                         const options = getConfirmOptions(Number(), () => handleDeleteStep());

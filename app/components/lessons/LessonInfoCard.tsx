@@ -46,7 +46,7 @@ export default function LessonInfoCard({
     skeleton?: boolean;
     getValues?: () => void;
     addPracticaScore?: (id: number) => void;
-    isOpened?: boolean,
+    isOpened?: boolean;
     item?: {};
 }) {
     const media = useMediaQuery('(max-width: 640px)');
@@ -306,11 +306,13 @@ export default function LessonInfoCard({
                     <i className={`${icon} text-white`}></i>
                 </div>
                 <div className="flex flex-col justify-center gap-1 max-w-[800px] text-wrap break-all">
-                    <span onClick={() => {
-                        setTestCall(true)
-                        getValues && getValues();
-                    }} 
-                        className="cursor-pointer max-w-[800px] text-[16px] text-wrap break-all hover:underline">
+                    <span
+                        onClick={() => {
+                            setTestCall(true);
+                            getValues && getValues();
+                        }}
+                        className="cursor-pointer max-w-[800px] text-[16px] text-wrap break-all hover:underline"
+                    >
                         Тест
                     </span>
                 </div>
@@ -376,7 +378,6 @@ export default function LessonInfoCard({
                         <GroupSkeleton count={1} size={{ width: '100%', height: '5rem' }} />
                     </div>
                 ) : (
-                    
                     test?.answers && (
                         <div className="flex flex-col justify-center gap-2 w-full">
                             <div className="flex gap-1 items-center flex-col md:flex-row border-b-1 pb-1 border-[var(--borderBottomColor)]">
@@ -412,10 +413,13 @@ export default function LessonInfoCard({
                 <div className="p-2 bg-[var(--yellowColor)] w-[36px] h-[36px] flex justify-center items-center rounded">
                     <i className={`${icon} text-white`}></i>
                 </div>
-                <span onClick={() => {
-                    setPracticaCall(true);
-                    getValues && getValues();
-                }} className={`cursor-pointer max-w-[800px] text-[16px] text-wrap ${isOpened ? 'underline' : ''} break-all hover:underline`}>
+                <span
+                    onClick={() => {
+                        setPracticaCall(true);
+                        getValues && getValues();
+                    }}
+                    className={`cursor-pointer max-w-[800px] text-[16px] text-wrap ${isOpened ? 'underline' : ''} break-all hover:underline`}
+                >
                     Практическое задание
                 </span>
             </div>
@@ -513,25 +517,48 @@ export default function LessonInfoCard({
                                                     Балл отправлен <span className="text-[var(--mainColor)]">{answerList?.score}</span>
                                                 </b>
                                             ) : (
-                                                <div className="w-full">
-                                                    <b>Поставить балл студенту</b>
-                                                    <div className="w-full flex items-center gap-1">
-                                                        <InputText
-                                                            type="number"
-                                                            placeholder={`Макс. ${totalScore}`}
-                                                            className="w-[70%] sm:w-[80%]"
-                                                            onChange={(e) => {
-                                                                setPracticaScore((prev) => ({ ...prev, score: Number(e.target.value) }));
-                                                            }}
-                                                        />
-                                                        <Button
-                                                            label="Отправить"
-                                                            size="small"
-                                                            onClick={() => {
-                                                                setPracticaCall(false);
-                                                                addPracticaScore && addPracticaScore(Number(practicaScore?.score));
-                                                            }}
-                                                        />
+                                                <div className="w-full flex flex-col gap-2">
+                                                    <div className='flex flex-col gap-1'>
+                                                        <b className="text-sm">Поставить балл студенту</b>
+                                                        <div className="w-full flex items-center gap-1">
+                                                            <InputText
+                                                                type="number"
+                                                                placeholder={`Макс. ${totalScore}`}
+                                                                className="w-[70%] sm:w-[80%]"
+                                                                onChange={(e) => {
+                                                                    setPracticaScore((prev) => ({ ...prev, score: Number(e.target.value) }));
+                                                                }}
+                                                            />
+                                                            <Button
+                                                                label="Отправить"
+                                                                size="small"
+                                                                onClick={() => {
+                                                                    setPracticaCall(false);
+                                                                    addPracticaScore && addPracticaScore(Number(practicaScore?.score));
+                                                                }}
+                                                            />
+                                                        </div>
+                                                    </div>
+
+                                                    <div className='flex flex-col gap-1'>
+                                                        <b className="text-sm">Оставьте комментарий студенту (необязательно)</b>
+                                                        <div className="w-full flex items-center gap-1">
+                                                            <InputText
+                                                                type="text"
+                                                                className="w-[70%] sm:w-[80%]"
+                                                                onChange={(e) => {
+                                                                    setPracticaScore((prev) => ({ ...prev, score: Number(e.target.value) }));
+                                                                }}
+                                                            />
+                                                            <Button
+                                                                label="Отправить"
+                                                                size="small"
+                                                                onClick={() => {
+                                                                    console.log('send');
+                                                                    // addPracticaScore && addPracticaScore(Number(practicaScore?.score));
+                                                                }}
+                                                            />
+                                                        </div>
                                                     </div>
                                                 </div>
                                             )}

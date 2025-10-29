@@ -309,7 +309,7 @@ export default function LessonTest() {
         }
     }, [courses]);
 
-    useEffect(() => {        
+    useEffect(() => {
         const check = answer?.find((item) => item?.is_correct);
         if (check) {
             setAnswerCheck(true);
@@ -318,13 +318,13 @@ export default function LessonTest() {
         }
     }, [answer]);
 
-    useEffect(()=> {
-        if(test?.answer_id && test?.answer_id != null){
+    useEffect(() => {
+        if (test?.answer_id && test?.answer_id != null) {
             setSelectedAnswer(true);
         } else {
             setSelectedAnswer(false);
         }
-    },[test]);
+    }, [test]);
 
     const hasPdf = /pdf/i.test(document?.content?.document || ''); // true
 
@@ -424,7 +424,14 @@ export default function LessonTest() {
             ) : (
                 <div className="flex flex-col gap-2 items-start w-full mt-2">
                     <span className="pi pi-check-circle sm:text-lg mb-1 text-[var(--mainColor)] shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)] pb-1"> Задание после изучения материала, загрузи свой файл с решением.</span>
-                    <div className="w-full">
+ 
+                    {/* <b>Сообщения от преподавателя</b>
+                    <ul className='border-l-2 pl-2'>
+                        <li className='list-disc ml-[15px]'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Mollitia, illum.</li>
+                        <li className='list-disc ml-[15px]'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Mollitia, illum.</li>
+                    </ul> */}
+
+                    <div className="w-full mt-2">
                         <input
                             type="file"
                             accept="application/pdf"
@@ -507,13 +514,13 @@ export default function LessonTest() {
                                             <div className="bg-gray border border-[var(--borderBottomColor)] py-[5px] pl-1 w-full">{item.text}</div>
                                         </>
                                     ) : (
-                                        <>  
+                                        <>
                                             <label className="custom-radio border border-[var(--borderBottomColor)] p-2">
                                                 <input
                                                     type="radio"
                                                     name="testRadio"
                                                     disabled={steps?.count_attempt ? steps?.count_attempt >= 3 : false}
-                                                    className='bg-[var(--greenBgColor)] none'
+                                                    className="bg-[var(--greenBgColor)] none"
                                                     onChange={() => {
                                                         setAnswer((prev) => prev && prev.map((ans, i) => (i === index ? { ...ans, is_correct: true } : { ...ans, is_correct: false })));
                                                     }}
@@ -590,17 +597,21 @@ export default function LessonTest() {
             <div className={`w-full bg-[var(--titleColor)] relative text-white p-4 md:p-3 pb-4`}>
                 <div className="flex flex-col gap-2 items-center">
                     <div className={`w-full flex items-center gap-2 ${courseInfo?.image && courseInfo?.image.length > 0 ? 'justify-around flex-col sm:flex-row' : 'justify-center'} items-center`}>
-                        <h1 className="sm:w-1/2" style={{ color: 'white', fontSize: media ? '24px' : '28px', textAlign: 'center', margin: '0' }}>
-                            {courseInfo?.title}
-                        </h1>
+                        <div className='sm:w-1/2 flex flex-col gap-2 items-center'>
+                            <h1 className="m-0" style={{ color: 'white', fontSize: media ? '24px' : '28px', textAlign: 'center', margin: '0' }}>
+                                {courseInfo?.title}
+                            </h1>
+                            <div className="flex items-center justify-end gap-1 flex-col sm:flex-row mt-2">
+                                <h3 className="text-white m-0 sm:text-lg">Тема: </h3>
+                                <h3 className="text-white text-[16px] m-0 sm:text-[18px]">{lessonName ? lessonName : '------'}</h3>
+                            </div>
+                            <span className="w-[90%] break-words text-center">{courseInfo?.description} </span>
+                        </div>
                         {courseInfo?.image && courseInfo?.image.length > 0 && (
-                            <div className="sm:w-1/2"><img src={courseInfo?.image} /></div>
+                            <div className="sm:w-1/3">
+                                <img src={courseInfo?.image} />
+                            </div>
                         )}
-                    </div>
-                    <span className="w-[90%] break-words text-center">{courseInfo?.description} </span>
-                    <div className="flex items-center justify-end gap-1 flex-col sm:flex-row mt-2">
-                        <b className="text-white sm:text-lg">Тема: </b>
-                        <b className="text-[16px] sm:text-[18px]">{lessonName ? lessonName : '------'}</b>
                     </div>
                 </div>
             </div>

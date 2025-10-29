@@ -514,3 +514,16 @@ export const stepSequenceUpdate = async (lesson_id: number | null, steps: { id: 
         return err;
     }
 };
+
+export const generageQuiz = async (lesson_id: number, step_id: number | string) => {
+    
+    try {
+        const res = await axiosInstance.get(`/v1/teacher/lessons/generate-quiz?lesson_id=${lesson_id}&step_id=${step_id}`);
+        const data = await res.data;
+        
+        return data;
+    } catch (err) {
+        console.log('Ошибка загрузки:', err);
+        return err;
+    }
+};

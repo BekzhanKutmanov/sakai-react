@@ -46,7 +46,7 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
     };
 
     const dateTime = (createdAt: string | null) => {
-        const invalidDate = <div>---</div>;
+        const invalidDate = <span>---</span>;
         if (notification && createdAt) {
             const dateObject = new Date(createdAt);
             if (dateObject) {
@@ -60,7 +60,7 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                 const formattedString = dateObject.toLocaleString('ru-RU', options);
                 const result = formattedString?.replace(/,/g, '');
                 if (formattedString) {
-                    return <div>{result}</div>;
+                    return <span>{result}</span>;
                 } else {
                     return invalidDate;
                 }

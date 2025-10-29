@@ -17,7 +17,6 @@ import { mainStepsType } from '@/types/mainStepType';
 import useErrorMessage from '@/hooks/useErrorMessage';
 import { LayoutContext } from '@/layout/context/layoutcontext';
 import FormModal from '../popUp/FormModal';
-import { InputTextarea } from 'primereact/inputtextarea';
 import dynamic from 'next/dynamic';
 import GroupSkeleton from '../skeleton/GroupSkeleton';
 import { Editor, EditorTextChangeEvent } from 'primereact/editor';
