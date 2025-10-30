@@ -26,6 +26,7 @@ export default function LessonInfoCard({
     getValues,
     answerList,
     addPracticaScore,
+    addPracticaDisannul,
     skeleton,
     isOpened,
     item
@@ -41,11 +42,12 @@ export default function LessonInfoCard({
     test?: { content: string; answers: { id: number | null; text: string; is_correct: boolean }[]; score: number | null };
     contentType?: string;
     totalScore?: number | null;
-    answerList?: { answer_id: number | null; file: string; score: number | null };
+    answerList?: { answer_id: number | null; file: string; score: number | null; id_curricula: number; course_id: number; id_parent: number | null; id_stream: number; student_id: number; lesson_id: number; id:number; steps_id: number };
     checkTitle?: string | null;
     skeleton?: boolean;
     getValues?: () => void;
     addPracticaScore?: (id: number) => void;
+    addPracticaDisannul?: (id_curricula:number, course_id:number, id_stream:number, id:number, steps_id:number, message:string) => void;
     isOpened?: boolean;
     item?: {};
 }) {
@@ -62,6 +64,7 @@ export default function LessonInfoCard({
     const [videoCall, setVideoCall] = useState(false);
     const [videoLink, setVideoLink] = useState('');
     const [practicaScore, setPracticaScore] = useState<{ score: number }>({ score: 0 });
+    const [practicaMessage, setPracticaMessage] = useState('');
 
     const hasPdf = /pdf/i.test(documentUrl?.document_path || ''); // true
     const hasAnswerPdf = /pdf/i.test(answerList?.file || ''); // true
@@ -518,7 +521,7 @@ export default function LessonInfoCard({
                                                 </b>
                                             ) : (
                                                 <div className="w-full flex flex-col gap-2">
-                                                    <div className='flex flex-col gap-1'>
+                                                    <div className="flex flex-col gap-1">
                                                         <b className="text-sm">Поставить балл студенту</b>
                                                         <div className="w-full flex items-center gap-1">
                                                             <InputText
@@ -540,26 +543,28 @@ export default function LessonInfoCard({
                                                         </div>
                                                     </div>
 
-                                                    {/* <div className='flex flex-col gap-1'>
+                                                    <div className="flex flex-col gap-1">
                                                         <b className="text-sm">Оставьте комментарий студенту (необязательно)</b>
                                                         <div className="w-full flex items-center gap-1">
                                                             <InputText
                                                                 type="text"
                                                                 className="w-[70%] sm:w-[80%]"
                                                                 onChange={(e) => {
-                                                                    setPracticaScore((prev) => ({ ...prev, score: Number(e.target.value) }));
+                                                                    setPracticaMessage((prev) => prev = e.target.value );
                                                                 }}
                                                             />
                                                             <Button
                                                                 label="Отправить"
                                                                 size="small"
                                                                 onClick={() => {
-                                                                    console.log('send');
-                                                                    // addPracticaScore && addPracticaScore(Number(practicaScore?.score));
+                                                                    console.log(answerList);
+                                                                    if(answerList){
+                                                                        addPracticaDisannul && addPracticaDisannul(answerList?.id_curricula, answerList?.course_id, answerList?.id_stream, answerList?.id, answerList?.steps_id, practicaMessage);
+                                                                    }
                                                                 }}
                                                             />
                                                         </div>
-                                                    </div> */}
+                                                    </div>
                                                 </div>
                                             )}
                                         </div>
@@ -585,6 +590,10 @@ export default function LessonInfoCard({
             handleVideoCall(video_link);
         }
     }, [videoCall]);
+
+    useEffect(()=> {
+        console.log(practicaMessage);
+    },[practicaMessage]);
 
     return (
         <div>

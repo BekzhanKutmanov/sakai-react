@@ -4,6 +4,7 @@ import { NotFound } from '@/app/components/NotFound';
 import useErrorMessage from '@/hooks/useErrorMessage';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { LayoutContext } from '@/layout/context/layoutcontext';
+import { statusView } from '@/services/notifications';
 import { fetchItemsLessons, fetchMainLesson, fetchStudentSteps, fetchSubjects, stepPractica, stepTest } from '@/services/studentMain';
 import { docValueType } from '@/types/docValueType';
 import { lessonType } from '@/types/lessonType';
@@ -24,10 +25,10 @@ export default function LessonTest() {
 
     const { lesson_id, subject_id, stream_id, id } = useParams();
     const params = new URLSearchParams();
-    
+
     const media = useMediaQuery('(max-width: 640px)');
     const showError = useErrorMessage();
-    const { setMessage, setContextNewStudentThemes } = useContext(LayoutContext);
+    const { setMessage, setContextNewStudentThemes, contextNotificationId, setContextNotificationId } = useContext(LayoutContext);
 
     const [steps, setMainSteps] = useState<mainStepsType | null>(null);
     const [hasSteps, setHasSteps] = useState(false);
@@ -92,10 +93,18 @@ export default function LessonTest() {
         }
     };
 
+    const handleStatusView = async (notification_id: number | null) => {
+        console.log(notification_id);
+        if (notification_id) {
+            const data = await statusView(Number(notification_id));
+            console.log(data);
+
+            setContextNotificationId(null);
+        }
+    };
+
     const handleStep = async () => {
         const data = await fetchStudentSteps(Number(id), Number(stream_id));
-        // console.log(data);
-
         if (data?.success) {
             if (!data?.step?.content || data?.step?.content == null) {
                 setHasSteps(true);
@@ -232,6 +241,10 @@ export default function LessonTest() {
     useEffect(() => {
         handleFetchLessons();
         handleStep();
+
+        if (contextNotificationId && contextNotificationId != null) {
+            handleStatusView(contextNotificationId);
+        }
     }, []);
 
     useEffect(() => {
@@ -424,7 +437,7 @@ export default function LessonTest() {
             ) : (
                 <div className="flex flex-col gap-2 items-start w-full mt-2">
                     <span className="pi pi-check-circle sm:text-lg mb-1 text-[var(--mainColor)] shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)] pb-1"> Задание после изучения материала, загрузи свой файл с решением.</span>
- 
+
                     {/* <b>Сообщения от преподавателя</b>
                     <ul className='border-l-2 pl-2'>
                         <li className='list-disc ml-[15px]'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Mollitia, illum.</li>
@@ -597,7 +610,7 @@ export default function LessonTest() {
             <div className={`w-full bg-[var(--titleColor)] relative text-white p-4 md:p-3 pb-4`}>
                 <div className="flex flex-col gap-2 items-center">
                     <div className={`w-full flex items-center gap-2 ${courseInfo?.image && courseInfo?.image.length > 0 ? 'justify-around flex-col sm:flex-row' : 'justify-center'} items-center`}>
-                        <div className='sm:w-1/2 flex flex-col gap-2 items-center'>
+                        <div className="sm:w-1/2 flex flex-col gap-2 items-center">
                             <h1 className="m-0" style={{ color: 'white', fontSize: media ? '24px' : '28px', textAlign: 'center', margin: '0' }}>
                                 {courseInfo?.title}
                             </h1>

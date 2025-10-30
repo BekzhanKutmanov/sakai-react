@@ -46,11 +46,9 @@ export default function Teaching() {
     const handleFetchLessons = async () => {
         setSkeleton(true);
         const data = await fetchItemsLessons();
-        console.log(data);
 
-        if (data) {
+        if (data && Object.keys(data).length > 0) {
             // валидность проверить
-            console.log(data);
             setLessons(data);
             setHasLessons(false);
             setSkeleton(false);
@@ -69,7 +67,6 @@ export default function Teaching() {
 
     const handleFetchConnectId = async () => {
         const data = await fetchItemsConnect();
-        console.log(data);
         toggleSkeleton();
         if (data) {
             setConnection(data);

@@ -61,7 +61,6 @@ export default function LessonStep() {
     const handleCourseInfo = async () => {
         setSkeleton(true);
         const data = await fetchCourseInfo(Number(course_id));
-        console.log(data);
 
         if (data && data?.success) {
             setSkeleton(false);
@@ -138,7 +137,6 @@ export default function LessonStep() {
         const forSequence_number = lastStep && lastStep > 0 ? (!sequence_number || sequence_number < 1 ? lastStep + 1 : sequence_number) : sequence_number;
 
         const data = await addLesson({ lesson_id: lessonId, type_id: typeId }, forSequence_number || 0);
-        console.log(data);
 
         if (data.success) {
             setSequence_number(null);
@@ -171,7 +169,6 @@ export default function LessonStep() {
         if (lesson_id) {
             setSkeleton(true);
             const data = await fetchElement(Number(lesson_id), stepId);
-            console.log(data);
 
             if (data.success) {
                 setSkeleton(false);
@@ -338,7 +335,6 @@ export default function LessonStep() {
 
     // заменяем первый useEffect
     useEffect(() => {
-        console.log('Обновился ', contextThemes);
 
         const lessons = contextThemes?.lessons?.data ?? [];
 
@@ -447,7 +443,6 @@ export default function LessonStep() {
     );
 
     const accept = () => {
-        console.log(courseInfo, lessonInfoState, steps);
     };
 
     // const reject = () => {};

@@ -220,7 +220,6 @@ export default function LessonTest({
         setProgressSpinner(true);
         console.log('Был перетащен элемент с id:', forAiTestId);
         const data = await generageQuiz(element?.lesson_id && Number(element?.lesson_id), forAiTestId);
-        console.log(data);
         if (data.status === 'success') {
             setProgressSpinner(false);
             setAiOptions(data?.quiz?.questions);

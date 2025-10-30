@@ -41,6 +41,8 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
     const handleNotifications = async () => {
         const data = await getNotifications();
         if (data && Array.isArray(data)) {
+            console.log(data);
+
             setNotification(data);
         }
     };
@@ -87,20 +89,25 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                 <div className="flex flex-col justify-center p-2 gap-1">
                     {notification?.length > 0 ? (
                         notification?.map((item) => {
+                            let path = '';
+                            if (user?.is_working && item?.type?.type === 'practical') {
+                                path = `/students/${item?.meta?.course_id}/${item?.meta?.connect_id}/${item?.meta?.stream_id}/${item?.meta?.student_id}/${item?.meta?.lesson_id}/${item?.meta?.step_id}`;
+                            }
                             return (
                                 <div key={item?.id} className="w-full flex flex-col justify-center shadow p-2 gap-2">
                                     <div className="w-full flex justify-between">
                                         <Link
                                             onClick={() => setContextNotificationId(item?.id)}
                                             className="cursor-pointer hover:underline"
-                                            href={`/students/${item?.meta?.course_id}/${item?.meta?.connect_id}/${item?.meta?.stream_id}/${item?.meta?.student_id}/${item?.meta?.lesson_id}/${item?.meta?.step_id}`}
+                                            // href={`/students/${item?.meta?.course_id}/${item?.meta?.connect_id}/${item?.meta?.stream_id}/${item?.meta?.student_id}/${item?.meta?.lesson_id}/${item?.meta?.step_id}`}
+                                            href={path}
                                         >
                                             <b className="text-[var(--mainColor)]">{item?.type?.title}</b>
                                         </Link>
                                         <span className="text-sm w-[13px] h-[13px] rounded-full bg-[var(--amberColor)]"></span>
                                     </div>
-                                    <p className="m-0 text-[13px]">
-                                        {item?.from_user?.father_name} {item?.from_user?.name}
+                                    <p className="m-0 text-[12px]">
+                                        {item?.from_user?.last_name} {item?.from_user?.name}
                                     </p>
                                     <div className="w-full relative flex">
                                         <p className="absolute right-0 -top-3 text-[12px] m-0">{dateTime(item?.created_at)}</p>
@@ -177,13 +184,15 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                         <div className="flex flex-col items-center max-h-[200px] overflow-y-auto p-2 gap-1">
                             {notification?.length > 0 ? (
                                 notification?.map((item) => {
+                                    let path = '';
+                                    if (user?.is_working && item?.type?.type === 'practical') {
+                                        path = `/students/${item?.meta?.course_id}/${item?.meta?.connect_id}/${item?.meta?.stream_id}/${item?.meta?.student_id}/${item?.meta?.lesson_id}/${item?.meta?.step_id}`;
+                                    }
+
                                     return (
                                         <div key={item?.id} className="w-full cursor-pointer flex flex-col justify-center shadow p-1 gap-1">
                                             <div className="w-full flex justify-between">
-                                                <Link
-                                                    onClick={() => setContextNotificationId(item?.id)}
-                                                    href={`/students/${item?.meta?.course_id}/${item?.meta?.connect_id}/${item?.meta?.stream_id}/${item?.meta?.student_id}/${item?.meta?.lesson_id}/${item?.meta?.step_id}`}
-                                                >
+                                                <Link onClick={() => setContextNotificationId(item?.id)} href={path}>
                                                     <b className="text-[var(--mainColor)] text-[12px]">{item?.type?.title}</b>
                                                 </Link>
                                                 <span className="text-sm w-[12px] h-[12px] text-[13px] rounded-full bg-[var(--amberColor)]"></span>
@@ -268,6 +277,60 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
               },
 
         {
+            label: 'Уведомление',
+            icon: (
+                <div className="p-overlay-badge">
+                    <i className="pi pi-bell p-menuitem-icon" style={{ fontSize: '1.5rem' }}></i>
+                    {/* Условное отображение красного кружка (бэйджа) */}
+                    {notification?.length > 0 && (
+                        // <div className='w-full relative'>
+                        <span className="absolute w-[10px] h-[10px] right-[10px] top-[5px] bg-[var(--amberColor)] rounded-full "></span>
+                        // </div>
+                    )}
+                </div>
+            ),
+            items: [
+                {
+                    label: '',
+                    template: (
+                        // <div className='max-h-[100px] overflow-y-auto'>
+                        <div className="flex flex-col items-center max-h-[200px] overflow-y-auto p-2 gap-1">
+                            {notification?.length > 0 ? (
+                                notification?.map((item) => {
+                                    let path = '';
+                                    if (user?.is_student && item?.type?.type === 'practical') {
+                                        path = `/teaching/lessonView/${item?.meta?.lesson_id}/${item?.meta?.id_curricula}/${item?.meta?.stream_id}/${item?.meta?.step_id}`;
+                                    }
+
+                                    return (
+                                        <div key={item?.id} className="w-full cursor-pointer flex flex-col justify-center shadow p-1 gap-1">
+                                            <div className="w-full flex justify-between">
+                                                <Link onClick={() => setContextNotificationId(item?.id)} href={path}>
+                                                    <b className="text-[var(--mainColor)] text-[13px]">{item?.type?.title}</b>
+                                                </Link>
+                                                <span className="text-sm w-[11px] h-[11px] text-[13px] rounded-full bg-[var(--amberColor)]"></span>
+                                            </div>
+                                            {user?.is_student && item?.type?.type === 'practical' && <span className="text-[var(--titleColor)] text-[11px] max-w-[270px] text-nowrap overflow-hidden text-ellipsis">{item?.title}</span>}
+                                            <p className="m-0 text-[11px]">
+                                                {item?.from_user?.last_name} {item?.from_user?.name}
+                                            </p>
+                                            <div className="w-full relative flex">
+                                                <p className="absolute right-0 -top-3 text-[10px] m-0">{dateTime(item?.created_at)}</p>
+                                            </div>
+                                        </div>
+                                    );
+                                })
+                            ) : (
+                                <p className="text-center text-[12px]">Сообщений нет</p>
+                            )}
+                        </div>
+                        // </div>
+                    )
+                }
+            ]
+        },
+
+        {
             label: 'Старый Mooc',
             icon: '',
             items: [],
@@ -310,7 +373,42 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
 
     const student_notification = [
         {
-            // label: ''
+            label: '',
+            template: (
+                <div className="flex flex-col justify-center p-2 gap-1">
+                    {notification?.length > 0 ? (
+                        notification?.map((item) => {
+                            let path = '';
+                            if (user?.is_student && item?.type?.type === 'practical') {
+                                path = `/teaching/lessonView/${item?.meta?.lesson_id}/${item?.meta?.id_curricula}/${item?.meta?.stream_id}/${item?.meta?.step_id}`;
+                            }
+                            return (
+                                <div key={item?.id} className="w-full flex flex-col justify-center shadow p-2 gap-2">
+                                    <div className="w-full flex justify-between">
+                                        <Link onClick={() => setContextNotificationId(item?.id)} className="cursor-pointer hover:underline" href={path}>
+                                            <b className="text-[var(--mainColor)]">{item?.type?.title}</b>
+                                        </Link>
+                                        <span className="text-sm w-[13px] h-[13px] rounded-full bg-[var(--amberColor)]"></span>
+                                    </div>
+                                    {user?.is_student && item?.type?.type === 'practical' && (
+                                        <b className="text-[13px] max-w-[350px] text-nowrap overflow-hidden text-ellipsis" title={item?.title}>
+                                            {item?.title}
+                                        </b>
+                                    )}
+                                    <p className="m-0 text-[12px]">
+                                        {item?.from_user?.last_name} {item?.from_user?.name}
+                                    </p>
+                                    <div className="w-full relative flex">
+                                        <p className="absolute right-0 -top-3 text-[12px] m-0">{dateTime(item?.created_at)}</p>
+                                    </div>
+                                </div>
+                            );
+                        })
+                    ) : (
+                        <p className="text-center">Сообщений нет</p>
+                    )}
+                </div>
+            )
         }
     ];
 
@@ -326,7 +424,7 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
     }, []);
 
     useEffect(() => {
-        if (user?.is_working) {
+        if (user?.is_working || user?.is_student) {
             handleNotifications();
         }
     }, [user]);
@@ -410,7 +508,7 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                         </div>
                     ) : user ? (
                         <div className={`hidden lg:flex items-center gap-3 ${media ? 'order-1' : 'order-2'} `}>
-                            {user?.is_working && (
+                            {user?.is_working ? (
                                 // <Tiered title={{ name: '', font: 'pi pi-bell' }} items={user?.is_working ? working_notification : user?.is_student ? student_notification : []} insideColor={'--titleColor'} />
                                 <div>
                                     <div className="relative">
@@ -429,7 +527,7 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                                         breakpoint="1000px"
                                         // style={{ maxWidth: media ? '300px' : '500px', left: '10px' }}
                                         style={{ maxWidth: '600px', left: '8px' }}
-                                        className={`min-w-[380px] max-h-[370px] mt-4 overflow-y-scroll`}
+                                        className={`${notification?.length < 1 ? 'min-w-[280px]' : 'min-w-[380px]'} max-h-[370px] mt-4 overflow-y-scroll`}
                                         pt={{
                                             root: { className: `bg-white border w-[500px] border-gray-300 rounded-md shadow-md` },
                                             menu: { className: 'transition-all' },
@@ -440,6 +538,37 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                                         }}
                                     />
                                 </div>
+                            ) : user?.is_student ? (
+                                <div>
+                                    <div className="relative">
+                                        {notification?.length > 0 ? <div className={`absolute -right-1 -top-1 px-1 bg-[var(--amberColor)] rounded text-white text-[11px]`}>{notification.length}</div> : ''}
+                                        <button
+                                            // icon={title.font}
+                                            onClick={(e) => toggleMenu(e)}
+                                            style={{ color: 'black', fontSize: media ? '16px' : '20px' }}
+                                            className={`cursor-pointer flex gap-2 items-center px-0 bg-white text-blue-300 p-2 pi pi-bell font-bold`}
+                                        />
+                                    </div>
+                                    <TieredMenu
+                                        model={student_notification}
+                                        popup
+                                        ref={menu}
+                                        breakpoint="1000px"
+                                        // style={{ maxWidth: media ? '300px' : '500px', left: '10px' }}
+                                        style={{ maxWidth: '600px', left: '8px' }}
+                                        className={`${notification?.length < 1 ? 'min-w-[280px]' : 'min-w-[380px]'} max-h-[370px] mt-4 overflow-y-scroll`}
+                                        pt={{
+                                            root: { className: `bg-white border w-[500px] border-gray-300 rounded-md shadow-md` },
+                                            menu: { className: 'transition-all' },
+                                            menuitem: { className: 'text-[var(--titleColor)] text-[14px] py-1 hover:shadow-xl border-gray-200' },
+                                            action: { className: `flex justify-center items-center gap-2` }, // для иконки + текста не работает :)
+                                            icon: { className: 'text-[var(--titleColor)] mx-1' }
+                                            // submenuIcon: { className: 'text-gray-400 ml-auto' }
+                                        }}
+                                    />
+                                </div>
+                            ) : (
+                                ''
                             )}
                             <Tiered title={{ name: '', font: 'pi pi-user' }} items={profileItems} insideColor={'--titleColor'} />
                         </div>

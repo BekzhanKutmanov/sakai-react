@@ -10,7 +10,6 @@ export default function ItemCard({
     connection: { id: number; course_id: number; id_myedu_stream: number }[];
     subject: { connect: boolean; progress: { chills_percent: number; max_score: number; score: number } };
 }) {
-    console.log(subject);
 
     function ProgressBar({ value = 0, max = 100, height = 'h-3', className = '' }) {
         const safeMax = typeof max === 'number' && max > 0 ? max : 100;

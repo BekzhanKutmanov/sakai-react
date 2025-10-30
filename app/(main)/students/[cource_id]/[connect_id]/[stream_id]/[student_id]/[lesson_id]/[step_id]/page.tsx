@@ -7,7 +7,7 @@ import useErrorMessage from '@/hooks/useErrorMessage';
 import { LayoutContext } from '@/layout/context/layoutcontext';
 import { statusView } from '@/services/notifications';
 import { fetchElement } from '@/services/steps';
-import { fetchStudentCalendar, fetchStudentDetail, pacticaScoreAdd } from '@/services/streams';
+import { fetchStudentCalendar, fetchStudentDetail, pacticaDisannul, pacticaScoreAdd } from '@/services/streams';
 import { ContributionDay } from '@/types/ContributionDay';
 import { lessonType } from '@/types/lessonType';
 import { mainStepsType } from '@/types/mainStepType';
@@ -22,7 +22,7 @@ export default function StudentCheck() {
 
     const { connect_id, stream_id, student_id, lesson_id, step_id } = useParams();
     const params = useParams();
-    console.log(params);
+    // console.log(params);
 
     const { setMessage, contextNotificationId, setContextNotificationId } = useContext(LayoutContext);
     const showError = useErrorMessage();
@@ -65,7 +65,7 @@ export default function StudentCheck() {
         if (notification_id) {
             const data = await statusView(Number(notification_id));
             console.log(data);
-            
+
             setContextNotificationId(null);
         }
     };
@@ -140,6 +140,35 @@ export default function StudentCheck() {
         }
     };
 
+    const handlePracticaDisannul = async (id_curricula:number, course_id:number, id_stream:number, id:number, steps_id:number, message: string) => {
+        console.log(message);
+        
+        const data = await pacticaDisannul(id_curricula, course_id, id_stream, Number(student_id), steps_id, message);
+
+        if (data?.success) {
+            setMessage({
+                state: true,
+                value: { severity: 'success', summary: 'Успешно добавлен!', detail: '' }
+            });
+            handleFetchStreams();
+        } else {
+            setMessage({
+                state: true,
+                value: { severity: 'error', summary: 'Ошибка при добавлении!', detail: '' }
+            });
+            if (data?.response?.status) {
+                if (data?.response?.status == '400') {
+                    setMessage({
+                        state: true,
+                        value: { severity: 'error', summary: 'Ошибка!', detail: data?.response?.data?.message }
+                    });
+                } else {
+                    showError(data.response.status);
+                }
+            }
+        }
+    };
+
     useEffect(() => {
         handleFetchCalendar();
         handleFetchStreams();
@@ -149,16 +178,16 @@ export default function StudentCheck() {
         }
     }, []);
 
-    useEffect(()=> {
-        if(lessons && lessons?.length) {
-            lessons.forEach((item, idx)=> {
-                if(item?.is_opened){
+    useEffect(() => {
+        if (lessons && lessons?.length) {
+            lessons.forEach((item, idx) => {
+                if (item?.is_opened) {
                     setActiveIndex(idx);
                     return null;
                 }
             });
         }
-    },[lessons]);
+    }, [lessons]);
 
     return (
         <div className="main-bg">
@@ -204,6 +233,7 @@ export default function StudentCheck() {
                                                                     skeleton={skeleton}
                                                                     getValues={() => handleFetchElement(i?.lesson_id, i?.id)}
                                                                     addPracticaScore={(score) => handlePracticaScoreAdd(i?.id, score)}
+                                                                    addPracticaDisannul={(id_curricula:number, course_id:number, id_stream:number, id:number, steps_id:number, message: string) => handlePracticaDisannul(id_curricula, course_id, id_stream, id, steps_id, message)}
                                                                     isOpened={i?.is_opened || false}
                                                                     item={i}
                                                                 />

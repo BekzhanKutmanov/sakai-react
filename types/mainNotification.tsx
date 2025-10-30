@@ -6,6 +6,7 @@ export interface mainNotification {
     addressed_id: number;
     notification_type_id: number;
     meta: {
+        id_curricula: number;
         course_id: number;
         connect_id: number;
         stream_id: number;
