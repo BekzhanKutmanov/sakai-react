@@ -544,7 +544,7 @@ export default function LessonInfoCard({
                                                     </div>
 
                                                     <div className="flex flex-col gap-1">
-                                                        <b className="text-sm">Оставьте комментарий студенту (необязательно)</b>
+                                                        <b className="text-sm">Анулировать ответ студента</b>
                                                         <div className="w-full flex items-center gap-1">
                                                             <InputText
                                                                 type="text"
@@ -557,7 +557,6 @@ export default function LessonInfoCard({
                                                                 label="Отправить"
                                                                 size="small"
                                                                 onClick={() => {
-                                                                    console.log(answerList);
                                                                     if(answerList){
                                                                         addPracticaDisannul && addPracticaDisannul(answerList?.id_curricula, answerList?.course_id, answerList?.id_stream, answerList?.id, answerList?.steps_id, practicaMessage);
                                                                     }
