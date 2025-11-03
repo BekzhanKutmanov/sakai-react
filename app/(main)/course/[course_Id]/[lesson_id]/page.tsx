@@ -547,9 +547,9 @@ export default function LessonStep() {
                     ) : (
                         <div className="w-full flex flex-col mt-1">
                             {types.map((item) => {
-                                if(item?.name === 'forum'){
-                                    return null;
-                                }
+                                // if(item?.name === 'forum'){
+                                //     return null;
+                                // }
 
                                 return (
                                     <React.Fragment key={item?.id}>
@@ -558,12 +558,7 @@ export default function LessonStep() {
                                             <b
                                                 className="cursor-pointer"
                                                 onClick={() => {
-                                                    // if (item?.name === 'test') {
-                                                    //     confirm1();
-                                                    //     setLastTestStepId(item?.id);
-                                                    // } else {
                                                     handleAddLesson(Number(lesson_id), item?.id);
-                                                    // }
                                                 }}
                                             >
                                                 {item.title}

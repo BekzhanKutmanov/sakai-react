@@ -140,6 +140,8 @@ export default function StudentLesson() {
     const handleFetchLessons = async () => {
         setSkeleton(true);
         const data = await fetchItemsLessons();
+        console.log(data);
+
         if (data) {
             // валидность проверить
             setLessons(data);
@@ -160,10 +162,11 @@ export default function StudentLesson() {
 
     // Запрос курса, типа уроков (лк,лб)
     const handleFetchSubject = async (subject: subjectType) => {
-        params.append('id_curricula', String(subject.id_curricula));
-        subject.streams.forEach((i) => params.append('streams[]', String(i)));
-        subject.course_ids.forEach((i) => params.append('course_ids[]', String(i)));
+        params.append('id_curricula', String(subject?.id_curricula));
+        subject?.streams.forEach((i) => params.append('streams[]', String(i)));
+        subject?.course_ids.forEach((i) => params.append('course_ids[]', String(i)));
         const data = await fetchSubjects(params);
+        console.log(data);
 
         setSkeleton(true);
 
@@ -197,11 +200,11 @@ export default function StudentLesson() {
         // console.log(lessonArray)
         let search_id: predmetType | null = null;
         if (lessonArray && Array.isArray(lessonArray)) {
-            for (let i = 0; i < lessonArray.length; i++) {
+            for (let i = 0; i < lessonArray?.length; i++) {
                 const lessonItemArray = Object.values(lessonArray[i]);
                 // console.log(lessonItemArray);
 
-                search_id = lessonItemArray.find((item: any) => item.id_curricula == subject_id);
+                search_id = lessonItemArray.find((item: any) => item?.id_curricula == subject_id);
                 if (search_id && search_id != null) {
                     break;
                 }
@@ -223,94 +226,103 @@ export default function StudentLesson() {
 
     return (
         <div className="main-bg">
-            <h1 className="text-xl shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">Список курсов</h1>
-
-            {skeleton ? (
-                <div className="w-full">
-                    <GroupSkeleton count={1} size={{ width: '100%', height: '10rem' }} />
-                </div>
-            ) : hasThemes ? (
+            {hasLessons ? (
                 <NotFound titleMessage="Данные не доступны" />
             ) : (
-                courses.map((course) => {
-                    return (
-                        <div key={course.id} className="flex flex-col gap-4 shadow-sm rounded my-4 py-2 px-1">
-                            <div className="flex flex-col gap-2">
-                                <h3 className="m-0  text-md break-words">
-                                    <span className="text-[var(--mainColor)]">Название курса:</span> {course?.title}
-                                </h3>
-                                <h3 className="m-0 text-md ">
-                                    <span className="text-[var(--mainColor)]">Преподаватель:</span> {course?.user.last_name} {course?.user.name}
-                                </h3>
-                                {course?.connections[0]?.subject_type && (
-                                    <h3 className="m-0 text-md ">
-                                        <span className="text-[var(--mainColor)]">Тип обучения:</span> {course?.connections[0]?.subject_type === 'Лк' ? 'Лекция' : course?.connections[0]?.subject_type === 'Лб' ? 'Лабораторные занятия' : ''}
-                                    </h3>
-                                )}
-                            </div>
-                            <div>
-                                <Accordion key={`${course.id}`} activeIndex={activeIndexes[course.id]} onTabChange={(e) => handleTabChange(course.id, e)} multiple={false} expandIcon="" collapseIcon="">
-                                    {course.lessons.map((lesson) => {
-                                        const contentPresence = lesson?.steps?.filter((content) => content.content && content?.type?.name !== 'forum');
-                                        // console.warn(newLesson);
-                                        const sortedSteps = contentPresence?.sort((a, b) => {
-                                            const isAForum = a?.type?.name === 'forum';
-                                            const isBForum = b?.type?.name === 'forum';
+                <>
+                    <h1 className="text-xl shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">Список курсов</h1>
 
-                                            if (isAForum && !isBForum) {
-                                                return 1; // 'a' (форум) идет после 'b'
-                                            }
-                                            if (!isAForum && isBForum) {
-                                                return -1; // 'b' (форум) идет после 'a'
-                                            }
-                                            return 0; // Сохраняем относительный порядок
-                                        });
-
-                                        return (
-                                            <AccordionTab header={'Тема: ' + lesson.title} key={lesson.id} className="w-full p-accordion" style={{ width: '100%', backgroundColor: 'white' }}>
-                                                <div className="flex flex-col gap-2">
-                                                    {/* Используем lesson.steps, который был обновлен в handleTabChange */}
-                                                    {lesson?.isLoadingSteps ? (
-                                                        <ProgressSpinner style={{ width: '50px', height: '50px' }} />
-                                                    ) : sortedSteps && sortedSteps?.length > 0 ? (
-                                                        sortedSteps.map(
-                                                            (item: { id: number; chills: boolean; type: { name: string; logo: string }; content: { title: string; description: string; url: string; document: string; document_path: string } }, idx) => {
-                                                                if (item.content == null || item.type?.name === 'forum') {
-                                                                    return null;
-                                                                }
-
-                                                                return (
-                                                                    <div key={item.id} className={`${idx > 0 ? 'my-border-top' : ''}`}>
-                                                                        <StudentInfoCard
-                                                                            type={item.type.name}
-                                                                            icon={item.type.logo}
-                                                                            title={item.content?.title}
-                                                                            description={item.content?.description || ''}
-                                                                            documentUrl={{ document: item.content?.document, document_path: item.content?.document_path }}
-                                                                            link={item.content?.url}
-                                                                            stepId={item.id}
-                                                                            streams={course}
-                                                                            lesson={lesson.id}
-                                                                            subjectId={subject_id}
-                                                                            chills={item?.chills}
-                                                                            fetchProp={() => handleTabChange(course.id, accordionIndex)}
-                                                                        />
-                                                                    </div>
-                                                                );
-                                                            }
-                                                        )
-                                                    ) : (
-                                                        <p className="text-center text-sm">Данных нет</p>
-                                                    )}
-                                                </div>
-                                            </AccordionTab>
-                                        );
-                                    })}
-                                </Accordion>
-                            </div>
+                    {skeleton ? (
+                        <div className="w-full">
+                            <GroupSkeleton count={1} size={{ width: '100%', height: '10rem' }} />
                         </div>
-                    );
-                })
+                    ) : hasThemes ? (
+                        <NotFound titleMessage="Данные не доступны" />
+                    ) : (
+                        Array.isArray(courses) &&
+                        courses?.map((course) => {
+                            return (
+                                <div key={course.id} className="flex flex-col gap-4 shadow-sm rounded my-4 py-2 px-1">
+                                    <div className="flex flex-col gap-2">
+                                        <h3 className="m-0  text-md break-words">
+                                            <span className="text-[var(--mainColor)]">Название курса:</span> {course?.title}
+                                        </h3>
+                                        <h3 className="m-0 text-md ">
+                                            <span className="text-[var(--mainColor)]">Преподаватель:</span> {course?.user.last_name} {course?.user.name}
+                                        </h3>
+                                        {course?.connections[0]?.subject_type && (
+                                            <h3 className="m-0 text-md ">
+                                                <span className="text-[var(--mainColor)]">Тип обучения:</span> {course?.connections[0]?.subject_type === 'Лк' ? 'Лекция' : course?.connections[0]?.subject_type === 'Лб' ? 'Лабораторные занятия' : ''}
+                                            </h3>
+                                        )}
+                                    </div>
+                                    <div>
+                                        <Accordion key={`${course.id}`} activeIndex={activeIndexes[course.id]} onTabChange={(e) => handleTabChange(course.id, e)} multiple={false} expandIcon="" collapseIcon="">
+                                            {course?.lessons.map((lesson) => {
+                                                const contentPresence = lesson?.steps?.filter((content) => content.content);
+                                                const sortedSteps = contentPresence?.sort((a, b) => {
+                                                    const isAForum = a?.type?.name === 'forum';
+                                                    const isBForum = b?.type?.name === 'forum';
+
+                                                    if (isAForum && !isBForum) {
+                                                        return 1; // 'a' (форум) идет после 'b'
+                                                    }
+                                                    if (!isAForum && isBForum) {
+                                                        return -1; // 'b' (форум) идет после 'a'
+                                                    }
+                                                    return 0; // Сохраняем относительный порядок
+                                                });
+
+                                                return (
+                                                    <AccordionTab header={'Тема: ' + lesson.title} key={lesson.id} className="w-full p-accordion" style={{ width: '100%', backgroundColor: 'white' }}>
+                                                        <div className="flex flex-col gap-2">
+                                                            {/* Используем lesson.steps, который был обновлен в handleTabChange */}
+                                                            {lesson?.isLoadingSteps ? (
+                                                                <ProgressSpinner style={{ width: '50px', height: '50px' }} />
+                                                            ) : sortedSteps && sortedSteps?.length > 0 ? (
+                                                                sortedSteps.map(
+                                                                    (item: {id: number;chills: boolean;type: { name: string; logo: string };content: { id: number; title: string; description: string; url: string; document: string; document_path: string }, id_parent?: number | null},idx
+                                                                        ) => {
+                                                                        if (item.content == null) {
+                                                                            return null;
+                                                                        }
+
+                                                                        return (
+                                                                            <div key={item.id} className={`${idx > 0 ? 'my-border-top' : ''}`}>
+                                                                                <StudentInfoCard
+                                                                                    type={item.type.name}
+                                                                                    icon={item.type.logo}
+                                                                                    title={item.content?.title}
+                                                                                    description={item.content?.description || ''}
+                                                                                    documentUrl={{ document: item.content?.document, document_path: item.content?.document_path }}
+                                                                                    link={item.content?.url}
+                                                                                    stepId={item.id}
+                                                                                    streams={course}
+                                                                                    lesson={lesson.id}
+                                                                                    subjectId={subject_id}
+                                                                                    chills={item?.chills}
+                                                                                    fetchProp={() => handleTabChange(course.id, accordionIndex)}
+                                                                                    contentId={item?.content?.id}
+                                                                                    id_parent={item?.id_parent || null}
+                                                                                />
+                                                                            </div>
+                                                                        );
+                                                                    }
+                                                                )
+                                                            ) : (
+                                                                <p className="text-center text-sm">Данных нет</p>
+                                                            )}
+                                                        </div>
+                                                    </AccordionTab>
+                                                );
+                                            })}
+                                        </Accordion>
+                                    </div>
+                                </div>
+                            );
+                        })
+                    )}
+                </>
             )}
         </div>
     );

@@ -25,7 +25,9 @@ export default function StudentInfoCard({
     stepId,
     subjectId,
     chills,
-    fetchProp
+    fetchProp,
+    contentId,
+    id_parent,
 }: {
     type: string;
     icon: string;
@@ -42,6 +44,8 @@ export default function StudentInfoCard({
     subjectId?: string;
     chills: boolean;
     fetchProp: () => void;
+    contentId?: number;
+    id_parent?: number | null;
 }) {
     const { id_kafedra } = useParams();
     // console.log(id_kafedra);
@@ -290,7 +294,7 @@ export default function StudentInfoCard({
                     <i className={`${icon} text-white`}></i>
                 </div>
                 <div className="flex flex-col justify-center gap-1 max-w-[1000px]">
-                    <Link href={`/students/forum`} className="cursor-pointer max-w-[1000px] text-[14px] sm:text-[16px] hover:underline">
+                    <Link href={stepId && id_parent && contentId ? `/students/forum/${stepId}/${id_parent}/${contentId}` : '#'} className="cursor-pointer max-w-[1000px] text-[14px] sm:text-[16px] hover:underline">
                         Оставьте отзыв или задайте вопрос по материалам урока
                     </Link>
                 </div>

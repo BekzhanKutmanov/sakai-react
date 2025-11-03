@@ -223,7 +223,7 @@ export default function LessonCard({
                                         <div className="flex items-center">
                                             <div className="flex gap-2 items-center">
                                                 {type.typeValue === 'forum' && (
-                                                    <Link href={'/students/forum'}>
+                                                    <Link href={`/students/forum/${cardValue?.id}`}>
                                                         <Button icon={'pi pi-comments'} />
                                                     </Link>
                                                 )}

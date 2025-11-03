@@ -1,5 +1,6 @@
 'use client';
 
+import MyDateTime from '@/app/components/MyDateTime';
 import { NotFound } from '@/app/components/NotFound';
 import GroupSkeleton from '@/app/components/skeleton/GroupSkeleton';
 import useErrorMessage from '@/hooks/useErrorMessage';
@@ -46,32 +47,13 @@ export default function UnVerifed() {
         }
     };
 
-    const dateTime = (createdAt: string | null) => {
-        const invalidDate = <span>---</span>;
-        if (tasks && createdAt) {
-            const dateObject = new Date(createdAt);
-            if (dateObject) {
-                const options: OptionsType = {
-                    year: '2-digit',
-                    month: 'short', // 'long', 'short', 'numeric'
-                    day: '2-digit',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    hour12: false // 24-часовой формат
-                };
-                const formattedString = dateObject.toLocaleString('ru-RU', options);
-                const result = formattedString?.replace(/,/g, '');
-                if (formattedString) {
-                    return <span>{result}</span>;
-                } else {
-                    return invalidDate;
-                }
-            } else {
-                return invalidDate;
-            }
-        } else {
-            return invalidDate;
-        }
+    const options: OptionsType = {
+        year: '2-digit',
+        month: 'short', // 'long', 'short', 'numeric'
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false // 24-часовой формат
     };
 
     useEffect(() => {
@@ -83,7 +65,9 @@ export default function UnVerifed() {
             {hasThemes ? (
                 <NotFound titleMessage="Данных нет" />
             ) : skeleton ? (
-                <div className="w-full"><GroupSkeleton count={2} size={{ width: '100%', height: '5rem' }} /></div>
+                <div className="w-full">
+                    <GroupSkeleton count={2} size={{ width: '100%', height: '5rem' }} />
+                </div>
             ) : (
                 <>
                     <h3 className="text-xl pb-1 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">Непроверенные практические задания</h3>
@@ -112,7 +96,7 @@ export default function UnVerifed() {
                                         </Link>
                                     </div>
                                     <div className="w-full relative flex">
-                                        <p className="absolute right-0 -top-3 text-[10px] m-0">{dateTime(item?.answer?.created_at)}</p>
+                                        <p className="absolute right-0 -top-3 text-[10px] m-0"><MyDateTime createdAt={item?.answer?.created_at} options={options} /></p>
                                     </div>
                                 </div>
                             </div>

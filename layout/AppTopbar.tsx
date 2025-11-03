@@ -15,10 +15,10 @@ import { getNotifications } from '@/services/notifications';
 import { mainNotification } from '@/types/mainNotification';
 import { TieredMenu } from 'primereact/tieredmenu';
 import type { TieredMenu as TieredMenuRef } from 'primereact/tieredmenu';
+import { OptionsType } from '@/types/OptionsType';
+import MyDateTime from '@/app/components/MyDateTime';
 
 const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
-    type OptionsType = Intl.DateTimeFormatOptions;
-
     const { layoutState, onMenuToggle, user, setUser, setGlobalLoading, setContextNotificationId } = useContext(LayoutContext);
 
     const menubuttonRef = useRef(null);
@@ -38,6 +38,14 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
     const [skeleton, setSkeleton] = useState(true);
     const [notification, setNotification] = useState<mainNotification[]>([]);
 
+    const options: OptionsType = {
+        month: 'short', // 'long', 'short', 'numeric'
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false // 24-часовой формат
+    };
+
     const handleNotifications = async () => {
         const data = await getNotifications();
         if (data && Array.isArray(data)) {
@@ -47,32 +55,32 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
         }
     };
 
-    const dateTime = (createdAt: string | null) => {
-        const invalidDate = <span>---</span>;
-        if (notification && createdAt) {
-            const dateObject = new Date(createdAt);
-            if (dateObject) {
-                const options: OptionsType = {
-                    month: 'short', // 'long', 'short', 'numeric'
-                    day: '2-digit',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    hour12: false // 24-часовой формат
-                };
-                const formattedString = dateObject.toLocaleString('ru-RU', options);
-                const result = formattedString?.replace(/,/g, '');
-                if (formattedString) {
-                    return <span>{result}</span>;
-                } else {
-                    return invalidDate;
-                }
-            } else {
-                return invalidDate;
-            }
-        } else {
-            return invalidDate;
-        }
-    };
+    // const dateTime = (createdAt: string | null, options: OptionsType) => {
+    //     const invalidDate = <span>---</span>;
+    //     if (notification && createdAt) {
+    //         const dateObject = new Date(createdAt);
+    //         if (dateObject) {
+    //             // const options: OptionsType = {
+    //             //     month: 'short', // 'long', 'short', 'numeric'
+    //             //     day: '2-digit',
+    //             //     hour: '2-digit',
+    //             //     minute: '2-digit',
+    //             //     hour12: false // 24-часовой формат
+    //             // };
+    //             const formattedString = dateObject.toLocaleString('ru-RU', options);
+    //             const result = formattedString?.replace(/,/g, '');
+    //             if (formattedString) {
+    //                 return <span>{result}</span>;
+    //             } else {
+    //                 return invalidDate;
+    //             }
+    //         } else {
+    //             return invalidDate;
+    //         }
+    //     } else {
+    //         return invalidDate;
+    //     }
+    // };
 
     const working_notification = [
         // {
@@ -110,7 +118,7 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                                         {item?.from_user?.last_name} {item?.from_user?.name}
                                     </p>
                                     <div className="w-full relative flex">
-                                        <p className="absolute right-0 -top-3 text-[12px] m-0">{dateTime(item?.created_at)}</p>
+                                        <p className="absolute right-0 -top-3 text-[12px] m-0"><MyDateTime createdAt={item?.created_at} options={options}/></p>
                                     </div>
                                 </div>
                             );
@@ -201,7 +209,7 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                                                 {item?.from_user?.last_name} {item?.from_user?.name}
                                             </p>
                                             <div className="w-full relative flex">
-                                                <p className="absolute right-0 -top-3 text-[10px] m-0">{dateTime(item?.created_at)}</p>
+                                                <p className="absolute right-0 -top-3 text-[10px] m-0"><MyDateTime createdAt={item?.created_at} options={options}/></p>
                                             </div>
                                         </div>
                                     );
@@ -315,7 +323,7 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                                                 {item?.from_user?.last_name} {item?.from_user?.name}
                                             </p>
                                             <div className="w-full relative flex">
-                                                <p className="absolute right-0 -top-3 text-[10px] m-0">{dateTime(item?.created_at)}</p>
+                                                <p className="absolute right-0 -top-3 text-[10px] m-0"><MyDateTime createdAt={item?.created_at} options={options}/></p>
                                             </div>
                                         </div>
                                     );
@@ -399,7 +407,7 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                                         {item?.from_user?.last_name} {item?.from_user?.name}
                                     </p>
                                     <div className="w-full relative flex">
-                                        <p className="absolute right-0 -top-3 text-[12px] m-0">{dateTime(item?.created_at)}</p>
+                                        <p className="absolute right-0 -top-3 text-[12px] m-0"><MyDateTime createdAt={item?.created_at} options={options}/></p>
                                     </div>
                                 </div>
                             );
