@@ -86,7 +86,10 @@ export interface LayoutContextProps {
     setContextNewStudentThemes,
 
     contextNotificationId: number | null, 
-    setContextNotificationId
+    setContextNotificationId,
+
+    forumValuse: {description: string, userInfo: {userName: string, userLastName: string}} | null, 
+    setForumValues,
     // message: { state: boolean; value: MessageType };
     // setMessage: React.Dispatch<React.SetStateAction<{ state: boolean; value: MessageType }>>;
 }

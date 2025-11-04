@@ -1,7 +1,9 @@
 'use client';
 
+import { NotFound } from '@/app/components/NotFound';
 import FormModal from '@/app/components/popUp/FormModal';
 import Redacting from '@/app/components/popUp/Redacting';
+import GroupSkeleton from '@/app/components/skeleton/GroupSkeleton';
 import useErrorMessage from '@/hooks/useErrorMessage';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { LayoutContext } from '@/layout/context/layoutcontext';
@@ -51,7 +53,7 @@ export default function Forum() {
 
     const { stepId, id_parent, forum_id } = useParams();
 
-    const { user, setMessage } = useContext(LayoutContext);
+    const { user, setMessage, forumValuse } = useContext(LayoutContext);
     const showError = useErrorMessage();
     const media = useMediaQuery('(max-width: 640px)');
     const scrollRef = useRef();
@@ -75,12 +77,19 @@ export default function Forum() {
         to: 0,
         total: 0
     });
+
     const [sendMessage, setSendMessage] = useState('');
     const [progressSpinner, setProgressSpinner] = useState(false);
     const [bigProgressSpinner, setBigProgressSpinner] = useState(false);
     const [sendBtnDisabled, setSendBtnDisabled] = useState(false);
     const [currentPage, setCurrentPage] = useState<number | null>(0);
     const [editingLesson, setEditingLesson] = useState<{ description: string } | null>(null);
+    const [descCommentState, setDescCommentState] = useState(false);
+    const [answerToComment, setAnswerToComment] = useState<{ userInfo: { userName: string }; description: string; id: number } | null>(null);
+    const [hasComments, setHasComments] = useState(false);
+    const [valueEmpty, setValueEmpty] = useState(false);
+    const [skeleton, setSkeleton] = useState(true);
+    const [forumInfoValues, setInfoForumValues] = useState<{ description: string; userInfo: { userName: string; userLastName: string } } | null>(null);
 
     // 2. Функция, выполняющая прокрутку
     const scrollToTop = () => {
@@ -118,12 +127,19 @@ export default function Forum() {
     };
 
     const handleForumDetails = async () => {
+        if (skeleton) {
+            setTimeout(() => {
+                setSkeleton(false);
+            }, 1000);
+        }
+
         setIsLoadingOlder(true); // сразу же отключаем запрос
         setProgressSpinner(true);
         const data = await forumDetails(Number(forum_id), currentPage);
         if (data && Object.values(data).length > 0) {
-            // setTimeout(() => {
+            setHasComments(false);
             setProgressSpinner(false);
+
             if (data?.data?.length < 1) {
                 // если очередной или первый запрос возвращает пустой массив то отключам состояние и прекращаем на этом делать новые запросы
                 setIsLoadingOlder(true);
@@ -132,7 +148,7 @@ export default function Forum() {
             }
 
             const forData = [...(forumValue?.data ?? []), ...(data?.data || [])];
-            const newStructure = {
+            const newStructure: mainAnswerType = {
                 current_page: data?.current_page,
                 first_page_url: '',
                 data: forData,
@@ -147,10 +163,9 @@ export default function Forum() {
                 to: data?.to,
                 total: data?.total
             };
-            console.log(newStructure);
             setForumValue(newStructure);
-            // }, 1000);
         } else {
+            setHasComments(true);
             setIsLoadingOlder(true); // останавливаем если ошибка
             setProgressSpinner(false);
         }
@@ -158,7 +173,6 @@ export default function Forum() {
 
     const editing = async (id: number) => {
         const data = await forumDetailsShow(id);
-        console.log(data);
 
         if (data && Object.values(data).length) {
             setEditingLesson({ description: data?.description });
@@ -174,8 +188,6 @@ export default function Forum() {
     };
 
     const selectedForEditing = (id: number) => {
-        console.log(id);
-
         setSelectId(id);
         setVisisble(true);
         editing(id);
@@ -188,7 +200,7 @@ export default function Forum() {
     const handleAddMessage = async () => {
         setIsLoadingOlder(true);
         setProgressSpinner(true);
-        const data = await addForumMessage(Number(stepId), null, sendMessage);
+        const data = await addForumMessage(Number(stepId), answerToComment?.id || null, sendMessage);
         console.log(data);
 
         if (data.success) {
@@ -290,21 +302,79 @@ export default function Forum() {
         // Рассчитываем, насколько близко мы к низу.
         // Мы на самом низу, когда: scrollTop + clientHeight === scrollHeight
         // Устанавливаем "зазор" (например, 100px), чтобы начать загрузку заранее:
-        const isNearBottom = scrollTop + clientHeight >= scrollHeight - 200;
-        // clientHeight -
+        const isNearBottom = scrollTop + clientHeight >= scrollHeight - 250;
 
         if (isNearBottom && !isLoadingOlder) {
             // Вызов функции для загрузки БОЛЕЕ НОВЫХ сообщений
             // handleAddMessage();
             handleForumDetails();
-
-            console.log('up');
         }
     };
+
+    const chatSection = (item: answerType, messageAnswer: boolean) => {
+        const parendItem = item?.parent_id ? forumValue.data.find((el) => el.id === item.parent_id) : false;
+        return (
+            <div className={`shadow p-2 gap-3 ${user?.id === item?.user?.id ? 'bg-[#ddc4f51a]' : ''} `}>
+                {parendItem && (
+                    <div className="relative p-2 mb-1 lesson-card-border rounded flex overflow-hidden">
+                        <span className="bg-[var(--mainColor)] w-[6px] h-full absolute block top-0 left-0"></span>
+                        <div className='flex flex-col gap-1'>
+                            <b className="w-full ml-[5px] text-[13px] text-[var(--mainColor)]">{item?.parent_id ? parendItem?.user.name : ''}</b>
+                            <span className="text-[13px] ml-[5px]">{item?.parent_id ? parendItem?.description : ''}</span>
+                        </div>
+                    </div>
+                )}
+                <div className={`flex ${messageAnswer ? 'w-full justify-center' : 'w-[97%] justify-end'} flex-col`}>
+                    <div className="w-full flex justify-between">
+                        <b className="w-full text-sm text-[var(--mainColor)]">{item?.user?.name}</b>
+
+                        <div className="w-full h-full relative flex flex-col items-end gap-2 justify-between">
+                            {user?.id === item?.user?.id && <Redacting redactor={getRedactor('null', item, { onEdit: selectedForEditing, getConfirmOptions, onDelete: handleDelete })} textSize={'14px'} />}
+                        </div>
+                    </div>
+                    <div className="flex flex-col gap-1">
+                        <div className="flex justify-between flex-col sm:items-end">
+                            <div className="w-full break-words text-sm whitespace-pre-wrap">{item?.description}</div>
+                        </div>
+                        <div className="relative flex justify-end items-center">
+                            {messageAnswer && (
+                                <div className="w-full flex items-center gap-1 justify-start sm:justify-end sm:mr-[120px]">
+                                    <i className="pi pi-envelope text-[10px] text-[var(--mainColor)]" style={{ fontSize: '0.8rem' }}></i>
+                                    <i
+                                        className="cursor-pointer text-[var(--mainColor)] text-[12px] sm:text-[13px]"
+                                        onClick={() => {
+                                            setDescCommentState(true);
+                                            setAnswerToComment({ userInfo: { userName: item?.user?.name }, description: item?.description, id: item?.id });
+                                            scrollToTop();
+                                        }}
+                                    >
+                                        Ответить
+                                    </i>
+                                </div>
+                            )}
+                            <p className="absolute top-2 text-[10px] m-0 flex justify-end">{dateTime(item?.updated_at)}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    };
+
     // Вызываем детаилс
     useEffect(() => {
-        handleForumDetails();
-        // scrollToTop();
+        // const testFunc = () => {
+        //     const clearValue = setInterval(() => {
+                handleForumDetails();
+        //     }, 3000);
+        //     if(hasComments || ha){
+        //         clearInterval(clearValue);
+        //     }
+        // }
+        // testFunc();
+        const checkValues = localStorage.getItem('forumValues');
+        if (checkValues && checkValues?.length > 0) {
+            setInfoForumValues(JSON.parse(checkValues));
+        }
     }, []);
 
     useEffect(() => {
@@ -312,11 +382,17 @@ export default function Forum() {
         if (forumValue?.current_page) {
             setCurrentPage(forumValue.current_page);
         }
+
+        if (forumValue?.data?.length < 1) {
+            setValueEmpty(true);
+        } else {
+            setValueEmpty(false);
+        }
     }, [forumValue]);
 
     useEffect(() => {
-        console.log('currentpage', currentPage);
-    }, [currentPage]);
+        console.log('currentpage', forumValuse);
+    }, [forumValuse]);
 
     return (
         <div className="main-bg">
@@ -332,62 +408,114 @@ export default function Forum() {
                     </div> */}
                     <div className="flex justify-between items-start shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)] pb-2">
                         <div className="flex flex-col gap-1">
-                            <h3 className="m-0 w-full break-words text-lg">Название форума Название форума Название форума</h3>
-                            <span className="text-[13px]">Иван Иванов</span>
+                            {forumInfoValues?.description ? <h3 className="m-0 w-full break-words text-lg">Название форума: {forumInfoValues?.description}</h3> : <h3 className="m-0 w-full break-words text-xl">Форум</h3>}
+                            {forumInfoValues?.userInfo?.userName && (
+                                <span className="text-[13px]">
+                                    {forumInfoValues?.userInfo?.userLastName} {forumInfoValues?.userInfo?.userName}
+                                </span>
+                            )}
                         </div>
-                        <span className="w-[180px] text-sm flex justify-end">xx-xx-xx</span>
+                        {/* <span className="w-[180px] text-sm flex justify-end">xx-xx-xx</span> */}
                     </div>
                 </div>
 
-                {/* chat */}
-                <div className="relative">
-                    {bigProgressSpinner && (
-                        <div className="absolute w-full h-full bg-black/50 flex justify-center items-center">
-                            <ProgressSpinner className="text-white text-lg" style={{ width: '54px', height: '54px' }} />
-                        </div>
-                    )}
-                    <div onScroll={handleScroll} ref={messagesEndRef} className="flex flex-col gap-2 p-3 lesson-card-border rounded max-h-[350px] sm:max-h-[400px] overflow-x-auto">
-                        {Array.isArray(forumValue?.data) &&
-                            forumValue?.data?.map((item) => {
-                                return (
-                                    <div key={item?.id}>
-                                        <div className={`w-full flex flex-col justify-center shadow p-2 gap-2 ${user?.id === item?.user?.id ? 'bg-[#ddc4f51a]' : ''}`}>
-                                            <div className="w-full flex justify-between">
-                                                <b className="w-full text-sm text-[var(--mainColor)]">{item?.user?.name}</b>
-
-                                                <div className="w-full h-full relative flex flex-col items-end gap-2 justify-between">
-                                                    {user?.id === item?.user?.id && <Redacting redactor={getRedactor('null', item, { onEdit: selectedForEditing, getConfirmOptions, onDelete: handleDelete })} textSize={'14px'} />}
-                                                </div>
-                                            </div>
-                                            <div className='flex justify-between gap-2 items-center'>
-                                                <div className="w-full break-words text-sm ">{item?.description}</div>
-                                                <p className="text-[10px] m-0 w-full flex justify-end">{dateTime(item?.updated_at)}</p>
-                                            </div>
-                                        </div>
+                {skeleton ? (
+                    <div className="w-full">
+                        <GroupSkeleton count={1} size={{ width: '100%', height: '15rem' }} />
+                    </div>
+                ) : hasComments ? (
+                    <NotFound titleMessage="Данные временно не доступны" />
+                ) : (
+                    <>
+                        {/* chat */}
+                        <div className="relative">
+                            {bigProgressSpinner && (
+                                <div className="absolute w-full h-full bg-black/50 flex justify-center items-center">
+                                    <ProgressSpinner className="text-white text-lg" style={{ width: '54px', height: '54px' }} />
+                                </div>
+                            )}
+                            <div onScroll={handleScroll} ref={messagesEndRef} className="flex flex-col gap-2 p-3 lesson-card-border rounded max-h-[350px] sm:max-h-[400px] overflow-x-auto">
+                                {valueEmpty ? (
+                                    <div className="w-full">
+                                        <p className="text-sm text-center">Сообщения отсутствуют. Добавьте первое, чтобы начать диалог</p>
                                     </div>
-                                );
-                            })}
-                        {progressSpinner && <ProgressSpinner style={{ width: '70px', height: '50px' }} animationDuration=".5s" />}
-                    </div>
-                </div>
+                                ) : (
+                                    // <div className="flex flex-col gap-2">
+                                    //     <div className="flex justify-between flex-col sm:gap-1 pb-1 mb-4 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">
+                                    //         <div className="flex justify-between items-center">
+                                    //             <div className="flex items-center gap-3">
+                                    //                 <b className="pi pi-times cursor-pointer sm:text-lg text-[var(--mainColor)]" onClick={() => setDescCommentState(false)}></b>
+                                    //                 <h3 className="m-0">Ответить пользователю ({''})</h3>
+                                    //             </div>
+                                    //             <p className="text-[10px] m-0 flex justify-end">{dateTime('')}</p>
+                                    //         </div>
+                                    //         <div className="w-full break-words text-sm">{'lorem'}</div>
+                                    //     </div>
 
-                {/* send area */}
-                <div className="flex items-center gap-1">
-                    <InputText className="w-full p-2 p-inputtext-sm" value={sendMessage} onChange={(e) => setSendMessage((prev) => (prev = e.target.value))} />
-                    <button
-                        disabled={progressSpinner || sendBtnDisabled}
-                        onClick={() => {
-                            handleAddMessage();
-                            setSendBtnDisabled(true);
-                            setTimeout(() => {
-                                setSendBtnDisabled(false);
-                            }, 1000);
-                        }}
-                        className={`pi pi-send cursor-pointer ${
-                            progressSpinner && 'opacity-50'
-                        } transform rotate-[47deg] bg-[var(--mainColor)] p-[10px] sm:p-[12px] rounded-full text-white text-lg sm:text-xl hover:bg-[var(--mainBorder)] hover:text-[var(--mainColor)]`}
-                    ></button>
-                </div>
+                                    //     {Array.isArray(forumValue?.data) &&
+                                    //         forumValue?.data?.map((item) => {
+                                    //             return (
+                                    //                 <div key={item?.id} className="w-full flex justify-end">
+                                    //                     {chatSection(item, false)}
+                                    //                 </div>
+                                    //             );
+                                    //         })}
+                                    // </div>
+                                    <div className="flex flex-col gap-4">
+                                        {descCommentState && (
+                                            <div className="flex justify-between flex-col sm:gap-1 pb-1 mb-4 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">
+                                                <div className="flex items-center justify-between gap-3">
+                                                    <h3 className="m-0">Ответить пользователю ({answerToComment?.userInfo?.userName})</h3>
+                                                    <b className="pi pi-times cursor-pointer mr-2 sm:text-lg text-[var(--mainColor)]" onClick={() => setDescCommentState(false)}></b>
+                                                </div>
+
+                                                <div className="w-full break-words text-sm">{answerToComment?.description}</div>
+                                            </div>
+                                        )}
+
+                                        {Array.isArray(forumValue?.data) &&
+                                            forumValue?.data?.map((item) => {
+                                                return <div key={item?.id}>{chatSection(item, true)}</div>;
+                                            })}
+                                    </div>
+                                )}
+
+                                {progressSpinner && <ProgressSpinner style={{ width: '70px', height: '50px' }} animationDuration=".5s" />}
+                            </div>
+                        </div>
+                        {/* send area */}
+                        <div className="flex items-center gap-1">
+                            <InputText
+                                className="w-full p-2 p-inputtext-sm"
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter') {
+                                        handleAddMessage();
+                                        setSendBtnDisabled(true);
+                                        setTimeout(() => {
+                                            setSendBtnDisabled(false);
+                                        }, 1000);
+                                    }
+                                }}
+                                placeholder={descCommentState ? 'Введите свой ответ' : ''}
+                                value={sendMessage}
+                                onChange={(e) => setSendMessage((prev) => (prev = e.target.value))}
+                            />
+                            <button
+                                disabled={progressSpinner || sendBtnDisabled}
+                                onClick={() => {
+                                    handleAddMessage();
+                                    setSendBtnDisabled(true);
+                                    setTimeout(() => {
+                                        setSendBtnDisabled(false);
+                                    }, 1000);
+                                }}
+                                className={`pi pi-send cursor-pointer ${
+                                    progressSpinner && 'opacity-50'
+                                } transform rotate-[47deg] bg-[var(--mainColor)] p-[10px] sm:p-[12px] rounded-full text-white text-lg sm:text-xl hover:bg-[var(--mainBorder)] hover:text-[var(--mainColor)]`}
+                            ></button>
+                        </div>
+                    </>
+                )}
             </div>
 
             <FormModal title={'Редактировать'} fetchValue={() => handleUpdate()} clearValues={() => {}} visible={visible} setVisible={setVisisble} start={false} footerValue={{ footerState: true, reject: 'Закрыть', next: 'Сохранить' }}>

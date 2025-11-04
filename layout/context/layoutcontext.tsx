@@ -115,6 +115,8 @@ export const LayoutProvider = ({ children }: ChildContainerProps) => {
     const [departament, setDepartament] = useState<{ last_name: string; name: string; father_name: string; info: string }>({ last_name: '', name: '', father_name: '', info: '' });
 
     const [contextNotificationId, setContextNotificationId] = useState<number | null>(null);
+    
+    const [forumValuse, setForumValues] = useState<{description: string, userInfo: {userName: string, userLastName: string}} | null>(null);
 
     useEffect(() => {
         // if (pathname === '/course' && !departament.name) {
@@ -181,7 +183,10 @@ export const LayoutProvider = ({ children }: ChildContainerProps) => {
         setContextNewStudentThemes,
         
         contextNotificationId, 
-        setContextNotificationId
+        setContextNotificationId,
+
+        forumValuse, 
+        setForumValues,
     };
 
     return (

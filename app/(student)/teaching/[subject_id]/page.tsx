@@ -25,7 +25,7 @@ export default function StudentLesson() {
     const { subject_id } = useParams();
     const params = new URLSearchParams();
 
-    const { setMessage } = useContext(LayoutContext);
+    const { setMessage, forumValuse, setForumValues } = useContext(LayoutContext);
     const showError = useErrorMessage();
 
     const [main_id, setMain_id] = useState<predmetType | null>(null);
@@ -304,6 +304,10 @@ export default function StudentLesson() {
                                                                                     fetchProp={() => handleTabChange(course.id, accordionIndex)}
                                                                                     contentId={item?.content?.id}
                                                                                     id_parent={item?.id_parent || null}
+                                                                                    forumValueAdd={()=> {
+                                                                                        setForumValues({description: item?.content.title || '', userInfo: {userName: course?.user?.name, userLastName: course?.user?.last_name}});
+                                                                                        localStorage.setItem('forumValues', JSON.stringify({description: item?.content.title || '', userInfo: {userName: course?.user?.name, userLastName: course?.user?.last_name}}));
+                                                                                    }}
                                                                                 />
                                                                             </div>
                                                                         );
