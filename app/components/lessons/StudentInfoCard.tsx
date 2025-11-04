@@ -65,7 +65,6 @@ export default function StudentInfoCard({
         const newChills = !chills;
         setProgressSpinner(true);
         const data = await chillsUpdate(stepId, streams?.connections[0]?.id_stream, newChills);
-        console.log(data);
         if (data?.success) {
             setProgressSpinner(false);
             setMessage({

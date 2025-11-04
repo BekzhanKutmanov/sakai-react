@@ -222,14 +222,15 @@ export default function LessonCard({
                                     {status === 'working' && (
                                         <div className="flex items-center">
                                             <div className="flex gap-2 items-center">
-                                                {type.typeValue === 'forum' && (
+                                                {/* {type.typeValue === 'forum' && (
                                                     <Link href={`/students/forum/${cardValue?.id}`}>
                                                         <Button icon={'pi pi-comments'} />
                                                     </Link>
-                                                )}
+                                                )} */}
                                                 <Button
                                                     icon={'pi pi-pencil'}
                                                     label={!media ? 'Редактировать' : ''}
+                                                    size='small'
                                                     onClick={() => {
                                                         onSelected && onSelected(cardValue.id, cardValue?.type || '');
                                                     }}
@@ -237,6 +238,7 @@ export default function LessonCard({
                                                 <Button
                                                     className="trash-button"
                                                     icon={'pi pi-trash'}
+                                                    size='small'
                                                     label={!media ? 'Удалить' : ''}
                                                     onClick={() => {
                                                         const options = getConfirmOptions(Number(cardValue.id), () => onDelete && onDelete(cardValue.id));
