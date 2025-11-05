@@ -197,7 +197,7 @@ export default function StudentCheck() {
                 </div>
             ) : (
                 <div>
-                    <ActivityPage value={contribution} />
+                    <ActivityPage value={contribution} recipient='Активность студента'/>
                     <h3 className="text-lg pb-1 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">{/* <span className="text-[var(--mainColor)]">Название курса:</span> {courseInfo.title} */}</h3>
                     <Accordion activeIndex={activeIndex} onTabChange={(e) => setActiveIndex(e.index)}>
                         {lessons?.map((item) => {

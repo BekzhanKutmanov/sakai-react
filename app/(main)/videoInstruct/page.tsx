@@ -18,8 +18,6 @@ export default function VideoInstruct() {
     const router = useRouter();
 
     const handleVideoCall = (value: string | null) => {
-        console.log(value);
-
         if (!value) {
             setMessage({
                 state: true,

@@ -49,7 +49,6 @@ export default function LessonStep() {
     const [skeleton, setSkeleton] = useState(false);
     const [wasCreated, setWasCreated] = useState(false);
     const [lastStep, setLastStep] = useState<number | null>(null);
-    const [lastTestStepId, setLastTestStepId] = useState<number | null>(null);
     const [draggedId, setDraggedId] = useState<number | string>('');
     const [toggleDragSteps, setToggleDragSteps] = useState<boolean>(false);
     const [documentSteps, setDocumentSteps] = useState<mainStepsType[]>([]);

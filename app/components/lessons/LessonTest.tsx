@@ -9,7 +9,7 @@ import { useContext, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { NotFound } from '../NotFound';
 import LessonCard from '../cards/LessonCard';
-import { addDocument, addTest, deleteDocument, deleteTest, fetchElement, generageQuiz, stepSequenceUpdate, updateDocument, updateTest } from '@/services/steps';
+import { addDocument, addTest, deleteDocument, deleteTest, fetchElement, generateQuiz, stepSequenceUpdate, updateDocument, updateTest } from '@/services/steps';
 import { mainStepsType } from '@/types/mainStepType';
 import useErrorMessage from '@/hooks/useErrorMessage';
 import { LayoutContext } from '@/layout/context/layoutcontext';
@@ -57,17 +57,16 @@ export default function LessonTest({
     ]);
     const [test, setTests] = useState<testType>({ answers: [{ id: null, text: '', is_correct: false }], id: null, content: '', score: 0, image: null, title: '', created_at: '' });
     const [aiOptions, setAiOptions] = useState<testType[]>([]);
-    const [testValue, setTestValue] = useState<{ title: string; score: number }>({ title: '', score: 0 });
+    const [testValue, setTestValue] = useState<{ title: string; score: number, aiCreate: boolean }>({ title: '', score: 0, aiCreate: false});
     const [testShow, setTestShow] = useState<boolean>(false);
 
     const [progressSpinner, setProgressSpinner] = useState(false);
     const [testChecked, setTestChecked] = useState<{ idx: null | number; check: boolean }>({ idx: null, check: false });
     const [selectId, setSelectId] = useState<number | null>(null);
     const [skeleton, setSkeleton] = useState(false);
-    const [preparationVisible, setPreparationVisible] = useState(false);
 
     const clearValues = () => {
-        setTestValue({ title: '', score: 0 });
+        setTestValue({ title: '', score: 0, aiCreate: false });
         setAnswer([
             { text: '', is_correct: false, id: null },
             { text: '', is_correct: false, id: null }
@@ -110,7 +109,7 @@ export default function LessonTest({
     };
 
     const handleAddTest = async () => {
-        const data = await addTest(answer, testValue.title, element?.lesson_id && Number(element?.lesson_id), element.type.id, element.id, testValue.score);
+        const data = await addTest(answer, testValue.title, element?.lesson_id && Number(element?.lesson_id), element.type.id, element.id, testValue.score, testValue?.aiCreate);
         if (data?.success) {
             fetchPropElement(element.id);
             fetchPropThemes();
@@ -120,7 +119,7 @@ export default function LessonTest({
                 value: { severity: 'success', summary: 'Успешно добавлен!', detail: '' }
             });
         } else {
-            setTestValue({ title: '', score: 0 });
+            setTestValue({ title: '', score: 0, aiCreate:false });
             setEditingLesson(null);
             setMessage({
                 state: true,
@@ -219,7 +218,7 @@ export default function LessonTest({
     const handleDrop = async () => {
         setProgressSpinner(true);
         console.log('Был перетащен элемент с id:', forAiTestId);
-        const data = await generageQuiz(element?.lesson_id && Number(element?.lesson_id), forAiTestId);
+        const data = await generateQuiz(element?.lesson_id && Number(element?.lesson_id), forAiTestId);
         if (data.status === 'success') {
             setProgressSpinner(false);
             setAiOptions(data?.quiz?.questions);
@@ -240,7 +239,6 @@ export default function LessonTest({
             <div className="flex flex-col gap-2">
                 <h3 className="text-lg text-center">Выберите один тест для дальнейшей работы </h3>
                 {aiOptions?.map((item) => {
-                    console.log(item);
 
                     return (
                         <div key={item?.id} className="lesson-card-border shadow rounded p-2">
@@ -272,7 +270,7 @@ export default function LessonTest({
                                     size="small"
                                     className="text-sm"
                                     onClick={() => {
-                                        setTestValue((prev) => ({ ...prev, title: item?.content, score: item?.score }));
+                                        setTestValue((prev) => ({ ...prev, title: item?.content, score: item?.score, aiCreate: true }));
                                         setAnswer(item.answers);
                                         const correctIndex = item.answers?.findIndex((answer) => answer?.is_correct);
 
@@ -462,7 +460,7 @@ export default function LessonTest({
     }, [content]);
 
     useEffect(() => {
-        setTestValue({ title: '', score: 0 });
+        setTestValue({ title: '', score: 0, aiCreate:false });
     }, [element]);
 
     return (

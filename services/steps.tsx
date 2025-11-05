@@ -220,9 +220,7 @@ export const deleteStep = async (lesson_id: number, step_id: number) => {
 };
 
 // test
-export const addTest = async (answers: { text: string; is_correct: boolean }[], title: string, lesson_id: number, type_id: number, step_id: number, score: number) => {
-    console.log(score);
-
+export const addTest = async (answers: { text: string; is_correct: boolean }[], title: string, lesson_id: number, type_id: number, step_id: number, score: number, aiCreate: boolean) => {
     const payload = {
         lesson_id,
         type_id,
@@ -515,7 +513,7 @@ export const stepSequenceUpdate = async (lesson_id: number | null, steps: { id: 
     }
 };
 
-export const generageQuiz = async (lesson_id: number, step_id: number | string) => {
+export const generateQuiz = async (lesson_id: number, step_id: number | string) => {
     
     try {
         const res = await axiosInstance.get(`/v1/teacher/lessons/generate-quiz?lesson_id=${lesson_id}&step_id=${step_id}`);
