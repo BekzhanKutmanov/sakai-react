@@ -5,11 +5,11 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { Button } from 'primereact/button';
 import { InputText } from 'primereact/inputtext';
 import { ProgressSpinner } from 'primereact/progressspinner';
-import { useContext, useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { NotFound } from '../NotFound';
 import LessonCard from '../cards/LessonCard';
-import { addDocument, addTest, deleteDocument, deleteTest, fetchElement, generateQuiz, stepSequenceUpdate, updateDocument, updateTest } from '@/services/steps';
+import { addTest, deleteTest, fetchElement, generateQuiz, stepSequenceUpdate, updateTest } from '@/services/steps';
 import { mainStepsType } from '@/types/mainStepType';
 import useErrorMessage from '@/hooks/useErrorMessage';
 import { LayoutContext } from '@/layout/context/layoutcontext';
@@ -17,7 +17,6 @@ import FormModal from '../popUp/FormModal';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { testType } from '@/types/testType';
 import GroupSkeleton from '../skeleton/GroupSkeleton';
-import { Dialog } from 'primereact/dialog';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 
 export default function LessonTest({
@@ -239,7 +238,8 @@ export default function LessonTest({
             <div className="flex flex-col gap-2">
                 <h3 className="text-lg text-center">Выберите один тест для дальнейшей работы </h3>
                 {aiOptions?.map((item) => {
-
+                    console.log(aiOptions);
+                    
                     return (
                         <div key={item?.id} className="lesson-card-border shadow rounded p-2">
                             <div className="flex items-start justify-between gap-2">
@@ -352,7 +352,7 @@ export default function LessonTest({
                                                 status="working"
                                                 onSelected={(id: number, type: string) => selectedForEditing(id)}
                                                 onDelete={(id: number) => handleDeleteTest(id)}
-                                                cardValue={{ title: test?.content || '', id: Number(test!.id), desctiption: '', type: 'test', score: test.score }}
+                                                cardValue={{ title: test?.content || '', id: Number(test!.id), desctiption: '', type: 'test', score: test.score, aiCreate: testValue?.aiCreate }}
                                                 cardBg={'#ddc4f51a'}
                                                 type={{ typeValue: 'test', icon: 'pi pi-doc' }}
                                                 typeColor={'var(--mainColor)'}
@@ -462,6 +462,10 @@ export default function LessonTest({
     useEffect(() => {
         setTestValue({ title: '', score: 0, aiCreate:false });
     }, [element]);
+
+    useEffect(()=> {
+        console.log(testValue);
+    },[testValue]);
 
     return (
         <div>

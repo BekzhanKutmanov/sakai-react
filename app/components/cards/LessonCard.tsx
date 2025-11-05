@@ -26,7 +26,7 @@ export default function LessonCard({
     status: string;
     onSelected?: (id: number, type: string) => void;
     onDelete?: (id: number) => void;
-    cardValue: { title: string; id: number; desctiption?: string; type?: string; photo?: string; url?: string; document?: string; score?: number };
+    cardValue: { title: string; id: number; desctiption?: string; type?: string; photo?: string; url?: string; document?: string; score?: number; aiCreate?: boolean };
     cardBg: string;
     type: { typeValue: string; icon: string };
     typeColor: string;
@@ -100,12 +100,14 @@ export default function LessonCard({
                 <div className={`flex flex-col items-center ${type.typeValue !== 'video' ? 'gap-3' : 'gap-1'}`}>
                     <div className="w-full flex flex-col gap-1 justify-center rounded-2xl p-2">
                         {/* <div className=''>{!cardValue.photo && <img className="cover" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSweN5K2yaBwZpz5W9CxY9S41DI-2LawmjzYw&s" alt="" />}</div> */}
-                        <div className={`flex justify-center gap-1 ${cardValue.score ? 'items-center gap-2 flex-col' : ''}`}>
-                            {cardValue.score ? (
+                        <div className={`flex justify-center gap-1 items-center flex-col`}>
+                            {/* {cardValue.score ? ( */}
                                 <div className="w-full flex justify-between items-center">
-                                    <div className="flex items-center justify-start gap-1">
-                                        <span className="text-[var(--mainColor)] sm:text-lg">Балл: </span>
-                                        <b className="text-[16px] sm:text-[18px]">{`${cardValue.score}`}</b>
+                                    <div>
+                                        <div className="flex items-center justify-start gap-1">
+                                            <span className="text-[var(--mainColor)] sm:text-lg">Балл: </span>
+                                            <b className="text-[16px] sm:text-[18px]">{`${cardValue.score}`}</b>
+                                        </div>
                                     </div>
                                     {status === 'working' && lessonDate && (
                                         <div className={`bg-white p-2 flex gap-1 items-center justify-center min-w-[120px] max-h-[25px]`}>
@@ -114,17 +116,17 @@ export default function LessonCard({
                                         </div>
                                     )}
                                 </div>
-                            ) : (
+                            {/* ) : (
                                 ''
-                            )}
+                            )} */}
                             <div className="w-full flex justify-between sm:items-start flex-col gap-1 sm:flex-row">
                                 <b className={`flex items-center justify-start text-[16px] sm:text-[18px] mt-1 break-words ${type.typeValue === 'practica' && 'shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]'}`}>{cardValue?.title}</b>
-                                {!cardValue.score && status === 'working' && lessonDate && (
+                                {/* {!cardValue.score && status === 'working' && lessonDate && (
                                     <div className={`bg-white p-2 flex gap-1 items-center justify-center min-w-[120px] max-h-[25px]`}>
                                         <i className={`pi pi-calendar text-[var(--mainColor)]`}></i>
                                         <span className="text-[12px]">{lessonDate}</span>
                                     </div>
-                                )}
+                                )} */}
                             </div>
                         </div>
 
@@ -167,6 +169,7 @@ export default function LessonCard({
                                 : cardValue?.desctiption && cardValue?.desctiption !== 'null' && <div className="w-full break-words">{cardValue.desctiption}</div>}
                         </div>
                     </div>
+
                     {/* video preview */}
                     {videoPreviw}
 
@@ -230,7 +233,7 @@ export default function LessonCard({
                                                 <Button
                                                     icon={'pi pi-pencil'}
                                                     label={!media ? 'Редактировать' : ''}
-                                                    size='small'
+                                                    size="small"
                                                     onClick={() => {
                                                         onSelected && onSelected(cardValue.id, cardValue?.type || '');
                                                     }}
@@ -238,7 +241,7 @@ export default function LessonCard({
                                                 <Button
                                                     className="trash-button"
                                                     icon={'pi pi-trash'}
-                                                    size='small'
+                                                    size="small"
                                                     label={!media ? 'Удалить' : ''}
                                                     onClick={() => {
                                                         const options = getConfirmOptions(Number(cardValue.id), () => onDelete && onDelete(cardValue.id));

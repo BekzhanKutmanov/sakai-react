@@ -220,7 +220,7 @@ export const deleteStep = async (lesson_id: number, step_id: number) => {
 };
 
 // test
-export const addTest = async (answers: { text: string; is_correct: boolean }[], title: string, lesson_id: number, type_id: number, step_id: number, score: number, aiCreate: boolean) => {
+export const addTest = async (answers: { text: string; is_correct: boolean }[], title: string, lesson_id: number, type_id: number, step_id: number, score: number, is_ai: boolean) => {
     const payload = {
         lesson_id,
         type_id,
@@ -228,7 +228,8 @@ export const addTest = async (answers: { text: string; is_correct: boolean }[], 
         answers, // массив уходит как есть
         content: title,
         img: null, // если файла нет, можно null или пустую строку
-        score
+        score,
+        is_ai,
     };
 
     try {
@@ -236,7 +237,7 @@ export const addTest = async (answers: { text: string; is_correct: boolean }[], 
 
         return res.data;
     } catch (err) {
-        console.log('Ошибка при добавлении курса', err);
+        console.log('Ошибка при добавлении теста', err);
         return err;
     }
 };

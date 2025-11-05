@@ -6,10 +6,9 @@ import ActivityPage from '@/app/components/Contribution';
 import Link from 'next/link';
 import { useContext, useEffect, useState } from 'react';
 
-export default function DashBoard() {
+export default function Dashboard() {
     const { user, departament, setMessage } = useContext(LayoutContext);
 
-    const [videoCall, setVideoCall] = useState(false);
     const [videoLink, setVideoLink] = useState('');
     const [contribution, setContribution] = useState<ContributionDay[] | null>([{date: 'xxx', count: 3}]);
 
@@ -41,7 +40,7 @@ export default function DashBoard() {
         }
         // return `https://www.youtube.com/embed/${videoId}`;
         setVideoLink(`https://www.youtube.com/embed/${videoId}`);
-        setVideoCall(true);
+        // setVideoCall(true);
         // setVisisble(true);
     };
 
