@@ -94,10 +94,10 @@ export default function StudentInfoCard({
                     {progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}
                     {type === 'test' || type === 'practical' ? (
                         <Link href={`/teaching/lessonView/${lesson}/${subjectId}/${streams.connections[0].id_stream}/${stepId}`}>
-                            <Button disabled={progressSpinner} label="Выполнено" icon="pi pi-check" size="small" className={`w-full success-button px-2 py-1 ${progressSpinner && 'opacity-50'} ${media ? 'mini-button' : ''}`} />
+                            <Button disabled={progressSpinner} label="Выполнено" icon="pi pi-check" size="small" className={`w-full success-button px-2 py-1 flex items-center justify-center gap-1 ${progressSpinner && 'opacity-50'} ${media ? 'mini-button' : ''}`} />
                         </Link>
                     ) : (
-                        <Button disabled={progressSpinner} label="Выполнено" icon="pi pi-check" onClick={handleChills} size="small" className={`w-full success-button px-2 py-1 ${progressSpinner && 'opacity-50'} ${media ? 'mini-button' : ''}`} />
+                        <Button disabled={progressSpinner} label="Выполнено" icon="pi pi-check" onClick={handleChills} size="small" className={`w-full success-button px-2 py-1 flex items-center justify-center gap-2 ${progressSpinner && 'opacity-50'} ${media ? 'mini-button' : ''}`} />
                     )}
                 </div>
             ) : (

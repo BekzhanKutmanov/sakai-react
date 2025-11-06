@@ -334,7 +334,6 @@ export default function LessonStep() {
 
     // заменяем первый useEffect
     useEffect(() => {
-
         const lessons = contextThemes?.lessons?.data ?? [];
 
         // делаем "снимок" важных полей (id + title)
@@ -441,8 +440,7 @@ export default function LessonStep() {
         </div>
     );
 
-    const accept = () => {
-    };
+    const accept = () => {};
 
     // const reject = () => {};
 
@@ -458,13 +456,12 @@ export default function LessonStep() {
         });
     };
 
-
     const step = (item: mainStepsType, icon: string, step: number, idx: number) => {
         return (
             <div
                 className="cursor-pointer flex flex-col items-center"
                 onClick={() => {
-                    if(toggleDragSteps){
+                    if (toggleDragSteps) {
                         setDraggedId(item?.id);
                     } else {
                         setSelectId(step);
@@ -508,6 +505,8 @@ export default function LessonStep() {
             return true;
         }
     };
+
+    const [notificationGroup, setNotificationGroup] = useState({state: false, type: ''});
 
     if (themeNull) {
         return (
@@ -573,7 +572,7 @@ export default function LessonStep() {
 
             {/* info section */}
             {lessonInfo}
-
+        
             {/* steps section */}
             <div className="flex gap-2 mt-4 items-end">
                 {hasSteps ? (
@@ -584,8 +583,8 @@ export default function LessonStep() {
                     <div className="flex items-center relative max-w-[550px] sm:max-w-[800px] overflow-x-auto scrollbar-thin">
                         {toggleDragSteps ? (
                             <div className="flex flex-col gap-2 items-start">
-                                <div className='flex flex-col gap-2'>
-                                    <div className='flex flex-col sm:flex-row gap-2 items-start sm:items-center '>
+                                <div className="flex flex-col gap-2">
+                                    <div className="flex flex-col sm:flex-row gap-2 items-start sm:items-center ">
                                         <b className="pi pi-times cursor-pointer sm:text-xl text-[var(--mainColor)]" onClick={() => setToggleDragSteps(false)}></b>
                                         <div className="flex items-center gap-1">
                                             <b className="">Тест генерируется искусственным интеллектом</b>
@@ -593,7 +592,9 @@ export default function LessonStep() {
                                         </div>
                                     </div>
                                     <div className="flex items-center gap-2">
-                                        <span className='text-sm text-black'>Варианты тестов будут более продуманными если передать ваш документ <span className='opacity-60 text-[13px]'>(необязательно)</span></span>
+                                        <span className="text-sm text-black">
+                                            Варианты тестов будут более продуманными если передать ваш документ <span className="opacity-60 text-[13px]">(необязательно)</span>
+                                        </span>
                                         {/* <span className="text-[13px]">Кол-о документов: {documentSteps?.length || 0}</span> */}
                                     </div>
                                 </div>
@@ -686,7 +687,7 @@ export default function LessonStep() {
                         <LessonTest
                             preparation={() => handlePreparation(steps)}
                             aiTestStat={toggleDragSteps}
-                            aiTestSet={()=> setToggleDragSteps(false)}
+                            aiTestSet={() => setToggleDragSteps(false)}
                             forAiTestId={draggedId}
                             aiTestSteps={documentSteps}
                             element={element?.step}

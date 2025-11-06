@@ -101,7 +101,7 @@ export default function LessonCard({
                     <div className="w-full flex flex-col gap-1 justify-center rounded-2xl p-2">
                         {/* <div className=''>{!cardValue.photo && <img className="cover" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSweN5K2yaBwZpz5W9CxY9S41DI-2LawmjzYw&s" alt="" />}</div> */}
                         <div className={`flex justify-center gap-1 items-center flex-col`}>
-                            {/* {cardValue.score ? ( */}
+                            {cardValue.score ? (
                                 <div className="w-full flex justify-between items-center">
                                     <div>
                                         <div className="flex items-center justify-start gap-1">
@@ -116,17 +116,17 @@ export default function LessonCard({
                                         </div>
                                     )}
                                 </div>
-                            {/* ) : (
+                             ) : (
                                 ''
-                            )} */}
+                            )} 
                             <div className="w-full flex justify-between sm:items-start flex-col gap-1 sm:flex-row">
                                 <b className={`flex items-center justify-start text-[16px] sm:text-[18px] mt-1 break-words ${type.typeValue === 'practica' && 'shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]'}`}>{cardValue?.title}</b>
-                                {/* {!cardValue.score && status === 'working' && lessonDate && (
+                                {!cardValue.score && status === 'working' && lessonDate && (
                                     <div className={`bg-white p-2 flex gap-1 items-center justify-center min-w-[120px] max-h-[25px]`}>
                                         <i className={`pi pi-calendar text-[var(--mainColor)]`}></i>
                                         <span className="text-[12px]">{lessonDate}</span>
                                     </div>
-                                )} */}
+                                )}
                             </div>
                         </div>
 

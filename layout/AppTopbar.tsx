@@ -55,33 +55,6 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
         }
     };
 
-    // const dateTime = (createdAt: string | null, options: OptionsType) => {
-    //     const invalidDate = <span>---</span>;
-    //     if (notification && createdAt) {
-    //         const dateObject = new Date(createdAt);
-    //         if (dateObject) {
-    //             // const options: OptionsType = {
-    //             //     month: 'short', // 'long', 'short', 'numeric'
-    //             //     day: '2-digit',
-    //             //     hour: '2-digit',
-    //             //     minute: '2-digit',
-    //             //     hour12: false // 24-часовой формат
-    //             // };
-    //             const formattedString = dateObject.toLocaleString('ru-RU', options);
-    //             const result = formattedString?.replace(/,/g, '');
-    //             if (formattedString) {
-    //                 return <span>{result}</span>;
-    //             } else {
-    //                 return invalidDate;
-    //             }
-    //         } else {
-    //             return invalidDate;
-    //         }
-    //     } else {
-    //         return invalidDate;
-    //     }
-    // };
-
     const working_notification = [
         // {
         //     label: '',
@@ -436,6 +409,32 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
             handleNotifications();
         }
     }, [user]);
+
+    // <div className="relative mt-3 z-1">
+    //             {notificationGroup?.state ? (
+    //                 <div>
+    //                     <i className='pi pi-times cursor-pointer text-[var(--mainColor)] text-lg' onClick={()=> setNotificationGroup({state: false, type: ''})}></i>
+    //                     <div>
+    //                         {notificationGroup?.type === 'practical' ? 'he he baby' : 'not bab'}
+    //                     </div>
+    //                 </div>
+    //             ) : (
+    //                 <div className="cursor-pointer w-full z-2 mt-4 flex flex-col justify-center shadow p-2 gap-2 hover:underline" onClick={() => setNotificationGroup({state: true, type: 'practical'})}>
+    //                     <div className="w-full flex justify-between">
+    //                         <b
+    //                             // onClick={() => setContextNotificationId(item?.id)}
+    //                             className="hover:underline"
+    //                             // href={`/students/${item?.meta?.course_id}/${item?.meta?.connect_id}/${item?.meta?.stream_id}/${item?.meta?.student_id}/${item?.meta?.lesson_id}/${item?.meta?.step_id}`}
+    //                         >
+    //                             <b className="text-[var(--mainColor)]">{'Практическое задание'}</b>
+    //                         </b>
+    //                         <span className="text-sm w-[13px] h-[13px] rounded-full bg-[var(--amberColor)]"></span>
+    //                     </div>
+    //                     <p className="m-0 text-[12px]">10 сообщений</p>
+    //                     <div className="w-full relative flex">{/* <p className="absolute right-0 -top-3 text-[12px] m-0">xx-xx-xx</p> */}</div>
+    //                 </div>
+    //             )}
+    //         </div>
 
     return (
         <div className="layout-topbar">

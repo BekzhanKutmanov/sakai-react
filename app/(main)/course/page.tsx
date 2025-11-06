@@ -61,6 +61,7 @@ export default function Course() {
     const [forStreamId, setForStreamId] = useState<{ id: number | null; title: string } | null>(null);
     const [globalCourseId, setGlobalCourseId] = useState<{ id: number | null; title: string | null } | null>(null);
     const [pageState, setPageState] = useState<number>(1);
+    const [state, setState] = useState<number>(0);
 
     const showError = useErrorMessage();
 
@@ -578,7 +579,6 @@ export default function Course() {
                 </div>
                 {/* lorem */}
             </FormModal>
-
             <div className="flex justify-between gap-3">
                 <div className="w-full">
                     {media ? (

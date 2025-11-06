@@ -40,6 +40,7 @@ const LoginPage = () => {
 
     const onSubmit = async (value: LoginType) => {
         const user = await login(value);
+        console.log(user);
         
         if (user && user.success) {
             document.cookie = `access_token=${user.token.access_token}; path=/; Secure; SameSite=Strict; expires=${user.token.expires_at}`;
@@ -127,7 +128,7 @@ const LoginPage = () => {
 
                 <div className={`w-[90%] sm:w-[500px] shadow-2xl bg-white py-6 px-3 md:py-8 sm:px-4 md:px-8 rounded`}>
                     <h1 className="text-3xl sm:text-4xl font-bold inline-block border-b-2 pb-1 border-[var(--mainColor)]">Вход в mooc</h1>
-                    <form onSubmit={handleSubmit(onSubmit, onError)} className="w-full flex flex-col gap-4">
+                    <form onSubmit={handleSubmit(onSubmit, (onError))} className="w-full flex flex-col gap-4">
                         <div className="flex flex-col">
                             {/* <label htmlFor="email1" className="block text-900 text-[16px] md:text-xl font-medium mb-1 md:mb-2">
                                 MyEdu email

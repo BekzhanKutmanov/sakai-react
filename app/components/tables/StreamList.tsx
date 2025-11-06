@@ -37,7 +37,6 @@ export default function StreamList({
     const [hasStreams, setHasStreams] = useState(false);
     const [skeleton, setSkeleton] = useState(false);
     const [visible, setVisible] = useState(false);
-    const [contentShow, setContentShow] = useState(false);
     const [pendingChanges, setPendingChanges] = useState<streamsType[]>([]);
 
     const { setMessage } = useContext(LayoutContext);
@@ -187,6 +186,11 @@ export default function StreamList({
         insideDisplayStreams(displayStreams);        
     }, [displayStreams]);
 
+    useEffect(()=> {
+        console.log('hi');
+        
+    },[]);
+
     const itemTemplate = (item: mainStreamsType, index: number) => {
         const bgClass = index % 2 == 0 ? 'bg-[#f5f5f5]' : '';
         return (
@@ -271,6 +275,7 @@ export default function StreamList({
         <div>
             <Button
                 label="Назад"
+                size='small'
                 className="reject-button"
                 icon="pi pi-times"
                 onClick={() => {
@@ -281,6 +286,7 @@ export default function StreamList({
             {
                 <Button
                     label="Добавить"
+                    size='small'
                     disabled={streams.length < 1}
                     icon="pi pi-check"
                     onClick={() => {
@@ -352,7 +358,7 @@ export default function StreamList({
                         ></Column>
                     </DataTable>
                 ) : (
-                    <p className="text-[16px] text-center font-bold">Курс не опубликован или данные временно не доступны</p>
+                    <p className="text-[16px] text-center font-bold">Данные временно не доступны</p>
                 )}
             </Dialog>
             {callIndex === 1 && (
