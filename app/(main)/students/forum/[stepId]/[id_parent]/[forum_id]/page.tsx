@@ -209,7 +209,7 @@ export default function Forum() {
             setSendMessage('');
             setIsLoadingOlder(false);
             setProgressSpinner(false);
-            setForumValue((prev) => (prev ? { ...prev, data: [...prev.data, data?.data] } : prev));
+            setForumValue((prev) => (prev ? { ...prev, data: [data?.data, ...prev.data] } : prev));
             // setForumValue(data?.data);
             setMessage({
                 state: true,
@@ -400,7 +400,7 @@ export default function Forum() {
         <div className="main-bg">
             <div className="flex flex-col gap-4">
                 {/* header section */}
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-col gap-2">   
                     <div className="max-w-4xl mb-2">
                         <button onClick={() => router.back()} className="text-[var(--mainColor)] underline px-2 flex items-center gap-1">
                             <i className="pi pi-arrow-left text-[13px] cursor-pointer hover:shadow-2xl" style={{ fontSize: '13px' }}></i>
