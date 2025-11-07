@@ -62,9 +62,9 @@ export default function VideoInstruct() {
                 <h2 className="text-center text-lg sm:text-xl w-full m-0 mb-4 flex justify-center">Видеоуроки по использованию платформы Mooc</h2>
             </div>
             <div className="flex items-start justify-evenly">
-                {videoValues?.map((item) => {
+                {videoValues?.map((item, idx) => {
                     return (
-                        <div className="p-2 shadow w-[600px]">
+                        <div key={idx} className="p-2 shadow w-[600px]">
                             <div className="w-full flex flex-col justify-center items-center">
                                 <iframe
                                     className="w-full h-[200px] md:h-[400px]"

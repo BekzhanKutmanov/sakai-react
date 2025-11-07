@@ -472,7 +472,7 @@ export default function LessonStep() {
                                 <div className="w-full relative flex">
                                     <p className="absolute right-0 -top-3 text-[10px] sm:text-[12px] m-0">
                                         {/* <MyDateTime createdAt={item?.created_at} options={options} /> */}
-                                        '----'
+                                        {/* '----' */}
                                     </p>
                                 </div>
                             </div>
