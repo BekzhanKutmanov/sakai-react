@@ -524,9 +524,9 @@ export default function LessonStep() {
                     ) : (
                         <div className="w-full flex flex-col mt-1">
                             {types.map((item) => {
-                                if(item?.name === 'forum'){
-                                    return null;
-                                }
+                                // if(item?.name === 'forum'){
+                                //     return null;
+                                // }
 
                                 return (
                                     <React.Fragment key={item?.id}>
@@ -702,7 +702,7 @@ export default function LessonStep() {
                             clearProp={hasSteps}
                         />
                     )}
-                    {/* {element?.step.type.name === 'forum' && (
+                    {element?.step.type.name === 'forum' && (
                         <LessonForum
                             element={element?.step}
                             content={element?.content}
@@ -712,7 +712,7 @@ export default function LessonStep() {
                             }}
                             clearProp={hasSteps}
                         />
-                    )} */}
+                    )}
                 </>
             )}
 

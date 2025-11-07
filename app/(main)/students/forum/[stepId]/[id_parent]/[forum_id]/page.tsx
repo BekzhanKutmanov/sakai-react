@@ -11,7 +11,7 @@ import { addForumMessage, deleteMessageForum, forumDetails, forumDetailsShow, up
 import { getConfirmOptions } from '@/utils/getConfirmOptions';
 import { getRedactor } from '@/utils/getRedactor';
 import Link from 'next/link';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { Button } from 'primereact/button';
 import { confirmDialog } from 'primereact/confirmdialog';
 import { InputText } from 'primereact/inputtext';
@@ -90,6 +90,8 @@ export default function Forum() {
     const [valueEmpty, setValueEmpty] = useState(false);
     const [skeleton, setSkeleton] = useState(true);
     const [forumInfoValues, setInfoForumValues] = useState<{ description: string; userInfo: { userName: string; userLastName: string } } | null>(null);
+
+    const router = useRouter();
 
     // 2. Функция, выполняющая прокрутку
     const scrollToTop = () => {
@@ -318,7 +320,7 @@ export default function Forum() {
                 {parendItem && (
                     <div className="relative p-2 mb-1 lesson-card-border rounded flex overflow-hidden">
                         <span className="bg-[var(--mainColor)] w-[6px] h-full absolute block top-0 left-0"></span>
-                        <div className='flex flex-col gap-1'>
+                        <div className="flex flex-col gap-1">
                             <b className="w-full ml-[5px] text-[13px] text-[var(--mainColor)]">{item?.parent_id ? parendItem?.user.name : ''}</b>
                             <span className="text-[13px] ml-[5px]">{item?.parent_id ? parendItem?.description : ''}</span>
                         </div>
@@ -364,7 +366,7 @@ export default function Forum() {
     useEffect(() => {
         // const testFunc = () => {
         //     const clearValue = setInterval(() => {
-                handleForumDetails();
+        handleForumDetails();
         //     }, 3000);
         //     if(hasComments || ha){
         //         clearInterval(clearValue);
@@ -399,6 +401,12 @@ export default function Forum() {
             <div className="flex flex-col gap-4">
                 {/* header section */}
                 <div className="flex flex-col gap-2">
+                    <div className="max-w-4xl mb-2">
+                        <button onClick={() => router.back()} className="text-[var(--mainColor)] underline px-2 flex items-center gap-1">
+                            <i className="pi pi-arrow-left text-[13px] cursor-pointer hover:shadow-2xl" style={{ fontSize: '13px' }}></i>
+                            <span className="text-[13px] cursor-pointer">Назад</span>
+                        </button>
+                    </div>
                     {/* <div className="flex justify-between shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)] pb-2">
                         <div className="flex flex-col sm:flex-row items-center gap-1 text-xl">
                             <h3 className="m-0">Название курса {!media && '-'}</h3>

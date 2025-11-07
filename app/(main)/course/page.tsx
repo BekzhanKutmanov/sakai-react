@@ -30,6 +30,8 @@ import { ProgressSpinner } from 'primereact/progressspinner';
 import { DataView } from 'primereact/dataview';
 import { FileWithPreview } from '@/types/fileuploadPreview';
 import { mainStreamsType } from '@/types/mainStreamsType';
+import { Dropdown } from 'primereact/dropdown';
+import { Tooltip } from 'primereact/tooltip';
 
 export default function Course() {
     const { setMessage, setGlobalLoading, course, contextFetchCourse, setMainCourseId } = useContext(LayoutContext);
@@ -61,12 +63,17 @@ export default function Course() {
     const [forStreamId, setForStreamId] = useState<{ id: number | null; title: string } | null>(null);
     const [globalCourseId, setGlobalCourseId] = useState<{ id: number | null; title: string | null } | null>(null);
     const [pageState, setPageState] = useState<number>(1);
-    const [state, setState] = useState<number>(0);
+    const [courseStatus, setCourseStatus] = useState({ name: 'Приватный', code: 0 });
 
     const showError = useErrorMessage();
 
     const media = useMediaQuery('(max-width: 640px)');
     const tableMedia = useMediaQuery('(max-width: 577px)');
+
+    const courseStatusOptions = [
+        { name: 'Приватный', code: 0 },
+        { name: 'Публичный', code: 1 }
+    ];
 
     const toggleSkeleton = () => {
         setSkeleton(true);
@@ -470,26 +477,41 @@ export default function Course() {
                 footerValue={{ footerState: editMode, reject: 'Назад', next: 'Сохранить' }}
             >
                 <div className="flex flex-col gap-1">
+                    <div></div>
+
                     <div className="flex flex-col gap-1 items-center justify-center">
-                        <label className="block text-900 font-medium text-[16px] md:text-lg mb-1 md:mb-2">Название</label>
+                        <div className='w-full flex justify-center gap-3 items-center'>
+                            <label className="block text-900 font-medium text-md md:text-lg">Название</label>
+                            {/* <div className='flex gap-1 items-center'>
+                                <label className="block text-900 font-medium text-md md:text-lg">Доступность</label>
+                                <div>
+                                    <Tooltip target=".info-btn" content="Курс будет виден всем пользователям" position={media ? 'left' : "right"} />
+                                    <Button icon="pi pi-info-circle" size='small' className="info-btn text-white" text />
+                                </div>
+                            </div> */}
+                        </div>
                         <div className="w-full flex gap-2 items-center">
-                            <InputText
-                                value={editMode ? editingLesson.title || '' : courseValue.title}
-                                placeholder="Название обязательно"
-                                disabled={progressSpinner === true ? true : false}
-                                className="w-full"
-                                onChange={(e) => {
-                                    editMode
-                                        ? setEditingLesson((prev) => ({
-                                              ...prev,
-                                              title: e.target.value
-                                          }))
-                                        : setCourseValue((prev) => ({
-                                              ...prev,
-                                              title: e.target.value
-                                          }));
-                                }}
-                            />
+                            {/* <div className="p-inputgroup flex-1"> */}
+                                <InputText
+                                    value={editMode ? editingLesson.title || '' : courseValue.title}
+                                    placeholder="Название обязательно"
+                                    disabled={progressSpinner === true ? true : false}
+                                    className="w-[100%]"
+                                    onChange={(e) => {
+                                        editMode
+                                            ? setEditingLesson((prev) => ({
+                                                  ...prev,
+                                                  title: e.target.value
+                                              }))
+                                            : setCourseValue((prev) => ({
+                                                  ...prev,
+                                                  title: e.target.value
+                                              }));
+                                    }}
+                                />
+                                {/* <Button type="button" label='Приватный' size='small' icon={false ? 'pi pi-globe text-white text-sm p-[0] !mr-[3px]' : 'pi pi-lock text-white text-sm p-[0] !mr-[3px]'} onClick={() => ()=>(() => {})} className="text-white text-sm pr-4" /> */}
+                                {/* <Dropdown value={courseStatus} options={courseStatusOptions} onChange={(e) => setCourseStatus(e?.value)} optionLabel="name" className="max-w-[100px] sm:max-w-[170px]" style={{maxWidth: media ? '100px' : '170px', fontSize: '14px'}}/> */}
+                            {/* </div> */}
                             {progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}
                         </div>
                     </div>
@@ -577,7 +599,6 @@ export default function Course() {
                         </div>
                     </div>
                 </div>
-                {/* lorem */}
             </FormModal>
             <div className="flex justify-between gap-3">
                 <div className="w-full">
