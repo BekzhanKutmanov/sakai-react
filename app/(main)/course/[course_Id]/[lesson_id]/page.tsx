@@ -6,6 +6,7 @@ import LessonLink from '@/app/components/lessons/LessonLink';
 import LessonPractica from '@/app/components/lessons/LessonPractica';
 import LessonTest from '@/app/components/lessons/LessonTest';
 import LessonVideo from '@/app/components/lessons/LessonVideo';
+import MyDateTime from '@/app/components/MyDateTime';
 import { NotFound } from '@/app/components/NotFound';
 import GroupSkeleton from '@/app/components/skeleton/GroupSkeleton';
 import useErrorMessage from '@/hooks/useErrorMessage';
@@ -15,10 +16,10 @@ import { fetchCourseInfo, fetchLessonShow } from '@/services/courses';
 import { addLesson, deleteStep, fetchElement, fetchSteps, fetchTypes } from '@/services/steps';
 import { mainStepsType } from '@/types/mainStepType';
 import { getConfirmOptions } from '@/utils/getConfirmOptions';
+import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { Button } from 'primereact/button';
-import { CarouselResponsiveOption } from 'primereact/carousel';
-import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
+import { confirmDialog } from 'primereact/confirmdialog';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
 import React, { useContext, useEffect, useRef, useState } from 'react';
@@ -34,7 +35,7 @@ export default function LessonStep() {
     const [courseInfo, setCourseInfo] = useState<{ title: string } | null>(null);
     const [lessonInfoState, setLessonInfoState] = useState<{ title: string; documents_count: string; usefullinks_count: string; videos_count: string } | null>(null);
     const media = useMediaQuery('(max-width: 640px)');
-    const { setMessage, contextFetchThemes, contextThemes, setContextThemes, setDeleteQuery, deleteQuery, updateQuery, setUpdateeQuery } = useContext(LayoutContext);
+    const { user, setMessage, contextFetchThemes, contextThemes, deleteQuery } = useContext(LayoutContext);
     const showError = useErrorMessage();
 
     const [formVisible, setFormVisible] = useState(false);
@@ -213,15 +214,6 @@ export default function LessonStep() {
         }
     };
 
-    // useEffect(() => {
-    //     if (Array.isArray(steps) && steps.length > 0) {
-    //         const firstStep = steps[0]?.id;
-    //         // const firstStep = steps[steps.length - 1]?.id;
-    //         setSelectId(firstStep);
-    //         handleFetchElement(firstStep);
-    //     }
-    // }, [steps]);
-
     // РАБОЧИЙ ВАРИАНТ
     // useEffect(() => {
     //     if (Array.isArray(steps) && steps.length > 0) {
@@ -288,49 +280,6 @@ export default function LessonStep() {
     useEffect(() => {
         contextFetchThemes(Number(course_id), null);
     }, [course_id]);
-
-    // useEffect(() => {
-
-    //     if (!lesson_id) return;
-
-    //     handleShow(lesson_id);
-    //     handleFetchSteps(lesson_id);
-    //     changeUrl(lesson_id);
-    // }, [lesson_id]);
-
-    // useEffect(() => {
-    //     if (contextThemes?.length < 1 || !contextThemes?.lessons?.data) {
-    //         setThemeNull(true);
-    //         return;
-    //     } else {
-    //         setThemeNull(false);
-    //     }
-
-    //     const lessons = contextThemes.lessons.data;
-    //     if (lessons.length < 1) {
-    //         setThemeNull(true);
-    //     } else {
-    //         setThemeNull(false);
-    //     }
-
-    //     let chosenId: number | null = null;
-    //     if (lessons.length > 0) {
-    //         setThemeNull(false);
-    //         if (param.lesson_id && param.lesson_id !== 'null') {
-    //             const urlId = Number(param.lesson_id);
-    //             const exists = lessons.some((l: { id: number }) => l.id === urlId);
-    //             chosenId = exists ? urlId : lessons[0].id;
-    //         } else {
-    //             chosenId = lessons[0].id;
-    //         }
-
-    //         if (lesson_id !== chosenId) {
-    //             setLesson_id(chosenId);
-    //         }
-    //     } else {
-    //         setThemeNull(true);
-    //     }
-    // }, [contextThemes, deleteQuery, param.lesson_id]);
 
     // заменяем первый useEffect
     useEffect(() => {
@@ -440,22 +389,6 @@ export default function LessonStep() {
         </div>
     );
 
-    const accept = () => {};
-
-    // const reject = () => {};
-
-    const confirm1 = () => {
-        confirmDialog({
-            group: 'headless',
-            message: 'Выберите метод создания теста',
-            header: '',
-            icon: 'pi pi-exclamation-triangle',
-            defaultFocus: 'accept',
-            accept
-            // reject
-        });
-    };
-
     const step = (item: mainStepsType, icon: string, step: number, idx: number) => {
         return (
             <div
@@ -506,7 +439,53 @@ export default function LessonStep() {
         }
     };
 
-    const [notificationGroup, setNotificationGroup] = useState({state: false, type: ''});
+    const Notificatoin = ({notification}: {notification: any}) => {
+        return (
+            <div className={`flex flex-col justify-center p-2 gap-1`}>
+                {notification?.length > 0 ? (
+                    notification?.map((item: any) => {
+                        let path = '';
+                        if (user?.is_working && item?.type?.type === 'practical') {
+                            path = `/students/${item?.meta?.course_id}/${item?.meta?.connect_id}/${item?.meta?.stream_id}/${item?.meta?.student_id}/${item?.meta?.lesson_id}/${item?.meta?.step_id}`;
+                        } else if (user?.is_student && item?.type?.type === 'practical') {
+                            path = `/teaching/lessonView/${item?.meta?.lesson_id}/${item?.meta?.id_curricula}/${item?.meta?.stream_id}/${item?.meta?.step_id}`;
+                        }
+
+                        return (
+                            <div key={item?.id} className={`w-full flex flex-col justify-center shadow p-2 gap-1 sm:gap-2`}>
+                                <div className="w-full flex justify-between">
+                                    <Link className="cursor-pointer hover:underline" href={path}>
+                                        <b className="text-[var(--mainColor)] text-[12px] sm:text-[14px]">{item?.type?.title}</b>
+                                    </Link>
+                                    <span className="text-sm w-[11px] h-[11px] sm:w-[13px] sm:h-[13px] rounded-full bg-[var(--amberColor)]"></span>
+                                </div>
+
+                                {/* student message */}
+                                {user?.is_student && item?.type?.type === 'practical' && (
+                                    <b className="text-[13px] max-w-[350px] text-nowrap overflow-hidden text-ellipsis" title={item?.title}>
+                                        {item?.title}
+                                    </b>
+                                )}
+                                <p className="m-0 text-[11px] sm:text-[12px]">
+                                    {item?.from_user?.last_name} {item?.from_user?.name}
+                                </p>
+                                <div className="w-full relative flex">
+                                    <p className="absolute right-0 -top-3 text-[10px] sm:text-[12px] m-0">
+                                        {/* <MyDateTime createdAt={item?.created_at} options={options} /> */}
+                                        '----'
+                                    </p>
+                                </div>
+                            </div>
+                        );
+                    })
+                ) : (
+                    <p className="text-center">Сообщений нет</p>
+                )}
+            </div>
+        );
+    };
+
+    const [notificationGroup, setNotificationGroup] = useState({ state: false, type: '' });
 
     if (themeNull) {
         return (
@@ -545,9 +524,9 @@ export default function LessonStep() {
                     ) : (
                         <div className="w-full flex flex-col mt-1">
                             {types.map((item) => {
-                                // if(item?.name === 'forum'){
-                                //     return null;
-                                // }
+                                if(item?.name === 'forum'){
+                                    return null;
+                                }
 
                                 return (
                                     <React.Fragment key={item?.id}>
@@ -572,7 +551,7 @@ export default function LessonStep() {
 
             {/* info section */}
             {lessonInfo}
-        
+
             {/* steps section */}
             <div className="flex gap-2 mt-4 items-end">
                 {hasSteps ? (
@@ -723,7 +702,7 @@ export default function LessonStep() {
                             clearProp={hasSteps}
                         />
                     )}
-                    {element?.step.type.name === 'forum' && (
+                    {/* {element?.step.type.name === 'forum' && (
                         <LessonForum
                             element={element?.step}
                             content={element?.content}
@@ -733,7 +712,7 @@ export default function LessonStep() {
                             }}
                             clearProp={hasSteps}
                         />
-                    )}
+                    )} */}
                 </>
             )}
 

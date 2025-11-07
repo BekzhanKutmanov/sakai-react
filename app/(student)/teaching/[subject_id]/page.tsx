@@ -283,7 +283,7 @@ export default function StudentLesson() {
                                                                 sortedSteps.map(
                                                                     (item: {id: number;chills: boolean;type: { name: string; logo: string };content: { id: number; title: string; description: string; url: string; document: string; document_path: string }, id_parent?: number | null},idx
                                                                         ) => {
-                                                                        if (item.content == null) {
+                                                                        if (item.content == null || item?.type.name === 'forum') {
                                                                             return null;
                                                                         }
 

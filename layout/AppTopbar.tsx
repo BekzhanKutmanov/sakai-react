@@ -37,6 +37,7 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
 
     const [skeleton, setSkeleton] = useState(true);
     const [notification, setNotification] = useState<mainNotification[]>([]);
+    // const [groupNotifications, setGroupNotifications] = useState([]);
 
     const options: OptionsType = {
         month: 'short', // 'long', 'short', 'numeric'
@@ -52,7 +53,108 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
             console.log(data);
 
             setNotification(data);
+            // setNotification((prev) => [...prev, { type: { type: 'lorem' } }, { type: { type: 'second' } }]);
         }
+    };
+
+    const Notificatoin = () => {
+        const typeObjs = {};
+
+        // if (notification?.length > 0) {
+        //     for (let i = 0; i < notification.length; i++) {
+        //         const currentType = notification[i]?.type?.type;
+
+        //         if (!typeObjs[currentType]) {
+        //             // Если ключа ещё нет — создаём пустой массив
+        //             typeObjs[currentType] = [];
+        //         }
+
+        //         // Добавляем значение в массив этого ключа
+        //         typeObjs[currentType].push(notification[i]);
+        //     }
+        // }
+
+        console.log(typeObjs);
+
+        return (
+            <div className={`flex flex-col justify-center p-2 gap-1`}>
+                {Object.values(typeObjs)?.length > 1 ? (
+                    Object.entries(typeObjs).map((el:any) => {
+                        const item = el[1];
+                        console.log(item);
+                        let path = '';
+                        if (user?.is_working && item?.type?.type === 'practical') {
+                            path = `/students/${item?.meta?.course_id}/${item?.meta?.connect_id}/${item?.meta?.stream_id}/${item?.meta?.student_id}/${item?.meta?.lesson_id}/${item?.meta?.step_id}`;
+                        } else if (user?.is_student && item?.type?.type === 'practical') {
+                            path = `/teaching/lessonView/${item?.meta?.lesson_id}/${item?.meta?.id_curricula}/${item?.meta?.stream_id}/${item?.meta?.step_id}`;
+                        }
+
+                        return (
+                            <div className={`w-full flex flex-col justify-center shadow p-2 gap-1 sm:gap-2`}>
+                                <div className="w-full flex justify-between">
+                                    <Link onClick={() => setContextNotificationId(item?.id)} className="cursor-pointer hover:underline" href={path}>
+                                        <b className="text-[var(--mainColor)] text-[12px] sm:text-[14px]">{item?.type?.title}</b>
+                                    </Link>
+                                    <span className="text-sm w-[11px] h-[11px] sm:w-[13px] sm:h-[13px] rounded-full bg-[var(--amberColor)]"></span>
+                                </div>
+
+                                {/* student message */}
+                                {user?.is_student && item?.type?.type === 'practical' && (
+                                    <b className="text-[13px] max-w-[350px] text-nowrap overflow-hidden text-ellipsis" title={item?.title}>
+                                        {item?.title}
+                                    </b>
+                                )}
+                                <p className="m-0 text-[11px] sm:text-[12px]">
+                                    {item?.from_user?.last_name} {item?.from_user?.name}
+                                </p>
+                                <div className="w-full relative flex">
+                                    <p className="absolute right-0 -top-3 text-[10px] sm:text-[12px] m-0">
+                                        <MyDateTime createdAt={item?.created_at} options={options} />
+                                    </p>
+                                </div>
+                            </div>
+                        );
+                    })
+                ) : notification?.length > 0 ? (
+                    notification?.map((item) => {
+                        let path = '';
+                        if (user?.is_working && item?.type?.type === 'practical') {
+                            path = `/students/${item?.meta?.course_id}/${item?.meta?.connect_id}/${item?.meta?.stream_id}/${item?.meta?.student_id}/${item?.meta?.lesson_id}/${item?.meta?.step_id}`;
+                        } else if (user?.is_student && item?.type?.type === 'practical') {
+                            path = `/teaching/lessonView/${item?.meta?.lesson_id}/${item?.meta?.id_curricula}/${item?.meta?.stream_id}/${item?.meta?.step_id}`;
+                        }
+
+                        return (
+                            <div key={item?.id} className={`w-full flex flex-col justify-center shadow p-2 gap-1 sm:gap-2`}>
+                                <div className="w-full flex justify-between">
+                                    <Link onClick={() => setContextNotificationId(item?.id)} className="cursor-pointer hover:underline" href={path}>
+                                        <b className="text-[var(--mainColor)] text-[12px] sm:text-[14px]">{item?.type?.title}</b>
+                                    </Link>
+                                    <span className="text-sm w-[11px] h-[11px] sm:w-[13px] sm:h-[13px] rounded-full bg-[var(--amberColor)]"></span>
+                                </div>
+
+                                {/* student message */}
+                                {user?.is_student && item?.type?.type === 'practical' && (
+                                    <b className="text-[13px] max-w-[350px] text-nowrap overflow-hidden text-ellipsis" title={item?.title}>
+                                        {item?.title}
+                                    </b>
+                                )}
+                                <p className="m-0 text-[11px] sm:text-[12px]">
+                                    {item?.from_user?.last_name} {item?.from_user?.name}
+                                </p>
+                                <div className="w-full relative flex">
+                                    <p className="absolute right-0 -top-3 text-[10px] sm:text-[12px] m-0">
+                                        <MyDateTime createdAt={item?.created_at} options={options} />
+                                    </p>
+                                </div>
+                            </div>
+                        );
+                    })
+                ) : (
+                    <p className="text-center">Сообщений нет</p>
+                )}
+            </div>
+        );
     };
 
     const working_notification = [
@@ -66,41 +168,7 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
         // },
         {
             label: '',
-            template: (
-                <div className="flex flex-col justify-center p-2 gap-1">
-                    {notification?.length > 0 ? (
-                        notification?.map((item) => {
-                            let path = '';
-                            if (user?.is_working && item?.type?.type === 'practical') {
-                                path = `/students/${item?.meta?.course_id}/${item?.meta?.connect_id}/${item?.meta?.stream_id}/${item?.meta?.student_id}/${item?.meta?.lesson_id}/${item?.meta?.step_id}`;
-                            }
-                            return (
-                                <div key={item?.id} className="w-full flex flex-col justify-center shadow p-2 gap-2">
-                                    <div className="w-full flex justify-between">
-                                        <Link
-                                            onClick={() => setContextNotificationId(item?.id)}
-                                            className="cursor-pointer hover:underline"
-                                            // href={`/students/${item?.meta?.course_id}/${item?.meta?.connect_id}/${item?.meta?.stream_id}/${item?.meta?.student_id}/${item?.meta?.lesson_id}/${item?.meta?.step_id}`}
-                                            href={path}
-                                        >
-                                            <b className="text-[var(--mainColor)]">{item?.type?.title}</b>
-                                        </Link>
-                                        <span className="text-sm w-[13px] h-[13px] rounded-full bg-[var(--amberColor)]"></span>
-                                    </div>
-                                    <p className="m-0 text-[12px]">
-                                        {item?.from_user?.last_name} {item?.from_user?.name}
-                                    </p>
-                                    <div className="w-full relative flex">
-                                        <p className="absolute right-0 -top-3 text-[12px] m-0"><MyDateTime createdAt={item?.created_at} options={options}/></p>
-                                    </div>
-                                </div>
-                            );
-                        })
-                    ) : (
-                        <p className="text-center">Сообщений нет</p>
-                    )}
-                </div>
-            )
+            template: <Notificatoin />
         }
     ];
 
@@ -161,37 +229,9 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                 {
                     label: '',
                     template: (
-                        // <div className='max-h-[100px] overflow-y-auto'>
-                        <div className="flex flex-col items-center max-h-[200px] overflow-y-auto p-2 gap-1">
-                            {notification?.length > 0 ? (
-                                notification?.map((item) => {
-                                    let path = '';
-                                    if (user?.is_working && item?.type?.type === 'practical') {
-                                        path = `/students/${item?.meta?.course_id}/${item?.meta?.connect_id}/${item?.meta?.stream_id}/${item?.meta?.student_id}/${item?.meta?.lesson_id}/${item?.meta?.step_id}`;
-                                    }
-
-                                    return (
-                                        <div key={item?.id} className="w-full cursor-pointer flex flex-col justify-center shadow p-1 gap-1">
-                                            <div className="w-full flex justify-between">
-                                                <Link onClick={() => setContextNotificationId(item?.id)} href={path}>
-                                                    <b className="text-[var(--mainColor)] text-[12px]">{item?.type?.title}</b>
-                                                </Link>
-                                                <span className="text-sm w-[12px] h-[12px] text-[13px] rounded-full bg-[var(--amberColor)]"></span>
-                                            </div>
-                                            <p className="m-0 text-[11px]">
-                                                {item?.from_user?.last_name} {item?.from_user?.name}
-                                            </p>
-                                            <div className="w-full relative flex">
-                                                <p className="absolute right-0 -top-3 text-[10px] m-0"><MyDateTime createdAt={item?.created_at} options={options}/></p>
-                                            </div>
-                                        </div>
-                                    );
-                                })
-                            ) : (
-                                <p className="text-center text-[12px]">Сообщений нет</p>
-                            )}
+                        <div className="max-h-[200px] overflow-y-auto">
+                            <Notificatoin />
                         </div>
-                        // </div>
                     )
                 }
             ]
@@ -250,9 +290,7 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                   label: 'Вход',
                   icon: 'pi pi-sign-in',
                   items: [],
-                  //   url: '/auth/login'
                   command: () => {
-                      // router.push('/auth/login');
                       window.location.href = '/auth/login';
                   }
               },
@@ -263,49 +301,16 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                 <div className="p-overlay-badge">
                     <i className="pi pi-bell p-menuitem-icon" style={{ fontSize: '1.5rem' }}></i>
                     {/* Условное отображение красного кружка (бэйджа) */}
-                    {notification?.length > 0 && (
-                        // <div className='w-full relative'>
-                        <span className="absolute w-[10px] h-[10px] right-[10px] top-[5px] bg-[var(--amberColor)] rounded-full "></span>
-                        // </div>
-                    )}
+                    {notification?.length > 0 && <span className="absolute w-[10px] h-[10px] right-[10px] top-[5px] bg-[var(--amberColor)] rounded-full "></span>}
                 </div>
             ),
             items: [
                 {
                     label: '',
                     template: (
-                        // <div className='max-h-[100px] overflow-y-auto'>
-                        <div className="flex flex-col items-center max-h-[200px] overflow-y-auto p-2 gap-1">
-                            {notification?.length > 0 ? (
-                                notification?.map((item) => {
-                                    let path = '';
-                                    if (user?.is_student && item?.type?.type === 'practical') {
-                                        path = `/teaching/lessonView/${item?.meta?.lesson_id}/${item?.meta?.id_curricula}/${item?.meta?.stream_id}/${item?.meta?.step_id}`;
-                                    }
-
-                                    return (
-                                        <div key={item?.id} className="w-full cursor-pointer flex flex-col justify-center shadow p-1 gap-1">
-                                            <div className="w-full flex justify-between">
-                                                <Link onClick={() => setContextNotificationId(item?.id)} href={path}>
-                                                    <b className="text-[var(--mainColor)] text-[13px]">{item?.type?.title}</b>
-                                                </Link>
-                                                <span className="text-sm w-[11px] h-[11px] text-[13px] rounded-full bg-[var(--amberColor)]"></span>
-                                            </div>
-                                            {user?.is_student && item?.type?.type === 'practical' && <span className="text-[var(--titleColor)] text-[11px] max-w-[270px] text-nowrap overflow-hidden text-ellipsis">{item?.title}</span>}
-                                            <p className="m-0 text-[11px]">
-                                                {item?.from_user?.last_name} {item?.from_user?.name}
-                                            </p>
-                                            <div className="w-full relative flex">
-                                                <p className="absolute right-0 -top-3 text-[10px] m-0"><MyDateTime createdAt={item?.created_at} options={options}/></p>
-                                            </div>
-                                        </div>
-                                    );
-                                })
-                            ) : (
-                                <p className="text-center text-[12px]">Сообщений нет</p>
-                            )}
+                        <div className="max-h-[200px] overflow-y-auto">
+                            <Notificatoin />
                         </div>
-                        // </div>
                     )
                 }
             ]
@@ -350,46 +355,10 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
         }
     ];
 
-    //
-
     const student_notification = [
         {
             label: '',
-            template: (
-                <div className="flex flex-col justify-center p-2 gap-1">
-                    {notification?.length > 0 ? (
-                        notification?.map((item) => {
-                            let path = '';
-                            if (user?.is_student && item?.type?.type === 'practical') {
-                                path = `/teaching/lessonView/${item?.meta?.lesson_id}/${item?.meta?.id_curricula}/${item?.meta?.stream_id}/${item?.meta?.step_id}`;
-                            }
-                            return (
-                                <div key={item?.id} className="w-full flex flex-col justify-center shadow p-2 gap-2">
-                                    <div className="w-full flex justify-between">
-                                        <Link onClick={() => setContextNotificationId(item?.id)} className="cursor-pointer hover:underline" href={path}>
-                                            <b className="text-[var(--mainColor)]">{item?.type?.title}</b>
-                                        </Link>
-                                        <span className="text-sm w-[13px] h-[13px] rounded-full bg-[var(--amberColor)]"></span>
-                                    </div>
-                                    {user?.is_student && item?.type?.type === 'practical' && (
-                                        <b className="text-[13px] max-w-[350px] text-nowrap overflow-hidden text-ellipsis" title={item?.title}>
-                                            {item?.title}
-                                        </b>
-                                    )}
-                                    <p className="m-0 text-[12px]">
-                                        {item?.from_user?.last_name} {item?.from_user?.name}
-                                    </p>
-                                    <div className="w-full relative flex">
-                                        <p className="absolute right-0 -top-3 text-[12px] m-0"><MyDateTime createdAt={item?.created_at} options={options}/></p>
-                                    </div>
-                                </div>
-                            );
-                        })
-                    ) : (
-                        <p className="text-center">Сообщений нет</p>
-                    )}
-                </div>
-            )
+            template: <Notificatoin />
         }
     ];
 
@@ -410,32 +379,6 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
         }
     }, [user]);
 
-    // <div className="relative mt-3 z-1">
-    //             {notificationGroup?.state ? (
-    //                 <div>
-    //                     <i className='pi pi-times cursor-pointer text-[var(--mainColor)] text-lg' onClick={()=> setNotificationGroup({state: false, type: ''})}></i>
-    //                     <div>
-    //                         {notificationGroup?.type === 'practical' ? 'he he baby' : 'not bab'}
-    //                     </div>
-    //                 </div>
-    //             ) : (
-    //                 <div className="cursor-pointer w-full z-2 mt-4 flex flex-col justify-center shadow p-2 gap-2 hover:underline" onClick={() => setNotificationGroup({state: true, type: 'practical'})}>
-    //                     <div className="w-full flex justify-between">
-    //                         <b
-    //                             // onClick={() => setContextNotificationId(item?.id)}
-    //                             className="hover:underline"
-    //                             // href={`/students/${item?.meta?.course_id}/${item?.meta?.connect_id}/${item?.meta?.stream_id}/${item?.meta?.student_id}/${item?.meta?.lesson_id}/${item?.meta?.step_id}`}
-    //                         >
-    //                             <b className="text-[var(--mainColor)]">{'Практическое задание'}</b>
-    //                         </b>
-    //                         <span className="text-sm w-[13px] h-[13px] rounded-full bg-[var(--amberColor)]"></span>
-    //                     </div>
-    //                     <p className="m-0 text-[12px]">10 сообщений</p>
-    //                     <div className="w-full relative flex">{/* <p className="absolute right-0 -top-3 text-[12px] m-0">xx-xx-xx</p> */}</div>
-    //                 </div>
-    //             )}
-    //         </div>
-
     return (
         <div className="layout-topbar">
             <Link href="/" className="layout-topbar-logo">
@@ -446,7 +389,7 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
 
             {pathName !== '/' ? (
                 // departament.name.length > 0 ? (
-                !pathName.startsWith('/pdf') && !pathName.startsWith('/students/') && !pathName.startsWith('/videoInstruct') ? (
+                !pathName.startsWith('/pdf') && !pathName.startsWith('/videoInstruct') ? (
                     <button ref={menubuttonRef} type="button" className="p-link layout-menu-button layout-topbar-button" onClick={onMenuToggle}>
                         <i className="pi pi-bars text-[var(--mainColor)]" />
                     </button>
@@ -482,9 +425,7 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                                                       label: 'Вход',
                                                       icon: 'pi pi-sign-in',
                                                       items: [],
-                                                      //   url: '/auth/login'
                                                       command: () => {
-                                                          // router.push('/auth/login');
                                                           window.location.href = '/auth/login';
                                                       }
                                                   }

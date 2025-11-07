@@ -2,15 +2,14 @@
 
 import { lessonSchema } from '@/schemas/lessonSchema';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useParams, useRouter } from 'next/navigation';
 import { Button } from 'primereact/button';
 import { InputText } from 'primereact/inputtext';
 import { ProgressSpinner } from 'primereact/progressspinner';
-import { useContext, useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { NotFound } from '../NotFound';
 import LessonCard from '../cards/LessonCard';
-import { addDocument, addForum, addLink, addPractica, deleteDocument, deleteForum, deleteLink, deletePractica, fetchElement, stepSequenceUpdate, updateDocument, updateForum, updateLink, updatePractica } from '@/services/steps';
+import { addForum, deleteForum, fetchElement, stepSequenceUpdate, updateForum } from '@/services/steps';
 import { mainStepsType } from '@/types/mainStepType';
 import useErrorMessage from '@/hooks/useErrorMessage';
 import { LayoutContext } from '@/layout/context/layoutcontext';
@@ -236,9 +235,7 @@ export default function LessonForum({ element, content, fetchPropElement, clearP
         );
     };
 
-    useEffect(() => {
-        console.log(content);
-        
+    useEffect(() => {        
         if (content) {
             setContentShow(true);
             setForum(content);

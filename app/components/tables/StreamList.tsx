@@ -183,13 +183,8 @@ export default function StreamList({
     }, [streams]);
 
     useEffect(() => {
-        insideDisplayStreams(displayStreams);        
+        insideDisplayStreams(displayStreams);
     }, [displayStreams]);
-
-    useEffect(()=> {
-        console.log('hi');
-        
-    },[]);
 
     const itemTemplate = (item: mainStreamsType, index: number) => {
         const bgClass = index % 2 == 0 ? 'bg-[#f5f5f5]' : '';

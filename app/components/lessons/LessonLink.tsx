@@ -2,16 +2,14 @@
 
 import { lessonSchema } from '@/schemas/lessonSchema';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useParams, useRouter } from 'next/navigation';
 import { Button } from 'primereact/button';
 import { InputText } from 'primereact/inputtext';
 import { ProgressSpinner } from 'primereact/progressspinner';
-import { useContext, useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { NotFound } from '../NotFound';
 import LessonCard from '../cards/LessonCard';
-import { useMediaQuery } from '@/hooks/useMediaQuery';
-import { addDocument, addLink, addPractica, deleteDocument, deleteLink, deletePractica, fetchElement, stepSequenceUpdate, updateDocument, updateLink, updatePractica } from '@/services/steps';
+import { addLink, deleteLink, fetchElement, stepSequenceUpdate, updateLink } from '@/services/steps';
 import { mainStepsType } from '@/types/mainStepType';
 import useErrorMessage from '@/hooks/useErrorMessage';
 import { LayoutContext } from '@/layout/context/layoutcontext';
