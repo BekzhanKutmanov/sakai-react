@@ -1,7 +1,7 @@
 'use client';
 
 import FormModal from '@/app/components/popUp/FormModal';
-import { addCourse, deleteCourse, fetchCourseInfo, fetchCourses, publishCourse, updateCourse, veryfyCourse } from '@/services/courses';
+import { addCourse, deleteCourse, fetchCourseInfo, fetchCourses, updateCourse, veryfyCourse } from '@/services/courses';
 import { Button } from 'primereact/button';
 import { FileUpload, FileUploadSelectEvent } from 'primereact/fileupload';
 import { InputText } from 'primereact/inputtext';
@@ -35,6 +35,11 @@ import { Tooltip } from 'primereact/tooltip';
 
 export default function Course() {
     const { setMessage, setGlobalLoading, course, contextFetchCourse, setMainCourseId } = useContext(LayoutContext);
+
+    const topRef = useRef<HTMLDivElement>(null);
+    const media = useMediaQuery('(max-width: 640px)');
+    const tableMedia = useMediaQuery('(max-width: 577px)');
+
     const [coursesValue, setValueCourses] = useState<myMainCourseType[]>([]);
     const [hasCourses, setHasCourses] = useState(false);
     const [courseValue, setCourseValue] = useState<CourseCreateType>({ title: '', description: '', video_url: '', image: '' });
@@ -44,7 +49,6 @@ export default function Course() {
     const [forStart, setForStart] = useState(false);
     const [skeleton, setSkeleton] = useState(false);
     const [progressSpinner, setProgressSpinner] = useState(false);
-    const [forStreamCount, setForStreamCount] = useState<mainStreamsType[]>([]);
     const [pagination, setPagination] = useState<{ currentPage: number; total: number; perPage: number }>({
         currentPage: 1,
         total: 0,
@@ -64,11 +68,9 @@ export default function Course() {
     const [globalCourseId, setGlobalCourseId] = useState<{ id: number | null; title: string | null } | null>(null);
     const [pageState, setPageState] = useState<number>(1);
     const [courseStatus, setCourseStatus] = useState({ name: 'Приватный', code: 0 });
+    const [isTall, setIsTall] = useState(false);
 
     const showError = useErrorMessage();
-
-    const media = useMediaQuery('(max-width: 640px)');
-    const tableMedia = useMediaQuery('(max-width: 577px)');
 
     const courseStatusOptions = [
         { name: 'Приватный', code: 0 },
@@ -139,12 +141,10 @@ export default function Course() {
     };
 
     const handleFetchCourse = async (page = 1) => {
-        const data = await fetchCourses(page, 0);
-        toggleSkeleton();
         setSkeleton(true);
+        const data = await fetchCourses(page, 0);
         if (course) {
             setHasCourses(false);
-            setSkeleton(false);
             setValueCourses(course.data);
             setPagination({
                 currentPage: course.current_page,
@@ -153,7 +153,6 @@ export default function Course() {
             });
         } else {
             setHasCourses(true);
-            setSkeleton(false);
             setMessage({
                 state: true,
                 value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
@@ -162,12 +161,13 @@ export default function Course() {
                 showError(data.response.status);
             }
         }
+        setSkeleton(false);
     };
 
     const handleAddCourse = async () => {
+        setSkeleton(true);
         const data = await addCourse(courseValue);
         if (data?.success) {
-            toggleSkeleton();
             contextFetchCourse(1);
             setPageState(1);
             setMessage({
@@ -183,14 +183,14 @@ export default function Course() {
                 showError(data.response.status);
             }
         }
+        setSkeleton(false);
     };
 
     const handleDeleteCourse = async (id: number) => {
+        setSkeleton(true);
         const data = await deleteCourse(id);
         if (data?.success) {
-            toggleSkeleton();
             setGlobalCourseId(null);
-            // handleFetchCourse();
             contextFetchCourse(1);
             setPageState(1);
             setMessage({
@@ -213,6 +213,7 @@ export default function Course() {
                 }
             }
         }
+        setSkeleton(false);
     };
 
     const clearValues = () => {
@@ -224,10 +225,10 @@ export default function Course() {
     };
 
     const handleUpdateCourse = async () => {
+        setSkeleton(true);
         const data = await updateCourse(selectedCourse, editingLesson);
         if (data?.success) {
             toggleSkeleton();
-            // handleFetchCourse();
             contextFetchCourse(1);
             setPageState(1);
             clearValues();
@@ -253,6 +254,7 @@ export default function Course() {
                 }
             }
         }
+        setSkeleton(false);
     };
 
     const onSelect = (e: FileUploadSelectEvent & { files: FileWithPreview[] }) => {
@@ -288,9 +290,6 @@ export default function Course() {
         );
     };
 
-    const topRef = useRef<HTMLDivElement>(null);
-    const [isTall, setIsTall] = useState(false);
-
     // Ручное управление пагинацией
     const handlePageChange = (page: number) => {
         setGlobalCourseId(null);
@@ -312,6 +311,8 @@ export default function Course() {
     };
 
     const itemTemplate = (shablonData: any) => {
+        console.log(shablonData);
+        
         return (
             <div className="col-12">
                 <div className={`w-full flex flex-col align-items-center p-3 gap-3 `}>
@@ -480,7 +481,7 @@ export default function Course() {
                     <div></div>
 
                     <div className="flex flex-col gap-1 items-center justify-center">
-                        <div className='w-full flex justify-center gap-3 items-center'>
+                        <div className="w-full flex justify-center gap-3 items-center">
                             <label className="block text-900 font-medium text-md md:text-lg">Название</label>
                             {/* <div className='flex gap-1 items-center'>
                                 <label className="block text-900 font-medium text-md md:text-lg">Доступность</label>
@@ -492,25 +493,25 @@ export default function Course() {
                         </div>
                         <div className="w-full flex gap-2 items-center">
                             {/* <div className="p-inputgroup flex-1"> */}
-                                <InputText
-                                    value={editMode ? editingLesson.title || '' : courseValue.title}
-                                    placeholder="Название обязательно"
-                                    disabled={progressSpinner === true ? true : false}
-                                    className="w-[100%]"
-                                    onChange={(e) => {
-                                        editMode
-                                            ? setEditingLesson((prev) => ({
-                                                  ...prev,
-                                                  title: e.target.value
-                                              }))
-                                            : setCourseValue((prev) => ({
-                                                  ...prev,
-                                                  title: e.target.value
-                                              }));
-                                    }}
-                                />
-                                {/* <Button type="button" label='Приватный' size='small' icon={false ? 'pi pi-globe text-white text-sm p-[0] !mr-[3px]' : 'pi pi-lock text-white text-sm p-[0] !mr-[3px]'} onClick={() => ()=>(() => {})} className="text-white text-sm pr-4" /> */}
-                                {/* <Dropdown value={courseStatus} options={courseStatusOptions} onChange={(e) => setCourseStatus(e?.value)} optionLabel="name" className="max-w-[100px] sm:max-w-[170px]" style={{maxWidth: media ? '100px' : '170px', fontSize: '14px'}}/> */}
+                            <InputText
+                                value={editMode ? editingLesson.title || '' : courseValue.title}
+                                placeholder="Название обязательно"
+                                disabled={progressSpinner === true ? true : false}
+                                className="w-[100%]"
+                                onChange={(e) => {
+                                    editMode
+                                        ? setEditingLesson((prev) => ({
+                                              ...prev,
+                                              title: e.target.value
+                                          }))
+                                        : setCourseValue((prev) => ({
+                                              ...prev,
+                                              title: e.target.value
+                                          }));
+                                }}
+                            />
+                            {/* <Button type="button" label='Приватный' size='small' icon={false ? 'pi pi-globe text-white text-sm p-[0] !mr-[3px]' : 'pi pi-lock text-white text-sm p-[0] !mr-[3px]'} onClick={() => ()=>(() => {})} className="text-white text-sm pr-4" /> */}
+                            {/* <Dropdown value={courseStatus} options={courseStatusOptions} onChange={(e) => setCourseStatus(e?.value)} optionLabel="name" className="max-w-[100px] sm:max-w-[170px]" style={{maxWidth: media ? '100px' : '170px', fontSize: '14px'}}/> */}
                             {/* </div> */}
                             {progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}
                         </div>
@@ -602,6 +603,7 @@ export default function Course() {
             </FormModal>
             <div className="flex justify-between gap-3">
                 <div className="w-full">
+                    {/* Мобильный курс */}
                     {media ? (
                         <>
                             <TabView
@@ -621,7 +623,6 @@ export default function Course() {
                                     header="Курсы"
                                     className=" p-tabview p-tabview-nav p-tabview-selected p-tabview-panels p-tabview-panel"
                                 >
-                                    {/* mobile table section */}
                                     {/* mobile table section */}
                                     {hasCourses ? (
                                         <>
@@ -689,19 +690,13 @@ export default function Course() {
                                     className="p-tabview p-tabview-nav p-tabview-selected p-tabview-panels p-tabview-panel"
                                 >
                                     <div className="w-full sm:w-1/2">
-                                        <StreamList
-                                            callIndex={activeIndex}
-                                            courseValue={forStreamId}
-                                            isMobile={true}
-                                            insideDisplayStreams={(value) => setForStreamCount(value)}
-                                            fetchprop={() => contextFetchCourse(pageState)}
-                                            toggleIndex={() => setActiveIndex(0)}
-                                        />
+                                        <StreamList callIndex={activeIndex} courseValue={forStreamId} isMobile={true} fetchprop={() => contextFetchCourse(pageState)} toggleIndex={() => setActiveIndex(0)} />
                                     </div>
                                 </TabPanel>
                             </TabView>
                         </>
                     ) : (
+                        // Десктопный курс
                         <div className="w-full flex justify-between items-start gap-2 xl:gap-5">
                             <div className="py-4 w-2/3">
                                 {/* info section */}
@@ -734,7 +729,7 @@ export default function Course() {
                                         ) : (
                                             <div>
                                                 <div ref={topRef}>
-                                                    <DataTable value={coursesValue} dataKey="id" emptyMessage="..." key={JSON.stringify(forStreamId)} responsiveLayout="stack" breakpoint="960px" rows={5} className="my-custom-table">
+                                                    <DataTable value={coursesValue} dataKey="id" emptyMessage="..." key={JSON.stringify(forStreamId)} breakpoint="960px" rows={5} className="my-custom-table">
                                                         <Column body={(_, { rowIndex }) => rowIndex + 1} header="#" style={{ width: '20px' }}></Column>
                                                         <Column
                                                             style={{ width: '70px' }}
@@ -825,7 +820,7 @@ export default function Course() {
                                                         />
                                                     </DataTable>
                                                 </div>
-                                                <div className={`${isTall ? 'mt-[20px]' : 'mt-[5px]'} shadow-[0px_-11px_5px_-6px_rgba(0,_0,_0,_0.1)]`} style={{ marginTop: isTall ? '20px' : '5px' }}>
+                                                <div className={`${isTall ? 'mt-[20px]' : 'mt-[5px]'} shadow-[0px_-11px_5px_-6px_rgba(0,_0,_0,_0.1)]`}>
                                                     <Paginator
                                                         first={(pagination.currentPage - 1) * pagination.perPage}
                                                         rows={pagination.perPage}
@@ -841,14 +836,7 @@ export default function Course() {
                             </div>
                             {/* STREAMS SECTION */}
                             <div className="w-1/2">
-                                <StreamList
-                                    isMobile={false}
-                                    callIndex={1}
-                                    courseValue={forStreamId?.id ? forStreamId : null}
-                                    insideDisplayStreams={(value) => setForStreamCount(value)}
-                                    fetchprop={() => contextFetchCourse(pageState)}
-                                    toggleIndex={() => {}}
-                                />
+                                <StreamList isMobile={false} callIndex={1} courseValue={forStreamId?.id ? forStreamId : null} fetchprop={() => contextFetchCourse(pageState)} toggleIndex={() => {}} />
                             </div>
                         </div>
                     )}

@@ -29,7 +29,6 @@ export default function AnotherLesson() {
     const { setMessage, setContextNewStudentThemes } = useContext(LayoutContext);
 
     const [steps, setMainSteps] = useState<mainStepsType | null>(null);
-    const [forSteps, setForSteps] = useState<mainStepsType | null>(null);
     const [hasSteps, setHasSteps] = useState(false);
     const [progressSpinner, setProgressSpinner] = useState(false);
     const [type, setType] = useState('');

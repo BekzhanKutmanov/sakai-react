@@ -21,19 +21,16 @@ export default function StreamList({
     callIndex,
     courseValue,
     isMobile,
-    insideDisplayStreams,
     toggleIndex,
     fetchprop
 }: {
     callIndex: number;
     courseValue: { id: number | null; title: string } | null;
     isMobile: boolean;
-    insideDisplayStreams: (id: mainStreamsType[]) => void;
     toggleIndex: () => void;
     fetchprop: () => void;
 }) {
     const [streams, setStreams] = useState<mainStreamsType[]>([]);
-    const [displayStreams, setDisplayStreams] = useState<displayType[] | any>([]);
     const [hasStreams, setHasStreams] = useState(false);
     const [skeleton, setSkeleton] = useState(false);
     const [visible, setVisible] = useState(false);
@@ -166,7 +163,6 @@ export default function StreamList({
     };
 
     useEffect(() => {        
-        setDisplayStreams([]);
         toggleSkeleton();
         if (courseValue?.id) {
             handleFetchStreams();
@@ -181,10 +177,6 @@ export default function StreamList({
             setHasStreams(false);
         }
     }, [streams]);
-
-    useEffect(() => {
-        insideDisplayStreams(displayStreams);
-    }, [displayStreams]);
 
     const itemTemplate = (item: mainStreamsType, index: number) => {
         const bgClass = index % 2 == 0 ? 'bg-[#f5f5f5]' : '';

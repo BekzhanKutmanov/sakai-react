@@ -318,16 +318,28 @@ export default function Forum() {
         return (
             <div className={`shadow p-2 gap-3 ${user?.id === item?.user?.id ? 'bg-[#ddc4f51a]' : ''} `}>
                 {parendItem && (
-                    <div className="relative p-2 mb-1 lesson-card-border rounded flex overflow-hidden">
+                    <a
+                        href={'#' + item?.parent_id}
+                        className="relative p-2 mb-1 lesson-card-border rounded flex overflow-hidden"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            if(item?.parent_id){
+                                const target = document.getElementById(item.parent_id + '');
+                                if (target) {
+                                    target.scrollIntoView({ behavior: 'smooth' }); // плавный скролл
+                                }
+                            }
+                        }}
+                    >
                         <span className="bg-[var(--mainColor)] w-[6px] h-full absolute block top-0 left-0"></span>
                         <div className="flex flex-col gap-1">
                             <b className="w-full ml-[5px] text-[13px] text-[var(--mainColor)]">{item?.parent_id ? parendItem?.user.name : ''}</b>
                             <span className="text-[13px] ml-[5px]">{item?.parent_id ? parendItem?.description : ''}</span>
                         </div>
-                    </div>
+                    </a>
                 )}
                 <div className={`flex ${messageAnswer ? 'w-full justify-center' : 'w-[97%] justify-end'} flex-col`}>
-                    <div className="w-full flex justify-between">
+                    <div id={'' + item?.id} className="w-full flex justify-between">
                         <b className="w-full text-sm text-[var(--mainColor)]">{item?.user?.name}</b>
 
                         <div className="w-full h-full relative flex flex-col items-end gap-2 justify-between">
@@ -400,7 +412,7 @@ export default function Forum() {
         <div className="main-bg">
             <div className="flex flex-col gap-4">
                 {/* header section */}
-                <div className="flex flex-col gap-2">   
+                <div className="flex flex-col gap-2">
                     <div className="max-w-4xl mb-2">
                         <button onClick={() => router.back()} className="text-[var(--mainColor)] underline px-2 flex items-center gap-1">
                             <i className="pi pi-arrow-left text-[13px] cursor-pointer hover:shadow-2xl" style={{ fontSize: '13px' }}></i>
