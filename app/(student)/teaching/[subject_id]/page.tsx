@@ -1,6 +1,5 @@
 'use client';
 
-import LessonInfoCard from '@/app/components/lessons/LessonInfoCard';
 import StudentInfoCard from '@/app/components/lessons/StudentInfoCard';
 import { NotFound } from '@/app/components/NotFound';
 import GroupSkeleton from '@/app/components/skeleton/GroupSkeleton';
@@ -8,9 +7,8 @@ import useErrorMessage from '@/hooks/useErrorMessage';
 import { LayoutContext } from '@/layout/context/layoutcontext';
 import { fetchItemsLessons, fetchMainLesson, fetchSubjects } from '@/services/studentMain';
 import { lessonType } from '@/types/lessonType';
-import Link from 'next/link';
 import { useParams } from 'next/navigation';
-import { Accordion, AccordionTab, AccordionTabChangeEvent } from 'primereact/accordion';
+import { Accordion, AccordionTab } from 'primereact/accordion';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import { useContext, useEffect, useState } from 'react';
 
@@ -22,10 +20,12 @@ export default function StudentLesson() {
         streams: number[];
     }
 
+    interface CourseType { id: number; connections: { subject_type: string; id: number; user_id: number | null; id_stream: number }[]; title: string; description: string; user: { last_name: string; name: string; father_name: string }; lessons: lessonType[] }[]
+
     const { subject_id } = useParams();
     const params = new URLSearchParams();
 
-    const { setMessage, forumValuse, setForumValues } = useContext(LayoutContext);
+    const { setMessage, setForumValues } = useContext(LayoutContext);
     const showError = useErrorMessage();
 
     const [main_id, setMain_id] = useState<predmetType | null>(null);
@@ -35,13 +35,8 @@ export default function StudentLesson() {
     const [lessons, setLessons] = useState<Record<number, { semester: { name_kg: string } } | predmetType>>({
         1: { semester: { name_kg: '' } }
     });
-    const [courses, setCourses] = useState<
-        { id: number; connections: { subject_type: string; id: number; user_id: number | null; id_stream: number }[]; title: string; description: string; user: { last_name: string; name: string; father_name: string }; lessons: lessonType[] }[]
-    >([]);
+    const [courses, setCourses] = useState<CourseType[]>([]);
     const [hasThemes, setHasThemes] = useState(false);
-    const [activeAccordion, setActiveAccordion] = useState<number>(0);
-    const [activeIndex, setActiveIndex] = useState<number | number[]>(0);
-
     const [activeIndexes, setActiveIndexes] = useState<Record<number, number | null>>({});
     const [accordionIndex, setAccordionIndex] = useState({ index: null });
 
@@ -77,7 +72,7 @@ export default function StudentLesson() {
         return course.lessons[index]?.id;
     };
 
-    const handleTabChange = async (courseId: number, e: any) => {
+    const handleTabChange = async (courseInside: CourseType[],courseId: number, e: any) => {
         // 1. Обновление активного индекса (ОК)
         setActiveIndexes((prev) => ({
             ...prev,
@@ -85,7 +80,7 @@ export default function StudentLesson() {
         }));
         setAccordionIndex({ index: e.index });
 
-        const course = courses.find((c) => c.id === courseId);
+        const course = courseInside.find((c) => c.id === courseId);
 
         // Если вкладка закрывается (e.index == null или -1),
         // нет необходимости в загрузке данных
@@ -113,7 +108,6 @@ export default function StudentLesson() {
                 );
 
                 const newSteps = await handleMainLesson(lessonId, stream.id_stream);
-                console.warn(newSteps);
                 if (newSteps) {
                     // 3. Обновляем состояние courses: добавляем steps к нужному уроку
                     setCourses((prevCourses) =>
@@ -140,8 +134,6 @@ export default function StudentLesson() {
     const handleFetchLessons = async () => {
         setSkeleton(true);
         const data = await fetchItemsLessons();
-        console.log(data);
-
         if (data) {
             // валидность проверить
             setLessons(data);
@@ -166,12 +158,16 @@ export default function StudentLesson() {
         subject?.streams.forEach((i) => params.append('streams[]', String(i)));
         subject?.course_ids.forEach((i) => params.append('course_ids[]', String(i)));
         const data = await fetchSubjects(params);
-        console.log(data);
-
         setSkeleton(true);
 
-        if (data) {
+        if (data && Array.isArray(data)) {
             setCourses(data);
+            if (data && data?.length > 0) {
+                const courseId = data[0].id;
+                if (courseId) {
+                    handleTabChange(data, courseId, { index: 0 });
+                }
+            }
             setHasThemes(false);
             setSkeleton(false);
         } else {
@@ -257,7 +253,7 @@ export default function StudentLesson() {
                                         )}
                                     </div>
                                     <div>
-                                        <Accordion key={`${course.id}`} activeIndex={activeIndexes[course.id]} onTabChange={(e) => handleTabChange(course.id, e)} multiple={false} expandIcon="" collapseIcon="">
+                                        <Accordion key={`${course.id}`} activeIndex={activeIndexes[course.id]} onTabChange={(e) => handleTabChange(courses, course.id, e)} multiple={false} expandIcon="" collapseIcon="">
                                             {course?.lessons.map((lesson) => {
                                                 const contentPresence = lesson?.steps?.filter((content) => content.content);
                                                 const sortedSteps = contentPresence?.sort((a, b) => {
@@ -281,8 +277,16 @@ export default function StudentLesson() {
                                                                 <ProgressSpinner style={{ width: '50px', height: '50px' }} />
                                                             ) : sortedSteps && sortedSteps?.length > 0 ? (
                                                                 sortedSteps.map(
-                                                                    (item: {id: number;chills: boolean;type: { name: string; logo: string };content: { id: number; title: string; description: string; url: string; document: string; document_path: string }, id_parent?: number | null},idx
-                                                                        ) => {
+                                                                    (
+                                                                        item: {
+                                                                            id: number;
+                                                                            chills: boolean;
+                                                                            type: { name: string; logo: string };
+                                                                            content: { id: number; title: string; description: string; url: string; document: string; document_path: string };
+                                                                            id_parent?: number | null;
+                                                                        },
+                                                                        idx
+                                                                    ) => {
                                                                         if (item.content == null) {
                                                                             return null;
                                                                         }
@@ -301,12 +305,15 @@ export default function StudentLesson() {
                                                                                     lesson={lesson.id}
                                                                                     subjectId={subject_id}
                                                                                     chills={item?.chills}
-                                                                                    fetchProp={() => handleTabChange(course.id, accordionIndex)}
+                                                                                    fetchProp={() => handleTabChange(courses, course.id, accordionIndex)}
                                                                                     contentId={item?.content?.id}
                                                                                     id_parent={item?.id_parent || null}
-                                                                                    forumValueAdd={()=> {
-                                                                                        setForumValues({description: item?.content.title || '', userInfo: {userName: course?.user?.name, userLastName: course?.user?.last_name}});
-                                                                                        localStorage.setItem('forumValues', JSON.stringify({description: item?.content.title || '', userInfo: {userName: course?.user?.name, userLastName: course?.user?.last_name}}));
+                                                                                    forumValueAdd={() => {
+                                                                                        setForumValues({ description: item?.content.title || '', userInfo: { userName: course?.user?.name, userLastName: course?.user?.last_name } });
+                                                                                        localStorage.setItem(
+                                                                                            'forumValues',
+                                                                                            JSON.stringify({ description: item?.content.title || '', userInfo: { userName: course?.user?.name, userLastName: course?.user?.last_name } })
+                                                                                        );
                                                                                     }}
                                                                                 />
                                                                             </div>
