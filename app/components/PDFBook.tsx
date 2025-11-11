@@ -38,7 +38,10 @@ export default function PDFViewer({ url }: { url: string }) {
             setSkeleton(true);
             try {
                 // Проверяем, одна ли страница в документе
-                let newUrl = `https://api-dev.mooc.oshsu.kg/public/temprory-file/${url}`;
+                // let newUrl = `https://api.mooc.oshsu.kg/public/temprory-file/${url}`;
+                const inApiString = process.env.NEXT_PUBLIC_BASE_URL;
+                let newUrl = `${inApiString?.substring(0, inApiString?.length - 4)}/temprory-file/${url}`;
+                
                 const pdf = await pdfjsLib.getDocument(newUrl).promise;
                 setTotalPages(pdf.numPages);
                 const tempPages = [];
@@ -47,7 +50,6 @@ export default function PDFViewer({ url }: { url: string }) {
                 // Получаем оригинальное соотношение сторон первой страницы
                 const viewport = firstPage.getViewport({ scale: 1.5 });
                 const aspectRatio = viewport.width / viewport.height;
-                console.log(pdf.numPages);
 
                 for (let i = 1; i <= pdf.numPages; i++) {
                     const page = await pdf.getPage(i);

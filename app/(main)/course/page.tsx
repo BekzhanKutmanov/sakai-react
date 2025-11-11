@@ -506,7 +506,7 @@ export default function Course() {
                                     }}
                                 />
                                 {/* <Button type="button" label='Приватный' size='small' icon={false ? 'pi pi-globe text-white text-sm p-[0] !mr-[3px]' : 'pi pi-lock text-white text-sm p-[0] !mr-[3px]'} onClick={() => ()=>(() => {})} className="text-white text-sm pr-4" /> */}
-                                <div className="relative">
+                                {/* <div className="relative">
                                     <Dropdown
                                         value={courseStatus}
                                         options={courseStatusOptions}
@@ -520,7 +520,7 @@ export default function Course() {
                                         <i className="pi pi-info-circle absolute right-3 top-3 md:top-4 w-[10px] text-gray-500 info-btn" />
                                         <Tooltip target=".info-btn" content={courseStatus?.name === 'Закрытый' ? "Курс будет доступен только вашим студентам" : courseStatus?.name === 'Открытый' ? "Курс будет виден всем пользователям" : ""} position={media ? 'left' : 'right'} />
                                     </>
-                                </div>
+                                </div> */}
                             </div>
                             {progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}
                         </div>
