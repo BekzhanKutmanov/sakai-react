@@ -370,7 +370,7 @@ export default function LessonTest({
                 ) : (
                     <div className="w-full flex flex-col justify-center gap-2 my-2">
                         <div className="lesson-card-border shadow rounded p-2">
-                            <div className="w-[99%] sm:w-[90%] flex flex-col gap-2 sm:items-center  p-1 sm:p-2">
+                            <div className="w-[99%] sm:w-full flex flex-col gap-2 sm:items-center  p-1 sm:p-2">
                                 <div className="w-full flex items-start gap-1">
                                     <div className="w-full">
                                         <InputTextarea
@@ -430,6 +430,11 @@ export default function LessonTest({
                                         <Button label="Создать с ИИ" size="small" className="text-sm" icon="pi pi-microchip-ai" onClick={preparation} />
                                     </div>
                                 </div>
+                            </div>
+                            <div className='flex gap-1 sm:gap-2 flex-col sm:flex-row items-start'>
+                                {!testValue.title?.length && <span className='text-[12px] text-[var(--amberColor)]'>*Добавтье вопрос</span> }
+                                {!testChecked.check && <span className='text-[12px] text-[var(--amberColor)]'>*Добавтье правильный ответ</span>}
+                                <span className='text-[12px] text-[var(--amberColor)]'>*Балл за тест ({testValue?.score || '0'})</span>
                             </div>
                         </div>
                         <div className="flex relative">

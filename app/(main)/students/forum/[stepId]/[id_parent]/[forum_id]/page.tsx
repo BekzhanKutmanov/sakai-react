@@ -343,7 +343,7 @@ export default function Forum() {
                         <b className="w-full text-sm text-[var(--mainColor)]">{item?.user?.name}</b>
 
                         <div className="w-full h-full relative flex flex-col items-end gap-2 justify-between">
-                            {user?.id === item?.user?.id && <Redacting redactor={getRedactor('null', item, { onEdit: selectedForEditing, getConfirmOptions, onDelete: handleDelete })} textSize={'14px'} />}
+                            {user?.id === item?.user?.id && <Redacting redactor={getRedactor(item, { onEdit: selectedForEditing, getConfirmOptions, onDelete: handleDelete })} textSize={'14px'} />}
                         </div>
                     </div>
                     <div className="flex flex-col gap-1">

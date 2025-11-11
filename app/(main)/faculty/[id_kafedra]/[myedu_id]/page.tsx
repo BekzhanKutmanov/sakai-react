@@ -124,7 +124,7 @@ export default function CoursesDep() {
                 <NotFound titleMessage="Курсы не доступны" />
             ) : (
                 <>
-                    <h3 className="text-lg sm:text-xl pb-1 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">Преподаватели</h3>
+                    <h3 className="text-lg sm:text-xl pb-1 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">Курсы</h3>
                     <DataTable value={courses} dataKey="id" emptyMessage="Загрузка" key={JSON.stringify(forDisabled)} responsiveLayout="stack" breakpoint="960px" rows={5} className="my-custom-table">
                         <Column body={(_, { rowIndex }) => rowIndex + 1} header="#" style={{ width: '20px' }}></Column>
                         <Column body={imageBodyTemplate}></Column>

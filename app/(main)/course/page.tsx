@@ -29,7 +29,6 @@ import useShortText from '@/hooks/useShortText';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import { DataView } from 'primereact/dataview';
 import { FileWithPreview } from '@/types/fileuploadPreview';
-import { mainStreamsType } from '@/types/mainStreamsType';
 import { Dropdown } from 'primereact/dropdown';
 import { Tooltip } from 'primereact/tooltip';
 
@@ -67,14 +66,14 @@ export default function Course() {
     const [forStreamId, setForStreamId] = useState<{ id: number | null; title: string } | null>(null);
     const [globalCourseId, setGlobalCourseId] = useState<{ id: number | null; title: string | null } | null>(null);
     const [pageState, setPageState] = useState<number>(1);
-    const [courseStatus, setCourseStatus] = useState({ name: 'Приватный', code: 0 });
+    const [courseStatus, setCourseStatus] = useState({ name: 'Закрытый', code: 0 });
     const [isTall, setIsTall] = useState(false);
 
     const showError = useErrorMessage();
 
     const courseStatusOptions = [
-        { name: 'Приватный', code: 0 },
-        { name: 'Публичный', code: 1 }
+        { name: 'Закрытый', code: 0 },
+        { name: 'Открытый', code: 1 }
     ];
 
     const toggleSkeleton = () => {
@@ -311,8 +310,6 @@ export default function Course() {
     };
 
     const itemTemplate = (shablonData: any) => {
-        console.log(shablonData);
-        
         return (
             <div className="col-12">
                 <div className={`w-full flex flex-col align-items-center p-3 gap-3 `}>
@@ -337,7 +334,7 @@ export default function Course() {
                         </div>
                         {tableMedia && (
                             <div className="flex flex-column sm:flex-row gap-2 sm:mt-0">
-                                <Redacting redactor={getRedactor('null', shablonData, { onEdit: edit, getConfirmOptions, onDelete: handleDeleteCourse })} textSize={'14px'} />
+                                <Redacting redactor={getRedactor(shablonData, { onEdit: edit, getConfirmOptions, onDelete: handleDeleteCourse })} textSize={'14px'} />
                             </div>
                         )}
                     </div>
@@ -386,7 +383,7 @@ export default function Course() {
                         <div className="flex flex-column sm:flex-row gap-2 sm:mt-0">
                             {/* <Button icon="pi pi-pencil" className="p-button-rounded" onClick={() => edit(shablonData)} /> */}
                             {/* <Button icon="pi pi-trash" className="p-button-rounded p-button-danger" onClick={() => handleDeleteCourse(shablonData.id)} /> */}
-                            <Redacting redactor={getRedactor('null', shablonData, { onEdit: edit, getConfirmOptions, onDelete: handleDeleteCourse })} textSize={'14px'} />
+                            <Redacting redactor={getRedactor(shablonData, { onEdit: edit, getConfirmOptions, onDelete: handleDeleteCourse })} textSize={'14px'} />
                         </div>
                     )}
                 </div>
@@ -478,41 +475,53 @@ export default function Course() {
                 footerValue={{ footerState: editMode, reject: 'Назад', next: 'Сохранить' }}
             >
                 <div className="flex flex-col gap-1">
-                    <div></div>
-
                     <div className="flex flex-col gap-1 items-center justify-center">
                         <div className="w-full flex justify-center gap-3 items-center">
                             <label className="block text-900 font-medium text-md md:text-lg">Название</label>
-                            {/* <div className='flex gap-1 items-center'>
-                                <label className="block text-900 font-medium text-md md:text-lg">Доступность</label>
+                            {/* <div className="flex gap-1 items-center">
+                                <label className="block text-[13px] font-medium">Доступность</label>
                                 <div>
-                                    <Tooltip target=".info-btn" content="Курс будет виден всем пользователям" position={media ? 'left' : "right"} />
-                                    <Button icon="pi pi-info-circle" size='small' className="info-btn text-white" text />
+                                    <Tooltip target=".info-btn" content="Курс будет виден всем пользователям" position={media ? 'left' : 'right'} />
+                                    <Button icon="pi pi-info-circle" size="small" className="info-btn text-white" text />
                                 </div>
                             </div> */}
                         </div>
                         <div className="w-full flex gap-2 items-center">
-                            {/* <div className="p-inputgroup flex-1"> */}
-                            <InputText
-                                value={editMode ? editingLesson.title || '' : courseValue.title}
-                                placeholder="Название обязательно"
-                                disabled={progressSpinner === true ? true : false}
-                                className="w-[100%]"
-                                onChange={(e) => {
-                                    editMode
-                                        ? setEditingLesson((prev) => ({
-                                              ...prev,
-                                              title: e.target.value
-                                          }))
-                                        : setCourseValue((prev) => ({
-                                              ...prev,
-                                              title: e.target.value
-                                          }));
-                                }}
-                            />
-                            {/* <Button type="button" label='Приватный' size='small' icon={false ? 'pi pi-globe text-white text-sm p-[0] !mr-[3px]' : 'pi pi-lock text-white text-sm p-[0] !mr-[3px]'} onClick={() => ()=>(() => {})} className="text-white text-sm pr-4" /> */}
-                            {/* <Dropdown value={courseStatus} options={courseStatusOptions} onChange={(e) => setCourseStatus(e?.value)} optionLabel="name" className="max-w-[100px] sm:max-w-[170px]" style={{maxWidth: media ? '100px' : '170px', fontSize: '14px'}}/> */}
-                            {/* </div> */}
+                            <div className="p-inputgroup flex-1">
+                                <InputText
+                                    value={editMode ? editingLesson.title || '' : courseValue.title}
+                                    placeholder="Название обязательно"
+                                    disabled={progressSpinner === true ? true : false}
+                                    className="w-[100%]"
+                                    onChange={(e) => {
+                                        editMode
+                                            ? setEditingLesson((prev) => ({
+                                                  ...prev,
+                                                  title: e.target.value
+                                              }))
+                                            : setCourseValue((prev) => ({
+                                                  ...prev,
+                                                  title: e.target.value
+                                              }));
+                                    }}
+                                />
+                                {/* <Button type="button" label='Приватный' size='small' icon={false ? 'pi pi-globe text-white text-sm p-[0] !mr-[3px]' : 'pi pi-lock text-white text-sm p-[0] !mr-[3px]'} onClick={() => ()=>(() => {})} className="text-white text-sm pr-4" /> */}
+                                <div className="relative">
+                                    <Dropdown
+                                        value={courseStatus}
+                                        options={courseStatusOptions}
+                                        onChange={(e) => setCourseStatus(e?.value)}
+                                        optionLabel="name"
+                                        // className="max-w-[100px] sm:max-w-[170px]"
+                                        className="min-w-[100px] w-full pr-3"
+                                        style={{ maxWidth: media ? '100px' : '170px', fontSize: '14px' }}
+                                    />
+                                    <>
+                                        <i className="pi pi-info-circle absolute right-3 top-3 md:top-4 w-[10px] text-gray-500 info-btn" />
+                                        <Tooltip target=".info-btn" content={courseStatus?.name === 'Закрытый' ? "Курс будет доступен только вашим студентам" : courseStatus?.name === 'Открытый' ? "Курс будет виден всем пользователям" : ""} position={media ? 'left' : 'right'} />
+                                    </>
+                                </div>
+                            </div>
                             {progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}
                         </div>
                     </div>
@@ -814,7 +823,7 @@ export default function Course() {
                                                             className="flex items-center justify-center h-[60px] border-b-0"
                                                             body={(rowData) => (
                                                                 <div className="flex items-center gap-2" key={rowData.id}>
-                                                                    <Redacting redactor={getRedactor('null', rowData, { onEdit: edit, getConfirmOptions, onDelete: handleDeleteCourse })} textSize={'14px'} />
+                                                                    <Redacting redactor={getRedactor(rowData, { onEdit: edit, getConfirmOptions, onDelete: handleDeleteCourse })} textSize={'14px'} />
                                                                 </div>
                                                             )}
                                                         />
