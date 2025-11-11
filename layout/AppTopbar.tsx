@@ -74,12 +74,10 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
         //     }
         // }
 
-        console.log(typeObjs);
-
         return (
             <div className={`flex flex-col justify-center p-2 gap-1`}>
                 {Object.values(typeObjs)?.length > 1 ? (
-                    Object.entries(typeObjs).map((el:any) => {
+                    Object.entries(typeObjs).map((el: any) => {
                         const item = el[1];
                         console.log(item);
                         let path = '';
@@ -458,7 +456,7 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                         <div className={`hidden lg:flex items-center gap-3 ${media ? 'order-1' : 'order-2'} `}>
                             {user?.is_working ? (
                                 // <Tiered title={{ name: '', font: 'pi pi-bell' }} items={user?.is_working ? working_notification : user?.is_student ? student_notification : []} insideColor={'--titleColor'} />
-                                <div>
+                                <div className='px-3 border-x-1 border-[var(--borderBottomColor)]'>
                                     <div className="relative">
                                         {notification?.length > 0 ? <div className={`absolute -right-1 -top-1 px-1 bg-[var(--amberColor)] rounded text-white text-[11px]`}>{notification.length}</div> : ''}
                                         <button
@@ -487,7 +485,7 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                                     />
                                 </div>
                             ) : user?.is_student ? (
-                                <div>
+                                <div className='px-3 border-x-1 border-[var(--borderBottomColor)]'>
                                     <div className="relative">
                                         {notification?.length > 0 ? <div className={`absolute -right-1 -top-1 px-1 bg-[var(--amberColor)] rounded text-white text-[11px]`}>{notification.length}</div> : ''}
                                         <button
@@ -518,7 +516,21 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                             ) : (
                                 ''
                             )}
-                            <Tiered title={{ name: '', font: 'pi pi-user' }} items={profileItems} insideColor={'--titleColor'} />
+                            {/* <Tiered title={{ name: '', font: 'pi pi-user' }} items={profileItems} insideColor={'--titleColor'} /> */}
+                            <div className='flex items-center gap-2'>
+                                <span>
+                                    {user?.last_name} {user?.name && user?.name[0] + '.'} {user?.father_name && user?.father_name[0] + '.'}
+                                </span>
+                                <button
+                                    className="cursor-pointer"
+                                    onClick={() => {
+                                        window.location.href = '/auth/login';
+                                        logout({ setUser, setGlobalLoading });
+                                    }}
+                                >
+                                    <i className="pi pi-sign-out text-xl rounded-full p-2 hover:text-white hover:bg-[var(--mainColor)]"></i>
+                                </button>
+                            </div>
                         </div>
                     ) : (
                         <div className={`hidden lg:block ${media ? 'order-1' : 'order-2'}`}>
