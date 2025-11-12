@@ -384,7 +384,6 @@ export default function Course() {
             <div className="col-12">
                 <div className={`w-full flex flex-col align-items-center p-3 gap-3 `}>
                     {/* Номер (rowIndex) можно добавить через внешний счетчик или props, но для DataView это сложнее */}
-
                     {/* Заголовок */}
                     <div className={`w-full flex-1 ${tableMedia && 'flex items-center gap-1 justify-between'}`}>
                         <div className="font-bold text-md mb-2">
@@ -408,13 +407,24 @@ export default function Course() {
                             </div>
                         )}
                     </div>
-
                     <div>{imageBodyTemplate(shablonData)}</div>
-
-                    <div>
+                    <div className="w-full flex flex-col justify-start">
                         <div className="flex gap-1 items-center">
-                            <span className="text-[var(--mainColor)] text-sm">Публикация: </span>
-                            {shablonData.is_published ? <i className="pi pi-check text-md sm:text-lg text-[var(--greenColor)]"></i> : <i className="pi pi-times text-md sm:text-lg text-[var(--redColor)]"></i>}
+                            <span className="text-[var(--mainColor)] text-sm mr-1">Статус: </span>
+                            <Button
+                                size="small"
+                                className="p-2"
+                                onClick={() => {
+                                    setSelectedCourse(shablonData?.id);
+                                    handleFetchCourseOpenStatus();
+                                }}
+                            >
+                                <i className={`${shablonData?.audience_type?.icon}`}></i>
+                            </Button>
+                        </div>
+                        <div>
+                            <span className="text-[var(--mainColor)] text-sm">Балл: </span>
+                            <span className="text-sm">{`${shablonData?.max_score}`}</span>
                         </div>
                         <div className="flex gap-1 items-center">
                             <span className="text-[var(--mainColor)] text-sm">На рассмотрение: </span>
@@ -430,8 +440,11 @@ export default function Course() {
                                 <span className="checkbox-mark"></span>
                             </label>
                         </div>
+                        <div className="flex gap-1 items-center">
+                            <span className="text-[var(--mainColor)] text-sm">Публикация: </span>
+                            {shablonData.is_published ? <i className="pi pi-check text-md sm:text-lg text-[var(--greenColor)]"></i> : <i className="pi pi-times text-md sm:text-lg text-[var(--redColor)]"></i>}
+                        </div>
                     </div>
-
                     <>
                         <label className="custom-course-radio">
                             <input
@@ -447,7 +460,6 @@ export default function Course() {
                             <span className="radio-course-mark rounded">Связан ({shablonData.connects_count})</span>
                         </label>
                     </>
-
                     {/* Кнопки действий */}
                     {!tableMedia && (
                         <div className="flex flex-column sm:flex-row gap-2 sm:mt-0">
@@ -698,18 +710,16 @@ export default function Course() {
                                                             style={{ width: '70px' }}
                                                             header={() => <div className="text-[13px]">Статус</div>}
                                                             body={(rowData) => (
-                                                                <>
-                                                                    <Button
-                                                                        size="small"
-                                                                        className="p-2"
-                                                                        onClick={() => {
-                                                                            setSelectedCourse(rowData?.id);
-                                                                            handleFetchCourseOpenStatus();
-                                                                        }}
-                                                                    >
-                                                                        <i className={`${rowData?.audience_type?.icon}`}></i>
-                                                                    </Button>
-                                                                </>
+                                                                <Button
+                                                                    size="small"
+                                                                    className="p-2"
+                                                                    onClick={() => {
+                                                                        setSelectedCourse(rowData?.id);
+                                                                        handleFetchCourseOpenStatus();
+                                                                    }}
+                                                                >
+                                                                    <i className={`${rowData?.audience_type?.icon}`}></i>
+                                                                </Button>
                                                             )}
                                                         ></Column>
                                                         <Column field="title" header={() => <div className="text-[13px]">Балл</div>} body={(rowData) => <span key={rowData.id}>{rowData.max_score}</span>}></Column>
@@ -737,12 +747,10 @@ export default function Course() {
                                                             style={{ margin: '0 3px', textAlign: 'center' }}
                                                             body={(rowData) => {
                                                                 // if(rowData?.audience_type?.name === 'lock'){
-                                                                    return rowData.is_published ? <i className="pi pi-check text-md sm:text-lg text-[var(--greenColor)]"></i> : <i className="pi pi-times text-md sm:text-lg text-[var(--redColor)]"></i>
+                                                                return rowData.is_published ? <i className="pi pi-check text-md sm:text-lg text-[var(--greenColor)]"></i> : <i className="pi pi-times text-md sm:text-lg text-[var(--redColor)]"></i>;
                                                                 // }
                                                                 // return <i className='pi pi-minus'></i>
-                                                            }
-                                                                
-                                                            }
+                                                            }}
                                                         ></Column>
                                                         <Column
                                                             header={() => <div className="text-[13px]">Потоки</div>}
@@ -812,13 +820,6 @@ export default function Course() {
                     <div className="flex flex-col gap-1 items-center justify-center">
                         <div className="w-full flex justify-center gap-3 items-center">
                             <label className="block text-900 font-medium text-md md:text-lg">Название</label>
-                            {/* <div className="flex gap-1 items-center">
-                                <label className="block text-[13px] font-medium">Доступность</label>
-                                <div>
-                                    <Tooltip target=".info-btn" content="Курс будет виден всем пользователям" position={media ? 'left' : 'right'} />
-                                    <Button icon="pi pi-info-circle" size="small" className="info-btn text-white" text />
-                                </div>
-                            </div> */}
                         </div>
                         <div className="w-full flex gap-2 items-center">
                             <div className="p-inputgroup flex-1">
@@ -839,22 +840,6 @@ export default function Course() {
                                               }));
                                     }}
                                 />
-                                {/* <Button type="button" label='Приватный' size='small' icon={false ? 'pi pi-globe text-white text-sm p-[0] !mr-[3px]' : 'pi pi-lock text-white text-sm p-[0] !mr-[3px]'} onClick={() => ()=>(() => {})} className="text-white text-sm pr-4" /> */}
-                                {/* <div className="relative">
-                                    <Dropdown
-                                        value={courseStatus}
-                                        options={courseStatusOptions}
-                                        onChange={(e) => setCourseStatus(e?.value)}
-                                        optionLabel="name"
-                                        // className="max-w-[100px] sm:max-w-[170px]"
-                                        className="min-w-[100px] w-full pr-3"
-                                        style={{ maxWidth: media ? '100px' : '170px', fontSize: '14px' }}
-                                    />
-                                    <>
-                                        <i className="pi pi-info-circle absolute right-3 top-3 md:top-4 w-[10px] text-gray-500 info-btn" />
-                                        <Tooltip target=".info-btn" content={courseStatus?.name === 'Закрытый' ? "Курс будет доступен только вашим студентам" : courseStatus?.name === 'Открытый' ? "Курс будет виден всем пользователям" : ""} position={media ? 'left' : 'right'} />
-                                    </>
-                                </div> */}
                             </div>
                             {progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}
                         </div>
@@ -947,7 +932,7 @@ export default function Course() {
 
             {/* open status window */}
             <Dialog
-                header={'Выберите тип курса'}
+                header={'Выберите статус курса'}
                 visible={audenceTypeVisible}
                 className="w-[90%] sm:w-[400px]"
                 onHide={() => {
