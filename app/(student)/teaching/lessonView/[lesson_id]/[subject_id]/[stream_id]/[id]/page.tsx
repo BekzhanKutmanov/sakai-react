@@ -5,7 +5,7 @@ import useErrorMessage from '@/hooks/useErrorMessage';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { LayoutContext } from '@/layout/context/layoutcontext';
 import { statusView } from '@/services/notifications';
-import { fetchItemsLessons, fetchMainLesson, fetchStudentSteps, fetchSubjects, stepPractica, stepTest } from '@/services/studentMain';
+import { fetchItemsLessons, fetchStudentSteps, fetchSubjects, stepPractica, stepTest } from '@/services/studentMain';
 import { docValueType } from '@/types/docValueType';
 import { lessonType } from '@/types/lessonType';
 import { mainStepsType } from '@/types/mainStepType';
@@ -406,7 +406,7 @@ export default function LessonTest() {
                 <div className="lesson-card-border shadow rounded p-2">
                     {practica?.content?.description && <div className="p-2 sm:w-full md:w-[70%]" dangerouslySetInnerHTML={{ __html: practica?.content?.description }} />}
 
-                    <div className="flex flex-col gap-2 w-full ">
+                    <div className="flex flex-col gap-2 w-full">
                         <div className="flex items-center gap-1">
                             {practica?.content?.document_path && practica?.content.document_path.toLowerCase().includes('pdf') && (
                                 <>
@@ -432,18 +432,20 @@ export default function LessonTest() {
                 </div>
             </div>
 
+            {/* <div>
+                <span className="pi pi-envelope text-lg mb-1 text-[var(--mainColor)] shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)] pb-1"> Сообщения от преподавателя</span>
+
+                <ul className="pl-2 w-[95%]">
+                    <li className="list-disc ml-[15px] text-sm break-words">Loremipsumdolorsitametconsecteturadipisicingelit. Mollitia, illum.</li>
+                    <li className="list-disc ml-[15px]">Lorem ipsum dolor sit amet consectetur adipisicing elit. Mollitia, illum.</li>
+                </ul>
+            </div> */}
+
             {steps?.chills ? (
                 <span className="pi pi-check-circle text-xl mb-1 text-[var(--greenColor)]"> Задание выполнено</span>
             ) : (
                 <div className="flex flex-col gap-2 items-start w-full mt-2">
-                    <span className="pi pi-check-circle sm:text-lg mb-1 text-[var(--mainColor)] shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)] pb-1"> Задание после изучения материала, загрузи свой файл с решением.</span>
-
-                    {/* <b>Сообщения от преподавателя</b>
-                    <ul className='border-l-2 pl-2'>
-                        <li className='list-disc ml-[15px]'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Mollitia, illum.</li>
-                        <li className='list-disc ml-[15px]'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Mollitia, illum.</li>
-                    </ul> */}
-
+                    <span className="pi pi-check-circle text-lg mb-1 text-[var(--mainColor)] shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)] pb-1"> Задание после изучения материала, загрузи свой файл с решением.</span>
                     <div className="w-full mt-2">
                         <input
                             type="file"
@@ -473,6 +475,7 @@ export default function LessonTest() {
                         {progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}
                         <Button
                             label="Отправить"
+                            size="small"
                             disabled={progressSpinner}
                             className={`${progressSpinner ? 'opacity-50' : ''}`}
                             onClick={() => {

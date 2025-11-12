@@ -11,14 +11,11 @@ import { fetchStudentCalendar, fetchStudentDetail, pacticaDisannul, pacticaScore
 import { ContributionDay } from '@/types/ContributionDay';
 import { lessonType } from '@/types/lessonType';
 import { mainStepsType } from '@/types/mainStepType';
-import { studentType } from '@/types/studentType';
 import { useParams } from 'next/navigation';
 import { Accordion, AccordionTab } from 'primereact/accordion';
 import { useContext, useEffect, useState } from 'react';
 
 export default function StudentCheck() {
-    // type
-    interface mainStep {}
 
     const { connect_id, stream_id, student_id, lesson_id, step_id } = useParams();
     const params = useParams();
@@ -29,7 +26,6 @@ export default function StudentCheck() {
 
     const [mainSkeleton, mainSetSkeleton] = useState(false);
     const [lessons, setLessons] = useState<lessonType[] | null>(null);
-    const [student, setStudent] = useState<studentType | null>(null);
     const [hasSteps, setHasSteps] = useState(false);
     const [element, setElement] = useState<{ content: any | null; step: mainStepsType } | null>(null);
     const [contribution, setContribution] = useState<ContributionDay[] | null>(null);
@@ -40,13 +36,11 @@ export default function StudentCheck() {
     const handleFetchStreams = async () => {
         mainSetSkeleton(true);
         const data = await fetchStudentDetail(lesson_id ? Number(lesson_id) : null, connect_id ? Number(connect_id) : null, stream_id ? Number(stream_id) : null, student_id ? Number(student_id) : null, step_id ? Number(step_id) : null);
-        console.log(data);
 
         if (data?.success) {
             // handleStatusView();
             setHasSteps(false);
             mainSetSkeleton(false);
-            setStudent(data?.student);
             setLessons(data?.lessons);
         } else {
             mainSetSkeleton(false);
@@ -96,13 +90,7 @@ export default function StudentCheck() {
 
         if (data && Array.isArray(data)) {
             setContribution(data);
-            // setHasInfo(false);
-            // mainSetSkeleton(false);
-            // setStudent(data?.student);
-            // setLessons(data?.lessons);
         } else {
-            // mainSetSkeleton(false);
-            // setHasInfo(true);
             setMessage({
                 state: true,
                 value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
@@ -140,9 +128,7 @@ export default function StudentCheck() {
         }
     };
 
-    const handlePracticaDisannul = async (id_curricula:number, course_id:number, id_stream:number, id:number, steps_id:number, message: string) => {
-        console.log(message);
-        
+    const handlePracticaDisannul = async (id_curricula:number, course_id:number, id_stream:number, id:number, steps_id:number, message: string) => {        
         const data = await pacticaDisannul(id_curricula, course_id, id_stream, Number(student_id), steps_id, message);
 
         if (data?.success) {

@@ -2,14 +2,13 @@
 
 import { NotFound } from '@/app/components/NotFound';
 import GroupSkeleton from '@/app/components/skeleton/GroupSkeleton';
-import useBreadCrumbs from '@/hooks/useBreadCrumbs';
 import useErrorMessage from '@/hooks/useErrorMessage';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { LayoutContext } from '@/layout/context/layoutcontext';
 import { fetchStreams, fetchStreamStudents } from '@/services/streams';
 import { mainStreamsType } from '@/types/mainStreamsType';
 import Link from 'next/link';
-import { useParams, usePathname } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import { Button } from 'primereact/button';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
@@ -22,13 +21,11 @@ export default function StudentList() {
     const [streams, setStreams] = useState<mainStreamsType[]>([]);
     const [stream, setStream] = useState<mainStreamsType | null>(null);
 
-    const { setMessage, setGlobalLoading } = useContext(LayoutContext);
+    const { setMessage } = useContext(LayoutContext);
     const showError = useErrorMessage();
 
     const { cource_id, connect_id, stream_id } = useParams();
-
     const media = useMediaQuery('(max-width: 640px)');
-    const pathname = usePathname();
 
     // functions
     const toggleSkeleton = () => {

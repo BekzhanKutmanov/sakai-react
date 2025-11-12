@@ -1,6 +1,5 @@
 'use client';
 
-import useErrorMessage from '@/hooks/useErrorMessage';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { LayoutContext } from '@/layout/context/layoutcontext';
 import { Button } from 'primereact/button';
@@ -8,7 +7,6 @@ import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
 import { useContext, useEffect, useState } from 'react';
 import GroupSkeleton from '../skeleton/GroupSkeleton';
-import { lessonType } from '@/types/lessonType';
 
 export default function LessonInfoCard({
     contentType,
@@ -51,11 +49,8 @@ export default function LessonInfoCard({
     isOpened?: boolean;
     item?: {};
 }) {
-    const media = useMediaQuery('(max-width: 640px)');
-
     const { setMessage } = useContext(LayoutContext);
-    const showError = useErrorMessage();
-
+    
     const [testCall, setTestCall] = useState(false);
     const [answerTest, setAnswerTest] = useState<{ text: string } | null>(null);
     const [docCall, setDocCall] = useState(false);
