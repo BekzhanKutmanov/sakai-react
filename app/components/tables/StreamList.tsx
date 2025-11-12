@@ -185,24 +185,6 @@ export default function StreamList({
                 <div className={`flex flex-column p-2 gap-2`}>
                     <div className="flex justify-between gap-1 items-center">
                         <h3 className="m-0 text-lg">{item?.subject_name.name_ru}</h3>
-                        {/* <label className="custom-radio">
-                            <input
-                                type="checkbox"
-                                className={`customCheckbox`}
-                                // svoysky
-                                // checked={Boolean(item.connect_id)}
-                                // onChange={(e) => {
-                                //     handleEdit(e.target, item.stream_id, item?.subject_name.name_ru);
-                                //     setStreams((prev) => prev.map((el) => (el.stream_id === item.stream_id ? { ...el, connect_id: el.connect_id ? null : 1 } : el)));
-                                // }}
-                                checked={pendingChanges.some((s) => s.stream_id === item.stream_id)}
-                                onChange={(e) => {
-
-                                    handleEdit(e.target, item);
-                                }}
-                            />
-                            <span className="checkbox-mark"></span>
-                        </label> */}
                     </div>
                     <div className="flex flex-column xl:flex-row justify-content-between align-items-center xl:align-items-start flex-1 gap-2">
                         <div className="flex flex-col order-2 xl:order-1 gap-1 items-start text-[12px] sm:text-[14px]">

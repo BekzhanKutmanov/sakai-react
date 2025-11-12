@@ -1,3 +1,5 @@
+import { AudenceType } from "./courseTypes/AudenceTypes";
+
 export interface test {
     title: string;
     id: number;
@@ -15,6 +17,8 @@ export interface myMainCourseType {
     title: string;
     user_id: number;
     current_page?: number;
+
+    audience_type: AudenceType
 
     // data?: test[];
 }

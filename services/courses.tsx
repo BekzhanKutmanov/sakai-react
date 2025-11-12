@@ -380,3 +380,36 @@ export const veryfyCourse = async (value: {course_id: number, status: number}) =
         return err;
     }
 };
+
+// course open status
+
+export const fetchCourseOpenStatus = async () => {
+    try {
+        const res = await axiosInstance.get(`/open/course/types`);
+        const data = await res.data;
+
+        return data;
+    } catch (err) {
+        console.log('Ошибка загрузки:', err);
+        return err;
+    }
+};
+
+export const addOpenTypes = async (course_audience_type_id: number, course_id: number) => {
+    const formData = new FormData();
+    formData.append('course_audience_type_id', String(course_audience_type_id));
+    formData.append('course_id', String(course_id));
+
+    try {
+        const res = await axiosInstance.post(`/v1/teacher/courses/audience/update`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        });
+
+        return res.data;
+    } catch (err) {
+        console.log('Ошибка при добавлении типа курса', err);
+        return err;
+    }
+};

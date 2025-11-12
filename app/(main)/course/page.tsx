@@ -1,11 +1,11 @@
 'use client';
 
 import FormModal from '@/app/components/popUp/FormModal';
-import { addCourse, deleteCourse, fetchCourseInfo, fetchCourses, updateCourse, veryfyCourse } from '@/services/courses';
+import { addCourse, addOpenTypes, deleteCourse, fetchCourseInfo, fetchCourseOpenStatus, fetchCourses, updateCourse, veryfyCourse } from '@/services/courses';
 import { Button } from 'primereact/button';
 import { FileUpload, FileUploadSelectEvent } from 'primereact/fileupload';
 import { InputText } from 'primereact/inputtext';
-import { useContext, useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { LayoutContext } from '@/layout/context/layoutcontext';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { DataTable } from 'primereact/datatable';
@@ -31,6 +31,8 @@ import { DataView } from 'primereact/dataview';
 import { FileWithPreview } from '@/types/fileuploadPreview';
 import { Dropdown } from 'primereact/dropdown';
 import { Tooltip } from 'primereact/tooltip';
+import { Dialog } from 'primereact/dialog';
+import { AudenceType } from '@/types/courseTypes/AudenceTypes';
 
 export default function Course() {
     const { setMessage, setGlobalLoading, course, contextFetchCourse, setMainCourseId } = useContext(LayoutContext);
@@ -45,6 +47,7 @@ export default function Course() {
     const [editMode, setEditMode] = useState(false);
     const [selectedCourse, setSelectedCourse] = useState<number | null>(null);
     const [formVisible, setFormVisible] = useState(false);
+    const [audenceTypeVisible, setAudenceTypeVisible] = useState(false);
     const [forStart, setForStart] = useState(false);
     const [skeleton, setSkeleton] = useState(false);
     const [progressSpinner, setProgressSpinner] = useState(false);
@@ -67,6 +70,8 @@ export default function Course() {
     const [globalCourseId, setGlobalCourseId] = useState<{ id: number | null; title: string | null } | null>(null);
     const [pageState, setPageState] = useState<number>(1);
     const [courseStatus, setCourseStatus] = useState({ name: 'Закрытый', code: 0 });
+    const [openTypes, setOpenTypes] = useState<AudenceType[]>([]);
+
     const [isTall, setIsTall] = useState(false);
 
     const showError = useErrorMessage();
@@ -85,7 +90,6 @@ export default function Course() {
 
     const handleEdit = async (e: { checked: boolean }, item: { status: boolean; id: number }) => {
         setSkeleton(true);
-
         const { id } = item;
         const status = e.checked;
 
@@ -109,6 +113,20 @@ export default function Course() {
                     state: true,
                     value: { severity: 'error', summary: 'Ошибка!', detail: data.response.data.cause }
                 });
+            } else if (data?.response?.status) {
+                if (data?.response?.status == '400') {
+                    setMessage({
+                        state: true,
+                        value: { severity: 'error', summary: 'Ошибка!', detail: data?.response?.data?.message }
+                    });
+                } else if (data?.response?.status == '422') {
+                    setMessage({
+                        state: true,
+                        value: { severity: 'error', summary: 'Ошибка!', detail: data?.response?.data?.message }
+                    });
+                } else {
+                    showError(data.response.status);
+                }
             } else {
                 setMessage({
                     state: true,
@@ -309,6 +327,58 @@ export default function Course() {
         setActiveIndex(e.index);
     };
 
+    const handleFetchCourseOpenStatus = async () => {
+        setAudenceTypeVisible(true);
+        const data = await fetchCourseOpenStatus();
+        if (data && Array.isArray(data)) {
+            setOpenTypes(data);
+        } else {
+            setMessage({
+                state: true,
+                value: { severity: 'error', summary: 'Ошибка повторите позже', detail: '' }
+            }); // messege - Ошибка при изменении курса
+            if (data?.response?.status) {
+                if (data?.response?.status == '400') {
+                    setMessage({
+                        state: true,
+                        value: { severity: 'error', summary: 'Ошибка!', detail: data?.response?.data?.message }
+                    });
+                } else {
+                    showError(data.response.status);
+                }
+            }
+        }
+        console.log(data);
+    };
+
+    const handleAddOpenTypes = async (course_audience_type_id: number, course_id: number) => {
+        setSkeleton(true);
+        const data = await addOpenTypes(course_audience_type_id, course_id);
+        console.log(data);
+
+        if (data && data.success) {
+            contextFetchCourse(1);
+            setMessage({
+                state: true,
+                value: { severity: 'success', summary: data.message, detail: '' }
+            });
+        } else {
+            if (data?.response?.status) {
+                if (data?.response?.status == '400') {
+                    setMessage({
+                        state: true,
+                        value: { severity: 'error', summary: 'Ошибка!', detail: data?.response?.data?.message }
+                    });
+                } else {
+                    showError(data.response.status);
+                }
+            }
+        }
+        setAudenceTypeVisible(false);
+        setSelectedCourse(null);
+        setSkeleton(false);
+    };
+
     const itemTemplate = (shablonData: any) => {
         return (
             <div className="col-12">
@@ -464,152 +534,6 @@ export default function Course() {
 
     return (
         <div className="main-bg">
-            {/* modal window */}
-            <FormModal
-                title={editMode ? 'Обновить курс' : 'Добавить'}
-                fetchValue={editMode ? handleUpdateCourse : handleAddCourse}
-                clearValues={clearValues}
-                visible={formVisible}
-                setVisible={setFormVisible}
-                start={forStart}
-                footerValue={{ footerState: editMode, reject: 'Назад', next: 'Сохранить' }}
-            >
-                <div className="flex flex-col gap-1">
-                    <div className="flex flex-col gap-1 items-center justify-center">
-                        <div className="w-full flex justify-center gap-3 items-center">
-                            <label className="block text-900 font-medium text-md md:text-lg">Название</label>
-                            {/* <div className="flex gap-1 items-center">
-                                <label className="block text-[13px] font-medium">Доступность</label>
-                                <div>
-                                    <Tooltip target=".info-btn" content="Курс будет виден всем пользователям" position={media ? 'left' : 'right'} />
-                                    <Button icon="pi pi-info-circle" size="small" className="info-btn text-white" text />
-                                </div>
-                            </div> */}
-                        </div>
-                        <div className="w-full flex gap-2 items-center">
-                            <div className="p-inputgroup flex-1">
-                                <InputText
-                                    value={editMode ? editingLesson.title || '' : courseValue.title}
-                                    placeholder="Название обязательно"
-                                    disabled={progressSpinner === true ? true : false}
-                                    className="w-[100%]"
-                                    onChange={(e) => {
-                                        editMode
-                                            ? setEditingLesson((prev) => ({
-                                                  ...prev,
-                                                  title: e.target.value
-                                              }))
-                                            : setCourseValue((prev) => ({
-                                                  ...prev,
-                                                  title: e.target.value
-                                              }));
-                                    }}
-                                />
-                                {/* <Button type="button" label='Приватный' size='small' icon={false ? 'pi pi-globe text-white text-sm p-[0] !mr-[3px]' : 'pi pi-lock text-white text-sm p-[0] !mr-[3px]'} onClick={() => ()=>(() => {})} className="text-white text-sm pr-4" /> */}
-                                {/* <div className="relative">
-                                    <Dropdown
-                                        value={courseStatus}
-                                        options={courseStatusOptions}
-                                        onChange={(e) => setCourseStatus(e?.value)}
-                                        optionLabel="name"
-                                        // className="max-w-[100px] sm:max-w-[170px]"
-                                        className="min-w-[100px] w-full pr-3"
-                                        style={{ maxWidth: media ? '100px' : '170px', fontSize: '14px' }}
-                                    />
-                                    <>
-                                        <i className="pi pi-info-circle absolute right-3 top-3 md:top-4 w-[10px] text-gray-500 info-btn" />
-                                        <Tooltip target=".info-btn" content={courseStatus?.name === 'Закрытый' ? "Курс будет доступен только вашим студентам" : courseStatus?.name === 'Открытый' ? "Курс будет виден всем пользователям" : ""} position={media ? 'left' : 'right'} />
-                                    </>
-                                </div> */}
-                            </div>
-                            {progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}
-                        </div>
-                    </div>
-                    {/* <div className="flex flex-col gap-1 items-center justify-center">
-                        <label className="block text-900 font-medium text-[16px] md:text-lg mb-1 md:mb-2">Видео ссылка</label>
-                        <div className="w-full flex gap-2 items-center">
-                            <InputText
-                                value={editMode ? editingLesson.video_url || '' : courseValue.video_url}
-                                placeholder="https://..."
-                                title="Ссылка должна начинаться с https://!"
-                                disabled={progressSpinner === true ? true : false}
-                                className="w-full"
-                                onChange={(e) => {
-                                    editMode
-                                        ? setEditingLesson((prev) => ({
-                                              ...prev,
-                                              video_url: e.target.value
-                                          }))
-                                        : setCourseValue((prev) => ({
-                                              ...prev,
-                                              video_url: e.target.value
-                                          }));
-                                }}
-                            />
-                            {progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}
-                        </div>
-                    </div> */}
-
-                    <div className="flex flex-col gap-1 items-center justify-center">
-                        <label className="block text-900 font-medium text-[16px] md:text-lg mb-1 md:mb-2">Описание</label>
-                        <div className="w-full flex gap-2 justify-center items-center">
-                            <InputTextarea
-                                // autoResize
-                                value={editMode ? editingLesson.description || '' : courseValue.description}
-                                disabled={progressSpinner === true ? true : false}
-                                rows={3}
-                                cols={30}
-                                className="w-[300px] sm:w-full h-[100px]"
-                                onChange={(e) => {
-                                    editMode
-                                        ? setEditingLesson((prev) => ({
-                                              ...prev,
-                                              description: e.target.value
-                                          }))
-                                        : setCourseValue((prev) => ({
-                                              ...prev,
-                                              description: e.target.value
-                                          }));
-                                }}
-                            />
-                            {progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}
-                        </div>
-                    </div>
-
-                    <div className={imagestateStyle}>
-                        <div className="w-1/2 order-2 sm:order-1 max-h-[170px] max-w-[300px] overflow-hidden flex justify-center items-center">
-                            {typeof imageState === 'string' ? <img className="w-full object-cover" src={imageState} /> : <img className="w-full object-cover" src={typeof editingLesson.image === 'string' ? editingLesson.image : ''} />}
-                        </div>
-                        <div className={`flex flex-col pag-1 order-1 sm:order-2 items-center justify-center ${imageState && 'w-1/2'}`}>
-                            <label className="block text-900 font-medium text-[16px] md:text-lg mb-1 md:mb-2">Добавить фото</label>
-                            <FileUpload
-                                ref={fileUploadRef}
-                                mode="basic"
-                                chooseLabel="Фото"
-                                style={{ fontSize: '12px', textWrap: 'wrap' }}
-                                className="max-w-[200px]"
-                                customUpload
-                                name="demo[]"
-                                accept="image/*"
-                                maxFileSize={1000000}
-                                onSelect={onSelect}
-                            />
-                            {courseValue.image || editingLesson.image ? (
-                                <div className="mt-2 text-sm text-gray-700 ">
-                                    {typeof editingLesson.image === 'string' && (
-                                        <>
-                                            <b className="text-[12px] text-center w-[300px]">{imageTitle}</b>
-                                        </>
-                                    )}
-                                </div>
-                            ) : (
-                                <b className="text-[12px] text-red-500">jpeg, png, jpg</b>
-                            )}
-                            <div className="flex items-center gap-1">{(editingLesson.image || imageState) && <Button icon={'pi pi-trash'} className="trash-button" onClick={clearFile} />}</div>
-                        </div>
-                    </div>
-                </div>
-            </FormModal>
             <div className="flex justify-between gap-3">
                 <div className="w-full">
                     {/* Мобильный курс */}
@@ -770,6 +694,24 @@ export default function Course() {
                                                                 </Link>
                                                             )}
                                                         ></Column>
+                                                        <Column
+                                                            style={{ width: '70px' }}
+                                                            header={() => <div className="text-[13px]">Статус</div>}
+                                                            body={(rowData) => (
+                                                                <>
+                                                                    <Button
+                                                                        size="small"
+                                                                        className="p-2"
+                                                                        onClick={() => {
+                                                                            setSelectedCourse(rowData?.id);
+                                                                            handleFetchCourseOpenStatus();
+                                                                        }}
+                                                                    >
+                                                                        <i className={`${rowData?.audience_type?.icon}`}></i>
+                                                                    </Button>
+                                                                </>
+                                                            )}
+                                                        ></Column>
                                                         <Column field="title" header={() => <div className="text-[13px]">Балл</div>} body={(rowData) => <span key={rowData.id}>{rowData.max_score}</span>}></Column>
                                                         <Column
                                                             header={() => <div className="text-[13px]">На рассмотрение</div>}
@@ -793,8 +735,13 @@ export default function Course() {
                                                         <Column
                                                             header={() => <div className="text-[13px]">Публикация</div>}
                                                             style={{ margin: '0 3px', textAlign: 'center' }}
-                                                            body={(rowData) =>
-                                                                rowData.is_published ? <i className="pi pi-check text-md sm:text-lg text-[var(--greenColor)]"></i> : <i className="pi pi-times text-md sm:text-lg text-[var(--redColor)]"></i>
+                                                            body={(rowData) => {
+                                                                // if(rowData?.audience_type?.name === 'lock'){
+                                                                    return rowData.is_published ? <i className="pi pi-check text-md sm:text-lg text-[var(--greenColor)]"></i> : <i className="pi pi-times text-md sm:text-lg text-[var(--redColor)]"></i>
+                                                                // }
+                                                                // return <i className='pi pi-minus'></i>
+                                                            }
+                                                                
                                                             }
                                                         ></Column>
                                                         <Column
@@ -851,6 +798,191 @@ export default function Course() {
                     )}
                 </div>
             </div>
+            {/* modal window */}
+            <FormModal
+                title={editMode ? 'Обновить курс' : 'Добавить'}
+                fetchValue={editMode ? handleUpdateCourse : handleAddCourse}
+                clearValues={clearValues}
+                visible={formVisible}
+                setVisible={setFormVisible}
+                start={forStart}
+                footerValue={{ footerState: editMode, reject: 'Назад', next: 'Сохранить' }}
+            >
+                <div className="flex flex-col gap-1">
+                    <div className="flex flex-col gap-1 items-center justify-center">
+                        <div className="w-full flex justify-center gap-3 items-center">
+                            <label className="block text-900 font-medium text-md md:text-lg">Название</label>
+                            {/* <div className="flex gap-1 items-center">
+                                <label className="block text-[13px] font-medium">Доступность</label>
+                                <div>
+                                    <Tooltip target=".info-btn" content="Курс будет виден всем пользователям" position={media ? 'left' : 'right'} />
+                                    <Button icon="pi pi-info-circle" size="small" className="info-btn text-white" text />
+                                </div>
+                            </div> */}
+                        </div>
+                        <div className="w-full flex gap-2 items-center">
+                            <div className="p-inputgroup flex-1">
+                                <InputText
+                                    value={editMode ? editingLesson.title || '' : courseValue.title}
+                                    placeholder="Название обязательно"
+                                    disabled={progressSpinner === true ? true : false}
+                                    className="w-[100%]"
+                                    onChange={(e) => {
+                                        editMode
+                                            ? setEditingLesson((prev) => ({
+                                                  ...prev,
+                                                  title: e.target.value
+                                              }))
+                                            : setCourseValue((prev) => ({
+                                                  ...prev,
+                                                  title: e.target.value
+                                              }));
+                                    }}
+                                />
+                                {/* <Button type="button" label='Приватный' size='small' icon={false ? 'pi pi-globe text-white text-sm p-[0] !mr-[3px]' : 'pi pi-lock text-white text-sm p-[0] !mr-[3px]'} onClick={() => ()=>(() => {})} className="text-white text-sm pr-4" /> */}
+                                {/* <div className="relative">
+                                    <Dropdown
+                                        value={courseStatus}
+                                        options={courseStatusOptions}
+                                        onChange={(e) => setCourseStatus(e?.value)}
+                                        optionLabel="name"
+                                        // className="max-w-[100px] sm:max-w-[170px]"
+                                        className="min-w-[100px] w-full pr-3"
+                                        style={{ maxWidth: media ? '100px' : '170px', fontSize: '14px' }}
+                                    />
+                                    <>
+                                        <i className="pi pi-info-circle absolute right-3 top-3 md:top-4 w-[10px] text-gray-500 info-btn" />
+                                        <Tooltip target=".info-btn" content={courseStatus?.name === 'Закрытый' ? "Курс будет доступен только вашим студентам" : courseStatus?.name === 'Открытый' ? "Курс будет виден всем пользователям" : ""} position={media ? 'left' : 'right'} />
+                                    </>
+                                </div> */}
+                            </div>
+                            {progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}
+                        </div>
+                    </div>
+                    {/* <div className="flex flex-col gap-1 items-center justify-center">
+                        <label className="block text-900 font-medium text-[16px] md:text-lg mb-1 md:mb-2">Видео ссылка</label>
+                        <div className="w-full flex gap-2 items-center">
+                            <InputText
+                                value={editMode ? editingLesson.video_url || '' : courseValue.video_url}
+                                placeholder="https://..."
+                                title="Ссылка должна начинаться с https://!"
+                                disabled={progressSpinner === true ? true : false}
+                                className="w-full"
+                                onChange={(e) => {
+                                    editMode
+                                        ? setEditingLesson((prev) => ({
+                                              ...prev,
+                                              video_url: e.target.value
+                                          }))
+                                        : setCourseValue((prev) => ({
+                                              ...prev,
+                                              video_url: e.target.value
+                                          }));
+                                }}
+                            />
+                            {progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}
+                        </div>
+                    </div> */}
+
+                    <div className="flex flex-col gap-1 items-center justify-center">
+                        <label className="block text-900 font-medium text-[16px] md:text-lg mb-1 md:mb-2">Описание</label>
+                        <div className="w-full flex gap-2 justify-center items-center">
+                            <InputTextarea
+                                // autoResize
+                                value={editMode ? editingLesson.description || '' : courseValue.description}
+                                disabled={progressSpinner === true ? true : false}
+                                rows={3}
+                                cols={30}
+                                className="w-[300px] sm:w-full h-[100px]"
+                                onChange={(e) => {
+                                    editMode
+                                        ? setEditingLesson((prev) => ({
+                                              ...prev,
+                                              description: e.target.value
+                                          }))
+                                        : setCourseValue((prev) => ({
+                                              ...prev,
+                                              description: e.target.value
+                                          }));
+                                }}
+                            />
+                            {progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}
+                        </div>
+                    </div>
+
+                    <div className={imagestateStyle}>
+                        <div className="w-1/2 order-2 sm:order-1 max-h-[170px] max-w-[300px] overflow-hidden flex justify-center items-center">
+                            {typeof imageState === 'string' ? <img className="w-full object-cover" src={imageState} /> : <img className="w-full object-cover" src={typeof editingLesson.image === 'string' ? editingLesson.image : ''} />}
+                        </div>
+                        <div className={`flex flex-col pag-1 order-1 sm:order-2 items-center justify-center ${imageState && 'w-1/2'}`}>
+                            <label className="block text-900 font-medium text-[16px] md:text-lg mb-1 md:mb-2">Добавить фото</label>
+                            <FileUpload
+                                ref={fileUploadRef}
+                                mode="basic"
+                                chooseLabel="Фото"
+                                style={{ fontSize: '12px', textWrap: 'wrap' }}
+                                className="max-w-[200px]"
+                                customUpload
+                                name="demo[]"
+                                accept="image/*"
+                                maxFileSize={1000000}
+                                onSelect={onSelect}
+                            />
+                            {courseValue.image || editingLesson.image ? (
+                                <div className="mt-2 text-sm text-gray-700 ">
+                                    {typeof editingLesson.image === 'string' && (
+                                        <>
+                                            <b className="text-[12px] text-center w-[300px]">{imageTitle}</b>
+                                        </>
+                                    )}
+                                </div>
+                            ) : (
+                                <b className="text-[12px] text-red-500">jpeg, png, jpg</b>
+                            )}
+                            <div className="flex items-center gap-1">{(editingLesson.image || imageState) && <Button icon={'pi pi-trash'} className="trash-button" onClick={clearFile} />}</div>
+                        </div>
+                    </div>
+                </div>
+            </FormModal>
+
+            {/* open status window */}
+            <Dialog
+                header={'Выберите тип курса'}
+                visible={audenceTypeVisible}
+                className="w-[90%] sm:w-[400px]"
+                onHide={() => {
+                    if (!audenceTypeVisible) return;
+                    setAudenceTypeVisible(false);
+                }}
+            >
+                <div className="flex flex-col gap-1">
+                    {skeleton ? (
+                        <GroupSkeleton count={1} size={{ width: '100%', height: '5rem' }} />
+                    ) : (
+                        <div className="w-full flex flex-col mt-1 gap-1">
+                            {openTypes?.map((item) => {
+                                return (
+                                    <div
+                                        key={item?.id}
+                                        className="cursor-pointer shadow flex flex-col hover:text-[var(--mainColor)] transition-all"
+                                        onClick={() => {
+                                            if (selectedCourse) {
+                                                handleAddOpenTypes(item?.id, selectedCourse);
+                                            }
+                                        }}
+                                    >
+                                        <div key={item?.id} className="flex-1 py-2 px-2 flex gap-1 items-center">
+                                            <i className={`${item?.icon}`}></i>
+                                            <b>{item.title}</b>
+                                        </div>
+                                        <small className="px-2">{item?.description}</small>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    )}
+                </div>
+            </Dialog>
         </div>
     );
 }

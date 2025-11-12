@@ -530,7 +530,7 @@ export default function LessonStep() {
 
                                 return (
                                     <React.Fragment key={item?.id}>
-                                        <div className="flex-1 py-2 px-2 shadow flex gap-1 items-center">
+                                        <div className="flex-1 py-2 px-2 shadow flex gap-1 items-center hover:text-[var(--mainColor)] transition-all">
                                             <i className={`${item?.logo}`}></i>
                                             <b
                                                 className="cursor-pointer"
