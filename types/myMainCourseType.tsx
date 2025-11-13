@@ -15,9 +15,10 @@ export interface myMainCourseType {
     image: string;
     status: true;
     title: string;
+    description: string | null; 
     user_id: number;
     current_page?: number;
-
+    user:{name:string, last_name:string, father_name: string};
     audience_type: AudenceType
 
     // data?: test[];

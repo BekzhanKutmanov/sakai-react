@@ -70,13 +70,6 @@ export default function LessonLink({ element, content, fetchPropElement, clearPr
         setSelectId(null);
     };
 
-    const toggleSpinner = () => {
-        setProgressSpinner(true);
-        setInterval(() => {
-            setProgressSpinner(false);
-        }, 1000);
-    };
-
     // validate
     const {
         setValue,
@@ -109,7 +102,7 @@ export default function LessonLink({ element, content, fetchPropElement, clearPr
     };
 
     const handleAddLink = async () => {
-        toggleSpinner();
+        setProgressSpinner(true);
         const data = await addLink(linkValue, element.lesson_id, element.type_id, element.id);
         if (data.success) {
             fetchPropElement(element.id);
@@ -126,6 +119,7 @@ export default function LessonLink({ element, content, fetchPropElement, clearPr
                 showError(data.response.status);
             }
         }
+        setProgressSpinner(false);
     };
 
     // delete document

@@ -127,13 +127,6 @@ export default function LessonPractica({ element, content, fetchPropElement, fet
         setSelectType('');
     };
 
-    const toggleSpinner = () => {
-        setProgressSpinner(true);
-        setInterval(() => {
-            setProgressSpinner(false);
-        }, 1000);
-    };
-
     // validate
     const {
         setValue,
@@ -176,7 +169,7 @@ export default function LessonPractica({ element, content, fetchPropElement, fet
     };
 
     const handleAddPracica = async () => {
-        toggleSpinner();
+        setProgressSpinner(true);
         const data = await addPractica(docValue, element.lesson_id, element.type_id, element.id);
         if (data.success) {
             fetchPropElement(element.id);
@@ -201,6 +194,7 @@ export default function LessonPractica({ element, content, fetchPropElement, fet
                 }
             }
         }
+        setProgressSpinner(false);
     };
 
     // delete document

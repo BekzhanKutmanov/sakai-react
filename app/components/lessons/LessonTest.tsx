@@ -108,6 +108,7 @@ export default function LessonTest({
     };
 
     const handleAddTest = async () => {
+        setProgressSpinner(true);
         const data = await addTest(answer, testValue.title, element?.lesson_id && Number(element?.lesson_id), element.type.id, element.id, testValue.score, testValue?.aiCreate);
         if (data?.success) {
             fetchPropElement(element.id);
@@ -135,6 +136,7 @@ export default function LessonTest({
                 }
             }
         }
+        setProgressSpinner(false);
     };
 
     const addOption = () => {

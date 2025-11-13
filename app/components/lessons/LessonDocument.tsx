@@ -105,13 +105,6 @@ export default function LessonDocument({ element, content, fetchPropElement, cle
         setSelectType('');
     };
 
-    const toggleSpinner = () => {
-        setProgressSpinner(true);
-        setInterval(() => {
-            setProgressSpinner(false);
-        }, 1000);
-    };
-
     // validate
     const {
         setValue,
@@ -164,7 +157,7 @@ export default function LessonDocument({ element, content, fetchPropElement, cle
     };
 
     const handleAddDoc = async () => {
-        toggleSpinner();
+        setProgressSpinner(true);
         const data = await addDocument(docValue, element.lesson_id, element.type_id, element.id);
         if (data.success) {
             fetchPropElement(element.id);
@@ -188,6 +181,7 @@ export default function LessonDocument({ element, content, fetchPropElement, cle
                 }
             }
         }
+        setProgressSpinner(false);
     };
 
     // delete document

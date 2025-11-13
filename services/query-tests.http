@@ -34,10 +34,10 @@
 # Authorization: Bearer {{token}} 
 # Content-Type: application/json 
 
-GET https://api-dev.mooc.oshsu.kg/public/api/v1/student/forum-details?forum_id=8
+GET https://api-dev.mooc.oshsu.kg/public/api/open/course/show?course_id=206
 Authorization: Bearer {{token}} 
 Content-Type: application/json 
 
 {
-    "forum_id": 8
+    "course_id": 206
 }

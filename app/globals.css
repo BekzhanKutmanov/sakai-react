@@ -31,6 +31,7 @@
   --bg: #ffffff;
   --track-shadow: 0 6px 18px rgba(33,33,33,0.08);
   --knob-shadow: 0 6px 14px rgba(16,24,40,0.12);
+  --bottom-shadow: 0 2px 1px 0 rgba(0, 0, 0, 0.1);
 }
 
 p {

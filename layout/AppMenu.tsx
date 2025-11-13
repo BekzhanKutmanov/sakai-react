@@ -53,7 +53,7 @@ const AppMenu = () => {
     const [themeValue, setThemeValue] = useState<{ title: string; sequence_number: number | null }>({ title: '', sequence_number: null });
     const [courseInfo, setCourseInfo] = useState<{ title: string } | null>(null);
     const [forDepartamentLength, setForDepartamentLength] = useState(false);
-    
+
     const [themesStudentList, setThemesStudentList] = useState<{ key?: string; label: string; id: number; to: string; items?: AppMenuItem[] }[]>([]);
 
     const showError = useErrorMessage();
@@ -74,40 +74,53 @@ const AppMenu = () => {
                       items: courseList?.length > 0 ? courseList : []
                   }
               ]
-            : 
-            !forDepartamentLength ? (user?.is_working && pathname.startsWith('/course')) || pathname.startsWith('/students/') || pathname.startsWith('/unVerifed') || pathname.startsWith('/pdf/') || pathname.startsWith('/videoInstruct/') || pathname.startsWith('/notification') || pathname.startsWith('/dashboard')
-            ? [
-                  {
-                      // key: 'prev',
-                      label: '',
-                      icon: 'pi pi-fw pi-arrow-left',
-                      to: '#',
-                      command: () => {
-                          router.back();
+            : !forDepartamentLength
+            ? (user?.is_working && pathname.startsWith('/course')) ||
+              pathname.startsWith('/students/') ||
+              pathname.startsWith('/unVerifed') ||
+              pathname.startsWith('/pdf/') ||
+              pathname.startsWith('/videoInstruct/') ||
+              pathname.startsWith('/notification') ||
+              pathname.startsWith('/dashboard') ||
+              pathname.startsWith('/openCourse')
+                ? [
+                      {
+                          // key: 'prev',
+                          label: '',
+                          icon: 'pi pi-fw pi-arrow-left',
+                          to: '#',
+                          command: () => {
+                              router.back();
+                          }
+                      },
+                      {
+                          label: 'Главная страница',
+                          icon: 'pi pi-home',
+                          to: '/'
+                      },
+                      {
+                          label: 'Курсы',
+                          icon: 'pi pi-fw pi-book',
+                          to: '/course'
+                      },
+                      {
+                          label: 'Видеоинструкция',
+                          icon: 'pi pi-fw pi-video',
+                          to: '/videoInstruct'
+                      },
+                      {
+                          label: 'Непроверенные задания',
+                          icon: 'pi pi-fw pi-clock',
+                          to: '/unVerifed'
+                      },
+                      {
+                          label: 'Общедоступные курсы',
+                          icon: 'pi pi-fw pi-globe',
+                          to: '/openCourse'
                       }
-                  },
-                  {
-                      label: 'Главная страница',
-                      icon: 'pi pi-home',
-                      to: '/'
-                  },
-                  {
-                      label: 'Курсы',
-                      icon: 'pi pi-fw pi-book',
-                      to: '/course'
-                  },
-                  {
-                      label: 'Видеоинструкция',
-                      icon: 'pi pi-fw pi-video',
-                      to: '/videoInstruct'
-                  },
-                  {
-                      label: 'Непроверенные задания',
-                      icon: 'pi pi-fw pi-clock',
-                      to: '/unVerifed'
-                  }
-              ] 
-            : [] : []
+                  ]
+                : []
+            : []
         : user?.is_student
         ? pathname.startsWith('/teaching/lessonView/')
             ? [
@@ -139,8 +152,8 @@ const AppMenu = () => {
               ]
         : [];
 
-    const forDepartament =
-        forDepartamentLength ? !pathname.startsWith('/course/') && !pathname.startsWith('/pdf/')
+    const forDepartament = forDepartamentLength
+        ? !pathname.startsWith('/course/') && !pathname.startsWith('/pdf/')
             ? [
                   {
                       // key: 'prev',
@@ -175,9 +188,15 @@ const AppMenu = () => {
                       label: 'Непроверенные задания',
                       icon: 'pi pi-fw pi-clock',
                       to: '/unVerifed'
+                  },
+                  {
+                      label: 'Общедоступные курсы',
+                      icon: 'pi pi-fw pi-globe',
+                      to: '/openCourse'
                   }
               ]
-            : [] : [];
+            : []
+        : [];
 
     const model: AppMenuItem[] = [
         {
@@ -190,7 +209,6 @@ const AppMenu = () => {
             label: '  ',
             items: byStatus
         }
-
     ];
 
     const handleCourseInfo = async () => {
@@ -366,13 +384,13 @@ const AppMenu = () => {
         }
     }, [contextNewStudentThemes, pathname]);
 
-    useEffect(()=> {
-        if(departament.info.length < 1){
+    useEffect(() => {
+        if (departament.info.length < 1) {
             setForDepartamentLength(false);
         } else {
             setForDepartamentLength(true);
         }
-    },[departament, pathname]);
+    }, [departament, pathname]);
 
     return (
         <MenuProvider>

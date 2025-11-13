@@ -10,7 +10,6 @@ import { useContext, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { NotFound } from '../NotFound';
 import LessonCard from '../cards/LessonCard';
-import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { getToken } from '@/utils/auth';
 import { addDocument, addVideo, deleteDocument, deleteVideo, fetchElement, stepSequenceUpdate, updateDocument, updateVideo } from '@/services/steps';
 import { mainStepsType } from '@/types/mainStepType';
@@ -103,13 +102,6 @@ export default function LessonVideo({ element, content, fetchPropElement, clearP
         setSelectType('');
     };
 
-    const toggleSpinner = () => {
-        setProgressSpinner(true);
-        setInterval(() => {
-            setProgressSpinner(false);
-        }, 1000);
-    };
-
     const handleVideoCall = (value: string | null) => {
         console.log(value);
 
@@ -188,7 +180,7 @@ export default function LessonVideo({ element, content, fetchPropElement, clearP
     };
 
     const handleAddVideo = async () => {
-        toggleSpinner();
+        setProgressSpinner(true);
         const data = await addVideo(videoValue, element.lesson_id, 1, element.type_id, element.id);
 
         if (data.success) {
@@ -207,6 +199,7 @@ export default function LessonVideo({ element, content, fetchPropElement, clearP
                 showError(data.response.status);
             }
         }
+        setProgressSpinner(false);
     };
 
     // delete video

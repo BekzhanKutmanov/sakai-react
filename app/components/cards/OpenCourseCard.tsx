@@ -1,0 +1,85 @@
+'use client';
+
+import { OptionsType } from '@/types/OptionsType';
+import MyDateTime from '../MyDateTime';
+import { myMainCourseType } from '@/types/myMainCourseType';
+import { Button } from 'primereact/button';
+
+// компонент представляет с собой карточку одного курса
+// отобр. название, фото, тип (платный, бесплатный), дата, (срок), фио препода
+// должен переслать в страницу с нужными ид: что есть в самом объекте
+// так как нужны и ид и значения для отобр. стоит передать сам ОБЪЕКТ
+
+// в будущем можем добавить: лайк или сохранение,
+
+// компонент из пропсов должен получить...
+// название, фото, тип, дата, ид ВСЕ ИЗ ОБЪЕКТА
+// должен вызывать у родителя функцию и передать ид курса для отобр. show
+
+export default function OpenCourseCard({ course, courseShowProp }: { course: myMainCourseType, courseShowProp: (course_id: number)=> void }) {
+    const options: OptionsType = {
+        year: '2-digit',
+        month: 'short', // 'long', 'short', 'numeric'
+        day: '2-digit',
+        // hour: '2-digit',
+        // minute: '2-digit',
+        hour12: false // 24-часовой формат
+    };
+
+    const imageBodyTemplate = (product: any) => {
+        const image = product.image;
+
+        if (typeof image === 'string') {
+            return (
+                <div className="flex justify-center w-[60px] h-[60px] sm:w-[80px] sm:h-[80px] mx-4" key={product.id}>
+                    <img src={image} alt="Course image" className="w-full object-cover shadow-2 border-round" />
+                </div>
+            );
+        }
+
+        return (
+            <div className="flex justify-center w-[60px] h-[60px] sm:w-[80px] sm:h-[80px] mx-4" key={product.id}>
+                <img src={'/layout/images/no-image.png'} alt="Course image" className="w-full object-cover shadow-2 border-round" />
+            </div>
+        );
+    };
+
+    return (
+        <div className="flex flex-col shadow rounded p-2 sm:p-4 gap-3 w-full hover:shadow-lg">
+            {/* header section */}
+            <div className="flex items-start justify-between gap-2 flex-col sm:flex-row">
+                <div className="w-full flex justify-between gap-1 items-start">
+                    {imageBodyTemplate(course)}
+                    <div
+                        className={`flex sm:hidden gap-1 items-center text-sm text-white rounded p-1 mb-1 ${
+                            course?.audience_type?.name === 'open' ? 'bg-[var(--greenColor)]' : course?.audience_type?.name === 'wallet' ? 'bg-[var(--amberColor)]' : ''
+                        }`}
+                    >
+                        <i className={course?.audience_type?.icon} style={{ fontSize: '14px' }}></i>
+                        <i className="text-[13px]">{course?.audience_type?.name === 'open' ? 'Бесплатный' : course?.audience_type?.name === 'wallet' ? 'Платный' : ''}</i>
+                    </div>
+                </div>
+                <div className="w-full flex flex-col items-end">
+                    <div
+                        className={`hidden sm:flex gap-1 items-center text-sm text-white rounded p-1 mb-1 ${
+                            course?.audience_type?.name === 'open' ? 'bg-[var(--greenColor)]' : course?.audience_type?.name === 'wallet' ? 'bg-[var(--amberColor)]' : ''
+                        }`}
+                    >
+                        <i className={course?.audience_type?.icon} style={{ fontSize: '14px' }}></i>
+                        <i className="text-[13px]">{course?.audience_type?.name === 'open' ? 'Бесплатный' : course?.audience_type?.name === 'wallet' ? 'Платный' : ''}</i>
+                    </div>
+                    <b className="cursor-pointer w-full sm:max-w-[350px] break-words break-all text-[var(--mainColor)] underline" onClick={()=> courseShowProp(course?.id)}>{course?.title}</b>
+                </div>
+            </div>
+
+            <div className="flex items-center gap-1 justify-between">
+                <Button label="Записаться на курс" size="small" disabled className="opacity-50 ml-3 text-sm mini-button" />
+
+                {/* data */}
+                <div className="flex justify-end text-[13px] order-1 sm:order-2">
+                    <MyDateTime createdAt={course?.created_at} options={options} />
+                </div>
+            </div>
+        </div>
+    );
+}

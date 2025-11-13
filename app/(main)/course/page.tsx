@@ -951,7 +951,7 @@ export default function Course() {
                                         key={item?.id}
                                         className="cursor-pointer shadow flex flex-col hover:text-[var(--mainColor)] transition-all"
                                         onClick={() => {
-                                            if (selectedCourse) {
+                                            if (selectedCourse) {                                               
                                                 handleAddOpenTypes(item?.id, selectedCourse);
                                             }
                                         }}

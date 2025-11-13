@@ -9,6 +9,7 @@ import 'primeicons/primeicons.css';
 import '../styles/layout/layout.scss';
 import '../styles/demo/Demos.scss';
 
+import '../styles/layout/openCourse.css'
 import './globals.css';
 
 interface RootLayoutProps {
