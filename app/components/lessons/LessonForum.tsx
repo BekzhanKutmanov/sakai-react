@@ -52,22 +52,13 @@ export default function LessonForum({ element, content, fetchPropElement, clearP
         description: '',
         url: ''
     });
-    const [docShow, setDocShow] = useState<boolean>(false);
 
     const [progressSpinner, setProgressSpinner] = useState(false);
-    const [additional, setAdditional] = useState<{ doc: boolean; link: boolean; video: boolean }>({ doc: false, link: false, video: false });
-    const [selectId, setSelectId] = useState<number | null>(null);
     const [skeleton, setSkeleton] = useState(false);
 
-    const clearFile = () => {
-        setAdditional((prev) => ({ ...prev, link: false }));
-    };
-
     const clearValues = () => {
-        clearFile();
         setForumValue({ title: '', description: '', url: '' });
         setEditingLesson({ title: '', description: '', url: '' });
-        setSelectId(null);
     };
 
     // validate
@@ -80,7 +71,6 @@ export default function LessonForum({ element, content, fetchPropElement, clearP
     });
 
     const selectedForEditing = (id: number, type: string) => {
-        setSelectId(id);
         setVisisble(true);
         editing();
     };
@@ -124,8 +114,6 @@ export default function LessonForum({ element, content, fetchPropElement, clearP
 
     // delete forum
     const handleDeleteForum = async (id: number) => {
-        console.log('he he ');
-        
         const data = await deleteForum(Number(forum?.lesson_id), id, element.type.id, element.id);
         if (data.success) {
             fetchPropElement(element.id);
@@ -179,9 +167,7 @@ export default function LessonForum({ element, content, fetchPropElement, clearP
                 {contentShow ? (
                     <div className="w-full flex flex-col items-center gap-4 py-2">
                         <div className="w-full flex flex-wrap gap-4">
-                            {docShow ? (
-                                <NotFound titleMessage={'Заполните поля для добавления урока'} />
-                            ) : skeleton ? (
+                            {skeleton ? (
                                 <div className="w-full">
                                     <GroupSkeleton count={1} size={{ width: '100%', height: '6rem' }} />
                                 </div>
