@@ -14,6 +14,7 @@ import { useParams } from 'next/navigation';
 import { Button } from 'primereact/button';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import { useContext, useEffect, useState } from 'react';
+import dynamic from 'next/dynamic';
 
 export default function LessonTest() {
     // types
@@ -22,6 +23,10 @@ export default function LessonTest() {
         course_ids: number[];
         streams: number[];
     }
+
+    const PDFreader = dynamic(() => import('@/app/components/pdfComponents/PDFworker'), {
+        ssr: false
+    });
 
     const { lesson_id, subject_id, stream_id, id } = useParams();
     const params = new URLSearchParams();
@@ -339,30 +344,36 @@ export default function LessonTest() {
         }
     }, [test]);
 
-    const hasPdf = /pdf/i.test(document?.content?.document || ''); // true
-
     const docSection = (
-        <div className="p-2 mt-2 mb-4 w-full flex flex-col gap-3 items-center">
-            <div className="w-full flex gap-1 items-center mb-2 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">
-                <span className="sm:text-[18px]">{steps?.type?.title}</span>
-                <i className={`${steps?.type?.logo} text-2xl`}></i>
+        <div className='flex flex-col gap-2'>
+            <div className="p-2 mt-2 mb-4 w-full flex flex-col gap-3 items-center">
+                <div className="w-full flex gap-1 items-center mb-2 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">
+                    <span className="sm:text-[18px]">{steps?.type?.title}</span>
+                    <i className={`${steps?.type?.logo} text-2xl`}></i>
+                </div>
+                <div className="w-full flex flex-col gap-1">
+                    <b className="text-[16px] sm:text-[18px] break-words">{document?.content?.title}</b>
+                    {document?.content?.description && <div className="flex flex-col gap-2 ">{document?.content?.description && <div className="lesson-card-border shadow rounded p-2 sm:w-full md:w-[70%]">{document?.content?.description}</div>}</div>}
+                </div>
+                <div className="w-full flex gap-2 items-center">
+                    {/* <Link href={`/pdf/${document?.content?.document}`}>
+                        <Button icon="pi pi-eye" label="Открыть документ" className="px-2 mini-button" />
+                    </Link> */}
+                    <span>Открыть отдельно</span>
+                    {document?.content?.document_path && (
+                        <a href={document?.content?.document_path} download target="_blank" rel="noopener noreferrer">
+                            {' '}
+                            <Button icon="pi pi-file-arrow-up" className="mini-button" />
+                        </a>
+                    )}
+                    {progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}
+                </div>
             </div>
-            <div className="w-full flex flex-col gap-1">
-                <b className="text-[16px] sm:text-[18px] break-words">{document?.content?.title}</b>
-                {document?.content?.description && <div className="flex flex-col gap-2 ">{document?.content?.description && <div className="lesson-card-border shadow rounded p-2 sm:w-full md:w-[70%]">{document?.content?.description}</div>}</div>}
+
+            <div className='w-[90%] m-auto'>
+                <PDFreader url={document?.content?.document || ''} />
             </div>
-            <div className="w-full flex gap-2">
-                <Link href={`/pdf/${document?.content?.document}`}>
-                    <Button icon="pi pi-eye" label="Открыть документ" className="px-2 mini-button" />
-                </Link>
-                {document?.content?.document_path && (
-                    <a href={document?.content?.document_path} download target="_blank" rel="noopener noreferrer">
-                        {' '}
-                        <Button icon="pi pi-file-arrow-up" className="mini-button" />
-                    </a>
-                )}
-                {progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}
-            </div>
+            
         </div>
     );
 

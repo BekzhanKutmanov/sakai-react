@@ -29,10 +29,9 @@ import useShortText from '@/hooks/useShortText';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import { DataView } from 'primereact/dataview';
 import { FileWithPreview } from '@/types/fileuploadPreview';
-import { Dropdown } from 'primereact/dropdown';
-import { Tooltip } from 'primereact/tooltip';
 import { Dialog } from 'primereact/dialog';
 import { AudenceType } from '@/types/courseTypes/AudenceTypes';
+import PDFViewer from '@/app/components/PDFBook';
 
 export default function Course() {
     const { setMessage, setGlobalLoading, course, contextFetchCourse, setMainCourseId } = useContext(LayoutContext);
