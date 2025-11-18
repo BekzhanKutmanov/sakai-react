@@ -1,5 +1,6 @@
-import dynamic from 'next/dynamic';
+'use client';
 
+import dynamic from 'next/dynamic';
 
 const PDFreader = dynamic(() => import('@/app/components/pdfComponents/PDFworker'), {
     ssr: false

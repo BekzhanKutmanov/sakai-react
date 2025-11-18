@@ -1,5 +1,11 @@
 'use client';
 
+import dynamic from 'next/dynamic';
+
+const PDFreader = dynamic(() => import('@/app/components/pdfComponents/PDFworker'), {
+    ssr: false
+});
+
 import { NotFound } from '@/app/components/NotFound';
 import useErrorMessage from '@/hooks/useErrorMessage';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
@@ -13,7 +19,6 @@ import { useParams } from 'next/navigation';
 import { Button } from 'primereact/button';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import { useContext, useEffect, useState } from 'react';
-import dynamic from 'next/dynamic';
 import { fetchActiveStepsDetail } from '@/services/openCourse';
 
 export default function ActiveLessonDetail() {
@@ -23,10 +28,6 @@ export default function ActiveLessonDetail() {
         course_ids: number[];
         streams: number[];
     }
-
-    const PDFreader = dynamic(() => import('@/app/components/pdfComponents/PDFworker'), {
-        ssr: false
-    });
 
     const { course_id, lesson_id, step_id } = useParams();
     const params = new URLSearchParams();
@@ -86,7 +87,7 @@ export default function ActiveLessonDetail() {
     const handleSteps = async () => {
         setSkeleton(true);
         const data = await fetchActiveStepsDetail(course_id ? Number(course_id) : null, step_id ? Number(step_id) : null);
-        console.log(data);  
+        console.log(data);
 
         if (data?.success) {
             setHasSteps(false);
@@ -474,7 +475,7 @@ export default function ActiveLessonDetail() {
                             disabled={progressSpinner}
                             className={`${progressSpinner ? 'opacity-50' : ''}`}
                             onClick={() => {
-                              handleAddPractica();
+                                handleAddPractica();
                             }}
                         />
                     </div>
@@ -554,7 +555,7 @@ export default function ActiveLessonDetail() {
                 <div className="w-full">
                     <Button
                         label="Отправить"
-                        size='small'
+                        size="small"
                         disabled={progressSpinner || !answer || !answerCheck}
                         onClick={() => {
                             handleAddTest();
