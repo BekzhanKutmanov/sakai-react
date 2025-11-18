@@ -1,8 +1,10 @@
+'use client';
+
+import dynamic from 'next/dynamic';
+
 const PDFreader = dynamic(() => import('@/app/components/pdfComponents/PDFworker'), {
     ssr: false
 });
-
-('use client');
 
 import { NotFound } from '@/app/components/NotFound';
 import useErrorMessage from '@/hooks/useErrorMessage';
@@ -17,7 +19,6 @@ import { useParams } from 'next/navigation';
 import { Button } from 'primereact/button';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import { useContext, useEffect, useState } from 'react';
-import dynamic from 'next/dynamic';
 
 export default function LessonTest() {
     // types

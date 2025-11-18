@@ -15,7 +15,7 @@
 // // Указываем путь к файлу mjs
 // pdfjsLib.GlobalWorkerOptions.workerSrc = `/pdf.worker.mjs`;
 
-export default function PDFViewer({ url }: { url: string }) {
+export default function PDFView({ url }: { url: string }) {
     // const { setMessage } = useContext(LayoutContext);
 
     // const [pages, setPages] = useState<React.JSX.Element[]>([]);
