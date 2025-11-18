@@ -17,13 +17,8 @@ import { mainStepsType } from '@/types/mainStepType';
 import useErrorMessage from '@/hooks/useErrorMessage';
 import { LayoutContext } from '@/layout/context/layoutcontext';
 import FormModal from '../popUp/FormModal';
-import dynamic from 'next/dynamic';
 import GroupSkeleton from '../skeleton/GroupSkeleton';
 import { Editor, EditorTextChangeEvent } from 'primereact/editor';
-
-// const PDFViewer = dynamic(() => import('../PDFBook'), {
-//     ssr: false
-// });
 
 export default function LessonPractica({ element, content, fetchPropElement, fetchPropThemes, clearProp }: { element: mainStepsType; content: any; fetchPropElement: (id: number) => void; fetchPropThemes: () => void; clearProp: boolean }) {
     interface docValueType {
@@ -113,7 +108,6 @@ export default function LessonPractica({ element, content, fetchPropElement, fet
             <div className="flex flex-col gap-1">
                 <i className="pi pi-times text-2xl" onClick={() => setPDFVisible(false)}></i>
                 <div className="w-full flex flex-col gap-1 items-center justify-center">
-                    {/* <PDFViewer url={urlPDF || ''} /> */}
                 </div>
             </div>
         </>

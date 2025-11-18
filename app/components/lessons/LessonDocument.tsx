@@ -18,13 +18,7 @@ import { mainStepsType } from '@/types/mainStepType';
 import useErrorMessage from '@/hooks/useErrorMessage';
 import { LayoutContext } from '@/layout/context/layoutcontext';
 import FormModal from '../popUp/FormModal';
-// import PDFViewer from '../PDFBook';
-import dynamic from 'next/dynamic';
 import GroupSkeleton from '../skeleton/GroupSkeleton';
-
-// const PDFViewer = dynamic(() => import('../PDFBook'), {
-//     ssr: false
-// });
 
 export default function LessonDocument({ element, content, fetchPropElement, clearProp }: { element: mainStepsType; content: any; fetchPropElement: (id: number) => void; clearProp: boolean }) {
     interface docValueType {
@@ -119,7 +113,6 @@ export default function LessonDocument({ element, content, fetchPropElement, cle
             <div className=" flex flex-col gap-1">
                 <i className="pi pi-times text-2xl cursor-pointer" onClick={() => setPDFVisible(false)}></i>
                 <div className="w-full flex flex-col gap-1 items-center justify-center">
-                    {/* <PDFViewer url={urlPDF || ''} /> */}
                 </div>
             </div>
         </>
@@ -136,7 +129,6 @@ export default function LessonDocument({ element, content, fetchPropElement, cle
         // if (media) {
         router.push(`/pdf/${url}`);
         // } else {
-        // setPDFVisible(true);
         // }
     };
 

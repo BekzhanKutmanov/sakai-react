@@ -1,12 +1,5 @@
-// 'use client';
-
-// import PDFViewer from '@/app/components/PDFBook';
-// import PDFViewer from '../PDFBook';
 import dynamic from 'next/dynamic';
 
-// const PDFViewer = dynamic(() => import('@/app/components/PDFBook'), {
-//     ssr: false
-// });
 
 const PDFreader = dynamic(() => import('@/app/components/pdfComponents/PDFworker'), {
     ssr: false
@@ -27,7 +20,6 @@ export default function PdfUrlViewer() {
                 </button>
             </div>
             <div className="w-[90%] m-auto bg-red-500">
-                {/* <PDFViewer url={pdfUrl || ''} /> */}
                 <PDFreader url={pdfUrl || ''} />
             </div>
         </div>
