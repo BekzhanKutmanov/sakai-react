@@ -9,7 +9,6 @@ import { fetchItemsLessons, fetchStudentSteps, fetchSubjects, stepPractica, step
 import { docValueType } from '@/types/docValueType';
 import { lessonType } from '@/types/lessonType';
 import { mainStepsType } from '@/types/mainStepType';
-import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { Button } from 'primereact/button';
 import { ProgressSpinner } from 'primereact/progressspinner';

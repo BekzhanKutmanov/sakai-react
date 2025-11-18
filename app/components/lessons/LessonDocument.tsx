@@ -22,9 +22,9 @@ import FormModal from '../popUp/FormModal';
 import dynamic from 'next/dynamic';
 import GroupSkeleton from '../skeleton/GroupSkeleton';
 
-const PDFViewer = dynamic(() => import('../PDFBook'), {
-    ssr: false
-});
+// const PDFViewer = dynamic(() => import('../PDFBook'), {
+//     ssr: false
+// });
 
 export default function LessonDocument({ element, content, fetchPropElement, clearProp }: { element: mainStepsType; content: any; fetchPropElement: (id: number) => void; clearProp: boolean }) {
     interface docValueType {
@@ -119,7 +119,7 @@ export default function LessonDocument({ element, content, fetchPropElement, cle
             <div className=" flex flex-col gap-1">
                 <i className="pi pi-times text-2xl cursor-pointer" onClick={() => setPDFVisible(false)}></i>
                 <div className="w-full flex flex-col gap-1 items-center justify-center">
-                    <PDFViewer url={urlPDF || ''} />
+                    {/* <PDFViewer url={urlPDF || ''} /> */}
                 </div>
             </div>
         </>
