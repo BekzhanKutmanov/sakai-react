@@ -1,4 +1,8 @@
-'use client';
+const PDFreader = dynamic(() => import('@/app/components/pdfComponents/PDFworker'), {
+    ssr: false
+});
+
+('use client');
 
 import { NotFound } from '@/app/components/NotFound';
 import useErrorMessage from '@/hooks/useErrorMessage';
@@ -22,10 +26,6 @@ export default function LessonTest() {
         course_ids: number[];
         streams: number[];
     }
-
-    const PDFreader = dynamic(() => import('@/app/components/pdfComponents/PDFworker'), {
-        ssr: false
-    });
 
     const { lesson_id, subject_id, stream_id, id } = useParams();
     const params = new URLSearchParams();
@@ -344,7 +344,7 @@ export default function LessonTest() {
     }, [test]);
 
     const docSection = (
-        <div className='flex flex-col gap-2'>
+        <div className="flex flex-col gap-2">
             <div className="p-2 mt-2 mb-4 w-full flex flex-col gap-3 items-center">
                 <div className="w-full flex gap-1 items-center mb-2 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">
                     <span className="sm:text-[18px]">{steps?.type?.title}</span>
@@ -369,10 +369,9 @@ export default function LessonTest() {
                 </div>
             </div>
 
-            <div className='w-[90%] m-auto'>
+            <div className="w-[90%] m-auto">
                 <PDFreader url={document?.content?.document || ''} />
             </div>
-            
         </div>
     );
 
