@@ -15,30 +15,10 @@ import useErrorMessage from '@/hooks/useErrorMessage';
 import { LayoutContext } from '@/layout/context/layoutcontext';
 import FormModal from '../popUp/FormModal';
 import GroupSkeleton from '../skeleton/GroupSkeleton';
+import { contentType } from '@/types/contentType';
+import { linkValueType } from '@/types/linkValueType';
 
 export default function LessonLink({ element, content, fetchPropElement, clearProp }: { element: mainStepsType; content: any; fetchPropElement: (id: number) => void; clearProp: boolean }) {
-    interface linkValueType {
-        title: string;
-        description: string;
-        url: string;
-        stepPos?: number;
-    }
-
-    interface contentType {
-        course_id: number | null;
-        created_at: string;
-        description: string | null;
-        document: string;
-        id: number;
-        lesson_id: number;
-        status: true;
-        title: string;
-        updated_at: string;
-        user_id: number;
-        document_path: string;
-        url: string;
-    }
-
     const showError = useErrorMessage();
     const { setMessage } = useContext(LayoutContext);
 

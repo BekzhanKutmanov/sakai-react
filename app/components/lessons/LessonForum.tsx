@@ -7,7 +7,6 @@ import { InputText } from 'primereact/inputtext';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import { useContext, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { NotFound } from '../NotFound';
 import LessonCard from '../cards/LessonCard';
 import { addForum, deleteForum, fetchElement, stepSequenceUpdate, updateForum } from '@/services/steps';
 import { mainStepsType } from '@/types/mainStepType';
@@ -15,6 +14,7 @@ import useErrorMessage from '@/hooks/useErrorMessage';
 import { LayoutContext } from '@/layout/context/layoutcontext';
 import FormModal from '../popUp/FormModal';
 import GroupSkeleton from '../skeleton/GroupSkeleton';
+import { contentType } from '@/types/contentType';
 
 export default function LessonForum({ element, content, fetchPropElement, clearProp }: { element: mainStepsType; content: any; fetchPropElement: (id: number) => void; clearProp: boolean }) {
     interface linkValueType {
@@ -22,21 +22,6 @@ export default function LessonForum({ element, content, fetchPropElement, clearP
         description: string;
         url: string;
         stepPos?: number;
-    }
-
-    interface contentType {
-        course_id: number | null;
-        created_at: string;
-        description: string | null;
-        document: string;
-        id: number;
-        lesson_id: number;
-        status: true;
-        title: string;
-        updated_at: string;
-        user_id: number;
-        document_path: string;
-        url: string;
     }
 
     const showError = useErrorMessage();

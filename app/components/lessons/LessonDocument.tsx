@@ -2,7 +2,7 @@
 
 import { lessonSchema } from '@/schemas/lessonSchema';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useParams, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { Button } from 'primereact/button';
 import { FileUpload } from 'primereact/fileupload';
 import { InputText } from 'primereact/inputtext';
@@ -19,6 +19,7 @@ import useErrorMessage from '@/hooks/useErrorMessage';
 import { LayoutContext } from '@/layout/context/layoutcontext';
 import FormModal from '../popUp/FormModal';
 import GroupSkeleton from '../skeleton/GroupSkeleton';
+import { contentType } from '@/types/contentType';
 
 export default function LessonDocument({ element, content, fetchPropElement, clearProp }: { element: mainStepsType; content: any; fetchPropElement: (id: number) => void; clearProp: boolean }) {
     interface docValueType {
@@ -29,29 +30,13 @@ export default function LessonDocument({ element, content, fetchPropElement, cle
         stepPos?: number;
     }
 
-    interface contentType {
-        course_id: number | null;
-        created_at: string;
-        description: string | null;
-        document: string;
-        id: number;
-        lesson_id: number;
-        status: true;
-        title: string;
-        updated_at: string;
-        user_id: number;
-        document_path: string;
-    }
-
     const router = useRouter();
-    const media = useMediaQuery('(max-width: 640px)');
     const fileUploadRef = useRef<FileUpload>(null);
     const showError = useErrorMessage();
     const { setMessage } = useContext(LayoutContext);
 
     const [editingLesson, setEditingLesson] = useState<docValueType | null>({ title: 'string', description: '', file: null });
     const [visible, setVisisble] = useState(false);
-    const [imageState, setImageState] = useState<string | null>(null);
     const [contentShow, setContentShow] = useState(false);
     const [skeleton, setSkeleton] = useState(false);
 
@@ -62,19 +47,16 @@ export default function LessonDocument({ element, content, fetchPropElement, cle
         description: '',
         file: null
     });
-    const [docShow, setDocShow] = useState<boolean>(false);
     const [urlPDF, setUrlPDF] = useState('');
     const [PDFVisible, setPDFVisible] = useState<boolean>(false);
 
     const [progressSpinner, setProgressSpinner] = useState(false);
     const [additional, setAdditional] = useState<{ doc: boolean; link: boolean; video: boolean }>({ doc: false, link: false, video: false });
-    const [selectType, setSelectType] = useState('');
     const [selectId, setSelectId] = useState<number | null>(null);
 
     const clearFile = () => {
         fileUploadRef.current?.clear();
         setAdditional((prev) => ({ ...prev, video: false }));
-        setImageState(null);
         if (visible) {
             setEditingLesson(
                 (prev) =>
@@ -96,7 +78,6 @@ export default function LessonDocument({ element, content, fetchPropElement, cle
         setDocValue({ title: '', description: '', file: null });
         setEditingLesson(null);
         setSelectId(null);
-        setSelectType('');
     };
 
     // validate
@@ -112,13 +93,11 @@ export default function LessonDocument({ element, content, fetchPropElement, cle
         <>
             <div className=" flex flex-col gap-1">
                 <i className="pi pi-times text-2xl cursor-pointer" onClick={() => setPDFVisible(false)}></i>
-                <div className="w-full flex flex-col gap-1 items-center justify-center">
-                </div>
+                <div className="w-full flex flex-col gap-1 items-center justify-center"></div>
             </div>
         </>
     );
     const selectedForEditing = (id: number, type: string) => {
-        setSelectType(type);
         setSelectId(id);
         setVisisble(true);
         editing();
@@ -250,32 +229,28 @@ export default function LessonDocument({ element, content, fetchPropElement, cle
                 ) : contentShow ? (
                     <div className="w-full flex flex-col items-center gap-4 py-2">
                         <div className="w-full flex flex-wrap gap-4">
-                            {docShow ? (
-                                <NotFound titleMessage={'Заполните поля для добавления урока'} />
-                            ) : (
-                                <>
-                                    {skeleton ? (
-                                        <div className="w-full">
-                                            <GroupSkeleton count={1} size={{ width: '100%', height: '6rem' }} />
-                                        </div>
-                                    ) : (
-                                        document && (
-                                            <LessonCard
-                                                status="working"
-                                                onSelected={(id: number, type: string) => selectedForEditing(id, type)}
-                                                onDelete={(id: number) => handleDeleteDoc(id)}
-                                                cardValue={{ title: document?.title, id: document.id, desctiption: document?.description || '', type: 'doc', document: document.document }}
-                                                cardBg={'#ddc4f51a'}
-                                                type={{ typeValue: 'doc', icon: 'pi pi-doc' }}
-                                                typeColor={'var(--mainColor)'}
-                                                lessonDate={new Date(document.created_at).toISOString().slice(0, 10)}
-                                                urlForPDF={() => sentToPDF(document.document || '')}
-                                                urlForDownload={document.document_path || ''}
-                                            />
-                                        )
-                                    )}
-                                </>
-                            )}
+                            <>
+                                {skeleton ? (
+                                    <div className="w-full">
+                                        <GroupSkeleton count={1} size={{ width: '100%', height: '6rem' }} />
+                                    </div>
+                                ) : (
+                                    document && (
+                                        <LessonCard
+                                            status="working"
+                                            onSelected={(id: number, type: string) => selectedForEditing(id, type)}
+                                            onDelete={(id: number) => handleDeleteDoc(id)}
+                                            cardValue={{ title: document?.title, id: document.id, desctiption: document?.description || '', type: 'doc', document: document.document }}
+                                            cardBg={'#ddc4f51a'}
+                                            type={{ typeValue: 'doc', icon: 'pi pi-doc' }}
+                                            typeColor={'var(--mainColor)'}
+                                            lessonDate={new Date(document.created_at).toISOString().slice(0, 10)}
+                                            urlForPDF={() => sentToPDF(document.document || '')}
+                                            urlForDownload={document.document_path || ''}
+                                        />
+                                    )
+                                )}
+                            </>
                         </div>
                     </div>
                 ) : (

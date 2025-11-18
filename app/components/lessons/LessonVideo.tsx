@@ -11,7 +11,7 @@ import { useForm } from 'react-hook-form';
 import { NotFound } from '../NotFound';
 import LessonCard from '../cards/LessonCard';
 import { getToken } from '@/utils/auth';
-import { addDocument, addVideo, deleteDocument, deleteVideo, fetchElement, stepSequenceUpdate, updateDocument, updateVideo } from '@/services/steps';
+import { addVideo, deleteVideo, fetchElement, stepSequenceUpdate, updateVideo } from '@/services/steps';
 import { mainStepsType } from '@/types/mainStepType';
 import useErrorMessage from '@/hooks/useErrorMessage';
 import { LayoutContext } from '@/layout/context/layoutcontext';
@@ -36,12 +36,6 @@ export default function LessonVideo({ element, content, fetchPropElement, clearP
         cover_url: string;
     }
 
-    interface videoType {
-        name: string;
-        status: boolean;
-        id: number;
-    }
-
     interface videoValueType {
         title: string;
         description: string | null; // вместо ? → строго string | null
@@ -57,7 +51,6 @@ export default function LessonVideo({ element, content, fetchPropElement, clearP
 
     // videos
     const [video, setVideo] = useState<contentType>();
-    const [selectedCity, setSelectedCity] = useState({ name: '', status: true, id: 1 });
     const [videoCall, setVideoCall] = useState(false);
     const [videoLink, setVideoLink] = useState('');
     const [videoValue, setVideoValue] = useState<{ title: string; description: string; file: null; url: string; video_link: string; cover: File | null; link: null }>({
@@ -69,7 +62,6 @@ export default function LessonVideo({ element, content, fetchPropElement, clearP
         cover: null,
         link: null
     });
-    const [videoShow, setVideoShow] = useState<boolean>(false);
     const [imageState, setImageState] = useState<string | null>(null);
 
     // auxiliary
@@ -79,7 +71,6 @@ export default function LessonVideo({ element, content, fetchPropElement, clearP
     const [editingLesson, setEditingLesson] = useState<videoValueType | null>(null);
     const [progressSpinner, setProgressSpinner] = useState(false);
     const [additional, setAdditional] = useState<{ doc: boolean; link: boolean; video: boolean }>({ doc: false, link: false, video: false });
-    const [selectType, setSelectType] = useState('');
     const [selectId, setSelectId] = useState<number | null>(null);
     const [contentShow, setContentShow] = useState(false);
     const [skeleton, setSkeleton] = useState(false);
@@ -99,12 +90,9 @@ export default function LessonVideo({ element, content, fetchPropElement, clearP
         setEditingLesson(null);
         setVideoValue({ title: '', description: '', file: null, url: '', video_link: '', cover: null, link: null });
         setSelectId(null);
-        setSelectType('');
     };
 
     const handleVideoCall = (value: string | null) => {
-        console.log(value);
-
         if (!value) {
             setMessage({
                 state: true,
@@ -146,8 +134,6 @@ export default function LessonVideo({ element, content, fetchPropElement, clearP
     });
 
     const selectedForEditing = (id: number, type: string) => {
-        console.log(id, type);
-        setSelectType(type);
         setSelectId(id);
         setVisisble(true);
         editing();
@@ -297,7 +283,7 @@ export default function LessonVideo({ element, content, fetchPropElement, clearP
                                     <div className="flex flex-col sm:flex-row gap-2 items-center sm:w-xl h-[140px] my-2">
                                         <div className="flex items-center gap-1">
                                             <FileUpload ref={fileUploadRef} mode="basic" chooseLabel="Превью" style={{ fontSize: '12px' }} customUpload name="demo[]" accept="image/*" maxFileSize={1000000} onSelect={onSelect} />
-                                            {imageState && <Button icon={'pi pi-trash'} className='trash-button' onClick={clearFile} />}
+                                            {imageState && <Button icon={'pi pi-trash'} className="trash-button" onClick={clearFile} />}
                                         </div>
                                         <div className="w-1/2 order-2 sm:order-1 max-h-[150px] max-w-[250px] border overflow-hidden flex justify-center items-center">
                                             {imageState ? <img className="w-full object-cover" src={imageState} alt="" /> : <img className="w-full object-cover" src={'/layout/images/no-image.png'} alt="" />}
@@ -344,48 +330,45 @@ export default function LessonVideo({ element, content, fetchPropElement, clearP
                                     ></iframe>
                                 </div>
                             </Dialog> */}
-                            {videoShow ? (
-                                <NotFound titleMessage={'Заполните поля для добавления урока'} />
-                            ) : (
-                                <>
-                                    {skeleton ? (
-                                        <div className="w-full">
-                                            <GroupSkeleton count={1} size={{ width: '100%', height: '20rem' }} />
+
+                            <>
+                                {skeleton ? (
+                                    <div className="w-full">
+                                        <GroupSkeleton count={1} size={{ width: '100%', height: '20rem' }} />
+                                    </div>
+                                ) : !videoCall ? (
+                                    video && (
+                                        <LessonCard
+                                            status={'working'}
+                                            onSelected={(id: number, type: string) => selectedForEditing(id, type)}
+                                            onDelete={(id: number) => handleDeleteVideo(id)}
+                                            cardValue={{ title: video.title, id: video.id, desctiption: video?.description || '', type: 'video', photo: video?.cover_url }}
+                                            cardBg={'#ddc4f51a'}
+                                            type={{ typeValue: 'video', icon: 'pi pi-video' }}
+                                            typeColor={'var(--mainColor)'}
+                                            lessonDate={new Date(video.created_at).toISOString().slice(0, 10)}
+                                            urlForPDF={() => ''}
+                                            urlForDownload=""
+                                            videoVisible={() => handleVideoCall(String(video?.link))}
+                                        />
+                                    )
+                                ) : (
+                                    <div className="w-full flex flex-col justify-center items-center">
+                                        <div className="w-[90%] flex justify-start">
+                                            <i className="pi pi-times sm:text-2xl my-2 cursor-pointer" onClick={() => setVideoCall(false)}></i>
                                         </div>
-                                    ) : !videoCall ? (
-                                        video && (
-                                            <LessonCard
-                                                status={'working'}
-                                                onSelected={(id: number, type: string) => selectedForEditing(id, type)}
-                                                onDelete={(id: number) => handleDeleteVideo(id)}
-                                                cardValue={{ title: video.title, id: video.id, desctiption: video?.description || '', type: 'video', photo: video?.cover_url }}
-                                                cardBg={'#ddc4f51a'}
-                                                type={{ typeValue: 'video', icon: 'pi pi-video' }}
-                                                typeColor={'var(--mainColor)'}
-                                                lessonDate={new Date(video.created_at).toISOString().slice(0, 10)}
-                                                urlForPDF={() => ''}
-                                                urlForDownload=""
-                                                videoVisible={() => handleVideoCall(String(video?.link))}
-                                            />
-                                        )
-                                    ) : (
-                                        <div className="w-full flex flex-col justify-center items-center">
-                                            <div className="w-[90%] flex justify-start">
-                                                <i className="pi pi-times sm:text-2xl my-2 cursor-pointer" onClick={() => setVideoCall(false)}></i>
-                                            </div>
-                                            <iframe
-                                                className="w-[90%] h-[200px] md:h-[400px]"
-                                                // src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1"
-                                                src={videoLink}
-                                                title="YouTube video player"
-                                                frameBorder="0"
-                                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                                allowFullScreen
-                                            ></iframe>
-                                        </div>
-                                    )}
-                                </>
-                            )}
+                                        <iframe
+                                            className="w-[90%] h-[200px] md:h-[400px]"
+                                            // src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1"
+                                            src={videoLink}
+                                            title="YouTube video player"
+                                            frameBorder="0"
+                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                            allowFullScreen
+                                        ></iframe>
+                                    </div>
+                                )}
+                            </>
                         </div>
                     </div>
                 )}
