@@ -1,11 +1,5 @@
 'use client';
 
-import dynamic from 'next/dynamic';
-
-const PDFreader = dynamic(() => import('@/app/components/pdfComponents/PDFworker'), {
-    ssr: false
-});
-
 import { useParams, useRouter } from 'next/navigation';
 
 export default function PdfUrlViewer() {
@@ -19,9 +13,6 @@ export default function PdfUrlViewer() {
                     <i className="pi pi-arrow-left text-[13px] cursor-pointer hover:shadow-2xl" style={{ fontSize: '13px' }}></i>
                     <span className="text-[13px] cursor-pointer">Назад</span>
                 </button>
-            </div>
-            <div className="w-[90%] m-auto bg-red-500">
-                <PDFreader url={pdfUrl || ''} />
             </div>
         </div>
     );

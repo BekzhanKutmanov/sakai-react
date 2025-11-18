@@ -1,11 +1,5 @@
 'use client';
 
-import dynamic from 'next/dynamic';
-
-const PDFreader = dynamic(() => import('@/app/components/pdfComponents/PDFworker'), {
-    ssr: false
-});
-
 import { NotFound } from '@/app/components/NotFound';
 import useErrorMessage from '@/hooks/useErrorMessage';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
@@ -368,10 +362,6 @@ export default function LessonTest() {
                     )}
                     {progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}
                 </div>
-            </div>
-
-            <div className="w-[90%] m-auto">
-                <PDFreader url={document?.content?.document || ''} />
             </div>
         </div>
     );
