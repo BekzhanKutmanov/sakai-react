@@ -5,27 +5,31 @@ import LessonInfoCard from '@/app/components/lessons/LessonInfoCard';
 import GroupSkeleton from '@/app/components/skeleton/GroupSkeleton';
 import useErrorMessage from '@/hooks/useErrorMessage';
 import { LayoutContext } from '@/layout/context/layoutcontext';
+import { fetchCourseInfo } from '@/services/courses';
 import { statusView } from '@/services/notifications';
 import { fetchElement } from '@/services/steps';
 import { fetchStudentCalendar, fetchStudentDetail, pacticaDisannul, pacticaScoreAdd } from '@/services/streams';
 import { ContributionDay } from '@/types/ContributionDay';
+import { CourseType } from '@/types/courseType';
 import { lessonType } from '@/types/lessonType';
 import { mainStepsType } from '@/types/mainStepType';
+import { User } from '@/types/user';
 import { useParams } from 'next/navigation';
 import { Accordion, AccordionTab } from 'primereact/accordion';
 import { useContext, useEffect, useState } from 'react';
 
 export default function StudentCheck() {
-
-    const { connect_id, stream_id, student_id, lesson_id, step_id } = useParams();
+    const { cource_id, connect_id, stream_id, student_id, lesson_id, step_id } = useParams();
     const params = useParams();
-    // console.log(params);
+    // console.log(params, cource_id, connect_id, stream_id, student_id, lesson_id, step_id);
 
     const { setMessage, contextNotificationId, setContextNotificationId } = useContext(LayoutContext);
     const showError = useErrorMessage();
 
     const [mainSkeleton, mainSetSkeleton] = useState(false);
     const [lessons, setLessons] = useState<lessonType[] | null>(null);
+    const [student, setStudent] = useState<User | null>(null);
+    const [courseShow, setCourseShow] = useState<CourseType | null>(null);
     const [hasSteps, setHasSteps] = useState(false);
     const [element, setElement] = useState<{ content: any | null; step: mainStepsType } | null>(null);
     const [contribution, setContribution] = useState<ContributionDay[] | null>(null);
@@ -33,15 +37,26 @@ export default function StudentCheck() {
 
     const [activeIndex, setActiveIndex] = useState<number | number[]>(0);
 
+    const handleCourseShow = async () => {
+        mainSetSkeleton(true);
+        const data = await fetchCourseInfo(cource_id ? Number(cource_id) : null);
+        if (data?.success) {
+            setCourseShow(data?.course);
+        }
+        mainSetSkeleton(false);
+    };
+
     const handleFetchStreams = async () => {
         mainSetSkeleton(true);
         const data = await fetchStudentDetail(lesson_id ? Number(lesson_id) : null, connect_id ? Number(connect_id) : null, stream_id ? Number(stream_id) : null, student_id ? Number(student_id) : null, step_id ? Number(step_id) : null);
-
+        console.log(data);
+        
         if (data?.success) {
             // handleStatusView();
             setHasSteps(false);
             mainSetSkeleton(false);
             setLessons(data?.lessons);
+            setStudent(data?.student);
         } else {
             mainSetSkeleton(false);
             setHasSteps(true);
@@ -58,8 +73,6 @@ export default function StudentCheck() {
     const handleStatusView = async (notification_id: number | null) => {
         if (notification_id) {
             const data = await statusView(Number(notification_id));
-            console.log(data);
-
             setContextNotificationId(null);
         }
     };
@@ -128,7 +141,7 @@ export default function StudentCheck() {
         }
     };
 
-    const handlePracticaDisannul = async (id_curricula:number, course_id:number, id_stream:number, id:number, steps_id:number, message: string) => {        
+    const handlePracticaDisannul = async (id_curricula: number, course_id: number, id_stream: number, id: number, steps_id: number, message: string) => {
         const data = await pacticaDisannul(id_curricula, course_id, id_stream, Number(student_id), steps_id, message);
 
         if (data?.success) {
@@ -156,6 +169,7 @@ export default function StudentCheck() {
     };
 
     useEffect(() => {
+        handleCourseShow();
         handleFetchCalendar();
         handleFetchStreams();
 
@@ -183,7 +197,12 @@ export default function StudentCheck() {
                 </div>
             ) : (
                 <div>
-                    <ActivityPage value={contribution} recipient='Активность студента'/>
+
+                    {courseShow && courseShow?.title ? <h1 className='text-2xl bg-[var(--titleColor)] text-white text-center p-3'>
+                        {courseShow?.title}
+                    </h1> : ''}
+
+                    <ActivityPage value={contribution} recipient="Активность студента" userInfo={student}/>
                     <h3 className="text-lg pb-1 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">{/* <span className="text-[var(--mainColor)]">Название курса:</span> {courseInfo.title} */}</h3>
                     <Accordion activeIndex={activeIndex} onTabChange={(e) => setActiveIndex(e.index)}>
                         {lessons?.map((item) => {
@@ -219,7 +238,9 @@ export default function StudentCheck() {
                                                                     skeleton={skeleton}
                                                                     getValues={() => handleFetchElement(i?.lesson_id, i?.id)}
                                                                     addPracticaScore={(score) => handlePracticaScoreAdd(i?.id, score)}
-                                                                    addPracticaDisannul={(id_curricula:number, course_id:number, id_stream:number, id:number, steps_id:number, message: string) => handlePracticaDisannul(id_curricula, course_id, id_stream, id, steps_id, message)}
+                                                                    addPracticaDisannul={(id_curricula: number, course_id: number, id_stream: number, id: number, steps_id: number, message: string) =>
+                                                                        handlePracticaDisannul(id_curricula, course_id, id_stream, id, steps_id, message)
+                                                                    }
                                                                     isOpened={i?.is_opened || false}
                                                                     item={i}
                                                                 />

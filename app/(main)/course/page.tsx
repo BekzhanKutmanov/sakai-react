@@ -5,7 +5,7 @@ import { addCourse, addOpenTypes, deleteCourse, fetchCourseInfo, fetchCourseOpen
 import { Button } from 'primereact/button';
 import { FileUpload, FileUploadSelectEvent } from 'primereact/fileupload';
 import { InputText } from 'primereact/inputtext';
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { LayoutContext } from '@/layout/context/layoutcontext';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { DataTable } from 'primereact/datatable';
@@ -31,7 +31,6 @@ import { DataView } from 'primereact/dataview';
 import { FileWithPreview } from '@/types/fileuploadPreview';
 import { Dialog } from 'primereact/dialog';
 import { AudenceType } from '@/types/courseTypes/AudenceTypes';
-import PDFViewer from '@/app/components/PDFBook';
 
 export default function Course() {
     const { setMessage, setGlobalLoading, course, contextFetchCourse, setMainCourseId } = useContext(LayoutContext);
@@ -68,17 +67,11 @@ export default function Course() {
     const [forStreamId, setForStreamId] = useState<{ id: number | null; title: string } | null>(null);
     const [globalCourseId, setGlobalCourseId] = useState<{ id: number | null; title: string | null } | null>(null);
     const [pageState, setPageState] = useState<number>(1);
-    const [courseStatus, setCourseStatus] = useState({ name: 'Закрытый', code: 0 });
     const [openTypes, setOpenTypes] = useState<AudenceType[]>([]);
 
     const [isTall, setIsTall] = useState(false);
 
     const showError = useErrorMessage();
-
-    const courseStatusOptions = [
-        { name: 'Закрытый', code: 0 },
-        { name: 'Открытый', code: 1 }
-    ];
 
     const toggleSkeleton = () => {
         setSkeleton(true);
@@ -475,6 +468,18 @@ export default function Course() {
     const imagestateStyle = imageState || editingLesson.image ? 'flex gap-1 items-center justify-between flex-col sm:flex-row' : '';
     const imageTitle = useShortText(typeof editingLesson.image === 'string' ? editingLesson.image : '', 20);
 
+    // usecallback
+    const callbackFetchCourse = useCallback(() => {
+        contextFetchCourse(pageState);
+    }, [pageState]);
+
+    const callbackSetIndex = useCallback(() => {
+        setActiveIndex(0);
+    }, [activeIndex]);
+
+    // useMemo
+    const memoForStreamId = useMemo(() => (forStreamId?.id ? forStreamId : null), [forStreamId?.id]);
+
     useEffect(() => {
         contextFetchCourse(1);
         setPageState(1);
@@ -545,266 +550,266 @@ export default function Course() {
 
     return (
         <div className="main-bg">
-            <div className="flex justify-between gap-3">
-                <div className="w-full">
-                    {/* Мобильный курс */}
-                    {media ? (
-                        <>
-                            <TabView
-                                onTabChange={(e) => handleTabChange(e)}
-                                activeIndex={activeIndex}
-                                // className="main-bg"
+            <div className="w-full flex justify-between gap-3">
+                {/* Мобильный курс */}
+                {media ? (
+                    <div className="w-full">
+                        <TabView
+                            onTabChange={(e) => handleTabChange(e)}
+                            activeIndex={activeIndex}
+                            // className="main-bg"
+                            pt={{
+                                nav: { className: 'flex flex-wrap justify-around' },
+                                panelContainer: { className: 'flex-1 pl-4' }
+                            }}
+                        >
+                            {/* COURSE MOBILE */}
+                            <TabPanel
                                 pt={{
-                                    nav: { className: 'flex flex-wrap justify-around' },
-                                    panelContainer: { className: 'flex-1 pl-4' }
+                                    headerAction: { className: 'font-italic ' }
                                 }}
+                                header="Курсы"
+                                className=" p-tabview p-tabview-nav p-tabview-selected p-tabview-panels p-tabview-panel"
                             >
-                                {/* COURSE MOBILE */}
-                                <TabPanel
-                                    pt={{
-                                        headerAction: { className: 'font-italic ' }
-                                    }}
-                                    header="Курсы"
-                                    className=" p-tabview p-tabview-nav p-tabview-selected p-tabview-panels p-tabview-panel"
-                                >
-                                    {/* mobile table section */}
-                                    {hasCourses ? (
-                                        <>
-                                            <div className="flex justify-end">
-                                                <Button
-                                                    label="Добавить курс"
-                                                    icon="pi pi-plus"
-                                                    onClick={() => {
-                                                        setEditMode(false);
-                                                        clearValues();
-                                                        setFormVisible(true);
-                                                    }}
-                                                />
-                                            </div>
-                                            <NotFound titleMessage={'Курсы отсутствуют'} />
-                                        </>
-                                    ) : (
-                                        <>
-                                            <div className="w-full flex flex-col items-center justify-between gap-1">
-                                                <Button
-                                                    label="Добавить курс"
-                                                    icon="pi pi-plus"
-                                                    iconPos="right"
-                                                    className="w-full"
-                                                    onClick={() => {
-                                                        setEditMode(false);
-                                                        clearValues();
-                                                        setFormVisible(true);
-                                                    }}
-                                                />
-                                                <Button
-                                                    label="Потоки"
-                                                    icon="pi pi-arrow-right"
-                                                    className="w-full"
-                                                    iconPos="right"
-                                                    onClick={() => {
-                                                        setActiveIndex(1);
-                                                    }}
-                                                />
-                                            </div>
-                                            <DataView
-                                                value={coursesValue}
-                                                itemTemplate={itemTemplate}
-                                                layout="list" // Отображение в виде сетки, что идеально подходит для карточек
-                                                rows={5}
-                                                emptyMessage="Нет данных для отображения"
-                                            />
-                                            <Paginator
-                                                first={(pagination.currentPage - 1) * pagination.perPage}
-                                                rows={pagination.perPage}
-                                                totalRecords={pagination.total}
-                                                onPageChange={(e) => handlePageChange(e.page + 1)}
-                                                template={media ? 'FirstPageLink PrevPageLink NextPageLink LastPageLink' : 'FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink'}
-                                            />
-                                        </>
-                                    )}
-                                </TabPanel>
-
-                                {/* STREAMS MOBILE */}
-                                <TabPanel
-                                    pt={{
-                                        headerAction: { className: 'font-italic' }
-                                    }}
-                                    header="Потоки"
-                                    className="p-tabview p-tabview-nav p-tabview-selected p-tabview-panels p-tabview-panel"
-                                >
-                                    <div className="w-full sm:w-1/2">
-                                        <StreamList callIndex={activeIndex} courseValue={forStreamId} isMobile={true} fetchprop={() => contextFetchCourse(pageState)} toggleIndex={() => setActiveIndex(0)} />
-                                    </div>
-                                </TabPanel>
-                            </TabView>
-                        </>
-                    ) : (
-                        // Десктопный курс
-                        <div className="w-full flex justify-between items-start gap-2 xl:gap-5">
-                            <div className="py-4 w-2/3">
-                                {/* info section */}
-                                {skeleton ? (
-                                    <GroupSkeleton count={1} size={{ width: '100%', height: '5rem' }} />
-                                ) : (
-                                    <div className="flex flex-col md:flex-row justify-between md:items-center mb-4 py-2 gap-1 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">
-                                        <h3 className="text-[32px] m-0">Курсы</h3>
-                                        <Button
-                                            label="Добавить курс"
-                                            icon="pi pi-plus"
-                                            onClick={() => {
-                                                setEditMode(false);
-                                                clearValues();
-                                                setFormVisible(true);
-                                            }}
-                                        />
-                                    </div>
-                                )}
-
-                                {/* table section */}
+                                {/* mobile table section */}
                                 {hasCourses ? (
-                                    <p className="text-[16px] text-center font-bold">{'Курсы отсутствуют'}</p>
+                                    <>
+                                        <div className="flex justify-end">
+                                            <Button
+                                                label="Добавить курс"
+                                                icon="pi pi-plus"
+                                                onClick={() => {
+                                                    setEditMode(false);
+                                                    clearValues();
+                                                    setFormVisible(true);
+                                                }}
+                                            />
+                                        </div>
+                                        <NotFound titleMessage={'Курсы отсутствуют'} />
+                                    </>
                                 ) : (
                                     <>
-                                        {skeleton ? (
-                                            <div className="w-full">
-                                                <GroupSkeleton count={coursesValue?.length || 5} size={{ width: '100%', height: '4rem' }} />
-                                            </div>
-                                        ) : (
-                                            <div>
-                                                <div ref={topRef}>
-                                                    <DataTable value={coursesValue} dataKey="id" emptyMessage="..." key={JSON.stringify(forStreamId)} breakpoint="960px" rows={5} className="my-custom-table">
-                                                        <Column body={(_, { rowIndex }) => rowIndex + 1} header="#" style={{ width: '20px' }}></Column>
-                                                        <Column
-                                                            style={{ width: '70px' }}
-                                                            header={() => (
-                                                                <div className="flex justify-center">
-                                                                    <i className="pi pi-images text-xl"></i>
-                                                                </div>
-                                                            )}
-                                                            body={imageBodyTemplate}
-                                                        ></Column>
-
-                                                        <Column
-                                                            field="title"
-                                                            header={() => <div className="text-[13px]">Название</div>}
-                                                            body={(rowData) => (
-                                                                <Link
-                                                                    href={`/course/${rowData.id}/${'null'}`}
-                                                                    onClick={() => {
-                                                                        setGlobalLoading(true);
-                                                                        setTimeout(() => {
-                                                                            setGlobalLoading(false);
-                                                                        }, 1200);
-                                                                        setMainCourseId(rowData.id);
-                                                                    }}
-                                                                    key={rowData.id}
-                                                                    className="max-w-sm break-words"
-                                                                >
-                                                                    {rowData.title}
-                                                                </Link>
-                                                            )}
-                                                        ></Column>
-                                                        <Column
-                                                            style={{ width: '70px' }}
-                                                            header={() => <div className="text-[13px]">Статус</div>}
-                                                            body={(rowData) => (
-                                                                <Button
-                                                                    size="small"
-                                                                    className="p-2"
-                                                                    onClick={() => {
-                                                                        setSelectedCourse(rowData?.id);
-                                                                        handleFetchCourseOpenStatus();
-                                                                    }}
-                                                                >
-                                                                    <i className={`${rowData?.audience_type?.icon}`}></i>
-                                                                </Button>
-                                                            )}
-                                                        ></Column>
-                                                        <Column field="title" header={() => <div className="text-[13px]">Балл</div>} body={(rowData) => <span key={rowData.id}>{rowData.max_score}</span>}></Column>
-                                                        <Column
-                                                            header={() => <div className="text-[13px]">На рассмотрение</div>}
-                                                            style={{ margin: '0 3px', textAlign: 'center' }}
-                                                            body={(rowData) => (
-                                                                <>
-                                                                    <label className="custom-radio">
-                                                                        <input
-                                                                            type="checkbox"
-                                                                            className={`customCheckbox`}
-                                                                            checked={rowData.status}
-                                                                            onChange={(e) => {
-                                                                                handleEdit(e.target, rowData);
-                                                                            }}
-                                                                        />
-                                                                        <span className="checkbox-mark"></span>
-                                                                    </label>
-                                                                </>
-                                                            )}
-                                                        ></Column>
-                                                        <Column
-                                                            header={() => <div className="text-[13px]">Публикация</div>}
-                                                            style={{ margin: '0 3px', textAlign: 'center' }}
-                                                            body={(rowData) => {
-                                                                // if(rowData?.audience_type?.name === 'lock'){
-                                                                return rowData.is_published ? <i className="pi pi-check text-md sm:text-lg text-[var(--greenColor)]"></i> : <i className="pi pi-times text-md sm:text-lg text-[var(--redColor)]"></i>;
-                                                                // }
-                                                                // return <i className='pi pi-minus'></i>
-                                                            }}
-                                                        ></Column>
-                                                        <Column
-                                                            header={() => <div className="text-[13px]">Потоки</div>}
-                                                            style={{ margin: '0 3px', textAlign: 'center' }}
-                                                            body={(rowData) => (
-                                                                <>
-                                                                    <label className="custom-course-radio">
-                                                                        <input
-                                                                            type="radio"
-                                                                            name="radio"
-                                                                            onChange={() => {
-                                                                                const newValue = forStreamId?.id === rowData.id ? null : { id: rowData.id, title: rowData.title };
-                                                                                // Устанавливаем состояние
-                                                                                setGlobalCourseId(newValue);
-                                                                                setForStreamId(newValue);
-                                                                            }}
-                                                                            checked={forStreamId?.id === rowData.id}
-                                                                        />
-                                                                        <span className="radio-course-mark rounded">Связан ({rowData.connects_count})</span>
-                                                                    </label>
-                                                                </>
-                                                            )}
-                                                        ></Column>
-                                                        <Column
-                                                            className="flex items-center justify-center h-[60px] border-b-0"
-                                                            body={(rowData) => (
-                                                                <div className="flex items-center gap-2" key={rowData.id}>
-                                                                    <Redacting redactor={getRedactor(rowData, { onEdit: edit, getConfirmOptions, onDelete: handleDeleteCourse })} textSize={'14px'} />
-                                                                </div>
-                                                            )}
-                                                        />
-                                                    </DataTable>
-                                                </div>
-                                                <div className={`${isTall ? 'mt-[20px]' : 'mt-[5px]'} shadow-[0px_-11px_5px_-6px_rgba(0,_0,_0,_0.1)]`}>
-                                                    <Paginator
-                                                        first={(pagination.currentPage - 1) * pagination.perPage}
-                                                        rows={pagination.perPage}
-                                                        totalRecords={pagination.total}
-                                                        onPageChange={(e) => handlePageChange(e.page + 1)}
-                                                        template="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
-                                                    />
-                                                </div>
-                                            </div>
-                                        )}
+                                        <div className="w-full flex flex-col items-center justify-between gap-1">
+                                            <Button
+                                                label="Добавить курс"
+                                                icon="pi pi-plus"
+                                                iconPos="right"
+                                                className="w-full"
+                                                onClick={() => {
+                                                    setEditMode(false);
+                                                    clearValues();
+                                                    setFormVisible(true);
+                                                }}
+                                            />
+                                            <Button
+                                                label="Потоки"
+                                                icon="pi pi-arrow-right"
+                                                className="w-full"
+                                                iconPos="right"
+                                                onClick={() => {
+                                                    setActiveIndex(1);
+                                                }}
+                                            />
+                                        </div>
+                                        <DataView
+                                            value={coursesValue}
+                                            itemTemplate={itemTemplate}
+                                            layout="list" // Отображение в виде сетки, что идеально подходит для карточек
+                                            rows={5}
+                                            emptyMessage="Нет данных для отображения"
+                                        />
+                                        <Paginator
+                                            first={(pagination.currentPage - 1) * pagination.perPage}
+                                            rows={pagination.perPage}
+                                            totalRecords={pagination.total}
+                                            onPageChange={(e) => handlePageChange(e.page + 1)}
+                                            template={media ? 'FirstPageLink PrevPageLink NextPageLink LastPageLink' : 'FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink'}
+                                        />
                                     </>
                                 )}
-                            </div>
-                            {/* STREAMS SECTION */}
-                            <div className="w-1/2">
-                                <StreamList isMobile={false} callIndex={1} courseValue={forStreamId?.id ? forStreamId : null} fetchprop={() => contextFetchCourse(pageState)} toggleIndex={() => {}} />
-                            </div>
+                            </TabPanel>
+
+                            {/* STREAMS MOBILE */}
+                            <TabPanel
+                                pt={{
+                                    headerAction: { className: 'font-italic' }
+                                }}
+                                header="Потоки"
+                                className="p-tabview p-tabview-nav p-tabview-selected p-tabview-panels p-tabview-panel"
+                            >
+                                <div className="w-full sm:w-1/2">
+                                    <StreamList callIndex={activeIndex} courseValue={memoForStreamId} isMobile={true} fetchprop={callbackFetchCourse} toggleIndex={callbackSetIndex} />
+                                </div>
+                            </TabPanel>
+                        </TabView>
+                    </div>
+                ) : (
+                    // Десктопный курс
+                    <div className="w-full flex justify-between items-start gap-2 xl:gap-5">
+                        <div className="py-4 w-2/3">
+                            {/* info section */}
+                            {skeleton ? (
+                                <GroupSkeleton count={1} size={{ width: '100%', height: '5rem' }} />
+                            ) : (
+                                <div className="flex flex-col md:flex-row justify-between md:items-center mb-4 py-2 gap-1 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">
+                                    <h3 className="text-[32px] m-0">Курсы</h3>
+                                    <Button
+                                        label="Добавить курс"
+                                        icon="pi pi-plus"
+                                        onClick={() => {
+                                            setEditMode(false);
+                                            clearValues();
+                                            setFormVisible(true);
+                                        }}
+                                    />
+                                </div>
+                            )}
+
+                            {/* table section */}
+                            {hasCourses ? (
+                                <p className="text-[16px] text-center font-bold">{'Курсы отсутствуют'}</p>
+                            ) : (
+                                <>
+                                    {skeleton ? (
+                                        <div className="w-full">
+                                            <GroupSkeleton count={coursesValue?.length || 5} size={{ width: '100%', height: '4rem' }} />
+                                        </div>
+                                    ) : (
+                                        <div>
+                                            <div ref={topRef}>
+                                                <DataTable value={coursesValue} dataKey="id" emptyMessage="..." key={JSON.stringify(forStreamId)} breakpoint="960px" rows={5} className="my-custom-table">
+                                                    <Column body={(_, { rowIndex }) => rowIndex + 1} header="#" style={{ width: '20px' }}></Column>
+                                                    <Column
+                                                        style={{ width: '70px' }}
+                                                        header={() => (
+                                                            <div className="flex justify-center">
+                                                                <i className="pi pi-images text-xl"></i>
+                                                            </div>
+                                                        )}
+                                                        body={imageBodyTemplate}
+                                                    ></Column>
+
+                                                    <Column
+                                                        field="title"
+                                                        header={() => <div className="text-[13px]">Название</div>}
+                                                        body={(rowData) => (
+                                                            <Link
+                                                                href={`/course/${rowData.id}/${'null'}`}
+                                                                onClick={() => {
+                                                                    setGlobalLoading(true);
+                                                                    setTimeout(() => {
+                                                                        setGlobalLoading(false);
+                                                                    }, 1200);
+                                                                    setMainCourseId(rowData.id);
+                                                                }}
+                                                                key={rowData.id}
+                                                                className="max-w-sm break-words"
+                                                            >
+                                                                {rowData.title}
+                                                            </Link>
+                                                        )}
+                                                    ></Column>
+                                                    <Column
+                                                        style={{ width: '70px' }}
+                                                        header={() => <div className="text-[13px]">Статус</div>}
+                                                        body={(rowData) => (
+                                                            <Button
+                                                                size="small"
+                                                                className="p-2"
+                                                                onClick={() => {
+                                                                    setSelectedCourse(rowData?.id);
+                                                                    handleFetchCourseOpenStatus();
+                                                                }}
+                                                            >
+                                                                <i className={`${rowData?.audience_type?.icon}`}></i>
+                                                            </Button>
+                                                        )}
+                                                    ></Column>
+                                                    <Column field="title" header={() => <div className="text-[13px]">Балл</div>} body={(rowData) => <span key={rowData.id}>{rowData.max_score}</span>}></Column>
+                                                    <Column
+                                                        header={() => <div className="text-[13px]">На рассмотрение</div>}
+                                                        style={{ margin: '0 3px', textAlign: 'center' }}
+                                                        body={(rowData) => (
+                                                            <>
+                                                                <label className="custom-radio">
+                                                                    <input
+                                                                        type="checkbox"
+                                                                        className={`customCheckbox`}
+                                                                        checked={rowData.status}
+                                                                        onChange={(e) => {
+                                                                            handleEdit(e.target, rowData);
+                                                                        }}
+                                                                    />
+                                                                    <span className="checkbox-mark"></span>
+                                                                </label>
+                                                            </>
+                                                        )}
+                                                    ></Column>
+                                                    <Column
+                                                        header={() => <div className="text-[13px]">Публикация</div>}
+                                                        style={{ margin: '0 3px', textAlign: 'center' }}
+                                                        body={(rowData) => {
+                                                            // if(rowData?.audience_type?.name === 'lock'){
+                                                            return rowData.is_published ? <i className="pi pi-check text-md sm:text-lg text-[var(--greenColor)]"></i> : <i className="pi pi-times text-md sm:text-lg text-[var(--redColor)]"></i>;
+                                                            // }
+                                                            // return <i className='pi pi-minus'></i>
+                                                        }}
+                                                    ></Column>
+                                                    <Column
+                                                        header={() => <div className="text-[13px]">Потоки</div>}
+                                                        style={{ margin: '0 3px', textAlign: 'center' }}
+                                                        body={(rowData) => (
+                                                            <>
+                                                                <label className="custom-course-radio">
+                                                                    <input
+                                                                        type="radio"
+                                                                        name="radio"
+                                                                        onChange={() => {
+                                                                            const newValue = forStreamId?.id === rowData.id ? null : { id: rowData.id, title: rowData.title };
+                                                                            // Устанавливаем состояние
+                                                                            setGlobalCourseId(newValue);
+                                                                            setForStreamId(newValue);
+                                                                        }}
+                                                                        checked={forStreamId?.id === rowData.id}
+                                                                    />
+                                                                    <span className="radio-course-mark rounded">Связан ({rowData.connects_count})</span>
+                                                                </label>
+                                                            </>
+                                                        )}
+                                                    ></Column>
+                                                    <Column
+                                                        className="flex items-center justify-center h-[60px] border-b-0"
+                                                        body={(rowData) => (
+                                                            <div className="flex items-center gap-2" key={rowData.id}>
+                                                                <Redacting redactor={getRedactor(rowData, { onEdit: edit, getConfirmOptions, onDelete: handleDeleteCourse })} textSize={'14px'} />
+                                                            </div>
+                                                        )}
+                                                    />
+                                                </DataTable>
+                                            </div>
+                                            <div className={`${isTall ? 'mt-[20px]' : 'mt-[5px]'} shadow-[0px_-11px_5px_-6px_rgba(0,_0,_0,_0.1)]`}>
+                                                <Paginator
+                                                    first={(pagination.currentPage - 1) * pagination.perPage}
+                                                    rows={pagination.perPage}
+                                                    totalRecords={pagination.total}
+                                                    onPageChange={(e) => handlePageChange(e.page + 1)}
+                                                    template="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
+                                                />
+                                            </div>
+                                        </div>
+                                    )}
+                                </>
+                            )}
                         </div>
-                    )}
-                </div>
+                        {/* STREAMS SECTION */}
+                        <div className="w-1/2">
+                            <StreamList isMobile={false} callIndex={1} courseValue={memoForStreamId} fetchprop={callbackFetchCourse} />
+                            {/* <StreamList isMobile={false} callIndex={1} courseValue={} fetchprop={()=> contextFetchCourse(pageState)} toggleIndex={()=> {}} /> */}
+                        </div>
+                    </div>
+                )}
             </div>
+
             {/* modal window */}
             <FormModal
                 title={editMode ? 'Обновить курс' : 'Добавить'}
@@ -950,7 +955,7 @@ export default function Course() {
                                         key={item?.id}
                                         className="cursor-pointer shadow flex flex-col hover:text-[var(--mainColor)] transition-all"
                                         onClick={() => {
-                                            if (selectedCourse) {                                               
+                                            if (selectedCourse) {
                                                 handleAddOpenTypes(item?.id, selectedCourse);
                                             }
                                         }}

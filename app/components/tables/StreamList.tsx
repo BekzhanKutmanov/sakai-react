@@ -5,11 +5,9 @@ import { LayoutContext } from '@/layout/context/layoutcontext';
 import { connectStreams, fetchStreams } from '@/services/streams';
 import { Button } from 'primereact/button';
 import { DataView } from 'primereact/dataview';
-import { useContext, useEffect, useState } from 'react';
-import { NotFound } from '../NotFound';
+import React, { useContext, useEffect, useState } from 'react';
 import GroupSkeleton from '../skeleton/GroupSkeleton';
 import { streamsType } from '@/types/streamType';
-import { displayType } from '@/types/displayType';
 import { Dialog } from 'primereact/dialog';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
@@ -17,7 +15,7 @@ import { mainStreamsType } from '@/types/mainStreamsType';
 import Link from 'next/link';
 import useShortText from '@/hooks/useShortText';
 
-export default function StreamList({
+const StreamList = React.memo(function StreamList({
     callIndex,
     courseValue,
     isMobile,
@@ -27,7 +25,7 @@ export default function StreamList({
     callIndex: number;
     courseValue: { id: number | null; title: string } | null;
     isMobile: boolean;
-    toggleIndex: () => void;
+    toggleIndex?: () => void;
     fetchprop: () => void;
 }) {
     const [streams, setStreams] = useState<mainStreamsType[]>([]);
@@ -46,7 +44,7 @@ export default function StreamList({
             setSkeleton(false);
         }, 1000);
     };
-
+    
     const profilactor = (data: mainStreamsType[]) => {
         const newStreams: streamsType[] = [];
 
@@ -80,7 +78,7 @@ export default function StreamList({
         const data = await fetchStreams(courseValue ? courseValue?.id : null);
         // setStreamValues({ stream: [] });
         setPendingChanges([]);
-        
+
         if (data) {
             profilactor(data);
             setHasStreams(false);
@@ -162,7 +160,7 @@ export default function StreamList({
         });
     };
 
-    useEffect(() => {        
+    useEffect(() => {
         toggleSkeleton();
         if (courseValue?.id) {
             handleFetchStreams();
@@ -222,7 +220,7 @@ export default function StreamList({
 
     const listTemplate = (items: mainStreamsType[]) => {
         if (!items || items.length === 0) return null;
-        
+
         const hasData = items.some((item) => item.connect_id !== null);
         if (hasData) {
             let list = items.map((product, index: number) => {
@@ -230,7 +228,7 @@ export default function StreamList({
                     return itemTemplate(product, index);
                 }
             });
-            
+
             return <div className="grid grid-nogutter shadow-[0_2px_2px_0px_rgba(0,0,0,0.2)]">{list}</div>;
         }
         return (
@@ -239,12 +237,12 @@ export default function StreamList({
             </div>
         );
     };
-    
+
     const footerContent = (
         <div>
             <Button
                 label="Назад"
-                size='small'
+                size="small"
                 className="reject-button"
                 icon="pi pi-times"
                 onClick={() => {
@@ -255,7 +253,7 @@ export default function StreamList({
             {
                 <Button
                     label="Добавить"
-                    size='small'
+                    size="small"
                     disabled={streams.length < 1}
                     icon="pi pi-check"
                     onClick={() => {
@@ -294,7 +292,7 @@ export default function StreamList({
                         <Column field="title" header="Период" body={(rowData) => <p key={rowData.id}>{rowData.period.name_ru}</p>}></Column>
 
                         <Column field="title" header="Семестр" body={(rowData) => <p key={rowData.id}>{rowData.semester.name_ru}</p>}></Column>
-                        
+
                         <Column field="title" header="Форма обучения" body={(rowData) => <p key={rowData.id}>{rowData.edu_form.name_ru}</p>}></Column>
 
                         <Column field="title" header="Тип обучения" body={(rowData) => <p key={rowData.id}>{rowData.subject_type_name.short_name_ru}</p>}></Column>
@@ -381,7 +379,7 @@ export default function StreamList({
                                         className="w-full"
                                         icon="pi pi-arrow-left"
                                         onClick={() => {
-                                            toggleIndex();
+                                            toggleIndex && toggleIndex();
                                         }}
                                     />
                                 </div>
@@ -393,7 +391,7 @@ export default function StreamList({
                                 ) : (
                                     <>
                                         <div>
-                                            <DataView value={streams} listTemplate={listTemplate} emptyMessage="..."/>
+                                            <DataView value={streams} listTemplate={listTemplate} emptyMessage="..." />
                                         </div>
                                     </>
                                 )}
@@ -423,4 +421,6 @@ export default function StreamList({
             )}
         </>
     );
-}
+});
+
+export default StreamList;

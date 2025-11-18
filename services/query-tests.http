@@ -1,4 +1,4 @@
-@token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2FwaS5teWVkdS5vc2hzdS5rZy9wdWJsaWMvYXBpL21vb2MvbG9naW4iLCJpYXQiOjE3NjE4OTg1NjEsImV4cCI6MTc2MTkyNzQyMSwibmJmIjoxNzYxODk4NTYxLCJqdGkiOiJHcndYUGd5c2pDWnhBMVZIIiwic3ViIjoiOTUwNjAiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.vN5g1UzIjsQaq6XlMq5nula481JtcQwd-4SKh8aqeiw
+@token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2FwaS5teWVkdS5vc2hzdS5rZy9wdWJsaWMvYXBpL21vb2MvbG9naW4iLCJpYXQiOjE3NjMzNjc0OTQsImV4cCI6MTc2MzM5NjM1NCwibmJmIjoxNzYzMzY3NDk0LCJqdGkiOiIwcTZBTVg2cGlETjFIQWt5Iiwic3ViIjoiNDY0NTYiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.vLOVmtYZb3_4Jzstn6i2QGbJCuXx5BofOEZ9I9pKnhk
 # ###
 
 # http://api.mooc.oshsu.kg/public/api/v1/open/video/types
@@ -34,10 +34,10 @@
 # Authorization: Bearer {{token}} 
 # Content-Type: application/json 
 
-GET https://api-dev.mooc.oshsu.kg/public/api/open/course/show?course_id=206
+GET https://api-dev.mooc.oshsu.kg/public/api/v1/course/open?course_id=204
 Authorization: Bearer {{token}} 
 Content-Type: application/json 
 
 {
-    "course_id": 206
+    "course_id": 204,
 }

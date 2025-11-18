@@ -1,5 +1,6 @@
 'use client';
 
+import MyDateTime from '@/app/components/MyDateTime';
 import { NotFound } from '@/app/components/NotFound';
 import GroupSkeleton from '@/app/components/skeleton/GroupSkeleton';
 import useErrorMessage from '@/hooks/useErrorMessage';
@@ -7,6 +8,7 @@ import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { LayoutContext } from '@/layout/context/layoutcontext';
 import { fetchStreams, fetchStreamStudents } from '@/services/streams';
 import { mainStreamsType } from '@/types/mainStreamsType';
+import { OptionsType } from '@/types/OptionsType';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { Button } from 'primereact/button';
@@ -26,6 +28,16 @@ export default function StudentList() {
 
     const { cource_id, connect_id, stream_id } = useParams();
     const media = useMediaQuery('(max-width: 640px)');
+
+    const options: OptionsType = {
+        year: '2-digit',
+        month: '2-digit', // 'long', 'short', 'numeric'
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false // 24-часовой формат
+    };
 
     // functions
     const toggleSkeleton = () => {
@@ -57,7 +69,7 @@ export default function StudentList() {
         toggleSkeleton();
         if (data) {
             setHasList(false);
-            setStudentList(data);            
+            setStudentList(data);
         } else {
             setHasList(true);
             setMessage({
@@ -86,9 +98,9 @@ export default function StudentList() {
             }
         }
     }, [streams]);
-    
+
     return (
-        <div className='main-bg'>
+        <div className="main-bg">
             {skeleton ? (
                 <GroupSkeleton count={studentList.length} size={{ width: '100%', height: '5rem' }} />
             ) : (
@@ -107,7 +119,7 @@ export default function StudentList() {
                                 {/* <span>{stream?.teacher?.name}</span> */}
                             </div>
                             <div className="flex gap-1 items-center">
-                                <span >Язык обучения: </span>
+                                <span>Язык обучения: </span>
                                 <span className="font-semibold">{stream?.language?.name}</span>
                             </div>
                             <div className="flex gap-1 items-center">
@@ -158,7 +170,7 @@ export default function StudentList() {
                                             {rowData?.score && rowData.score > 0 ? (
                                                 <div className="flex justify-between items-center gap-2 ">
                                                     <b className={`${rowData.score > 30 ? 'text-[var(--greenColor)] p-1 w-[25px] text-center' : 'text-amber-400 p-1 w-[25px] text-center '}`}>{rowData.score}</b>
-                                                    <i className='cursor-pointer pi pi-upload bg-[var(--mainColor)] text-white p-2 px-3 rounded' title='Сохранить в myedu'></i>
+                                                    <i className="cursor-pointer pi pi-upload bg-[var(--mainColor)] text-white p-2 px-3 rounded" title="Сохранить в myedu"></i>
                                                     {/* <Button icon={'pi pi-arrow-right'} size='small' style={{ fontSize: '13px', padding: '4px 4px'}} label="myedu" /> */}
                                                 </div>
                                             ) : (
@@ -173,7 +185,8 @@ export default function StudentList() {
                                     // style={{ width: '20%' }}
                                     body={(rowData) => (
                                         <div className="flex items-center gap-2" key={rowData?.id}>
-                                            {rowData?.last_movement ? new Date(rowData.last_movement).toISOString().slice(0, 19).replace('T', ' ') : <i className="pi pi-minus"></i>}
+                                            {/* {rowData?.last_movement ? new Date(rowData.last_movement).toISOString().slice(0, 19).replace('T', ' ') : <i className="pi pi-minus"></i>} */}
+                                            {rowData?.last_movement ? <MyDateTime createdAt={rowData?.last_movement} options={options} /> : <i className="pi pi-minus"></i>}
                                         </div>
                                     )}
                                 />
@@ -182,9 +195,15 @@ export default function StudentList() {
                                     header="Выполненные действия"
                                     body={(rowData) => (
                                         <div className="flex items-center gap-2" key={rowData?.id}>
-                                            {rowData?.last_movement && <Link href={{
-                                                pathname: `/students/${cource_id}/${connect_id}/${stream_id}/${rowData?.id}/optional/optional`,
-                                            }}><Button label="Данные" /></Link>}
+                                            {rowData?.last_movement && (
+                                                <Link
+                                                    href={{
+                                                        pathname: `/students/${cource_id}/${connect_id}/${stream_id}/${rowData?.id}/optional/optional`
+                                                    }}
+                                                >
+                                                    <Button label="Данные" />
+                                                </Link>
+                                            )}
                                         </div>
                                     )}
                                 />

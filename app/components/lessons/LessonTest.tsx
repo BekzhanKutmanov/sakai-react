@@ -470,10 +470,6 @@ export default function LessonTest({
         setTestValue({ title: '', score: 0, aiCreate:false });
     }, [element]);
 
-    useEffect(()=> {
-        console.log(testValue);
-    },[testValue]);
-
     return (
         <div>
             <FormModal

@@ -226,7 +226,7 @@ export default function StudentLesson() {
                 <NotFound titleMessage="Данные не доступны" />
             ) : (
                 <>
-                    <h1 className="text-xl shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">Список курсов</h1>
+                    <h1 className="text-xl shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)] pb-1">Список курсов</h1>
 
                     {skeleton ? (
                         <div className="w-full">
@@ -284,6 +284,7 @@ export default function StudentLesson() {
                                                                             type: { name: string; logo: string };
                                                                             content: { id: number; title: string; description: string; url: string; document: string; document_path: string };
                                                                             id_parent?: number | null;
+                                                                            score: number;
                                                                         },
                                                                         idx
                                                                     ) => {
@@ -315,6 +316,7 @@ export default function StudentLesson() {
                                                                                             JSON.stringify({ description: item?.content.title || '', userInfo: { userName: course?.user?.name, userLastName: course?.user?.last_name } })
                                                                                         );
                                                                                     }}
+                                                                                    lessonItem={item}
                                                                                 />
                                                                             </div>
                                                                         );

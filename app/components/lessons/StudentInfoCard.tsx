@@ -26,7 +26,8 @@ export default function StudentInfoCard({
     fetchProp,
     contentId,
     id_parent,
-    forumValueAdd
+    forumValueAdd,
+    lessonItem
 }: {
     type: string;
     icon: string;
@@ -37,7 +38,7 @@ export default function StudentInfoCard({
     // video_link?: string;
     // videoStart?: (id: string) => void;
     // test?: { content: string; answers: { id: number | null; text: string; is_correct: boolean }[]; score: number | null };
-    streams: { id: number; connections: { subject_type: string; id: number; user_id: number | null; id_stream: number }[]; title: string; description: string; user: { last_name: string; name: string; father_name: string }; lessons: lessonType[] };
+    streams: { id: number; connections: { subject_type: string; id: number; user_id: number | null; id_stream: number }[]; title: string; description: string; user: { last_name: string; name: string; father_name: string }; lessons: lessonType[] } | null;
     lesson: number;
     stepId: number;
     subjectId?: string;
@@ -45,7 +46,25 @@ export default function StudentInfoCard({
     fetchProp: () => void;
     contentId?: number;
     id_parent?: number | null;
-    forumValueAdd?: ()=> void; 
+    forumValueAdd?: () => void;
+    lessonItem: {
+        id: number;
+        chills: boolean;
+        type: { name: string; logo: string };
+        content: { id: number; title: string; description: string; url: string; document: string; document_path: string };
+        id_parent?: number | null;
+        score: number;
+
+        // id: number;
+        // chills: boolean;
+        // type: { name: string; logo: string; title: string };
+        // content: { id: number; title: string; description: string; url: string; document: string; document_path: string; link: string };
+        // lesson_id: number;
+        // id_parent?: number | null;
+        // score: number;
+        // ListAnswer: any;
+        // is_opened: boolean;
+    };
 }) {
     const { id_kafedra } = useParams();
     // console.log(id_kafedra);
@@ -59,7 +78,7 @@ export default function StudentInfoCard({
     const handleChills = async () => {
         const newChills = !chills;
         setProgressSpinner(true);
-        const data = await chillsUpdate(stepId, streams?.connections[0]?.id_stream, newChills);
+        const data = await chillsUpdate(stepId, streams && streams?.connections[0]?.id_stream, newChills);
         if (data?.success) {
             setProgressSpinner(false);
             setMessage({
@@ -88,18 +107,31 @@ export default function StudentInfoCard({
                 <div className="flex items-center gap-1">
                     {progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}
                     {type === 'test' || type === 'practical' ? (
-                        <Link href={`/teaching/lessonView/${lesson}/${subjectId}/${streams.connections[0].id_stream}/${stepId}`}>
-                            <Button disabled={progressSpinner} label="Выполнено" icon="pi pi-check" size="small" className={`w-full success-button px-2 py-1 flex items-center justify-center gap-1 ${progressSpinner && 'opacity-50'} ${media ? 'mini-button' : ''}`} />
+                        <Link href={`/teaching/lessonView/${lesson}/${subjectId}/${streams && streams.connections[0].id_stream}/${stepId}`}>
+                            <Button
+                                disabled={progressSpinner}
+                                label="Выполнено"
+                                icon="pi pi-check"
+                                size="small"
+                                className={`w-full success-button px-2 py-1 flex items-center justify-center gap-1 ${progressSpinner && 'opacity-50'} ${media ? 'mini-button' : ''}`}
+                            />
                         </Link>
                     ) : (
-                        <Button disabled={progressSpinner} label="Выполнено" icon="pi pi-check" onClick={handleChills} size="small" className={`w-full success-button px-2 py-1 flex items-center justify-center gap-2 ${progressSpinner && 'opacity-50'} ${media ? 'mini-button' : ''}`} />
+                        <Button
+                            disabled={progressSpinner}
+                            label="Выполнено"
+                            icon="pi pi-check"
+                            onClick={handleChills}
+                            size="small"
+                            className={`w-full success-button px-2 py-1 flex items-center justify-center gap-2 ${progressSpinner && 'opacity-50'} ${media ? 'mini-button' : ''}`}
+                        />
                     )}
                 </div>
             ) : (
                 <div className="flex items-center gap-1">
                     {progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}
                     {type === 'test' || type === 'practical' ? (
-                        <Link href={`/teaching/lessonView/${lesson}/${subjectId}/${streams.connections[0].id_stream}/${stepId}`}>
+                        <Link href={`/teaching/lessonView/${lesson}/${subjectId}/${streams && streams.connections[0].id_stream}/${stepId}`}>
                             <Button disabled={progressSpinner} label="Отметить как выполненный" size="small" className={`w-full px-2 py-1 ${progressSpinner && 'opacity-50'} ${media ? 'mini-button' : ''}`} />
                         </Link>
                     ) : (
@@ -118,7 +150,7 @@ export default function StudentInfoCard({
                         <i className={`${icon} text-white`}></i>
                     </div>
                     <Link
-                        href={`/teaching/lessonView/${lesson}/${subjectId}/${streams.connections[0].id_stream}/${stepId}`}
+                        href={`/teaching/lessonView/${lesson}/${subjectId}/${streams && streams.connections[0].id_stream}/${stepId}`}
                         // onClick={() => videoStart && videoStart(video_link || '')}
                         className="cursor-pointer max-w-[800px] text-[16px] break-words hover:underline"
                     >
@@ -138,7 +170,7 @@ export default function StudentInfoCard({
                 </div>
                 <div className="flex flex-col justify-center gap-1 max-w-[800px] break-words">
                     <Link
-                        href={`/teaching/lessonView/${lesson}/${subjectId}/${streams.connections[0].id_stream}/${stepId}`}
+                        href={`/teaching/lessonView/${lesson}/${subjectId}/${streams && streams.connections[0].id_stream}/${stepId}`}
                         // onClick={() => videoStart && videoStart(video_link || '')}
                         className="cursor-pointer max-w-[800px] text-[16px] text-wrap break-all hover:underline"
                     >
@@ -166,7 +198,7 @@ export default function StudentInfoCard({
                 </div>
                 <div className="flex flex-col justify-center gap-1 max-w-[800px] text-wrap break-all">
                     <Link
-                        href={`/teaching/lessonView/${lesson}/${subjectId}/${streams.connections[0].id_stream}/${stepId}`}
+                        href={`/teaching/lessonView/${lesson}/${subjectId}/${streams && streams.connections[0].id_stream}/${stepId}`}
                         // onClick={() => videoStart && videoStart(video_link || '')}
                         className="cursor-pointer max-w-[800px] text-[16px] text-wrap break-all hover:underline"
                     >
@@ -185,7 +217,7 @@ export default function StudentInfoCard({
                     <i className={`${icon} text-white`}></i>
                 </div>
                 <div className="flex flex-col justify-center gap-1 max-w-[800px] text-wrap break-all">
-                    <Link href={`/teaching/lessonView/${lesson}/${subjectId}/${streams.connections[0].id_stream}/${stepId}`} className="cursor-pointer max-w-[800px] text-[16px] text-wrap break-all hover:underline">
+                    <Link href={`/teaching/lessonView/${lesson}/${subjectId}/${streams && streams.connections[0].id_stream}/${stepId}`} className="cursor-pointer max-w-[800px] text-[16px] text-wrap break-all hover:underline">
                         Тест
                     </Link>
                 </div>
@@ -200,11 +232,20 @@ export default function StudentInfoCard({
                 <div className="p-2 bg-[var(--yellowColor)] min-w-[38px] w-[38px] min-h-[38px] h-[38px] flex justify-center items-center rounded">
                     <i className={`${icon} text-white`}></i>
                 </div>
-                <Link href={`/teaching/lessonView/${lesson}/${subjectId}/${streams.connections[0].id_stream}/${stepId}`} className="cursor-pointer max-w-[800px] text-[16px] text-wrap break-all hover:underline">
+                <Link href={`/teaching/lessonView/${lesson}/${subjectId}/${streams && streams.connections[0].id_stream}/${stepId}`} className="cursor-pointer max-w-[800px] text-[16px] text-wrap break-all hover:underline">
                     Практическое задание
                 </Link>
             </div>
-            <div className="w-full flex justify-end">{cheelseBtn('practical')}</div>
+            <div className="w-full flex items-center justify-center sm:justify-end gap-2 sm:max-w-[300px]">
+                <div className="w-1/2 sm:w-full text-sm">
+                    <span>Балл:</span>{' '}
+                    <span className="text-[var(--mainColor)]">
+                        {' '}
+                        {lessonItem?.score || 0} / {0}
+                    </span>
+                </div>
+                <div className="w-full flex justify-end">{cheelseBtn('practical')}</div>
+            </div>
         </div>
     );
 

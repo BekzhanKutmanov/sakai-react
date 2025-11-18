@@ -5,7 +5,7 @@ import MyDateTime from '../MyDateTime';
 import { myMainCourseType } from '@/types/myMainCourseType';
 import { Button } from 'primereact/button';
 
-export default function OpenCourseShowCard({ course }: { course: myMainCourseType }) {
+export default function OpenCourseShowCard({ course, courseSignup }: { course: myMainCourseType; courseSignup: (id: number) => void }) {
     const options: OptionsType = {
         year: '2-digit',
         month: 'short', // 'long', 'short', 'numeric'
@@ -14,6 +14,8 @@ export default function OpenCourseShowCard({ course }: { course: myMainCourseTyp
         // minute: '2-digit',
         hour12: false // 24-часовой формат
     };
+
+    console.log(course);
 
     return (
         <div className="flex flex-col shadow rounded p-2 sm:p-4 gap-3 w-full">
@@ -33,17 +35,23 @@ export default function OpenCourseShowCard({ course }: { course: myMainCourseTyp
 
             <div className="flex gap-1 items-center justify-center p-1 w-[270px] bg-[var(--mainBgColor)] rounded">
                 <span>Автор: </span>
-                <div className='flex gap-1 items-center'>
+                <div className="flex gap-1 items-center">
                     <span>{course?.user?.last_name}</span>
                     <span>{course?.user?.name}</span>
                 </div>
             </div>
 
             <div className="flex items-end gap-1 justify-between">
-                <Button label="Записаться на курс" size="small" disabled className="opacity-50 text-sm" />
+                {/* {course?.is_signed ? (
+                    <Button label="---" disabled size="small" className="ml-3 bg-[var(--amberColor)] text-sm mini-button" onClick={() => courseSignup(course?.id)} />
+                ) : !course?.is_signed ? (
+                    <Button label="Записаться на курс" size="small" className="ml-3 text-sm mini-button" onClick={() => courseSignup(course?.id)} />
+                ) : (
+                    ''
+                )} */}
 
                 {/* data */}
-                <div className="flex justify-end text-[13px] order-1 sm:order-2">
+                <div className="w-full flex justify-end text-[13px] order-1 sm:order-2">
                     <MyDateTime createdAt={course?.created_at} options={options} />
                 </div>
             </div>

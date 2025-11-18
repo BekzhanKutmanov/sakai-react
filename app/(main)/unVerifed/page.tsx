@@ -21,6 +21,15 @@ export default function UnVerifed() {
     const [hasThemes, setHasThemes] = useState(false);
     const [tasks, setTasks] = useState<answerListType[] | null>(null);
 
+    const options: OptionsType = {
+        year: '2-digit',
+        month: 'short', // 'long', 'short', 'numeric'
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false // 24-часовой формат
+    };
+
     const fetchVerifedSteps = async () => {
         const data = await unVerifedSteps();
 
@@ -45,15 +54,6 @@ export default function UnVerifed() {
             }
             setSkeleton(false);
         }
-    };
-
-    const options: OptionsType = {
-        year: '2-digit',
-        month: 'short', // 'long', 'short', 'numeric'
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: false // 24-часовой формат
     };
 
     useEffect(() => {
@@ -96,7 +96,9 @@ export default function UnVerifed() {
                                         </Link>
                                     </div>
                                     <div className="w-full relative flex">
-                                        <p className="absolute right-0 -top-3 text-[10px] m-0"><MyDateTime createdAt={item?.answer?.created_at} options={options} /></p>
+                                        <p className="absolute right-0 -top-3 text-[10px] m-0">
+                                            <MyDateTime createdAt={item?.answer?.created_at} options={options} />
+                                        </p>
                                     </div>
                                 </div>
                             </div>

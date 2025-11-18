@@ -1,4 +1,5 @@
 import { AudenceType } from "./courseTypes/AudenceTypes";
+import { lessonStateType } from "./lessonStateType";
 
 export interface test {
     title: string;
@@ -19,7 +20,10 @@ export interface myMainCourseType {
     user_id: number;
     current_page?: number;
     user:{name:string, last_name:string, father_name: string};
-    audience_type: AudenceType
+    audience_type: AudenceType;
+    is_signed: boolean;
+
+    lessons?: lessonStateType
 
     // data?: test[];
 }
