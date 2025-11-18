@@ -5,11 +5,11 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { Button } from 'primereact/button';
 import { InputText } from 'primereact/inputtext';
 import { ProgressSpinner } from 'primereact/progressspinner';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { NotFound } from '../NotFound';
 import LessonCard from '../cards/LessonCard';
-import { addTest, deleteTest, fetchElement, generateQuiz, stepSequenceUpdate, updateTest } from '@/services/steps';
+import { addTest, deleteTest, fetchElement, generateDoc, generateQuiz, stepSequenceUpdate, updateTest } from '@/services/steps';
 import { mainStepsType } from '@/types/mainStepType';
 import useErrorMessage from '@/hooks/useErrorMessage';
 import { LayoutContext } from '@/layout/context/layoutcontext';
@@ -18,10 +18,14 @@ import { InputTextarea } from 'primereact/inputtextarea';
 import { testType } from '@/types/testType';
 import GroupSkeleton from '../skeleton/GroupSkeleton';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { FileUpload } from 'primereact/fileupload';
 
 export default function LessonTest({
     preparation,
+    docPreparationTrue,
+    docPreparationFalse,
     aiTestStat,
+    docGenerageState,
     aiTestSet,
     forAiTestId,
     aiTestSteps,
@@ -32,7 +36,10 @@ export default function LessonTest({
     clearProp
 }: {
     preparation: () => void;
+    docPreparationTrue: () => void;
+    docPreparationFalse: () => void;
     aiTestStat: boolean;
+    docGenerageState: boolean;
     aiTestSet: () => void;
     forAiTestId: number | string;
     aiTestSteps: mainStepsType[];
@@ -45,6 +52,7 @@ export default function LessonTest({
     const showError = useErrorMessage();
     const { setMessage } = useContext(LayoutContext);
     const media = useMediaQuery('(max-width: 640px)');
+    const fileUploadRef = useRef<FileUpload>(null);
 
     const [editingLesson, setEditingLesson] = useState<{ title: string; score: number; stepPos?: number } | null>({ title: '', score: 0 });
     const [visible, setVisisble] = useState(false);
@@ -56,8 +64,10 @@ export default function LessonTest({
     ]);
     const [test, setTests] = useState<testType>({ answers: [{ id: null, text: '', is_correct: false }], id: null, content: '', score: 0, image: null, title: '', created_at: '' });
     const [aiOptions, setAiOptions] = useState<testType[]>([]);
-    const [testValue, setTestValue] = useState<{ title: string; score: number, aiCreate: boolean }>({ title: '', score: 0, aiCreate: false});
+    const [docOptions, setdocOptions] = useState<testType[]>([]);
+    const [testValue, setTestValue] = useState<{ title: string; score: number; aiCreate: boolean, isDoc: boolean }>({ title: '', score: 0, aiCreate: false, isDoc: false });
     const [testShow, setTestShow] = useState<boolean>(false);
+    const [myFile, setMyFile] = useState<File | null>(null);
 
     const [progressSpinner, setProgressSpinner] = useState(false);
     const [testChecked, setTestChecked] = useState<{ idx: null | number; check: boolean }>({ idx: null, check: false });
@@ -65,7 +75,7 @@ export default function LessonTest({
     const [skeleton, setSkeleton] = useState(false);
 
     const clearValues = () => {
-        setTestValue({ title: '', score: 0, aiCreate: false });
+        setTestValue({ title: '', score: 0, aiCreate: false , isDoc: false});
         setAnswer([
             { text: '', is_correct: false, id: null },
             { text: '', is_correct: false, id: null }
@@ -109,7 +119,7 @@ export default function LessonTest({
 
     const handleAddTest = async () => {
         setProgressSpinner(true);
-        const data = await addTest(answer, testValue.title, element?.lesson_id && Number(element?.lesson_id), element.type.id, element.id, testValue.score, testValue?.aiCreate);
+        const data = await addTest(answer, testValue.title, element?.lesson_id && Number(element?.lesson_id), element.type.id, element.id, testValue.score, testValue?.aiCreate, testValue?.isDoc);
         if (data?.success) {
             fetchPropElement(element.id);
             fetchPropThemes();
@@ -119,7 +129,7 @@ export default function LessonTest({
                 value: { severity: 'success', summary: 'Успешно добавлен!', detail: '' }
             });
         } else {
-            setTestValue({ title: '', score: 0, aiCreate:false });
+            setTestValue({ title: '', score: 0, aiCreate: false, isDoc: false });
             setEditingLesson(null);
             setMessage({
                 state: true,
@@ -220,6 +230,8 @@ export default function LessonTest({
         setProgressSpinner(true);
         console.log('Был перетащен элемент с id:', forAiTestId);
         const data = await generateQuiz(element?.lesson_id && Number(element?.lesson_id), forAiTestId);
+        console.log(data);
+        
         if (data.status === 'success') {
             setProgressSpinner(false);
             setAiOptions(data?.quiz?.questions);
@@ -235,15 +247,39 @@ export default function LessonTest({
         }
     };
 
-    const aiOptionsSection = () => {
+    const handleDocGenerate = async () => {
+        setProgressSpinner(true);
+        const data = await generateDoc(myFile);
+        console.log(data);
+
+        if (data?.questions) {
+            console.warn('he he');
+            setProgressSpinner(false);
+            setdocOptions(data?.questions);
+        } else {
+            setProgressSpinner(false);
+            setMessage({
+                state: true,
+                value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
+            });
+            if (data?.response?.status) {
+                showError(data.response.status);
+            }
+        }
+    };
+
+    const aiOptionsSection = (param: 'doc' | 'ai') => {
+        const arr = param === 'ai' ? aiOptions : docOptions;
+        if (arr?.length < 1) {
+            return <b>Результатов нет, повторите позже</b>;
+        }
+
         return (
-            <div className="flex flex-col gap-2">
-                <h3 className="text-lg text-center">Выберите один тест для дальнейшей работы </h3>
-                {aiOptions?.map((item) => {
-                    console.log(aiOptions);
-                    
+            <div className="w-full flex flex-col gap-2">
+                <h3 className="text-lg text-center">Выберите один тест для дальнейшей работы</h3>
+                {arr?.map((item) => {
                     return (
-                        <div key={item?.id} className="lesson-card-border shadow rounded p-2">
+                        <div key={item?.id} className="w-full lesson-card-border shadow rounded p-2">
                             <div className="flex items-start justify-between gap-2">
                                 <b className="text-[14px] sm:text-[16px]">{item?.content}</b>
                                 <div className="flex items-center justify-start gap-1">
@@ -272,7 +308,7 @@ export default function LessonTest({
                                     size="small"
                                     className="text-sm"
                                     onClick={() => {
-                                        setTestValue((prev) => ({ ...prev, title: item?.content, score: item?.score, aiCreate: true }));
+                                        setTestValue((prev) => ({ ...prev, title: item?.content, score: item?.score, aiCreate: param === 'ai' ? true : false, isDoc: param === 'doc' ? true : false }));
                                         setAnswer(item.answers);
                                         const correctIndex = item.answers?.findIndex((answer) => answer?.is_correct);
 
@@ -281,6 +317,7 @@ export default function LessonTest({
                                             setTestChecked({ check: true, idx: correctIndex });
                                         }
                                         aiTestSet();
+                                        docPreparationFalse();
                                     }}
                                 />
                             </div>
@@ -295,10 +332,60 @@ export default function LessonTest({
     const testSection = () => {
         return (
             <div className="py-1 sm:py-3 flex flex-col items-center gap-4">
-                {aiTestStat ? (
+                {docGenerageState ? (
+                    docOptions && docOptions?.length > 0 ? (
+                        aiOptionsSection('doc')
+                    ) : (
+                        <>
+                            <h3 className="text-lg m-0 text-center">Формат вопроса в Word:</h3>
+                            <div className="flex flex-col gap-2 p-2 lesson-card-border shadow rounded ">
+                                <li className="ml-4 text-sm">Пишите текст вопроса и затем блок вариантов</li>
+                                <li className="ml-4 text-sm">Поставьте звёздочку [*] в конце правильного варианта</li>
+                                <div className="text-sm">
+                                    <b>Пример: </b>Столица Франции?|Париж[*]|Лондон|Берлин
+                                </div>
+
+                                <div className="flex flex-col gap-2 p-2">
+                                    <div className="flex justify-center items-center gap-2">
+                                        <FileUpload
+                                            ref={fileUploadRef}
+                                            mode="basic"
+                                            onSelect={(e) => {
+                                                const file = e.files?.[0];
+                                                setMyFile(file);
+                                            }}
+                                            accept=".doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                            maxFileSize={1000000}
+                                            customUpload
+                                            auto={false}
+                                            chooseLabel="Загрузить документ"
+                                        />
+
+                                        {myFile && (
+                                            <Button
+                                                icon="pi pi-trash"
+                                                className="trash-button"
+                                                size="small"
+                                                onClick={() => {
+                                                    fileUploadRef.current?.clear();
+                                                    setMyFile(null);
+                                                }}
+                                            />
+                                        )}
+                                    </div>
+                                    <div className="flex justify-center">
+                                        <Button icon="pi pi-play" disabled={myFile ? false : true} iconPos="right" onClick={handleDocGenerate}>
+                                            Начать генерацию
+                                        </Button>
+                                    </div>
+                                </div>
+                            </div>
+                        </>
+                    )
+                ) : aiTestStat ? (
                     <div className="">
                         {aiOptions && aiOptions?.length > 0 ? (
-                            aiOptionsSection()
+                            aiOptionsSection('ai')
                         ) : progressSpinner ? (
                             <ProgressSpinner className="max-w-[50px] sm:max-w-[70px]" />
                         ) : aiTestSteps?.length > 0 ? (
@@ -427,16 +514,17 @@ export default function LessonTest({
                                             </div>
                                         );
                                     })}
-                                    <div className="w-full flex gap-3 items-end sm:items-center flex-col sm:flex-row">
+                                    <div className="w-full flex gap-1 sm:gap-3 sm:items-center flex-col sm:flex-row">
                                         <Button label="Добавить вариант" onClick={addOption} disabled={optionAddBtn} icon="pi pi-plus" className="sm:ml-4 text-sm" size="small" />
                                         <Button label="Создать с ИИ" size="small" className="text-sm" icon="pi pi-microchip-ai" onClick={preparation} />
+                                        <Button label="Создать тест из документа" size="small" className="text-sm" icon="pi pi-file-word" onClick={() => docPreparationTrue()} />
                                     </div>
                                 </div>
                             </div>
-                            <div className='flex gap-1 sm:gap-2 flex-col sm:flex-row items-start'>
-                                {!testValue.title?.length && <span className='text-[12px] text-[var(--amberColor)]'>*Добавтье вопрос</span> }
-                                {!testChecked.check && <span className='text-[12px] text-[var(--amberColor)]'>*Добавтье правильный ответ</span>}
-                                <span className='text-[12px] text-[var(--amberColor)]'>*Балл за тест ({testValue?.score || '0'})</span>
+                            <div className="flex gap-1 sm:gap-2 flex-col sm:flex-row items-start">
+                                {!testValue.title?.length && <span className="text-[12px] text-[var(--amberColor)]">*Добавтье вопрос</span>}
+                                {!testChecked.check && <span className="text-[12px] text-[var(--amberColor)]">*Добавтье правильный ответ</span>}
+                                <span className="text-[12px] text-[var(--amberColor)]">*Балл за тест ({testValue?.score || '0'})</span>
                             </div>
                         </div>
                         <div className="flex relative">
@@ -467,8 +555,12 @@ export default function LessonTest({
     }, [content]);
 
     useEffect(() => {
-        setTestValue({ title: '', score: 0, aiCreate:false });
+        setTestValue({ title: '', score: 0, aiCreate: false, isDoc: false });
     }, [element]);
+
+    useEffect(() => {
+        console.log(myFile);
+    }, [myFile]);
 
     return (
         <div>

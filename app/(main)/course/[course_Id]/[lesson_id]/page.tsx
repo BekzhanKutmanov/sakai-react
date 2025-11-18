@@ -52,6 +52,7 @@ export default function LessonStep() {
     const [lastStep, setLastStep] = useState<number | null>(null);
     const [draggedId, setDraggedId] = useState<number | string>('');
     const [toggleDragSteps, setToggleDragSteps] = useState<boolean>(false);
+    const [toggleDocGenerate, setToggleDocGenerate] = useState<boolean>(false);
     const [documentSteps, setDocumentSteps] = useState<mainStepsType[]>([]);
 
     const changeUrl = (lessonId: number | null) => {
@@ -439,7 +440,7 @@ export default function LessonStep() {
         }
     };
 
-    const Notificatoin = ({notification}: {notification: any}) => {
+    const Notificatoin = ({ notification }: { notification: any }) => {
         return (
             <div className={`flex flex-col justify-center p-2 gap-1`}>
                 {notification?.length > 0 ? (
@@ -560,7 +561,18 @@ export default function LessonStep() {
                     </div>
                 ) : (
                     <div className="flex items-center relative max-w-[550px] sm:max-w-[800px] overflow-x-auto scrollbar-thin">
-                        {toggleDragSteps ? (
+                        {toggleDocGenerate ? (
+                            <div className="flex flex-col gap-2">
+                                <div className="flex flex-col sm:flex-row gap-2 items-start">
+                                    <b className="pi pi-times cursor-pointer sm:text-xl text-[var(--mainColor)]" onClick={() => {
+                                        setToggleDocGenerate(false);
+                                    }}></b>
+                                    <div className="flex items-center gap-1">
+                                        <b>Выберите свой документ в формате Word — из его содержания будет автоматически создан тест.</b>
+                                    </div>
+                                </div>
+                            </div>
+                        ) : toggleDragSteps ? (
                             <div className="flex flex-col gap-2 items-start">
                                 <div className="flex flex-col gap-2">
                                     <div className="flex flex-col sm:flex-row gap-2 items-start sm:items-center ">
@@ -609,7 +621,8 @@ export default function LessonStep() {
                     {skeleton ? (
                         <GroupSkeleton count={1} size={{ width: '47px', height: '3rem' }} />
                     ) : (
-                        !toggleDragSteps && (
+                        !toggleDragSteps &&
+                        !toggleDocGenerate && (
                             <button
                                 onClick={handleFetchTypes}
                                 className={`stepElement pi pi-plus text-xl ${
@@ -665,7 +678,14 @@ export default function LessonStep() {
                     {element?.step.type.name === 'test' && (
                         <LessonTest
                             preparation={() => handlePreparation(steps)}
+                            docPreparationTrue={() => {
+                                setToggleDocGenerate(true);
+                            }}
+                            docPreparationFalse={() => {
+                                setToggleDocGenerate(false);
+                            }}
                             aiTestStat={toggleDragSteps}
+                            docGenerageState={toggleDocGenerate}
                             aiTestSet={() => setToggleDragSteps(false)}
                             forAiTestId={draggedId}
                             aiTestSteps={documentSteps}

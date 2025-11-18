@@ -220,7 +220,7 @@ export const deleteStep = async (lesson_id: number, step_id: number) => {
 };
 
 // test
-export const addTest = async (answers: { text: string; is_correct: boolean }[], title: string, lesson_id: number, type_id: number, step_id: number, score: number, is_ai: boolean) => {
+export const addTest = async (answers: { text: string; is_correct: boolean }[], title: string, lesson_id: number, type_id: number, step_id: number, score: number, is_ai: boolean, is_doc: boolean) => {
     const payload = {
         lesson_id,
         type_id,
@@ -230,8 +230,9 @@ export const addTest = async (answers: { text: string; is_correct: boolean }[], 
         img: null, // если файла нет, можно null или пустую строку
         score,
         is_ai,
+        is_doc
     };
-    
+
     try {
         const res = await axiosInstance.post(`/v1/teacher/test/store`, payload);
 
@@ -515,11 +516,29 @@ export const stepSequenceUpdate = async (lesson_id: number | null, steps: { id: 
 };
 
 export const generateQuiz = async (lesson_id: number, step_id: number | string) => {
+    console.log(step_id);
     
     try {
         const res = await axiosInstance.get(`/v1/teacher/lessons/generate-quiz?lesson_id=${lesson_id}&step_id=${step_id}`);
         const data = await res.data;
-        
+
+        return data;
+    } catch (err) {
+        console.log('Ошибка загрузки:', err);
+        return err;
+    }
+};
+
+export const generateDoc = async (doc_file: File | null) => { 
+    const formData = new FormData();
+    if(doc_file){
+        formData.append('doc_file', doc_file);
+    }
+
+    try {
+        const res = await axiosInstance.post(`/test-doc`, formData);
+        const data = await res.data;
+
         return data;
     } catch (err) {
         console.log('Ошибка загрузки:', err);
