@@ -21,7 +21,6 @@ import { Dropdown } from 'primereact/dropdown';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { useRouter } from 'next/navigation';
 import { ProgressSpinner } from 'primereact/progressspinner';
-import useShortText from '@/hooks/useShortText';
 import { Dialog } from 'primereact/dialog';
 import { FileWithPreview } from '@/types/fileuploadPreview';
 
@@ -61,26 +60,14 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
 
     // doc
     const [documents, setDocuments] = useState([]);
-    const [docValue, setDocValue] = useState<lessonStateType>({
-        title: '',
-        description: '',
-        file: null,
-        url: '',
-        video_link: ''
-    });
+    const [docValue, setDocValue] = useState<lessonStateType | null>(null);
     const [docShow, setDocShow] = useState<boolean>(false);
     const [urlPDF, setUrlPDF] = useState('');
     const [PDFVisible, setPDFVisible] = useState<boolean>(false);
 
     // links
     const [links, setLinks] = useState([]);
-    const [linksValue, setLinksValue] = useState<lessonStateType>({
-        title: '',
-        description: '',
-        file: null,
-        url: '',
-        video_link: ''
-    });
+    const [linksValue, setLinksValue] = useState<lessonStateType | null>(null);
     const [linksShow, setLinksShow] = useState<boolean>(false);
 
     // videos
@@ -90,14 +77,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
     const [videoTypes, setVideoTypes] = useState<videoInsideType[]>([]);
     const [videoCall, setVideoCall] = useState(false);
     const [videoLink, setVideoLink] = useState('');
-    const [videoValue, setVideoValue] = useState<lessonStateType>({
-        title: '',
-        description: '',
-        file: null,
-        url: '',
-        video_link: '',
-        cover: null
-    });
+    const [videoValue, setVideoValue] = useState<lessonStateType | null>(null);
     const [videoShow, setVideoShow] = useState<boolean>(false);
     const [imageState, setImageState] = useState<string | null>(null);
 
@@ -178,7 +158,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                     }
             );
         } else {
-            setDocValue((prev) => ({
+            setDocValue((prev) => prev && ({
                 ...prev,
                 file: null
             }));
@@ -187,8 +167,8 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
 
     const clearValues = () => {
         clearFile();
-        setDocValue({ title: '', description: '', file: null, url: '', video_link: '' });
-        setLinksValue({ title: '', description: '', file: null, url: '', video_link: '' });
+        setDocValue(null);
+        setLinksValue(null);
         setEditingLesson(null);
         setSelectId(null);
         setSelectType('');
@@ -229,7 +209,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                                     uploadHandler={() => {}}
                                     accept="application/pdf"
                                     onSelect={(e) =>
-                                        setDocValue((prev) => ({
+                                        setDocValue((prev) => prev && ({
                                             ...prev,
                                             file: e.files[0]
                                         }))
@@ -242,24 +222,24 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                                 id="title"
                                 type="text"
                                 placeholder={'Аталышы'}
-                                value={docValue.title}
+                                value={docValue && docValue.title}
                                 onChange={(e) => {
-                                    setDocValue((prev) => ({ ...prev, title: e.target.value }));
+                                    setDocValue((prev) => prev && ({ ...prev, title: e.target.value }));
                                     setValue('title', e.target.value, { shouldValidate: true });
                                 }}
                             />
                             <b style={{ color: 'red', fontSize: '12px' }}>{errors.title?.message}</b>
-                            {additional.doc && <InputText placeholder="Мазмун" value={docValue.description} onChange={(e) => setDocValue((prev) => ({ ...prev, description: e.target.value }))} className="w-full" />}
+                            {additional.doc && <InputText placeholder="Мазмун" value={docValue && docValue.description} onChange={(e) => setDocValue((prev) => prev && ({ ...prev, description: e.target.value }))} className="w-full" />}
 
                             <div className="flex relative">
-                                {/* <Button disabled={!!errors.title || !docValue.file} label="Сактоо" onClick={handleAddDoc} /> */}
+                                {/* <Button disabled={!!errors.title || !docValue && docValue.file} label="Сактоо" onClick={handleAddDoc} /> */}
                                 <div className="absolute">
                                     <span className="cursor-pointer ml-1 text-sm text-[var(--mainColor)]" onClick={() => setAdditional((prev) => ({ ...prev, doc: !prev.doc }))}>
                                         Кошумча {additional.doc ? '-' : '+'}
                                     </span>
                                 </div>
                                 <div className="w-full flex gap-1 justify-center items-center">
-                                    <Button label="Сактоо" disabled={progressSpinner || !docValue.title.length || !!errors.title || !docValue.file} onClick={handleAddDoc} />
+                                    <Button label="Сактоо" disabled={progressSpinner || !!errors.title || !docValue} onClick={handleAddDoc} />
                                     {progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}
                                 </div>
                             </div>
@@ -305,7 +285,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
         if (data?.success) {
             if (data.documents) {
                 // Присваиваю себе. Для отображения
-                setDocValue({ title: '', description: '', file: null, url: '', video_link: '' });
+                setDocValue(null);
                 setDocuments(data.documents);
                 setDocShow(false);
             } else {
@@ -328,7 +308,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
     const handleAddDoc = async () => {
         toggleSpinner();
         const token = getToken('access_token');
-        const data = await addLesson('doc', token, courseId ? Number(courseId) : null, lessonId ? Number(lessonId) : null, docValue, 0);
+        const data = await addLesson('doc', token, courseId ? Number(courseId) : null, lessonId ? Number(lessonId) : null, docValue || '', 0);
 
         if (data.success) {
             handleFetchDoc();
@@ -366,7 +346,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                 value: { severity: 'success', summary: 'Ийгиликтүү өзгөртүлдү!', detail: '' }
             });
         } else {
-            setDocValue({ title: '', description: '', file: null, url: '', video_link: '' });
+            setDocValue(null);
             setMessage({
                 state: true,
                 value: { severity: 'error', summary: 'Ошибка', detail: 'Ошибка при при изменении урока' }
@@ -412,9 +392,9 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                         id="usefulLink"
                         type="url"
                         placeholder={'Шилтеме жүктөө'}
-                        value={linksValue.url}
+                        value={linksValue && linksValue.url}
                         onChange={(e) => {
-                            setLinksValue((prev) => ({ ...prev, url: e.target.value }));
+                            setLinksValue((prev) => prev && ({ ...prev, url: e.target.value }));
                             setValue('usefulLink', e.target.value, { shouldValidate: true });
                         }}
                     />
@@ -424,17 +404,17 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                         id="title"
                         type="text"
                         placeholder={'Аталышы'}
-                        value={linksValue.title}
+                        value={linksValue && linksValue.title}
                         onChange={(e) => {
-                            setLinksValue((prev) => ({ ...prev, title: e.target.value }));
+                            setLinksValue((prev) => prev && ({ ...prev, title: e.target.value }));
                             setValue('title', e.target.value, { shouldValidate: true });
                         }}
                     />
                     <b style={{ color: 'red', fontSize: '12px' }}>{errors.title?.message}</b>
-                    {additional.link && <InputText placeholder="Мазмун" value={linksValue.description} onChange={(e) => setLinksValue((prev) => ({ ...prev, description: e.target.value }))} className="w-full" />}
+                    {additional.link && <InputText placeholder="Мазмун" value={linksValue && linksValue.description} onChange={(e) => setLinksValue((prev) => prev && ({ ...prev, description: e.target.value }))} className="w-full" />}
 
                     <div className="flex relative">
-                        {/* <Button disabled={!!errors.title || !docValue.file} label="Сактоо" onClick={handleAddDoc} /> */}
+                        {/* <Button disabled={!!errors.title || !docValue && docValue.file} label="Сактоо" onClick={handleAddDoc} /> */}
                         <div className="absolute">
                             <span className="cursor-pointer ml-1 text-sm text-[var(--mainColor)]" onClick={() => setAdditional((prev) => ({ ...prev, link: !prev.link }))}>
                                 Кошумча {additional.link ? '-' : '+'}
@@ -442,7 +422,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                         </div>
                         <div className="w-full flex gap-1 justify-center items-center">
                             <div className="flex gap-1 items-center">
-                                <Button label="Сактоо" disabled={progressSpinner || !linksValue.title.length || !linksValue.url?.length || !!errors.title || !!errors.usefulLink} onClick={handleAddLink} />
+                                <Button label="Сактоо" disabled={progressSpinner || !linksValue || !!errors.title || !!errors.usefulLink} onClick={handleAddLink} />
                                 {progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}
                             </div>
                         </div>
@@ -489,7 +469,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
         if (data?.success) {
             if (data.links) {
                 // Присваиваю себе. Для отображения
-                setLinksValue({ title: '', description: '', file: null, url: '', video_link: '' });
+                setLinksValue(null);
                 setLinks(data.links);
                 setLinksShow(false);
             } else {
@@ -512,7 +492,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
     const handleAddLink = async () => {
         toggleSpinner();
         const token = getToken('access_token');
-        const data = await addLesson('url', token, courseId ? Number(courseId) : null, lessonId ? Number(lessonId) : null, linksValue, 0);
+        const data = await addLesson('url', token, courseId ? Number(courseId) : null, lessonId ? Number(lessonId) : null, linksValue || '', 0);
 
         if (data.success) {
             handleFetchLink();
@@ -567,7 +547,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                 value: { severity: 'success', summary: 'Ийгиликтүү өзгөртүлдү!', detail: '' }
             });
         } else {
-            setLinksValue({ title: '', description: '', file: null, url: '', video_link: '' });
+            setLinksValue(null);
             setMessage({
                 state: true,
                 value: { severity: 'error', summary: 'Ошибка', detail: 'Ошибка при при изменении урока' }
@@ -581,7 +561,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
     // VIDEO SECTIONS
     const toggleVideoType = (e: videoType) => {
         setSelectedCity(e);
-        setVideoValue({ title: '', description: '', file: null, url: '', video_link: '', cover: null });
+        setVideoValue(null);
     };
 
     const handleVideoCall = (value: string | null) => {
@@ -620,7 +600,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
     const onSelect = (e: FileUploadSelectEvent & { files: FileWithPreview[] }) => {
         if (e.files.length > 0) {
             setImageState(e.files[0].objectURL);
-            setVideoValue((prev) => ({
+            setVideoValue((prev) => prev && ({
                 ...prev,
                 cover: e.files[0]
             }));
@@ -650,10 +630,10 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                                     id="usefulLink"
                                     type="url"
                                     placeholder={'Шилтеме жүктөө'}
-                                    value={videoValue.video_link}
+                                    value={videoValue && videoValue.video_link}
                                     className="w-full"
                                     onChange={(e) => {
-                                        setVideoValue((prev) => ({ ...prev, video_link: e.target.value }));
+                                        setVideoValue((prev) => prev && ({ ...prev, video_link: e.target.value }));
                                         setValue('usefulLink', e.target.value, { shouldValidate: true });
                                     }}
                                 />
@@ -669,7 +649,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                                     uploadHandler={() => {}}
                                     accept="video/"
                                     onSelect={(e) =>
-                                        setVideoValue((prev) => ({
+                                        setVideoValue((prev) => prev && ({
                                             ...prev,
                                             file: e.files[0]
                                         }))
@@ -684,16 +664,16 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                         id="title"
                         type="text"
                         placeholder={'Аталышы'}
-                        value={videoValue.title}
+                        value={videoValue && videoValue.title}
                         onChange={(e) => {
-                            setVideoValue((prev) => ({ ...prev, title: e.target.value }));
+                            setVideoValue((prev) => prev && ({ ...prev, title: e.target.value }));
                             setValue('title', e.target.value, { shouldValidate: true });
                         }}
                     />
                     <b style={{ color: 'red', fontSize: '12px' }}>{errors.title?.message}</b>
                     {additional.video && (
                         <div>
-                            <InputText placeholder="Мазмун" value={videoValue.description} onChange={(e) => setVideoValue((prev) => ({ ...prev, description: e.target.value }))} className="w-full" />
+                            <InputText placeholder="Мазмун" value={videoValue && videoValue.description} onChange={(e) => setVideoValue((prev) => prev && ({ ...prev, description: e.target.value }))} className="w-full" />
                             <div className="flex flex-col sm:flex-row gap-2 items-center sm:w-xl h-[140px] my-2">
                                 <div className="flex items-center gap-1">
                                     <FileUpload ref={fileUploadRef} mode="basic" chooseLabel="Превью" style={{ fontSize: '12px' }} customUpload name="demo[]" accept="image/*" maxFileSize={1000000} onSelect={onSelect} />
@@ -707,14 +687,14 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                     )}
 
                     <div className="flex relative">
-                        {/* <Button disabled={!!errors.title || !docValue.file} label="Сактоо" onClick={handleAddDoc} /> */}
+                        {/* <Button disabled={!!errors.title || !docValue && docValue.file} label="Сактоо" onClick={handleAddDoc} /> */}
                         <div className="absolute">
                             <span className="cursor-pointer ml-1 text-sm text-[var(--mainColor)]" onClick={() => setAdditional((prev) => ({ ...prev, video: !prev.video }))}>
                                 Кошумча {additional.video ? '-' : '+'}
                             </span>
                         </div>
                         <div className="w-full flex gap-1 justify-center items-center">
-                            <Button label="Сактоо" disabled={progressSpinner || !videoValue.title.length || !videoValue.video_link?.length || !!errors.title || !!errors.usefulLink} onClick={handleAddVideo} />
+                            <Button label="Сактоо" disabled={progressSpinner || !videoValue || !videoValue || !!errors.title || !!errors.usefulLink} onClick={handleAddVideo} />
                             {progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}
                         </div>
                     </div>
@@ -790,7 +770,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
 
         if (data?.success) {
             if (data.videos) {
-                setVideoValue({ title: '', description: '', file: null, url: '', video_link: '' });
+                setVideoValue(null);
                 setVideo(data.videos);
                 setVideoShow(false);
             } else {
@@ -813,7 +793,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
     const handleAddVideo = async () => {
         toggleSpinner();
         const token = getToken('access_token');
-        const data = await addLesson('video', token, courseId ? Number(courseId) : null, lessonId ? Number(lessonId) : null, videoValue, selectedCity?.id );
+        const data = await addLesson('video', token, courseId ? Number(courseId) : null, lessonId ? Number(lessonId) : null, videoValue || '', selectedCity?.id );
         if (data.success) {
             clearFile();
             handleFetchVideo();
@@ -846,7 +826,7 @@ export default function LessonTyping({ mainType, courseId, lessonId }: { mainTyp
                 value: { severity: 'success', summary: 'Ийгиликтүү өзгөртүлдү!', detail: '' }
             });
         } else {
-            setVideoValue({ title: '', description: '', file: null, url: '', video_link: '' });
+            setVideoValue(null);
             setMessage({
                 state: true,
                 value: { severity: 'error', summary: 'Ошибка', detail: 'Ошибка при изменении урока' }

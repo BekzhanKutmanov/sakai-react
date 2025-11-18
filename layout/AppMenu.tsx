@@ -113,11 +113,11 @@ const AppMenu = () => {
                           icon: 'pi pi-fw pi-clock',
                           to: '/unVerifed'
                       },
-                      {
-                          label: 'Общедоступные курсы',
-                          icon: 'pi pi-fw pi-globe',
-                          to: '/openCourse'
-                      }
+                    //   {
+                    //       label: 'Общедоступные курсы',
+                    //       icon: 'pi pi-fw pi-globe',
+                    //       to: '/openCourse'
+                    //   }
                   ]
                 : []
             : []
@@ -189,11 +189,11 @@ const AppMenu = () => {
                       icon: 'pi pi-fw pi-clock',
                       to: '/unVerifed'
                   },
-                  {
-                      label: 'Общедоступные курсы',
-                      icon: 'pi pi-fw pi-globe',
-                      to: '/openCourse'
-                  }
+                //   {
+                //       label: 'Общедоступные курсы',
+                //       icon: 'pi pi-fw pi-globe',
+                //       to: '/openCourse'
+                //   }
               ]
             : []
         : [];
