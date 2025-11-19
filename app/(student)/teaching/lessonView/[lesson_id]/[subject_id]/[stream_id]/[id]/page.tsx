@@ -1,5 +1,9 @@
 'use client';
 
+import dynamic from 'next/dynamic';
+
+const PDFreader = dynamic(() => import('@/app/components/pdfComponents/PDFreader'), { ssr: false });
+
 import { NotFound } from '@/app/components/NotFound';
 import useErrorMessage from '@/hooks/useErrorMessage';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
@@ -360,6 +364,7 @@ export default function LessonTest() {
                             <Button icon="pi pi-file-arrow-up" className="mini-button" />
                         </a>
                     )}
+                    {/* <PDFreader url={''}> */}
                     {progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}
                 </div>
             </div>
