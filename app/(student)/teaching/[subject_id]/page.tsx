@@ -304,7 +304,7 @@ export default function StudentLesson() {
                                                                                     stepId={item.id}
                                                                                     streams={course}
                                                                                     lesson={lesson.id}
-                                                                                    subjectId={subject_id}
+                                                                                    // subjectId={subject_id}
                                                                                     chills={item?.chills}
                                                                                     fetchProp={() => handleTabChange(courses, course.id, accordionIndex)}
                                                                                     contentId={item?.content?.id}

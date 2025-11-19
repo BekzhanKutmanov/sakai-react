@@ -364,10 +364,10 @@ export default function LessonTest() {
                             <Button icon="pi pi-file-arrow-up" className="mini-button" />
                         </a>
                     )}
-                    {/* <PDFreader url={''}> */}
                     {progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}
                 </div>
             </div>
+            <PDFreader url={document?.content?.document || ''} />
         </div>
     );
 
