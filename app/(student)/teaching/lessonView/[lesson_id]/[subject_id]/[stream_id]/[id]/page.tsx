@@ -361,7 +361,7 @@ export default function LessonTest() {
                     {document?.content?.document_path && (
                         <a href={document?.content?.document_path} download target="_blank" rel="noopener noreferrer">
                             {' '}
-                            <Button icon="pi pi-file-arrow-up" className="mini-button" />
+                            <Button icon="pi pi-file-arrow-up"  className="mini-button" />
                         </a>
                     )}
                     {progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}
