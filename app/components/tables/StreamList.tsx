@@ -20,13 +20,15 @@ const StreamList = React.memo(function StreamList({
     courseValue,
     isMobile,
     toggleIndex,
-    fetchprop
+    fetchprop,
+    close
 }: {
     callIndex: number;
     courseValue: { id: number | null; title: string } | null;
     isMobile: boolean;
     toggleIndex?: () => void;
     fetchprop: () => void;
+    close: () => void;
 }) {
     const [streams, setStreams] = useState<mainStreamsType[]>([]);
     const [hasStreams, setHasStreams] = useState(false);
@@ -36,7 +38,7 @@ const StreamList = React.memo(function StreamList({
 
     const { setMessage } = useContext(LayoutContext);
     const showError = useErrorMessage();
-    const shortTitle = useShortText(courseValue?.title ? courseValue?.title : '', 20, 'right');
+    // const shortTitle = useShortText(courseValue?.title ? courseValue?.title : '', 40, 'right');
 
     const toggleSkeleton = () => {
         setSkeleton(true);
@@ -44,7 +46,7 @@ const StreamList = React.memo(function StreamList({
             setSkeleton(false);
         }, 1000);
     };
-    
+
     const profilactor = (data: mainStreamsType[]) => {
         const newStreams: streamsType[] = [];
 
@@ -329,27 +331,31 @@ const StreamList = React.memo(function StreamList({
                 )}
             </Dialog>
             {callIndex === 1 && (
-                <div className="sm:py-4">
+                <div className="">
                     {skeleton ? (
                         <GroupSkeleton count={10} size={{ width: '100%', height: '5rem' }} />
                     ) : (
                         <>
                             {/* info section */}
                             {!isMobile && (
-                                <div className="flex flex-col md:flex-row justify-between md:items-center gap-1 mb-4 py-2 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">
-                                    {/* <span className=" text-[var(--mainColor)] "> */}
-                                    <span className="lg:max-w-[300px] xl:max-w-[400px] text-[16px] sm:text-[16px] md:text-[18px] font-bold text-[#4B4563] max-w-sm text-word break-all">{shortTitle}</span>
-                                    {/* </span> */}
-                                    <div className="min-w-[110px]">
-                                        <Button
-                                            label="Добавить"
-                                            icon="pi pi-link"
-                                            className="w-full"
-                                            onClick={() => {
-                                                handleFetchStreams();
-                                                setVisible(true);
-                                            }}
-                                        />
+                                <div>
+                                    <i onClick={close} className='pi pi-arrow-left cursor-pointer text-[var(--mainColor)]'></i>
+                                    <div className="flex flex-col md:flex-row justify-between md:items-center gap-1 mb-4 py-2 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">
+                                        {/* <span className=" text-[var(--mainColor)] "> */}
+
+                                        <span className="lg:max-w-[300px] xl:max-w-[600px] text-[16px] sm:text-[16px] md:text-[18px] font-bold text-[#4B4563] max-w-sm break-words">{courseValue?.title}</span>
+                                        {/* </span> */}
+                                        <div className="min-w-[110px]">
+                                            <Button
+                                                label="Добавить"
+                                                icon="pi pi-link"
+                                                className="w-full"
+                                                onClick={() => {
+                                                    handleFetchStreams();
+                                                    setVisible(true);
+                                                }}
+                                            />
+                                        </div>
                                     </div>
                                 </div>
                             )}
@@ -358,7 +364,7 @@ const StreamList = React.memo(function StreamList({
 
                     {hasStreams ? (
                         <>
-                            <p className="text-[16px] text-center font-bold">Потоков пока нет</p>
+                            <p className="text-[16px] text-center font-bold">Потоков пока нет или курс не связан с потоками</p>
                         </>
                     ) : (
                         <div className="flex flex-col gap-2 sm:gap-2">

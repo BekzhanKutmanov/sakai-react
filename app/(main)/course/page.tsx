@@ -31,11 +31,13 @@ import { DataView } from 'primereact/dataview';
 import { FileWithPreview } from '@/types/fileuploadPreview';
 import { Dialog } from 'primereact/dialog';
 import { AudenceType } from '@/types/courseTypes/AudenceTypes';
+import { OverlayPanel } from 'primereact/overlaypanel';
 
 export default function Course() {
     const { setMessage, setGlobalLoading, course, contextFetchCourse, setMainCourseId } = useContext(LayoutContext);
 
     const topRef = useRef<HTMLDivElement>(null);
+    const op = useRef(null);
     const media = useMediaQuery('(max-width: 640px)');
     const tableMedia = useMediaQuery('(max-width: 577px)');
 
@@ -65,6 +67,7 @@ export default function Course() {
     });
 
     const [forStreamId, setForStreamId] = useState<{ id: number | null; title: string } | null>(null);
+    const [sendStream, setSendStream] = useState(false);
     const [globalCourseId, setGlobalCourseId] = useState<{ id: number | null; title: string | null } | null>(null);
     const [pageState, setPageState] = useState<number>(1);
     const [openTypes, setOpenTypes] = useState<AudenceType[]>([]);
@@ -519,7 +522,7 @@ export default function Course() {
                     setForStreamId({ id: coursesValue[0].id, title: coursesValue[0].title });
                 }
             } else {
-                setForStreamId({ id: coursesValue[0].id, title: coursesValue[0].title });
+                // setForStreamId({ id: coursesValue[0].id, title: coursesValue[0].title });
             }
             setHasCourses(false);
         }
@@ -547,6 +550,10 @@ export default function Course() {
             handleShow();
         }
     }, [editMode]);
+
+    const tableData = useMemo(() => {
+        return coursesValue.map((item) => ({ ...item, __isActive: forStreamId?.id === item.id }));
+    }, [coursesValue, forStreamId]);
 
     return (
         <div className="main-bg">
@@ -646,166 +653,173 @@ export default function Course() {
                 ) : (
                     // Десктопный курс
                     <div className="w-full flex justify-between items-start gap-2 xl:gap-5">
-                        <div className="py-4 w-2/3">
-                            {/* info section */}
-                            {skeleton ? (
-                                <GroupSkeleton count={1} size={{ width: '100%', height: '5rem' }} />
-                            ) : (
-                                <div className="flex flex-col md:flex-row justify-between md:items-center mb-4 py-2 gap-1 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">
-                                    <h3 className="text-[32px] m-0">Курсы</h3>
-                                    <Button
-                                        label="Добавить курс"
-                                        icon="pi pi-plus"
-                                        onClick={() => {
-                                            setEditMode(false);
-                                            clearValues();
-                                            setFormVisible(true);
-                                        }}
-                                    />
-                                </div>
-                            )}
+                        {!sendStream ? (
+                            <div className="w-full">
+                                {/* info section */}
+                                {skeleton ? (
+                                    <GroupSkeleton count={1} size={{ width: '100%', height: '5rem' }} />
+                                ) : (
+                                    <div className="flex flex-col md:flex-row justify-between md:items-center mb-4 py-2 gap-1 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">
+                                        <h3 className="text-[32px] m-0">Курсы</h3>
+                                        <Button
+                                            label="Добавить курс"
+                                            icon="pi pi-plus"
+                                            onClick={() => {
+                                                setEditMode(false);
+                                                clearValues();
+                                                setFormVisible(true);
+                                            }}
+                                        />
+                                    </div>
+                                )}
 
-                            {/* table section */}
-                            {hasCourses ? (
-                                <p className="text-[16px] text-center font-bold">{'Курсы отсутствуют'}</p>
-                            ) : (
-                                <>
-                                    {skeleton ? (
-                                        <div className="w-full">
-                                            <GroupSkeleton count={coursesValue?.length || 5} size={{ width: '100%', height: '4rem' }} />
-                                        </div>
-                                    ) : (
-                                        <div>
-                                            <div ref={topRef}>
-                                                <DataTable value={coursesValue} dataKey="id" emptyMessage="..." key={JSON.stringify(forStreamId)} breakpoint="960px" rows={5} className="my-custom-table">
-                                                    <Column body={(_, { rowIndex }) => rowIndex + 1} header="#" style={{ width: '20px' }}></Column>
-                                                    <Column
-                                                        style={{ width: '70px' }}
-                                                        header={() => (
-                                                            <div className="flex justify-center">
-                                                                <i className="pi pi-images text-xl"></i>
-                                                            </div>
-                                                        )}
-                                                        body={imageBodyTemplate}
-                                                    ></Column>
+                                {/* table section */}
+                                {hasCourses ? (
+                                    <p className="text-[16px] text-center font-bold">{'Курсы отсутствуют'}</p>
+                                ) : (
+                                    <>
+                                        {skeleton ? (
+                                            <div className="w-full">
+                                                <GroupSkeleton count={coursesValue?.length || 5} size={{ width: '100%', height: '4rem' }} />
+                                            </div>
+                                        ) : (
+                                            <div>
+                                                <div ref={topRef}>
+                                                    <DataTable value={tableData} dataKey="id" emptyMessage="..." breakpoint="960px" rows={5} className="my-custom-table">
+                                                        <Column body={(_, { rowIndex }) => rowIndex + 1} header="#" style={{ width: '20px' }}></Column>
+                                                        <Column
+                                                            style={{ width: '70px' }}
+                                                            header={() => (
+                                                                <div className="flex justify-center">
+                                                                    <i className="pi pi-images text-xl"></i>
+                                                                </div>
+                                                            )}
+                                                            body={imageBodyTemplate}
+                                                        ></Column>
 
-                                                    <Column
-                                                        field="title"
-                                                        header={() => <div className="text-[13px]">Название</div>}
-                                                        body={(rowData) => (
-                                                            <Link
-                                                                href={`/course/${rowData.id}/${'null'}`}
-                                                                onClick={() => {
-                                                                    setGlobalLoading(true);
-                                                                    setTimeout(() => {
-                                                                        setGlobalLoading(false);
-                                                                    }, 1200);
-                                                                    setMainCourseId(rowData.id);
-                                                                }}
-                                                                key={rowData.id}
-                                                                className="max-w-sm break-words"
-                                                            >
-                                                                {rowData.title}
-                                                            </Link>
-                                                        )}
-                                                    ></Column>
-                                                    <Column
-                                                        style={{ width: '70px' }}
-                                                        header={() => <div className="text-[13px]">Статус</div>}
-                                                        body={(rowData) => (
-                                                            <Button
-                                                                size="small"
-                                                                className="p-2"
-                                                                onClick={() => {
-                                                                    setSelectedCourse(rowData?.id);
-                                                                    handleFetchCourseOpenStatus();
-                                                                }}
-                                                            >
-                                                                <i className={`${rowData?.audience_type?.icon}`}></i>
-                                                            </Button>
-                                                        )}
-                                                    ></Column>
-                                                    <Column field="title" header={() => <div className="text-[13px]">Балл</div>} body={(rowData) => <span key={rowData.id}>{rowData.max_score}</span>}></Column>
-                                                    <Column
-                                                        header={() => <div className="text-[13px]">На рассмотрение</div>}
-                                                        style={{ margin: '0 3px', textAlign: 'center' }}
-                                                        body={(rowData) => (
-                                                            <>
-                                                                <label className="custom-radio">
-                                                                    <input
-                                                                        type="checkbox"
-                                                                        className={`customCheckbox`}
-                                                                        checked={rowData.status}
-                                                                        onChange={(e) => {
-                                                                            handleEdit(e.target, rowData);
-                                                                        }}
-                                                                    />
-                                                                    <span className="checkbox-mark"></span>
-                                                                </label>
-                                                            </>
-                                                        )}
-                                                    ></Column>
-                                                    <Column
-                                                        header={() => <div className="text-[13px]">Публикация</div>}
-                                                        style={{ margin: '0 3px', textAlign: 'center' }}
-                                                        body={(rowData) => {
-                                                            // if(rowData?.audience_type?.name === 'lock'){
-                                                            return rowData.is_published ? <i className="pi pi-check text-md sm:text-lg text-[var(--greenColor)]"></i> : <i className="pi pi-times text-md sm:text-lg text-[var(--redColor)]"></i>;
-                                                            // }
-                                                            // return <i className='pi pi-minus'></i>
-                                                        }}
-                                                    ></Column>
-                                                    <Column
-                                                        header={() => <div className="text-[13px]">Потоки</div>}
-                                                        style={{ margin: '0 3px', textAlign: 'center' }}
-                                                        body={(rowData) => (
-                                                            <>
-                                                                <label className="custom-course-radio">
-                                                                    <input
-                                                                        type="radio"
-                                                                        name="radio"
-                                                                        onChange={() => {
-                                                                            const newValue = forStreamId?.id === rowData.id ? null : { id: rowData.id, title: rowData.title };
-                                                                            // Устанавливаем состояние
-                                                                            setGlobalCourseId(newValue);
-                                                                            setForStreamId(newValue);
-                                                                        }}
-                                                                        checked={forStreamId?.id === rowData.id}
-                                                                    />
-                                                                    <span className="radio-course-mark rounded">Связан ({rowData.connects_count})</span>
-                                                                </label>
-                                                            </>
-                                                        )}
-                                                    ></Column>
-                                                    <Column
-                                                        className="flex items-center justify-center h-[60px] border-b-0"
-                                                        body={(rowData) => (
-                                                            <div className="flex items-center gap-2" key={rowData.id}>
-                                                                <Redacting redactor={getRedactor(rowData, { onEdit: edit, getConfirmOptions, onDelete: handleDeleteCourse })} textSize={'14px'} />
-                                                            </div>
-                                                        )}
+                                                        <Column
+                                                            field="title"
+                                                            header={() => <div className="text-[13px]">Название</div>}
+                                                            body={(rowData) => (
+                                                                <Link
+                                                                    href={`/course/${rowData.id}/${'null'}`}
+                                                                    onClick={() => {
+                                                                        setGlobalLoading(true);
+                                                                        setTimeout(() => {
+                                                                            setGlobalLoading(false);
+                                                                        }, 1200);
+                                                                        setMainCourseId(rowData.id);
+                                                                    }}
+                                                                    key={rowData.id}
+                                                                    className="max-w-sm break-words"
+                                                                >
+                                                                    {rowData.title}
+                                                                </Link>
+                                                            )}
+                                                        ></Column>
+                                                        <Column
+                                                            style={{ width: '70px' }}
+                                                            header={() => <div className="text-[13px]">Статус</div>}
+                                                            body={(rowData) => (
+                                                                <Button
+                                                                    size="small"
+                                                                    className="p-2"
+                                                                    onClick={() => {
+                                                                        setSelectedCourse(rowData?.id);
+                                                                        handleFetchCourseOpenStatus();
+                                                                    }}
+                                                                >
+                                                                    <i className={`${rowData?.audience_type?.icon}`}></i>
+                                                                </Button>
+                                                            )}
+                                                        ></Column>
+                                                        <Column field="title" header={() => <div className="text-[13px]">Балл</div>} body={(rowData) => <span key={rowData.id}>{rowData.max_score}</span>}></Column>
+                                                        <Column
+                                                            header={() => <div className="text-[13px]">На рассмотрение</div>}
+                                                            style={{ margin: '0 3px', textAlign: 'center' }}
+                                                            body={(rowData) => (
+                                                                <>
+                                                                    <label className="custom-radio">
+                                                                        <input
+                                                                            type="checkbox"
+                                                                            className={`customCheckbox`}
+                                                                            checked={rowData.status}
+                                                                            onChange={(e) => {
+                                                                                handleEdit(e.target, rowData);
+                                                                            }}
+                                                                        />
+                                                                        <span className="checkbox-mark"></span>
+                                                                    </label>
+                                                                </>
+                                                            )}
+                                                        ></Column>
+                                                        <Column
+                                                            header={() => <div className="text-[13px]">Публикация</div>}
+                                                            style={{ margin: '0 3px', textAlign: 'center' }}
+                                                            body={(rowData) => {
+                                                                // if(rowData?.audience_type?.name === 'lock'){
+                                                                return rowData.is_published ? <i className="pi pi-check text-md sm:text-lg text-[var(--greenColor)]"></i> : <i className="pi pi-times text-md sm:text-lg text-[var(--redColor)]"></i>;
+                                                                // }
+                                                                // return <i className='pi pi-minus'></i>
+                                                            }}
+                                                        ></Column>
+                                                        <Column
+                                                            header={() => <div className="text-[13px]">Потоки</div>}
+                                                            style={{ margin: '0 3px', textAlign: 'center' }}
+                                                            body={(rowData) => {
+                                                                const isChecked = forStreamId?.id === rowData.id;
+                                                                return (
+                                                                    <>
+                                                                        <label className="custom-course-radio">
+                                                                            <input
+                                                                                type="radio"
+                                                                                name="radio"
+                                                                                onChange={() => {
+                                                                                    const newValue = forStreamId?.id === rowData.id ? null : { id: rowData.id, title: rowData.title };
+                                                                                    // Устанавливаем состояние
+                                                                                    setGlobalCourseId(newValue);
+                                                                                    setForStreamId(newValue);
+                                                                                    setSendStream(true);
+                                                                                }}
+                                                                                checked={isChecked}
+                                                                                // checked={forStreamId?.id === rowData.id}
+                                                                            />
+                                                                            <span className="radio-course-mark rounded">Связан ({rowData.connects_count})</span>
+                                                                        </label>
+                                                                    </>
+                                                                );
+                                                            }}
+                                                        ></Column>
+                                                        <Column
+                                                            className="flex items-center justify-center h-[60px] border-b-0"
+                                                            body={(rowData) => (
+                                                                <div className="flex items-center gap-2" key={rowData.id}>
+                                                                    <Redacting redactor={getRedactor(rowData, { onEdit: edit, getConfirmOptions, onDelete: handleDeleteCourse })} textSize={'14px'} />
+                                                                </div>
+                                                            )}
+                                                        />
+                                                    </DataTable>
+                                                </div>
+                                                <div className={`${isTall ? 'mt-[20px]' : 'mt-[5px]'} shadow-[0px_-11px_5px_-6px_rgba(0,_0,_0,_0.1)]`}>
+                                                    <Paginator
+                                                        first={(pagination.currentPage - 1) * pagination.perPage}
+                                                        rows={pagination.perPage}
+                                                        totalRecords={pagination.total}
+                                                        onPageChange={(e) => handlePageChange(e.page + 1)}
+                                                        template="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
                                                     />
-                                                </DataTable>
+                                                </div>
                                             </div>
-                                            <div className={`${isTall ? 'mt-[20px]' : 'mt-[5px]'} shadow-[0px_-11px_5px_-6px_rgba(0,_0,_0,_0.1)]`}>
-                                                <Paginator
-                                                    first={(pagination.currentPage - 1) * pagination.perPage}
-                                                    rows={pagination.perPage}
-                                                    totalRecords={pagination.total}
-                                                    onPageChange={(e) => handlePageChange(e.page + 1)}
-                                                    template="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
-                                                />
-                                            </div>
-                                        </div>
-                                    )}
-                                </>
-                            )}
-                        </div>
-                        {/* STREAMS SECTION */}
-                        <div className="w-1/2">
-                            <StreamList isMobile={false} callIndex={1} courseValue={memoForStreamId} fetchprop={callbackFetchCourse} />
-                            {/* <StreamList isMobile={false} callIndex={1} courseValue={} fetchprop={()=> contextFetchCourse(pageState)} toggleIndex={()=> {}} /> */}
-                        </div>
+                                        )}
+                                    </>
+                                )}
+                            </div>
+                        ) : (
+                            <div className="w-full">
+                                <StreamList isMobile={false} callIndex={1} courseValue={memoForStreamId} fetchprop={callbackFetchCourse} close={()=> setSendStream(false)}/>
+                                {/* <StreamList isMobile={false} callIndex={1} courseValue={} fetchprop={()=> contextFetchCourse(pageState)} toggleIndex={()=> {}} /> */}
+                            </div>
+                        )}
                     </div>
                 )}
             </div>
