@@ -648,7 +648,7 @@ export default function Course() {
                                 header="Потоки"
                                 className="p-tabview p-tabview-nav p-tabview-selected p-tabview-panels p-tabview-panel"
                             >
-                                <div className="w-full sm:w-1/2">
+                                <div className="w-full block sm:w-1/2">
                                     <StreamList callIndex={activeIndex} courseValue={memoForStreamId} isMobile={true} fetchprop={callbackFetchCourse} toggleIndex={callbackSetIndex} close={callbackClose} />
                                 </div>
                             </TabPanel>
@@ -821,7 +821,6 @@ export default function Course() {
                         ) : (
                             <div className="w-full">
                                 <StreamList isMobile={false} callIndex={1} courseValue={memoForStreamId} fetchprop={callbackFetchCourse} close={callbackClose} />
-                                {/* <StreamList isMobile={false} callIndex={1} courseValue={} fetchprop={()=> contextFetchCourse(pageState)} toggleIndex={()=> {}} /> */}
                             </div>
                         )}
                     </div>

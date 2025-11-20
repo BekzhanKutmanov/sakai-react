@@ -28,7 +28,7 @@ const StreamList = React.memo(function StreamList({
     isMobile: boolean;
     toggleIndex?: () => void;
     fetchprop: () => void;
-    close: () => void;
+    close?: () => void;
 }) {
     const [streams, setStreams] = useState<mainStreamsType[]>([]);
     const [hasStreams, setHasStreams] = useState(false);
