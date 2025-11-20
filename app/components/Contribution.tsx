@@ -8,8 +8,7 @@ import { User } from '@/types/user';
 
 const ActivityHeatmap = ({ value, recipient, userInfo }: { value: ContributionDay[] | null; recipient: string, userInfo: User | null}) => {
     const months = ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'];
-    const weekdays = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
-    console.log(userInfo);
+    const weekdays = ['Вс', "Пн", 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
 
     // const start = new Date('2025-01-01'); // 1 января
     // const end = new Date('2025-12-31'); // 31 декабря

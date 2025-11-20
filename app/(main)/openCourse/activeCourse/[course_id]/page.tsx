@@ -144,7 +144,7 @@ export default function ActiveCourseDetail() {
                                                                     
                                                                     // chills={i?.chills}
                                                                     // fetchProp={() => handleTabChange(courses, course.id, accordionIndex)}
-                                                                    fetchProp={() => {}}
+                                                                    fetchProp={() => handleSteps(item?.id)}
                                                                     // contentId={i?.content?.id}
                                                                     // id_parent={i?.id_parent || null}
                                                                     // forumValueAdd={() => {

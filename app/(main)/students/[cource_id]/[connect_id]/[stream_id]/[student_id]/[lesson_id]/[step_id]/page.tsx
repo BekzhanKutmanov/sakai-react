@@ -34,6 +34,7 @@ export default function StudentCheck() {
     const [element, setElement] = useState<{ content: any | null; step: mainStepsType } | null>(null);
     const [contribution, setContribution] = useState<ContributionDay[] | null>(null);
     const [skeleton, setSkeleton] = useState(false);
+    const [totalScore, setTotalScore] = useState(0);
 
     const [activeIndex, setActiveIndex] = useState<number | number[]>(0);
 
@@ -50,7 +51,7 @@ export default function StudentCheck() {
         mainSetSkeleton(true);
         const data = await fetchStudentDetail(lesson_id ? Number(lesson_id) : null, connect_id ? Number(connect_id) : null, stream_id ? Number(stream_id) : null, student_id ? Number(student_id) : null, step_id ? Number(step_id) : null);
         console.log(data);
-        
+
         if (data?.success) {
             // handleStatusView();
             setHasSteps(false);
@@ -186,8 +187,26 @@ export default function StudentCheck() {
                     return null;
                 }
             });
+
+            // Вычисляем сумму баллов студента
+            let total = 0;
+            for (let i = 0; i < lessons.length; i++) {
+                for (let j = 0; j < lessons[i]?.steps?.length; j++) {
+                    const step = lessons[i].steps[j];
+                    if (step.id_parent && step.ListAnswer) {
+                        total += step.ListAnswer.score;
+                    }
+                }
+            }
+            if (total) {
+                setTotalScore(total);
+            }
         }
     }, [lessons]);
+
+    useEffect(() => {
+        console.log(totalScore);
+    }, [totalScore]);
 
     return (
         <div className="main-bg">
@@ -197,12 +216,9 @@ export default function StudentCheck() {
                 </div>
             ) : (
                 <div>
+                    {courseShow && courseShow?.title ? <h1 className="text-2xl bg-[var(--titleColor)] text-white text-center p-3">{courseShow?.title}</h1> : ''}
 
-                    {courseShow && courseShow?.title ? <h1 className='text-2xl bg-[var(--titleColor)] text-white text-center p-3'>
-                        {courseShow?.title}
-                    </h1> : ''}
-
-                    <ActivityPage value={contribution} recipient="Активность студента" userInfo={student}/>
+                    <ActivityPage value={contribution} recipient="Активность студента" userInfo={student} />
                     <h3 className="text-lg pb-1 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">{/* <span className="text-[var(--mainColor)]">Название курса:</span> {courseInfo.title} */}</h3>
                     <Accordion activeIndex={activeIndex} onTabChange={(e) => setActiveIndex(e.index)}>
                         {lessons?.map((item) => {
@@ -255,6 +271,10 @@ export default function StudentCheck() {
                             );
                         })}
                     </Accordion>
+                    <div className="flex justify-end gap-1 p-1">
+                        <b>Балл студента: </b>
+                        <b className="text-[var(--mainColor)]"> {totalScore}</b>
+                    </div>
                 </div>
             )}
         </div>

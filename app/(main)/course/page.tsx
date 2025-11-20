@@ -480,6 +480,10 @@ export default function Course() {
         setActiveIndex(0);
     }, [activeIndex]);
 
+    const callbackClose = useCallback(() => {
+        setSendStream(false);
+    }, [activeIndex]);
+
     // useMemo
     const memoForStreamId = useMemo(() => (forStreamId?.id ? forStreamId : null), [forStreamId?.id]);
 
@@ -645,7 +649,7 @@ export default function Course() {
                                 className="p-tabview p-tabview-nav p-tabview-selected p-tabview-panels p-tabview-panel"
                             >
                                 <div className="w-full sm:w-1/2">
-                                    <StreamList callIndex={activeIndex} courseValue={memoForStreamId} isMobile={true} fetchprop={callbackFetchCourse} toggleIndex={callbackSetIndex} />
+                                    <StreamList callIndex={activeIndex} courseValue={memoForStreamId} isMobile={true} fetchprop={callbackFetchCourse} toggleIndex={callbackSetIndex} close={callbackClose} />
                                 </div>
                             </TabPanel>
                         </TabView>
@@ -816,7 +820,7 @@ export default function Course() {
                             </div>
                         ) : (
                             <div className="w-full">
-                                <StreamList isMobile={false} callIndex={1} courseValue={memoForStreamId} fetchprop={callbackFetchCourse} close={()=> setSendStream(false)}/>
+                                <StreamList isMobile={false} callIndex={1} courseValue={memoForStreamId} fetchprop={callbackFetchCourse} close={callbackClose} />
                                 {/* <StreamList isMobile={false} callIndex={1} courseValue={} fetchprop={()=> contextFetchCourse(pageState)} toggleIndex={()=> {}} /> */}
                             </div>
                         )}

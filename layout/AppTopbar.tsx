@@ -8,7 +8,7 @@ import { classNames } from 'primereact/utils';
 import { AppTopbarRef } from '@/types';
 import { LayoutContext } from './context/layoutcontext';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { logout } from '@/utils/logout';
 import GroupSkeleton from '@/app/components/skeleton/GroupSkeleton';
 import { getNotifications } from '@/services/notifications';

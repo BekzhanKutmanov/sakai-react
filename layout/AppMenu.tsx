@@ -17,6 +17,8 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { lessonSchema } from '@/schemas/lessonSchema';
 import useErrorMessage from '@/hooks/useErrorMessage';
 import { Button } from 'primereact/button';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBookOpen } from '@fortawesome/free-solid-svg-icons';
 
 const AppMenu = () => {
     const { user, setDeleteQuery, setUpdateeQuery, contextFetchThemes, contextThemes, contextFetchStudentThemes, contextStudentThemes, departament, contextNewStudentThemes } = useContext(LayoutContext);
@@ -117,6 +119,11 @@ const AppMenu = () => {
                     //       label: 'Общедоступные курсы',
                     //       icon: 'pi pi-fw pi-globe',
                     //       to: '/openCourse'
+                    //   },
+                    //   {
+                    //       label: 'Мои активные курсы',
+                    //       icon: 'pi pi-list',
+                    //       to: '/openCourse/activeCourse'
                     //   }
                   ]
                 : []
@@ -193,6 +200,11 @@ const AppMenu = () => {
                 //       label: 'Общедоступные курсы',
                 //       icon: 'pi pi-fw pi-globe',
                 //       to: '/openCourse'
+                //   },
+                //   {
+                //       label: 'Мои активные курсы',
+                //       icon: 'pi pi-list',
+                //       to: '/openCourse/activeCourse'
                 //   }
               ]
             : []
@@ -478,7 +490,7 @@ const AppMenu = () => {
                 })}
             </ul>
             {pathname.startsWith('/course/') && (
-                <div className="">
+                <div>
                     <div className="p-4 mt-auto">
                         <Button label="Добавить тему" icon={'pi pi-plus'} className="cursor-pointer w-full py-2 px-4 rounded-lg transition" onClick={() => setThemeAddVisisble(true)}></Button>
                     </div>

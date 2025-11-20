@@ -13,7 +13,7 @@ import { useParams } from 'next/navigation';
 import { Button } from 'primereact/button';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import { useContext, useEffect, useState } from 'react';
-import { fetchActiveStepsDetail } from '@/services/openCourse';
+import { fetchActiveStepsDetail, openCoursePracticAdd, openCourseTestAdd } from '@/services/openCourse';
 
 export default function ActiveLessonDetail() {
     // types
@@ -76,13 +76,9 @@ export default function ActiveLessonDetail() {
     const [preview, setPreview] = useState(false);
     const [videoLink, setVideoLink] = useState('');
 
-    // fetch lessons
-
     const handleSteps = async () => {
         setSkeleton(true);
         const data = await fetchActiveStepsDetail(course_id ? Number(course_id) : null, step_id ? Number(step_id) : null);
-        console.log(data);
-
         if (data?.success) {
             setHasSteps(false);
             // if (data?.courses?.length < 1) {
@@ -118,44 +114,6 @@ export default function ActiveLessonDetail() {
     //         console.log(data);
 
     //         setContextNotificationId(null);
-    //     }
-    // };
-
-    // const handleStep = async () => {
-    //     const data = await fetchStudentSteps(Number(id), Number(stream_id));
-    //     if (data?.success) {
-    //         if (!data?.step?.content || data?.step?.content == null) {
-    //             setHasSteps(true);
-    //         } else {
-    //             setHasSteps(false);
-    //             setMainSteps(data.step);
-    //         }
-    //     } else {
-    //         setHasSteps(true);
-    //     }
-    // };
-
-    // Запрос курса, типа уроков (лк,лб)
-    // const handleFetchSubject = async (subject: subjectType) => {
-    //     params.append('id_curricula', String(subject.id_curricula));
-    //     subject.streams.forEach((i) => params.append('streams[]', String(i)));
-    //     subject.course_ids.forEach((i) => params.append('course_ids[]', String(i)));
-
-    //     const data = await fetchSubjects(params);
-    //     // console.log(data);
-
-    //     if (data) {
-    //         setCourses(data);
-    //         // setHasThemes(false);
-    //     } else {
-    //         // setHasThemes(true);
-    //         setMessage({
-    //             state: true,
-    //             value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
-    //         });
-    //         if (data?.response?.status) {
-    //             showError(data.response.status);
-    //         }
     //     }
     // };
 
@@ -198,7 +156,7 @@ export default function ActiveLessonDetail() {
     const handleAddTest = async () => {
         setProgressSpinner(true);
         const isCorrect = answer?.filter((item) => item.is_correct);
-        const data = await stepTest(steps && steps?.id, steps?.connections?.id_stream, (isCorrect && isCorrect[0]?.id) || null);
+        const data = await openCourseTestAdd(Number(course_id), Number(step_id), isCorrect ? Number(isCorrect[0]?.id) : null);
 
         if (data?.success) {
             setProgressSpinner(false);
@@ -229,7 +187,7 @@ export default function ActiveLessonDetail() {
 
     const handleAddPractica = async () => {
         setProgressSpinner(true);
-        const data = await stepPractica(steps && steps?.id, steps?.connections?.id_stream, docValue.file);
+        const data = await openCoursePracticAdd(Number(course_id), Number(step_id), docValue.file);
         if (data?.success) {
             setProgressSpinner(false);
             setMessage({
@@ -287,6 +245,10 @@ export default function ActiveLessonDetail() {
     }, [video]);
 
     useEffect(() => {
+        console.log(docValue);
+    }, [docValue]);
+
+    useEffect(() => {
         if (lesson_id) {
             const forLesson = courses?.find((item) => {
                 return item?.lessons.find((j) => {
@@ -296,9 +258,6 @@ export default function ActiveLessonDetail() {
                     return j?.id === Number(lesson_id);
                 });
             });
-            if (forLesson && forLesson?.lessons) {
-                setContextNewStudentThemes(forLesson?.lessons);
-            }
             setCoursesInfo(forLesson || null);
         }
     }, [courses]);
@@ -559,7 +518,7 @@ export default function ActiveLessonDetail() {
     const videoSection = (
         <div className="lesson-card-border shadow rounded p-2 mt-2">
             <div className="flex flex-col gap-2">
-                <div className="w-full flex gap-1 items-center mb-2 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">
+                <div className="w-full flex gap-1 items-center mb-  2 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">
                     <span className="sm:text-[18px]">{steps?.type?.title}</span>
                     <i className={`${steps?.type?.logo} text-2xl`}></i>
                 </div>

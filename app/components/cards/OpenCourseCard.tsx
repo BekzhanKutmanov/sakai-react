@@ -58,7 +58,7 @@ export default function OpenCourseCard({
             {/* header section */}
             <div className="flex items-start justify-between gap-2 flex-col sm:flex-row">
                 <div className={`w-full flex justify-between gap-1 items-start`}>
-                    {imageBodyTemplate(course)}
+                    <Link href={link.url || '#'}>{imageBodyTemplate(course)}</Link>
                     {/* {titlePos === 'left' && <b className="cursor-pointer w-full sm:max-w-[350px] break-words text-[var(--mainColor)] underline" onClick={()=> courseShowProp(course?.id)}>{course?.title}</b>} */}
                     <div
                         className={`flex sm:hidden gap-1 items-center text-sm text-white rounded p-1 mb-1 ${

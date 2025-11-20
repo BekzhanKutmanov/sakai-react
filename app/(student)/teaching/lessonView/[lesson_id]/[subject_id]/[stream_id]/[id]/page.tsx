@@ -127,8 +127,6 @@ export default function LessonTest() {
         subject.course_ids.forEach((i) => params.append('course_ids[]', String(i)));
 
         const data = await fetchSubjects(params);
-        // console.log(data);
-
         if (data) {
             setCourses(data);
             // setHasThemes(false);
@@ -321,6 +319,8 @@ export default function LessonTest() {
             if (forLesson && forLesson?.lessons) {
                 setContextNewStudentThemes(forLesson?.lessons);
             }
+            console.log(forLesson);
+            
             setCoursesInfo(forLesson || null);
         }
     }, [courses]);

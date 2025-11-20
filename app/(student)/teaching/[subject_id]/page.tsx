@@ -226,7 +226,7 @@ export default function StudentLesson() {
                 <NotFound titleMessage="Данные не доступны" />
             ) : (
                 <>
-                    <h1 className="text-xl shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)] pb-1">Список курсов</h1>
+                    <h1 className="text-xl sm:text-2xl shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)] pb-1">Список курсов</h1>
 
                     {skeleton ? (
                         <div className="w-full">
@@ -304,7 +304,7 @@ export default function StudentLesson() {
                                                                                     stepId={item.id}
                                                                                     streams={course}
                                                                                     lesson={lesson.id}
-                                                                                    // subjectId={subject_id}
+                                                                                    subjectId={String(subject_id)}
                                                                                     chills={item?.chills}
                                                                                     fetchProp={() => handleTabChange(courses, course.id, accordionIndex)}
                                                                                     contentId={item?.content?.id}

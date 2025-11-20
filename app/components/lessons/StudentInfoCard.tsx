@@ -146,7 +146,7 @@ export default function StudentInfoCard({
         <div className="w-full flex items-end py-1 flex-col sm:flex-row">
             <div className="w-full flex flex-col sm:flex-row gap-1">
                 <div className="w-full flex items-center gap-2">
-                    <div className="p-2 bg-[var(--mainColor)] min-w-[38px] min-h-[38px] w-[38px] h-[38px] flex justify-center items-center rounded">
+                    <div className="p-2 bg-[var(--mainColor)] shadow-xl min-w-[40px] min-h-[40px] w-[40px] h-[40px] flex justify-center items-center rounded">
                         <i className={`${icon} text-white`}></i>
                     </div>
                     <Link
@@ -165,7 +165,7 @@ export default function StudentInfoCard({
     const linkCard = (
         <div className="w-full py-1 flex items-center flex-col sm:flex-row">
             <div className="w-full flex sm:flex-row gap-2">
-                <div className="p-2 bg-[var(--greenColor)] min-w-[38px] w-[38px] min-h-[38px] h-[38px] flex justify-center items-center rounded">
+                <div className="p-2 bg-[var(--greenColor)] shadow-xl min-w-[40px] min-h-[40px] w-[40px] h-[40px] flex justify-center items-center rounded">
                     <i className={`${icon} text-white`}></i>
                 </div>
                 <div className="flex flex-col justify-center gap-1 max-w-[800px] break-words">
@@ -193,7 +193,7 @@ export default function StudentInfoCard({
     const videoCard = (
         <div className="w-full flex items-center flex-col sm:flex-row py-1">
             <div className="w-full flex items-center gap-2">
-                <div className="p-2 bg-[var(--amberColor)] min-w-[38px] w-[38px] min-h-[38px] h-[38px] flex justify-center items-center rounded">
+                <div className="p-2 bg-[var(--amberColor)] shadow-xl min-w-[40px] min-h-[40px] w-[40px] h-[40px] flex justify-center items-center rounded">
                     <i className={`${icon} text-white`}></i>
                 </div>
                 <div className="flex flex-col justify-center gap-1 max-w-[800px] text-wrap break-all">
@@ -213,7 +213,7 @@ export default function StudentInfoCard({
     const testCard = (
         <div className="w-full flex items-center flex-col sm:flex-row py-1">
             <div className="w-full flex items-center gap-2">
-                <div className="p-2 bg-[#c38598] min-w-[38px] w-[38px] min-h-[38px] h-[38px] flex justify-center items-center rounded">
+                <div className="p-2 bg-[#c38598] shadow-xl min-w-[40px] min-h-[40px] w-[40px] h-[40px] flex justify-center items-center rounded">
                     <i className={`${icon} text-white`}></i>
                 </div>
                 <div className="flex flex-col justify-center gap-1 max-w-[800px] text-wrap break-all">
@@ -229,7 +229,7 @@ export default function StudentInfoCard({
     const practicaCard = (
         <div className="w-full flex items-center flex-col sm:flex-row py-1">
             <div className="w-full flex items-center gap-2">
-                <div className="p-2 bg-[var(--yellowColor)] min-w-[38px] w-[38px] min-h-[38px] h-[38px] flex justify-center items-center rounded">
+                <div className="p-2 bg-[var(--yellowColor)] shadow-xl min-w-[40px] min-h-[40px] w-[40px] h-[40px] flex justify-center items-center rounded">
                     <i className={`${icon} text-white`}></i>
                 </div>
                 <Link href={`/teaching/lessonView/${lesson}/${subjectId}/${streams && streams.connections[0].id_stream}/${stepId}`} className="cursor-pointer max-w-[800px] text-[16px] text-wrap break-all hover:underline">
@@ -252,7 +252,7 @@ export default function StudentInfoCard({
     const forumCard = (
         <div className="w-full flex items-center flex-col sm:flex-row py-1">
             <div className="w-full flex items-center gap-2">
-                <div className="p-2 bg-[#6099a8] min-w-[38px] w-[38px] min-h-[38px] h-[38px] flex justify-center items-center rounded">
+                <div className="p-2 bg-[#6099a8] shadow-xl min-w-[40px] min-h-[40px] w-[40px] h-[40px] flex justify-center items-center rounded">
                     <i className={`${icon} text-white`}></i>
                 </div>
                 <div className="flex flex-col justify-center gap-1 max-w-[1000px]">
