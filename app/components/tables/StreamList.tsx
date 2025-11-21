@@ -13,7 +13,6 @@ import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { mainStreamsType } from '@/types/mainStreamsType';
 import Link from 'next/link';
-import useShortText from '@/hooks/useShortText';
 
 const StreamList = React.memo(function StreamList({
     callIndex,
@@ -331,7 +330,7 @@ const StreamList = React.memo(function StreamList({
                 )}
             </Dialog>
             {callIndex === 1 && (
-                <div className="">
+                <div>
                     {skeleton ? (
                         <GroupSkeleton count={10} size={{ width: '100%', height: '5rem' }} />
                     ) : (
@@ -339,7 +338,7 @@ const StreamList = React.memo(function StreamList({
                             {/* info section */}
                             {!isMobile && (
                                 <div>
-                                    <i onClick={close} className='pi pi-arrow-left cursor-pointer text-[var(--mainColor)]'></i>
+                                    <i onClick={close} className='pi pi-arrow-left cursor-pointer text-[var(--mainColor)] p-2 rounded-full hover:bg-[var(--mainColor)] hover:text-white'></i>
                                     <div className="flex flex-col md:flex-row justify-between md:items-center gap-1 mb-4 py-2 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">
                                         {/* <span className=" text-[var(--mainColor)] "> */}
 
@@ -389,7 +388,7 @@ const StreamList = React.memo(function StreamList({
                                         }}
                                     />
                                 </div>
-                            )}
+                            )}  
 
                             <div className="max-h-[685px] overflow-y-scroll">
                                 {skeleton ? (

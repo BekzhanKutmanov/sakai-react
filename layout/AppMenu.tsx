@@ -115,16 +115,16 @@ const AppMenu = () => {
                           icon: 'pi pi-fw pi-clock',
                           to: '/unVerifed'
                       },
-                    //   {
-                    //       label: 'Общедоступные курсы',
-                    //       icon: 'pi pi-fw pi-globe',
-                    //       to: '/openCourse'
-                    //   },
-                    //   {
-                    //       label: 'Мои активные курсы',
-                    //       icon: 'pi pi-list',
-                    //       to: '/openCourse/activeCourse'
-                    //   }
+                      {
+                          label: 'Общедоступные курсы',
+                          icon: 'pi pi-fw pi-globe',
+                          to: '/openCourse'
+                      },
+                      {
+                          label: 'Мои активные курсы',
+                          icon: 'pi pi-play-circle',
+                          to: '/openCourse/activeCourse'
+                      }
                   ]
                 : []
             : []
@@ -154,7 +154,17 @@ const AppMenu = () => {
                       icon: 'pi pi-home',
                       to: '/'
                   },
-                  { label: 'План обучения', icon: 'pi pi-fw pi-calendar-clock', to: '/teaching' }
+                  { label: 'План обучения', icon: 'pi pi-fw pi-calendar-clock', to: '/teaching' },
+                  {
+                      label: 'Общедоступные курсы',
+                      icon: 'pi pi-fw pi-globe',
+                      to: '/openCourse'
+                  },
+                  {
+                      label: 'Мои активные курсы',
+                      icon: 'pi pi-play-circle',
+                      to: '/openCourse/activeCourse'
+                  }
                   //   pathname.startsWith('/teaching/lesson/') ? { label: 'Темы', icon: 'pi pi-fw pi-book', items: themesStudentList?.length > 0 ? themesStudentList : [] } : { label: '' },
               ]
         : [];
@@ -196,16 +206,16 @@ const AppMenu = () => {
                       icon: 'pi pi-fw pi-clock',
                       to: '/unVerifed'
                   },
-                //   {
-                //       label: 'Общедоступные курсы',
-                //       icon: 'pi pi-fw pi-globe',
-                //       to: '/openCourse'
-                //   },
-                //   {
-                //       label: 'Мои активные курсы',
-                //       icon: 'pi pi-list',
-                //       to: '/openCourse/activeCourse'
-                //   }
+                  {
+                      label: 'Общедоступные курсы',
+                      icon: 'pi pi-fw pi-globe',
+                      to: '/openCourse'
+                  },
+                  {
+                      label: 'Мои активные курсы',
+                      icon: 'pi pi-play-circle',
+                      to: '/openCourse/activeCourse'
+                  }
               ]
             : []
         : [];

@@ -521,9 +521,9 @@ export default function Course() {
             if (globalCourseId != null) {
                 const exists = coursesValue.some((c: { id: number }) => c.id === globalCourseId.id);
                 if (exists) {
-                    setForStreamId({ id: globalCourseId.id, title: globalCourseId.title || '' });
+                    // setForStreamId({ id: globalCourseId.id, title: globalCourseId.title || '' });
                 } else {
-                    setForStreamId({ id: coursesValue[0].id, title: coursesValue[0].title });
+                    // setForStreamId({ id: coursesValue[0].id, title: coursesValue[0].title });
                 }
             } else {
                 // setForStreamId({ id: coursesValue[0].id, title: coursesValue[0].title });
@@ -558,6 +558,14 @@ export default function Course() {
     const tableData = useMemo(() => {
         return coursesValue.map((item) => ({ ...item, __isActive: forStreamId?.id === item.id }));
     }, [coursesValue, forStreamId]);
+
+    useEffect(() => {
+        console.log(sendStream, forStreamId);
+    }, [sendStream]);
+
+    useEffect(() => {
+        console.log(forStreamId);
+    }, [forStreamId]);
 
     return (
         <div className="main-bg">
@@ -778,12 +786,16 @@ export default function Course() {
                                                                             <input
                                                                                 type="radio"
                                                                                 name="radio"
-                                                                                onChange={() => {
-                                                                                    const newValue = forStreamId?.id === rowData.id ? null : { id: rowData.id, title: rowData.title };
-                                                                                    // Устанавливаем состояние
+                                                                                onClick={() => {
+                                                                                    // const newValue = forStreamId?.id === rowData.id ? { id: rowData.id, title: rowData.title } : { id: rowData.id, title: rowData.title };
+                                                                                    // if(isChecked) {
+                                                                                    const newValue = { id: rowData.id, title: rowData.title };
                                                                                     setGlobalCourseId(newValue);
                                                                                     setForStreamId(newValue);
                                                                                     setSendStream(true);
+                                                                                    console.log(newValue);
+                                                                                    // }
+                                                                                    // Устанавливаем состояние
                                                                                 }}
                                                                                 checked={isChecked}
                                                                                 // checked={forStreamId?.id === rowData.id}
