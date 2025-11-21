@@ -11,6 +11,7 @@ import '../styles/demo/Demos.scss';
 
 import '../styles/layout/openCourse.css'
 import './globals.css';
+import { useEffect } from 'react';
 
 interface RootLayoutProps {
     children: React.ReactNode;

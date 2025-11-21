@@ -150,6 +150,15 @@ const AppMenu = () => {
               ]
             : [
                   {
+                      // key: 'prev',
+                      label: '',
+                      icon: 'pi pi-fw pi-arrow-left',
+                      to: '#',
+                      command: () => {
+                          router.back();
+                      }
+                  },
+                  {
                       label: 'Главная страница',
                       icon: 'pi pi-home',
                       to: '/'

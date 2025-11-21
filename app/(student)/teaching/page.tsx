@@ -136,6 +136,7 @@ export default function Teaching() {
     useEffect(() => {
         handleFetchLessons();
         handleFetchConnectId();
+
     }, []);
 
     return (

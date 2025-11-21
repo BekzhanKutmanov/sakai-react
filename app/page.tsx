@@ -4,7 +4,7 @@ import BaseLayout from './components/BaseLayout'
 export default function page() {
   return (
     <div>
-      <BaseLayout/>      
+      <BaseLayout/>
     </div>
   )
 }

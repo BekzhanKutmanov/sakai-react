@@ -29,14 +29,16 @@ const StreamList = React.memo(function StreamList({
     fetchprop: () => void;
     close?: () => void;
 }) {
+    const { setMessage } = useContext(LayoutContext);
+    const showError = useErrorMessage();
+
     const [streams, setStreams] = useState<mainStreamsType[]>([]);
     const [hasStreams, setHasStreams] = useState(false);
     const [skeleton, setSkeleton] = useState(false);
     const [visible, setVisible] = useState(false);
     const [pendingChanges, setPendingChanges] = useState<streamsType[]>([]);
+    const [emptyCourse, setEmptyCourse] = useState(false);
 
-    const { setMessage } = useContext(LayoutContext);
-    const showError = useErrorMessage();
     // const shortTitle = useShortText(courseValue?.title ? courseValue?.title : '', 40, 'right');
 
     const toggleSkeleton = () => {
@@ -168,11 +170,18 @@ const StreamList = React.memo(function StreamList({
         }
     }, [courseValue]);
 
-    useEffect(() => {
+    useEffect(() => {        
         if (streams.length < 1) {
-            // insideDisplayStreams(streams);
+            setEmptyCourse(true);
             setHasStreams(true);
         } else {
+
+            const hasData = streams.some((item) => item.connect_id !== null);
+            if(hasData){
+                setEmptyCourse(false);
+            } else {
+                setEmptyCourse(true);
+            }
             setHasStreams(false);
         }
     }, [streams]);
@@ -338,7 +347,7 @@ const StreamList = React.memo(function StreamList({
                             {/* info section */}
                             {!isMobile && (
                                 <div>
-                                    <i onClick={close} className='pi pi-arrow-left cursor-pointer text-[var(--mainColor)] p-2 rounded-full hover:bg-[var(--mainColor)] hover:text-white'></i>
+                                    <i onClick={close} className="pi pi-arrow-left cursor-pointer text-[var(--mainColor)] p-2 rounded-full hover:bg-[var(--mainColor)] hover:text-white"></i>
                                     <div className="flex flex-col md:flex-row justify-between md:items-center gap-1 mb-4 py-2 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">
                                         {/* <span className=" text-[var(--mainColor)] "> */}
 
@@ -346,7 +355,7 @@ const StreamList = React.memo(function StreamList({
                                         {/* </span> */}
                                         <div className="min-w-[110px]">
                                             <Button
-                                                label="Добавить"
+                                                label={emptyCourse ? "Добавить поток" : 'Потоки'}
                                                 icon="pi pi-link"
                                                 className="w-full"
                                                 onClick={() => {
@@ -388,7 +397,7 @@ const StreamList = React.memo(function StreamList({
                                         }}
                                     />
                                 </div>
-                            )}  
+                            )}
 
                             <div className="max-h-[685px] overflow-y-scroll">
                                 {skeleton ? (
