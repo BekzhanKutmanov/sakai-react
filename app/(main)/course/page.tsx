@@ -31,7 +31,7 @@ import { DataView } from 'primereact/dataview';
 import { FileWithPreview } from '@/types/fileuploadPreview';
 import { Dialog } from 'primereact/dialog';
 import { AudenceType } from '@/types/courseTypes/AudenceTypes';
-import { OverlayPanel } from 'primereact/overlaypanel';
+import OpenStudentList from '@/app/components/tables/OpenStudentList';
 
 export default function Course() {
     const { setMessage, setGlobalLoading, course, contextFetchCourse, setMainCourseId } = useContext(LayoutContext);
@@ -559,14 +559,6 @@ export default function Course() {
         return coursesValue.map((item) => ({ ...item, __isActive: forStreamId?.id === item.id }));
     }, [coursesValue, forStreamId]);
 
-    useEffect(() => {
-        console.log(sendStream, forStreamId);
-    }, [sendStream]);
-
-    useEffect(() => {
-        console.log(forStreamId);
-    }, [forStreamId]);
-
     return (
         <div className="main-bg">
             <div className="w-full flex justify-between gap-3">
@@ -696,6 +688,7 @@ export default function Course() {
                                             </div>
                                         ) : (
                                             <div>
+                                                {/* <OpenStudentList /> */}
                                                 <div ref={topRef}>
                                                     <DataTable value={tableData} dataKey="id" emptyMessage="..." breakpoint="960px" rows={5} className="my-custom-table">
                                                         <Column body={(_, { rowIndex }) => rowIndex + 1} header="#" style={{ width: '20px' }}></Column>

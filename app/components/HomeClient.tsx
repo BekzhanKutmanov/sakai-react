@@ -2,21 +2,35 @@
 
 import AOS from 'aos';
 import 'aos/dist/aos.css';
-import { useContext, useEffect } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import CounterBanner from './CounterBanner';
 import Link from 'next/link';
 import VideoPlay from './VideoPlay';
 import FancyLinkBtn from './buttons/FancyLinkBtn';
 import { LayoutContext } from '@/layout/context/layoutcontext';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { MainPageStatistics } from '@/types/main/MainPageStatistic';
+import { mainPageStatistics } from '@/services/main/main';
 
 export default function HomeClient() {
     const { user, setGlobalLoading } = useContext(LayoutContext);
+    const [statistics, setStatistics] = useState<MainPageStatistics | null>(null);
 
     const media = useMediaQuery('(max-width: 640px)');
 
+    const handleMainPageStatistics = async ()=> {
+        const data = await mainPageStatistics();
+        console.log(data);
+        if(data && data?.students || data?.workers || data?.course ){
+            setStatistics(data);
+        } else {
+
+        }
+    }
+
     useEffect(() => {
         setGlobalLoading(true);
+        handleMainPageStatistics();
         setTimeout(() => {
             setGlobalLoading(false);
         }, 800);
@@ -73,7 +87,7 @@ export default function HomeClient() {
                 </div>
 
                 {/* Counter Statistics */}
-                <CounterBanner />
+                <CounterBanner statisticValue={statistics}/>
 
                 {/* Oshgu Video */}
                 <div>

@@ -138,7 +138,6 @@ export default function LessonStep() {
         const forSequence_number = lastStep && lastStep > 0 ? (!sequence_number || sequence_number < 1 ? lastStep + 1 : sequence_number) : sequence_number;
 
         const data = await addLesson({ lesson_id: lessonId, type_id: typeId }, forSequence_number || 0);
-
         if (data.success) {
             setSequence_number(null);
             setWasCreated(true);

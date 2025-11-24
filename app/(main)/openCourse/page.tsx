@@ -28,7 +28,7 @@ export default function OpenCourse() {
     const [skeleton, setSkeleton] = useState(false);
     const [hasCourses, setHasCourses] = useState(false);
     const [emptyCourse, setEmptyCourse] = useState(false);
-    // const [pageState, setPageState] = useState<number>(1);
+    const [pageState, setPageState] = useState<number>(1);
     const [pagination, setPagination] = useState<{ currentPage: number; total: number; perPage: number }>({
         currentPage: 1,
         total: 0,
@@ -39,7 +39,7 @@ export default function OpenCourse() {
     const [progressSpinner, setProgressSpinner] = useState(false);
     const [sendSignupList, setSendSignupList] = useState(false);
 
-    const handleFetchOpenCourse = async (page = 1, audence_type_id: number | string, search: string) => {
+    const handleFetchOpenCourse = async (page: number, audence_type_id: number | string, search: string) => {
         setSkeleton(true);
         const data = await fetchOpenCourses(page, audence_type_id, search);
         console.log(data);
@@ -173,20 +173,19 @@ export default function OpenCourse() {
 
     const clearFilter = () => {
         setFree(null);
-        handleFetchOpenCourse(1, '', '');
+        handleFetchOpenCourse(pageState, '', '');
     };
 
     // Ручное управление пагинацией
     const handlePageChange = (page: number) => {
-        // setGlobalCourseId(null);
         handleFetchOpenCourse(page, free === 'paid' ? '3' : free === 'free' ? '2' : '', search);
-        // setPageState(page);
+        setPageState(page);
     };
 
     useEffect(() => {
         setProgressSpinner(true);
         if (search?.length === 0 && searchController) {
-            handleFetchOpenCourse(1, free === 'paid' ? '3' : free === 'free' ? '2' : '', search);
+            handleFetchOpenCourse(pageState, free === 'paid' ? '3' : free === 'free' ? '2' : '', search);
             setSearchController(false);
             setProgressSpinner(false);
         }
@@ -198,7 +197,7 @@ export default function OpenCourse() {
 
         setSearchController(true);
         const delay = setTimeout(() => {
-            handleFetchOpenCourse(1, free === 'paid' ? '3' : free === 'free' ? '2' : '', search);
+            handleFetchOpenCourse(pageState, free === 'paid' ? '3' : free === 'free' ? '2' : '', search);
             setProgressSpinner(false);
         }, 1000);
 
@@ -233,7 +232,7 @@ export default function OpenCourse() {
     }, [sendSignupList]);
 
     useEffect(() => {
-        handleFetchOpenCourse(1, '', '');
+        handleFetchOpenCourse(pageState, '', '');
     }, []);
 
     if (hasCourses) return <NotFound titleMessage="Данные не доступны" />;
@@ -257,7 +256,7 @@ export default function OpenCourse() {
                                         checked={free === 'free'}
                                         className={`customCheckbox p-0`}
                                         onChange={() => {
-                                            handleFetchOpenCourse(1, 2, search);
+                                            handleFetchOpenCourse(pageState, 2, search);
                                             setFree((prev) => (prev === 'free' ? null : 'free'));
                                         }}
                                     />
@@ -272,7 +271,7 @@ export default function OpenCourse() {
                                         checked={free === 'paid'}
                                         className={`customCheckbox`}
                                         onChange={() => {
-                                            handleFetchOpenCourse(1, 3, search);
+                                            handleFetchOpenCourse(pageState, 3, search);
                                             setFree((prev) => (prev === 'paid' ? null : 'paid'));
                                         }}
                                     />

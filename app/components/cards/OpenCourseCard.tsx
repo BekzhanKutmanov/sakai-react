@@ -96,7 +96,7 @@ export default function OpenCourseCard({
                 <div className="w-full">
                     {signBtn ? (
                         course?.is_signed ? (
-                            <Link href={`/openCourse/activeCourse/${course?.id}`}><Button label="Открыть" disabled size="small" className="ml-3 bg-[var(--amberColor)] text-sm mini-button" onClick={() => courseSignup(course?.id)} /></Link>
+                            <Link href={`/openCourse/activeCourse/${course?.id}`}><Button label="Открыть" size="small" className="ml-3 bg-[var(--amberColor)] text-sm mini-button" /></Link>
                         ) : !course?.is_signed ? (
                             <Button label="Записаться на курс" size="small" className="ml-3 text-sm mini-button" onClick={() => courseSignup(course?.id)} />
                         ) : (

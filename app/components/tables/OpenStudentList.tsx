@@ -1,23 +1,20 @@
 'use client';
 
-import MyDateTime from '@/app/components/MyDateTime';
-import { NotFound } from '@/app/components/NotFound';
-import GroupSkeleton from '@/app/components/skeleton/GroupSkeleton';
-import useErrorMessage from '@/hooks/useErrorMessage';
-import { useMediaQuery } from '@/hooks/useMediaQuery';
-import { LayoutContext } from '@/layout/context/layoutcontext';
-import { fetchStreams, fetchStreamStudents } from '@/services/streams';
-import { mainStreamsType } from '@/types/mainStreamsType';
-import { OptionsType } from '@/types/OptionsType';
 import Link from 'next/link';
-import { useParams } from 'next/navigation';
 import { Button } from 'primereact/button';
 import { Column } from 'primereact/column';
+import MyDateTime from '../MyDateTime';
 import { DataTable } from 'primereact/datatable';
-import React, { useContext, useEffect, useState } from 'react';
+import GroupSkeleton from '../skeleton/GroupSkeleton';
+import { NotFound } from '../NotFound';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { useContext, useState } from 'react';
+import { mainStreamsType } from '@/types/mainStreamsType';
+import { LayoutContext } from '@/layout/context/layoutcontext';
+import useErrorMessage from '@/hooks/useErrorMessage';
+import { OptionsType } from '@/types/OptionsType';
 
-export default function StudentList() {
-    const { cource_id, connect_id, stream_id } = useParams();
+export default function OpenStudentList() {
     const media = useMediaQuery('(max-width: 640px)');
 
     const [studentList, setStudentList] = useState([]);
@@ -39,65 +36,9 @@ export default function StudentList() {
         hour12: false // 24-часовой формат
     };
 
-    // functions
-    const toggleSkeleton = () => {
-        setSkeleton(true);
-        setTimeout(() => {
-            setSkeleton(false);
-        }, 1000);
-    };
-
-    const handleFetchStreams = async () => {
-        if (cource_id) {
-            const data = await fetchStreams(cource_id ? Number(cource_id) : null);
-            if (data) {
-                setStreams(data);
-            } else {
-                setMessage({
-                    state: true,
-                    value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
-                });
-                if (data?.response?.status) {
-                    showError(data.response.status);
-                }
-            }
-        }
-    };
-
-    const handleFetchStudents = async () => {
-        const data = await fetchStreamStudents(connect_id ? Number(connect_id) : null, stream_id ? Number(stream_id) : null);
-        toggleSkeleton();
-        if (data) {
-            setHasList(false);
-            setStudentList(data);
-        } else {
-            setHasList(true);
-            setMessage({
-                state: true,
-                value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
-            });
-            if (data?.response?.status) {
-                showError(data.response.status);
-            }
-        }
-    };
-
-    // USEECFFECTS
-
-    useEffect(() => {
-        handleFetchStreams();
-        toggleSkeleton();
-        handleFetchStudents();
-    }, []);
-
-    useEffect(() => {
-        if (streams && streams?.length > 0 && stream_id) {
-            const forStream = streams.find((item) => item.stream_id === Number(stream_id));
-            if (forStream) {
-                setStream(forStream);
-            }
-        }
-    }, [streams]);
+    if(hasList) {
+        <NotFound titleMessage={'Данные временно не доступны'} />
+    }
 
     return (
         <div className="main-bg">
@@ -107,40 +48,42 @@ export default function StudentList() {
                 <>
                     {/* info section */}
                     <div className="bg-[var(--titleColor)] relative flex flex-col justify-center items-center w-full text-white p-[30px] md:p-[40px] pb-4">
-                        <h1 className="text-wrap break-words" style={{ color: 'white', fontSize: media ? '22px' : '26px', textAlign: 'center' }}>
-                            {stream?.subject_name.name_ru}
-                        </h1>
+                        
+                            <h1 className="text-wrap break-words text-xl sm:text-2xl" style={{ color: 'white', textAlign: 'center' }}>
+                                {stream?.subject_name.name_ru}
+                                {true ? 'Ваш открытый курс: древние закопки в пирамидах египта'
+                                : <div>Ваш открытый курс не опубликован</div>}
+                            </h1>
 
-                        <div className="w-full flex flex-wrap flex-col sm:flex-row gap-3 justify-center text-[12px] sm:text-[14px]">
-                            <span className="text-sm font-semibold">{stream?.semester?.name_ru}</span>
+                        {true ? (
+                            <div className="w-full flex flex-wrap flex-col sm:flex-row gap-3 justify-center text-[12px] sm:text-[14px]">
+                                <span className="text-sm font-semibold">{stream?.semester?.name_ru}</span>
 
-                            <div className="flex gap-1 items-center">
-                                <span className="font-semibold">{stream?.subject_type_name?.name_ru}</span>
-                                {/* <span>{stream?.teacher?.name}</span> */}
+                                <div className="flex gap-1 items-center">
+                                    <span className="font-semibold">{stream?.subject_type_name?.name_ru}</span>
+                                </div>
+                                <div className="flex gap-1 items-center">
+                                    <span>Количество записанных студентов: </span>
+                                    <span className="font-semibold">{20}</span>
+                                </div>
+                                <div className="flex gap-1 items-center">
+                                    <span>Время обучения: </span>
+                                    <span className="font-semibold">----</span>
+                                </div>
+                                <div>
+                                    <span className="bg-[var(--greenColor)] text-[12px] text-center text-white p-1 rounded">{'Бесплатный'}</span>
+                                </div>
                             </div>
-                            <div className="flex gap-1 items-center">
-                                <span>Язык обучения: </span>
-                                <span className="font-semibold">{stream?.language?.name}</span>
-                            </div>
-                            <div className="flex gap-1 items-center">
-                                <span>Год обучения: </span>
-                                <span className="font-semibold">20{stream?.id_edu_year}</span>
-                            </div>
-                            <div className="flex gap-1 items-center">
-                                <span>Период: </span>
-                                <span className="font-semibold">{stream?.period.name_ru}</span>
-                            </div>
-                            <div>
-                                <span className="bg-[var(--greenColor)] text-[12px] text-center text-white p-1 rounded">{stream?.edu_form?.name_ru}</span>
-                            </div>
-                        </div>
+                        ) : (
+                            <div className="text-center">Курс пока не опубликован. После публикации все пользователи MOOC смогут находить этот курс, записываться и проходить его материалы.</div>
+                        )}
                     </div>
                 </>
             )}
 
             {/* table section */}
-            {hasList ? (
-                <NotFound titleMessage={'Данные временно не доступны'} />
+            {false ? (
+                <b className='flex justify-center m-4'>Здесь будет отображаться список ваших студентов </b>
             ) : (
                 <div>
                     {skeleton ? (
@@ -198,7 +141,8 @@ export default function StudentList() {
                                             {rowData?.last_movement && (
                                                 <Link
                                                     href={{
-                                                        pathname: `/students/${cource_id}/${connect_id}/${stream_id}/${rowData?.id}/optional/optional`
+                                                        pathname: ''
+                                                        // pathname: `/students/${cource_id}/${connect_id}/${stream_id}/${rowData?.id}/optional/optional`
                                                     }}
                                                 >
                                                     <Button label="Данные" />

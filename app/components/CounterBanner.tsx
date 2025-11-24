@@ -1,9 +1,19 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { faCircle, faChalkboard, faUserGraduate, faBookOpen, faShieldHeart } from '@fortawesome/free-solid-svg-icons';
 import MyFontAwesome from './MyFontAwesome';
 import CountUp from 'react-countup';
+import { MainPageStatistics } from '@/types/main/MainPageStatistic';
 
-export default function CounterBanner() {
+export default function CounterBanner({statisticValue}: {statisticValue: MainPageStatistics | null}) {
+    const [statistics, setStatistics] = useState<MainPageStatistics | null>(null);
+
+    useEffect(()=> {
+        if(statisticValue){
+            setStatistics(statisticValue);
+        } else {
+            setStatistics(null);
+        }
+    },[statisticValue]);
 
     return (
         <div className="w-full h-[300px] relative my-[40px]">
@@ -14,7 +24,7 @@ export default function CounterBanner() {
                     <MyFontAwesome icon={faCircle} className='absolute z-0 bottom-[-25%] left-[25%] md:left-[50%] text-[27px] lg:text-[43px] text-[var(--mainColor)]'/>
                 </div>
                 <div className='flex flex-col'>
-                    <div className='text-[22px] sm:text-[30px]'><CountUp start={14.000} end={15000} duration={4} /><span>+</span></div>
+                    <div className='text-[22px] sm:text-[30px]'><CountUp start={0} end={statistics?.course || 0 } duration={4} /><span>+</span></div>
                     <span className='text-[12px] lg:text-[14px]'>Курсы & видео уроки</span>
                 </div>
             </div>
@@ -25,7 +35,7 @@ export default function CounterBanner() {
                     <MyFontAwesome icon={faCircle} className='absolute z-0 bottom-[-25%] left-[25%] md:left-[50%] text-[27px] lg:text-[43px] text-[var(--mainColor)]'/>
                 </div>
                 <div className='flex flex-col'>
-                    <div className='text-[22px] lg:text-[26px]'><CountUp start={130.000} end={145000} duration={4} /><span>+</span></div>
+                    <div className='text-[22px] lg:text-[26px]'><CountUp start={0} end={statistics?.students || 0 } duration={4} /><span>+</span></div>
                     <span className='text-[12px] lg:text-[14px]'>Зарегистрированные студенты</span>
                 </div>
             </div>
@@ -36,7 +46,7 @@ export default function CounterBanner() {
                     <MyFontAwesome icon={faCircle} className='absolute z-0 bottom-[-25%] left-[25%] md:left-[50%] text-[27px] lg:text-[43px] text-[var(--mainColor)]'/>
                 </div>
                 <div className='flex flex-col'>
-                    <div className='text-[22px] lg:text-[26px]'><CountUp start={5000} end={10000} duration={4} /><span>+</span></div>
+                    <div className='text-[22px] lg:text-[26px]'><CountUp start={0} end={statistics?.workers || 0 } duration={4} /><span>+</span></div>
                     <span className='text-[12px] lg:text-[14px]'>Преподаватели</span>
                 </div>
             </div>
