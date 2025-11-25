@@ -3,7 +3,7 @@
 import { OptionsType } from "@/types/OptionsType";
 import { useEffect, useState } from "react";
 
-export default function MyDateTime({createdAt, options}: {createdAt: string | null, options: OptionsType}){
+export default function MyDateTime({createdAt, options}: {createdAt: string | Date | null, options: OptionsType}){
     const [result, setResult] = useState<string>('');
 
     useEffect(()=> {

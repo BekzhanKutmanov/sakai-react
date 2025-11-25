@@ -153,3 +153,27 @@ export const openChillsUpdate = async (course_id: number | null, step_id: number
         return err;
     }
 };
+
+export const fetchOpenStudents = async (course_id: number | null) => {
+    try {
+        const res = await axiosInstance.get(`/v1/teacher/courses/students?course_id=${course_id}`);
+        const data = await res.data;
+
+        return data;
+    } catch (err) {
+        console.log('Ошибка загрузки:', err);
+        return err;
+    }
+};
+
+export const fetchWeeks = async (params: URLSearchParams ) => {
+    try {   
+        const res = await axiosInstance.get(`/v1/teacher/courses/students/was/wasnt?${params}`);
+        const data = await res.data;
+
+        return data;
+    } catch (err) {
+        console.log('Ошибка загрузки:', err);
+        return err;
+    }
+};

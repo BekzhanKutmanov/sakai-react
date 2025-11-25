@@ -24,3 +24,29 @@
 .p-accordion .p-accordion-header-link {
     padding-left: 1rem; /* Пример: добавьте padding, если он пропал из-за иконки */
 }
+
+.attendance-table .p-datatable-thead > tr > th {
+  background: #f3f4f6; /* светлый серый */
+  border: 1px solid #d1d5db;
+  text-align: center;
+  font-weight: 600;
+  padding: 10px;
+}
+
+.attendance-table .p-datatable-tbody > tr > td {
+  border: 1px solid #e5e7eb;
+  text-align: center;
+  padding: 8px 0;
+}
+
+.attendance-table .p-datatable-wrapper {
+  border: 1px solid #d1d5db;
+}
+
+.attendance-table .p-datatable-thead > tr {
+  height: 45px;
+}
+
+.attendance-table .p-datatable-tbody > tr {
+  height: 40px;
+}

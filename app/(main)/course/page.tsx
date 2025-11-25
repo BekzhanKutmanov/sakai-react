@@ -67,10 +67,11 @@ export default function Course() {
     });
 
     const [forStreamId, setForStreamId] = useState<{ id: number | null; title: string } | null>(null);
-    const [sendStream, setSendStream] = useState(false);
+    const [sendStream, setSendStream] = useState<{ status: boolean; name: 'lock' | 'open' | 'wallet' | '' }>({ status: true, name: 'lock' });
     const [globalCourseId, setGlobalCourseId] = useState<{ id: number | null; title: string | null } | null>(null);
     const [pageState, setPageState] = useState<number>(1);
     const [openTypes, setOpenTypes] = useState<AudenceType[]>([]);
+    const [openCourseId, setOpenCourseId] = useState<number | null>(null);
 
     const [isTall, setIsTall] = useState(false);
 
@@ -449,6 +450,8 @@ export default function Course() {
                                     const newValue = forStreamId?.id === shablonData.id ? null : { id: shablonData.id, title: shablonData.title };
                                     // Устанавливаем состояние
                                     setForStreamId(newValue);
+                                    setSendStream({ status: false, name: shablonData?.audience_type?.name });
+                                    setOpenCourseId(shablonData.id);
                                 }}
                                 checked={forStreamId?.id === shablonData.id}
                             />
@@ -481,7 +484,7 @@ export default function Course() {
     }, [activeIndex]);
 
     const callbackClose = useCallback(() => {
-        setSendStream(false);
+        setSendStream({ status: true, name: '' });
     }, [activeIndex]);
 
     // useMemo
@@ -649,7 +652,11 @@ export default function Course() {
                                 className="p-tabview p-tabview-nav p-tabview-selected p-tabview-panels p-tabview-panel"
                             >
                                 <div className="w-full block sm:w-1/2">
-                                    <StreamList callIndex={activeIndex} courseValue={memoForStreamId} isMobile={true} fetchprop={callbackFetchCourse} toggleIndex={callbackSetIndex} close={callbackClose} />
+                                    {sendStream.name === 'lock' ? (
+                                        <StreamList callIndex={activeIndex} courseValue={memoForStreamId} isMobile={true} fetchprop={callbackFetchCourse} toggleIndex={callbackSetIndex} close={callbackClose} />
+                                    ) : (
+                                        <OpenStudentList course_id={openCourseId} course_title={forStreamId?.title || null} close={callbackSetIndex} />
+                                    )}
                                 </div>
                             </TabPanel>
                         </TabView>
@@ -657,7 +664,7 @@ export default function Course() {
                 ) : (
                     // Десктопный курс
                     <div className="w-full flex justify-between items-start gap-2 xl:gap-5">
-                        {!sendStream ? (
+                        {sendStream.status ? (
                             <div className="w-full">
                                 {/* info section */}
                                 {skeleton ? (
@@ -785,8 +792,8 @@ export default function Course() {
                                                                                     const newValue = { id: rowData.id, title: rowData.title };
                                                                                     setGlobalCourseId(newValue);
                                                                                     setForStreamId(newValue);
-                                                                                    setSendStream(true);
-                                                                                    console.log(newValue);
+                                                                                    setSendStream({ status: false, name: rowData?.audience_type?.name });
+                                                                                    setOpenCourseId(rowData.id);
                                                                                     // }
                                                                                     // Устанавливаем состояние
                                                                                 }}
@@ -825,7 +832,11 @@ export default function Course() {
                             </div>
                         ) : (
                             <div className="w-full">
-                                <StreamList isMobile={false} callIndex={1} courseValue={memoForStreamId} fetchprop={callbackFetchCourse} close={callbackClose} />
+                                {sendStream.name === 'lock' ? (
+                                    <StreamList isMobile={false} callIndex={1} courseValue={memoForStreamId} fetchprop={callbackFetchCourse} close={callbackClose} />
+                                ) : (
+                                    <OpenStudentList course_id={openCourseId} course_title={forStreamId?.title || null} close={callbackClose} />
+                                )}
                             </div>
                         )}
                     </div>
