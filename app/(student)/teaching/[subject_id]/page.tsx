@@ -285,6 +285,7 @@ export default function StudentLesson() {
                                                                             content: { id: number; title: string; description: string; url: string; document: string; document_path: string };
                                                                             id_parent?: number | null;
                                                                             score: number;
+                                                                            my_score: number | null;
                                                                         },
                                                                         idx
                                                                     ) => {

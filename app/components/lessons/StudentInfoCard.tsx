@@ -38,7 +38,14 @@ export default function StudentInfoCard({
     // video_link?: string;
     // videoStart?: (id: string) => void;
     // test?: { content: string; answers: { id: number | null; text: string; is_correct: boolean }[]; score: number | null };
-    streams: { id: number; connections: { subject_type: string; id: number; user_id: number | null; id_stream: number }[]; title: string; description: string; user: { last_name: string; name: string; father_name: string }; lessons: lessonType[] } | null;
+    streams: {
+        id: number;
+        connections: { subject_type: string; id: number; user_id: number | null; id_stream: number }[];
+        title: string;
+        description: string;
+        user: { last_name: string; name: string; father_name: string };
+        lessons: lessonType[];
+    } | null;
     lesson: number;
     stepId: number;
     subjectId?: string;
@@ -54,7 +61,7 @@ export default function StudentInfoCard({
         content: { id: number; title: string; description: string; url: string; document: string; document_path: string };
         id_parent?: number | null;
         score: number;
-
+        my_score: number | null;
         // id: number;
         // chills: boolean;
         // type: { name: string; logo: string; title: string };
@@ -222,7 +229,24 @@ export default function StudentInfoCard({
                     </Link>
                 </div>
             </div>
-            <div className="w-full flex justify-end">{cheelseBtn('test')}</div>
+            {/* <div className="w-1/2 sm:w-full text-sm">
+                <span>Балл:</span>{' '}
+                <span className="text-[var(--mainColor)]">
+                    {' '}
+                    {0} / {lessonItem?.score || 0}
+                </span>
+            </div>
+            <div className="w-full flex justify-end">{cheelseBtn('test')}</div> */}
+            <div className="w-full flex items-center justify-center sm:justify-end gap-2 sm:max-w-[300px]">
+                <div className="w-1/2 sm:w-full text-sm">
+                    <span>Балл:</span>{' '}
+                    <span className="text-[var(--mainColor)]">
+                        {' '}
+                        {lessonItem?.my_score || 0} / {lessonItem?.score || 0}
+                    </span>
+                </div>
+                <div className="w-full flex justify-end">{cheelseBtn('test')}</div>
+            </div>
         </div>
     );
 
@@ -241,7 +265,7 @@ export default function StudentInfoCard({
                     <span>Балл:</span>{' '}
                     <span className="text-[var(--mainColor)]">
                         {' '}
-                        {lessonItem?.score || 0} / {0}
+                        {lessonItem?.my_score || 0} / {lessonItem?.score || 0}
                     </span>
                 </div>
                 <div className="w-full flex justify-end">{cheelseBtn('practical')}</div>
