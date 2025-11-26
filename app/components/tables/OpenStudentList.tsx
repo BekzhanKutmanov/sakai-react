@@ -52,8 +52,6 @@ export default function OpenStudentList({ course_id, course_title, close }: { co
     const handleFetchOpenStudents = async () => {
         setSkeleton(true);
         const data = await fetchOpenStudents(course_id);
-        console.log(data);
-
         if (data.success) {
             setHasStudents(false);
             setStudentList(data.students);
@@ -90,7 +88,6 @@ export default function OpenStudentList({ course_id, course_title, close }: { co
 
         setTableSkeleton(true);
         const data = await fetchWeeks(params);
-        console.log(data);
 
         if (data.success) {
             setDisplayWeekDays(data.data);
@@ -144,8 +141,6 @@ export default function OpenStudentList({ course_id, course_title, close }: { co
 
     const sendPrevNextWeek = (state: boolean, stateSend: 'next' | 'prev' | '') => {
         const result = findWeekdays(state, stateSend);
-        console.warn(result);
-
         if (result) {
             handleFetchOpenStudents();
             handleFetchWeeks();
@@ -255,13 +250,10 @@ export default function OpenStudentList({ course_id, course_title, close }: { co
     }, []);
 
     useEffect(() => {
-        console.log('stude ', studentList);
-
         if (studentList && studentList?.length > 0) {
             const forStudentIds = studentList.map((item) => {
                 return item?.id;
             });
-            console.log(forStudentIds);
             if (forStudentIds) {
                 setSendStudentIds(forStudentIds);
             }
@@ -273,10 +265,6 @@ export default function OpenStudentList({ course_id, course_title, close }: { co
             handleFetchWeeks();
         }
     }, [weekDays, sendStudentIds]);
-
-    useEffect(() => {
-        console.log('dis', displayWeekDays);
-    }, [displayWeekDays]);
 
     if (hasStudents) {
         <NotFound titleMessage={'Данные временно не доступны'} />;

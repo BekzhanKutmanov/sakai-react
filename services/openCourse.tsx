@@ -141,7 +141,6 @@ export const openChillsUpdate = async (course_id: number | null, step_id: number
     formData.append('step_id', String(step_id));
     formData.append('course_id', String(course_id));
     formData.append('chills', String(forChills));
-    console.log(course_id, step_id, chills);
     
     try {
         const res = await axiosInstance.post('/v1/course/open/step/chills', formData);
