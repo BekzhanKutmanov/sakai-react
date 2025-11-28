@@ -38,6 +38,7 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
     const [skeleton, setSkeleton] = useState(true);
     const [notification, setNotification] = useState<mainNotification[]>([]);
     // const [groupNotifications, setGroupNotifications] = useState([]);
+    const [copyClickState, setHandleCopyClick] = useState(false);
 
     const options: OptionsType = {
         month: 'short', // 'long', 'short', 'numeric'
@@ -363,6 +364,22 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
         // setMobile(prev => !prev);
     };
 
+    const handleCopyClick = async (id: string) => {
+        const textToCopy = id;
+
+        try {
+            await navigator.clipboard.writeText(textToCopy);
+            setHandleCopyClick(true);
+            setTimeout(() => {
+                setHandleCopyClick(false);
+            }, 2000);
+        } catch (err) {
+            console.error('Не удалось скопировать текст: ', err);
+        }
+    };
+
+    const copyBtnClassName = `text-white bg-[var(--greenColor)]`;
+
     useEffect(() => {
         setTimeout(() => {
             setSkeleton(false);
@@ -516,11 +533,17 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                             )}
                             {/* <Tiered title={{ name: '', font: 'pi pi-user' }} items={profileItems} insideColor={'--titleColor'} /> */}
                             <div className="flex items-center gap-2">
-                                <div className='flex items-center gap-1'>
+                                <div className="flex items-center gap-1">
                                     <span>
                                         {user?.last_name} {user?.name && user?.name[0] + '.'} {user?.father_name && user?.father_name.length > 1 && user?.father_name[0] + '.'}
                                     </span>
-                                    {user?.myedu_id && <small className='p-1 bg-[var(--mainBgColor)] rounded'>ID: {user.myedu_id}</small>}
+                                    {user?.myedu_id && (
+                                        <small onClick={()=> handleCopyClick(String(user.myedu_id))} className={`cursor-pointer p-1 rounded ${copyClickState ? copyBtnClassName : 'bg-[var(--mainBgColor)]'}`}>
+                                            {!copyClickState ? <span>ID: {user.myedu_id}</span>
+                                                : <span className='min-w-[60px]'>ID: Copy</span>
+                                            }
+                                        </small>
+                                    )}
                                 </div>
                                 <button
                                     className="cursor-pointer"

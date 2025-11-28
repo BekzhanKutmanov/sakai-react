@@ -13,7 +13,7 @@ import useErrorMessage from '@/hooks/useErrorMessage';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { LayoutContext } from '@/layout/context/layoutcontext';
 import { fetchCourseInfo, fetchLessonShow } from '@/services/courses';
-import { addLesson, deleteStep, fetchElement, fetchSteps, fetchTypes } from '@/services/steps';
+import { addLesson, deleteStep, fetchElement, fetchSteps, fetchTypes, stepSequenceUpdate } from '@/services/steps';
 import { mainStepsType } from '@/types/mainStepType';
 import { getConfirmOptions } from '@/utils/getConfirmOptions';
 import Link from 'next/link';
@@ -41,6 +41,7 @@ export default function LessonStep() {
     const [formVisible, setFormVisible] = useState(false);
     const [types, setTypes] = useState<{ id: number; title: string; name: string; logo: string }[]>([]);
     const [steps, setSteps] = useState<mainStepsType[]>([]);
+    const [dndSteps, setDndSteps] = useState<mainStepsType[]>([]);
     const [element, setElement] = useState<{ content: any | null; step: mainStepsType } | null>(null);
     const [selectedId, setSelectId] = useState<number | null>(null);
     const [hasSteps, setHasSteps] = useState(false);
@@ -211,6 +212,36 @@ export default function LessonStep() {
                     showError(data.response.status);
                 }
             }
+        }
+    };
+
+    const handleDrop = (e: any, index: number) => {
+        const startI = e.dataTransfer.getData('index');
+        console.log('Отпустили в: ', startI, index);
+
+        if(startI !== index){
+            const newStepsPosition = [];
+            if (steps && steps?.length > 0) {
+                const arr = [...steps];
+                [arr[startI], arr[index]] = [arr[index], arr[startI]];
+                if (arr) {
+                    for (let i = 0; i < arr?.length; i++) {
+                        const step = { id: arr[i]?.id, step: i + 1 };
+                        newStepsPosition?.push(step);
+                    }
+                }
+            }
+            if(newStepsPosition){
+                handleUpdateSequence(newStepsPosition);
+            }
+        }
+    };
+
+    const handleUpdateSequence = async (steps: {id: number, step: number}[]) => {
+        setSkeleton(true);
+        const secuence = await stepSequenceUpdate(lesson_id ? Number(lesson_id) : null, steps);
+        if(secuence?.success){
+            handleFetchSteps(lesson_id);
         }
     };
 
@@ -392,6 +423,13 @@ export default function LessonStep() {
     const step = (item: mainStepsType, icon: string, step: number, idx: number) => {
         return (
             <div
+                draggable
+                onDragStart={(e) => {
+                    e.dataTransfer.setData('index', String(idx));
+                    console.log('Перетаскиваем: ', idx);
+                }}
+                onDrop={(e) => handleDrop(e, idx)}
+                onDragOver={(e) => e.preventDefault()}
                 className="cursor-pointer flex flex-col items-center"
                 onClick={() => {
                     if (toggleDragSteps) {
@@ -563,9 +601,12 @@ export default function LessonStep() {
                         {toggleDocGenerate ? (
                             <div className="flex flex-col gap-2">
                                 <div className="flex flex-col sm:flex-row gap-2 items-start">
-                                    <b className="pi pi-times cursor-pointer sm:text-xl text-[var(--mainColor)]" onClick={() => {
-                                        setToggleDocGenerate(false);
-                                    }}></b>
+                                    <b
+                                        className="pi pi-times cursor-pointer sm:text-xl text-[var(--mainColor)]"
+                                        onClick={() => {
+                                            setToggleDocGenerate(false);
+                                        }}
+                                    ></b>
                                     <div className="flex items-center gap-1">
                                         <b>Выберите свой документ в формате Word — из его содержания будет автоматически создан тест.</b>
                                     </div>

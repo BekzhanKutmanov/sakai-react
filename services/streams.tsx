@@ -13,10 +13,21 @@ export const fetchStreams = async (id: number | null) => {
     }
 };
 
-// export const connectStreams = async (value: {stream: streamsType[]}) => {
-export const connectStreams = async (value: { course_id: number | null; stream: streamsType[] }) => {
+export const connectStreams = async (value: { stream: streamsType[] }) => {
+    // export const connectStreams = async (value: { course_id: number | null; id_stream: number | null }) => {
     try {
         const res = await axiosInstance.post(`/v1/teacher/stream/store`, value);
+
+        return res.data;
+    } catch (err) {
+        console.log('Ошибка при связке', err);
+        return err;
+    }
+};
+
+export const newConnectStreams = async (value: { course_id: number | null; id_stream: number | null, active: boolean }) => {
+    try {
+        const res = await axiosInstance.post(`/v1/teacher/stream/connect/course`, value);
 
         return res.data;
     } catch (err) {
@@ -75,7 +86,7 @@ export const pacticaScoreAdd = async (connect_id: number | null, stream_id: numb
     }
 };
 
-export const pacticaDisannul = async (id_curricula: number | null,course_id:number | null, stream_id: number | null, student_id: number | null, step_id: number, message: string) => {
+export const pacticaDisannul = async (id_curricula: number | null, course_id: number | null, stream_id: number | null, student_id: number | null, step_id: number, message: string) => {
     const value = {
         id_student: student_id,
         step_id: step_id,

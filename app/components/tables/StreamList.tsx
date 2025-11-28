@@ -2,7 +2,7 @@
 
 import useErrorMessage from '@/hooks/useErrorMessage';
 import { LayoutContext } from '@/layout/context/layoutcontext';
-import { connectStreams, fetchStreams } from '@/services/streams';
+import { connectStreams, fetchStreams, newConnectStreams } from '@/services/streams';
 import { Button } from 'primereact/button';
 import { DataView } from 'primereact/dataview';
 import React, { useContext, useEffect, useState } from 'react';
@@ -38,6 +38,8 @@ const StreamList = React.memo(function StreamList({
     const [visible, setVisible] = useState(false);
     const [pendingChanges, setPendingChanges] = useState<streamsType[]>([]);
     const [emptyCourse, setEmptyCourse] = useState(false);
+    const [sendStream_id, setSendStream_id] = useState<number | null>(null);
+    const [active, setActive] = useState(false);
 
     // const shortTitle = useShortText(courseValue?.title ? courseValue?.title : '', 40, 'right');
 
@@ -81,6 +83,7 @@ const StreamList = React.memo(function StreamList({
         const data = await fetchStreams(courseValue ? courseValue?.id : null);
         // setStreamValues({ stream: [] });
         setPendingChanges([]);
+        setSendStream_id(null);
 
         if (data) {
             profilactor(data);
@@ -98,8 +101,11 @@ const StreamList = React.memo(function StreamList({
         }
     };
 
-    const handleConnect = async () => {
-        const data = await connectStreams({ course_id: courseValue?.id ? courseValue?.id : null, stream: pendingChanges });
+    const handleConnect = async (id_stream: number, active: boolean) => {
+        // const data = await connectStreams({ course_id: courseValue?.id ? courseValue?.id : null, stream: pendingChanges });
+        setSkeleton(true);
+        const data = await newConnectStreams({ course_id: courseValue?.id ? courseValue?.id : null, id_stream: id_stream, active: active });
+        console.log(data);
 
         if (data?.success) {
             fetchprop();
@@ -110,11 +116,38 @@ const StreamList = React.memo(function StreamList({
                 value: { severity: 'success', summary: 'Успешно добавлен!', detail: '' }
             });
         } else {
-            setMessage({
-                state: true,
-                value: { severity: 'error', summary: 'Ошибка при добавлении', detail: '' }
-            });
-            if (data?.response?.status) {
+            if (data?.message) {
+                const teachers = () => {
+                    if (data?.teachers?.length) {
+                        return (
+                            <div className="flex flex-col gap-1">
+                                {data.teachers?.map((item: any, idx: number) => {
+
+                                    return (
+                                        <div key={idx} className='flex items-center gap-1'>
+                                            <span>
+                                                {item?.last_name} {item?.name && item?.name[0] + '.'} {item?.father_name && item?.father_name.length > 1 && item?.father_name[0] + '.'}
+                                            </span>
+                                            - 
+                                            <small>{item?.streams?.map((item: number)=>(
+                                                item + ' '
+                                            ))}</small>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        );
+                    } else {
+                        return '';
+                    }
+                };
+                console.log(teachers);
+
+                setMessage({
+                    state: true,
+                    value: { severity: 'error', summary: data?.message, detail: <div style={{ whiteSpace: 'pre-line' }}>{teachers()}</div> }
+                });
+            } else if (data?.response?.status) {
                 if (data?.response?.status == '400') {
                     setMessage({
                         state: true,
@@ -123,44 +156,59 @@ const StreamList = React.memo(function StreamList({
                 } else {
                     showError(data.response.status);
                 }
+            } else {
+                setMessage({
+                    state: true,
+                    value: { severity: 'error', summary: 'Ошибка при добавлении', detail: '' }
+                });
             }
         }
+        setSkeleton(false);
     };
 
     const handleEdit = (e: { checked: boolean }, item: mainStreamsType) => {
         const { stream_id, subject_name } = item;
         const isChecked = e.checked;
 
-        const forSentStreams = {
-            course_id: courseValue!.id,
-            stream_id: stream_id,
-            id_curricula: item.id_curricula,
-            id_subject: item.subject_name.id,
-            subject_type: item.subject_type_name.short_name_ru,
-            id_subject_type: item.subject_type_name.id,
-            id_edu_year: item.id_edu_year,
-            id_period: item.id_period,
-            id_speciality: item.speciality.id,
-            id_faculty: item.speciality.id_faculty,
-            info: '',
-            stream_title: subject_name.name_ru
-        };
+        setSendStream_id(stream_id);
+        if (isChecked) {
+            setActive(true);
+            handleConnect(stream_id, true);
+        } else {
+            setActive(false);
+            handleConnect(stream_id, false);
+        }
 
-        setPendingChanges((prev) => {
-            const isCurrentlyPending = prev.some((s) => s.stream_id === stream_id);
+        // const forSentStreams = {
+        //     course_id: courseValue!.id,
+        //     stream_id: stream_id,
+        //     id_curricula: item.id_curricula,
+        //     id_subject: item.subject_name.id,
+        //     subject_type: item.subject_type_name.short_name_ru,
+        //     id_subject_type: item.subject_type_name.id,
+        //     id_edu_year: item.id_edu_year,
+        //     id_period: item.id_period,
+        //     id_speciality: item.speciality.id,
+        //     id_faculty: item.speciality.id_faculty,
+        //     info: '',
+        //     stream_title: subject_name.name_ru
+        // };
 
-            if (isChecked) {
-                // Если чекбокс отмечается
-                if (!isCurrentlyPending) {
-                    return [...prev, forSentStreams];
-                }
-            } else {
-                // Если чекбокс снимается, удаляем объект из временного состояния
-                return prev.filter((s) => s.stream_id !== stream_id);
-            }
+        // setPendingChanges((prev) => {
+        //     const isCurrentlyPending = prev.some((s) => s.stream_id === stream_id);
 
-            return prev;
-        });
+        //     if (isChecked) {
+        //         // Если чекбокс отмечается
+        //         if (!isCurrentlyPending) {
+        //             return [...prev, forSentStreams];
+        //         }
+        //     } else {
+        //         // Если чекбокс снимается, удаляем объект из временного состояния
+        //         return prev.filter((s) => s.stream_id !== stream_id);
+        //     }
+
+        //     return prev;
+        // });
     };
 
     useEffect(() => {
@@ -170,14 +218,13 @@ const StreamList = React.memo(function StreamList({
         }
     }, [courseValue]);
 
-    useEffect(() => {        
+    useEffect(() => {
         if (streams.length < 1) {
             setEmptyCourse(true);
             setHasStreams(true);
         } else {
-
             const hasData = streams.some((item) => item.connect_id !== null);
-            if(hasData){
+            if (hasData) {
                 setEmptyCourse(false);
             } else {
                 setEmptyCourse(true);
@@ -185,6 +232,10 @@ const StreamList = React.memo(function StreamList({
             setHasStreams(false);
         }
     }, [streams]);
+
+    useEffect(() => {
+        console.log(pendingChanges);
+    }, [pendingChanges]);
 
     const itemTemplate = (item: mainStreamsType, index: number) => {
         const bgClass = index % 2 == 0 ? 'bg-[#f5f5f5]' : '';
@@ -268,7 +319,7 @@ const StreamList = React.memo(function StreamList({
                     icon="pi pi-check"
                     onClick={() => {
                         setVisible(false);
-                        handleConnect();
+                        // handleConnect();
                     }}
                     autoFocus
                 />
@@ -287,28 +338,29 @@ const StreamList = React.memo(function StreamList({
                     setVisible(false);
                     // clearValues();
                 }}
-                footer={footerContent}
+                // footer={footerContent}
             >
                 {streams && streams.length > 0 ? (
-                    <DataTable value={streams} className="w-full my-custom-table" dataKey="stream_id" emptyMessage="Нет данных" key={JSON.stringify(pendingChanges)} responsiveLayout="stack" breakpoint="960px" rows={5}>
-                        <Column body={(_, { rowIndex }) => rowIndex + 1} header="#"></Column>
+                    <DataTable value={streams} className="w-full my-custom-table" loading={skeleton} dataKey="stream_id" emptyMessage="Нет данных" key={JSON.stringify(pendingChanges)} responsiveLayout="stack" breakpoint="960px" rows={5}>
+                        <Column body={(_, { rowIndex }) => rowIndex + 1} header={() => <div className="text-[13px]">#</div>}></Column>
+                        <Column body={(rowIndex) => <span>{rowIndex.stream_id}</span>} header={() => <div className="text-[13px]">ID</div>}></Column>
                         {/* <Column body={imageBodyTemplate}></Column> */}
 
-                        <Column field="title" header="Название" body={(rowData) => <p key={rowData.id}>{rowData.subject_name.name_ru}</p>}></Column>
+                        <Column field="title" header={() => <div className="text-[13px]">Название</div>} body={(rowData) => <p key={rowData.id}>{rowData.subject_name.name_ru}</p>}></Column>
 
-                        <Column header="Язык обучения" body={(rowData) => <p key={rowData.id}>{rowData.language.name}</p>}></Column>
+                        <Column header={() => <div className="text-[13px]">Язык обучения</div>} body={(rowData) => <p key={rowData.id}>{rowData.language.name}</p>}></Column>
 
-                        <Column field="title" header="Год обучения" body={(rowData) => <p key={rowData.id}>20{rowData.id_edu_year}</p>}></Column>
-                        <Column field="title" header="Период" body={(rowData) => <p key={rowData.id}>{rowData.period.name_ru}</p>}></Column>
+                        <Column field="title" header={() => <div className="text-[13px]">Год обучения</div>} body={(rowData) => <p key={rowData.id}>20{rowData.id_edu_year}</p>}></Column>
+                        <Column field="title"  header={() => <div className="text-[13px]">Период </div>} body={(rowData) => <p key={rowData.id}>{rowData.period.name_ru}</p>}></Column>
 
-                        <Column field="title" header="Семестр" body={(rowData) => <p key={rowData.id}>{rowData.semester.name_ru}</p>}></Column>
+                        <Column field="title" header={() => <div className="text-[13px]">Семестр</div>} body={(rowData) => <p key={rowData.id}>{rowData.semester.name_ru}</p>}></Column>
 
-                        <Column field="title" header="Форма обучения" body={(rowData) => <p key={rowData.id}>{rowData.edu_form.name_ru}</p>}></Column>
+                        <Column field="title" header={() => <div className="text-[13px]">Форма обучения</div>} body={(rowData) => <p key={rowData.id}>{rowData.edu_form.name_ru}</p>}></Column>
 
-                        <Column field="title" header="Тип обучения" body={(rowData) => <p key={rowData.id}>{rowData.subject_type_name.short_name_ru}</p>}></Column>
+                        <Column field="title" header={() => <div className="text-[13px]">Тип обучения</div>} body={(rowData) => <p key={rowData.id}>{rowData.subject_type_name.short_name_ru}</p>}></Column>
 
                         <Column
-                            header="Связь к потоку"
+                            header={() => <div className="text-[13px]">Связь к потоку</div>}
                             style={{ margin: '0 3px', textAlign: 'center' }}
                             body={(rowData) => (
                                 <>
@@ -322,8 +374,10 @@ const StreamList = React.memo(function StreamList({
                                             //     handleEdit(e.target, item.stream_id, item?.subject_name.name_kg);
                                             //     setStreams((prev) => prev.map((el) => (el.stream_id === item.stream_id ? { ...el, connect_id: el.connect_id ? null : 1 } : el)));
                                             // }}
+
                                             checked={pendingChanges.some((s) => s.stream_id === rowData.stream_id)}
-                                            // checked={true}
+                                            // checked={sendStream_id === rowData.stream_id}
+
                                             onChange={(e) => {
                                                 handleEdit(e.target, rowData);
                                             }}
@@ -355,7 +409,7 @@ const StreamList = React.memo(function StreamList({
                                         {/* </span> */}
                                         <div className="min-w-[110px]">
                                             <Button
-                                                label={emptyCourse ? "Добавить поток" : 'Потоки'}
+                                                label={emptyCourse ? 'Добавить поток' : 'Потоки'}
                                                 icon="pi pi-link"
                                                 className="w-full"
                                                 onClick={() => {
