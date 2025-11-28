@@ -27,33 +27,33 @@ export default function OpenCourseStudentCheck() {
     const showError = useErrorMessage();
 
     const [mainSkeleton, mainSetSkeleton] = useState(false);
-    const [lessons, setLessons] = useState<lessonType[] | null>([
-        {
-            id: 92,
-            user_id: 12,
-            course_id: 189,
-            title: 'fjsdl',
-            is_deleted: false,
-            is_published: true,
-            steps: [
-                {
-                    ListAnswer: {},
-                    active: false,
-                    created_at: '2025-10-20T10:42:55.000000Z',
-                    id: 71,
-                    id_parent: 9,
-                    is_opened: false,
-                    lesson_id: 92,
-                    score: 30,
-                    step: 1,
-                    type: { title: 'Тест', modelName: 'Test', logo: 'pi pi-list-check', name: 'test', active: true },
-                    type_id: 4,
-                    updated_at: '2025-10-20T10:43:04.000000Z',
-                    user_id: 12
-                }
-            ]
-        }
-    ]);
+    // const [lessons, setLessons] = useState<lessonType[] | null>([
+    //     {
+    //         id: 92,
+    //         user_id: 12,
+    //         course_id: 189,
+    //         title: 'fjsdl',
+    //         is_deleted: false,
+    //         is_published: true,
+    //         steps: [
+    //             {
+    //                 ListAnswer: {},
+    //                 active: false,
+    //                 created_at: '2025-10-20T10:42:55.000000Z',
+    //                 id: 71,
+    //                 id_parent: 9,
+    //                 is_opened: false,
+    //                 lesson_id: 92,
+    //                 score: 30,
+    //                 step: 1,
+    //                 type: { title: 'Тест', modelName: 'Test', logo: 'pi pi-list-check', name: 'test', active: true },
+    //                 type_id: 4,
+    //                 updated_at: '2025-10-20T10:43:04.000000Z',
+    //                 user_id: 12
+    //             }
+    //         ]
+    //     }
+    // ]);
     const [student, setStudent] = useState<User | null>(null);
     const [courseShow, setCourseShow] = useState<CourseType | null>(null);
     const [hasSteps, setHasSteps] = useState(false);
@@ -184,30 +184,30 @@ export default function OpenCourseStudentCheck() {
         }
     }, []);
 
-    useEffect(() => {
-        if (lessons && lessons?.length) {
-            lessons.forEach((item, idx) => {
-                if (item?.is_opened) {
-                    setActiveIndex(idx);
-                    return null;
-                }
-            });
+    // useEffect(() => {
+    //     if (lessons && lessons?.length) {
+    //         lessons.forEach((item, idx) => {
+    //             if (item?.is_opened) {
+    //                 setActiveIndex(idx);
+    //                 return null;
+    //             }
+    //         });
 
-            // Вычисляем сумму баллов студента
-            let total = 0;
-            for (let i = 0; i < lessons.length; i++) {
-                for (let j = 0; j < lessons[i]?.steps?.length; j++) {
-                    const step = lessons[i].steps[j];
-                    if (step.id_parent && step.ListAnswer) {
-                        total += step.ListAnswer.score;
-                    }
-                }
-            }
-            if (total) {
-                setTotalScore(total);
-            }
-        }
-    }, [lessons]);
+    //         // Вычисляем сумму баллов студента
+    //         let total = 0;
+    //         for (let i = 0; i < lessons.length; i++) {
+    //             for (let j = 0; j < lessons[i]?.steps?.length; j++) {
+    //                 const step = lessons[i].steps[j];
+    //                 if (step.id_parent && step.ListAnswer) {
+    //                     total += step.ListAnswer.score;
+    //                 }
+    //             }
+    //         }
+    //         if (total) {
+    //             setTotalScore(total);
+    //         }
+    //     }
+    // }, [lessons]);
 
     return (
         <div className="main-bg">
@@ -222,7 +222,7 @@ export default function OpenCourseStudentCheck() {
                     <ActivityPage value={contribution} recipient="Активность студента" userInfo={student} />
                     <h3 className="text-lg pb-1 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">{/* <span className="text-[var(--mainColor)]">Название курса:</span> {courseInfo.title} */}</h3>
                     <Accordion activeIndex={activeIndex} onTabChange={(e) => setActiveIndex(e.index)}>
-                        {lessons?.map((item) => {
+                        {/* {lessons?.map((item) => {
                             const content = item?.steps?.filter((j) => {
                                 return j?.id_parent != null;
                             });
@@ -271,7 +271,7 @@ export default function OpenCourseStudentCheck() {
                                     </div>
                                 </AccordionTab>
                             );
-                        })}
+                        })} */}
                     </Accordion>
                     <div className="flex justify-end gap-1 p-1">
                         <b>Балл студента: </b>

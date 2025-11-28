@@ -120,15 +120,13 @@ const StreamList = React.memo(function StreamList({
                 const teachers = () => {
                     if (data?.teachers?.length) {
                         return (
-                            <div className="flex flex-col gap-1">
+                            <div className="flex flex-col gap-2">
                                 {data.teachers?.map((item: any, idx: number) => {
-
                                     return (
-                                        <div key={idx} className='flex items-center gap-1'>
+                                        <div key={idx} className={`flex gap-1 flex-col`}>
                                             <span>
                                                 {item?.last_name} {item?.name && item?.name[0] + '.'} {item?.father_name && item?.father_name.length > 1 && item?.father_name[0] + '.'}
                                             </span>
-                                            - 
                                             <small>{item?.streams?.map((item: number)=>(
                                                 item + ' '
                                             ))}</small>

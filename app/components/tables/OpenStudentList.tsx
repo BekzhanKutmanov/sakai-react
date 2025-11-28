@@ -334,11 +334,16 @@ export default function OpenStudentList({ course_id, course_title, close }: { co
                             field="name"
                             className="pl-1"
                             body={(rowData) => (
-                                <Link href={`/openCourse/students/${course_id}/${rowData.id}`} className="flex gap-1" key={rowData?.id}>
+                                // <Link href={`/openCourse/students/${course_id}/${rowData.id}`} className="flex gap-1" key={rowData?.id}>
+                                //     <span>{rowData?.last_name}</span>
+                                //     <span>{rowData?.name}</span>
+                                //     <span>{rowData?.father_name}</span>
+                                // </Link>
+                                <span className="flex gap-1" key={rowData?.id}>
                                     <span>{rowData?.last_name}</span>
                                     <span>{rowData?.name}</span>
                                     <span>{rowData?.father_name}</span>
-                                </Link>
+                                </span>
                             )}
                         ></Column>
 
