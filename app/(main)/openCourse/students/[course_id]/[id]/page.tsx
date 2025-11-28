@@ -18,8 +18,8 @@ import { useParams } from 'next/navigation';
 import { Accordion, AccordionTab } from 'primereact/accordion';
 import { useContext, useEffect, useState } from 'react';
 
-export default function StudentCheck() {
-    const { cource_id, connect_id, stream_id, student_id, lesson_id, step_id } = useParams();
+export default function OpenCourseStudentCheck() {
+    const { course_id, id } = useParams();
     // const params = useParams();
     // console.log(params, cource_id, connect_id, stream_id, student_id, lesson_id, step_id);
 
@@ -27,7 +27,33 @@ export default function StudentCheck() {
     const showError = useErrorMessage();
 
     const [mainSkeleton, mainSetSkeleton] = useState(false);
-    const [lessons, setLessons] = useState<lessonType[] | null>(null);
+    const [lessons, setLessons] = useState<lessonType[] | null>([
+        {
+            id: 92,
+            user_id: 12,
+            course_id: 189,
+            title: 'fjsdl',
+            is_deleted: false,
+            is_published: true,
+            steps: [
+                {
+                    ListAnswer: {},
+                    active: false,
+                    created_at: '2025-10-20T10:42:55.000000Z',
+                    id: 71,
+                    id_parent: 9,
+                    is_opened: false,
+                    lesson_id: 92,
+                    score: 30,
+                    step: 1,
+                    type: { title: 'Тест', modelName: 'Test', logo: 'pi pi-list-check', name: 'test', active: true },
+                    type_id: 4,
+                    updated_at: '2025-10-20T10:43:04.000000Z',
+                    user_id: 12
+                }
+            ]
+        }
+    ]);
     const [student, setStudent] = useState<User | null>(null);
     const [courseShow, setCourseShow] = useState<CourseType | null>(null);
     const [hasSteps, setHasSteps] = useState(false);
@@ -40,35 +66,13 @@ export default function StudentCheck() {
 
     const handleCourseShow = async () => {
         mainSetSkeleton(true);
-        const data = await fetchCourseInfo(cource_id ? Number(cource_id) : null);
+        const data = await fetchCourseInfo(course_id ? Number(course_id) : null);
+        console.log(data);
+
         if (data?.success) {
             setCourseShow(data?.course);
         }
         mainSetSkeleton(false);
-    };
-
-    const handleFetchStreams = async () => {
-        mainSetSkeleton(true);
-        const data = await fetchStudentDetail(lesson_id ? Number(lesson_id) : null, connect_id ? Number(connect_id) : null, stream_id ? Number(stream_id) : null, student_id ? Number(student_id) : null, step_id ? Number(step_id) : null);
-        console.log(data);
-
-        if (data?.success) {
-            // handleStatusView();
-            setHasSteps(false);
-            mainSetSkeleton(false);
-            setLessons(data?.lessons);
-            setStudent(data?.student);
-        } else {
-            mainSetSkeleton(false);
-            setHasSteps(true);
-            setMessage({
-                state: true,
-                value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
-            });
-            if (data?.response?.status) {
-                showError(data.response.status);
-            }
-        }
     };
 
     const handleStatusView = async (notification_id: number | null) => {
@@ -82,6 +86,8 @@ export default function StudentCheck() {
         if (lesson_id) {
             setSkeleton(true);
             const data = await fetchElement(Number(lesson_id), stepId);
+            console.log(data);
+            
             if (data.success) {
                 setSkeleton(false);
                 setElement({ content: data.content, step: data.step });
@@ -98,59 +104,59 @@ export default function StudentCheck() {
         }
     };
 
-    const handleFetchCalendar = async () => {
-        mainSetSkeleton(true);
-        const data = await fetchStudentCalendar(connect_id ? Number(connect_id) : null, stream_id ? Number(stream_id) : null, student_id ? Number(student_id) : null);
+    // const handleFetchCalendar = async () => {
+    //     mainSetSkeleton(true);
+    //     const data = await fetchStudentCalendar(connect_id ? Number(connect_id) : null, stream_id ? Number(stream_id) : null, student_id ? Number(student_id) : null);
 
-        if (data && Array.isArray(data)) {
-            setContribution(data);
-        } else {
-            setMessage({
-                state: true,
-                value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
-            });
-            if (data?.response?.status) {
-                showError(data.response.status);
-            }
-        }
-    };
+    //     if (data && Array.isArray(data)) {
+    //         setContribution(data);
+    //     } else {
+    //         setMessage({
+    //             state: true,
+    //             value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
+    //         });
+    //         if (data?.response?.status) {
+    //             showError(data.response.status);
+    //         }
+    //     }
+    // };
 
-    const handlePracticaScoreAdd = async (stepId: number, score: number) => {
-        const data = await pacticaScoreAdd(connect_id ? Number(connect_id) : null, stream_id ? Number(stream_id) : null, student_id ? Number(student_id) : null, stepId, score);
+    // const handlePracticaScoreAdd = async (stepId: number, score: number) => {
+    //     const data = await pacticaScoreAdd(connect_id ? Number(connect_id) : null, stream_id ? Number(stream_id) : null, student_id ? Number(student_id) : null, stepId, score);
 
-        if (data?.success) {
-            setMessage({
-                state: true,
-                value: { severity: 'success', summary: 'Успешно добавлен!', detail: '' }
-            });
-            handleFetchStreams();
-        } else {
-            setMessage({
-                state: true,
-                value: { severity: 'error', summary: 'Ошибка при добавлении!', detail: '' }
-            });
-            if (data?.response?.status) {
-                if (data?.response?.status == '400') {
-                    setMessage({
-                        state: true,
-                        value: { severity: 'error', summary: 'Ошибка!', detail: data?.response?.data?.message }
-                    });
-                } else {
-                    showError(data.response.status);
-                }
-            }
-        }
-    };
+    //     if (data?.success) {
+    //         setMessage({
+    //             state: true,
+    //             value: { severity: 'success', summary: 'Успешно добавлен!', detail: '' }
+    //         });
+    //         handleFetchStreams();
+    //     } else {
+    //         setMessage({
+    //             state: true,
+    //             value: { severity: 'error', summary: 'Ошибка при добавлении!', detail: '' }
+    //         });
+    //         if (data?.response?.status) {
+    //             if (data?.response?.status == '400') {
+    //                 setMessage({
+    //                     state: true,
+    //                     value: { severity: 'error', summary: 'Ошибка!', detail: data?.response?.data?.message }
+    //                 });
+    //             } else {
+    //                 showError(data.response.status);
+    //             }
+    //         }
+    //     }
+    // };
 
     const handlePracticaDisannul = async (id_curricula: number, course_id: number, id_stream: number, id: number, steps_id: number, message: string) => {
-        const data = await pacticaDisannul(id_curricula, course_id, id_stream, Number(student_id), steps_id, message);
+        const data = await pacticaDisannul(id_curricula, course_id, id_stream, Number(id), steps_id, message);
 
         if (data?.success) {
             setMessage({
                 state: true,
                 value: { severity: 'success', summary: 'Успешно добавлен!', detail: '' }
             });
-            handleFetchStreams();
+            // handleFetchStreams();
         } else {
             setMessage({
                 state: true,
@@ -171,8 +177,7 @@ export default function StudentCheck() {
 
     useEffect(() => {
         handleCourseShow();
-        handleFetchCalendar();
-        handleFetchStreams();
+        // handleFetchCalendar();
 
         if (contextNotificationId && contextNotificationId != null) {
             handleStatusView(contextNotificationId);
@@ -249,7 +254,8 @@ export default function StudentCheck() {
                                                                     videoStart={() => {}}
                                                                     skeleton={skeleton}
                                                                     getValues={() => handleFetchElement(i?.lesson_id, i?.id)}
-                                                                    addPracticaScore={(score) => handlePracticaScoreAdd(i?.id, score)}
+                                                                    addPracticaScore={(score) => {}}
+                                                                    // addPracticaScore={(score) => handlePracticaScoreAdd(i?.id, score)}
                                                                     addPracticaDisannul={(id_curricula: number, course_id: number, id_stream: number, id: number, steps_id: number, message: string) =>
                                                                         handlePracticaDisannul(id_curricula, course_id, id_stream, id, steps_id, message)
                                                                     }

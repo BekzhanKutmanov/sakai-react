@@ -97,8 +97,6 @@ export const fetchCourseInfo = async (id: number | null) => {
 };
 
 export const addThemes = async (id: number, title: string, sequence_number: number | null) => {
-    console.log(sequence_number);
-
     const formData = new FormData();
     formData.append('title', title);
     formData.append('sequence_number', String(sequence_number));

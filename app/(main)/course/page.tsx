@@ -438,7 +438,7 @@ export default function Course() {
                         </div>
                         <div className="flex gap-1 items-center">
                             <span className="text-[var(--mainColor)] text-sm">Публикация: </span>
-                            {shablonData.is_published ? <i className="pi pi-check text-md sm:text-lg text-[var(--greenColor)]"></i> : <i className="pi pi-times text-md sm:text-lg text-[var(--redColor)]"></i>}
+                            {shablonData.is_published ? <i className="pi pi-check text-md text-[var(--greenColor)]"></i> : <i className="pi pi-times text-md text-[var(--redColor)]"></i>}
                         </div>
                     </div>
                     <>
@@ -770,7 +770,7 @@ export default function Course() {
                                                             style={{ margin: '0 3px', textAlign: 'center' }}
                                                             body={(rowData) => {
                                                                 // if(rowData?.audience_type?.name === 'lock'){
-                                                                return rowData.is_published ? <i className="pi pi-check text-md sm:text-lg text-[var(--greenColor)]"></i> : <i className="pi pi-times text-md sm:text-lg text-[var(--redColor)]"></i>;
+                                                                return rowData.is_published ? <i className="pi pi-check text-md text-[var(--greenColor)]"></i> : <i className="pi pi-times text-md text-[var(--redColor)]"></i>;
                                                                 // }
                                                                 // return <i className='pi pi-minus'></i>
                                                             }}

@@ -9,4 +9,5 @@ export interface User {
     name: string;
     phone: string;
     pin: null;
+    myedu_id: number;
 }

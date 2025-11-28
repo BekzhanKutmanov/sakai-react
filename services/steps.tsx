@@ -503,8 +503,6 @@ export const stepSequenceUpdate = async (lesson_id: number | null, steps: { id: 
         steps: steps
     };
 
-    console.log(body);
-
     try {
         const res = await axiosInstance.post(`/v1/teacher/lessons/step/sequence`, body);
 

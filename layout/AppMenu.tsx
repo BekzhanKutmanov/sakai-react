@@ -19,6 +19,9 @@ import useErrorMessage from '@/hooks/useErrorMessage';
 import { Button } from 'primereact/button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBookOpen } from '@fortawesome/free-solid-svg-icons';
+import { Calendar } from 'primereact/calendar';
+import { Tooltip } from 'primereact/tooltip';
+import { Nullable } from 'primereact/ts-helpers';
 
 const AppMenu = () => {
     const { user, setDeleteQuery, setUpdateeQuery, contextFetchThemes, contextThemes, contextFetchStudentThemes, contextStudentThemes, departament, contextNewStudentThemes } = useContext(LayoutContext);
@@ -55,8 +58,11 @@ const AppMenu = () => {
     const [themeValue, setThemeValue] = useState<{ title: string; sequence_number: number | null }>({ title: '', sequence_number: null });
     const [courseInfo, setCourseInfo] = useState<{ title: string } | null>(null);
     const [forDepartamentLength, setForDepartamentLength] = useState(false);
+    const [additional, setAdditional] = useState(false);
 
     const [themesStudentList, setThemesStudentList] = useState<{ key?: string; label: string; id: number; to: string; items?: AppMenuItem[] }[]>([]);
+    const [startDeadline, setStartDeadline] = useState<Nullable<Date>>(null);
+    const [endDeadline, setEndDeadline] = useState<Nullable<Date>>(null);
 
     const showError = useErrorMessage();
     const { setMessage } = useContext(LayoutContext);
@@ -274,6 +280,7 @@ const AppMenu = () => {
         setThemeValue({ title: '', sequence_number: null });
         setEditingLesson(null);
         setSelectId(null);
+        setAdditional(false);
     };
 
     // add theme
@@ -436,31 +443,53 @@ const AppMenu = () => {
                 start={false}
                 footerValue={{ footerState: true, reject: 'Назад', next: 'Сохранить' }}
             >
-                <div className="flex flex-col w-full items-center gap-2">
-                    <div className="w-full flex flex-col justify-center items-center">
-                        <span>Позиция:</span>
-                        <InputText
-                            type="number"
-                            value={String(editingLesson?.sequence_number)}
-                            className="w-[90%]"
-                            onChange={(e) => {
-                                setEditingLesson((prev) => prev && { ...prev, sequence_number: Number(e.target.value) });
-                            }}
-                        />
+                <div className="flex flex-col gap-1">
+                    <div className="flex flex-col w-full items-center gap-2">
+                        <div className="w-full flex flex-col justify-center items-center">
+                            <span>Позиция:</span>
+                            <InputText
+                                type="number"
+                                value={String(editingLesson?.sequence_number)}
+                                className="w-[90%]"
+                                onChange={(e) => {
+                                    setEditingLesson((prev) => prev && { ...prev, sequence_number: Number(e.target.value) });
+                                }}
+                            />
+                        </div>
+                        <div className="w-full flex flex-col gap-1 items-center justify-center">
+                            <InputText
+                                type="text"
+                                placeholder="Название"
+                                className="w-[90%]"
+                                value={editingLesson?.title && editingLesson?.title}
+                                onChange={(e) => {
+                                    setEditingLesson((prev) => prev && { ...prev, title: e.target.value });
+                                    setValue('title', e.target.value, { shouldValidate: true });
+                                }}
+                            />
+                            <b style={{ color: 'red', fontSize: '12px' }}>{errors.title?.message}</b>
+                        </div>
                     </div>
-                    <div className="w-full flex flex-col gap-1 items-center justify-center">
-                        <InputText
-                            type="text"
-                            placeholder="Название"
-                            className="w-[90%]"
-                            value={editingLesson?.title && editingLesson?.title}
-                            onChange={(e) => {
-                                setEditingLesson((prev) => prev && { ...prev, title: e.target.value });
-                                setValue('title', e.target.value, { shouldValidate: true });
-                            }}
-                        />
-                        <b style={{ color: 'red', fontSize: '12px' }}>{errors.title?.message}</b>
-                    </div>
+                    {/* <span className="w-[90%] cursor-pointer ml-1 text-[13px] sm:text-sm text-[var(--mainColor)] flex justify-end" onClick={() => setAdditional((prev) => !prev)}>
+                        Дополнительно {additional ? '-' : '+'}
+                    </span>
+                    {additional && (
+                        <>
+                            <p className="text-sm sm:text-[16px] text-center m-0">Уроки будут доступны только до указанного срока.</p>
+                            <div className="w-full flex flex-col">
+                                <div className="w-full flex flex-col sm:flex-row justify-evenly items-center gap-1">
+                                    <div className="flex flex-col items-center">
+                                        <span className="text-sm">Начало</span>
+                                        <Calendar value={startDeadline} className="p-inputtext-sm" onChange={(e) => setStartDeadline(e.value)} />
+                                    </div>
+                                    <div className="flex flex-col items-center">
+                                        <span className="text-sm">Конец</span>
+                                        <Calendar value={endDeadline} className="p-inputtext-sm" onChange={(e) => setEndDeadline(e.value)} />
+                                    </div>
+                                </div>
+                            </div>
+                        </>
+                    )} */}
                 </div>
             </FormModal>
 
@@ -499,6 +528,26 @@ const AppMenu = () => {
                         />
                         <b style={{ color: 'red', fontSize: '12px' }}>{errors.title?.message}</b>
                     </div>
+                    {/* <span className="w-[90%] cursor-pointer ml-1 text-[13px] sm:text-sm text-[var(--mainColor)] flex justify-end" onClick={() => setAdditional((prev) => !prev)}>
+                        Дополнительно {additional ? '-' : '+'}
+                    </span>
+                    {additional && (
+                        <>
+                            <p className="text-[14px] sm:text-[16px] text-center m-0">Уроки будут доступны только до указанного срока.</p>
+                            <div className="w-full flex flex-col">
+                                <div className="w-full flex flex-col sm:flex-row justify-evenly items-center gap-1">
+                                    <div className="flex flex-col items-center">
+                                        <span className="text-sm">Начало</span>
+                                        <Calendar value={startDeadline} className="p-inputtext-sm" onChange={(e) => setStartDeadline(e.value)} />
+                                    </div>
+                                    <div className="flex flex-col items-center">
+                                        <span className="text-sm">Конец</span>
+                                        <Calendar value={endDeadline} className="p-inputtext-sm" onChange={(e) => setEndDeadline(e.value)} />
+                                    </div>
+                                </div>
+                            </div>
+                        </>
+                    )} */}
                 </div>
             </FormModal>
 

@@ -50,3 +50,9 @@
 .attendance-table .p-datatable-tbody > tr {
   height: 40px;
 }
+
+/* calendar */
+.p-datepicker {
+    font-size: 12px !important;
+    padding: 4px !important;
+}

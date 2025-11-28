@@ -50,8 +50,6 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
     const handleNotifications = async () => {
         const data = await getNotifications();
         if (data && Array.isArray(data)) {
-            console.log(data);
-
             setNotification(data);
             // setNotification((prev) => [...prev, { type: { type: 'lorem' } }, { type: { type: 'second' } }]);
         }
@@ -59,7 +57,6 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
 
     const Notificatoin = () => {
         const typeObjs = {};
-
         // if (notification?.length > 0) {
         //     for (let i = 0; i < notification.length; i++) {
         //         const currentType = notification[i]?.type?.type;
@@ -73,6 +70,8 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
         //         typeObjs[currentType].push(notification[i]);
         //     }
         // }
+
+        // console.log(typeObjs);
 
         return (
             <div className={`flex flex-col justify-center p-2 gap-1`}>
@@ -455,7 +454,7 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                         <div className={`hidden lg:flex items-center gap-3 ${media ? 'order-1' : 'order-2'} `}>
                             {user?.is_working ? (
                                 // <Tiered title={{ name: '', font: 'pi pi-bell' }} items={user?.is_working ? working_notification : user?.is_student ? student_notification : []} insideColor={'--titleColor'} />
-                                <div className='px-3 border-x-1 border-[var(--borderBottomColor)]'>
+                                <div className="px-3 border-x-1 border-[var(--borderBottomColor)]">
                                     <div className="relative">
                                         {notification?.length > 0 ? <div className={`absolute -right-1 -top-1 px-1 bg-[var(--amberColor)] rounded text-white text-[11px]`}>{notification.length}</div> : ''}
                                         <button
@@ -484,7 +483,7 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                                     />
                                 </div>
                             ) : user?.is_student ? (
-                                <div className='px-3 border-x-1 border-[var(--borderBottomColor)]'>
+                                <div className="px-3 border-x-1 border-[var(--borderBottomColor)]">
                                     <div className="relative">
                                         {notification?.length > 0 ? <div className={`absolute -right-1 -top-1 px-1 bg-[var(--amberColor)] rounded text-white text-[11px]`}>{notification.length}</div> : ''}
                                         <button
@@ -516,10 +515,13 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                                 ''
                             )}
                             {/* <Tiered title={{ name: '', font: 'pi pi-user' }} items={profileItems} insideColor={'--titleColor'} /> */}
-                            <div className='flex items-center gap-2'>
-                                <span>
-                                    {user?.last_name} {user?.name && user?.name[0] + '.'} {user?.father_name && user?.father_name[0] + '.'}
-                                </span>
+                            <div className="flex items-center gap-2">
+                                <div className='flex items-center gap-1'>
+                                    <span>
+                                        {user?.last_name} {user?.name && user?.name[0] + '.'} {user?.father_name && user?.father_name.length > 1 && user?.father_name[0] + '.'}
+                                    </span>
+                                    {user?.myedu_id && <small className='p-1 bg-[var(--mainBgColor)] rounded'>ID: {user.myedu_id}</small>}
+                                </div>
                                 <button
                                     className="cursor-pointer"
                                     onClick={() => {

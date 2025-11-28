@@ -1,6 +1,5 @@
 'use client';
 
-import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { LayoutContext } from '@/layout/context/layoutcontext';
 import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
@@ -19,8 +18,11 @@ export default function LessonInfoCard({
     documentUrl,
     link,
     video_link,
+
     videoStart,
+    
     test,
+    
     getValues,
     answerList,
     addPracticaScore,
@@ -97,7 +99,7 @@ export default function LessonInfoCard({
     const docCard = (
         <div className="w-full flex justify-between flex-col sm:flex-row">
             <div className=" flex items-start sm:items-center gap-2 py-1">
-                <div className="p-2 bg-[var(--mainColor)] min-w-[36px] min-h-[36px] w-[36px] h-[36px] flex justify-center items-center rounded">
+                <div className="p-2 bg-[var(--mainColor)] shadow-xl min-w-[40px] min-h-[40px] w-[40px] h-[40px] flex justify-center items-center rounded">
                     <i className={`${icon} text-white`}></i>
                 </div>
                 <div className="flex flex-col justify-center gap-1">
@@ -183,7 +185,7 @@ export default function LessonInfoCard({
     const linkCard = (
         <div className="w-full flex justify-between flex-col sm:flex-row">
             <div className="w-full flex items-start sm:items-center gap-2 py-1">
-                <div className="p-2 bg-[var(--greenColor)] w-[36px] h-[36px] flex justify-center items-center rounded">
+                <div className="p-2 bg-[var(--greenColor)] shadow-xl min-w-[40px] min-h-[40px] w-[40px] h-[40px] flex justify-center items-center rounded">
                     <i className={`${icon} text-white`}></i>
                 </div>
                 <div className="flex flex-col justify-center gap-1 max-w-[800px] text-wrap break-all">
@@ -240,7 +242,7 @@ export default function LessonInfoCard({
     const videoCard = (
         <div className="w-full flex justify-between flex-col sm:flex-row">
             <div className="w-full flex items-start sm:items-center gap-2 py-1">
-                <div className="p-2 bg-[var(--amberColor)] w-[36px] h-[36px] flex justify-center items-center rounded">
+                <div className="p-2 bg-[var(--amberColor)] shadow-xl min-w-[40px] min-h-[40px] w-[40px] h-[40px] flex justify-center items-center rounded">
                     <i className={`${icon} text-white`}></i>
                 </div>
                 <div className="flex flex-col justify-center gap-1 max-w-[800px] text-wrap break-all">
@@ -300,7 +302,7 @@ export default function LessonInfoCard({
     const testCard = (
         <div className="w-full flex justify-between gap-1 flex-col sm:flex-row">
             <div className="w-full flex items-start sm:items-center gap-2 py-1">
-                <div className="p-2 bg-[#c38598] w-[36px] h-[36px] flex justify-center items-center rounded">
+                <div className="p-2 bg-[#c38598] shadow-xl min-w-[40px] min-h-[40px] w-[40px] h-[40px] flex justify-center items-center rounded">
                     <i className={`${icon} text-white`}></i>
                 </div>
                 <div className="flex flex-col justify-center gap-1 max-w-[800px] text-wrap break-all">
@@ -408,7 +410,7 @@ export default function LessonInfoCard({
     const practicaCard = (
         <div className={`w-full flex justify-between flex-col sm:flex-row ${isOpened ? 'bg-[var(--greenBgColor)] rounded' : ''}`}>
             <div className="w-full flex items-start sm:items-center gap-2 py-1">
-                <div className="p-2 bg-[var(--yellowColor)] w-[36px] h-[36px] flex justify-center items-center rounded">
+                <div className="p-2 bg-[var(--yellowColor)] shadow-xl min-w-[40px] min-h-[40px] w-[40px] h-[40px] flex justify-center items-center rounded">
                     <i className={`${icon} text-white`}></i>
                 </div>
                 <span
