@@ -45,13 +45,13 @@ export default function Dashboard() {
     };
 
     useEffect(() => {
-        window.location.href = '/';
-        // handleVideoCall('https://youtu.be/9j9vUpNrgDM?si=nqk6tX5JPCyr7znv');
+        // window.location.href = '/';
+        handleVideoCall('https://youtu.be/9j9vUpNrgDM?si=nqk6tX5JPCyr7znv');
     }, []);
 
     return null;
 
-    // return (
+    //  return (
     //     <div className="flex flex-col gap-2">
     //         {/* user info */}
     //         <div className="main-bg">
