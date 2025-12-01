@@ -219,7 +219,7 @@ export default function LessonStep() {
         const startI = e.dataTransfer.getData('index');
         console.log('Отпустили в: ', startI, index);
 
-        if(startI !== index){
+        if (startI !== index) {
             const newStepsPosition = [];
             if (steps && steps?.length > 0) {
                 const arr = [...steps];
@@ -231,18 +231,40 @@ export default function LessonStep() {
                     }
                 }
             }
-            if(newStepsPosition){
+            if (newStepsPosition) {
                 handleUpdateSequence(newStepsPosition);
             }
         }
     };
 
-    const handleUpdateSequence = async (steps: {id: number, step: number}[]) => {
+    const handleUpdateSequence = async (steps: { id: number; step: number }[]) => {
         setSkeleton(true);
         const secuence = await stepSequenceUpdate(lesson_id ? Number(lesson_id) : null, steps);
-        if(secuence?.success){
+        console.log(secuence);
+
+        if (secuence?.success) {
             handleFetchSteps(lesson_id);
+            setMessage({
+                state: true,
+                value: { severity: 'success', summary: 'Успешно изменено!', detail: '' }
+            });
+        } else {
+            setMessage({
+                state: true,
+                value: { severity: 'error', summary: 'Ошибка при изменении!', detail: '' }
+            });
+            if (secuence?.response?.status) {
+                if (secuence?.response?.status == '400') {
+                    setMessage({
+                        state: true,
+                        value: { severity: 'error', summary: 'Ошибка!', detail: secuence?.response?.data?.message }
+                    });
+                } else {
+                    showError(secuence.response.status);
+                }
+            }
         }
+        setSkeleton(false);
     };
 
     // РАБОЧИЙ ВАРИАНТ

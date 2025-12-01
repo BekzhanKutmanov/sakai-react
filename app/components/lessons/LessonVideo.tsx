@@ -218,8 +218,8 @@ export default function LessonVideo({ element, content, fetchPropElement, clearP
         const steps: { id: number; step: number | null }[] = [{ id: element?.id, step: editingLesson?.stepPos || 0 }];
         const secuence = await stepSequenceUpdate(video?.lesson_id ? Number(video?.lesson_id) : null, steps);
 
+        console.warn(secuence);
         if (data?.success && secuence.success) {
-            setSkeleton(false);
             fetchPropElement(element.id);
             clearValues();
             setMessage({
@@ -227,16 +227,23 @@ export default function LessonVideo({ element, content, fetchPropElement, clearP
                 value: { severity: 'success', summary: 'Успешно изменено!', detail: '' }
             });
         } else {
-            setSkeleton(false);
             setEditingLesson(null);
             setMessage({
                 state: true,
                 value: { severity: 'error', summary: 'Ошибка при изменении!', detail: '' }
             });
             if (data?.response?.status) {
-                showError(data.response.status);
+                if (data?.response?.status == '400') {
+                    setMessage({
+                        state: true,
+                        value: { severity: 'error', summary: 'Ошибка!', detail: data?.response?.data?.message }
+                    });
+                } else {
+                    showError(data.response.status);
+                }
             }
         }
+        setSkeleton(false);
     };
 
     const videoSection = () => {

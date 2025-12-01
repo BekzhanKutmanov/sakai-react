@@ -329,7 +329,7 @@ export default function OpenStudentList({ course_id, course_title, close }: { co
             ) : (
                 <div className="attendance-table-wrapper">
                     <DataTable value={studentList} key={Object.keys(displayWeekDays?.[0]?.activity || {}).join('-')} loading={tableSkeleton} headerColumnGroup={headerGroup} className="attendance-table">
-                        <Column body={(_, { rowIndex }) => rowIndex + 1} header="#" style={{ width: '10px' }}></Column>
+                        <Column body={(_, { rowIndex }) => rowIndex + 1} header="#" style={{ width: '10px', fontSize: '14px' }}></Column>
                         <Column
                             field="name"
                             className="pl-1"
@@ -339,7 +339,7 @@ export default function OpenStudentList({ course_id, course_title, close }: { co
                                 //     <span>{rowData?.name}</span>
                                 //     <span>{rowData?.father_name}</span>
                                 // </Link>
-                                <span className="flex gap-1" key={rowData?.id}>
+                                <span className="flex gap-1 text-sm" key={rowData?.id}>
                                     <span>{rowData?.last_name}</span>
                                     <span>{rowData?.name}</span>
                                     <span>{rowData?.father_name}</span>
@@ -369,7 +369,7 @@ export default function OpenStudentList({ course_id, course_title, close }: { co
                             ))}
                         {/* <Column /> */}
 
-                        <Column field="all_score" style={{ textAlign: 'center' }} />
+                        <Column field="all_score" style={{ textAlign: 'center', fontSize: '14px' }} />
                     </DataTable>
                 </div>
             )}
