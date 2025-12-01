@@ -41,6 +41,7 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
     const [copyClickState, setHandleCopyClick] = useState(false);
 
     const options: OptionsType = {
+        year: '2-digit',
         month: 'short', // 'long', 'short', 'numeric'
         day: '2-digit',
         hour: '2-digit',
@@ -105,7 +106,7 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                                     {item?.from_user?.last_name} {item?.from_user?.name}
                                 </p>
                                 <div className="w-full relative flex">
-                                    <p className="absolute right-0 -top-3 text-[10px] sm:text-[12px] m-0">
+                                    <p className="absolute right-0 -top-3 text-[10px] m-0">
                                         <MyDateTime createdAt={item?.created_at} options={options} />
                                     </p>
                                 </div>
@@ -140,7 +141,7 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                                     {item?.from_user?.last_name} {item?.from_user?.name}
                                 </p>
                                 <div className="w-full relative flex">
-                                    <p className="absolute right-0 -top-3 text-[10px] sm:text-[12px] m-0">
+                                    <p className="absolute right-0 -top-1 sm:-top-3 text-[9px] sm:text-[10px] m-0">
                                         <MyDateTime createdAt={item?.created_at} options={options} />
                                     </p>
                                 </div>

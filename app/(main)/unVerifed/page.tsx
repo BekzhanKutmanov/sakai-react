@@ -80,25 +80,28 @@ export default function UnVerifed() {
                                             className="cursor-pointer"
                                             href={`/students/${item?.answer?.course_id}/${item?.connect_id}/${item?.answer?.id_stream}/${item?.answer?.student?.myedu_id}/${item?.answer?.lesson_id}/${item?.answer?.steps_id}`}
                                         >
-                                            <b className="text-[var(--mainColor)] underline">
-                                                {item?.answer?.student?.last_name} {item?.answer?.student?.name}
-                                            </b>
+                                            <b className="text-[var(--mainColor)] underline">Практическое задание</b>
                                         </Link>
                                         <span className="text-sm w-[13px] h-[13px] rounded-full bg-[var(--amberColor)]"></span>
                                     </div>
-                                    <div className="flex items-center justify-between w-[85%]">
-                                        <p className="m-0 text-[13px]">Практическое задание</p>
-                                        <Link
-                                            href={`/students/${item?.answer?.course_id}/${item?.connect_id}/${item?.answer?.id_stream}/${item?.answer?.student?.myedu_id}/${item?.answer?.lesson_id}/${item?.answer?.steps_id}`}
-                                            className="cursor-pointer m-0 text-[13px] text-[var(--mainColor)] flex items-center gap-1"
-                                        >
-                                            <span className="text-[var(--mainColor)]">Перейти</span> <i className="pi pi-arrow-right text-[var(--mainColor)] text-sm"></i>
-                                        </Link>
-                                    </div>
-                                    <div className="w-full relative flex">
-                                        <p className="absolute right-0 -top-3 text-[10px] m-0">
-                                            <MyDateTime createdAt={item?.answer?.created_at} options={options} />
-                                        </p>
+                                    <div className='flex flex-col gap-3'>
+                                        <div className="flex items-end justify-between w-full sm:w-[85%]">
+                                            <p className="m-0 text-[13px]">
+                                                {item?.answer?.student?.last_name} {item?.answer?.student?.name}
+                                            </p>
+
+                                            <Link
+                                                href={`/students/${item?.answer?.course_id}/${item?.connect_id}/${item?.answer?.id_stream}/${item?.answer?.student?.myedu_id}/${item?.answer?.lesson_id}/${item?.answer?.steps_id}`}
+                                                className="cursor-pointer m-0 text-[12px] sm:text-[13px] text-[var(--mainColor)] flex items-center gap-1"
+                                            >
+                                                <span className="text-[var(--mainColor)]">Перейти</span> <i style={{fontSize: '10px'}} className="pi pi-arrow-right text-[var(--mainColor)]"></i>
+                                            </Link>
+                                        </div>
+                                        <div className="w-full relative flex mt-1">
+                                            <p className="absolute right-0 -top-3 text-[10px] m-0">
+                                                <MyDateTime createdAt={item?.answer?.created_at} options={options} />
+                                            </p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
