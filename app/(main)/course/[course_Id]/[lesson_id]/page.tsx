@@ -6,7 +6,6 @@ import LessonLink from '@/app/components/lessons/LessonLink';
 import LessonPractica from '@/app/components/lessons/LessonPractica';
 import LessonTest from '@/app/components/lessons/LessonTest';
 import LessonVideo from '@/app/components/lessons/LessonVideo';
-import MyDateTime from '@/app/components/MyDateTime';
 import { NotFound } from '@/app/components/NotFound';
 import GroupSkeleton from '@/app/components/skeleton/GroupSkeleton';
 import useErrorMessage from '@/hooks/useErrorMessage';
@@ -243,16 +242,13 @@ export default function LessonStep() {
         console.log(secuence);
 
         if (secuence?.success) {
+            alert('true')
             handleFetchSteps(lesson_id);
             setMessage({
                 state: true,
                 value: { severity: 'success', summary: 'Успешно изменено!', detail: '' }
             });
         } else {
-            setMessage({
-                state: true,
-                value: { severity: 'error', summary: 'Ошибка при изменении!', detail: '' }
-            });
             if (secuence?.response?.status) {
                 if (secuence?.response?.status == '400') {
                     setMessage({
@@ -498,54 +494,6 @@ export default function LessonStep() {
             return true;
         }
     };
-
-    const Notificatoin = ({ notification }: { notification: any }) => {
-        return (
-            <div className={`flex flex-col justify-center p-2 gap-1`}>
-                {notification?.length > 0 ? (
-                    notification?.map((item: any) => {
-                        let path = '';
-                        if (user?.is_working && item?.type?.type === 'practical') {
-                            path = `/students/${item?.meta?.course_id}/${item?.meta?.connect_id}/${item?.meta?.stream_id}/${item?.meta?.student_id}/${item?.meta?.lesson_id}/${item?.meta?.step_id}`;
-                        } else if (user?.is_student && item?.type?.type === 'practical') {
-                            path = `/teaching/lessonView/${item?.meta?.lesson_id}/${item?.meta?.id_curricula}/${item?.meta?.stream_id}/${item?.meta?.step_id}`;
-                        }
-
-                        return (
-                            <div key={item?.id} className={`w-full flex flex-col justify-center shadow p-2 gap-1 sm:gap-2`}>
-                                <div className="w-full flex justify-between">
-                                    <Link className="cursor-pointer hover:underline" href={path}>
-                                        <b className="text-[var(--mainColor)] text-[12px] sm:text-[14px]">{item?.type?.title}</b>
-                                    </Link>
-                                    <span className="text-sm w-[11px] h-[11px] sm:w-[13px] sm:h-[13px] rounded-full bg-[var(--amberColor)]"></span>
-                                </div>
-
-                                {/* student message */}
-                                {user?.is_student && item?.type?.type === 'practical' && (
-                                    <b className="text-[13px] max-w-[350px] text-nowrap overflow-hidden text-ellipsis" title={item?.title}>
-                                        {item?.title}
-                                    </b>
-                                )}
-                                <p className="m-0 text-[11px] sm:text-[12px]">
-                                    {item?.from_user?.last_name} {item?.from_user?.name}
-                                </p>
-                                <div className="w-full relative flex">
-                                    <p className="absolute right-0 -top-3 text-[10px] sm:text-[12px] m-0">
-                                        {/* <MyDateTime createdAt={item?.created_at} options={options} /> */}
-                                        {/* '----' */}
-                                    </p>
-                                </div>
-                            </div>
-                        );
-                    })
-                ) : (
-                    <p className="text-center">Сообщений нет</p>
-                )}
-            </div>
-        );
-    };
-
-    const [notificationGroup, setNotificationGroup] = useState({ state: false, type: '' });
 
     if (themeNull) {
         return (
