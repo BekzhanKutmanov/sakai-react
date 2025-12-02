@@ -6,7 +6,7 @@ let url = '';
 
 export const fetchCourses = async (page: number | null, limit: number | null) => {
     try {
-        const res = await axiosInstance.get(`/v1/teacher/courses?page=${Number(page)}&limit=${''}`);
+        const res = await axiosInstance.get(`/v1/teacher/courses?page=${Number(page)}&limit=${limit}`);
         const data = await res.data;
 
         return data;

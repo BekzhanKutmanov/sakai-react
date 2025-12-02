@@ -37,7 +37,6 @@ export default function Course() {
     const { setMessage, setGlobalLoading, course, contextFetchCourse, setMainCourseId } = useContext(LayoutContext);
 
     const topRef = useRef<HTMLDivElement>(null);
-    const op = useRef(null);
     const media = useMediaQuery('(max-width: 640px)');
     const tableMedia = useMediaQuery('(max-width: 577px)');
 
@@ -155,7 +154,7 @@ export default function Course() {
 
     const handleFetchCourse = async (page = 1) => {
         setSkeleton(true);
-        const data = await fetchCourses(page, 0);
+        const data = await fetchCourses(page, 10);
         if (course) {
             setHasCourses(false);
             setValueCourses(course.data);

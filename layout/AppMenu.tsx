@@ -107,6 +107,11 @@ const AppMenu = () => {
                           to: '/'
                       },
                       {
+                          label: 'Панель управления',
+                          icon: 'pi pi-th-large',
+                          to: '/dashboard'
+                      },
+                      {
                           label: 'Курсы',
                           icon: 'pi pi-fw pi-book',
                           to: '/course'
@@ -200,6 +205,11 @@ const AppMenu = () => {
                       label: 'Главная страница',
                       icon: 'pi pi-home',
                       to: '/'
+                  },
+                  {
+                      label: 'Панель управления',
+                      icon: 'pi pi-th-large',
+                      to: '/dashboard'
                   },
                   {
                       label: 'Утвердить курсы',

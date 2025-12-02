@@ -81,7 +81,7 @@ export const LayoutProvider = ({ children }: ChildContainerProps) => {
     const [course, setCourses] = useState<{ current_page: number; total: number; per_page: number; data: myMainCourseType[] }>({ current_page: 1, total: 0, per_page: 10, data: [] });
 
     const contextFetchCourse = async (page: number) => {
-        const data = await fetchCourses(page, 0);
+        const data = await fetchCourses(page, 10);
 
         if (data?.courses) {
             // setCourses(data.courses.data);
