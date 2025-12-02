@@ -218,8 +218,8 @@ export default function StudentInfoCard({
     );
 
     const testCard = (
-        <div className="w-full flex items-center flex-col sm:flex-row py-1">
-            <div className="w-full flex items-center gap-2">
+        <div className="w-full flex sm:items-center flex-col sm:flex-row py-1">
+            <div className="w-1/2 flex items-center gap-2">
                 <div className="p-2 bg-[#c38598] shadow-xl min-w-[40px] min-h-[40px] w-[40px] h-[40px] flex justify-center items-center rounded">
                     <i className={`${icon} text-white`}></i>
                 </div>
@@ -229,30 +229,22 @@ export default function StudentInfoCard({
                     </Link>
                 </div>
             </div>
-            {/* <div className="w-1/2 sm:w-full text-sm">
-                <span>Балл:</span>{' '}
-                <span className="text-[var(--mainColor)]">
-                    {' '}
-                    {0} / {lessonItem?.score || 0}
-                </span>
-            </div>
-            <div className="w-full flex justify-end">{cheelseBtn('test')}</div> */}
-            <div className="w-full flex items-center justify-center sm:justify-end gap-2 sm:max-w-[300px]">
-                <div className="w-1/2 sm:w-full text-sm">
+            <div className="w-full flex items-center justify-center flex-col sm:flex-row sm:justify-end gap-2">
+                <div className="w-full text-sm flex items-center gap-1 justify-end">
                     <span>Балл:</span>{' '}
                     <span className="text-[var(--mainColor)]">
                         {' '}
                         {lessonItem?.my_score || 0} / {lessonItem?.score || 0}
                     </span>
                 </div>
-                <div className="w-full flex justify-end">{cheelseBtn('test')}</div>
+                <div className="w-full flex justify-end ">{cheelseBtn('test')}</div>
             </div>
         </div>
     );
 
     const practicaCard = (
-        <div className="w-full flex items-center flex-col sm:flex-row py-1">
-            <div className="w-full flex items-center gap-2">
+        <div className="w-full flex sm:items-center flex-col sm:flex-row py-1">
+            <div className="sm:w-1/2 flex items-center gap-2">
                 <div className="p-2 bg-[var(--yellowColor)] shadow-xl min-w-[40px] min-h-[40px] w-[40px] h-[40px] flex justify-center items-center rounded">
                     <i className={`${icon} text-white`}></i>
                 </div>
@@ -260,8 +252,8 @@ export default function StudentInfoCard({
                     Практическое задание
                 </Link>
             </div>
-            <div className="w-full flex items-center justify-center sm:justify-end gap-2 sm:max-w-[300px]">
-                <div className="w-1/2 sm:w-full text-sm">
+            <div className="w-full flex items-center justify-center flex-col sm:flex-row sm:justify-end gap-2">
+                <div className="w-full text-sm flex items-center gap-1 justify-end">
                     <span>Балл:</span>{' '}
                     <span className="text-[var(--mainColor)]">
                         {' '}

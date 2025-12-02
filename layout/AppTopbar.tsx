@@ -49,6 +49,8 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
         hour12: false // 24-часовой формат
     };
 
+    const copyBtnClassName = `text-white bg-[var(--greenColor)]`;
+
     const handleNotifications = async () => {
         const data = await getNotifications();
         if (data && Array.isArray(data)) {
@@ -149,7 +151,7 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                         );
                     })
                 ) : (
-                    <p className="text-center">Сообщений нет</p>
+                    <p className="text-center text-[13px]">Сообщений нет</p>
                 )}
             </div>
         );
@@ -179,19 +181,22 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                       {
                           label: '',
                           template: (
-                              <div className="flex items-center flex-col gap-1 text-sm">
+                              <div className="flex items-center gap-2 text-sm ml-4 mr-1 flex-wrap">
                                   <div className="flex gap-1">
-                                      <span className="text-[var(--titleColor)]">{user?.last_name}</span>
-                                      <span className="text-[var(--titleColor)]">{user?.name}</span>
+                                      <span className="text-[var(--titleColor)] text-[13px]">{user?.last_name}</span>
+                                      <span className="text-[var(--titleColor)] text-[13px]">{user?.name}</span>
                                   </div>
-                                  <span className="text-gray-500 text-[12px]">{user?.email}</span>
+                                  {user?.myedu_id && (
+                                      <small onClick={() => handleCopyClick(String(user.myedu_id))} className={`cursor-pointer p-1 rounded ${copyClickState ? copyBtnClassName : 'bg-[var(--mainBgColor)]'}`}>
+                                          {!copyClickState ? <span>ID: {user.myedu_id}</span> : <span className="min-w-[60px]">ID: Copy</span>}
+                                      </small>
+                                  )}
                               </div>
                           )
                       },
                       {
                           label: 'Выход',
                           icon: 'pi pi-sign-out',
-                          className: 'text-[12px]',
                           items: [],
                           command: () => {
                               window.location.href = '/auth/login';
@@ -235,23 +240,31 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
             ]
         },
         {
-            label: 'Старый Mooc',
+            // label: 'Старый Mooc',
             icon: '',
             items: [],
+            template: (
+                <div>
+                    <Link href={'https://oldmooc.oshsu.kg/'} target="_blank" className="flex text-[12px] text-[var(--bodyColor)]! py-1 hover:text-white! justify-center">
+                        Старый MOOC
+                    </Link>
+                </div>
+            ),
             url: 'https://oldmooc.oshsu.kg/'
         },
         {
-            label: 'Сайт ОшГУ',
+            // label: 'Сайт ОшГУ',
             icon: '',
             items: [],
+            template: (
+                <div>
+                    <Link href={'https://oshsu.kg'} target="_blank" className="flex text-[12px] text-[var(--bodyColor)]! py-1 hover:text-white! justify-center">
+                        Сайт ОшГУ
+                    </Link>
+                </div>
+            ),
             url: 'https://oshsu.kg'
         }
-        // {
-        //     label: 'Видеоинструкция',
-        //     icon: '',
-        //     items: [],
-        //     url: '/videoInstruct'
-        // },
     ];
 
     const mobileStudentMenu = [
@@ -263,19 +276,22 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                       {
                           label: '',
                           template: (
-                              <div className="flex items-center flex-col gap-1 text-sm">
+                              <div className="flex items-center gap-2 text-sm ml-4 mr-1 flex-wrap">
                                   <div className="flex gap-1">
-                                      <span className="text-[var(--titleColor)]">{user?.last_name}</span>
-                                      <span className="text-[var(--titleColor)]">{user?.name}</span>
+                                      <span className="text-[var(--titleColor)] text-[13px]">{user?.last_name}</span>
+                                      <span className="text-[var(--titleColor)] text-[13px]">{user?.name}</span>
                                   </div>
-                                  <span className="text-gray-500 text-[12px]">{user?.email}</span>
+                                  {user?.myedu_id && (
+                                      <small onClick={() => handleCopyClick(String(user.myedu_id))} className={`cursor-pointer p-1 rounded ${copyClickState ? copyBtnClassName : 'bg-[var(--mainBgColor)]'}`}>
+                                          {!copyClickState ? <span>ID: {user.myedu_id}</span> : <span className="min-w-[60px]">ID: Copy</span>}
+                                      </small>
+                                  )}
                               </div>
                           )
                       },
                       {
                           label: 'Выход',
                           icon: 'pi pi-sign-out',
-                          className: 'text-[12px]',
                           items: [],
                           command: () => {
                               window.location.href = '/auth/login';
@@ -315,15 +331,29 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
         },
 
         {
-            label: 'Старый Mooc',
+            // label: 'Старый Mooc',
             icon: '',
             items: [],
+            template: (
+                <div>
+                    <Link href={'https://oldmooc.oshsu.kg/'} target="_blank" className="flex text-[12px] text-[var(--bodyColor)]! py-1 hover:text-white! justify-center">
+                        Старый MOOC
+                    </Link>
+                </div>
+            ),
             url: 'https://oldmooc.oshsu.kg/'
         },
         {
-            label: 'Сайт ОшГУ',
+            // label: 'Сайт ОшГУ',
             icon: '',
             items: [],
+            template: (
+                <div>
+                    <Link href={'https://oshsu.kg'} target="_blank" className="flex text-[12px] text-[var(--bodyColor)]! py-1 hover:text-white! justify-center">
+                        Сайт ОшГУ
+                    </Link>
+                </div>
+            ),
             url: 'https://oshsu.kg'
         }
     ];
@@ -378,8 +408,6 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
             console.error('Не удалось скопировать текст: ', err);
         }
     };
-
-    const copyBtnClassName = `text-white bg-[var(--greenColor)]`;
 
     useEffect(() => {
         setTimeout(() => {
@@ -539,10 +567,8 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                                         {user?.last_name} {user?.name && user?.name[0] + '.'} {user?.father_name && user?.father_name.length > 1 && user?.father_name[0] + '.'}
                                     </span>
                                     {user?.myedu_id && (
-                                        <small onClick={()=> handleCopyClick(String(user.myedu_id))} className={`cursor-pointer p-1 rounded ${copyClickState ? copyBtnClassName : 'bg-[var(--mainBgColor)]'}`}>
-                                            {!copyClickState ? <span>ID: {user.myedu_id}</span>
-                                                : <span className='min-w-[60px]'>ID: Copy</span>
-                                            }
+                                        <small onClick={() => handleCopyClick(String(user.myedu_id))} className={`cursor-pointer p-1 rounded ${copyClickState ? copyBtnClassName : 'bg-[var(--mainBgColor)]'}`}>
+                                            {!copyClickState ? <span>ID: {user.myedu_id}</span> : <span className="min-w-[60px]">ID: Copy</span>}
                                         </small>
                                     )}
                                 </div>

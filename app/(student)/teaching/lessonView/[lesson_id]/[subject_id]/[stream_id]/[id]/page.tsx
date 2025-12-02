@@ -409,7 +409,7 @@ export default function LessonTest() {
                 <b className="text-[16px] sm:text-[18px] break-words">{practica?.content?.title}</b>
 
                 <div className="lesson-card-border shadow rounded p-2">
-                    {practica?.content?.description && <div className="p-2 sm:w-full md:w-[70%]" dangerouslySetInnerHTML={{ __html: practica?.content?.description }} />}
+                    {practica?.content?.description && <div className="sm:w-full md:w-[70%]" dangerouslySetInnerHTML={{ __html: practica?.content?.description }} />}
 
                     <div className="flex flex-col gap-2 w-full">
                         <div className="flex items-center gap-1">

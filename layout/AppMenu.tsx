@@ -470,7 +470,7 @@ const AppMenu = () => {
                             <b style={{ color: 'red', fontSize: '12px' }}>{errors.title?.message}</b>
                         </div>
                     </div>
-                    {/* <span className="w-[90%] cursor-pointer ml-1 text-[13px] sm:text-sm text-[var(--mainColor)] flex justify-end" onClick={() => setAdditional((prev) => !prev)}>
+                    <span className="w-[90%] cursor-pointer ml-1 text-[13px] sm:text-sm text-[var(--mainColor)] flex justify-end" onClick={() => setAdditional((prev) => !prev)}>
                         Дополнительно {additional ? '-' : '+'}
                     </span>
                     {additional && (
@@ -489,7 +489,7 @@ const AppMenu = () => {
                                 </div>
                             </div>
                         </>
-                    )} */}
+                    )}
                 </div>
             </FormModal>
 

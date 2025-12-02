@@ -54,12 +54,10 @@ const LoginPage = () => {
                                 const roleCheck = res.roles.find((i: { id_role: number }) => i.id_role);
                                 if (roleCheck) {
                                     setDepartament({ info: roleCheck.roles_name.info_ru, last_name: res.user?.last_name, name: res?.user.name, father_name: res.user?.father_name });
-                                    window.location.href = '/course';
-                                } else {
-                                    window.location.href = '/course';
                                 }
+                                window.location.href = '/dashboard';
                             } else {
-                                window.location.href = '/course';
+                                window.location.href = '/dashboard';
                             }
                         }
                         if (res?.user.is_student) {
