@@ -10,7 +10,7 @@ import { lessonType } from '@/types/lessonType';
 import { useParams } from 'next/navigation';
 import { Accordion, AccordionTab } from 'primereact/accordion';
 import { ProgressSpinner } from 'primereact/progressspinner';
-import { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 
 export default function StudentLesson() {
     // types
@@ -20,7 +20,17 @@ export default function StudentLesson() {
         streams: number[];
     }
 
-    interface CourseType { id: number; connections: { subject_type: string; id: number; user_id: number | null; id_stream: number }[]; title: string; description: string; user: { last_name: string; name: string; father_name: string }; lessons: lessonType[] }[]
+    interface CourseType {
+        id: number;
+        connections: { subject_type: string; id: number; user_id: number | null; id_stream: number }[];
+        title: string;
+        description: string;
+        user: { last_name: string; name: string; father_name: string };
+        lessons: lessonType[];
+    }
+    [];
+
+    // type HeaderTemplateOptions = Parameters<NonNullable<React.ComponentProps<typeof AccordionTab>['headerTemplate']>>[0];
 
     const { subject_id } = useParams();
     const params = new URLSearchParams();
@@ -59,9 +69,16 @@ export default function StudentLesson() {
 
     const handleMainLesson = async (lesson_id: number, stream_id: number) => {
         const data = await fetchMainLesson(lesson_id, stream_id);
+        console.log(data);
+
         // Возвращаем данные или null/пустой массив
         if (data && data.length > 0) {
             return data;
+        } else {
+            if (data?.response?.data && data?.response?.status === '400') {
+                setMessage({ state: true, value: { severity: 'error', summary: 'Ошибка!', detail: data?.response?.data?.message } });
+            }
+            setMessage({ state: true, value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' } });
         }
         return [];
     };
@@ -72,13 +89,15 @@ export default function StudentLesson() {
         return course.lessons[index]?.id;
     };
 
-    const handleTabChange = async (courseInside: CourseType[],courseId: number, e: any) => {
+    const handleTabChange = async (courseInside: CourseType[], courseId: number, e: any, sendActiveIndex: boolean) => {
         // 1. Обновление активного индекса (ОК)
-        setActiveIndexes((prev) => ({
-            ...prev,
-            [courseId]: e.index // e.index - это индекс темы (AccordionTab)
-        }));
-        setAccordionIndex({ index: e.index });
+        if(sendActiveIndex) {
+            setActiveIndexes((prev) => ({
+                ...prev,
+                [courseId]: e.index // e.index - это индекс темы (AccordionTab)
+            }))
+            setAccordionIndex({ index: e.index });
+        }
 
         const course = courseInside.find((c) => c.id === courseId);
 
@@ -90,8 +109,6 @@ export default function StudentLesson() {
 
             // 2. Вызываем новую handleMainLesson и получаем данные
             if (lessonId && stream) {
-                // Ожидаем массив данных или пустой массив
-
                 // 1. Устанавливаем статус загрузки для конкретного урока
                 setCourses((prevCourses) =>
                     prevCourses.map((c) => {
@@ -158,14 +175,20 @@ export default function StudentLesson() {
         subject?.streams.forEach((i) => params.append('streams[]', String(i)));
         subject?.course_ids.forEach((i) => params.append('course_ids[]', String(i)));
         const data = await fetchSubjects(params);
+        console.log(data);
         setSkeleton(true);
-
+        
         if (data && Array.isArray(data)) {
             setCourses(data);
             if (data && data?.length > 0) {
                 const courseId = data[0].id;
                 if (courseId) {
-                    handleTabChange(data, courseId, { index: 0 });
+                    console.log(data[0].lessons[0]);
+                    if(data[0].lessons && data[0].lessons[0]?.active){
+                        handleTabChange(data, courseId, { index: 0 }, true);
+                    } else {
+                        // handleTabChange(data, courseId, { index: 0 }, false);   
+                    }
                 }
             }
             setHasThemes(false);
@@ -253,8 +276,8 @@ export default function StudentLesson() {
                                         )}
                                     </div>
                                     <div>
-                                        <Accordion key={`${course.id}`} activeIndex={activeIndexes[course.id]} onTabChange={(e) => handleTabChange(courses, course.id, e)} multiple={false} expandIcon="" collapseIcon="">
-                                            {course?.lessons.map((lesson) => {
+                                        <Accordion key={`${course.id}`} activeIndex={activeIndexes[course.id]} className="my-accardion-icon" onTabChange={(e) => handleTabChange(courses, course.id, e, true)} multiple={false}>
+                                            {course?.lessons.map((lesson, idx) => {
                                                 const contentPresence = lesson?.steps?.filter((content) => content.content);
                                                 const sortedSteps = contentPresence?.sort((a, b) => {
                                                     const isAForum = a?.type?.name === 'forum';
@@ -270,7 +293,22 @@ export default function StudentLesson() {
                                                 });
 
                                                 return (
-                                                    <AccordionTab header={'Тема: ' + lesson.title} key={lesson.id} className="w-full p-accordion" style={{ width: '100%', backgroundColor: 'white' }}>
+                                                    <AccordionTab
+                                                        header={
+                                                            <>
+                                                                <span>{idx + 1}. Тема: {lesson.title}</span>
+                                                                {!lesson?.active && (
+                                                                    <div className='w-full flex justify-end items-center gap-1 mt-1 sm:m-o'>
+                                                                        <small>Доступен с:</small>
+                                                                        <small>{lesson?.from} - {lesson?.to}</small>
+                                                                    </div>
+                                                                )}
+                                                            </>
+                                                        }
+                                                        key={lesson.id}
+                                                        className={`w-full p-accordion my-accardion-icon ${!lesson?.active ? 'opacity-50 pointer-events-none' : ''}`}
+                                                        style={{ width: '100%', backgroundColor: 'white' }}
+                                                    >
                                                         <div className="flex flex-col gap-2">
                                                             {/* Используем lesson.steps, который был обновлен в handleTabChange */}
                                                             {lesson?.isLoadingSteps ? (
@@ -307,7 +345,7 @@ export default function StudentLesson() {
                                                                                     lesson={lesson.id}
                                                                                     subjectId={String(subject_id)}
                                                                                     chills={item?.chills}
-                                                                                    fetchProp={() => handleTabChange(courses, course.id, accordionIndex)}
+                                                                                    fetchProp={() => handleTabChange(courses, course.id, accordionIndex, true)}
                                                                                     contentId={item?.content?.id}
                                                                                     id_parent={item?.id_parent || null}
                                                                                     forumValueAdd={() => {

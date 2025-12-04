@@ -17,13 +17,19 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { lessonSchema } from '@/schemas/lessonSchema';
 import useErrorMessage from '@/hooks/useErrorMessage';
 import { Button } from 'primereact/button';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBookOpen } from '@fortawesome/free-solid-svg-icons';
 import { Calendar } from 'primereact/calendar';
-import { Tooltip } from 'primereact/tooltip';
 import { Nullable } from 'primereact/ts-helpers';
+import { addLocale } from 'primereact/api';
 
 const AppMenu = () => {
+    // types
+    interface LessonInfoUi {
+        title: string;
+        sequence_number: number | null;
+        from: Nullable<Date> | null;
+        to: Nullable<Date> | null;
+    }
+
     const { user, setDeleteQuery, setUpdateeQuery, contextFetchThemes, contextThemes, contextFetchStudentThemes, contextStudentThemes, departament, contextNewStudentThemes } = useContext(LayoutContext);
     interface test {
         label: string;
@@ -42,6 +48,7 @@ const AppMenu = () => {
         mode: 'onChange'
     });
 
+    const deadlineParams = new URLSearchParams();
     const router = useRouter();
     const location = usePathname();
     const pathname = location;
@@ -54,7 +61,7 @@ const AppMenu = () => {
     const [selectId, setSelectId] = useState<number | null>(null);
     const [visible, setVisisble] = useState(false);
     const [themeAddvisible, setThemeAddVisisble] = useState(false);
-    const [editingLesson, setEditingLesson] = useState<{ title: string; sequence_number: number | null } | null>(null);
+    const [editingLesson, setEditingLesson] = useState<LessonInfoUi | null>(null);
     const [themeValue, setThemeValue] = useState<{ title: string; sequence_number: number | null }>({ title: '', sequence_number: null });
     const [courseInfo, setCourseInfo] = useState<{ title: string } | null>(null);
     const [forDepartamentLength, setForDepartamentLength] = useState(false);
@@ -66,6 +73,21 @@ const AppMenu = () => {
 
     const showError = useErrorMessage();
     const { setMessage } = useContext(LayoutContext);
+
+    const ruLocale = {
+        firstDayOfWeek: 1, // Понедельник
+        dayNames: ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'],
+        dayNamesShort: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
+        dayNamesMin: ['В', 'П', 'В', 'С', 'Ч', 'П', 'С'],
+        monthNames: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
+        monthNamesShort: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'],
+        today: 'Сегодня',
+        clear: 'Очистить',
+        dateFormat: 'dd.mm.yy', // Ваш предпочтительный формат
+        weekHeader: 'Нд'
+    };
+
+    addLocale('ru', ruLocale);
 
     const byStatus: AppMenuItem[] = user?.is_working
         ? pathname.startsWith('/course/')
@@ -260,6 +282,7 @@ const AppMenu = () => {
 
     const handleCourseInfo = async () => {
         const data = await fetchCourseInfo(Number(course_Id));
+        console.warn(data);
         if (data && data?.success) {
             setCourseInfo(data.course);
         }
@@ -273,8 +296,10 @@ const AppMenu = () => {
 
     const editing = async (id: number) => {
         const data = await fetchLessonShow(id);
+        console.log(data);
+
         if (data.lesson) {
-            setEditingLesson({ title: data.lesson.title, sequence_number: data.lesson.sequence_number });
+            setEditingLesson({ title: data.lesson.title, sequence_number: data.lesson.sequence_number, from: data.lesson.from, to: data.lesson.to });
         } else {
             setMessage({
                 state: true,
@@ -291,11 +316,15 @@ const AppMenu = () => {
         setEditingLesson(null);
         setSelectId(null);
         setAdditional(false);
+        setEndDeadline(null);
+        setStartDeadline(null);
     };
 
     // add theme
     const handleAddTheme = async () => {
-        const data = await addThemes(Number(course_Id), themeValue?.title ? themeValue?.title : '', themeValue.sequence_number);
+        const deadline = { from: startDeadline, to: endDeadline };
+
+        const data = await addThemes(Number(course_Id), themeValue?.title ? themeValue?.title : '', themeValue.sequence_number, deadline);
         if (data?.success) {
             contextFetchThemes(Number(course_Id), id_kafedra ? Number(id_kafedra) : null);
             clearValues();
@@ -351,7 +380,9 @@ const AppMenu = () => {
 
     // update document
     const handleUpdate = async () => {
-        const data = await updateTheme(Number(course_Id), selectId, editingLesson?.title ? editingLesson?.title : '', editingLesson?.sequence_number ? editingLesson?.sequence_number : null);
+        const deadline = { from: editingLesson?.from, to: editingLesson?.to };
+
+        const data = await updateTheme(Number(course_Id), selectId, editingLesson?.title ? editingLesson?.title : '', editingLesson?.sequence_number ? editingLesson?.sequence_number : null, deadline);
         if (data?.success) {
             setUpdateeQuery(true);
             contextFetchThemes(Number(course_Id), id_kafedra ? Number(id_kafedra) : null);
@@ -440,6 +471,10 @@ const AppMenu = () => {
         }
     }, [departament, pathname]);
 
+    useEffect(() => {
+        console.log(editingLesson);
+    }, [editingLesson]);
+
     return (
         <MenuProvider>
             <FormModal
@@ -485,16 +520,32 @@ const AppMenu = () => {
                     </span>
                     {additional && (
                         <>
-                            <p className="text-sm sm:text-[16px] text-center m-0">Уроки будут доступны только до указанного срока.</p>
+                            <p className="text-sm sm:text-[16px] py-2 text-center">Уроки будут доступны только до указанного срока</p>
                             <div className="w-full flex flex-col">
                                 <div className="w-full flex flex-col sm:flex-row justify-evenly items-center gap-1">
                                     <div className="flex flex-col items-center">
                                         <span className="text-sm">Начало</span>
-                                        <Calendar value={startDeadline} className="p-inputtext-sm" onChange={(e) => setStartDeadline(e.value)} />
+                                        <Calendar
+                                            value={editingLesson ? editingLesson.from : null}
+                                            locale="ru" // Указываем русскую локаль
+                                            dateFormat="dd.mm.yy"
+                                            className="p-inputtext-sm"
+                                            onChange={(e) => {
+                                                setEditingLesson((prev) => prev && { ...prev, from: e.target.value });
+                                            }}
+                                        />
                                     </div>
                                     <div className="flex flex-col items-center">
                                         <span className="text-sm">Конец</span>
-                                        <Calendar value={endDeadline} className="p-inputtext-sm" onChange={(e) => setEndDeadline(e.value)} />
+                                        <Calendar
+                                            value={editingLesson ? editingLesson.to : null}
+                                            locale="ru" // Указываем русскую локаль
+                                            dateFormat="dd.mm.yy"
+                                            className="p-inputtext-sm"
+                                            onChange={(e) => {
+                                                setEditingLesson((prev) => prev && { ...prev, to: e.target.value });
+                                            }}
+                                        />
                                     </div>
                                 </div>
                             </div>
@@ -538,26 +589,38 @@ const AppMenu = () => {
                         />
                         <b style={{ color: 'red', fontSize: '12px' }}>{errors.title?.message}</b>
                     </div>
-                    {/* <span className="w-[90%] cursor-pointer ml-1 text-[13px] sm:text-sm text-[var(--mainColor)] flex justify-end" onClick={() => setAdditional((prev) => !prev)}>
+                    <span className="w-[90%] cursor-pointer ml-1 text-[13px] sm:text-sm text-[var(--mainColor)] flex justify-end" onClick={() => setAdditional((prev) => !prev)}>
                         Дополнительно {additional ? '-' : '+'}
                     </span>
                     {additional && (
                         <>
-                            <p className="text-[14px] sm:text-[16px] text-center m-0">Уроки будут доступны только до указанного срока.</p>
+                            <p className="text-sm sm:text-[16px] py-2 text-center">Уроки будут доступны только до указанного срока</p>
                             <div className="w-full flex flex-col">
                                 <div className="w-full flex flex-col sm:flex-row justify-evenly items-center gap-1">
                                     <div className="flex flex-col items-center">
                                         <span className="text-sm">Начало</span>
-                                        <Calendar value={startDeadline} className="p-inputtext-sm" onChange={(e) => setStartDeadline(e.value)} />
+                                        <Calendar
+                                            value={startDeadline}
+                                            locale="ru" // Указываем русскую локаль
+                                            dateFormat="dd.mm.yy"
+                                            className="p-inputtext-sm"
+                                            onChange={(e) => setStartDeadline(e.value)}
+                                        />
                                     </div>
                                     <div className="flex flex-col items-center">
                                         <span className="text-sm">Конец</span>
-                                        <Calendar value={endDeadline} className="p-inputtext-sm" onChange={(e) => setEndDeadline(e.value)} />
+                                        <Calendar
+                                            value={endDeadline}
+                                            locale="ru" // Указываем русскую локаль
+                                            dateFormat="dd.mm.yy"
+                                            className="p-inputtext-sm"
+                                            onChange={(e) => setEndDeadline(e.value)}
+                                        />
                                     </div>
                                 </div>
                             </div>
                         </>
-                    )} */}
+                    )}
                 </div>
             </FormModal>
 

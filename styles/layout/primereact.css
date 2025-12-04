@@ -18,11 +18,11 @@
 
 /* В вашем глобальном или локальном CSS-файле */
 .p-accordion .p-accordion-header .p-accordion-toggle-icon {
-    /* display: none !important;  */
+    font-size: 6px;
 }
 /* Возможно, также потребуется скорректировать отступ, если он остается */
 .p-accordion .p-accordion-header-link {
-    padding-left: 1rem; /* Пример: добавьте padding, если он пропал из-за иконки */
+    /* padding-left: 1rem;  */
 }
 
 .attendance-table .p-datatable-thead > tr > th {

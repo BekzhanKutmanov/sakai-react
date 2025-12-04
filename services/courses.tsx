@@ -1,6 +1,7 @@
 import { CourseCreateType } from '@/types/courseCreateType';
 import { lessonStateType } from '@/types/lessonStateType';
 import axiosInstance from '@/utils/axiosInstance';
+import { Nullable } from 'primereact/ts-helpers';
 
 let url = '';
 
@@ -96,13 +97,31 @@ export const fetchCourseInfo = async (id: number | null) => {
     }
 };
 
-export const addThemes = async (id: number, title: string, sequence_number: number | null) => {
-    const formData = new FormData();
-    formData.append('title', title);
-    formData.append('sequence_number', String(sequence_number));
+export const addThemes = async (course_id: number, title: string, sequence_number: number | null, deadline: { from: Nullable<Date>; to: Nullable<Date> }) => {
+    // сделал функцию убирающую часы , минуты... оставляя только дату. Из за того что на сервер отправляется один день раньше
+    const getFormattedDate = (date: Nullable<Date>) => {
+        if (!date) return null;
+
+        // Получаем компоненты даты из локального объекта
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0'); // Месяцы с 0 до 11, поэтому +1
+        const day = String(date.getDate()).padStart(2, '0');
+
+        return `${year}-${month}-${day}`;
+    };
+
+    const deadlineStart = getFormattedDate(deadline?.from);
+    const deadlineEnd = getFormattedDate(deadline?.to);
+    const payload = {
+        course_id,
+        title,
+        sequence_number: sequence_number || 0,
+        deadline: { from: deadlineStart, to: deadlineEnd }
+    };
 
     try {
-        const res = await axiosInstance.post(`/v1/teacher/lessons/store?course_id=${id}&title=${title}&sequence_number=${sequence_number}`, formData, {
+        // const res = await axiosInstance.post(`/v1/teacher/lessons/store?course_id=${course_id}&title=${title}&sequence_number=${sequence_number}&deadline=${deadline}`, formData, {
+        const res = await axiosInstance.post(`/v1/teacher/lessons/store`, payload, {
             headers: {
                 'Content-Type': 'multipart/form-data'
             }
@@ -124,7 +143,7 @@ export const fetchThemes = async (id: number | null, id_kafedra: number | null) 
 
         const data = await res.data;
         console.log('COURSE', data);
-        
+
         return data;
     } catch (err) {
         console.log('Ошибка при получении темы', err);
@@ -132,15 +151,31 @@ export const fetchThemes = async (id: number | null, id_kafedra: number | null) 
     }
 };
 
-export const updateTheme = async (course_id: number | null, theme_id: number | null, title: string, sequence_number: number | null) => {
-    console.log(course_id, title, sequence_number);
+export const updateTheme = async (course_id: number | null, lesson_id: number | null, title: string, sequence_number: number | null, deadline: { from: Nullable<Date>; to: Nullable<Date> }) => {
+    // сделал функцию убирающую часы , минуты... оставляя только дату. Из за того что на сервер отправляется один день раньше
+    const getFormattedDate = (date: Nullable<Date>) => {
+        if (!date) return null;
 
-    const formData = new FormData();
-    formData.append('title', title);
-    formData.append('sequence_number', String(sequence_number));
+        // Получаем компоненты даты из локального объекта
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0'); // Месяцы с 0 до 11, поэтому +1
+        const day = String(date.getDate()).padStart(2, '0');
+
+        return `${year}-${month}-${day}`;
+    };
+
+    const deadlineStart = getFormattedDate(deadline?.from);
+    const deadlineEnd = getFormattedDate(deadline?.to);
+    const payload = {
+        course_id,
+        lesson_id,
+        title,
+        sequence_number: sequence_number || 0,
+        deadline: { from: deadlineStart, to: deadlineEnd }
+    };
 
     try {
-        const res = await axiosInstance.post(`/v1/teacher/lessons/update?course_id=${course_id}&title=${title}&lesson_id=${theme_id}&sequence_number=${sequence_number}`, formData, {
+        const res = await axiosInstance.post(`/v1/teacher/lessons/update`, payload, {
             headers: {
                 'Content-Type': 'multipart/form-data'
             }
@@ -353,7 +388,7 @@ export const publishCourse = async (id_kafedra: number, id_teacher: number | nul
             }
         ]
     };
-    
+
     try {
         const res = await axiosInstance.post(`/v1/teacher/controls/department/course/status`, data);
 
@@ -364,11 +399,11 @@ export const publishCourse = async (id_kafedra: number, id_teacher: number | nul
     }
 };
 
-export const veryfyCourse = async (value: {course_id: number, status: number}) => {
+export const veryfyCourse = async (value: { course_id: number; status: number }) => {
     const formData = new FormData();
-    formData.append('course_id', String(value.course_id))
-    formData.append('status', String(value.status))
-    
+    formData.append('course_id', String(value.course_id));
+    formData.append('status', String(value.status));
+
     try {
         const res = await axiosInstance.post(`/v1/teacher/courses/send/verify`, formData);
 

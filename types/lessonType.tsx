@@ -16,4 +16,7 @@ export interface lessonType {
     cover_url?: string; 
     link?:string;
     is_opened?: boolean
+    active: boolean;
+    from: string;
+    to: string;
 }

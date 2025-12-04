@@ -48,41 +48,8 @@ export default function Dashboard() {
         setSkeleton(false);
     };
 
-    const handleVideoCall = (value: string | null) => {
-        if (!value) {
-            setMessage({
-                state: true,
-                value: { severity: 'error', summary: 'Ошибка при обработке видео', detail: '' }
-            });
-        }
-
-        const url = new URL(typeof value === 'string' ? value : '');
-        let videoId = null;
-
-        if (url.hostname === 'youtu.be') {
-            // короткая ссылка, видео ID — в пути
-            videoId = url.pathname.slice(1); // убираем первый слеш
-        } else if (url.hostname === 'www.youtube.com' || url.hostname === 'youtube.com') {
-            // стандартная ссылка, видео ID в параметре v
-            videoId = url.searchParams.get('v');
-        }
-
-        if (!videoId) {
-            setMessage({
-                state: true,
-                value: { severity: 'error', summary: 'Ошибка при обработке видео', detail: '' }
-            });
-            return null; // не удалось получить ID
-        }
-        // return `https://www.youtube.com/embed/${videoId}`;
-        setVideoLink(`https://www.youtube.com/embed/${videoId}`);
-        // setVideoCall(true);
-        // setVisisble(true);
-    };;
-
     useEffect(() => {
         hanldeTeacherDashboard();
-        handleVideoCall('https://youtu.be/9j9vUpNrgDM?si=nqk6tX5JPCyr7znv');
     }, []);
 
     if(!user?.is_student){
@@ -170,19 +137,6 @@ export default function Dashboard() {
                 )}
     
                 <div className="flex flex-col gap-4 items-center">
-                    {/* video instruct */}
-                    <div className="w-full flex flex-col justify-center items-center main-bg p-2 bg-white shadow">
-                        <iframe
-                            className="w-full h-[200px] md:h-[400px]"
-                            // src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1"
-                            src={videoLink}
-                            title="YouTube video player"
-                            frameBorder="0"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                            allowFullScreen
-                        ></iframe>
-                    </div>
-    
                     {/* activity */}
                     <div className="w-full main-bg p-2">
                         <ActivityPage value={contribution} recipient="Активность преподавателя" userInfo={null} />

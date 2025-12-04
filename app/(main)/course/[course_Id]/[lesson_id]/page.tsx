@@ -31,16 +31,14 @@ export default function LessonStep() {
     const prevLessonsRef = useRef<Array<{ id: number; title: string }> | null>(null);
     const prevStepsRef = useRef<mainStepsType[]>([]);
 
-    const [courseInfo, setCourseInfo] = useState<{ title: string } | null>(null);
-    const [lessonInfoState, setLessonInfoState] = useState<{ title: string; documents_count: string; usefullinks_count: string; videos_count: string } | null>(null);
     const media = useMediaQuery('(max-width: 640px)');
     const { user, setMessage, contextFetchThemes, contextThemes, deleteQuery } = useContext(LayoutContext);
     const showError = useErrorMessage();
 
+    const [lessonInfoState, setLessonInfoState] = useState<{ title: string; documents_count: string; usefullinks_count: string; videos_count: string; from: string; to: string } | null>(null);
     const [formVisible, setFormVisible] = useState(false);
     const [types, setTypes] = useState<{ id: number; title: string; name: string; logo: string }[]>([]);
     const [steps, setSteps] = useState<mainStepsType[]>([]);
-    const [dndSteps, setDndSteps] = useState<mainStepsType[]>([]);
     const [element, setElement] = useState<{ content: any | null; step: mainStepsType } | null>(null);
     const [selectedId, setSelectId] = useState<number | null>(null);
     const [hasSteps, setHasSteps] = useState(false);
@@ -59,23 +57,14 @@ export default function LessonStep() {
         router.replace(`/course/${course_id}/${lessonId ? lessonId : null}`);
     };
 
-    const handleCourseInfo = async () => {
-        setSkeleton(true);
-        const data = await fetchCourseInfo(Number(course_id));
-
-        if (data && data?.success) {
-            setSkeleton(false);
-            setCourseInfo(data.course);
-        }
-    };
-
     const handleShow = async (LessonId: number | null) => {
         setSkeleton(true);
         const data = await fetchLessonShow(LessonId);
+        console.log(data);
 
         if (data?.lesson) {
             setSkeleton(false);
-            setLessonInfoState({ title: data.lesson.title, videos_count: data.lesson.videos_count, usefullinks_count: data.lesson.usefullinks_count, documents_count: data.lesson.documents_count });
+            setLessonInfoState({ title: data.lesson.title, videos_count: data.lesson.videos_count, usefullinks_count: data.lesson.usefullinks_count, documents_count: data.lesson.documents_count, from: data.lesson.from, to: data.lesson.to });
         } else {
             setSkeleton(false);
             setMessage({
@@ -216,7 +205,6 @@ export default function LessonStep() {
 
     const handleDrop = (e: any, index: number) => {
         const startI = e.dataTransfer.getData('index');
-        console.log('Отпустили в: ', startI, index);
 
         if (startI !== index) {
             const newStepsPosition = [];
@@ -242,7 +230,6 @@ export default function LessonStep() {
         console.log(secuence);
 
         if (secuence?.success) {
-            alert('true')
             handleFetchSteps(lesson_id);
             setMessage({
                 state: true,
@@ -319,7 +306,6 @@ export default function LessonStep() {
     }, [steps]);
 
     useEffect(() => {
-        handleCourseInfo();
         if (lesson_id) {
             handleShow(lesson_id);
             changeUrl(lesson_id);
@@ -332,8 +318,11 @@ export default function LessonStep() {
 
     // заменяем первый useEffect
     useEffect(() => {
+        console.log('lkfjs ', contextThemes);
+        
         const lessons = contextThemes?.lessons?.data ?? [];
-
+        // console.log(lessons);
+        
         // делаем "снимок" важных полей (id + title)
         const snapshot = lessons.map((l: any) => ({ id: l.id, title: l.title ?? '' }));
         const prev = prevLessonsRef.current;
@@ -372,7 +361,6 @@ export default function LessonStep() {
             // можно аккуратно обновить отображение (handleShow) — только если у нас реально поменялся title
             const prevSelected = prev?.find((p) => p.id === lesson_id);
             const currSelected = snapshot.find((p: { id: number }) => p.id === lesson_id);
-
             if (lesson_id && prevSelected && currSelected && prevSelected.title !== currSelected.title) {
                 // вызываем только обновление показа — не трогаем fetchSteps, если id тот же
                 handleShow(lesson_id);
@@ -426,6 +414,16 @@ export default function LessonStep() {
                 <h2 style={{ color: 'white', fontSize: media ? '22px' : '26px', textAlign: 'center' }} className="w-full break-words">
                     {lessonInfoState?.title}
                 </h2>
+                {lessonInfoState?.from && lessonInfoState?.to && (
+                    <div className="w-full flex justify-start gap-1 items-center text-[12px]" title="Этот урок будет доступен до определённой даты. После окончания срока доступ к материалам будет закрыт">
+                        <div className="flex gap-1 items-center p-1 bg-[var(--borderBottomColor)] rounded text-black">
+                            <span>Доступен с:</span>
+                            {lessonInfoState?.from}
+                            <span>-</span>
+                            {lessonInfoState?.to}
+                        </div>
+                    </div>
+                )}
                 {media && contextThemes && contextThemes?.max_sum_score ? (
                     <div className="flex justify-center gap-1 items-center">
                         <span>Балл за курс</span>
@@ -477,8 +475,6 @@ export default function LessonStep() {
     };
 
     const handleDragStart = (id: number | string) => {
-        console.log('Перетаскивается элемент с id:', id);
-        // здесь можно, например, сохранить id в состояние
         setDraggedId(id);
     };
 
@@ -564,7 +560,7 @@ export default function LessonStep() {
             <div className="flex gap-2 mt-4 items-end">
                 {hasSteps ? (
                     <div className="flex items-center gap-4">
-                        <div onClick={handleFetchTypes} className="cursor-pointer w-[54px] h-[54px] sm:w-[54px] sm:h-[54px] rounded animate-step"></div>
+                        <div onClick={handleFetchTypes} className="cursor-pointer w-[40px] h-[40px] sm:w-[54px] sm:h-[54px] rounded animate-step"></div>
                     </div>
                 ) : (
                     <div className="flex items-center relative max-w-[550px] sm:max-w-[800px] overflow-x-auto scrollbar-thin">

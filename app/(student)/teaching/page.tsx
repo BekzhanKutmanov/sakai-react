@@ -46,7 +46,7 @@ export default function Teaching() {
     const handleFetchLessons = async () => {
         setSkeleton(true);
         const data = await fetchItemsLessons();
-
+        
         if (data && Object.keys(data).length > 0) {
             // валидность проверить
             setLessons(data);
@@ -136,7 +136,6 @@ export default function Teaching() {
     useEffect(() => {
         handleFetchLessons();
         handleFetchConnectId();
-
     }, []);
 
     return (
