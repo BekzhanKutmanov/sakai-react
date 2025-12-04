@@ -81,7 +81,7 @@ export default function LessonTest() {
     // fetch lessons
     const handleFetchLessons = async () => {
         const data = await fetchItemsLessons();
-
+        
         if (data) {
             // валидность проверить
             setLessons(data);
@@ -97,11 +97,8 @@ export default function LessonTest() {
     };
 
     const handleStatusView = async (notification_id: number | null) => {
-        console.log(notification_id);
         if (notification_id) {
             const data = await statusView(Number(notification_id));
-            console.log(data);
-
             setContextNotificationId(null);
         }
     };
@@ -312,6 +309,9 @@ export default function LessonTest() {
                 return item?.lessons.find((j) => {
                     if (j?.id === Number(lesson_id)) {
                         setLessonName(j?.title || '');
+
+                        console.warn('LESSON: ', j);
+                        console.warn('LESSONS: ', item.lessons);
                     }
                     return j?.id === Number(lesson_id);
                 });
