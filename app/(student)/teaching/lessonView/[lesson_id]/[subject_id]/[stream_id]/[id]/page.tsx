@@ -9,7 +9,7 @@ import useErrorMessage from '@/hooks/useErrorMessage';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { LayoutContext } from '@/layout/context/layoutcontext';
 import { statusView } from '@/services/notifications';
-import { fetchItemsLessons, fetchStudentSteps, fetchSubjects, stepPractica, stepTest } from '@/services/studentMain';
+import { fetchItemsLessons, fetchMainLesson, fetchStudentSteps, fetchSubjects, stepPractica, stepTest } from '@/services/studentMain';
 import { docValueType } from '@/types/docValueType';
 import { lessonType } from '@/types/lessonType';
 import { mainStepsType } from '@/types/mainStepType';
@@ -17,6 +17,8 @@ import { useParams } from 'next/navigation';
 import { Button } from 'primereact/button';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import { useContext, useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { StepApi } from '@/types/Step/StepApi/StepApi';
 
 export default function LessonTest() {
     // types
@@ -26,9 +28,22 @@ export default function LessonTest() {
         streams: number[];
     }
 
+    interface LessonNavigationUi {
+        lesson: lessonType;
+        lessons: lessonType[];
+    }
+
+    interface StepNavigationUi {
+        stepsLength: number;
+        currentStepPos: number;
+        nextStep: StepApi;
+        prevStep: StepApi;
+    }
+
     const { lesson_id, subject_id, stream_id, id } = useParams();
     const params = new URLSearchParams();
 
+    const router = useRouter();
     const media = useMediaQuery('(max-width: 640px)');
     const showError = useErrorMessage();
     const { setMessage, setContextNewStudentThemes, contextNotificationId, setContextNotificationId } = useContext(LayoutContext);
@@ -48,6 +63,11 @@ export default function LessonTest() {
         1: { semester: { name_kg: '' } }
     });
     const [lessonName, setLessonName] = useState('');
+    const [lessonNavigation, setLessonNavigation] = useState<LessonNavigationUi | null>(null);
+    const [stepNavigation, setStepNavigation] = useState<StepNavigationUi | null>(null);
+    const [nextLesson, setNextLesson] = useState<lessonType | null>(null);
+    const [prevLesson, setPrevLesson] = useState<lessonType | null>(null);
+    const [navigationStepId, setNavigationStepId] = useState<number | null>(null);
     const [courseInfo, setCoursesInfo] = useState<{ title: string; description: string; image: string } | null>(null);
     const [main_id, setMain_id] = useState<predmetType | null>(null);
     const [courses, setCourses] = useState<
@@ -81,7 +101,7 @@ export default function LessonTest() {
     // fetch lessons
     const handleFetchLessons = async () => {
         const data = await fetchItemsLessons();
-        
+
         if (data) {
             // валидность проверить
             setLessons(data);
@@ -236,14 +256,40 @@ export default function LessonTest() {
         }
     };
 
-    useEffect(() => {
-        handleFetchLessons();
-        handleStep();
+    // Вызываем список шагов
+    const handleMainLesson = async (lesson_id: number, stream_id: number) => {
+        const data = await fetchMainLesson(lesson_id, stream_id);
+        console.log(data);
 
-        if (contextNotificationId && contextNotificationId != null) {
-            handleStatusView(contextNotificationId);
+        // Возвращаем данные или null/пустой массив
+        if (data && data.length > 0) {
+            return data;
+        } else {
+            setMessage({ state: true, value: { severity: 'error', summary: 'Ошибка!', detail: 'Тема не доступна' } });
+            return [];
         }
-    }, []);
+    };
+
+    // Вызываем список шагов для prev , next темы
+    const handleLessonRouterPush = async (lesson_id: number, stream_id: number) => {
+        const data: any = await handleMainLesson(lesson_id, stream_id);
+        if (data && data.length > 0) {
+            // пока состояние не используется
+            setNavigationStepId(data[0]?.id);
+            if (data[0]?.id) router.push(`/teaching/lessonView/${lesson_id}/${subject_id}/${stream_id}/${data[0].id}`);
+        } else {
+            setMessage({ state: true, value: { severity: 'error', summary: 'Ошибка!', detail: 'Тема не доступна' } });
+        }
+    };
+
+    // Редирект в новый шаг от навигации шагов
+    // const handleStepRouterPush = async (stepId: number, stream_id: number) => {
+    //         setNavigationStepId(data[0]?.id);
+    //         if (data[0]?.id)
+    //     } else {
+    //         setMessage({ state: true, value: { severity: 'error', summary: 'Ошибка!', detail: 'Тема не доступна' } });
+    //     }
+    // };
 
     useEffect(() => {
         console.log('Step ', steps);
@@ -309,9 +355,7 @@ export default function LessonTest() {
                 return item?.lessons.find((j) => {
                     if (j?.id === Number(lesson_id)) {
                         setLessonName(j?.title || '');
-
-                        console.warn('LESSON: ', j);
-                        console.warn('LESSONS: ', item.lessons);
+                        setLessonNavigation({ lessons: item.lessons, lesson: j });
                     }
                     return j?.id === Number(lesson_id);
                 });
@@ -320,7 +364,7 @@ export default function LessonTest() {
                 setContextNewStudentThemes(forLesson?.lessons);
             }
             console.log(forLesson);
-            
+
             setCoursesInfo(forLesson || null);
         }
     }, [courses]);
@@ -342,6 +386,75 @@ export default function LessonTest() {
         }
     }, [test]);
 
+    useEffect(() => {
+        if (lessonNavigation) {
+            console.log('LESSON NAV ', lessonNavigation);
+            for (let i = 0; i < lessonNavigation?.lessons?.length; i++) {
+                const el: lessonType = lessonNavigation?.lessons[i];
+                if (el?.id === lessonNavigation?.lesson?.id) {
+                    if (lessonNavigation?.lessons[i + 1]) {
+                        setNextLesson(lessonNavigation.lessons[i + 1]);
+                    } else {
+                        setNextLesson(null);
+                    }
+
+                    if (lessonNavigation?.lessons[i - 1]) {
+                        setPrevLesson(lessonNavigation.lessons[i - 1]);
+                    } else {
+                        setPrevLesson(null);
+                    }
+                }
+            }
+        }
+    }, [lessonNavigation]);
+
+    useEffect(() => {
+        console.warn(`StepNavigation `, stepNavigation);
+    }, [stepNavigation]);
+
+    useEffect(() => {
+        handleFetchLessons();
+        handleStep();
+
+        if (contextNotificationId && contextNotificationId != null) {
+            handleStatusView(contextNotificationId);
+        }
+
+        const stepSend = async () => {
+            if (lesson_id && stream_id) {
+                const data = await handleMainLesson(Number(lesson_id), Number(stream_id)); // steps
+                console.log(data);
+                if (data) {
+                    for (let i = 0; i < data?.length; i++) {
+                        const step: StepApi = data[i];
+                        if (step?.id === Number(id)) {
+                            console.log('STEP NAV ', data);
+                            console.log(step);
+
+                            const stepsLength = data.length;
+                            const currentStepPos = i + 1;
+                            const nextStep = data[i + 1] || null;
+                            const prevStep = data[i - 1] || null;
+
+                            setStepNavigation((prev) => {
+                                // Если prev — null, создаем новое состояние.
+                                // Если prev существует, используем его для объединения.
+                                return {
+                                    ...(prev || {}), // Используем существующее или пустой объект
+                                    stepsLength,
+                                    currentStepPos,
+                                    nextStep,
+                                    prevStep
+                                };
+                            });
+                        }
+                    }
+                }
+            }
+        };
+        stepSend();
+    }, []);
+
     const docSection = (
         <div className="flex flex-col gap-2">
             <div className="p-2 mt-2 mb-4 w-full flex flex-col gap-3 items-center">
@@ -361,7 +474,7 @@ export default function LessonTest() {
                     {document?.content?.document_path && (
                         <a href={document?.content?.document_path} download target="_blank" rel="noopener noreferrer">
                             {' '}
-                            <Button icon="pi pi-file-arrow-up"  className="mini-button" />
+                            <Button icon="pi pi-file-arrow-up" className="mini-button" />
                         </a>
                     )}
                     {progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}
@@ -614,35 +727,91 @@ export default function LessonTest() {
     );
 
     return (
-        <div className="main-bg min-h-[100vh]">
-            <div className={`w-full bg-[var(--titleColor)] relative text-white p-4 md:p-3 pb-4`}>
-                <div className="flex flex-col gap-2 items-center">
-                    <div className={`w-full flex items-center gap-2 ${courseInfo?.image && courseInfo?.image.length > 0 ? 'justify-around flex-col sm:flex-row' : 'justify-center'} items-center`}>
-                        <div className="sm:w-1/2 flex flex-col gap-2 items-center">
-                            <h1 className="m-0" style={{ color: 'white', fontSize: media ? '24px' : '28px', textAlign: 'center', margin: '0' }}>
-                                {courseInfo?.title}
-                            </h1>
-                            <div className="flex items-center justify-end gap-1 flex-col sm:flex-row mt-2">
-                                <h3 className="text-white m-0 sm:text-lg">Тема: </h3>
-                                <h3 className="text-white text-[16px] m-0 sm:text-[18px]">{lessonName ? lessonName : '------'}</h3>
-                            </div>
-                            <span className="w-[90%] break-words text-center">{courseInfo?.description} </span>
+        <div className="main-bg min-h-[100vh] w-full relative flex flex-col gap-3 justify-between">
+            <div className="flex flex-col">
+                {stepNavigation && stepNavigation.currentStepPos ? (
+                    <div className="w-full p-1 shadow-[var(--bottom-shadow)] flex items-center gap-2 justify-center">
+                        {stepNavigation?.prevStep && (
+                            <i
+                                onClick={() => {
+                                    router.push(`/teaching/lessonView/${lesson_id}/${subject_id}/${stream_id}/${stepNavigation?.prevStep?.id}`);
+                                }}
+                                className="pi pi-angle-left text-bold cursor-pointer p-1 rounded-full hover:bg-[var(--mainColor)] hover:text-white"
+                            ></i>
+                        )}
+                        <div className="flex gap-1 items-center">
+                            <span>Шаг</span>
+                            <b>{stepNavigation?.currentStepPos}</b>
                         </div>
-                        {courseInfo?.image && courseInfo?.image.length > 0 && (
-                            <div className="sm:w-1/3">
-                                <img src={courseInfo?.image} />
-                            </div>
+                        <div className="flex gap-1 items-center">
+                            <span>Из</span>
+                            {stepNavigation?.stepsLength}
+                        </div>
+                        {stepNavigation?.nextStep && (
+                            <i
+                                onClick={() => {
+                                    router.push(`/teaching/lessonView/${lesson_id}/${subject_id}/${stream_id}/${stepNavigation?.nextStep?.id}`);
+                                }}
+                                className="pi pi-angle-right text-bold cursor-pointer p-1 rounded-full hover:bg-[var(--mainColor)] hover:text-white"
+                            ></i>
                         )}
                     </div>
+                ) : (
+                    ''
+                )}
+                <div className={`w-full bg-[var(--titleColor)] relative text-white  p-4 md:p-3 pb-4`}>
+                    <div className="flex flex-col gap-2 items-center">
+                        <div className={`w-full flex items-center gap-2 ${courseInfo?.image && courseInfo?.image.length > 0 ? 'justify-around flex-col sm:flex-row' : 'justify-center'} items-center`}>
+                            <div className="sm:w-1/2 flex flex-col gap-2 items-center">
+                                <h1 className="m-0" style={{ color: 'white', fontSize: media ? '24px' : '28px', textAlign: 'center', margin: '0' }}>
+                                    {courseInfo?.title}
+                                </h1>
+                                <div className="flex items-center justify-end gap-1 flex-col sm:flex-row mt-2">
+                                    <h3 className="text-white m-0 sm:text-lg">Тема: </h3>
+                                    <h3 className="text-white text-[16px] m-0 sm:text-[18px]">{lessonName ? lessonName : '------'}</h3>
+                                </div>
+                                <span className="w-[90%] break-words text-center">{courseInfo?.description} </span>
+                            </div>
+                            {courseInfo?.image && courseInfo?.image.length > 0 && (
+                                <div className="sm:w-1/3">
+                                    <img src={courseInfo?.image} />
+                                </div>
+                            )}
+                        </div>
+                    </div>
                 </div>
+
+                {hasSteps && <NotFound titleMessage="Данные не доступны" />}
+                {type === 'document' && docSection}
+                {type === 'link' && linkSection}
+                {type === 'practical' && practicaSection}
+                {type === 'test' && testSection}
+                {type === 'video' && videoSection}
             </div>
 
-            {hasSteps && <NotFound titleMessage="Данные не доступны" />}
-            {type === 'document' && docSection}
-            {type === 'link' && linkSection}
-            {type === 'practical' && practicaSection}
-            {type === 'test' && testSection}
-            {type === 'video' && videoSection}
+            <div className="sticky w-full bottom-0 mt-1">
+                <div className="bg-white my-border-top p-1 flex items-center justify-end gap-2">
+                    {prevLesson?.title && (
+                        <button
+                            onClick={() => handleLessonRouterPush(prevLesson?.id, Number(stream_id))}
+                            className={`cursor-pointer flex items-center gap-1 border-1 p-1 rounded shadow ${!prevLesson?.active ? 'opacity-50 pointer-events-none' : ''} hover:bg-[var(--mainColor)] hover:text-white transition`}
+                        >
+                            <i className="pi pi-angle-left"></i>
+                            <span className="max-w-[90px] sm:max-w-[200px] text-[13px] sm:text-md text-nowrap overflow-hidden text-ellipsis">{prevLesson?.title}</span>
+                        </button>
+                    )}
+                    <span className="text-[14px] sm:text-lg sm:text-bold">Тема</span>
+                    {nextLesson?.title && (
+                        <button
+                            onClick={() => handleLessonRouterPush(nextLesson?.id, Number(stream_id))}
+                            className={`cursor-pointer flex items-center gap-1 border-1 p-1 rounded shadow ${!nextLesson?.active ? 'opacity-50 pointer-events-none' : ''} hover:bg-[var(--mainColor)] hover:text-white transition`}
+                        >
+                            <span className="max-w-[90px] sm:max-w-[200px] text-[13px] sm:text-md text-nowrap overflow-hidden text-ellipsis">{nextLesson?.title}</span>
+                            <i className="pi pi-angle-right"></i>
+                        </button>
+                    )}
+                </div>
+            </div>
         </div>
     );
 }
