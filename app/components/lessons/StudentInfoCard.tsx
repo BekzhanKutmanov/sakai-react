@@ -73,13 +73,9 @@ export default function StudentInfoCard({
         // is_opened: boolean;
     };
 }) {
-    const { id_kafedra } = useParams();
-    // console.log(id_kafedra);
-
     const media = useMediaQuery('(max-width: 640px)');
-
     const showError = useErrorMessage();
-    const { setMessage } = useContext(LayoutContext);
+    const { setMessage, setContextLastSubjectPageVisit } = useContext(LayoutContext);
     const [progressSpinner, setProgressSpinner] = useState(false);
 
     const handleChills = async () => {
@@ -114,7 +110,7 @@ export default function StudentInfoCard({
                 <div className="flex items-center gap-1">
                     {progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}
                     {type === 'test' || type === 'practical' ? (
-                        <Link href={`/teaching/lessonView/${lesson}/${subjectId}/${streams && streams.connections[0].id_stream}/${stepId}`}>
+                        <Link onClick={()=> setContextLastSubjectPageVisit(subjectId)} href={`/teaching/lessonView/${lesson}/${subjectId}/${streams && streams.connections[0].id_stream}/${stepId}`}>
                             <Button
                                 disabled={progressSpinner}
                                 label="Выполнено"
@@ -138,7 +134,7 @@ export default function StudentInfoCard({
                 <div className="flex items-center gap-1">
                     {progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}
                     {type === 'test' || type === 'practical' ? (
-                        <Link href={`/teaching/lessonView/${lesson}/${subjectId}/${streams && streams.connections[0].id_stream}/${stepId}`}>
+                        <Link onClick={()=> setContextLastSubjectPageVisit(subjectId)} href={`/teaching/lessonView/${lesson}/${subjectId}/${streams && streams.connections[0].id_stream}/${stepId}`}>
                             <Button disabled={progressSpinner} label="Отметить как выполненный" size="small" className={`w-full px-2 py-1 ${progressSpinner && 'opacity-50'} ${media ? 'mini-button' : ''}`} />
                         </Link>
                     ) : (
@@ -157,6 +153,7 @@ export default function StudentInfoCard({
                         <i className={`${icon} text-white`}></i>
                     </div>
                     <Link
+                        onClick={() => setContextLastSubjectPageVisit(subjectId)}
                         href={`/teaching/lessonView/${lesson}/${subjectId}/${streams && streams.connections[0].id_stream}/${stepId}`}
                         // onClick={() => videoStart && videoStart(video_link || '')}
                         className="cursor-pointer max-w-[800px] text-[16px] break-words hover:underline"
@@ -177,20 +174,13 @@ export default function StudentInfoCard({
                 </div>
                 <div className="flex flex-col justify-center gap-1 max-w-[800px] break-words">
                     <Link
+                        onClick={() => setContextLastSubjectPageVisit(subjectId)}
                         href={`/teaching/lessonView/${lesson}/${subjectId}/${streams && streams.connections[0].id_stream}/${stepId}`}
                         // onClick={() => videoStart && videoStart(video_link || '')}
                         className="cursor-pointer max-w-[800px] text-[16px] text-wrap break-all hover:underline"
                     >
                         {title}
                     </Link>
-
-                    {/* {link && link?.length > 0 ? (
-                    <Link href={link} target="_blank" className="cursor-pointer max-w-[800px] text-[16px] text-wrap break-all hover:underline">
-                        {title}
-                    </Link>
-                ) : (
-                    <p>{title}</p>
-                )} */}
                 </div>
             </div>
             <div className="w-full flex justify-end">{cheelseBtn('')}</div>
@@ -205,6 +195,7 @@ export default function StudentInfoCard({
                 </div>
                 <div className="flex flex-col justify-center gap-1 max-w-[800px] text-wrap break-all">
                     <Link
+                        onClick={() => setContextLastSubjectPageVisit(subjectId)}
                         href={`/teaching/lessonView/${lesson}/${subjectId}/${streams && streams.connections[0].id_stream}/${stepId}`}
                         // onClick={() => videoStart && videoStart(video_link || '')}
                         className="cursor-pointer max-w-[800px] text-[16px] text-wrap break-all hover:underline"
@@ -224,7 +215,11 @@ export default function StudentInfoCard({
                     <i className={`${icon} text-white`}></i>
                 </div>
                 <div className="flex flex-col justify-center gap-1 max-w-[800px] text-wrap break-all">
-                    <Link href={`/teaching/lessonView/${lesson}/${subjectId}/${streams && streams.connections[0].id_stream}/${stepId}`} className="cursor-pointer max-w-[800px] text-[16px] text-wrap break-all hover:underline">
+                    <Link
+                        onClick={() => setContextLastSubjectPageVisit(subjectId)}
+                        href={`/teaching/lessonView/${lesson}/${subjectId}/${streams && streams.connections[0].id_stream}/${stepId}`}
+                        className="cursor-pointer max-w-[800px] text-[16px] text-wrap break-all hover:underline"
+                    >
                         Тест
                     </Link>
                 </div>
@@ -248,7 +243,11 @@ export default function StudentInfoCard({
                 <div className="p-2 bg-[var(--yellowColor)] shadow-xl min-w-[40px] min-h-[40px] w-[40px] h-[40px] flex justify-center items-center rounded">
                     <i className={`${icon} text-white`}></i>
                 </div>
-                <Link href={`/teaching/lessonView/${lesson}/${subjectId}/${streams && streams.connections[0].id_stream}/${stepId}`} className="cursor-pointer max-w-[800px] text-[16px] text-wrap break-all hover:underline">
+                <Link
+                    onClick={() => setContextLastSubjectPageVisit(subjectId)}
+                    href={`/teaching/lessonView/${lesson}/${subjectId}/${streams && streams.connections[0].id_stream}/${stepId}`}
+                    className="cursor-pointer max-w-[800px] text-[16px] text-wrap break-all hover:underline"
+                >
                     Практическое задание
                 </Link>
             </div>
@@ -272,7 +271,10 @@ export default function StudentInfoCard({
                     <i className={`${icon} text-white`}></i>
                 </div>
                 <div className="flex flex-col justify-center gap-1 max-w-[1000px]">
-                    <Link onClick={forumValueAdd} href={stepId && id_parent && contentId ? `/students/forum/${stepId}/${id_parent}/${contentId}` : '#'} className="cursor-pointer max-w-[1000px] text-[14px] sm:text-[16px] hover:underline">
+                    <Link onClick={()=> {
+                        forumValueAdd && forumValueAdd();
+                        setContextLastSubjectPageVisit(subjectId);
+                    }} href={stepId && id_parent && contentId ? `/students/forum/${stepId}/${id_parent}/${contentId}` : '#'} className="cursor-pointer max-w-[1000px] text-[14px] sm:text-[16px] hover:underline">
                         Оставьте отзыв или задайте вопрос по материалам урока
                     </Link>
                 </div>

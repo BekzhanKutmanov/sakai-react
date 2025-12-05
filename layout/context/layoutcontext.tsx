@@ -11,6 +11,8 @@ import { fetchCourses, fetchThemes } from '@/services/courses';
 import { fetchStudentThemes } from '@/services/studentMain';
 import { myMainCourseType } from '@/types/myMainCourseType';
 import { usePathname } from 'next/navigation';
+import { LastStepVisit } from '@/types/Step/visits/lastStepVisit/LastStepVist';
+import { LastSubjectPageVisit } from '@/types/Step/visits/LastSubjectPageVisit';
 
 export const LayoutContext = createContext({} as LayoutContextProps);
 
@@ -67,6 +69,12 @@ export const LayoutProvider = ({ children }: ChildContainerProps) => {
     const isDesktop = () => {
         return window.innerWidth > 991;
     };
+
+    // student. last step visit
+    const [contextLastStepVisit, setContextLastStepVisit] = useState<LastStepVisit | null>(null);
+
+    // student. last subject page visit 
+    const [contextLastSubjectPageVisit, setContextLastSubjectPageVisit] = useState<LastSubjectPageVisit | null>(null);
 
     // breadCrumb urls
     const isTopicsChildPage = /^\/teaching\/[^/]+\/[^/]+$/.test(pathname);
@@ -186,6 +194,12 @@ export const LayoutProvider = ({ children }: ChildContainerProps) => {
 
         forumValuse, 
         setForumValues,
+
+        contextLastStepVisit, 
+        setContextLastStepVisit,
+
+        contextLastSubjectPageVisit, 
+        setContextLastSubjectPageVisit
     };
 
     return (

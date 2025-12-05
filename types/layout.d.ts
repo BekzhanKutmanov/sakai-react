@@ -5,6 +5,8 @@ import { Demo } from './demo';
 import { Toast } from 'primereact/toast';
 import { User } from './user';
 import { MessageType } from './messageType';
+import { LastStepVisit } from './Step/visits/lastStepVisit/LastStepVist';
+import { LastSubjectPageVisit } from './Step/visits/LastSubjectPageVisit';
 
 /* Breadcrumb Types */
 export interface AppBreadcrumbProps {
@@ -90,6 +92,12 @@ export interface LayoutContextProps {
 
     forumValuse: {description: string, userInfo: {userName: string, userLastName: string}} | null, 
     setForumValues,
+
+    contextLastStepVisit: LastStepVisit | null, 
+    setContextLastStepVisit,
+
+    contextLastSubjectPageVisit: LastSubjectPageVisit | null, 
+    setContextLastSubjectPageVisit
     // message: { state: boolean; value: MessageType };
     // setMessage: React.Dispatch<React.SetStateAction<{ state: boolean; value: MessageType }>>;
 }

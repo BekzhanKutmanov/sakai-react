@@ -35,7 +35,7 @@ export default function StudentLesson() {
     const { subject_id } = useParams();
     const params = new URLSearchParams();
 
-    const { setMessage, setForumValues } = useContext(LayoutContext);
+    const { setMessage, setForumValues, contextLastStepVisit, setContextLastStepVisit, contextLastSubjectPageVisit, setContextLastSubjectPageVisit } = useContext(LayoutContext);
     const showError = useErrorMessage();
 
     const [main_id, setMain_id] = useState<predmetType | null>(null);
@@ -91,11 +91,11 @@ export default function StudentLesson() {
 
     const handleTabChange = async (courseInside: CourseType[], courseId: number, e: any, sendActiveIndex: boolean) => {
         // 1. Обновление активного индекса (ОК)
-        if(sendActiveIndex) {
+        if (sendActiveIndex) {
             setActiveIndexes((prev) => ({
                 ...prev,
                 [courseId]: e.index // e.index - это индекс темы (AccordionTab)
-            }))
+            }));
             setAccordionIndex({ index: e.index });
         }
 
@@ -177,17 +177,18 @@ export default function StudentLesson() {
         const data = await fetchSubjects(params);
         console.log(data);
         setSkeleton(true);
-        
+
         if (data && Array.isArray(data)) {
             setCourses(data);
             if (data && data?.length > 0) {
                 const courseId = data[0].id;
                 if (courseId) {
                     console.log(data[0].lessons[0]);
-                    if(data[0].lessons && data[0].lessons[0]?.active){
+                    // проверить контекст если у него есть значит забираем от него
+                    if (contextLastStepVisit && contextLastStepVisit.course_id) {
+                        handleTabChange(data, contextLastStepVisit.course_id, { index: contextLastStepVisit.index }, true);
+                    } else if (data[0].lessons && data[0].lessons[0]?.active) {
                         handleTabChange(data, courseId, { index: 0 }, true);
-                    } else {
-                        // handleTabChange(data, courseId, { index: 0 }, false);   
                     }
                 }
             }
@@ -276,7 +277,16 @@ export default function StudentLesson() {
                                         )}
                                     </div>
                                     <div>
-                                        <Accordion key={`${course.id}`} activeIndex={activeIndexes[course.id]} className="my-accardion-icon" onTabChange={(e) => handleTabChange(courses, course.id, e, true)} multiple={false}>
+                                        <Accordion
+                                            key={`${course.id}`}
+                                            activeIndex={activeIndexes[course.id]}
+                                            className="my-accardion-icon"
+                                            onTabChange={(e) => {
+                                                setContextLastStepVisit({ course_id: course.id, index: e.index });
+                                                handleTabChange(courses, course.id, e, true);
+                                            }}
+                                            multiple={false}
+                                        >
                                             {course?.lessons.map((lesson, idx) => {
                                                 const contentPresence = lesson?.steps?.filter((content) => content.content);
                                                 const sortedSteps = contentPresence?.sort((a, b) => {
@@ -296,11 +306,15 @@ export default function StudentLesson() {
                                                     <AccordionTab
                                                         header={
                                                             <>
-                                                                <span>{idx + 1}. Тема: {lesson.title}</span>
+                                                                <span>
+                                                                    {idx + 1}. Тема: {lesson.title}
+                                                                </span>
                                                                 {!lesson?.active && (
-                                                                    <div className='w-full flex justify-end items-center gap-1 mt-1 sm:m-o'>
+                                                                    <div className="w-full flex justify-end items-center gap-1 mt-1 sm:m-o">
                                                                         <small>Доступен с:</small>
-                                                                        <small>{lesson?.from} - {lesson?.to}</small>
+                                                                        <small>
+                                                                            {lesson?.from} - {lesson?.to}
+                                                                        </small>
                                                                     </div>
                                                                 )}
                                                             </>
@@ -345,7 +359,9 @@ export default function StudentLesson() {
                                                                                     lesson={lesson.id}
                                                                                     subjectId={String(subject_id)}
                                                                                     chills={item?.chills}
-                                                                                    fetchProp={() => handleTabChange(courses, course.id, accordionIndex, true)}
+                                                                                    fetchProp={() => {
+                                                                                        handleTabChange(courses, course.id, accordionIndex, true);
+                                                                                    }}
                                                                                     contentId={item?.content?.id}
                                                                                     id_parent={item?.id_parent || null}
                                                                                     forumValueAdd={() => {

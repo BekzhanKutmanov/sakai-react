@@ -19,6 +19,7 @@ import { ProgressSpinner } from 'primereact/progressspinner';
 import { useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { StepApi } from '@/types/Step/StepApi/StepApi';
+import Link from 'next/link';
 
 export default function LessonTest() {
     // types
@@ -46,7 +47,7 @@ export default function LessonTest() {
     const router = useRouter();
     const media = useMediaQuery('(max-width: 640px)');
     const showError = useErrorMessage();
-    const { setMessage, setContextNewStudentThemes, contextNotificationId, setContextNotificationId } = useContext(LayoutContext);
+    const { setMessage, setContextNewStudentThemes, contextNotificationId, setContextNotificationId, contextLastSubjectPageVisit, setContextLastSubjectPageVisit } = useContext(LayoutContext);
 
     const [steps, setMainSteps] = useState<mainStepsType | null>(null);
     const [hasSteps, setHasSteps] = useState(false);
@@ -423,30 +424,30 @@ export default function LessonTest() {
         const stepSend = async () => {
             if (lesson_id && stream_id) {
                 const data = await handleMainLesson(Number(lesson_id), Number(stream_id)); // steps
-                console.log(data);
+                // console.log(data);
                 if (data) {
-                    for (let i = 0; i < data?.length; i++) {
-                        const step: StepApi = data[i];
-                        if (step?.id === Number(id)) {
-                            console.log('STEP NAV ', data);
-                            console.log(step);
+                    const validSteps = data?.filter((item: StepApi) => item?.id_parent);
+                    for (let i = 0; i < validSteps?.length; i++) {
+                        const step: StepApi = validSteps[i];
+                        if (step.id_parent && step?.id === Number(id)) {
+                            if (validSteps) {
+                                const stepsLength = validSteps.length;
+                                const currentStepPos = i + 1;
+                                const nextStep = validSteps[i + 1] || null;
+                                const prevStep = validSteps[i - 1] || null;
 
-                            const stepsLength = data.length;
-                            const currentStepPos = i + 1;
-                            const nextStep = data[i + 1] || null;
-                            const prevStep = data[i - 1] || null;
-
-                            setStepNavigation((prev) => {
-                                // Если prev — null, создаем новое состояние.
-                                // Если prev существует, используем его для объединения.
-                                return {
-                                    ...(prev || {}), // Используем существующее или пустой объект
-                                    stepsLength,
-                                    currentStepPos,
-                                    nextStep,
-                                    prevStep
-                                };
-                            });
+                                setStepNavigation((prev) => {
+                                    // Если prev — null, создаем новое состояние.
+                                    // Если prev существует, используем его для объединения.
+                                    return {
+                                        ...(prev || {}), // Используем существующее или пустой объект
+                                        stepsLength,
+                                        currentStepPos,
+                                        nextStep,
+                                        prevStep
+                                    };
+                                });
+                            }
                         }
                     }
                 }
@@ -454,6 +455,10 @@ export default function LessonTest() {
         };
         stepSend();
     }, []);
+
+    useEffect(()=> {
+        console.log(contextLastSubjectPageVisit);
+    },[contextLastSubjectPageVisit]);
 
     const docSection = (
         <div className="flex flex-col gap-2">
@@ -730,7 +735,7 @@ export default function LessonTest() {
         <div className="main-bg min-h-[100vh] w-full relative flex flex-col gap-3 justify-between">
             <div className="flex flex-col">
                 {stepNavigation && stepNavigation.currentStepPos ? (
-                    <div className="w-full p-1 shadow-[var(--bottom-shadow)] flex items-center gap-2 justify-center">
+                    <div className="w-full p-1 shadow-[var(--bottom-shadow)] flex items-center gap-2 justify-center text-sm">
                         {stepNavigation?.prevStep && (
                             <i
                                 onClick={() => {
@@ -760,6 +765,7 @@ export default function LessonTest() {
                     ''
                 )}
                 <div className={`w-full bg-[var(--titleColor)] relative text-white  p-4 md:p-3 pb-4`}>
+                    {contextLastSubjectPageVisit ? <Link onClick={()=> setContextLastSubjectPageVisit(null)} href={`/teaching/${contextLastSubjectPageVisit}`}><i className='pi pi-arrow-left text-white absolute top-0 left-0 p-2'></i></Link> : ''}
                     <div className="flex flex-col gap-2 items-center">
                         <div className={`w-full flex items-center gap-2 ${courseInfo?.image && courseInfo?.image.length > 0 ? 'justify-around flex-col sm:flex-row' : 'justify-center'} items-center`}>
                             <div className="sm:w-1/2 flex flex-col gap-2 items-center">
@@ -790,7 +796,7 @@ export default function LessonTest() {
             </div>
 
             <div className="sticky w-full bottom-0 mt-1">
-                <div className="bg-white my-border-top p-1 flex items-center justify-end gap-2">
+                <div className="bg-white my-border-top p-1 sm:p-2 flex items-center justify-end gap-2">
                     {prevLesson?.title && (
                         <button
                             onClick={() => handleLessonRouterPush(prevLesson?.id, Number(stream_id))}
@@ -800,15 +806,17 @@ export default function LessonTest() {
                             <span className="max-w-[90px] sm:max-w-[200px] text-[13px] sm:text-md text-nowrap overflow-hidden text-ellipsis">{prevLesson?.title}</span>
                         </button>
                     )}
-                    <span className="text-[14px] sm:text-lg sm:text-bold">Тема</span>
                     {nextLesson?.title && (
-                        <button
-                            onClick={() => handleLessonRouterPush(nextLesson?.id, Number(stream_id))}
-                            className={`cursor-pointer flex items-center gap-1 border-1 p-1 rounded shadow ${!nextLesson?.active ? 'opacity-50 pointer-events-none' : ''} hover:bg-[var(--mainColor)] hover:text-white transition`}
-                        >
-                            <span className="max-w-[90px] sm:max-w-[200px] text-[13px] sm:text-md text-nowrap overflow-hidden text-ellipsis">{nextLesson?.title}</span>
-                            <i className="pi pi-angle-right"></i>
-                        </button>
+                        <>
+                            <span className="text-[14px] sm:text-lg sm:text-bold">Тема</span>
+                            <button
+                                onClick={() => handleLessonRouterPush(nextLesson?.id, Number(stream_id))}
+                                className={`cursor-pointer flex items-center gap-1 border-1 p-1 rounded shadow ${!nextLesson?.active ? 'opacity-50 pointer-events-none' : ''} hover:bg-[var(--mainColor)] hover:text-white transition`}
+                            >
+                                <span className="max-w-[90px] sm:max-w-[200px] text-[13px] sm:text-md text-nowrap overflow-hidden text-ellipsis">{nextLesson?.title}</span>
+                                <i className="pi pi-angle-right"></i>
+                            </button>
+                        </>
                     )}
                 </div>
             </div>
