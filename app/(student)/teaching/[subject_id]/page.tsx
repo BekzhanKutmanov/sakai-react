@@ -69,7 +69,6 @@ export default function StudentLesson() {
 
     const handleMainLesson = async (lesson_id: number, stream_id: number) => {
         const data = await fetchMainLesson(lesson_id, stream_id);
-        console.log(data);
 
         // Возвращаем данные или null/пустой массив
         if (data && data.length > 0) {
@@ -175,7 +174,6 @@ export default function StudentLesson() {
         subject?.streams.forEach((i) => params.append('streams[]', String(i)));
         subject?.course_ids.forEach((i) => params.append('course_ids[]', String(i)));
         const data = await fetchSubjects(params);
-        console.log(data);
         setSkeleton(true);
 
         if (data && Array.isArray(data)) {
@@ -183,7 +181,6 @@ export default function StudentLesson() {
             if (data && data?.length > 0) {
                 const courseId = data[0].id;
                 if (courseId) {
-                    console.log(data[0].lessons[0]);
                     // проверить контекст если у него есть значит забираем от него
                     if (contextLastStepVisit && contextLastStepVisit.course_id) {
                         handleTabChange(data, contextLastStepVisit.course_id, { index: contextLastStepVisit.index }, true);

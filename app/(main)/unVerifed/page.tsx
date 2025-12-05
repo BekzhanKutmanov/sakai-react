@@ -32,7 +32,7 @@ export default function UnVerifed() {
 
     const fetchVerifedSteps = async () => {
         const data = await unVerifedSteps();
-
+        
         setSkeleton(true);
         if (data?.success) {
             if (data?.lists?.length < 1) {

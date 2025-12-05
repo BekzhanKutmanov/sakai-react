@@ -32,7 +32,7 @@ export default function LessonStep() {
     const prevStepsRef = useRef<mainStepsType[]>([]);
 
     const media = useMediaQuery('(max-width: 640px)');
-    const { user, setMessage, contextFetchThemes, contextThemes, deleteQuery } = useContext(LayoutContext);
+    const { setMessage, contextFetchThemes, contextThemes, deleteQuery } = useContext(LayoutContext);
     const showError = useErrorMessage();
 
     const [lessonInfoState, setLessonInfoState] = useState<{ title: string; documents_count: string; usefullinks_count: string; videos_count: string; from: string; to: string } | null>(null);
@@ -415,7 +415,7 @@ export default function LessonStep() {
                     {lessonInfoState?.title}
                 </h2>
                 {lessonInfoState?.from && lessonInfoState?.to && (
-                    <div className="w-full flex justify-start gap-1 items-center text-[12px]" title="Этот урок будет доступен до определённой даты. После окончания срока доступ к материалам будет закрыт">
+                    <div className="w-full flex justify-center sm:justify-start gap-1 items-center text-[12px]" title="Этот урок будет доступен до определённой даты. После окончания срока доступ к материалам будет закрыт">
                         <div className="flex gap-1 items-center p-1 bg-[var(--borderBottomColor)] rounded text-black">
                             <span>Доступен с:</span>
                             {lessonInfoState?.from}
@@ -426,7 +426,7 @@ export default function LessonStep() {
                 )}
                 {media && contextThemes && contextThemes?.max_sum_score ? (
                     <div className="flex justify-center gap-1 items-center">
-                        <span>Балл за курс</span>
+                        <span className='text-sm'>Балл за курс</span>
                         <b className="font-semibold">{contextThemes?.max_sum_score}</b>
                     </div>
                 ) : (

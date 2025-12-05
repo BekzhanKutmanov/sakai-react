@@ -260,8 +260,6 @@ export default function LessonTest() {
     // Вызываем список шагов
     const handleMainLesson = async (lesson_id: number, stream_id: number) => {
         const data = await fetchMainLesson(lesson_id, stream_id);
-        console.log(data);
-
         // Возвращаем данные или null/пустой массив
         if (data && data.length > 0) {
             return data;
@@ -364,7 +362,6 @@ export default function LessonTest() {
             if (forLesson && forLesson?.lessons) {
                 setContextNewStudentThemes(forLesson?.lessons);
             }
-            console.log(forLesson);
 
             setCoursesInfo(forLesson || null);
         }
@@ -389,7 +386,6 @@ export default function LessonTest() {
 
     useEffect(() => {
         if (lessonNavigation) {
-            console.log('LESSON NAV ', lessonNavigation);
             for (let i = 0; i < lessonNavigation?.lessons?.length; i++) {
                 const el: lessonType = lessonNavigation?.lessons[i];
                 if (el?.id === lessonNavigation?.lesson?.id) {
@@ -408,10 +404,6 @@ export default function LessonTest() {
             }
         }
     }, [lessonNavigation]);
-
-    useEffect(() => {
-        console.warn(`StepNavigation `, stepNavigation);
-    }, [stepNavigation]);
 
     useEffect(() => {
         handleFetchLessons();
@@ -455,10 +447,6 @@ export default function LessonTest() {
         };
         stepSend();
     }, []);
-
-    useEffect(()=> {
-        console.log(contextLastSubjectPageVisit);
-    },[contextLastSubjectPageVisit]);
 
     const docSection = (
         <div className="flex flex-col gap-2">
