@@ -296,10 +296,9 @@ const AppMenu = () => {
 
     const editing = async (id: number) => {
         const data = await fetchLessonShow(id);
-        console.log(data);
 
         if (data.lesson) {
-            setEditingLesson({ title: data.lesson.title, sequence_number: data.lesson.sequence_number, from: data.lesson.from, to: data.lesson.to });
+            setEditingLesson({ title: data.lesson.title, sequence_number: data.lesson.sequence_number, from: data.lesson.from ? new Date(data.lesson.from) : null, to: data.lesson.to ? new Date(data.lesson.to) : null });
         } else {
             setMessage({
                 state: true,
@@ -471,9 +470,9 @@ const AppMenu = () => {
         }
     }, [departament, pathname]);
 
-    useEffect(() => {
+    useEffect(()=> {
         console.log(editingLesson);
-    }, [editingLesson]);
+    },[editingLesson])
 
     return (
         <MenuProvider>
@@ -524,18 +523,21 @@ const AppMenu = () => {
                             <div className="w-full flex flex-col">
                                 <div className="w-full flex flex-col sm:flex-row justify-evenly items-center gap-1">
                                     <div className="flex flex-col items-center">
+                                        {/* {editingLesson.from} */}
                                         <span className="text-sm">Начало</span>
                                         <Calendar
                                             value={editingLesson ? editingLesson.from : null}
                                             locale="ru" // Указываем русскую локаль
-                                            dateFormat="dd.mm.yy"
+                                            dateFormat="yy.mm.yy"
                                             className="p-inputtext-sm"
                                             onChange={(e) => {
-                                                setEditingLesson((prev) => prev && { ...prev, from: e.target.value });
+                                                console.log(e.value);
+                                                setEditingLesson((prev) => prev && { ...prev, from: e.value });
                                             }}
                                         />
                                     </div>
                                     <div className="flex flex-col items-center">
+                                        {/* {editingLesson.to} */}
                                         <span className="text-sm">Конец</span>
                                         <Calendar
                                             value={editingLesson ? editingLesson.to : null}
@@ -543,7 +545,7 @@ const AppMenu = () => {
                                             dateFormat="dd.mm.yy"
                                             className="p-inputtext-sm"
                                             onChange={(e) => {
-                                                setEditingLesson((prev) => prev && { ...prev, to: e.target.value });
+                                                setEditingLesson((prev) => prev && { ...prev, to: e.value });
                                             }}
                                         />
                                     </div>

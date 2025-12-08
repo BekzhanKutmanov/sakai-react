@@ -139,7 +139,6 @@ const StreamList = React.memo(function StreamList({
                         return '';
                     }
                 };
-                console.log(teachers);
 
                 setMessage({
                     state: true,
@@ -230,10 +229,6 @@ const StreamList = React.memo(function StreamList({
             setHasStreams(false);
         }
     }, [streams]);
-
-    useEffect(() => {
-        console.log(pendingChanges);
-    }, [pendingChanges]);
 
     const itemTemplate = (item: mainStreamsType, index: number) => {
         const bgClass = index % 2 == 0 ? 'bg-[#f5f5f5]' : '';

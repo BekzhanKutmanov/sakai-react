@@ -136,12 +136,34 @@ export default function LessonStep() {
                 value: { severity: 'success', summary: 'Успешно добавлен!', detail: '' }
             });
         } else {
-            setMessage({
-                state: true,
-                value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
-            });
+            if (data?.message) {
+                const teachers = () => {
+                    if (data?.response?.data.teachers?.length) {
+                        return (
+                            <div className="flex flex-col gap-2">
+                                {data.response?.data.teachers?.map((item: any, idx: number) => {
+                                    return (
+                                        <div key={idx} className={`flex gap-1 flex-col`}>
+                                            <span>
+                                                {item?.last_name} {item?.name && item?.name[0] + '.'} {item?.father_name && item?.father_name.length > 1 && item?.father_name[0] + '.'}
+                                            </span>
+                                            <small>{item?.streams?.map((item: number) => item + ' ')}</small>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        );
+                    } else {
+                        return '';
+                    }
+                };
 
-            if (data?.response?.status) {
+                alert(data?.response?.data?.message);
+                setMessage({
+                    state: true,
+                    value: { severity: 'error', summary: data?.response?.data?.message, detail: <div style={{ whiteSpace: 'pre-line' }}>{teachers()}</div> }
+                });
+            } else if (data?.response?.status) {
                 if (data?.response?.status == '400') {
                     setMessage({
                         state: true,
@@ -150,6 +172,11 @@ export default function LessonStep() {
                 } else {
                     showError(data.response.status);
                 }
+            } else {
+                setMessage({
+                    state: true,
+                    value: { severity: 'error', summary: 'Ошибка при добавлении', detail: '' }
+                });
             }
         }
     };
@@ -318,11 +345,9 @@ export default function LessonStep() {
 
     // заменяем первый useEffect
     useEffect(() => {
-        console.log('lkfjs ', contextThemes);
-        
         const lessons = contextThemes?.lessons?.data ?? [];
         // console.log(lessons);
-        
+
         // делаем "снимок" важных полей (id + title)
         const snapshot = lessons.map((l: any) => ({ id: l.id, title: l.title ?? '' }));
         const prev = prevLessonsRef.current;
@@ -426,7 +451,7 @@ export default function LessonStep() {
                 )}
                 {media && contextThemes && contextThemes?.max_sum_score ? (
                     <div className="flex justify-center gap-1 items-center">
-                        <span className='text-sm'>Балл за курс</span>
+                        <span className="text-sm">Балл за курс</span>
                         <b className="font-semibold">{contextThemes?.max_sum_score}</b>
                     </div>
                 ) : (
