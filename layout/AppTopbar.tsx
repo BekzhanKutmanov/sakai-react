@@ -82,6 +82,7 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                 {Object.values(typeObjs)?.length > 1 ? (
                     Object.entries(typeObjs).map((el: any) => {
                         const item = el[1];
+                        console.log(el);                        
                         let path = '';
                         if (user?.is_working && item?.type?.type === 'practical') {
                             path = `/students/${item?.meta?.course_id}/${item?.meta?.connect_id}/${item?.meta?.stream_id}/${item?.meta?.student_id}/${item?.meta?.lesson_id}/${item?.meta?.step_id}`;
@@ -117,6 +118,8 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                     })
                 ) : notification?.length > 0 ? (
                     notification?.map((item) => {
+                        console.log(item);
+                        
                         let path = '';
                         if (user?.is_working && item?.type?.type === 'practical') {
                             path = `/students/${item?.meta?.course_id}/${item?.meta?.connect_id}/${item?.meta?.stream_id}/${item?.meta?.student_id}/${item?.meta?.lesson_id}/${item?.meta?.step_id}`;

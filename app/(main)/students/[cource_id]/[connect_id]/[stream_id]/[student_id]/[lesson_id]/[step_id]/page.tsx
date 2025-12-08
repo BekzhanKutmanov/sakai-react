@@ -74,6 +74,8 @@ export default function StudentCheck() {
     const handleStatusView = async (notification_id: number | null) => {
         if (notification_id) {
             const data = await statusView(Number(notification_id));
+            console.log(data);
+            
             setContextNotificationId(null);
         }
     };
