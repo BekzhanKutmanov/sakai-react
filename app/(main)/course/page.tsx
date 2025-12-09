@@ -410,8 +410,8 @@ export default function Course() {
                                 size="small"
                                 className="p-2"
                                 onClick={() => {
-                                    // setSelectedCourse(shablonData?.id);
-                                    // handleFetchCourseOpenStatus();
+                                    setSelectedCourse(shablonData?.id);
+                                    handleFetchCourseOpenStatus();
                                 }}
                             >
                                 <i className={`${shablonData?.audience_type?.icon}`}></i>
@@ -736,8 +736,8 @@ export default function Course() {
                                                                     size="small"
                                                                     className="p-2"
                                                                     onClick={() => {
-                                                                        // setSelectedCourse(rowData?.id);
-                                                                        // handleFetchCourseOpenStatus();
+                                                                        setSelectedCourse(rowData?.id);
+                                                                        handleFetchCourseOpenStatus();
                                                                     }}
                                                                 >
                                                                     <i className={`${rowData?.audience_type?.icon}`}></i>

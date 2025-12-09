@@ -126,7 +126,6 @@ export const LayoutProvider = ({ children }: ChildContainerProps) => {
 
     const [forumValuse, setForumValues] = useState<{ description: string; userInfo: { userName: string; userLastName: string } } | null>(null);
 
-
     // verifed
     const [contextVerifedValue, setContextVerifedValue] = useState([]);
     const contextFetchVerifed = async () => {
