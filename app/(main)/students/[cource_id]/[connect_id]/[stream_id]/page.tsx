@@ -6,7 +6,7 @@ import GroupSkeleton from '@/app/components/skeleton/GroupSkeleton';
 import useErrorMessage from '@/hooks/useErrorMessage';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { LayoutContext } from '@/layout/context/layoutcontext';
-import { fetchStreams, fetchStreamStudents } from '@/services/streams';
+import { fetchScoreValues, fetchStreams, fetchStreamStudents, sendMyeduScore } from '@/services/streams';
 import { mainStreamsType } from '@/types/mainStreamsType';
 import { OptionsType } from '@/types/OptionsType';
 import Link from 'next/link';
@@ -14,9 +14,19 @@ import { useParams } from 'next/navigation';
 import { Button } from 'primereact/button';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
+import { Dialog } from 'primereact/dialog';
 import React, { useContext, useEffect, useState } from 'react';
 
 export default function StudentList() {
+    // types
+
+    interface ScoreValueType {
+        course: { id: number; title: string };
+        teacher: { last_name: string; name: string };
+        id_stream: number;
+        score: number | null;
+    }
+
     const { cource_id, connect_id, stream_id } = useParams();
     const media = useMediaQuery('(max-width: 640px)');
 
@@ -25,6 +35,11 @@ export default function StudentList() {
     const [skeleton, setSkeleton] = useState(false);
     const [streams, setStreams] = useState<mainStreamsType[]>([]);
     const [stream, setStream] = useState<mainStreamsType | null>(null);
+    const [myEduInfoVisible, setMyEduInfoVisible] = useState<boolean>(false);
+    const [hasScoreValue, setHasScoreValue] = useState<boolean>(false);
+    const [scoreValues, setScoreValues] = useState<ScoreValueType[]>([]);
+    const [studentId, setStudentId] = useState<number | null>(null);
+    const [studentScore, setStudentScore] = useState<number | null>(null);
 
     const { setMessage } = useContext(LayoutContext);
     const showError = useErrorMessage();
@@ -82,6 +97,88 @@ export default function StudentList() {
         }
     };
 
+    const handleFetchScoreValues = async (stream_id: number, student_id: number | null, score: number) => {
+        setStudentId(student_id);
+        setStudentScore(score);
+        setMyEduInfoVisible(true);
+        setSkeleton(true);
+        const data = await fetchScoreValues(stream_id, student_id);
+        console.log(data);
+
+        if (data) {
+            const scoresArr: ScoreValueType[] = Object.values(data);
+            console.log(scoresArr);
+            if (scoresArr && scoresArr?.length > 0) {
+                setScoreValues(scoresArr);
+                setHasScoreValue(false);
+            } else if (scoresArr?.length < 1) {
+                setHasScoreValue(true);
+            }
+        } else {
+            setHasScoreValue(true);
+        }
+        setSkeleton(false);
+    };
+
+    const handleSendMyeduScore = async (stream_id: number, student_id: number | null, score: number | null) => {
+        setMyEduInfoVisible(false);
+        setSkeleton(true);
+        const data = await sendMyeduScore(stream_id, student_id, score);
+        console.log(data);
+
+        if (data.success) {
+            const scoresArr: ScoreValueType[] = Object.values(data);
+            console.log(scoresArr);
+            if (scoresArr && scoresArr?.length > 0) {
+                setScoreValues(scoresArr);
+                setHasScoreValue(false);
+            } else if (scoresArr?.length < 1) {
+                setHasScoreValue(true);
+            }
+            setMessage({
+                state: true,
+                value: { severity: 'success', summary: 'Успешно отправлен!', detail: '' }
+            });
+        } else {
+            setMessage({
+                state: true,
+                value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
+            });
+            if (data?.response?.status) {
+                showError(data.response.status);
+            }
+        }
+        setStudentId(null);
+        setStudentScore(null);
+        setSkeleton(false);
+    };
+
+    const footerContent = (
+        <div>
+            <Button
+                label={'Назад'}
+                className="reject-button"
+                icon="pi pi-times"
+                size="small"
+                onClick={() => {
+                    setMyEduInfoVisible(false);
+                    // clearValues();
+                }}
+            />
+
+            <Button
+                label={'Отправить'}
+                icon="pi pi-check"
+                size="small"
+                onClick={() => {
+                    setMyEduInfoVisible(false);
+                    handleSendMyeduScore(Number(stream_id), studentId, studentScore);
+                }}
+                autoFocus
+            />
+        </div>
+    );
+
     // USEECFFECTS
 
     useEffect(() => {
@@ -98,6 +195,10 @@ export default function StudentList() {
             }
         }
     }, [streams]);
+
+    useEffect(()=> {
+        console.log(studentId, studentScore);
+    },[]);
 
     return (
         <div className="main-bg">
@@ -170,7 +271,12 @@ export default function StudentList() {
                                             {rowData?.score && rowData.score > 0 ? (
                                                 <div className="flex justify-between items-center gap-2 ">
                                                     <b className={`${rowData.score > 30 ? 'text-[var(--greenColor)] p-1 w-[25px] text-center' : 'text-amber-400 p-1 w-[25px] text-center '}`}>{rowData.score}</b>
-                                                    <i className="cursor-pointer pi pi-upload bg-[var(--mainColor)] text-white p-2 px-3 rounded" title="Сохранить в myedu"></i>
+                                                    <i
+                                                        onClick={() => handleFetchScoreValues(Number(stream_id), rowData?.id || null, rowData?.score)}
+                                                        className="cursor-pointer pi pi-upload bg-[var(--mainColor)] text-white p-2 px-3 rounded"
+                                                        title="Сохранить в myedu"
+                                                    ></i>
+                                                    {/* <i onClick={()=> console.log(rowData)} className="cursor-pointer pi pi-upload bg-[var(--mainColor)] text-white p-2 px-3 rounded" title="Сохранить в myedu"></i> */}
                                                     {/* <Button icon={'pi pi-arrow-right'} size='small' style={{ fontSize: '13px', padding: '4px 4px'}} label="myedu" /> */}
                                                 </div>
                                             ) : (
@@ -198,7 +304,7 @@ export default function StudentList() {
                                             {rowData?.last_movement && (
                                                 <Link
                                                     href={{
-                                                        pathname: `/students/${cource_id}/${connect_id}/${stream_id}/${rowData?.id}/optional/optional`
+                                                        pathname: `/students/${cource_id}/${connect_id}/${stream_id}/${rowData?.id}/optional/optional/optional`
                                                     }}
                                                 >
                                                     <Button label="Данные" />
@@ -212,6 +318,49 @@ export default function StudentList() {
                     )}
                 </div>
             )}
+
+            {/* dialog */}
+            <Dialog
+                header={'Окно подтверждение'}
+                className="p-2 w-[90%] sm:w-[600px] max-h-[400px]"
+                visible={myEduInfoVisible}
+                onHide={() => {
+                    if (!myEduInfoVisible) return;
+                    setMyEduInfoVisible(false);
+                }}
+                footer={footerContent}
+            >
+                <>
+                    {hasScoreValue ? (
+                        <b className='flex justify-center'>Данные не доступны</b>
+                    ) : (
+                        <div className="flex flex-col gap-2">
+                            {scoreValues?.map((item: ScoreValueType) => {
+                                console.log(item);
+
+                                return (
+                                    <div key={item?.course?.id} className={`flex flex-col gap-2 ${scoreValues.length > 1 && 'p-2 lesson-card-border shadow'}`}>
+                                        <div className="flex items-center gap-1 justify-between">
+                                            <b className="sm:text-md">{item?.course?.title}</b>
+                                            <div className="text-sm">
+                                                <span>Id:</span> <span className="text-[var(--mainColor)]"> {item?.id_stream}</span>
+                                            </div>
+                                        </div>
+                                        <div className="flex items-center gap-1 justify-between">
+                                            <p className="m-0">
+                                                {item?.teacher?.last_name} {item?.teacher?.name}
+                                            </p>
+                                            <div className="text-sm">
+                                                <span>Балл:</span> <span className="text-[var(--mainColor)]"> {item?.score || 0}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    )}
+                </>
+            </Dialog>
         </div>
     );
 }

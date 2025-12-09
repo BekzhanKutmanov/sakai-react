@@ -30,7 +30,7 @@ const AppMenu = () => {
         to: Nullable<Date> | null;
     }
 
-    const { user, setDeleteQuery, setUpdateeQuery, contextFetchThemes, contextThemes, contextFetchStudentThemes, contextStudentThemes, departament, contextNewStudentThemes } = useContext(LayoutContext);
+    const { user, setDeleteQuery, setUpdateeQuery, contextFetchThemes, contextThemes, contextFetchStudentThemes, departament, contextNewStudentThemes } = useContext(LayoutContext);
     interface test {
         label: string;
         id: number;
@@ -48,7 +48,6 @@ const AppMenu = () => {
         mode: 'onChange'
     });
 
-    const deadlineParams = new URLSearchParams();
     const router = useRouter();
     const location = usePathname();
     const pathname = location;
@@ -70,9 +69,10 @@ const AppMenu = () => {
     const [themesStudentList, setThemesStudentList] = useState<{ key?: string; label: string; id: number; to: string; items?: AppMenuItem[] }[]>([]);
     const [startDeadline, setStartDeadline] = useState<Nullable<Date>>(null);
     const [endDeadline, setEndDeadline] = useState<Nullable<Date>>(null);
+    const [verifedLength, setVerifedLength] = useState<number | null>(null);
 
     const showError = useErrorMessage();
-    const { setMessage } = useContext(LayoutContext);
+    const { setMessage, contextFetchVerifed } = useContext(LayoutContext);
 
     const ruLocale = {
         firstDayOfWeek: 1, // Понедельник
@@ -146,7 +146,20 @@ const AppMenu = () => {
                       {
                           label: 'Непроверенные задания',
                           icon: 'pi pi-fw pi-clock',
-                          to: '/unVerifed'
+                          to: '/unVerifed',
+                          extra: (
+                              <div className="p-overlay-badge">
+                                  {/* Условное отображение красного кружка (бэйджа) */}
+                                  {verifedLength ? (
+                                      <div className="relative">
+                                          <div className={`absolute -right-3 -top-3 px-1 bg-[var(--amberColor)] rounded text-white text-[11px]`}>{verifedLength}</div>
+                                          <button className={`cursor-pointer flex gap-2 items-center px-0 bg-white text-blue-300 p-2 font-bold`} />
+                                      </div>
+                                  ) : (
+                                      ''
+                                  )}
+                              </div>
+                          )
                       },
                       {
                           label: 'Общедоступные курсы',
@@ -177,9 +190,9 @@ const AppMenu = () => {
                       icon: 'pi pi-home',
                       to: '/'
                   },
-                  { label: 'План обучения', icon: 'pi pi-fw pi-calendar-clock', to: '/teaching' },
+                  { label: 'План обучения', icon: 'pi pi-fw pi-calendar-clock', to: '/teaching' }
                   //   pathname.startsWith('/teaching/lesson/') ? { label: 'Темы', icon: 'pi pi-fw pi-book', items: themesStudentList?.length > 0 ? themesStudentList : [] } : { label: '' },
-                //   pathname.startsWith('/teaching/lessonView/') ? { label: 'Темы', icon: 'pi pi-fw pi-book', items: themesStudentList?.length > 0 ? themesStudentList : [] } : { label: '' }
+                  //   pathname.startsWith('/teaching/lessonView/') ? { label: 'Темы', icon: 'pi pi-fw pi-book', items: themesStudentList?.length > 0 ? themesStudentList : [] } : { label: '' }
               ]
             : [
                   {
@@ -251,7 +264,20 @@ const AppMenu = () => {
                   {
                       label: 'Непроверенные задания',
                       icon: 'pi pi-fw pi-clock',
-                      to: '/unVerifed'
+                      to: '/unVerifed',
+                      extra: (
+                          <div className="p-overlay-badge">
+                              {/* Условное отображение красного кружка (бэйджа) */}
+                              {verifedLength ? (
+                                  <div className="relative">
+                                      <div className={`absolute -right-3 -top-3 px-1 bg-[var(--amberColor)] rounded text-white text-[11px]`}>{verifedLength}</div>
+                                      <button className={`cursor-pointer flex gap-2 items-center px-0 bg-white text-blue-300 p-2 font-bold`} />
+                                  </div>
+                              ) : (
+                                  ''
+                              )}
+                          </div>
+                      )
                   },
                   {
                       label: 'Общедоступные курсы',
@@ -282,7 +308,6 @@ const AppMenu = () => {
 
     const handleCourseInfo = async () => {
         const data = await fetchCourseInfo(Number(course_Id));
-        console.warn(data);
         if (data && data?.success) {
             setCourseInfo(data.course);
         }
@@ -423,6 +448,21 @@ const AppMenu = () => {
                 }
             }
         }
+
+        // unverifed
+        if (user && user?.is_working) {
+            const fetchVerifedSteps = async () => {
+                const data: any = await contextFetchVerifed();
+                console.log(data);
+
+                if (data?.success) {
+                    setVerifedLength(data?.lists?.length);
+                } else {
+                    setVerifedLength(null);
+                }
+            };
+            fetchVerifedSteps();
+        }
     }, [user, studentThemeCourse]);
 
     useEffect(() => {
@@ -469,10 +509,6 @@ const AppMenu = () => {
             setForDepartamentLength(true);
         }
     }, [departament, pathname]);
-
-    useEffect(()=> {
-        console.log(editingLesson);
-    },[editingLesson])
 
     return (
         <MenuProvider>

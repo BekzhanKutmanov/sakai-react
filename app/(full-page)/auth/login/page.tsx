@@ -26,7 +26,9 @@ const LoginPage = () => {
     const media = useMediaQuery('(max-width: 1030px)');
     // const containerClassName = classNames('surface-ground flex align-items-center justify-content-center min-h-screen min-w-screen overflow-hidden', { 'p-input-filled': layoutConfig.inputStyle === 'filled' });
     const [showPassword, setShowPassword] = useState(false);
-    const [progressSpinner, setProgressSpinner] = useState(true);
+    // const [progressSpinner, setProgressSpinner] = useState(true);
+    const [progressSpinner, setProgressSpinner] = useState(false);
+    const [disabledState, setDisabledState] = useState(false);
 
     const {
         register,
@@ -39,14 +41,14 @@ const LoginPage = () => {
     });
 
     const onSubmit = async (value: LoginType) => {
+        setDisabledState(true);
         const user = await login(value);
-        
         if (user && user.success) {
             document.cookie = `access_token=${user.token.access_token}; path=/; Secure; SameSite=Strict; expires=${user.token.expires_at}`;
             const token = user.token.access_token;
             if (token) {
                 const res = await getUser();
-                
+    
                 try {
                     if (res?.success) {
                         if (res?.user.is_working) {
@@ -66,7 +68,7 @@ const LoginPage = () => {
                         }
                     } else {
                         setMessage({
-                            state: true,    
+                            state: true,
                             value: { severity: 'error', summary: 'Ошибка при авторизации', detail: 'Повторите позже' }
                         }); // messege - Ошибка при авторизации, повторите позже
                         logout({ setUser, setGlobalLoading });
@@ -81,13 +83,16 @@ const LoginPage = () => {
                     console.log('Ошибка при получении пользователя');
                 }
             }
-        } 
+        }
         else {
             setMessage({
                 state: true,
                 value: { severity: 'error', summary: 'Ошибка при авторизации', detail: 'Повторите позже' }
             }); // messege - Ошибка при авторизации при авторизации
         }
+        setTimeout(() => {
+            setDisabledState(false);
+        }, 2000);
     };
 
     const onError = (errors: any) => {
@@ -95,22 +100,25 @@ const LoginPage = () => {
         setMessage({
             state: true,
             value: { severity: 'error', summary: 'Ошибка при авторизации', detail: 'Введите корректные данные' }
-        }); // messege - Ошибка при авторизации
+        });
     };
 
-    useEffect(()=> {
-        const token = getToken("access_token");
-        if(token){
+    useEffect(() => {
+        const token = getToken('access_token');
+        if (token) {
             window.location.href = '/';
             setProgressSpinner(false);
         } else {
             setProgressSpinner(false);
         }
-    },[]);
+    }, []);
 
-    if(progressSpinner) return <div className='flex justify-center items-center h-[100vh]'>
-        <ProgressSpinner style={{ width: '100px', height: '100px' }} />
-    </div>
+    if (progressSpinner)
+        return (
+            <div className="flex justify-center items-center h-[100vh]">
+                <ProgressSpinner style={{ width: '100px', height: '100px' }} />
+            </div>
+        );
 
     return (
         <div className={`flex flex-col gap-4 pt-6 h-[100vh] login-bg`}>
@@ -126,7 +134,9 @@ const LoginPage = () => {
 
                 <div className={`w-[90%] sm:w-[500px] shadow-2xl bg-white py-6 px-3 md:py-8 sm:px-4 md:px-8 rounded`}>
                     <h1 className="text-3xl sm:text-4xl font-bold inline-block border-b-2 pb-1 border-[var(--mainColor)]">Вход в mooc</h1>
-                    <form onSubmit={handleSubmit(onSubmit, onError)} className="w-full flex flex-col gap-4">
+                    <form onSubmit={handleSubmit(onSubmit, onError)}
+                        className="w-full flex flex-col gap-4"
+                    >
                         <div className="flex flex-col">
                             {/* <label htmlFor="email1" className="block text-900 text-[16px] md:text-xl font-medium mb-1 md:mb-2">
                                 MyEdu email
@@ -155,7 +165,9 @@ const LoginPage = () => {
                             {errors.password && <b className="text-[red] text-[12px] ml-2">{errors.password.message}</b>}
                         </div>
 
-                        <FancyLinkBtn btnWidth={'100%'} backround={'--mainColor'} effectBg={'--titleColor'} title={'Войти'} />
+                        <div className={`${disabledState ? 'opacity-50 pointer-events-none' : ''} `}>
+                            <FancyLinkBtn btnWidth={'100%'} backround={'--mainColor'} effectBg={'--titleColor'} title={'Войти'} />
+                        </div>
                     </form>
                     <Link href={'/'} className="mt-2 w-full">
                         <FancyLinkBtn btnWidth={'100%'} backround={'--mainColor'} effectBg={'--titleColor'} title={'В главную'} />

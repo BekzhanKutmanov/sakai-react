@@ -13,6 +13,7 @@ import { myMainCourseType } from '@/types/myMainCourseType';
 import { usePathname } from 'next/navigation';
 import { LastStepVisit } from '@/types/Step/visits/lastStepVisit/LastStepVist';
 import { LastSubjectPageVisit } from '@/types/Step/visits/LastSubjectPageVisit';
+import { unVerifedSteps } from '@/services/notifications';
 
 export const LayoutContext = createContext({} as LayoutContextProps);
 
@@ -73,7 +74,7 @@ export const LayoutProvider = ({ children }: ChildContainerProps) => {
     // student. last step visit
     const [contextLastStepVisit, setContextLastStepVisit] = useState<LastStepVisit | null>(null);
 
-    // student. last subject page visit 
+    // student. last subject page visit
     const [contextLastSubjectPageVisit, setContextLastSubjectPageVisit] = useState<LastSubjectPageVisit | null>(null);
 
     // breadCrumb urls
@@ -89,7 +90,7 @@ export const LayoutProvider = ({ children }: ChildContainerProps) => {
     const [course, setCourses] = useState<{ current_page: number; total: number; per_page: number; data: myMainCourseType[] }>({ current_page: 1, total: 0, per_page: 10, data: [] });
 
     const contextFetchCourse = async (page: number) => {
-        const data = await fetchCourses(page, 10);        
+        const data = await fetchCourses(page, 10);
         if (data?.courses) {
             // setCourses(data.courses.data);
             setCourses(data.courses);
@@ -104,7 +105,7 @@ export const LayoutProvider = ({ children }: ChildContainerProps) => {
         const data = await fetchThemes(Number(id) || null, id_kafedra);
         if (data) {
             setContextThemes(data);
-        }   
+        }
     };
 
     // fetch themes for student
@@ -122,12 +123,24 @@ export const LayoutProvider = ({ children }: ChildContainerProps) => {
     const [departament, setDepartament] = useState<{ last_name: string; name: string; father_name: string; info: string }>({ last_name: '', name: '', father_name: '', info: '' });
 
     const [contextNotificationId, setContextNotificationId] = useState<number | null>(null);
-    
-    const [forumValuse, setForumValues] = useState<{description: string, userInfo: {userName: string, userLastName: string}} | null>(null);
+
+    const [forumValuse, setForumValues] = useState<{ description: string; userInfo: { userName: string; userLastName: string } } | null>(null);
+
+
+    // verifed
+    const [contextVerifedValue, setContextVerifedValue] = useState([]);
+    const contextFetchVerifed = async () => {
+        const data = await unVerifedSteps();
+        if (data?.success) {
+           return data;  
+        } else {
+            return null;
+        }
+    };
 
     useEffect(() => {
         // if (pathname === '/course' && !departament.name) {
-        if (pathname.startsWith('/pdf')  || pathname.startsWith('/videoInstruct') ) {
+        if (pathname.startsWith('/pdf') || pathname.startsWith('/videoInstruct')) {
             setLayoutState((prev) => ({
                 ...prev,
                 staticMenuDesktopInactive: true,
@@ -188,18 +201,22 @@ export const LayoutProvider = ({ children }: ChildContainerProps) => {
         setDepartament,
         contextNewStudentThemes,
         setContextNewStudentThemes,
-        
-        contextNotificationId, 
+
+        contextNotificationId,
         setContextNotificationId,
 
-        forumValuse, 
+        forumValuse,
         setForumValues,
 
-        contextLastStepVisit, 
+        contextLastStepVisit,
         setContextLastStepVisit,
 
-        contextLastSubjectPageVisit, 
-        setContextLastSubjectPageVisit
+        contextLastSubjectPageVisit,
+        setContextLastSubjectPageVisit,
+
+        contextVerifedValue, 
+        setContextVerifedValue,
+        contextFetchVerifed
     };
 
     return (

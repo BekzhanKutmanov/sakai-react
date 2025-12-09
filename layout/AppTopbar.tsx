@@ -81,8 +81,7 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
             <div className={`flex flex-col justify-center p-2 gap-1`}>
                 {Object.values(typeObjs)?.length > 1 ? (
                     Object.entries(typeObjs).map((el: any) => {
-                        const item = el[1];
-                        console.log(el);                        
+                        const item = el[1];         
                         let path = '';
                         if (user?.is_working && item?.type?.type === 'practical') {
                             path = `/students/${item?.meta?.course_id}/${item?.meta?.connect_id}/${item?.meta?.stream_id}/${item?.meta?.student_id}/${item?.meta?.lesson_id}/${item?.meta?.step_id}`;
@@ -118,11 +117,9 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                     })
                 ) : notification?.length > 0 ? (
                     notification?.map((item) => {
-                        console.log(item);
-                        
                         let path = '';
                         if (user?.is_working && item?.type?.type === 'practical') {
-                            path = `/students/${item?.meta?.course_id}/${item?.meta?.connect_id}/${item?.meta?.stream_id}/${item?.meta?.student_id}/${item?.meta?.lesson_id}/${item?.meta?.step_id}`;
+                            path = `/students/${item?.meta?.course_id}/${item?.meta?.connect_id}/${item?.meta?.stream_id}/${item?.meta?.student_id}/${item?.from_user?.id}/${item?.meta?.lesson_id}/${item?.meta?.step_id}`;
                         } else if (user?.is_student && item?.type?.type === 'practical') {
                             path = `/teaching/lessonView/${item?.meta?.lesson_id}/${item?.meta?.id_curricula}/${item?.meta?.stream_id}/${item?.meta?.step_id}`;
                         }

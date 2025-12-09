@@ -19,10 +19,10 @@ import { Accordion, AccordionTab } from 'primereact/accordion';
 import { useContext, useEffect, useState } from 'react';
 
 export default function StudentCheck() {
-    const { cource_id, connect_id, stream_id, student_id, lesson_id, step_id } = useParams();
+    const { cource_id, connect_id, stream_id, student_id, from_student, lesson_id, step_id } = useParams();
     // const params = useParams();
     // console.log(params, cource_id, connect_id, stream_id, student_id, lesson_id, step_id);
-
+    
     const { setMessage, contextNotificationId, setContextNotificationId } = useContext(LayoutContext);
     const showError = useErrorMessage();
 

@@ -80,6 +80,7 @@ const AppMenuitem = (props: AppMenuItemProps) => {
                         <i className={classNames('layout-menuitem-icon', item!.icon)}></i>
 
                         <span className="layout-menuitem-text max-w-[200px] text-nowrap overflow-hidden text-ellipsis block" title={item!.label}> {item!.label}</span>
+                        {item?.extra && item.extra && <span className="menu-extra">{item.extra}</span>}
 
                         <Ripple />
                     </Link>

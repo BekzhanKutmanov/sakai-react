@@ -25,7 +25,7 @@ export const connectStreams = async (value: { stream: streamsType[] }) => {
     }
 };
 
-export const newConnectStreams = async (value: { course_id: number | null; id_stream: number | null, active: boolean }) => {
+export const newConnectStreams = async (value: { course_id: number | null; id_stream: number | null; active: boolean }) => {
     try {
         const res = await axiosInstance.post(`/v1/teacher/stream/connect/course`, value);
 
@@ -98,6 +98,37 @@ export const pacticaDisannul = async (id_curricula: number | null, course_id: nu
 
     try {
         const res = await axiosInstance.post(`/v1/teacher/stream/disannul/steps`, value);
+        const data = await res.data;
+
+        return data;
+    } catch (error) {
+        console.error('Ошибка загрузки:', error);
+        return error;
+    }
+};
+
+// myedu score info fetch
+export const fetchScoreValues = async (stream_id: number | null, student_id: number | null) => {
+    try {
+        const res = await axiosInstance.get(`/v1/teacher/export/info?id_stream=${stream_id}&id_student=${student_id}`);
+        const data = await res.data;
+
+        return data;
+    } catch (error) {
+        console.error('Ошибка загрузки:', error);
+    }
+};
+
+// myedu score send
+export const sendMyeduScore = async (id_stream: number | null, id_student: number | null, point: number | null) => {
+    const value = {
+        id_student,
+        id_stream,
+        point
+    };
+
+    try {
+        const res = await axiosInstance.post(`/v1/teacher/export/score`, value);
         const data = await res.data;
 
         return data;

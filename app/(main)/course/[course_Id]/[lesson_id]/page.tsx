@@ -158,7 +158,6 @@ export default function LessonStep() {
                     }
                 };
 
-                alert(data?.response?.data?.message);
                 setMessage({
                     state: true,
                     value: { severity: 'error', summary: data?.response?.data?.message, detail: <div style={{ whiteSpace: 'pre-line' }}>{teachers()}</div> }

@@ -96,8 +96,13 @@ export interface LayoutContextProps {
     contextLastStepVisit: LastStepVisit | null, 
     setContextLastStepVisit,
 
-    contextLastSubjectPageVisit: LastSubjectPageVisit | null, 
-    setContextLastSubjectPageVisit
+    contextLastSubjectPageVisit: LastSubjectPageVisit | null,
+    setContextLastSubjectPageVisit,
+
+    contextVerifedValue, 
+    setContextVerifedValue,
+    contextFetchVerifed: ()=> void;
+
     // message: { state: boolean; value: MessageType };
     // setMessage: React.Dispatch<React.SetStateAction<{ state: boolean; value: MessageType }>>;
 }
@@ -155,6 +160,9 @@ export interface AppMenuItem extends MenuModel {
     score?: string
     onEdit?: () => void;
     onDelete?: () => void;
+
+    template?: any;
+    extra?: any;
 }
 
 export interface AppMenuItemProps {

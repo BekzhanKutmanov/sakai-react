@@ -15,7 +15,7 @@ export default function UnVerifed() {
 
     const media = useMediaQuery('(max-width: 640px)');
     const showError = useErrorMessage();
-    const { setMessage } = useContext(LayoutContext);
+    const { setMessage, contextFetchVerifed } = useContext(LayoutContext);
 
     const [skeleton, setSkeleton] = useState(false);
     const [hasThemes, setHasThemes] = useState(false);
@@ -30,33 +30,59 @@ export default function UnVerifed() {
         hour12: false // 24-часовой формат
     };
 
-    const fetchVerifedSteps = async () => {
-        const data = await unVerifedSteps();
-        
-        setSkeleton(true);
-        if (data?.success) {
-            if (data?.lists?.length < 1) {
-                setHasThemes(true);
-            } else {
-                setTasks(data?.lists);
-                setHasThemes(false);
-            }
+    // const fetchVerifedSteps = async () => {
+    //     const data = await unVerifedSteps();
 
-            setSkeleton(false);
-        } else {
-            setHasThemes(true);
-            setMessage({
-                state: true,
-                value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
-            });
-            if (data?.response?.status) {
-                showError(data.response.status);
-            }
-            setSkeleton(false);
-        }
-    };
+    //     setSkeleton(true);
+    //     if (data?.success) {
+    //         if (data?.lists?.length < 1) {
+    //             setHasThemes(true);
+    //         } else {
+    //             setTasks(data?.lists);
+    //             setHasThemes(false);
+    //         }
+
+    //         setSkeleton(false);
+    //     } else {
+    //         setHasThemes(true);
+    //         setMessage({
+    //             state: true,
+    //             value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
+    //         });
+    //         if (data?.response?.status) {
+    //             showError(data.response.status);
+    //         }
+    //         setSkeleton(false);
+    //     }
+    // };
 
     useEffect(() => {
+        const fetchVerifedSteps = async () => {
+            setSkeleton(true);
+            const data:any = await contextFetchVerifed();
+            console.log(data);
+            
+            if (data?.success) {
+                if (data?.lists?.length < 1) {
+                    setHasThemes(true);
+                } else {
+                    setTasks(data?.lists);
+                    setHasThemes(false);
+                }
+
+                setSkeleton(false);
+            } else {
+                setHasThemes(true);
+                setMessage({
+                    state: true,
+                    value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
+                });
+                if (data?.response?.status) {
+                    showError(data.response.status);
+                }
+            }
+            setSkeleton(false);
+        };
         fetchVerifedSteps();
     }, []);
 
@@ -78,23 +104,23 @@ export default function UnVerifed() {
                                     <div className="w-full flex justify-between">
                                         <Link
                                             className="cursor-pointer"
-                                            href={`/students/${item?.answer?.course_id}/${item?.connect_id}/${item?.answer?.id_stream}/${item?.answer?.student?.myedu_id}/${item?.answer?.lesson_id}/${item?.answer?.steps_id}`}
+                                            href={`/students/${item?.answer?.course_id}/${item?.connect_id}/${item?.answer?.id_stream}/${item?.answer?.student?.myedu_id}/${item?.answer?.student?.id}/${item?.answer?.lesson_id}/${item?.answer?.steps_id}`}
                                         >
                                             <b className="text-[var(--mainColor)] underline">Практическое задание</b>
                                         </Link>
                                         <span className="text-sm w-[13px] h-[13px] rounded-full bg-[var(--amberColor)]"></span>
                                     </div>
-                                    <div className='flex flex-col gap-3'>
+                                    <div className="flex flex-col gap-3">
                                         <div className="flex items-end justify-between w-full sm:w-[85%]">
                                             <p className="m-0 text-[13px]">
                                                 {item?.answer?.student?.last_name} {item?.answer?.student?.name}
                                             </p>
 
                                             <Link
-                                                href={`/students/${item?.answer?.course_id}/${item?.connect_id}/${item?.answer?.id_stream}/${item?.answer?.student?.myedu_id}/${item?.answer?.lesson_id}/${item?.answer?.steps_id}`}
+                                                href={`/students/${item?.answer?.course_id}/${item?.connect_id}/${item?.answer?.id_stream}/${item?.answer?.student?.myedu_id}/${item?.answer?.student?.id}/${item?.answer?.lesson_id}/${item?.answer?.steps_id}`}
                                                 className="cursor-pointer m-0 text-[12px] sm:text-[13px] text-[var(--mainColor)] flex items-center gap-1"
                                             >
-                                                <span className="text-[var(--mainColor)]">Перейти</span> <i style={{fontSize: '10px'}} className="pi pi-arrow-right text-[var(--mainColor)]"></i>
+                                                <span className="text-[var(--mainColor)]">Перейти</span> <i style={{ fontSize: '10px' }} className="pi pi-arrow-right text-[var(--mainColor)]"></i>
                                             </Link>
                                         </div>
                                         <div className="w-full relative flex mt-1">
