@@ -103,9 +103,11 @@ export default function StudentList() {
         setMyEduInfoVisible(true);
         setSkeleton(true);
         const data = await fetchScoreValues(stream_id, student_id);
+        console.log(data);
 
-        if (data.success) {
+        if (data) {
             const scoresArr: ScoreValueType[] = Object.values(data);
+            console.log(scoresArr);
             if (scoresArr && scoresArr?.length > 0) {
                 setScoreValues(scoresArr);
                 setHasScoreValue(false);
@@ -133,7 +135,7 @@ export default function StudentList() {
                 };
                 setMessage({
                     state: true,
-                    value: { severity: 'error', summary: data?.response?.data?.message , detail: <div style={{ whiteSpace: 'pre-line' }}>{teachers()}</div> }
+                    value: { severity: 'error', summary: data?.response?.data?.message, detail: <div style={{ whiteSpace: 'pre-line' }}>{teachers()}</div> }
                 });
             }
         }
@@ -159,11 +161,12 @@ export default function StudentList() {
                 value: { severity: 'success', summary: 'Успешно отправлен!', detail: '' }
             });
         } else {
-            setMessage({
-                state: true,
-                value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
-            });
-            if (data?.response?.status) {
+            if (data?.response?.status == '400') {
+                setMessage({
+                    state: true,
+                    value: { severity: 'error', summary: 'Ошибка!', detail: data?.response?.data?.message }
+                });
+            } else {
                 showError(data.response.status);
             }
         }
@@ -286,14 +289,15 @@ export default function StudentList() {
                                             {rowData?.score && rowData.score > 0 ? (
                                                 <div className="flex justify-between items-center gap-2 ">
                                                     <b className={`${rowData.score > 30 ? 'text-[var(--greenColor)] p-1 w-[25px] text-center' : 'text-amber-400 p-1 w-[25px] text-center '}`}>{rowData.score}</b>
-                                                    {!rowData?.export ? 
+                                                    {!rowData?.export ? (
                                                         <i
                                                             onClick={() => handleFetchScoreValues(Number(stream_id), rowData?.id || null, rowData?.score)}
                                                             className="cursor-pointer pi pi-upload bg-[var(--mainColor)] text-white p-2 px-3 rounded"
                                                             title="Сохранить в myedu"
                                                         ></i>
-                                                        : ''
-                                                    }
+                                                    ) : (
+                                                        ''
+                                                    )}
                                                     {/* <i onClick={()=> console.log(rowData)} className="cursor-pointer pi pi-upload bg-[var(--mainColor)] text-white p-2 px-3 rounded" title="Сохранить в myedu"></i> */}
                                                     {/* <Button icon={'pi pi-arrow-right'} size='small' style={{ fontSize: '13px', padding: '4px 4px'}} label="myedu" /> */}
                                                 </div>
