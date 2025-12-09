@@ -231,6 +231,8 @@ export default function LessonTest() {
     const handleAddPractica = async () => {
         setProgressSpinner(true);
         const data = await stepPractica(steps && steps?.id, steps?.connections?.id_stream, docValue.file);
+        console.log(data);
+        
         if (data?.success) {
             setProgressSpinner(false);
             setMessage({

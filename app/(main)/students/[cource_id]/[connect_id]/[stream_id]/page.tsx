@@ -148,8 +148,8 @@ export default function StudentList() {
         const data = await sendMyeduScore(stream_id, student_id, score);
 
         if (data.success) {
+            handleFetchStudents();
             const scoresArr: ScoreValueType[] = Object.values(data);
-            console.log(scoresArr);
             if (scoresArr && scoresArr?.length > 0) {
                 setScoreValues(scoresArr);
                 setHasScoreValue(false);
@@ -184,7 +184,8 @@ export default function StudentList() {
                 size="small"
                 onClick={() => {
                     setMyEduInfoVisible(false);
-                    // clearValues();
+                    setStudentId(null);
+                    setStudentScore(null);
                 }}
             />
 
@@ -349,6 +350,8 @@ export default function StudentList() {
                 onHide={() => {
                     if (!myEduInfoVisible) return;
                     setMyEduInfoVisible(false);
+                    setStudentId(null);
+                    setStudentScore(null);
                 }}
                 footer={footerContent}
             >

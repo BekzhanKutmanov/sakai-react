@@ -220,9 +220,11 @@ export default function StudentCheck() {
                     <h3 className="text-lg pb-1 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">{/* <span className="text-[var(--mainColor)]">Название курса:</span> {courseInfo.title} */}</h3>
                     <Accordion activeIndex={activeIndex} onTabChange={(e) => setActiveIndex(e.index)}>
                         {lessons?.map((item) => {
+                            
                             const content = item?.steps?.filter((j) => {
                                 return j?.id_parent != null;
                             });
+                            console.log(content);
 
                             return (
                                 <AccordionTab header={'Тема: ' + item.title} key={item.id} className="w-full p-accordion" style={{ width: '100%' }}>
