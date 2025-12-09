@@ -47,7 +47,8 @@ export default function LessonTest() {
     const router = useRouter();
     const media = useMediaQuery('(max-width: 640px)');
     const showError = useErrorMessage();
-    const { setMessage, setContextNewStudentThemes, contextNotificationId, setContextNotificationId, contextLastSubjectPageVisit, setContextLastSubjectPageVisit } = useContext(LayoutContext);
+    const { user, setMessage, setContextNewStudentThemes, contextNotificationId, setContextNotificationId, contextNotifications, setContextNotifications, handleNotifications, contextLastSubjectPageVisit, setContextLastSubjectPageVisit } =
+        useContext(LayoutContext);
 
     const [steps, setMainSteps] = useState<mainStepsType | null>(null);
     const [hasSteps, setHasSteps] = useState(false);
@@ -120,6 +121,10 @@ export default function LessonTest() {
     const handleStatusView = async (notification_id: number | null) => {
         if (notification_id) {
             const data = await statusView(Number(notification_id));
+            console.log(data);
+            if (user?.is_working || user?.is_student) {
+                handleNotifications();
+            }
             setContextNotificationId(null);
         }
     };
@@ -231,8 +236,6 @@ export default function LessonTest() {
     const handleAddPractica = async () => {
         setProgressSpinner(true);
         const data = await stepPractica(steps && steps?.id, steps?.connections?.id_stream, docValue.file);
-        console.log(data);
-        
         if (data?.success) {
             setProgressSpinner(false);
             setMessage({
@@ -755,7 +758,13 @@ export default function LessonTest() {
                     ''
                 )}
                 <div className={`w-full bg-[var(--titleColor)] relative text-white  p-4 md:p-3 pb-4`}>
-                    {contextLastSubjectPageVisit ? <Link onClick={()=> setContextLastSubjectPageVisit(null)} href={`/teaching/${contextLastSubjectPageVisit}`}><i className='pi pi-arrow-left text-white absolute top-0 left-0 p-2'></i></Link> : ''}
+                    {contextLastSubjectPageVisit ? (
+                        <Link onClick={() => setContextLastSubjectPageVisit(null)} href={`/teaching/${contextLastSubjectPageVisit}`}>
+                            <i className="pi pi-arrow-left text-white absolute top-0 left-0 p-2"></i>
+                        </Link>
+                    ) : (
+                        ''
+                    )}
                     <div className="flex flex-col gap-2 items-center">
                         <div className={`w-full flex items-center gap-2 ${courseInfo?.image && courseInfo?.image.length > 0 ? 'justify-around flex-col sm:flex-row' : 'justify-center'} items-center`}>
                             <div className="sm:w-1/2 flex flex-col gap-2 items-center">

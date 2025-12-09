@@ -13,7 +13,8 @@ import { myMainCourseType } from '@/types/myMainCourseType';
 import { usePathname } from 'next/navigation';
 import { LastStepVisit } from '@/types/Step/visits/lastStepVisit/LastStepVist';
 import { LastSubjectPageVisit } from '@/types/Step/visits/LastSubjectPageVisit';
-import { unVerifedSteps } from '@/services/notifications';
+import { getNotifications, unVerifedSteps } from '@/services/notifications';
+import { mainNotification } from '@/types/mainNotification';
 
 export const LayoutContext = createContext({} as LayoutContextProps);
 
@@ -126,14 +127,27 @@ export const LayoutProvider = ({ children }: ChildContainerProps) => {
 
     const [forumValuse, setForumValues] = useState<{ description: string; userInfo: { userName: string; userLastName: string } } | null>(null);
 
+    // notification
+    const [contextNotifications, setContextNotifications] = useState<mainNotification[]>([]);
+
+    const handleNotifications = async () => {
+        const data = await getNotifications();
+        if (data && Array.isArray(data)) {
+            setContextNotifications(data);
+            // setNotification((prev) => [...prev, { type: { type: 'lorem' } }, { type: { type: 'second' } }]);
+        }
+    };
+
     // verifed
     const [contextVerifedValue, setContextVerifedValue] = useState([]);
     const contextFetchVerifed = async () => {
         const data = await unVerifedSteps();
+        console.log(data);
+        
         if (data?.success) {
-           return data;  
+            setContextVerifedValue(data?.lists);
         } else {
-            return null;
+            setContextVerifedValue([]);
         }
     };
 
@@ -213,9 +227,13 @@ export const LayoutProvider = ({ children }: ChildContainerProps) => {
         contextLastSubjectPageVisit,
         setContextLastSubjectPageVisit,
 
-        contextVerifedValue, 
+        contextVerifedValue,
         setContextVerifedValue,
-        contextFetchVerifed
+        contextFetchVerifed,
+
+        contextNotifications, 
+        setContextNotifications,
+        handleNotifications
     };
 
     return (

@@ -587,10 +587,6 @@ export default function LessonInfoCard({
         }
     }, [videoCall]);
 
-    useEffect(()=> {
-        console.log(practicaMessage);
-    },[practicaMessage]);
-
     return (
         <div>
             <Dialog

@@ -19,7 +19,7 @@ import { OptionsType } from '@/types/OptionsType';
 import MyDateTime from '@/app/components/MyDateTime';
 
 const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
-    const { layoutState, onMenuToggle, user, setUser, setGlobalLoading, setContextNotificationId } = useContext(LayoutContext);
+    const { layoutState, onMenuToggle, user, setUser, setGlobalLoading, setContextNotificationId, contextNotifications, setContextNotifications, handleNotifications } = useContext(LayoutContext);
 
     const menubuttonRef = useRef(null);
     const topbarmenuRef = useRef(null);
@@ -51,14 +51,6 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
 
     const copyBtnClassName = `text-white bg-[var(--greenColor)]`;
 
-    const handleNotifications = async () => {
-        const data = await getNotifications();
-        if (data && Array.isArray(data)) {
-            setNotification(data);
-            // setNotification((prev) => [...prev, { type: { type: 'lorem' } }, { type: { type: 'second' } }]);
-        }
-    };
-
     const Notificatoin = () => {
         const typeObjs = {};
         // if (notification?.length > 0) {
@@ -81,7 +73,7 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
             <div className={`flex flex-col justify-center p-2 gap-1`}>
                 {Object.values(typeObjs)?.length > 1 ? (
                     Object.entries(typeObjs).map((el: any) => {
-                        const item = el[1];         
+                        const item = el[1];
                         let path = '';
                         if (user?.is_working && item?.type?.type === 'practical') {
                             path = `/students/${item?.meta?.course_id}/${item?.meta?.connect_id}/${item?.meta?.stream_id}/${item?.meta?.student_id}/${item?.meta?.lesson_id}/${item?.meta?.step_id}`;
@@ -420,6 +412,13 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
             handleNotifications();
         }
     }, [user]);
+
+    useEffect(()=> {
+        console.log('notifications app topbar ', contextNotifications);
+        if(contextNotifications){
+            setNotification(contextNotifications)
+        }
+    },[contextNotifications]);
 
     return (
         <div className="layout-topbar">

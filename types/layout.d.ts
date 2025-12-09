@@ -103,6 +103,10 @@ export interface LayoutContextProps {
     setContextVerifedValue,
     contextFetchVerifed: ()=> void;
 
+    contextNotifications: mainNotificatio[], 
+    setContextNotifications,
+    handleNotifications: ()=> void,
+
     // message: { state: boolean; value: MessageType };
     // setMessage: React.Dispatch<React.SetStateAction<{ state: boolean; value: MessageType }>>;
 }

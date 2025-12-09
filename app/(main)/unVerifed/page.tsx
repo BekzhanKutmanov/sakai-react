@@ -6,7 +6,6 @@ import GroupSkeleton from '@/app/components/skeleton/GroupSkeleton';
 import useErrorMessage from '@/hooks/useErrorMessage';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { LayoutContext } from '@/layout/context/layoutcontext';
-import { unVerifedSteps } from '@/services/notifications';
 import Link from 'next/link';
 import { useContext, useEffect, useState } from 'react';
 
@@ -15,7 +14,7 @@ export default function UnVerifed() {
 
     const media = useMediaQuery('(max-width: 640px)');
     const showError = useErrorMessage();
-    const { setMessage, contextFetchVerifed } = useContext(LayoutContext);
+    const { setMessage, contextFetchVerifed, contextVerifedValue } = useContext(LayoutContext);
 
     const [skeleton, setSkeleton] = useState(false);
     const [hasThemes, setHasThemes] = useState(false);
@@ -57,34 +56,32 @@ export default function UnVerifed() {
     // };
 
     useEffect(() => {
-        const fetchVerifedSteps = async () => {
-            setSkeleton(true);
-            const data:any = await contextFetchVerifed();
-            console.log(data);
-            
-            if (data?.success) {
-                if (data?.lists?.length < 1) {
-                    setHasThemes(true);
-                } else {
-                    setTasks(data?.lists);
-                    setHasThemes(false);
-                }
-
-                setSkeleton(false);
-            } else {
-                setHasThemes(true);
-                setMessage({
-                    state: true,
-                    value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
-                });
-                if (data?.response?.status) {
-                    showError(data.response.status);
-                }
-            }
-            setSkeleton(false);
-        };
-        fetchVerifedSteps();
+        contextFetchVerifed();
     }, []);
+
+    useEffect(() => {
+        setSkeleton(true);
+        if (contextVerifedValue && Array.isArray(contextVerifedValue)) {
+            if (contextVerifedValue?.length < 1) {
+                setHasThemes(true);
+            } else {
+                setTasks(contextVerifedValue);
+                setHasThemes(false);
+            }
+
+            setSkeleton(false);
+        } else {
+            setHasThemes(true);
+            setMessage({
+                state: true,
+                value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
+            });
+            if (contextVerifedValue?.response?.status) {
+                showError(contextVerifedValue.response.status);
+            }
+        }
+        setSkeleton(false);
+    }, [contextFetchVerifed]);
 
     return (
         <div className="main-bg">

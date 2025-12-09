@@ -22,8 +22,8 @@ export default function StudentCheck() {
     const { cource_id, connect_id, stream_id, student_id, from_student, lesson_id, step_id } = useParams();
     // const params = useParams();
     // console.log(params, cource_id, connect_id, stream_id, student_id, lesson_id, step_id);
-    
-    const { setMessage, contextNotificationId, setContextNotificationId } = useContext(LayoutContext);
+
+    const { user, setMessage, contextNotificationId, setContextNotificationId, handleNotifications, contextFetchVerifed } = useContext(LayoutContext);
     const showError = useErrorMessage();
 
     const [mainSkeleton, mainSetSkeleton] = useState(false);
@@ -75,7 +75,10 @@ export default function StudentCheck() {
         if (notification_id) {
             const data = await statusView(Number(notification_id));
             console.log(data);
-            
+            if (user?.is_working || user?.is_student) {
+                handleNotifications();
+            }
+
             setContextNotificationId(null);
         }
     };
@@ -121,6 +124,7 @@ export default function StudentCheck() {
         const data = await pacticaScoreAdd(connect_id ? Number(connect_id) : null, stream_id ? Number(stream_id) : null, student_id ? Number(student_id) : null, stepId, score);
 
         if (data?.success) {
+            contextFetchVerifed();      
             setMessage({
                 state: true,
                 value: { severity: 'success', summary: 'Успешно добавлен!', detail: '' }
@@ -148,6 +152,7 @@ export default function StudentCheck() {
         const data = await pacticaDisannul(id_curricula, course_id, id_stream, Number(student_id), steps_id, message);
 
         if (data?.success) {
+            contextFetchVerifed();
             setMessage({
                 state: true,
                 value: { severity: 'success', summary: 'Успешно добавлен!', detail: '' }
@@ -220,11 +225,9 @@ export default function StudentCheck() {
                     <h3 className="text-lg pb-1 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">{/* <span className="text-[var(--mainColor)]">Название курса:</span> {courseInfo.title} */}</h3>
                     <Accordion activeIndex={activeIndex} onTabChange={(e) => setActiveIndex(e.index)}>
                         {lessons?.map((item) => {
-                            
                             const content = item?.steps?.filter((j) => {
                                 return j?.id_parent != null;
                             });
-                            console.log(content);
 
                             return (
                                 <AccordionTab header={'Тема: ' + item.title} key={item.id} className="w-full p-accordion" style={{ width: '100%' }}>

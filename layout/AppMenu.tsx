@@ -30,7 +30,7 @@ const AppMenu = () => {
         to: Nullable<Date> | null;
     }
 
-    const { user, setDeleteQuery, setUpdateeQuery, contextFetchThemes, contextThemes, contextFetchStudentThemes, departament, contextNewStudentThemes } = useContext(LayoutContext);
+    const { user, setMessage, setDeleteQuery, setUpdateeQuery, contextFetchThemes, contextThemes, contextFetchStudentThemes, departament, contextNewStudentThemes, contextVerifedValue, setContextVerifedValue, contextFetchVerifed } = useContext(LayoutContext);
     interface test {
         label: string;
         id: number;
@@ -72,7 +72,6 @@ const AppMenu = () => {
     const [verifedLength, setVerifedLength] = useState<number | null>(null);
 
     const showError = useErrorMessage();
-    const { setMessage, contextFetchVerifed } = useContext(LayoutContext);
 
     const ruLocale = {
         firstDayOfWeek: 1, // Понедельник
@@ -150,9 +149,9 @@ const AppMenu = () => {
                           extra: (
                               <div className="p-overlay-badge">
                                   {/* Условное отображение красного кружка (бэйджа) */}
-                                  {verifedLength ? (
+                                  {contextVerifedValue?.length ? (
                                       <div className="relative">
-                                          <div className={`absolute -right-3 -top-3 px-1 bg-[var(--amberColor)] rounded text-white text-[11px]`}>{verifedLength}</div>
+                                          <div className={`absolute -right-3 -top-3 px-1 bg-[var(--amberColor)] rounded text-white text-[11px]`}>{contextVerifedValue?.length}</div>
                                           <button className={`cursor-pointer flex gap-2 items-center px-0 bg-white text-blue-300 p-2 font-bold`} />
                                       </div>
                                   ) : (
@@ -268,9 +267,9 @@ const AppMenu = () => {
                       extra: (
                           <div className="p-overlay-badge">
                               {/* Условное отображение красного кружка (бэйджа) */}
-                              {verifedLength ? (
+                              {contextVerifedValue?.length ? (
                                   <div className="relative">
-                                      <div className={`absolute -right-3 -top-3 px-1 bg-[var(--amberColor)] rounded text-white text-[11px]`}>{verifedLength}</div>
+                                      <div className={`absolute -right-3 -top-3 px-1 bg-[var(--amberColor)] rounded text-white text-[11px]`}>{contextVerifedValue?.length}</div>
                                       <button className={`cursor-pointer flex gap-2 items-center px-0 bg-white text-blue-300 p-2 font-bold`} />
                                   </div>
                               ) : (
@@ -451,17 +450,7 @@ const AppMenu = () => {
 
         // unverifed
         if (user && user?.is_working) {
-            const fetchVerifedSteps = async () => {
-                const data: any = await contextFetchVerifed();
-                console.log(data);
-
-                if (data?.success) {
-                    setVerifedLength(data?.lists?.length);
-                } else {
-                    setVerifedLength(null);
-                }
-            };
-            fetchVerifedSteps();
+            contextFetchVerifed();
         }
     }, [user, studentThemeCourse]);
 

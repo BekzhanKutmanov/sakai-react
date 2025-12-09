@@ -696,7 +696,7 @@ export default function Course() {
                                             <div>
                                                 {/* <OpenStudentList /> */}
                                                 <div ref={topRef}>
-                                                    <DataTable value={tableData} dataKey="id" emptyMessage="..." breakpoint="960px" rows={5} className="my-custom-table">
+                                                    <DataTable value={tableData} dataKey="id" emptyMessage="Загрузка" breakpoint="960px" rows={5} className="my-custom-table">
                                                         <Column body={(_, { rowIndex }) => rowIndex + 1} header="#" style={{ width: '20px' }}></Column>
                                                         <Column
                                                             style={{ width: '70px' }}

@@ -55,13 +55,6 @@ export default function StudentList() {
     };
 
     // functions
-    const toggleSkeleton = () => {
-        setSkeleton(true);
-        setTimeout(() => {
-            setSkeleton(false);
-        }, 1000);
-    };
-
     const handleFetchStreams = async () => {
         if (cource_id) {
             const data = await fetchStreams(cource_id ? Number(cource_id) : null);
@@ -81,7 +74,7 @@ export default function StudentList() {
 
     const handleFetchStudents = async () => {
         const data = await fetchStreamStudents(connect_id ? Number(connect_id) : null, stream_id ? Number(stream_id) : null);
-        toggleSkeleton();
+        setSkeleton(true);
         if (data) {
             setHasList(false);
             setStudentList(data);
@@ -95,6 +88,7 @@ export default function StudentList() {
                 showError(data.response.status);
             }
         }
+        setSkeleton(false);
     };
 
     const handleFetchScoreValues = async (stream_id: number, student_id: number | null, score: number) => {
@@ -206,7 +200,6 @@ export default function StudentList() {
 
     useEffect(() => {
         handleFetchStreams();
-        toggleSkeleton();
         handleFetchStudents();
     }, []);
 
@@ -267,7 +260,7 @@ export default function StudentList() {
                         <GroupSkeleton count={studentList.length} size={{ width: '100%', height: '4rem' }} />
                     ) : (
                         <>
-                            <DataTable value={studentList} dataKey="id" emptyMessage="Нет данных" breakpoint="960px" rows={5} className="mini-table">
+                            <DataTable value={studentList} dataKey="id" emptyMessage="Загрузка" loading={skeleton} breakpoint="960px" rows={5} className="mini-table">
                                 <Column body={(_, { rowIndex }) => rowIndex + 1} header="#" style={{ width: '20px' }}></Column>
                                 <Column
                                     field="title"
