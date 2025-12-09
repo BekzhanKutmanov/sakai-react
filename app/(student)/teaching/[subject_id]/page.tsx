@@ -174,7 +174,7 @@ export default function StudentLesson() {
         subject?.streams.forEach((i) => params.append('streams[]', String(i)));
         subject?.course_ids.forEach((i) => params.append('course_ids[]', String(i)));
         const data = await fetchSubjects(params);
-        setSkeleton(true);
+        setSkeleton(true);  
 
         if (data && Array.isArray(data)) {
             setCourses(data);

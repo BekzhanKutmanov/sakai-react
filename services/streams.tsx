@@ -116,6 +116,7 @@ export const fetchScoreValues = async (stream_id: number | null, student_id: num
         return data;
     } catch (error) {
         console.error('Ошибка загрузки:', error);
+        return error;
     }
 };
 

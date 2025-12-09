@@ -103,11 +103,9 @@ export default function StudentList() {
         setMyEduInfoVisible(true);
         setSkeleton(true);
         const data = await fetchScoreValues(stream_id, student_id);
-        console.log(data);
 
-        if (data) {
+        if (data.success) {
             const scoresArr: ScoreValueType[] = Object.values(data);
-            console.log(scoresArr);
             if (scoresArr && scoresArr?.length > 0) {
                 setScoreValues(scoresArr);
                 setHasScoreValue(false);
@@ -116,6 +114,28 @@ export default function StudentList() {
             }
         } else {
             setHasScoreValue(true);
+            if (data?.response?.status == '400') {
+                const teachers = () => {
+                    if (data?.response?.data?.teacher) {
+                        return (
+                            <div className="flex flex-col gap-2">
+                                <div className={`flex gap-1 flex-col`}>
+                                    <span>
+                                        {data?.response?.data?.teacher?.last_name} {data?.response?.data?.teacher?.name && data?.response?.data?.teacher?.name[0] + '.'}{' '}
+                                        {data?.response?.data?.teacher?.father_name && data?.response?.data?.teacher?.father_name.length > 1 && data?.response?.data?.teacher?.father_name[0] + '.'}
+                                    </span>
+                                </div>
+                            </div>
+                        );
+                    } else {
+                        return '';
+                    }
+                };
+                setMessage({
+                    state: true,
+                    value: { severity: 'error', summary: data?.response?.data?.message , detail: <div style={{ whiteSpace: 'pre-line' }}>{teachers()}</div> }
+                });
+            }
         }
         setSkeleton(false);
     };
@@ -124,7 +144,6 @@ export default function StudentList() {
         setMyEduInfoVisible(false);
         setSkeleton(true);
         const data = await sendMyeduScore(stream_id, student_id, score);
-        console.log(data);
 
         if (data.success) {
             const scoresArr: ScoreValueType[] = Object.values(data);
@@ -195,10 +214,6 @@ export default function StudentList() {
             }
         }
     }, [streams]);
-
-    useEffect(()=> {
-        console.log(studentId, studentScore);
-    },[]);
 
     return (
         <div className="main-bg">
@@ -271,11 +286,14 @@ export default function StudentList() {
                                             {rowData?.score && rowData.score > 0 ? (
                                                 <div className="flex justify-between items-center gap-2 ">
                                                     <b className={`${rowData.score > 30 ? 'text-[var(--greenColor)] p-1 w-[25px] text-center' : 'text-amber-400 p-1 w-[25px] text-center '}`}>{rowData.score}</b>
-                                                    <i
-                                                        onClick={() => handleFetchScoreValues(Number(stream_id), rowData?.id || null, rowData?.score)}
-                                                        className="cursor-pointer pi pi-upload bg-[var(--mainColor)] text-white p-2 px-3 rounded"
-                                                        title="Сохранить в myedu"
-                                                    ></i>
+                                                    {!rowData?.export ? 
+                                                        <i
+                                                            onClick={() => handleFetchScoreValues(Number(stream_id), rowData?.id || null, rowData?.score)}
+                                                            className="cursor-pointer pi pi-upload bg-[var(--mainColor)] text-white p-2 px-3 rounded"
+                                                            title="Сохранить в myedu"
+                                                        ></i>
+                                                        : ''
+                                                    }
                                                     {/* <i onClick={()=> console.log(rowData)} className="cursor-pointer pi pi-upload bg-[var(--mainColor)] text-white p-2 px-3 rounded" title="Сохранить в myedu"></i> */}
                                                     {/* <Button icon={'pi pi-arrow-right'} size='small' style={{ fontSize: '13px', padding: '4px 4px'}} label="myedu" /> */}
                                                 </div>
@@ -332,7 +350,9 @@ export default function StudentList() {
             >
                 <>
                     {hasScoreValue ? (
-                        <b className='flex justify-center'>Данные не доступны</b>
+                        <div>
+                            <b className="flex justify-center">Данные не доступны</b>
+                        </div>
                     ) : (
                         <div className="flex flex-col gap-2">
                             {scoreValues?.map((item: ScoreValueType) => {
