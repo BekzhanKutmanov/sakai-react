@@ -121,7 +121,6 @@ export default function LessonTest() {
     const handleStatusView = async (notification_id: number | null) => {
         if (notification_id) {
             const data = await statusView(Number(notification_id));
-            console.log(data);
             if (user?.is_working || user?.is_student) {
                 handleNotifications();
             }
@@ -277,12 +276,13 @@ export default function LessonTest() {
     // Вызываем список шагов для prev , next темы
     const handleLessonRouterPush = async (lesson_id: number, stream_id: number) => {
         const data: any = await handleMainLesson(lesson_id, stream_id);
-        if (data && data.length > 0) {
+        const validSteps = data?.filter((item: { id_parent: number | null }) => item?.id_parent);
+        if (validSteps && validSteps.length > 0) {
             // пока состояние не используется
-            setNavigationStepId(data[0]?.id);
-            if (data[0]?.id) router.push(`/teaching/lessonView/${lesson_id}/${subject_id}/${stream_id}/${data[0].id}`);
+            setNavigationStepId(validSteps[0]?.id);
+            if (validSteps[0]?.id) router.push(`/teaching/lessonView/${lesson_id}/${subject_id}/${stream_id}/${validSteps[0].id}`);
         } else {
-            setMessage({ state: true, value: { severity: 'error', summary: 'Ошибка!', detail: 'Тема не доступна' } });
+            setMessage({ state: true, value: { severity: 'error', summary: 'В этой теме нет материалов', detail: 'Проверьте общий список тем' } });
         }
     };
 
@@ -296,10 +296,6 @@ export default function LessonTest() {
     // };
 
     useEffect(() => {
-        console.log('Step ', steps);
-
-        // const lesson = steps.find((item) => item.id === Number(id));
-        // console.log(lesson, lesson?.type);
         if (steps?.type.name === 'document') {
             setType(steps?.type.name);
             setDocument(steps);

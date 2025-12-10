@@ -50,7 +50,6 @@ export default function StudentCheck() {
     const handleFetchStreams = async () => {
         mainSetSkeleton(true);
         const data = await fetchStudentDetail(lesson_id ? Number(lesson_id) : null, connect_id ? Number(connect_id) : null, stream_id ? Number(stream_id) : null, student_id ? Number(student_id) : null, step_id ? Number(step_id) : null);
-        console.log(data);
 
         if (data?.success) {
             // handleStatusView();
@@ -74,7 +73,6 @@ export default function StudentCheck() {
     const handleStatusView = async (notification_id: number | null) => {
         if (notification_id) {
             const data = await statusView(Number(notification_id));
-            console.log(data);
             if (user?.is_working || user?.is_student) {
                 handleNotifications();
             }
@@ -124,7 +122,7 @@ export default function StudentCheck() {
         const data = await pacticaScoreAdd(connect_id ? Number(connect_id) : null, stream_id ? Number(stream_id) : null, student_id ? Number(student_id) : null, stepId, score);
 
         if (data?.success) {
-            contextFetchVerifed();      
+            contextFetchVerifed();
             setMessage({
                 state: true,
                 value: { severity: 'success', summary: 'Успешно добавлен!', detail: '' }
@@ -221,7 +219,17 @@ export default function StudentCheck() {
                 <div>
                     {courseShow && courseShow?.title ? <h1 className="text-2xl bg-[var(--titleColor)] text-white text-center p-3">{courseShow?.title}</h1> : ''}
 
-                    <ActivityPage value={contribution} recipient="Активность студента" userInfo={student} />
+                    <h2 style={{ marginBottom: 20 }} className="text-md sm:text-lg flex items-center justify-center gap-2">
+                        <span>Активность студента: </span>
+                        {student && (
+                            <div className="flex gap-1 items-center text-[var(--mainColor)]">
+                                <span>{student?.last_name}</span>
+                                <span>{student?.name && student?.name[0] + '.'}</span>
+                                <span>{student?.father_name && student?.father_name[0] + '.'}</span>
+                            </div>
+                        )}
+                    </h2>
+                    <ActivityPage value={contribution} />
                     <h3 className="text-lg pb-1 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">{/* <span className="text-[var(--mainColor)]">Название курса:</span> {courseInfo.title} */}</h3>
                     <Accordion activeIndex={activeIndex} onTabChange={(e) => setActiveIndex(e.index)}>
                         {lessons?.map((item) => {

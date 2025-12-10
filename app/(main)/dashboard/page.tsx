@@ -4,14 +4,17 @@ import { LayoutContext } from '@/layout/context/layoutcontext';
 import { ContributionDay } from '@/types/ContributionDay';
 import ActivityPage from '@/app/components/Contribution';
 import Link from 'next/link';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { fetchTeacherDashboard } from '@/services/dashboard/workingDashboard';
 import GroupSkeleton from '@/app/components/skeleton/GroupSkeleton';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { useRouter } from 'next/navigation';
 
 export default function Dashboard() {
-    interface CourseTotalLastMonth {total: number, last_month: number};
+    interface CourseTotalLastMonth {
+        total: number;
+        last_month: number;
+    }
 
     interface CourseStatisticApi {
         all: CourseTotalLastMonth;
@@ -24,6 +27,7 @@ export default function Dashboard() {
 
     const { user, departament, setMessage } = useContext(LayoutContext);
 
+    const ref = useRef<HTMLDivElement>(null);
     const media = useMediaQuery('(max-width: 640px)');
     const router = useRouter();
 
@@ -37,7 +41,7 @@ export default function Dashboard() {
         setSkeleton(true);
         const data = await fetchTeacherDashboard();
         console.log(data);
-        
+
         if (data && data?.all) {
             if (data?.myActiveDays) {
                 setContribution(data.myActiveDays);
@@ -54,7 +58,15 @@ export default function Dashboard() {
         hanldeTeacherDashboard();
     }, []);
 
-    if(!user?.is_student){
+    useEffect(() => {
+        if (media) {
+            if (ref.current) {
+                ref.current.scrollLeft = ref.current.scrollWidth;
+            }
+        }
+    }, [media]);
+
+    if (!user?.is_student) {
         return (
             <div className="flex flex-col gap-2">
                 {/* user info */}
@@ -70,7 +82,7 @@ export default function Dashboard() {
                         )}
                     </h1>
                 </div>
-    
+
                 {/* statistic */}
                 {skeleton ? (
                     <div className="w-full flex items-center justify-center gap-1 flex-col sm:flex-row sm:flex-wrap">
@@ -88,12 +100,13 @@ export default function Dashboard() {
                                     <i className="pi pi-fw pi-book text-xl p-1 px-3 flex justify-center rounded bg-[var(--productQuantityBg)] text-[var(--productQuantityText)]"></i>
                                 </div>
                                 <div className="text-lg mb-1 text-[black]">{courses?.all?.total}</div>
-                                {courses?.all.last_month && courses?.all.last_month > 0 ?
+                                {courses?.all.last_month && courses?.all.last_month > 0 ? (
                                     <small>
                                         <b className="text-[var(--greenColor)]">{courses?.all.last_month}</b> созданы за последние 30 дней
                                     </small>
-                                    : ''
-                                }
+                                ) : (
+                                    ''
+                                )}
                             </Link>
                             <Link href={'/course'} className="main-bg flex flex-col gap-1 w-full md:!w-[250px] px-4 min-h-[132px] hover:underline">
                                 <div className="flex justify-between gap-1 items-start">
@@ -101,25 +114,27 @@ export default function Dashboard() {
                                     <i className="pi pi-fw pi-lock text-xl p-1 px-3 flex justify-center rounded bg-[var(--productQuantityBg)] text-[var(--productQuantityText)]"></i>
                                 </div>
                                 <div className="text-lg mb-1 text-[black]">{courses?.lock?.total}</div>
-                                {courses?.lock.last_month && courses?.lock.last_month > 0 ? 
+                                {courses?.lock.last_month && courses?.lock.last_month > 0 ? (
                                     <small>
                                         <b className="text-[var(--greenColor)]">{courses?.lock.last_month}</b> созданы за последние 30 дней
                                     </small>
-                                    : ''
-                                }
+                                ) : (
+                                    ''
+                                )}
                             </Link>
                             <Link href={'/course'} className="main-bg flex flex-col gap-1 w-full md:!w-[250px] px-4 min-h-[132px] hover:underline">
                                 <div className="flex justify-between gap-1 items-start">
-                                    <b className="underline text-[var(--bodyColor)]">Открытые курсы</b> 
+                                    <b className="underline text-[var(--bodyColor)]">Открытые курсы</b>
                                     <i className="pi pi-fw pi-lock-open text-xl p-1 px-3 flex justify-center rounded bg-[var(--productQuantityBg)] text-[var(--productQuantityText)]"></i>
                                 </div>
                                 <div className="text-lg mb-1 text-[black]">{courses?.open?.total}</div>
-                                {courses?.open.last_month && courses?.open.last_month > 0 ? 
+                                {courses?.open.last_month && courses?.open.last_month > 0 ? (
                                     <small>
                                         <b className="text-[var(--greenColor)]">{courses?.open.last_month}</b> созданы за последние 30 дней
                                     </small>
-                                    : ''
-                                }
+                                ) : (
+                                    ''
+                                )}
                             </Link>
                             <Link href={'/course'} className="main-bg flex flex-col gap-1 w-full md:!w-[250px] px-4 min-h-[132px] hover:underline">
                                 <div className="flex justify-between gap-1 items-start">
@@ -127,22 +142,24 @@ export default function Dashboard() {
                                     <i className="pi pi-fw pi-wallet text-xl p-1 px-3 flex justify-center rounded bg-[var(--productQuantityBg)] text-[var(--productQuantityText)]"></i>
                                 </div>
                                 <div className="text-lg mb-1 text-[black]">{courses?.wallet?.total}</div>
-                                {courses?.wallet.last_month && courses?.wallet.last_month > 0 ? 
+                                {courses?.wallet.last_month && courses?.wallet.last_month > 0 ? (
                                     <small>
                                         <b className="text-[var(--greenColor)]">{courses?.wallet.last_month}</b> созданы за последние 30 дней
                                     </small>
-                                    : ''
-                                }
+                                ) : (
+                                    ''
+                                )}
                             </Link>
                         </div>
                     )
                 )}
-    
-                <div className="flex flex-col gap-4 items-center">
-                    {/* activity */}
-                    <div className="w-full main-bg p-2">
-                        <ActivityPage value={contribution} recipient="Активность преподавателя" userInfo={null} />
-                    </div>
+
+                {/* activity */}
+                <div ref={ref} className="w-full main-bg p-2">
+                    <h2 style={{ marginBottom: 20 }} className="text-md sm:text-lg flex items-center justify-center gap-2">
+                        <span>Активность преподавателя</span>
+                    </h2>
+                    <ActivityPage value={contribution} />
                 </div>
             </div>
         );

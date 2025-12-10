@@ -142,8 +142,6 @@ export const LayoutProvider = ({ children }: ChildContainerProps) => {
     const [contextVerifedValue, setContextVerifedValue] = useState([]);
     const contextFetchVerifed = async () => {
         const data = await unVerifedSteps();
-        console.log(data);
-        
         if (data?.success) {
             setContextVerifedValue(data?.lists);
         } else {

@@ -281,7 +281,7 @@ export default function StudentList() {
                                     body={(rowData) => (
                                         <div className="flex items-center gap-2" key={rowData?.id}>
                                             {rowData?.score && rowData.score > 0 ? (
-                                                <div className="flex justify-between items-center gap-2 ">
+                                                <div className="flex justify-between items-center gap-2">
                                                     <b className={`${rowData.score > 30 ? 'text-[var(--greenColor)] p-1 w-[25px] text-center' : 'text-amber-400 p-1 w-[25px] text-center '}`}>{rowData.score}</b>
                                                     {!rowData?.export ? (
                                                         <i
