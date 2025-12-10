@@ -29,13 +29,7 @@ export default function Faculty() {
     const handleFetchKafedra = async () => {
         setSkeleton(true);
         const data = await fetchKafedra();
-        console.log(data);
-        
         if (data && Array.isArray(data)) {
-            const r = data?.find((item)=> item?.short_name_kg === 'МИОТжББМ' );
-            console.warn(r);
-            // data?.forEach((item)=> console.log(item?.short_name_kg));
-            
             setSkeleton(false);
             if (data.length > 0) {
                 setKafedra(data);
@@ -47,6 +41,10 @@ export default function Faculty() {
         } else {
             setSkeleton(false);
             setFacultyShow(true);
+            setMessage({ state: true, value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' } });
+            if (data?.response?.status) {
+                showError(data.response.status);
+            }
         }
     };
 
@@ -59,7 +57,7 @@ export default function Faculty() {
         }, 900);
     }, []);
 
-    if(contentNull) return <NotFound titleMessage="Курсы отсутствуют" />
+    if (contentNull) return <NotFound titleMessage="Курсы отсутствуют" />;
 
     return (
         <div className="main-bg flex flex-col gap-4">
@@ -68,17 +66,17 @@ export default function Faculty() {
             ) : (
                 !selectShow && (
                     <div>
-                        <h3 className="text-xl pb-1 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">Кафедры</h3>
+                        <h3 className="text-xl sm:text-2xl pb-1 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">Кафедры</h3>
                         {facultyShow ? (
                             <NotFound titleMessage="Кафедры не доступны" />
                         ) : (
-                            <DataTable value={kafedra} dataKey="id" emptyMessage="Загрузка" key={JSON.stringify('name_ru')} responsiveLayout="stack" breakpoint="960px" rows={5} className="my-custom-table">
-                                <Column body={(_, { rowIndex }) => rowIndex + 1} header="#" style={{ width: '20px', display: 'flex', justifyContent: 'center' }} className='start'></Column>
+                            <DataTable value={kafedra} dataKey="id" emptyMessage="Загрузка" key={JSON.stringify('name_ru')} breakpoint="960px" rows={5} className="my-custom-table">
+                                <Column body={(_, { rowIndex }) => rowIndex + 1} header="#" style={{ width: '20px', display: 'flex', justifyContent: 'center' }} className="start"></Column>
                                 <Column
                                     field="name_ru"
                                     header="Название"
                                     style={{ width: '80%' }}
-                                    className='start'
+                                    className="start"
                                     body={(rowData) => (
                                         <Link href={`/faculty/${rowData.id}`} key={rowData.id}>
                                             {rowData.name_ru}

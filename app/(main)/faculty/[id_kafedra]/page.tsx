@@ -146,7 +146,7 @@ export default function Kafedra() {
                                     <div className="w-full flex justify-center">
                                         <div className="w-[300px] flex gap-1 justify-center items-center">
                                             <b className="w-full flex justify-end">{rowData.courses}</b>
-                                            <span className="w-full">({rowData.courses_published} утверждённых)</span>
+                                            <div className="w-full flex items-center gap-1">(<span>{rowData.courses_published}</span> <span>утверждённых</span>)</div>
                                         </div>
                                     </div>
                                 )}
