@@ -219,7 +219,7 @@ export default function OpenCourseStudentCheck() {
                 <div>
                     {courseShow && courseShow?.title ? <h1 className="text-2xl bg-[var(--titleColor)] text-white text-center p-3">{courseShow?.title}</h1> : ''}
 
-                    <ActivityPage value={contribution} recipient="Активность студента" userInfo={student} />
+                    {/* <ActivityPage value={contribution} recipient="Активность студента" userInfo={student} /> */}
                     <h3 className="text-lg pb-1 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">{/* <span className="text-[var(--mainColor)]">Название курса:</span> {courseInfo.title} */}</h3>
                     <Accordion activeIndex={activeIndex} onTabChange={(e) => setActiveIndex(e.index)}>
                         {/* {lessons?.map((item) => {
