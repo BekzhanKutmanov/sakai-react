@@ -20,12 +20,7 @@ export default function HomeClient() {
 
     const handleMainPageStatistics = async ()=> {
         const data = await mainPageStatistics();
-        console.log(data);
-        if(data && data?.students || data?.workers || data?.course ){
-            setStatistics(data);
-        } else {
-
-        }
+        if(data && data?.students || data?.workers || data?.course ) setStatistics(data);
     }
 
     useEffect(() => {

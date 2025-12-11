@@ -414,7 +414,6 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
     }, [user]);
 
     useEffect(()=> {
-        console.log('notifications app topbar ', contextNotifications);
         if(contextNotifications){
             setNotification(contextNotifications)
         }

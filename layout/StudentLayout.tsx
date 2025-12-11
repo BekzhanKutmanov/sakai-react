@@ -10,6 +10,9 @@ import { LayoutContext } from './context/layoutcontext';
 import { PrimeReactContext } from 'primereact/api';
 import { ChildContainerProps, LayoutState, AppTopbarRef } from '@/types';
 import { usePathname, useSearchParams } from 'next/navigation';
+import { Button } from 'primereact/button';
+import Link from 'next/link';
+import path from 'path';
 
 const StudentLayout = ({ children }: ChildContainerProps) => {
     const { layoutConfig, layoutState, setLayoutState, user } = useContext(LayoutContext);
@@ -133,12 +136,15 @@ const StudentLayout = ({ children }: ChildContainerProps) => {
 
     useEffect(()=> {
         requireRole();
+
+        console.log(pathname);
+        
     },[user, pathname]);
 
     // if(permission) return null;
 
     return (
-        <React.Fragment>    
+        <React.Fragment>
             <div className={containerClass}>
                 <AppTopbar ref={topbarRef} />
                 <div ref={sidebarRef} className="layout-sidebar">
@@ -147,6 +153,17 @@ const StudentLayout = ({ children }: ChildContainerProps) => {
                 <div className="layout-main-container">
                     <div className="layout-main">{children}</div>
                     {/* <AppFooter /> */}
+                    
+                    {/* bottom menu */}
+                    {/* <div className='sticky bottom-0 bg-[white] my-border-top p-3 rounded'>
+                        <div className='flex justify-around items-center gap-2'> 
+                            <Link href='/'><i className={`${pathname === '/' ? 'bg-[var(--mainColor)] text-[white]' : ''} cursor-pointer pi pi-home text-md p-2 rounded-full border text-[var(--mainColor)]`}></i></Link>
+                            <Link href=''><i className={`${pathname.startsWith('/teaching/') ? 'bg-[var(--mainColor)] text-[white]' : ''} cursor-pointer pi pi-bell text-md p-2 rounded-full border text-[var(--mainColor)]`}></i></Link>
+                            <Link href=''><i className={`${pathname === 'l' ? 'bg-[var(--mainColor)] text-[white]' : ''} cursor-pointer pi pi-comment text-md p-2 rounded-full border text-[var(--mainColor)]`}></i></Link>
+                            <Link href='/teaching'><i className={`${pathname === '/teaching' ? 'bg-[var(--mainColor)] text-[white]' : ''} cursor-pointer pi pi-book text-md p-2 rounded-full border text-[var(--mainColor)]`}></i></Link>
+                        </div>
+                    </div> */}
+
                 </div>
                 {/* <AppConfig /> */}
                 <div className="layout-mask"></div>
