@@ -53,6 +53,7 @@ export default function LessonTest() {
     const [steps, setMainSteps] = useState<mainStepsType | null>(null);
     const [hasSteps, setHasSteps] = useState(false);
     const [progressSpinner, setProgressSpinner] = useState(false);
+    const [mainProgressSpinner, setMainProgressSpinner] = useState(false);
     const [type, setType] = useState('');
     const [practica, setPractica] = useState<{
         content?: { document: string; document_path: string; description: string | null; title: string; link: string; url: string; content: string; answers: [{ text: string; is_correct: boolean; id: number | null }]; score: number };
@@ -102,8 +103,8 @@ export default function LessonTest() {
 
     // fetch lessons
     const handleFetchLessons = async () => {
+        setMainProgressSpinner(true);
         const data = await fetchItemsLessons();
-
         if (data) {
             // валидность проверить
             setLessons(data);
@@ -116,6 +117,7 @@ export default function LessonTest() {
                 showError(data.response.status);
             }
         }
+        setMainProgressSpinner(false);
     };
 
     const handleStatusView = async (notification_id: number | null) => {
@@ -720,9 +722,12 @@ export default function LessonTest() {
         </div>
     );
 
+    if(mainProgressSpinner) return <div className='main-bg flex justify-center items-center h-[100vh]'><ProgressSpinner style={{ width: '60px', height: '60px' }} /></div>
+
     return (
         <div className="main-bg min-h-[100vh] w-full relative flex flex-col gap-3 justify-between">
             <div className="flex flex-col">
+                {/* step navigation */}
                 {stepNavigation && stepNavigation.currentStepPos ? (
                     <div className="w-full p-1 shadow-[var(--bottom-shadow)] flex items-center gap-2 justify-center text-sm">
                         {stepNavigation?.prevStep && (
@@ -753,6 +758,8 @@ export default function LessonTest() {
                 ) : (
                     ''
                 )}
+
+                {/* course info */}
                 <div className={`w-full bg-[var(--titleColor)] relative text-white  p-4 md:p-3 pb-4`}>
                     {contextLastSubjectPageVisit ? (
                         <Link onClick={() => setContextLastSubjectPageVisit(null)} href={`/teaching/${contextLastSubjectPageVisit}`}>
@@ -782,6 +789,7 @@ export default function LessonTest() {
                     </div>
                 </div>
 
+                {/* main */}
                 {hasSteps && <NotFound titleMessage="Данные не доступны" />}
                 {type === 'document' && docSection}
                 {type === 'link' && linkSection}
@@ -790,6 +798,7 @@ export default function LessonTest() {
                 {type === 'video' && videoSection}
             </div>
 
+            {/* lesson navigation */}
             <div className="sticky w-full bottom-0 mt-1">
                 <div className="bg-white my-border-top p-1 sm:p-2 flex items-center justify-end gap-2">
                     {prevLesson?.title && (

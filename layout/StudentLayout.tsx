@@ -13,9 +13,10 @@ import { usePathname, useSearchParams } from 'next/navigation';
 import { Button } from 'primereact/button';
 import Link from 'next/link';
 import path from 'path';
+import { ProgressSpinner } from 'primereact/progressspinner';
 
 const StudentLayout = ({ children }: ChildContainerProps) => {
-    const { layoutConfig, layoutState, setLayoutState, user } = useContext(LayoutContext);
+    const { layoutConfig, layoutState, setLayoutState, user, globalSpinnerLoading } = useContext(LayoutContext);
     const { setRipple } = useContext(PrimeReactContext);
     const topbarRef = useRef<AppTopbarRef>(null);
     const sidebarRef = useRef<HTMLDivElement>(null);
@@ -35,6 +36,32 @@ const StudentLayout = ({ children }: ChildContainerProps) => {
             }
         }
     });
+
+    const MySpinner = () => {
+        return (
+            <div style={wrapperStyle}>
+                <div style={spinnerStyle}></div>
+            </div>
+        );
+    };
+
+    const wrapperStyle = {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: '100%',
+        height: '100%',
+        background: 'white'
+    };
+
+    const spinnerStyle = {
+        width: '60px',
+        height: '60px',
+        border: '4px solid black',
+        borderTop: '4px solid transparent',
+        borderRadius: '50%',
+        animation: 'spin 0.8s linear infinite'
+    };
 
     const pathname = usePathname();
     const searchParams = useSearchParams();
@@ -124,21 +151,28 @@ const StudentLayout = ({ children }: ChildContainerProps) => {
     });
 
     const requireRole = () => {
-        if(user){
-            if(!user?.is_student){
+        if (user) {
+            if (!user?.is_student) {
                 console.warn('Не имеете доступ! student');
                 // window.location.href = '/auth/login';
                 // setPermission(true);
             }
             setPermission(false);
         }
-    }
+    };
 
-    useEffect(()=> {
+    useEffect(() => {
         requireRole();
-    },[user, pathname]);
+    }, [user, pathname]);
 
     // if(permission) return null;
+
+    if (globalSpinnerLoading)
+        return (
+            <div className="flex justify-center items-center h-[100vh]">
+                <MySpinner />   
+            </div>
+        );
 
     return (
         <React.Fragment>
@@ -150,7 +184,7 @@ const StudentLayout = ({ children }: ChildContainerProps) => {
                 <div className="layout-main-container">
                     <div className="layout-main">{children}</div>
                     {/* <AppFooter /> */}
-                    
+
                     {/* bottom menu */}
                     {/* <div className='sticky bottom-0 bg-[white] my-border-top p-3 rounded'>
                         <div className='flex justify-around items-center gap-2'> 
@@ -160,7 +194,6 @@ const StudentLayout = ({ children }: ChildContainerProps) => {
                             <Link href='/teaching'><i className={`${pathname === '/teaching' ? 'bg-[var(--mainColor)] text-[white]' : ''} cursor-pointer pi pi-book text-md p-2 rounded-full border text-[var(--mainColor)]`}></i></Link>
                         </div>
                     </div> */}
-
                 </div>
                 {/* <AppConfig /> */}
                 <div className="layout-mask"></div>

@@ -40,7 +40,6 @@ export default function Dashboard() {
     const hanldeTeacherDashboard = async () => {
         setSkeleton(true);
         const data = await fetchTeacherDashboard();
-        console.log(data);
 
         if (data && data?.all) {
             if (data?.myActiveDays) {

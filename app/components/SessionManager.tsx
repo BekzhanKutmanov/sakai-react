@@ -8,9 +8,7 @@ import { logout } from '@/utils/logout';
 import { usePathname } from 'next/navigation';
 
 const SessionManager = () => {
-    const { setMessage } = useContext(LayoutContext);
-    const { user, setUser, departament, setDepartament } = useContext(LayoutContext);
-    const { setGlobalLoading } = useContext(LayoutContext);
+    const { user, setMessage, setGlobalLoading, setGlobalSpinnerLoading, setUser, departament, setDepartament } = useContext(LayoutContext);
 
     const pathname = usePathname();
 
@@ -19,6 +17,7 @@ const SessionManager = () => {
             console.log('проверяем токен...');
             const token = getToken('access_token');
             if (token) {
+                setGlobalSpinnerLoading(true);
                 const res = await getUser();
                 setGlobalLoading(true);
                 try {
@@ -47,6 +46,7 @@ const SessionManager = () => {
                         setUser(res.user);
                     } else {
                         logout({ setUser, setGlobalLoading });
+                        setGlobalLoading(false);
                         setMessage({
                             state: true,
                             value: { severity: 'error', summary: 'Ошибка', detail: 'Ошибка при авторизации' }
@@ -55,12 +55,15 @@ const SessionManager = () => {
                     }
                 } catch (error) {
                     logout({ setUser, setGlobalLoading });
+                    setGlobalLoading(false);
                     setMessage({
                         state: true,
                         value: { severity: 'error', summary: 'Ошибка', detail: 'Ошибка при авторизации' }
                     }); // messege - Ошибка при авторизации
                     console.log('Ошибка при получении пользователя');
                 }
+                setGlobalLoading(false);
+                setGlobalSpinnerLoading(false);
             }
         };
         init();

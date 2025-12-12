@@ -14,7 +14,8 @@ export default function VideoInstruct() {
 
     const [videoValues, setVideoValues] = useState([
         { title: 'Видеоинструкция по использованию образовательного портала Mooc', src: 'https://youtu.be/9j9vUpNrgDM?si=nqk6tX5JPCyr7znv' },
-        { title: 'Подтверждение курсов на портале дистанционного обучения для заведующих кафедрами', src: 'https://www.youtube.com/watch?v=dkjm2fTIQm0' }
+        { title: 'Подтверждение курсов на портале дистанционного обучения для заведующих кафедрами', src: 'https://www.youtube.com/watch?v=dkjm2fTIQm0' },
+        { title: 'Тестовая система ОшГУ. Онлайн-прокторинг', src: 'https://www.youtube.com/watch?v=4sYYaXc8Ywg' }
     ]);
 
     const router = useRouter();
@@ -61,10 +62,10 @@ export default function VideoInstruct() {
                 </button>
                 <h2 className="text-center text-lg sm:text-xl w-full m-0 mb-4 flex justify-center">Видеоуроки по использованию платформы Mooc</h2>
             </div>
-            <div className="flex items-start justify-evenly">
+            <div className="flex items-start justify-around flex-wrap gap-4">
                 {videoValues?.map((item, idx) => {
                     return (
-                        <div key={idx} className="p-2 shadow w-[600px]">
+                        <div key={idx} className="p-2 shadow w-[500px]">
                             <div className="w-full flex flex-col justify-center items-center">
                                 <iframe
                                     className="w-full h-[200px] md:h-[400px]"

@@ -9,6 +9,7 @@ import { fetchItemsConnect, fetchItemsLessons } from '@/services/studentMain';
 import Link from 'next/link';
 import { Dropdown } from 'primereact/dropdown';
 import { ReactElement, useContext, useEffect, useState } from 'react';
+import { ProgressSpinner } from 'primereact/progressspinner';
 
 export default function Teaching() {
     interface sortOptType {
@@ -16,7 +17,6 @@ export default function Teaching() {
         code: number;
     }
 
-    const [skeleton, setSkeleton] = useState(false);
     const [lessons, setLessons] = useState<Record<number, { semester: { name_kg: string } }>>({
         1: { semester: { name_kg: '' } }
     });
@@ -26,8 +26,10 @@ export default function Teaching() {
     const [selectedSort, setSelectedSort] = useState({ name: 'Все', code: 0 });
     const [sortOpt, setSortOpt] = useState<sortOptType[]>();
     const [connection, setConnection] = useState<[]>([]);
+    const [skeleton, setSkeleton] = useState(false);
+    const [mainSpinner, setMainSpinner] = useState(true);
 
-    const { setMessage } = useContext(LayoutContext);
+    const { setMessage, setGlobalSpinnerLoading } = useContext(LayoutContext);
     const showError = useErrorMessage();
 
     // functions
@@ -46,12 +48,11 @@ export default function Teaching() {
     const handleFetchLessons = async () => {
         setSkeleton(true);
         const data = await fetchItemsLessons();
-        
+
         if (data && Object.keys(data).length > 0) {
             // валидность проверить
             setLessons(data);
             setHasLessons(false);
-            setSkeleton(false);
         } else {
             setHasLessons(true);
             setMessage({
@@ -61,8 +62,10 @@ export default function Teaching() {
             if (data?.response?.status) {
                 showError(data.response.status);
             }
-            setSkeleton(false);
         }
+        setSkeleton(false);
+        setMainSpinner(false);
+        setGlobalSpinnerLoading(false);
     };
 
     const handleFetchConnectId = async () => {
@@ -112,7 +115,7 @@ export default function Teaching() {
         const x = displayData.map((semester: any, sIdx: number) => (
             <div className="flex flex-col gap-2" key={sIdx}>
                 <h3 className="text-center text-[22px] sm:text-[26px] mb-1">{semester.semester.name_kg}</h3>
-                <div className="flex flex-col gap-2">
+                <div key={sIdx} className="flex flex-col gap-2">
                     {Object.values(semester)
                         .filter((val: any) => val.subject)
                         .map((subj: any, subjIdx: number) => {
@@ -121,7 +124,7 @@ export default function Teaching() {
                                     <ItemCard key={subjIdx} subject={subj} lessonName={subj.subject} streams={subj.streams} connection={connection} />
                                 </Link>
                             ) : (
-                                <span>
+                                <span key={subjIdx}>
                                     <ItemCard key={subjIdx} subject={subj} lessonName={subj.subject} streams={subj.streams} connection={connection} />
                                 </span>
                             );
@@ -138,31 +141,33 @@ export default function Teaching() {
         handleFetchConnectId();
     }, []);
 
-    return (
-        <div className="main-bg w-full flex justify-between items-start gap-2 xl:gap-5">
-            <div className="w-full">
-                {/* info section */}
-                {skeleton ? (
-                    <GroupSkeleton count={1} size={{ width: '100%', height: '4rem' }} />
-                ) : (
-                    <div className="flex flex-col sm:flex-row justify-between items-center gap-2 mb-4 py-2 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">
-                        <h3 className="text-[24px] sm:text-[28px] m-0">План обучения</h3>
+     return (
+        <>      
+            <div className="main-bg w-full flex justify-between items-start gap-2 xl:gap-5">
+                <div className="w-full">
+                    {/* info section */}
+                    {skeleton ? (
+                        <GroupSkeleton count={1} size={{ width: '100%', height: '4rem' }} />
+                    ) : (
+                        <div className="flex flex-col sm:flex-row justify-between items-center gap-2 mb-4 py-2 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">
+                            <h3 className="text-[24px] sm:text-[28px] m-0">План обучения</h3>
 
-                        <Dropdown
-                            value={selectedSort}
-                            onChange={(e) => {
-                                toggleSortSelect(e.value);
-                            }}
-                            options={sortOpt}
-                            optionLabel="name"
-                            className="w-full sm:w-14rem"
-                        />
-                    </div>
-                )}  
+                            <Dropdown
+                                value={selectedSort}
+                                onChange={(e) => {
+                                    toggleSortSelect(e.value);
+                                }}
+                                options={sortOpt}
+                                optionLabel="name"
+                                className="w-full sm:w-14rem"
+                            />
+                        </div>
+                    )}
 
-                {/* lesson section */}
-                {hasLessons ? <NotFound titleMessage={'Данные временно не доступны'} /> : skeleton ? <GroupSkeleton count={10} size={{ width: '100%', height: '4rem' }} /> : <div className="flex gap-4 sm:gap-6 flex-col">{lessonsDisplay}</div>}
+                    {/* lesson section */}
+                    {hasLessons ? <NotFound titleMessage={'Данные временно не доступны'} /> : skeleton ? <GroupSkeleton count={10} size={{ width: '100%', height: '4rem' }} /> : <div className="flex gap-4 sm:gap-6 flex-col">{lessonsDisplay}</div>}
+                </div>
             </div>
-        </div>
+        </>
     );
 }

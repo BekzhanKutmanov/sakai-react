@@ -126,9 +126,7 @@ const StreamList = React.memo(function StreamList({
                                             <span>
                                                 {item?.last_name} {item?.name && item?.name[0] + '.'} {item?.father_name && item?.father_name.length > 1 && item?.father_name[0] + '.'}
                                             </span>
-                                            <small>{item?.streams?.map((item: number)=>(
-                                                item + ' '
-                                            ))}</small>
+                                            <small>{item?.streams?.map((item: number) => item + ' ')}</small>
                                         </div>
                                     );
                                 })}
@@ -310,12 +308,30 @@ const StreamList = React.memo(function StreamList({
                         <Column body={(rowIndex) => <span>{rowIndex.stream_id}</span>} header={() => <div className="text-[13px]">ID</div>}></Column>
                         {/* <Column body={imageBodyTemplate}></Column> */}
 
-                        <Column field="title" header={() => <div className="text-[13px]">Название</div>} body={(rowData) => <p key={rowData.id}>{rowData.subject_name.name_ru}</p>}></Column>
+                        <Column
+                            className="hover:text-[red]!"
+                            field="title"
+                            header={() => <div className="text-[13px]">Название</div>}
+                            body={(rowData) => (
+                                // <p key={rowData.id}></p>
+                                <p key={rowData.id}>{rowData.subject_name.name_ru}</p>
+                            )}
+                        ></Column>
 
-                        <Column header={() => <div className="text-[13px]">Язык обучения</div>} body={(rowData) => <p key={rowData.id}>{rowData.language.name}</p>}></Column>
+                        <Column
+                            className="hover:text-[red]!"
+                            field="title"
+                            header={() => <div className="text-[13px]">Специальность</div>}
+                            body={(rowData) => (
+                                // <p key={rowData.id}></p>
+                                <div className='max-w-[100px] scrollbar-thin overflow-x-scroll'><p key={rowData.id}>{rowData.speciality.name_ru}</p></div>
+                            )}
+                        ></Column>
+
+                        <Column header={() => <div>Язык обучения</div>} body={(rowData) => <p key={rowData.id}>{rowData.language.name}</p>}></Column>
 
                         <Column field="title" header={() => <div className="text-[13px]">Год обучения</div>} body={(rowData) => <p key={rowData.id}>20{rowData.id_edu_year}</p>}></Column>
-                        <Column field="title"  header={() => <div className="text-[13px]">Период </div>} body={(rowData) => <p key={rowData.id}>{rowData.period.name_ru}</p>}></Column>
+                        <Column field="title" header={() => <div className="text-[13px]">Период </div>} body={(rowData) => <p key={rowData.id}>{rowData.period.name_ru}</p>}></Column>
 
                         <Column field="title" header={() => <div className="text-[13px]">Семестр</div>} body={(rowData) => <p key={rowData.id}>{rowData.semester.name_ru}</p>}></Column>
 

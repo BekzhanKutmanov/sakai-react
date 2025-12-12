@@ -785,19 +785,17 @@ export default function Course() {
                                                                             <input
                                                                                 type="radio"
                                                                                 name="radio"
-                                                                                onClick={() => {
-                                                                                    // const newValue = forStreamId?.id === rowData.id ? { id: rowData.id, title: rowData.title } : { id: rowData.id, title: rowData.title };
-                                                                                    // if(isChecked) {
+                                                                                onChange={() => {
                                                                                     const newValue = { id: rowData.id, title: rowData.title };
                                                                                     setGlobalCourseId(newValue);
                                                                                     setForStreamId(newValue);
-                                                                                    setSendStream({ status: false, name: rowData?.audience_type?.name });
+                                                                                    // setSendStream({ status: false, name: rowData?.audience_type?.name });
                                                                                     setOpenCourseId(rowData.id);
-                                                                                    // }
-                                                                                    // Устанавливаем состояние
+                                                                                }}
+                                                                                onClick={()=> {
+                                                                                    setSendStream({ status: false, name: rowData?.audience_type?.name });
                                                                                 }}
                                                                                 checked={isChecked}
-                                                                                // checked={forStreamId?.id === rowData.id}
                                                                             />
                                                                             <span className="radio-course-mark rounded">Связан ({rowData.connects_count})</span>
                                                                         </label>

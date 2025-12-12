@@ -45,6 +45,9 @@ export const LayoutProvider = ({ children }: ChildContainerProps) => {
     // Глобальная загрузка
     const [globalLoading, setGlobalLoading] = useState<boolean>(false);
 
+    // Глобальная загрузка спиннер
+    const [globalSpinnerLoading, setGlobalSpinnerLoading] = useState<boolean>(false);
+
     // Сообщение об ошибке/успехе
     const [message, setMessage] = useState<MessageType>({ state: false, value: {} });
 
@@ -231,7 +234,10 @@ export const LayoutProvider = ({ children }: ChildContainerProps) => {
 
         contextNotifications, 
         setContextNotifications,
-        handleNotifications
+        handleNotifications,
+
+        globalSpinnerLoading, 
+        setGlobalSpinnerLoading
     };
 
     return (

@@ -129,6 +129,15 @@ input[type="password"]::-ms-clear {
   z-index: -1;
 }
 
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 /* animate */
 .animateContent{
   animation: content linear 6s infinite;
@@ -994,3 +1003,4 @@ input[type="password"]::-ms-clear {
     /* padding: 6px 6px ; */
   }
 }
+
