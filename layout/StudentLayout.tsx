@@ -136,9 +136,6 @@ const StudentLayout = ({ children }: ChildContainerProps) => {
 
     useEffect(()=> {
         requireRole();
-
-        console.log(pathname);
-        
     },[user, pathname]);
 
     // if(permission) return null;

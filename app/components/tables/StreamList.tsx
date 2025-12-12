@@ -105,7 +105,6 @@ const StreamList = React.memo(function StreamList({
         // const data = await connectStreams({ course_id: courseValue?.id ? courseValue?.id : null, stream: pendingChanges });
         setSkeleton(true);
         const data = await newConnectStreams({ course_id: courseValue?.id ? courseValue?.id : null, id_stream: id_stream, active: active });
-        console.log(data);
 
         if (data?.success) {
             fetchprop();
@@ -291,34 +290,6 @@ const StreamList = React.memo(function StreamList({
             </div>
         );
     };
-
-    const footerContent = (
-        <div>
-            <Button
-                label="Назад"
-                size="small"
-                className="reject-button"
-                icon="pi pi-times"
-                onClick={() => {
-                    setVisible(false);
-                    // clearValues();
-                }}
-            />
-            {
-                <Button
-                    label="Добавить"
-                    size="small"
-                    disabled={streams.length < 1}
-                    icon="pi pi-check"
-                    onClick={() => {
-                        setVisible(false);
-                        // handleConnect();
-                    }}
-                    autoFocus
-                />
-            }
-        </div>
-    );
 
     return (
         <>

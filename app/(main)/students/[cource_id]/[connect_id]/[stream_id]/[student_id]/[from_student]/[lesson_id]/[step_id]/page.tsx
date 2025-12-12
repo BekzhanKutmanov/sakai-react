@@ -14,14 +14,13 @@ import { CourseType } from '@/types/courseType';
 import { lessonType } from '@/types/lessonType';
 import { mainStepsType } from '@/types/mainStepType';
 import { User } from '@/types/user';
-import { useParams } from 'next/navigation';
+import { log } from 'console';
+import { useParams, useSearchParams } from 'next/navigation';
 import { Accordion, AccordionTab } from 'primereact/accordion';
 import { useContext, useEffect, useState } from 'react';
 
 export default function StudentCheck() {
     const { cource_id, connect_id, stream_id, student_id, from_student, lesson_id, step_id } = useParams();
-    // const params = useParams();
-    // console.log(params, cource_id, connect_id, stream_id, student_id, lesson_id, step_id);
 
     const { user, setMessage, contextNotificationId, setContextNotificationId, handleNotifications, contextFetchVerifed } = useContext(LayoutContext);
     const showError = useErrorMessage();
@@ -50,7 +49,8 @@ export default function StudentCheck() {
     const handleFetchStreams = async () => {
         mainSetSkeleton(true);
         const data = await fetchStudentDetail(lesson_id ? Number(lesson_id) : null, connect_id ? Number(connect_id) : null, stream_id ? Number(stream_id) : null, student_id ? Number(student_id) : null, step_id ? Number(step_id) : null);
-
+        console.log(data);
+        
         if (data?.success) {
             // handleStatusView();
             setHasSteps(false);
@@ -76,7 +76,6 @@ export default function StudentCheck() {
             if (user?.is_working || user?.is_student) {
                 handleNotifications();
             }
-
             setContextNotificationId(null);
         }
     };

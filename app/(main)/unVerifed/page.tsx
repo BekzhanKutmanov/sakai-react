@@ -81,7 +81,7 @@ export default function UnVerifed() {
             }
         }
         setSkeleton(false);
-    }, [contextFetchVerifed]);
+    }, [contextVerifedValue]);
 
     return (
         <div className="main-bg">
@@ -101,6 +101,7 @@ export default function UnVerifed() {
                                     <div className="w-full flex justify-between">
                                         <Link
                                             className="cursor-pointer"
+                                            onClick={() => console.log(item?.answer?.course_id, item?.connect_id, item?.answer?.id_stream, item?.answer?.student?.myedu_id, item?.answer?.student?.id, item?.answer?.lesson_id, item?.answer?.steps_id)}
                                             href={`/students/${item?.answer?.course_id}/${item?.connect_id}/${item?.answer?.id_stream}/${item?.answer?.student?.myedu_id}/${item?.answer?.student?.id}/${item?.answer?.lesson_id}/${item?.answer?.steps_id}`}
                                         >
                                             <b className="text-[var(--mainColor)] underline">Практическое задание</b>
