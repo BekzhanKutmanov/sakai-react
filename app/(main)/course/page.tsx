@@ -155,7 +155,7 @@ export default function Course() {
     const handleFetchCourse = async (page = 1) => {
         setSkeleton(true);
         const data = await fetchCourses(page, 10);
-        if (course) {
+        if (data && course) {
             setHasCourses(false);
             setValueCourses(course.data);
             setPagination({
@@ -516,18 +516,18 @@ export default function Course() {
         }
     }, [courseValue.title, editingLesson.title]);
 
-    useEffect(() => {
-        if (globalCourseId != null) {
-            const exists = coursesValue.some((c: { id: number }) => c.id === globalCourseId.id);
-            if (exists) {
-                // setForStreamId({ id: globalCourseId.id, title: globalCourseId.title || '' });
-            } else {
-                // setForStreamId({ id: coursesValue[0].id, title: coursesValue[0].title });
-            }
-        } else {
-            // setForStreamId({ id: coursesValue[0].id, title: coursesValue[0].title });
-        }
-    }, [coursesValue]);
+    // useEffect(() => {
+    //     if (globalCourseId != null) {
+    //         const exists = coursesValue.some((c: { id: number }) => c.id === globalCourseId.id);
+    //         if (exists) {
+    //             // setForStreamId({ id: globalCourseId.id, title: globalCourseId.title || '' });
+    //         } else {
+    //             // setForStreamId({ id: coursesValue[0].id, title: coursesValue[0].title });
+    //         }
+    //     } else {
+    //         // setForStreamId({ id: coursesValue[0].id, title: coursesValue[0].title });
+    //     }
+    // }, [coursesValue]);
 
     useEffect(() => {
         const handleShow = async () => {

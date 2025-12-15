@@ -6,7 +6,6 @@ import { LayoutContext } from './context/layoutcontext';
 import axiosInstance from '@/utils/axiosInstance';
 
 const AppFooter = () => {
-    const { layoutConfig } = useContext(LayoutContext);
     const [univer, setUniver] = useState<{ address_ru: string; contact_ru: string, info_ru: string, info_en: string }>({ address_ru: '', contact_ru: '', info_ru: '', info_en:'' });
     // dark mode
     // <img src={`/layout/images/logo-${layoutConfig.colorScheme === 'light' ? 'dark' : 'white'}.svg`} alt="Logo" height="20" className="mr-2" />
