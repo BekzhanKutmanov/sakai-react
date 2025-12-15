@@ -15,7 +15,6 @@ import { fetchCourseInfo, fetchLessonShow } from '@/services/courses';
 import { addLesson, deleteStep, fetchElement, fetchSteps, fetchTypes, stepSequenceUpdate } from '@/services/steps';
 import { mainStepsType } from '@/types/mainStepType';
 import { getConfirmOptions } from '@/utils/getConfirmOptions';
-import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { Button } from 'primereact/button';
 import { confirmDialog } from 'primereact/confirmdialog';

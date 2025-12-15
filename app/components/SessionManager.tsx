@@ -8,7 +8,7 @@ import { logout } from '@/utils/logout';
 import { usePathname } from 'next/navigation';
 
 const SessionManager = () => {
-    const { user, setMessage, setGlobalLoading, setGlobalSpinnerLoading, setUser, departament, setDepartament } = useContext(LayoutContext);
+    const { user, setMessage, setGlobalLoading, setUser, departament, setDepartament } = useContext(LayoutContext);
 
     const pathname = usePathname();
 
@@ -17,7 +17,6 @@ const SessionManager = () => {
             console.log('проверяем токен...');
             const token = getToken('access_token');
             if (token) {
-                setGlobalSpinnerLoading(true);
                 const res = await getUser();
                 setGlobalLoading(true);
                 try {
@@ -29,8 +28,6 @@ const SessionManager = () => {
                         if (res.roles && res.roles.length > 0) {
                             const roleCheck = res.roles.find((i: { id_role: number }) => i.id_role);
                             if (roleCheck) {
-                                console.log(roleCheck);
-                                
                                 setDepartament({ info: roleCheck.roles_name.info_ru, last_name: res.user?.last_name, name: res?.user.name, father_name: res.user?.father_name });
                             }
                         }
@@ -63,7 +60,6 @@ const SessionManager = () => {
                     console.log('Ошибка при получении пользователя');
                 }
                 setGlobalLoading(false);
-                setGlobalSpinnerLoading(false);
             }
         };
         init();

@@ -106,9 +106,6 @@ export interface LayoutContextProps {
     contextNotifications: mainNotificatio[], 
     setContextNotifications,
     handleNotifications: ()=> void,
-
-    globalSpinnerLoading: boolean, 
-    setGlobalSpinnerLoading
     // message: { state: boolean; value: MessageType };
     // setMessage: React.Dispatch<React.SetStateAction<{ state: boolean; value: MessageType }>>;
 }

@@ -517,20 +517,15 @@ export default function Course() {
     }, [courseValue.title, editingLesson.title]);
 
     useEffect(() => {
-        if (coursesValue?.length < 1) {
-            setHasCourses(true);
-        } else {
-            if (globalCourseId != null) {
-                const exists = coursesValue.some((c: { id: number }) => c.id === globalCourseId.id);
-                if (exists) {
-                    // setForStreamId({ id: globalCourseId.id, title: globalCourseId.title || '' });
-                } else {
-                    // setForStreamId({ id: coursesValue[0].id, title: coursesValue[0].title });
-                }
+        if (globalCourseId != null) {
+            const exists = coursesValue.some((c: { id: number }) => c.id === globalCourseId.id);
+            if (exists) {
+                // setForStreamId({ id: globalCourseId.id, title: globalCourseId.title || '' });
             } else {
                 // setForStreamId({ id: coursesValue[0].id, title: coursesValue[0].title });
             }
-            setHasCourses(false);
+        } else {
+            // setForStreamId({ id: coursesValue[0].id, title: coursesValue[0].title });
         }
     }, [coursesValue]);
 
@@ -792,7 +787,7 @@ export default function Course() {
                                                                                     // setSendStream({ status: false, name: rowData?.audience_type?.name });
                                                                                     setOpenCourseId(rowData.id);
                                                                                 }}
-                                                                                onClick={()=> {
+                                                                                onClick={() => {
                                                                                     setSendStream({ status: false, name: rowData?.audience_type?.name });
                                                                                 }}
                                                                                 checked={isChecked}

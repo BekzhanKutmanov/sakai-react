@@ -27,9 +27,9 @@ export default function Teaching() {
     const [sortOpt, setSortOpt] = useState<sortOptType[]>();
     const [connection, setConnection] = useState<[]>([]);
     const [skeleton, setSkeleton] = useState(false);
-    const [mainSpinner, setMainSpinner] = useState(true);
+    const [mainProgressSpinner, setMainProgressSpinner] = useState(false);
 
-    const { setMessage, setGlobalSpinnerLoading } = useContext(LayoutContext);
+    const { setMessage } = useContext(LayoutContext);
     const showError = useErrorMessage();
 
     // functions
@@ -47,11 +47,13 @@ export default function Teaching() {
     // fetch lessons
     const handleFetchLessons = async () => {
         setSkeleton(true);
+        setMainProgressSpinner(true);
         const data = await fetchItemsLessons();
-
-        if (data && Object.keys(data).length > 0) {
+        console.log(data);
+        
+        if (data && data?.success) {
             // валидность проверить
-            setLessons(data);
+            setLessons(data.data);
             setHasLessons(false);
         } else {
             setHasLessons(true);
@@ -59,13 +61,12 @@ export default function Teaching() {
                 state: true,
                 value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
             });
-            if (data?.response?.status) {
-                showError(data.response.status);
+            if (data?.data?.response?.status) {
+                showError(data?.data.response.status);
             }
         }
         setSkeleton(false);
-        setMainSpinner(false);
-        setGlobalSpinnerLoading(false);
+        setMainProgressSpinner(false);
     };
 
     const handleFetchConnectId = async () => {
@@ -141,8 +142,15 @@ export default function Teaching() {
         handleFetchConnectId();
     }, []);
 
-     return (
-        <>      
+    if (mainProgressSpinner)
+        return (
+            <div className="main-bg flex justify-center items-center h-[100vh]">
+                <ProgressSpinner style={{ width: '60px', height: '60px' }} />
+            </div>
+        );
+
+    return (
+        <>
             <div className="main-bg w-full flex justify-between items-start gap-2 xl:gap-5">
                 <div className="w-full">
                     {/* info section */}

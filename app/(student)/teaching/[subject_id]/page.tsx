@@ -49,23 +49,7 @@ export default function StudentLesson() {
     const [hasThemes, setHasThemes] = useState(false);
     const [activeIndexes, setActiveIndexes] = useState<Record<number, number | null>>({});
     const [accordionIndex, setAccordionIndex] = useState({ index: null });
-
-    // types
-    // old mainlesson
-    // const handleMainLesson = async (lesson_id: number, stream_id: number) => {
-    //     const data = await fetchMainLesson(lesson_id, stream_id);
-
-    //     if (data) {
-    //         if (data.length > 0) {
-    //             setHasSteps(false);
-    //             setMainSteps(data);
-    //         } else {
-    //             setHasSteps(true);
-    //         }
-    //     } else {
-    //         setHasSteps(true);
-    //     }
-    // };
+    const [mainProgressSpinner, setMainProgressSpinner] = useState(false);
 
     const handleMainLesson = async (lesson_id: number, stream_id: number) => {
         const data = await fetchMainLesson(lesson_id, stream_id);
@@ -149,23 +133,24 @@ export default function StudentLesson() {
     // fetch lessons
     const handleFetchLessons = async () => {
         setSkeleton(true);
+        setMainProgressSpinner(true);
         const data = await fetchItemsLessons();
-        if (data) {
+        if (data && data?.success) {
             // валидность проверить
-            setLessons(data);
+            setLessons(data?.data);
             setHasLessons(false);
-            setSkeleton(false);
         } else {
             setHasLessons(true);
             setMessage({
                 state: true,
                 value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
             });
-            if (data?.response?.status) {
-                showError(data.response.status);
+            if (data?.data?.response?.status) {
+                showError(data?.data.response.status);
             }
-            setSkeleton(false);
         }
+        setSkeleton(false);
+        setMainProgressSpinner(false);
     };
 
     // Запрос курса, типа уроков (лк,лб)
@@ -175,7 +160,6 @@ export default function StudentLesson() {
         subject?.course_ids.forEach((i) => params.append('course_ids[]', String(i)));
         const data = await fetchSubjects(params);
         setSkeleton(true);  
-
         if (data && Array.isArray(data)) {
             setCourses(data);
             if (data && data?.length > 0) {
@@ -240,6 +224,8 @@ export default function StudentLesson() {
             handleFetchSubject(forSubject);
         }
     }, [main_id]);
+
+    if(mainProgressSpinner) return <div className='main-bg flex justify-center items-center h-[100vh]'><ProgressSpinner style={{ width: '60px', height: '60px' }} /></div>
 
     return (
         <div className="main-bg">

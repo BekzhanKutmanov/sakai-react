@@ -105,16 +105,16 @@ export default function LessonTest() {
     const handleFetchLessons = async () => {
         setMainProgressSpinner(true);
         const data = await fetchItemsLessons();
-        if (data) {
+        if (data && data?.success) {
             // валидность проверить
-            setLessons(data);
+            setLessons(data?.data);
         } else {
             setMessage({
                 state: true,
                 value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
             });
-            if (data?.response?.status) {
-                showError(data.response.status);
+            if (data?.data?.response?.status) {
+                showError(data?.data.response.status);
             }
         }
         setMainProgressSpinner(false);

@@ -7,6 +7,7 @@ import useErrorMessage from '@/hooks/useErrorMessage';
 import { LayoutContext } from '@/layout/context/layoutcontext';
 import { fetchActiveCourses, fetchOpenCourses } from '@/services/openCourse';
 import { myMainCourseType } from '@/types/myMainCourseType';
+import { ProgressSpinner } from 'primereact/progressspinner';
 import { useContext, useEffect, useState } from 'react';
 
 export default function ActiveCourseList() {
@@ -16,9 +17,11 @@ export default function ActiveCourseList() {
     const [emptyCourse, setEmptyCourse] = useState(false);
     const [hasCourses, setHasCourses] = useState(false);
     const [skeleton, setSkeleton] = useState(false);
+    const [mainProgressSpinner, setMainProgressSpinner] = useState(false);
 
     const handleFetchActiveCourse = async () => {
         setSkeleton(true);
+        setMainProgressSpinner(true);
         const data = await fetchActiveCourses();
         if (data?.success) {
             setHasCourses(false);
@@ -46,12 +49,15 @@ export default function ActiveCourseList() {
                 }
             }
         }
+        setMainProgressSpinner(false);
         setSkeleton(false);
     };
 
     useEffect(() => {
         handleFetchActiveCourse();
     }, []);
+
+    if(mainProgressSpinner) return <div className='main-bg flex justify-center items-center h-[100vh]'><ProgressSpinner style={{ width: '60px', height: '60px' }} /></div>
 
     if (hasCourses) return <NotFound titleMessage="Данные не доступны" />;
 

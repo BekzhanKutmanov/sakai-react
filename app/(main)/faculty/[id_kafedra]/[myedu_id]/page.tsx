@@ -118,13 +118,13 @@ export default function CoursesDep() {
     if(contentNull) return <NotFound titleMessage="Курсы отсутствуют" />
 
     return (
-        <div>
+        <div className='main-bg'>
             {skeleton ? <div className="w-full"><GroupSkeleton count={5} size={{ width: '100%', height: '3rem' }} /></div>
              : contentShow ? (
                 <NotFound titleMessage="Курсы не доступны" />
             ) : (
                 <>
-                    <h3 className="text-lg sm:text-xl pb-1 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">Курсы</h3>
+                    <h3 className="text-xl sm:text-2xl pb-1 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">Курсы</h3>
                     <DataTable value={courses} dataKey="id" emptyMessage="Загрузка" key={JSON.stringify(forDisabled)} responsiveLayout="stack" breakpoint="960px" rows={5} className="my-custom-table">
                         <Column body={(_, { rowIndex }) => rowIndex + 1} header="#" style={{ width: '20px' }}></Column>
                         <Column body={imageBodyTemplate}></Column>

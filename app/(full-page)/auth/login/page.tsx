@@ -20,7 +20,7 @@ import { getToken } from '@/utils/auth';
 import { ProgressSpinner } from 'primereact/progressspinner';
 
 const LoginPage = () => {
-    const { layoutConfig, setUser, setMessage, setGlobalLoading, setGlobalSpinnerLoading, setDepartament, departament } = useContext(LayoutContext);
+    const { layoutConfig, setUser, setMessage, setGlobalLoading, setDepartament, departament } = useContext(LayoutContext);
 
     const router = useRouter();
     const media = useMediaQuery('(max-width: 1030px)');
@@ -42,7 +42,6 @@ const LoginPage = () => {
 
     const onSubmit = async (value: LoginType) => {
         setDisabledState(true);
-        setGlobalSpinnerLoading(true);
         const user = await login(value);
         if (user && user.success) {
             document.cookie = `access_token=${user.token.access_token}; path=/; Secure; SameSite=Strict; expires=${user.token.expires_at}`;
@@ -94,7 +93,6 @@ const LoginPage = () => {
         setTimeout(() => {
             setDisabledState(false);
         }, 2000);
-        setGlobalSpinnerLoading(false);
     };
 
     const onError = (errors: any) => {

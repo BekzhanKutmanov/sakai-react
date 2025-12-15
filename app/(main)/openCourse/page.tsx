@@ -38,11 +38,12 @@ export default function OpenCourse() {
     const [showVisisble, setShowVisible] = useState(false);
     const [progressSpinner, setProgressSpinner] = useState(false);
     const [sendSignupList, setSendSignupList] = useState(false);
+    const [mainProgressSpinner, setMainProgressSpinner] = useState(false);
 
     const handleFetchOpenCourse = async (page: number, audence_type_id: number | string, search: string) => {
         setSkeleton(true);
+        setMainProgressSpinner(true);
         const data = await fetchOpenCourses(page, audence_type_id, search);
-        console.log(data);
 
         if (data && Array.isArray(data.data)) {
             setHasCourses(false);
@@ -86,6 +87,7 @@ export default function OpenCourse() {
             }
         }
         setSkeleton(false);
+        setMainProgressSpinner(false);
     };
 
     const handleCourseShow = async (course_id: number) => {
@@ -234,6 +236,8 @@ export default function OpenCourse() {
     useEffect(() => {
         handleFetchOpenCourse(pageState, '', '');
     }, []);
+
+    if(mainProgressSpinner) return <div className='main-bg flex justify-center items-center h-[100vh]'><ProgressSpinner style={{ width: '60px', height: '60px' }} /></div>
 
     if (hasCourses) return <NotFound titleMessage="Данные не доступны" />;
 

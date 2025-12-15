@@ -5,10 +5,10 @@ export const fetchItemsLessons = async () => {
         const res = await axiosInstance.get(`v1/student/streams`);
         const data = await res.data;
 
-        return data;
+        return {success: true, data: data};
     } catch (err) {
         console.log('Ошибка загрузки:', err);
-        return err;
+        return {success: false, data: err};
     }
 };
 
