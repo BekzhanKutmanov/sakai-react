@@ -48,23 +48,31 @@ const LoginPage = () => {
             const token = user.token.access_token;
             if (token) {
                 const res = await getUser();
-    
+                
                 try {
                     if (res?.success) {
-                        if (res?.user.is_working) {
-                            if (res.roles && res.roles.length > 0) {
-                                const roleCheck = res.roles.find((i: { id_role: number }) => i.id_role);
-                                if (roleCheck) {
-                                    setDepartament({ info: roleCheck.roles_name.info_ru, last_name: res.user?.last_name, name: res?.user.name, father_name: res.user?.father_name });
+                        if (!res?.user.is_working && !res?.user.is_student) {
+                            setMessage({
+                                state: true,
+                                value: { severity: 'error', summary: 'Не удалось определить ваш статус пользователя.', detail: <div ><span>Обратитесь в службу поддержки, указав необходимые данные</span> <small className='text-[var(--mainColor)] underline'>{res?.user?.myedu_id}</small></div> }
+                            });
+                            document.cookie = 'access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;';
+                        } else {
+                            if (res?.user.is_working) {
+                                if (res.roles && res.roles.length > 0) {
+                                    const roleCheck = res.roles.find((i: { id_role: number }) => i.id_role);
+                                    if (roleCheck) {
+                                        setDepartament({ info: roleCheck.roles_name.info_ru, last_name: res.user?.last_name, name: res?.user.name, father_name: res.user?.father_name });
+                                    }
+                                    window.location.href = '/dashboard';
+                                } else {
+                                    window.location.href = '/dashboard';
                                 }
-                                window.location.href = '/dashboard';
-                            } else {
-                                window.location.href = '/dashboard';
                             }
-                        }
-                        if (res?.user.is_student) {
-                            window.location.href = '/teaching';
-                            // document.cookie = 'access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;';
+                            if (res?.user.is_student) {
+                                window.location.href = '/teaching';
+                                // document.cookie = 'access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;';
+                            }
                         }
                     } else {
                         setMessage({
@@ -83,8 +91,7 @@ const LoginPage = () => {
                     console.log('Ошибка при получении пользователя');
                 }
             }
-        }
-        else {
+        } else {
             setMessage({
                 state: true,
                 value: { severity: 'error', summary: 'Ошибка при авторизации', detail: 'Повторите позже' }
@@ -134,9 +141,7 @@ const LoginPage = () => {
 
                 <div className={`w-[90%] sm:w-[500px] shadow-2xl bg-white py-6 px-3 md:py-8 sm:px-4 md:px-8 rounded`}>
                     <h1 className="text-3xl sm:text-4xl font-bold inline-block border-b-2 pb-1 border-[var(--mainColor)]">Вход в mooc</h1>
-                    <form onSubmit={handleSubmit(onSubmit, onError)}
-                        className="w-full flex flex-col gap-4"
-                    >
+                    <form onSubmit={handleSubmit(onSubmit, onError)} className="w-full flex flex-col gap-4">
                         <div className="flex flex-col">
                             {/* <label htmlFor="email1" className="block text-900 text-[16px] md:text-xl font-medium mb-1 md:mb-2">
                                 MyEdu email

@@ -126,7 +126,7 @@ const StreamList = React.memo(function StreamList({
                                             <span>
                                                 {item?.last_name} {item?.name && item?.name[0] + '.'} {item?.father_name && item?.father_name.length > 1 && item?.father_name[0] + '.'}
                                             </span>
-                                            <small>{item?.streams?.map((item: number) => item + ' ')}</small>
+                                            <small className='text-[var(--mainColor)] underline'>{item?.streams?.map((item: number) => item + ' ')}</small>
                                         </div>
                                     );
                                 })}
