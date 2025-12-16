@@ -23,7 +23,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
                 <link id="theme-css" href={`/themes/lara-light-indigo/theme.css`} rel="stylesheet"></link>
             </head>
             <body>
-                <div id="preloader">
+                {/* <div id="preloader">
                     <div id="preloader-area">
                         <div className="spinner"></div>
                         <div className="spinner"></div>
@@ -34,14 +34,14 @@ export default function RootLayout({ children }: RootLayoutProps) {
                     </div>
                     <div className="preloader-section preloader-left"></div>
                     <div className="preloader-section preloader-right"></div>
-                </div>
+                </div> */}
 
                 <PrimeReactProvider>
                     <LayoutProvider>{children}</LayoutProvider>
                 </PrimeReactProvider>
 
                 {/* Скрипт скрытия */}
-                <script
+                {/* <script
                     dangerouslySetInnerHTML={{
                         __html: `
                     window.addEventListener('load', () => {
@@ -49,7 +49,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
                     });
                   `
                     }}
-                />
+                /> */}
             </body>
         </html>
     );
