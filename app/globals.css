@@ -307,6 +307,10 @@ input[type="password"]::-ms-clear {
     }
 }
 
+html.loaded #preloader {
+  display: none;
+}
+
 .p-password .p-password-toggle-icon {
   top: 50% !important;
   transform: translateY(-50%);
