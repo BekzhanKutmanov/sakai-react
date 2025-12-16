@@ -95,7 +95,7 @@ export default function StudentInfoCard({
                 if (data?.response?.status == '400') {
                     setMessage({
                         state: true,
-                        value: { severity: 'error', summary: 'Ошибка!', detail: data?.response?.data?.message }
+                        value: { severity: 'error', summary: data?.response?.data?.message, detail: '' }
                     });
                 } else {
                     showError(data.response.status);
