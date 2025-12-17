@@ -33,6 +33,6 @@ export const getUser = async () => {
         return data;
     } catch (err) {
         console.log('Ошибка при получении пользователя', err);
-        return err;
+        return [];
     }
 };
