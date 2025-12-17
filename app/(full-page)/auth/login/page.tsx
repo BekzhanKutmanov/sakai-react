@@ -46,9 +46,9 @@ const LoginPage = () => {
         if (user && user.success) {
             document.cookie = `access_token=${user.token.access_token}; path=/; Secure; SameSite=Strict; expires=${user.token.expires_at}`;
             const token = user.token.access_token;
+            
             if (token) {
                 const res = await getUser();
-                
                 try {
                     if (res?.success) {
                         if (!res?.user.is_working && !res?.user.is_student) {
@@ -132,20 +132,10 @@ const LoginPage = () => {
             {/* <div className={`flex flex-col gap-4 pt-4 h-[100vh] ${!media && 'login-bg'}`}> */}
             {/* <InfoBanner title="Кирүү" titleSize={{ default: '30px', sm: '40px' }} /> */}
             <div className="flex gap-4 flex-column lg:flex-row items-center justify-evenly px-4 mb-8">
-                {/* {!media && (
-                    <div className="user-img">
-                        <img src="/layout/images/enrolled-img2.png" className="w-[450px] object-cover" alt="" />
-                        <img src="/layout/images/no-image.png" className="w-[450px] object-cover" alt="" />
-                    </div>
-                )} */}
-
                 <div className={`w-[90%] sm:w-[500px] shadow-2xl bg-white py-6 px-3 md:py-8 sm:px-4 md:px-8 rounded`}>
                     <h1 className="text-3xl sm:text-4xl font-bold inline-block border-b-2 pb-1 border-[var(--mainColor)]">Вход в mooc</h1>
                     <form onSubmit={handleSubmit(onSubmit, onError)} className="w-full flex flex-col gap-4">
                         <div className="flex flex-col">
-                            {/* <label htmlFor="email1" className="block text-900 text-[16px] md:text-xl font-medium mb-1 md:mb-2">
-                                MyEdu email
-                            </label> */}
                             <InputText {...register('email')} id="email1" type="text" placeholder="email@oshsu.kg" className="w-[100%] p-2 sm:p-3" />
                             {errors.email && <b className="text-[red] text-[12px] ml-2">{errors.email.message}</b>}
                         </div>

@@ -294,19 +294,6 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                 </div>
             ),
             url: 'https://oldmooc.oshsu.kg/'
-        },
-        {
-            // label: 'Сайт ОшГУ',
-            icon: '',
-            items: [],
-            template: (
-                <div>
-                    <Link href={'https://oshsu.kg'} target="_blank" className="flex text-[12px] text-[var(--bodyColor)]! py-1 hover:text-white! justify-center">
-                        Сайт ОшГУ
-                    </Link>
-                </div>
-            ),
-            url: 'https://oshsu.kg'
         }
     ];
 
@@ -385,19 +372,6 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                 </div>
             ),
             url: 'https://oldmooc.oshsu.kg/'
-        },
-        {
-            // label: 'Сайт ОшГУ',
-            icon: '',
-            items: [],
-            template: (
-                <div>
-                    <Link href={'https://oshsu.kg'} target="_blank" className="flex text-[12px] text-[var(--bodyColor)]! py-1 hover:text-white! justify-center">
-                        Сайт ОшГУ
-                    </Link>
-                </div>
-            ),
-            url: 'https://oshsu.kg'
         }
     ];
 
@@ -534,9 +508,6 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                         <div className={`flex items-center gap-3 ${!media ? 'order-2' : 'order-3'} `}>
                             <Link className="text-[var(--titleColor)] text-sm hover:text-[var(--mainColor)]" href={'https://oldmooc.oshsu.kg/'} target="_blank">
                                 Старый Mooc
-                            </Link>
-                            <Link className="text-[var(--titleColor)] text-sm hover:text-[var(--mainColor)]" href={'https://www.oshsu.kg/ru'} target="_blank">
-                                Сайт ОшГУ
                             </Link>
                         </div>
                     )}
