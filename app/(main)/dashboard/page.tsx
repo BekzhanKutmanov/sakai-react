@@ -33,7 +33,6 @@ export default function Dashboard() {
 
     const [courses, setCourses] = useState<CourseStatisticApi | null>(null);
     const [hasCourses, setHasCourses] = useState(false);
-    const [videoLink, setVideoLink] = useState('');
     const [contribution, setContribution] = useState<ContributionDay[] | null>(null);
     const [skeleton, setSkeleton] = useState(false);
 

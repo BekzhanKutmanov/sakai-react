@@ -70,10 +70,10 @@ export default function HomeClient() {
                                     </ul>
                                     {user ? (
                                         <Link href={user.is_working ? '/course' : user.is_student ? '/teaching' : ''}>
-                                            <FancyLinkBtn btnWidth={'200px'} backround={'--mainColor'} effectBg={'--titleColor'} title={user.is_working ? 'Преподаватель' : user.is_student ? 'Студент' : ''} />
+                                            <FancyLinkBtn btnWidth={'200px'} backround={'--mainColor'} effectBg={'--titleColor'} title={user.is_working ? 'Преподаватель' : user.is_student ? 'Студент' : ''} btnType={false}/>
                                         </Link>
                                     ) : media ? <Link href={'/auth/login'}>
-                                            <FancyLinkBtn btnWidth={'200px'} backround={'--mainColor'} effectBg={'--titleColor'} title={'Вход'} />
+                                            <FancyLinkBtn btnWidth={'200px'} backround={'--mainColor'} effectBg={'--titleColor'} title={'Вход'} btnType={false}/>
                                         </Link> : ''}
                                 </div>
                             </div>

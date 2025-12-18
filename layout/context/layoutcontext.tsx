@@ -15,6 +15,7 @@ import { LastStepVisit } from '@/types/Step/visits/lastStepVisit/LastStepVist';
 import { LastSubjectPageVisit } from '@/types/Step/visits/LastSubjectPageVisit';
 import { getNotifications, unVerifedSteps } from '@/services/notifications';
 import { mainNotification } from '@/types/mainNotification';
+import MyGlobalLoader from '@/app/components/loading/MyGlobalLoader';
 
 export const LayoutContext = createContext({} as LayoutContextProps);
 
@@ -237,7 +238,8 @@ export const LayoutProvider = ({ children }: ChildContainerProps) => {
     return (
         <LayoutContext.Provider value={value}>
             <SessionManager />
-            <GlobalLoading />
+            {/* <GlobalLoading /> */}
+            <MyGlobalLoader/>
             <ConfirmDialog />
             {message.state && <Message />}
             {children}

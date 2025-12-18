@@ -30,8 +30,7 @@ export default function useTypingEffect(word: string, stop: boolean) {
                 const nextText = prev + nextChar;
 
                 if (nextText.length > 50) {
-                    clearInterval(intervalRef.current!);
-                    alert('baby');
+                    clearInterval(intervalRef.current!)
                     return '';
                 }
 

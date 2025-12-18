@@ -50,7 +50,7 @@ export default function Teaching() {
         setMainProgressSpinner(true);
         const data = await fetchItemsLessons();
         console.log(data);
-        
+
         if (data && data?.success) {
             // валидность проверить
             setLessons(data.data);

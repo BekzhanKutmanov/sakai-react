@@ -52,21 +52,10 @@ export default function RootLayout({ children }: RootLayoutProps) {
                     <div className="preloader-section preloader-left"></div>
                     <div className="preloader-section preloader-right"></div>
                 </div>
-
+                
                 <PrimeReactProvider>
                     <LayoutProvider>{children}</LayoutProvider>
                 </PrimeReactProvider>
-
-                {/* Скрипт скрытия */}
-                {/* <script
-                    dangerouslySetInnerHTML={{
-                        __html: `
-                    window.addEventListener('load', () => {
-                    document.documentElement.classList.add('loaded');
-                    });
-                  `
-                    }}
-                /> */}
             </body>
         </html>
     );

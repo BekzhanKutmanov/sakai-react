@@ -606,7 +606,7 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                     ) : (
                         <div className={`hidden lg:block ${media ? 'order-1' : 'order-2'}`}>
                             <Link href={'/auth/login'}>
-                                <FancyLinkBtn btnWidth={'100px'} backround={'--redColor'} effectBg={'--mainColor'} title={'Вход'} />
+                                <FancyLinkBtn btnWidth={'100px'} backround={'--redColor'} effectBg={'--mainColor'} title={'Вход'} btnType={false}/>
                             </Link>
                         </div>
                     )}

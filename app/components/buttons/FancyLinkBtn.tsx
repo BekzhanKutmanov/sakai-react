@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 
-export default function FancyLinkBtn({ btnWidth, backround, effectBg, title }
-    : {btnWidth: string, backround: string, effectBg: string, title: string}
+export default function FancyLinkBtn({ btnWidth, backround, effectBg, title, btnType }
+    : {btnWidth: string, backround: string, effectBg: string, title: string, btnType?: boolean | null}
 ) {
     const [position, setPosition] = useState(false);
 
@@ -18,7 +18,7 @@ export default function FancyLinkBtn({ btnWidth, backround, effectBg, title }
                     backgroundColor: `var(${backround})`,
                     width: `${ btnWidth }`,
                 }}
-                type='submit'
+                type={btnType ? 'submit' : 'button'}
             >
                 {/* <Link href={'/auth/login'} style={{ color: 'white' }} className='text-[14px] sm:text-[16px]'> */}
                     {title}

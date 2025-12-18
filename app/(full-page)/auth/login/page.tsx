@@ -10,16 +10,14 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { Controller } from 'react-hook-form';
 import { getUser, login } from '@/services/auth';
 import FancyLinkBtn from '@/app/components/buttons/FancyLinkBtn';
-import { logout } from '@/utils/logout';
 import { LoginType } from '@/types/login';
-import { useMediaQuery } from '@/hooks/useMediaQuery';
 import Link from 'next/link';
 import { Button } from 'primereact/button';
 import { getToken } from '@/utils/auth';
 import { ProgressSpinner } from 'primereact/progressspinner';
 
 const LoginPage = () => {
-    const { setUser, setMessage, setGlobalLoading, setDepartament, departament } = useContext(LayoutContext);
+    const { setUser, setMessage, setDepartament, departament } = useContext(LayoutContext);
     // const containerClassName = classNames('surface-ground flex align-items-center justify-content-center min-h-screen min-w-screen overflow-hidden', { 'p-input-filled': layoutConfig.inputStyle === 'filled' });
     const [showPassword, setShowPassword] = useState(false);
     // const [progressSpinner, setProgressSpinner] = useState(true);
@@ -175,11 +173,11 @@ const LoginPage = () => {
                         </div>
 
                         <div className={`${disabledState ? 'opacity-50 pointer-events-none' : ''} `}>
-                            <FancyLinkBtn btnWidth={'100%'} backround={'--mainColor'} effectBg={'--titleColor'} title={'Войти'} />
+                            <FancyLinkBtn btnWidth={'100%'} backround={'--mainColor'} effectBg={'--titleColor'} title={'Войти'} btnType={true}/>
                         </div>
                     </form>
                     <Link href={'/'} className="mt-2 w-full">
-                        <FancyLinkBtn btnWidth={'100%'} backround={'--mainColor'} effectBg={'--titleColor'} title={'В главную'} />
+                        <FancyLinkBtn btnWidth={'100%'} backround={'--mainColor'} effectBg={'--titleColor'} title={'В главную'} btnType={false}/>
                     </Link> 
                 </div>
             </div>
