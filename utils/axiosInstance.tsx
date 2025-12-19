@@ -32,19 +32,19 @@ axiosInstance.interceptors.response.use(
 
         if (status === 403) {
             console.warn('Не имеет доступ. Перенаправляю...');
-            if (typeof window !== 'undefined') {
-                window.location.href = '/';
-            }
+            // if (typeof window !== 'undefined') {
+            //     window.location.href = '/';
+            // }
         }
 
         if (status === 404) {
             console.warn('404 - Перенаправляю...');
             
-            // if (typeof window !== 'undefined') {
-            //     window.location.href = '/pages/notfound';
-            //     localStorage.removeItem('userVisit');
-            // }
-            // document.cookie = 'access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;';
+            if (typeof window !== 'undefined') {
+                window.location.href = '/pages/notfound';
+                localStorage.removeItem('userVisit');
+            }
+            document.cookie = 'access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;';
         }
 
         return Promise.reject(error);

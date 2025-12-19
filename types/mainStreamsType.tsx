@@ -12,6 +12,6 @@ export interface mainStreamsType {
     edu_form: { name_ru: string };
     period: { name_ru: string };
     courseValue?: number;
-    speciality: { id: number; id_faculty: number };
+    speciality: { id: number; id_faculty: number, name_ru: string};
     course_id?: number | null;
 }

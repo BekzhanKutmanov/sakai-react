@@ -56,7 +56,6 @@ export default function OpenCourse() {
             setValueCourses(data.data);
             const list: any | null = await handleSignupList(data?.data);
             if (list) {
-                console.warn(list);
                 setValueCourses((prev) =>
                     prev.map((item) => ({
                         ...item,

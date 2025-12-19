@@ -232,14 +232,14 @@ const StreamList = React.memo(function StreamList({
         return (
             <div className={`w-full ${bgClass}`} key={item?.stream_id}>
                 <div className={`flex flex-column p-2 gap-2`}>
-                    <div className="flex justify-between gap-1 items-center">
+                    <div className="w-full flex justify-between gap-1 items-center">
                         <h3 className="m-0 text-lg">{item?.subject_name.name_ru}</h3>
+                        <small className='underline text-[var(--mainColor)]'>Id: {item?.stream_id}</small>
                     </div>
                     <div className="flex flex-column xl:flex-row justify-content-between align-items-center xl:align-items-start flex-1 gap-2">
-                        <div className="flex flex-col order-2 xl:order-1 gap-1 items-start text-[12px] sm:text-[14px]">
-                            <div className="flex gap-1 items-center">
-                                <span className="text-[var(--mainColor)]">{item?.subject_type_name?.name_ru}</span>
-                                {/* <span>{item?.teacher?.name}</span> */}
+                        <div className="w-full sm:w-[70%] flex flex-col order-2 xl:order-1 gap-1 items-start text-[12px] sm:text-[14px]">
+                            <div className="flex gap-1 items-center text-[var(--mainColor)]">
+                                <span >{item?.subject_type_name?.name_ru}</span>
                             </div>
                             <div className="flex gap-1 items-center">
                                 <span className="text-[var(--mainColor)]">Язык обучения: </span>
@@ -252,6 +252,10 @@ const StreamList = React.memo(function StreamList({
                             <div className="flex gap-1 items-center">
                                 <span className="text-[var(--mainColor)]">Период: </span>
                                 <span>{item?.period.name_ru}</span>
+                            </div>
+                            <div className="flex gap-1 items-center" title={item?.speciality.name_ru}>
+                                <span className="text-[var(--mainColor)] ">Специальность: </span>
+                                <span className='max-w-[170px] sm:max-w-[800px] text-nowrap text-ellipsis overflow-hidden'>{item?.speciality.name_ru}</span>
                             </div>
                         </div>
                         <div className="flex flex-col order-1 xl:order-2 align-items-center gap-2">

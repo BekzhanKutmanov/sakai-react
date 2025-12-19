@@ -30,7 +30,8 @@ const AppMenu = () => {
         to: Nullable<Date> | null;
     }
 
-    const { user, setMessage, setDeleteQuery, setUpdateeQuery, contextFetchThemes, contextThemes, contextFetchStudentThemes, departament, contextNewStudentThemes, contextVerifedValue, setContextVerifedValue, contextFetchVerifed } = useContext(LayoutContext);
+    const { user, setMessage, setDeleteQuery, setUpdateeQuery, contextFetchThemes, contextThemes, contextFetchStudentThemes, departament, contextNewStudentThemes, contextVerifedValue, setContextVerifedValue, contextFetchVerifed } =
+        useContext(LayoutContext);
     interface test {
         label: string;
         id: number;
@@ -111,7 +112,8 @@ const AppMenu = () => {
               pathname.startsWith('/videoInstruct/') ||
               pathname.startsWith('/notification') ||
               pathname.startsWith('/dashboard') ||
-              pathname.startsWith('/openCourse')
+              pathname.startsWith('/openCourse') ||
+              pathname.startsWith('/roles')
                 ? [
                       {
                           // key: 'prev',
@@ -132,6 +134,11 @@ const AppMenu = () => {
                           icon: 'pi pi-th-large',
                           to: '/dashboard'
                       },
+                    //   {
+                    //       label: 'Админ',
+                    //       icon: 'pi pi-shield',
+                    //       to: '/roles'
+                    //   },
                       {
                           label: 'Курсы',
                           icon: 'pi pi-fw pi-book',
@@ -245,6 +252,11 @@ const AppMenu = () => {
                       icon: 'pi pi-th-large',
                       to: '/dashboard'
                   },
+                //   {
+                //       label: 'Админ',
+                //       icon: 'pi pi-shield',
+                //       to: '/roles'
+                //   },
                   {
                       label: 'Утвердить курсы',
                       icon: 'pi pi-graduation-cap',

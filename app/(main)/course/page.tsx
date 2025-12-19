@@ -42,6 +42,7 @@ export default function Course() {
 
     const [coursesValue, setValueCourses] = useState<myMainCourseType[]>([]);
     const [hasCourses, setHasCourses] = useState(false);
+    const [emptyCourses, setEmptyCourses] = useState(false);
     const [courseValue, setCourseValue] = useState<CourseCreateType>({ title: '', description: '', video_url: '', image: '' });
     const [editMode, setEditMode] = useState(false);
     const [selectedCourse, setSelectedCourse] = useState<number | null>(null);
@@ -67,7 +68,7 @@ export default function Course() {
 
     const [forStreamId, setForStreamId] = useState<{ id: number | null; title: string } | null>(null);
     const [sendStream, setSendStream] = useState<{ status: boolean; name: 'lock' | 'open' | 'wallet' | '' }>({ status: true, name: 'lock' });
-    const [globalCourseId, setGlobalCourseId] = useState<{ id: number | null; title: string | null } | null>(null);
+    // const [globalCourseId, setGlobalCourseId] = useState<{ id: number | null; title: string | null } | null>(null);
     const [pageState, setPageState] = useState<number>(1);
     const [openTypes, setOpenTypes] = useState<AudenceType[]>([]);
     const [openCourseId, setOpenCourseId] = useState<number | null>(null);
@@ -156,6 +157,11 @@ export default function Course() {
         setSkeleton(true);
         const data = await fetchCourses(page, 10);
         if (data && course) {
+            if(course.data?.length < 1){
+                setEmptyCourses(true);
+            } else {
+                setEmptyCourses(false);
+            }
             setHasCourses(false);
             setValueCourses(course.data);
             setPagination({
@@ -202,7 +208,7 @@ export default function Course() {
         setSkeleton(true);
         const data = await deleteCourse(id);
         if (data?.success) {
-            setGlobalCourseId(null);
+            // setGlobalCourseId(null);
             contextFetchCourse(1);
             setPageState(1);
             setMessage({
@@ -304,7 +310,7 @@ export default function Course() {
 
     // Ручное управление пагинацией
     const handlePageChange = (page: number) => {
-        setGlobalCourseId(null);
+        // setGlobalCourseId(null);
         contextFetchCourse(page);
         setPageState(page);
     };
@@ -612,7 +618,7 @@ export default function Course() {
                                             <Button
                                                 label="Потоки"
                                                 icon="pi pi-arrow-right"
-                                                className="w-full"
+                                                className="w-full mb-2"
                                                 iconPos="right"
                                                 onClick={() => {
                                                     setActiveIndex(1);
@@ -679,7 +685,9 @@ export default function Course() {
                                 )}
 
                                 {/* table section */}
-                                {hasCourses ? (
+                                {emptyCourses ? 
+                                    <p className="text-[16px] text-center font-bold">{'Пусто'}</p>
+                                : hasCourses ? (
                                     <p className="text-[16px] text-center font-bold">{'Курсы отсутствуют'}</p>
                                 ) : (
                                     <>
@@ -782,7 +790,7 @@ export default function Course() {
                                                                                 name="radio"
                                                                                 onChange={() => {
                                                                                     const newValue = { id: rowData.id, title: rowData.title };
-                                                                                    setGlobalCourseId(newValue);
+                                                                                    // setGlobalCourseId(newValue);
                                                                                     setForStreamId(newValue);
                                                                                     // setSendStream({ status: false, name: rowData?.audience_type?.name });
                                                                                     setOpenCourseId(rowData.id);

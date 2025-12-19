@@ -23,8 +23,8 @@
   --fontSize: 16px;
   --transition: 0.5s;
 
-  --size-w: 55px;
-  --size-h: 23px;
+  --size-w: 48px;
+  --size-h: 20px;
   --track-radius: 999px;
   --accent: #047d4b;    /* насыщенный зелёный */
   --accent-soft: var(--greenBgColor);/* фон-оттенок для зелёного */
@@ -33,6 +33,8 @@
   --knob-shadow: 0 6px 14px rgba(16,24,40,0.12);
   --bottom-shadow: 0 2px 1px 0 rgba(0, 0, 0, 0.1);
 }
+
+* {box-sizing: border-box}
 
 p {
   color: var(--bodyColor);
@@ -866,8 +868,6 @@ html.loaded #preloader {
     /* padding: 3px; */
   }
 }
-
-* {box-sizing: border-box}
 
 .theme-toggle{
   -webkit-tap-highlight-color: transparent;
