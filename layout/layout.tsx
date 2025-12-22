@@ -17,6 +17,7 @@ const Layout = ({ children }: ChildContainerProps) => {
     const topbarRef = useRef<AppTopbarRef>(null);
     const sidebarRef = useRef<HTMLDivElement>(null);
     const [permission, setPermission] = useState<boolean>(true);
+    const [loaderState, setLoaderState] = useState<boolean>(true);
     const [bindMenuOutsideClickListener, unbindMenuOutsideClickListener] = useEventListener({
         type: 'click',
         listener: (event) => {
@@ -135,8 +136,6 @@ const Layout = ({ children }: ChildContainerProps) => {
         requireRole();
     }, [user, pathname]);
 
-    // if(permission) return null;
-
     return (
         <React.Fragment>
             <div className={containerClass}>
@@ -144,6 +143,7 @@ const Layout = ({ children }: ChildContainerProps) => {
                 <div ref={sidebarRef} className="layout-sidebar">
                     <AppSidebar />
                 </div>
+
                 <div className="layout-main-container">
                     <div className="layout-main">{children}</div>
                     {/* <AppFooter /> */}

@@ -46,6 +46,9 @@ export const LayoutProvider = ({ children }: ChildContainerProps) => {
     // Глобальная загрузка
     const [globalLoading, setGlobalLoading] = useState<boolean>(false);
 
+    // 
+    const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);   
+
     // Сообщение об ошибке/успехе
     const [message, setMessage] = useState<MessageType>({ state: false, value: {} });
 

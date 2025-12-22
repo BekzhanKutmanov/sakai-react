@@ -97,8 +97,6 @@ export default function StudentList() {
         setMyEduInfoVisible(true);
         setSkeleton(true);
         const data = await fetchScoreValues(stream_id, student_id);
-        console.log(data);
-
         if (data) {
             const scoresArr: ScoreValueType[] = Object.values(data);
             console.log(scoresArr);
@@ -211,6 +209,10 @@ export default function StudentList() {
             }
         }
     }, [streams]);
+
+    // useEffect(()=> {
+    //     console.log(studentId, studentScore);
+    // },[studentId, studentScore]);
 
     return (
         <div className="main-bg">
@@ -356,8 +358,6 @@ export default function StudentList() {
                     ) : (
                         <div className="flex flex-col gap-2">
                             {scoreValues?.map((item: ScoreValueType) => {
-                                console.log(item);
-
                                 return (
                                     <div key={item?.course?.id} className={`flex flex-col gap-2 ${scoreValues.length > 1 && 'p-2 lesson-card-border shadow'}`}>
                                         <div className="flex items-center gap-1 justify-between">
