@@ -1,9 +1,9 @@
-import axiosInstance from "@/utils/axiosInstance";
+import axiosInstance from '@/utils/axiosInstance';
 let url = '';
 
 export const fetchRolesList = async () => {
     url = process.env.NEXT_PUBLIC_BASE_URL + '/roles/list';
-    
+
     try {
         const res = await axiosInstance.get(url);
 
@@ -12,12 +12,14 @@ export const fetchRolesList = async () => {
     } catch (err) {
         console.log('Ошибка при получении пользователя', err);
         return err;
-    }   
+    }
 };
 
-export const fetchRolesUsers = async (page:number, search: string | null, myedu_id: string | null, role_id: number | null, active: boolean | null) => {
-    try { 
-        const res = await axiosInstance.get(`/roles/users?search=${search}&myedu_id=${myedu_id ? Number(myedu_id) : 0}&${role_id ? `role_id=${role_id}` : 'role_id='}${role_id ? `${active ? `&active=${active ? 1 : 0}` : '&active='}` : '&active='}&page=${page}&limit=`);
+export const fetchRolesUsers = async (page: number, search: string | null, myedu_id: string | null, role_id: number | null, active: boolean | null) => {
+    try {
+        const res = await axiosInstance.get(
+            `/roles/users?search=${search}&myedu_id=${myedu_id ? Number(myedu_id) : 0}&${role_id ? `role_id=${role_id}` : 'role_id='}${role_id ? `${active ? `&active=${active ? 1 : 0}` : '&active='}` : '&active='}&page=${page}&limit=`
+        );
 
         const data = res.data;
         return data;
@@ -32,10 +34,42 @@ export const controlRolesUsers = async (worker_id: number | null, role_id: numbe
         worker_id,
         role_id,
         active
-    }
-    
-    try { 
+    };
+
+    try {
         const res = await axiosInstance.post(`/roles/control`, payload);
+
+        const data = res.data;
+        return data;
+    } catch (err) {
+        console.log('Ошибка при изменении роля', err);
+        return err;
+    }
+};
+
+export const fetchRolesDepartment = async (page: number, search: string | null, myedu_id: string | null, course_audience_type_id: number | null, active: boolean | null) => {
+    try {
+        const res = await axiosInstance.get(
+            `/roles/department/public?search=${search}&myedu_id=${myedu_id ? Number(myedu_id) : ''}&${course_audience_type_id ? `course_audience_type_id=${Number(course_audience_type_id)}` : 'course_audience_type_id='}${course_audience_type_id ? `${active ? `&active=${active ? 1 : 0}` : '&active='}` : '&active='}&page=${page}&limit=`
+        );
+
+        const data = res.data;
+        return data;
+    } catch (err) {
+        console.log('Ошибка при получении пользователя', err);
+        return err;
+    }
+};
+
+export const controlDepartamentUsers = async (worker_id: number | null, course_audience_type_id: number | null, active: boolean | null) => {
+    const payload = {
+        worker_id,
+        course_audience_type_id,
+        active
+    };
+
+    try {
+        const res = await axiosInstance.post(`/roles/department/public/control`, payload);
 
         const data = res.data;
         return data;

@@ -1,3 +1,5 @@
+import { UserRoles } from "./roles/RoleUserType";
+
 export interface User {
     birth_date: null;
     email: string;
@@ -10,4 +12,5 @@ export interface User {
     phone: string;
     pin: null;
     myedu_id: number;
+    roles: UserRoles[];
 }

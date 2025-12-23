@@ -7,6 +7,7 @@ import { User } from './user';
 import { MessageType } from './messageType';
 import { LastStepVisit } from './Step/visits/lastStepVisit/LastStepVist';
 import { LastSubjectPageVisit } from './Step/visits/LastSubjectPageVisit';
+import { UserRoles } from './roles/RoleUserType';
 
 /* Breadcrumb Types */
 export interface AppBreadcrumbProps {
@@ -71,10 +72,6 @@ export interface LayoutContextProps {
     updateQuery: boolean;
     setUpdateeQuery
 
-    contextFetchStudentThemes: (id)=> void;
-    contextStudentThemes;
-    setContextStudentThemes;
-
     crumbUrls: {type: string; crumbUrl: string };
     contextAddCrumb: (id)=> void
 
@@ -106,6 +103,9 @@ export interface LayoutContextProps {
     contextNotifications: mainNotificatio[], 
     setContextNotifications,
     handleNotifications: ()=> void,
+
+    contextUserRole: UserRoles | null, 
+    setContextUserRole
     // message: { state: boolean; value: MessageType };
     // setMessage: React.Dispatch<React.SetStateAction<{ state: boolean; value: MessageType }>>;
 }
@@ -138,8 +138,8 @@ export interface MenuProps {
     model: MenuModel[];
 }
 
-export interface MenuModel {
-    label: string;
+export interface MenuModel{
+    label?: string;
     icon?: string;
     items?: MenuModel[];
     to?: string;
@@ -148,7 +148,7 @@ export interface MenuModel {
     seperator?: boolean;
 }
 
-export interface AppMenuItem extends MenuModel {
+export interface AppMenuItem extends MenuModel{
     items?: AppMenuItem[];
     badge?: 'UPDATED' | 'NEW';
     badgeClass?: string;

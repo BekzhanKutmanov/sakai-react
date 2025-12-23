@@ -20,6 +20,7 @@ import { Button } from 'primereact/button';
 import { Calendar } from 'primereact/calendar';
 import { Nullable } from 'primereact/ts-helpers';
 import { addLocale } from 'primereact/api';
+import { UserRoles } from '@/types/roles/RoleUserType';
 
 const AppMenu = () => {
     // types
@@ -30,8 +31,6 @@ const AppMenu = () => {
         to: Nullable<Date> | null;
     }
 
-    const { user, setMessage, setDeleteQuery, setUpdateeQuery, contextFetchThemes, contextThemes, contextFetchStudentThemes, departament, contextNewStudentThemes, contextVerifedValue, setContextVerifedValue, contextFetchVerifed } =
-        useContext(LayoutContext);
     interface test {
         label: string;
         id: number;
@@ -39,6 +38,21 @@ const AppMenu = () => {
         items?: [];
         command?: () => void;
     }
+
+    interface ForLinkRole {
+        name: string;
+        id: number | null;
+        active: boolean;
+    }
+
+    interface MyApMenuType {
+        label?: string;
+        to?: string;
+        icon?: string;
+        profilact: string;
+    }
+
+    const { user, setMessage, setDeleteQuery, setUpdateeQuery, contextFetchThemes, contextThemes, departament, contextNewStudentThemes, contextVerifedValue, setContextVerifedValue, contextFetchVerifed } = useContext(LayoutContext);
 
     // validate
     const {
@@ -66,11 +80,12 @@ const AppMenu = () => {
     const [courseInfo, setCourseInfo] = useState<{ title: string } | null>(null);
     const [forDepartamentLength, setForDepartamentLength] = useState(false);
     const [additional, setAdditional] = useState(false);
+    const [adminRole, setAdminRole] = useState<MyApMenuType>({ profilact: '' });
+    const [depRole, setDepRole] = useState<MyApMenuType>({ profilact: '' });
 
     const [themesStudentList, setThemesStudentList] = useState<{ key?: string; label: string; id: number; to: string; items?: AppMenuItem[] }[]>([]);
     const [startDeadline, setStartDeadline] = useState<Nullable<Date>>(null);
     const [endDeadline, setEndDeadline] = useState<Nullable<Date>>(null);
-    const [verifedLength, setVerifedLength] = useState<number | null>(null);
 
     const showError = useErrorMessage();
 
@@ -134,11 +149,6 @@ const AppMenu = () => {
                           icon: 'pi pi-th-large',
                           to: '/dashboard'
                       },
-                    //   {
-                    //       label: 'Админ',
-                    //       icon: 'pi pi-shield',
-                    //       to: '/roles'
-                    //   },
                       {
                           label: 'Курсы',
                           icon: 'pi pi-fw pi-book',
@@ -176,7 +186,9 @@ const AppMenu = () => {
                           label: 'Мои активные курсы',
                           icon: 'pi pi-play-circle',
                           to: '/openCourse/activeCourse'
-                      }
+                      },
+                      adminRole,
+                      depRole,
                   ]
                 : []
             : []
@@ -242,6 +254,7 @@ const AppMenu = () => {
                           router.back();
                       }
                   },
+                  adminRole,
                   {
                       label: 'Главная страница',
                       icon: 'pi pi-home',
@@ -252,11 +265,6 @@ const AppMenu = () => {
                       icon: 'pi pi-th-large',
                       to: '/dashboard'
                   },
-                //   {
-                //       label: 'Админ',
-                //       icon: 'pi pi-shield',
-                //       to: '/roles'
-                //   },
                   {
                       label: 'Утвердить курсы',
                       icon: 'pi pi-graduation-cap',
@@ -299,7 +307,9 @@ const AppMenu = () => {
                       label: 'Мои активные курсы',
                       icon: 'pi pi-play-circle',
                       to: '/openCourse/activeCourse'
-                  }
+                  },
+                  adminRole,
+                  depRole,
               ]
             : []
         : [];
@@ -451,18 +461,36 @@ const AppMenu = () => {
     };
 
     useEffect(() => {
-        if (user?.is_student) {
-            const isTopicsChildPage = pathname.startsWith('/teaching/');
-            if (isTopicsChildPage) {
-                if (studentThemeCourse) {
-                    contextFetchStudentThemes(1);
-                }
-            }
-        }
-
         // unverifed
         if (user && user?.is_working) {
             contextFetchVerifed();
+        }
+
+        if (user && user?.roles?.length > 0) {
+            const roles = user.roles;
+            const forRole: ForLinkRole[] = [];
+            roles.forEach((role) => {
+                if (role?.pivot?.active) {
+                    const timeRole: ForLinkRole = {
+                        name: role.title,
+                        id: role.id,
+                        active: true
+                    };
+
+                    forRole.push(timeRole);
+                }
+            });
+            if (forRole && forRole?.length > 0) {
+                const forAdmin = forRole.find((item) => item.id === 1);
+                if (forAdmin) {
+                    setAdminRole({ label: 'Админ', icon: 'pi pi-shield', to: '/roles', profilact: '' });
+                }
+
+                const forDep = forRole.find((item) => item.id === 2);
+                if (forDep) {
+                    setDepRole({ label: 'Департамент', icon: 'pi pi-briefcase', to: '/roles/departament', profilact: '' });
+                }
+            }
         }
     }, [user, studentThemeCourse]);
 
@@ -510,6 +538,10 @@ const AppMenu = () => {
             setForDepartamentLength(true);
         }
     }, [departament, pathname]);
+
+    useEffect(() => {
+        console.log(adminRole);
+    }, [adminRole]);
 
     return (
         <MenuProvider>

@@ -16,6 +16,7 @@ import { LastSubjectPageVisit } from '@/types/Step/visits/LastSubjectPageVisit';
 import { getNotifications, unVerifedSteps } from '@/services/notifications';
 import { mainNotification } from '@/types/mainNotification';
 import MyGlobalLoader from '@/app/components/loading/MyGlobalLoader';
+import { UserRoles } from '@/types/roles/RoleUserType';
 
 export const LayoutContext = createContext({} as LayoutContextProps);
 
@@ -45,9 +46,6 @@ export const LayoutProvider = ({ children }: ChildContainerProps) => {
 
     // Глобальная загрузка
     const [globalLoading, setGlobalLoading] = useState<boolean>(false);
-
-    // 
-    const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);   
 
     // Сообщение об ошибке/успехе
     const [message, setMessage] = useState<MessageType>({ state: false, value: {} });
@@ -112,15 +110,7 @@ export const LayoutProvider = ({ children }: ChildContainerProps) => {
             setContextThemes(data);
         }
     };
-
-    // fetch themes for student
-    const [contextStudentThemes, setContextStudentThemes] = useState([]);
-    const contextFetchStudentThemes = async (id: number) => {
-        const data = await fetchStudentThemes(id);
-
-        setContextStudentThemes(data);
-    };
-
+    
     // fetch themes for student
     const [contextNewStudentThemes, setContextNewStudentThemes] = useState([]);
 
@@ -130,6 +120,9 @@ export const LayoutProvider = ({ children }: ChildContainerProps) => {
     const [contextNotificationId, setContextNotificationId] = useState<number | null>(null);
 
     const [forumValuse, setForumValues] = useState<{ description: string; userInfo: { userName: string; userLastName: string } } | null>(null);
+
+    // admin / departament sapat
+    const [contextUserRole, setContextUserRole] = useState<UserRoles | null>(null);
 
     // notification
     const [contextNotifications, setContextNotifications] = useState<mainNotification[]>([]);
@@ -202,11 +195,6 @@ export const LayoutProvider = ({ children }: ChildContainerProps) => {
         setDeleteQuery,
         updateQuery,
         setUpdateeQuery,
-
-        contextFetchStudentThemes,
-        contextStudentThemes,
-        setContextStudentThemes,
-
         crumbUrls,
         contextAddCrumb,
         mainCourseId,
@@ -236,6 +224,9 @@ export const LayoutProvider = ({ children }: ChildContainerProps) => {
         contextNotifications, 
         setContextNotifications,
         handleNotifications,
+
+        contextUserRole, 
+        setContextUserRole
     };
 
     return (
