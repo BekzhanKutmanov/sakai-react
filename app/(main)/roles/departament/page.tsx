@@ -256,6 +256,7 @@ export default function RolesDepartment() {
                                 {openTypes?.map((item) => {
                                     return (
                                         <Column
+                                            key={item?.id}
                                             header={item?.title}
                                             body={(rowData) => {
                                                 const element = rowData?.course_type_access.find((el: { id: number }) => el.id === item.id);

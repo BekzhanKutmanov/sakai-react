@@ -263,7 +263,7 @@ export default function Roles() {
                             {roles?.map((role, idx) => {
                                 return (
                                     <Column
-                                        key={role.id}
+                                        key={role?.id}
                                         header={() => <div className="text-[14px]">{role.title}</div>}
                                         body={(user) => {
                                             const userRole = user?.roles?.find((r: { id: number }) => r.id === role.id);
