@@ -133,7 +133,6 @@ export default function StudentLesson() {
     // fetch lessons
     const handleFetchLessons = async () => {
         setSkeleton(true);
-        setMainProgressSpinner(true);
         const data = await fetchItemsLessons();
         if (data && data?.success) {
             // валидность проверить
@@ -150,11 +149,11 @@ export default function StudentLesson() {
             }
         }
         setSkeleton(false);
-        setMainProgressSpinner(false);
     };
 
     // Запрос курса, типа уроков (лк,лб)
     const handleFetchSubject = async (subject: subjectType) => {
+        setMainProgressSpinner(true);
         params.append('id_curricula', String(subject?.id_curricula));
         subject?.streams.forEach((i) => params.append('streams[]', String(i)));
         subject?.course_ids.forEach((i) => params.append('course_ids[]', String(i)));
@@ -186,6 +185,7 @@ export default function StudentLesson() {
             }
             setSkeleton(false);
         }
+        setMainProgressSpinner(false);
     };
 
     // НАХОДИМ ПО ИД КРУКЛА НУЖНЫЙ ЭЛЕМЕНТ МАССИВА И ПРИСВАИВАЕМ В main_id ОБЪЕКТ

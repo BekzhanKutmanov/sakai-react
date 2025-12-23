@@ -3,6 +3,7 @@
 import { NotFound } from '@/app/components/NotFound';
 import GroupSkeleton from '@/app/components/skeleton/GroupSkeleton';
 import useErrorMessage from '@/hooks/useErrorMessage';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { LayoutContext } from '@/layout/context/layoutcontext';
 import { controlDepartamentUsers, controlRolesUsers, fetchRolesDepartment, fetchRolesList, fetchRolesUsers } from '@/services/roles/roles';
 import { PaginationType } from '@/types/pagination/PaginationType';
@@ -31,9 +32,9 @@ export default function Roles() {
 
     const showError = useErrorMessage();
     const { setMessage } = useContext(LayoutContext);
+    const media = useMediaQuery('(max-width: 640px)');
 
     const [roles, setRoles] = useState<Role[] | null>(null);
-    const [userPagination, setUserPagintaion] = useState<PaginationType | null>(null); // если нужна пагинация юсеров слишком много
     const [users, setUsers] = useState<RoleUserType[] | null>(null);
 
     const [skeleton, setSkeleton] = useState(false);
@@ -87,7 +88,6 @@ export default function Roles() {
     const handleFetchUsers = async (page: number, search: string, myedu_id: string | null, selectedRole_idType: Role_idType | null, active: boolean | null) => {
         const res = await fetchRolesUsers(page, search, myedu_id, selectedRole_idType?.role_id ? selectedRole_idType?.role_id : null, active);
         if (res?.success) {
-            setUserPagintaion(res?.data);
             setPagination({
                 currentPage: res?.data?.current_page,
                 total: res?.data?.total,
@@ -124,10 +124,15 @@ export default function Roles() {
             }, 1000);
             setMessage({ state: true, value: { severity: 'success', summary: 'Успешно изменено!', detail: '' } });
         } else {
-            setMessage({ state: true, value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' } });
-            if (res?.response?.status) {
-                showError(res.response.status);
+            if(res.response.status === 400){
+                setMessage({ state: true, value: { severity: 'error', summary: res.response.data.message, detail: '' } });
+            } else {
+                setMessage({ state: true, value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' } });
+                if (res?.response?.status) {
+                    showError(res.response.status);
+                }
             }
+
         }
         setForDisabled(false);
     };
@@ -233,7 +238,7 @@ export default function Roles() {
                                     <p>Активные</p>
                                 </div>
                                 <div>
-                                    <Dropdown value={selectedRole_idType} onChange={(e: DropdownChangeEvent) => setSelectedRole_idType(e.value)} options={cities} optionLabel="name" placeholder="..." className="w-full text-sm" />
+                                    <Dropdown value={selectedRole_idType} onChange={(e: DropdownChangeEvent) => setSelectedRole_idType(e.value)} options={cities} optionLabel="name" placeholder="..." className="w-[160px] sm:w-full text-sm" />
                                 </div>
                             </div>
                             <div className="w-full flex justify-center sm:justify-start items-center gap-1">
@@ -335,7 +340,8 @@ export default function Roles() {
                                 rows={pagination.perPage}
                                 totalRecords={pagination.total}
                                 onPageChange={(e) => handlePageChange(e.page + 1)}
-                                template="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
+                                // template="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
+                                template={media ? 'FirstPageLink PrevPageLink NextPageLink LastPageLink' : 'FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink'}
                             />
                         </div>
                     </div>

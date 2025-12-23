@@ -129,7 +129,7 @@ const AppMenu = () => {
               pathname.startsWith('/dashboard') ||
               pathname.startsWith('/openCourse') ||
               pathname.startsWith('/roles')
-                ? [
+                ? ([
                       {
                           // key: 'prev',
                           label: '',
@@ -149,6 +149,8 @@ const AppMenu = () => {
                           icon: 'pi pi-th-large',
                           to: '/dashboard'
                       },
+                      adminRole?.label ? adminRole : null,
+                      depRole?.label ? depRole : null,
                       {
                           label: 'Курсы',
                           icon: 'pi pi-fw pi-book',
@@ -186,10 +188,8 @@ const AppMenu = () => {
                           label: 'Мои активные курсы',
                           icon: 'pi pi-play-circle',
                           to: '/openCourse/activeCourse'
-                      },
-                      adminRole,
-                      depRole,
-                  ]
+                      }
+                  ].filter(Boolean) as AppMenuItem[])
                 : []
             : []
         : user?.is_student
@@ -244,7 +244,7 @@ const AppMenu = () => {
 
     const forDepartament = forDepartamentLength
         ? !pathname.startsWith('/course/') && !pathname.startsWith('/pdf/')
-            ? [
+            ? ([
                   {
                       // key: 'prev',
                       label: '',
@@ -254,7 +254,6 @@ const AppMenu = () => {
                           router.back();
                       }
                   },
-                  adminRole,
                   {
                       label: 'Главная страница',
                       icon: 'pi pi-home',
@@ -265,6 +264,8 @@ const AppMenu = () => {
                       icon: 'pi pi-th-large',
                       to: '/dashboard'
                   },
+                    adminRole?.label ? adminRole : null,
+                    depRole?.label ? depRole : null,
                   {
                       label: 'Утвердить курсы',
                       icon: 'pi pi-graduation-cap',
@@ -307,10 +308,8 @@ const AppMenu = () => {
                       label: 'Мои активные курсы',
                       icon: 'pi pi-play-circle',
                       to: '/openCourse/activeCourse'
-                  },
-                  adminRole,
-                  depRole,
-              ]
+                  }
+              ].filter(Boolean) as AppMenuItem[])
             : []
         : [];
 

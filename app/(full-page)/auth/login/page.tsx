@@ -15,7 +15,6 @@ import Link from 'next/link';
 import { Button } from 'primereact/button';
 import { getToken } from '@/utils/auth';
 import { ProgressSpinner } from 'primereact/progressspinner';
-import { useRouter } from 'next/navigation';
 
 const LoginPage = () => {
     const { setUser, setMessage, setDepartament, departament } = useContext(LayoutContext);
@@ -34,8 +33,6 @@ const LoginPage = () => {
         resolver: yupResolver(schema),
         mode: 'onChange'
     });
-
-    const router = useRouter();
 
     const onSubmit = async (value: LoginType) => {
         try {

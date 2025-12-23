@@ -5,6 +5,7 @@ import OpenCourseShowCard from '@/app/components/cards/OpenCourseShowCard';
 import { NotFound } from '@/app/components/NotFound';
 import GroupSkeleton from '@/app/components/skeleton/GroupSkeleton';
 import useErrorMessage from '@/hooks/useErrorMessage';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { LayoutContext } from '@/layout/context/layoutcontext';
 import { fetchOpenCourses, openCourseShow, openCourseSignup, signupList } from '@/services/openCourse';
 import { myMainCourseType } from '@/types/myMainCourseType';
@@ -18,6 +19,7 @@ import { useContext, useEffect, useState } from 'react';
 export default function OpenCourse() {
     const { setMessage } = useContext(LayoutContext);
     const showError = useErrorMessage();
+    const media = useMediaQuery('(max-width: 640px)');
 
     const params = new URLSearchParams();
     const [mainCourse, setMainCourse] = useState([]);
@@ -320,7 +322,8 @@ export default function OpenCourse() {
                             rows={pagination.perPage}
                             totalRecords={pagination.total}
                             onPageChange={(e) => handlePageChange(e.page + 1)}
-                            template="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
+                            // template="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
+                            template={media ? 'FirstPageLink PrevPageLink NextPageLink LastPageLink' : 'FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink'}
                         />
                     </div>
                 </>

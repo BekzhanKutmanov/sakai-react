@@ -3,6 +3,7 @@
 import { NotFound } from '@/app/components/NotFound';
 import GroupSkeleton from '@/app/components/skeleton/GroupSkeleton';
 import useErrorMessage from '@/hooks/useErrorMessage';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { LayoutContext } from '@/layout/context/layoutcontext';
 import { addOpenTypes, fetchCourseOpenStatus } from '@/services/courses';
 import { controlDepartamentUsers, controlRolesUsers, fetchRolesDepartment, fetchRolesList, fetchRolesUsers } from '@/services/roles/roles';
@@ -31,6 +32,8 @@ export default function RolesDepartment() {
 
     const showError = useErrorMessage();
     const { setMessage } = useContext(LayoutContext);
+
+    const media = useMediaQuery('(max-width: 640px)');
 
     const [roles, setRoles] = useState<Role[] | null>(null);
     const [skeleton, setSkeleton] = useState(true);
@@ -183,7 +186,7 @@ export default function RolesDepartment() {
         return () => {
             clearTimeout(delay);
         };
-    }, [myedu_id]); 
+    }, [myedu_id]);
 
     useEffect(() => {
         handleFetchCourseOpenStatus();
@@ -219,7 +222,7 @@ export default function RolesDepartment() {
                                     <p>Активные</p>
                                 </div>
                                 <div>
-                                    <Dropdown value={selectedTypeId} onChange={(e: DropdownChangeEvent) => setSelectedTypeId(e.value)} options={cities} optionLabel="name" placeholder="..." className="w-full text-sm" />
+                                    <Dropdown value={selectedTypeId} onChange={(e: DropdownChangeEvent) => setSelectedTypeId(e.value)} options={cities} optionLabel="name" placeholder="..." className="w-[160px] sm:w-full text-sm" />
                                 </div>
                             </div>
                             <div className="w-full flex justify-center sm:justify-start items-center gap-1">
@@ -240,87 +243,88 @@ export default function RolesDepartment() {
                             <ProgressSpinner style={{ width: '60px', height: '60px' }} />
                         </div>
                     ) : (
-                        <div className="main-bg overflow-x-auto scrollbar-thin flex flex-col gap-2">
-                            <DataTable value={roles || []} dataKey="id" emptyMessage="..." loading={forDisabled} breakpoint="960px" key={JSON.stringify(forDisabled)} rows={5} className="min-w-[640px] overflow-x-auto">
-                                <Column header={() => <div className="text-[14px]">#</div>} body={(_, { rowIndex }) => rowIndex + 1} />
+                        <div className="flex flex-col gap-2">
+                            <div className="main-bg overflow-x-auto scrollbar-thin">
+                                <DataTable value={roles || []} dataKey="id" emptyMessage="..." loading={forDisabled} breakpoint="960px" key={JSON.stringify(forDisabled)} rows={5} className="min-w-[640px] overflow-x-auto">
+                                    <Column header={() => <div className="text-[14px]">#</div>} body={(_, { rowIndex }) => rowIndex + 1} />
 
-                                <Column
-                                    header={() => <div className="text-[14px]">ФИО</div>}
-                                    body={(rowData: any) => (
-                                        <div className="text-[14px]">
-                                            {rowData.last_name} {rowData.name} {rowData.father_name}
-                                        </div>
-                                    )}
-                                />
+                                    <Column
+                                        header={() => <div className="text-[14px]">ФИО</div>}
+                                        body={(rowData: any) => (
+                                            <div className="text-[14px]">
+                                                {rowData.last_name} {rowData.name} {rowData.father_name}
+                                            </div>
+                                        )}
+                                    />
 
-                                {openTypes?.map((item) => {
-                                    return (
-                                        <Column
-                                            key={item?.id}
-                                            header={item?.title}
-                                            body={(rowData) => {
-                                                const element = rowData?.course_type_access.find((el: { id: number }) => el.id === item.id);
-                                                const isActive = Boolean(element?.pivot?.active);
+                                    {openTypes?.map((item) => {
+                                        return (
+                                            <Column
+                                                key={item?.id}
+                                                header={item?.title}
+                                                body={(rowData) => {
+                                                    const element = rowData?.course_type_access.find((el: { id: number }) => el.id === item.id);
+                                                    const isActive = Boolean(element?.pivot?.active);
 
-                                                return (
-                                                    <div className="text-center">
-                                                        <div className="flex justify-center items-center">
-                                                            {!isActive ? (
-                                                                <button
-                                                                    className={`theme-toggle ${forDisabled && 'opacity-50'}`}
-                                                                    disabled={forDisabled}
-                                                                    onClick={() => handleControlDepartament(rowData?.id, item?.id, true)}
-                                                                    // onClick={() => console.log(rowData?.id, element?.id, item.id, true)}
-                                                                    aria-pressed="false"
-                                                                >
-                                                                    <span className="right">
-                                                                        <span className="option option-left" aria-hidden></span>
-                                                                        <span className="option option-right" aria-hidden></span>
-                                                                        <span className="knob" aria-hidden></span>
-                                                                    </span>
-                                                                </button>
-                                                            ) : (
-                                                                <button
-                                                                    className={`theme-toggle ${forDisabled && 'opacity-50'}`}
-                                                                    disabled={forDisabled}
-                                                                    onClick={() => handleControlDepartament(rowData?.id, item?.id, false)}
-                                                                    aria-pressed="false"
-                                                                    // onClick={() => console.log(user, roles[idx])} aria-pressed="false"
-                                                                >
-                                                                    <span className="track">
-                                                                        <span className="option option-left" aria-hidden></span>
-
-                                                                        <span className="option option-right" aria-hidden>
-                                                                            <svg
-                                                                                xmlns="http://www.w3.org/2000/svg"
-                                                                                width="24"
-                                                                                height="24"
-                                                                                fill="none"
-                                                                                stroke="green"
-                                                                                stroke-width="2"
-                                                                                stroke-linecap="round"
-                                                                                stroke-linejoin="round"
-                                                                                viewBox="0 0 24 24"
-                                                                                aria-label="Опубликовано"
-                                                                            >
-                                                                                <circle cx="12" cy="12" r="10"></circle>
-                                                                                <path d="M9 12l2 2 4-4"></path>
-                                                                            </svg>
+                                                    return (
+                                                        <div className="text-center">
+                                                            <div className="flex justify-center items-center">
+                                                                {!isActive ? (
+                                                                    <button
+                                                                        className={`theme-toggle ${forDisabled && 'opacity-50'}`}
+                                                                        disabled={forDisabled}
+                                                                        onClick={() => handleControlDepartament(rowData?.id, item?.id, true)}
+                                                                        // onClick={() => console.log(rowData?.id, element?.id, item.id, true)}
+                                                                        aria-pressed="false"
+                                                                    >
+                                                                        <span className="right">
+                                                                            <span className="option option-left" aria-hidden></span>
+                                                                            <span className="option option-right" aria-hidden></span>
+                                                                            <span className="knob" aria-hidden></span>
                                                                         </span>
+                                                                    </button>
+                                                                ) : (
+                                                                    <button
+                                                                        className={`theme-toggle ${forDisabled && 'opacity-50'}`}
+                                                                        disabled={forDisabled}
+                                                                        onClick={() => handleControlDepartament(rowData?.id, item?.id, false)}
+                                                                        aria-pressed="false"
+                                                                        // onClick={() => console.log(user, roles[idx])} aria-pressed="false"
+                                                                    >
+                                                                        <span className="track">
+                                                                            <span className="option option-left" aria-hidden></span>
 
-                                                                        <span className="knob" aria-hidden></span>
-                                                                    </span>
-                                                                </button>
-                                                            )}
+                                                                            <span className="option option-right" aria-hidden>
+                                                                                <svg
+                                                                                    xmlns="http://www.w3.org/2000/svg"
+                                                                                    width="24"
+                                                                                    height="24"
+                                                                                    fill="none"
+                                                                                    stroke="green"
+                                                                                    stroke-width="2"
+                                                                                    stroke-linecap="round"
+                                                                                    stroke-linejoin="round"
+                                                                                    viewBox="0 0 24 24"
+                                                                                    aria-label="Опубликовано"
+                                                                                >
+                                                                                    <circle cx="12" cy="12" r="10"></circle>
+                                                                                    <path d="M9 12l2 2 4-4"></path>
+                                                                                </svg>
+                                                                            </span>
+
+                                                                            <span className="knob" aria-hidden></span>
+                                                                        </span>
+                                                                    </button>
+                                                                )}
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                );
-                                            }}
-                                        />
-                                    );
-                                })}
+                                                    );
+                                                }}
+                                            />
+                                        );
+                                    })}
 
-                                {/* <Column
+                                    {/* <Column
                                 header="Закрытый"
                                 body={(rowData) => {
                                     const element = rowData?.course_type_access[0];
@@ -383,7 +387,7 @@ export default function RolesDepartment() {
                                         );
                                 }}
                             /> */}
-                                {/* 
+                                    {/* 
                             <Column
                                 header="Открытый"
                                 body={(rowData) => {
@@ -447,15 +451,16 @@ export default function RolesDepartment() {
                                         );
                                 }}
                             /> */}
-                            </DataTable>
-
+                                </DataTable>
+                            </div>
                             <div className={`shadow-[0px_-11px_5px_-6px_rgba(0,_0,_0,_0.1)]`}>
                                 <Paginator
                                     first={(pagination.current_page - 1) * pagination.per_page}
                                     rows={pagination.per_page}
                                     totalRecords={pagination.total}
                                     onPageChange={(e) => handlePageChange(e.page + 1)}
-                                    template="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
+                                    // template="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
+                                    template={media ? 'FirstPageLink PrevPageLink NextPageLink LastPageLink' : 'FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink'}
                                 />
                             </div>
                         </div>
