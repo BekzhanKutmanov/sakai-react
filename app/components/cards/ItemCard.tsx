@@ -69,7 +69,7 @@ export default function ItemCard({
                             </div>
 
                             <div className="flex gap-2">
-                                <div className="flex items-center gap-1">
+                                <div className="flex items-center gap-1">   
                                     <div className="rounded-full p-[6px] bg-[orange] shadow flex justify-center items-center">
                                         <i className="pi pi-star-fill text-white" style={{ fontSize: '12px' }}></i>
                                     </div>

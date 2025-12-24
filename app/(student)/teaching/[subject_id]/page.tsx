@@ -251,7 +251,7 @@ export default function StudentLesson() {
                                             <span className="text-[var(--mainColor)]">Название курса:</span> {course?.title}
                                         </h3>
                                         <h3 className="m-0 text-md ">
-                                            <span className="text-[var(--mainColor)]">Преподаватель:</span> {course?.user.last_name} {course?.user.name}
+                                            <span className="text-[var(--mainColor)]">Преподаватель:</span> {course?.user.last_name} {course?.user.name} {course?.user.father_name ? course?.user.father_name[0] && course?.user.father_name : ''}
                                         </h3>
                                         {course?.connections[0]?.subject_type && (
                                             <h3 className="m-0 text-md ">

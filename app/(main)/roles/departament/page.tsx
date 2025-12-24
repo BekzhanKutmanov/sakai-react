@@ -5,15 +5,17 @@ import GroupSkeleton from '@/app/components/skeleton/GroupSkeleton';
 import useErrorMessage from '@/hooks/useErrorMessage';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { LayoutContext } from '@/layout/context/layoutcontext';
-import { addOpenTypes, fetchCourseOpenStatus } from '@/services/courses';
-import { controlDepartamentUsers, controlRolesUsers, fetchRolesDepartment, fetchRolesList, fetchRolesUsers } from '@/services/roles/roles';
+import { fetchCourseOpenStatus } from '@/services/courses';
+import { controlDepartamentUsers, fetchRolesDepartment } from '@/services/roles/roles';
 import { AudenceType } from '@/types/courseTypes/AudenceTypes';
+import { TabViewChange } from '@/types/tabViewChange';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import { Dropdown, DropdownChangeEvent } from 'primereact/dropdown';
 import { InputText } from 'primereact/inputtext';
 import { Paginator } from 'primereact/paginator';
 import { ProgressSpinner } from 'primereact/progressspinner';
+import { TabPanel, TabView } from 'primereact/tabview';
 import { useContext, useEffect, useState } from 'react';
 
 export default function RolesDepartment() {
@@ -35,6 +37,7 @@ export default function RolesDepartment() {
 
     const media = useMediaQuery('(max-width: 640px)');
 
+    const [roleStatus, setRoleStatus] = useState<0 | 1>(0);
     const [roles, setRoles] = useState<Role[] | null>(null);
     const [skeleton, setSkeleton] = useState(true);
     const [contentNull, setContentNull] = useState<boolean>(false);
@@ -56,6 +59,7 @@ export default function RolesDepartment() {
     const [cities, setCities] = useState<Role_idType[]>([{ name: 'Все', role_id: null }]);
     const [forDisabled, setForDisabled] = useState(false);
     const [openTypes, setOpenTypes] = useState<AudenceType[]>([]);
+    const [activeIndex, setActiveIndex] = useState<number>(0);
 
     const handleFetchCourseOpenStatus = async () => {
         const data = await fetchCourseOpenStatus();
@@ -134,6 +138,110 @@ export default function RolesDepartment() {
         setPageState(page);
     };
 
+    // for tabview
+    const handleTabChange = (e: TabViewChange) => {
+        setActiveIndex(e.index);
+        if(e.index === 0 || e.index === 1) setRoleStatus(e.index);
+    };
+
+    // TSX
+    const mainDepartamentSection = (
+        <div className="flex flex-col gap-2">
+            <div className="main-bg overflow-x-auto scrollbar-thin">
+                <DataTable value={roles || []} dataKey="id" emptyMessage="..." loading={forDisabled} breakpoint="960px" key={JSON.stringify(forDisabled)} rows={5} className="min-w-[640px] overflow-x-auto">
+                    <Column header={() => <div className="text-[14px]">#</div>} body={(_, { rowIndex }) => rowIndex + 1} />
+
+                    <Column
+                        header={() => <div className="text-[14px]">ФИО</div>}
+                        body={(rowData: any) => (
+                            <div className="text-[14px]">
+                                {rowData.last_name} {rowData.name} {rowData.father_name}
+                            </div>
+                        )}
+                    />
+
+                    {openTypes?.map((item) => {
+                        return (
+                            <Column
+                                key={item?.id}
+                                header={item?.title}
+                                body={(rowData) => {
+                                    const element = rowData?.course_type_access.find((el: { id: number }) => el.id === item.id);
+                                    const isActive = Boolean(element?.pivot?.active);
+
+                                    return (
+                                        <div className="text-center">
+                                            <div className="flex justify-center items-center">
+                                                {!isActive ? (
+                                                    <button
+                                                        className={`theme-toggle ${forDisabled && 'opacity-50'}`}
+                                                        disabled={forDisabled}
+                                                        onClick={() => handleControlDepartament(rowData?.id, item?.id, true)}
+                                                        // onClick={() => console.log(rowData?.id, element?.id, item.id, true)}
+                                                        aria-pressed="false"
+                                                    >
+                                                        <span className="right">
+                                                            <span className="option option-left" aria-hidden></span>
+                                                            <span className="option option-right" aria-hidden></span>
+                                                            <span className="knob" aria-hidden></span>
+                                                        </span>
+                                                    </button>
+                                                ) : (
+                                                    <button
+                                                        className={`theme-toggle ${forDisabled && 'opacity-50'}`}
+                                                        disabled={forDisabled}
+                                                        onClick={() => handleControlDepartament(rowData?.id, item?.id, false)}
+                                                        aria-pressed="false"
+                                                        // onClick={() => console.log(user, roles[idx])} aria-pressed="false"
+                                                    >
+                                                        <span className="track">
+                                                            <span className="option option-left" aria-hidden></span>
+
+                                                            <span className="option option-right" aria-hidden>
+                                                                <svg
+                                                                    xmlns="http://www.w3.org/2000/svg"
+                                                                    width="24"
+                                                                    height="24"
+                                                                    fill="none"
+                                                                    stroke="green"
+                                                                    stroke-width="2"
+                                                                    stroke-linecap="round"
+                                                                    stroke-linejoin="round"
+                                                                    viewBox="0 0 24 24"
+                                                                    aria-label="Опубликовано"
+                                                                >
+                                                                    <circle cx="12" cy="12" r="10"></circle>
+                                                                    <path d="M9 12l2 2 4-4"></path>
+                                                                </svg>
+                                                            </span>
+
+                                                            <span className="knob" aria-hidden></span>
+                                                        </span>
+                                                    </button>
+                                                )}
+                                            </div>
+                                        </div>
+                                    );
+                                }}
+                            />
+                        );
+                    })}
+                </DataTable>
+            </div>
+            <div className={`shadow-[0px_-11px_5px_-6px_rgba(0,_0,_0,_0.1)]`}>
+                <Paginator
+                    first={(pagination.current_page - 1) * pagination.per_page}
+                    rows={pagination.per_page}
+                    totalRecords={pagination.total}
+                    onPageChange={(e) => handlePageChange(e.page + 1)}
+                    // template="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
+                    template={media ? 'FirstPageLink PrevPageLink NextPageLink LastPageLink' : 'FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink'}
+                />
+            </div>
+        </div>
+    );
+
+    // USEEFFECTS
     useEffect(() => {
         setMiniProgressSpinner(true);
         if (search?.length === 0 && searchController) {
@@ -237,234 +345,36 @@ export default function RolesDepartment() {
                         </div>
                     </div>
 
-                    {/* Table */}
+                    {/* main */}
+
                     {mainProgressSpinner ? (
                         <div className="main-bg flex justify-center items-center h-[100vh]">
                             <ProgressSpinner style={{ width: '60px', height: '60px' }} />
                         </div>
                     ) : (
-                        <div className="flex flex-col gap-2">
-                            <div className="main-bg overflow-x-auto scrollbar-thin">
-                                <DataTable value={roles || []} dataKey="id" emptyMessage="..." loading={forDisabled} breakpoint="960px" key={JSON.stringify(forDisabled)} rows={5} className="min-w-[640px] overflow-x-auto">
-                                    <Column header={() => <div className="text-[14px]">#</div>} body={(_, { rowIndex }) => rowIndex + 1} />
+                        // <TabView
+                        //     onTabChange={(e) => handleTabChange(e)}
+                        //     activeIndex={activeIndex}
+                        //     // className="main-bg"
+                        //     pt={{
+                        //         nav: { className: 'flex cursor-pointer' },
+                        //         panelContainer: { className: 'flex-1 pl-4' }
+                        //     }}
+                        // >
+                        //     {/* Departament */}
+                        //     <TabPanel
+                        //         pt={{
+                        //             headerAction: { className: 'font-italic' }
+                        //         }}
+                        //         header="Департамент"
+                        //         className="p-tabview p-tabview-nav p-tabview-selected p-tabview-panels p-tabview-panel"
+                        //     >
+                                mainDepartamentSection
+                        //     {/* </TabPanel>
 
-                                    <Column
-                                        header={() => <div className="text-[14px]">ФИО</div>}
-                                        body={(rowData: any) => (
-                                            <div className="text-[14px]">
-                                                {rowData.last_name} {rowData.name} {rowData.father_name}
-                                            </div>
-                                        )}
-                                    />
-
-                                    {openTypes?.map((item) => {
-                                        return (
-                                            <Column
-                                                key={item?.id}
-                                                header={item?.title}
-                                                body={(rowData) => {
-                                                    const element = rowData?.course_type_access.find((el: { id: number }) => el.id === item.id);
-                                                    const isActive = Boolean(element?.pivot?.active);
-
-                                                    return (
-                                                        <div className="text-center">
-                                                            <div className="flex justify-center items-center">
-                                                                {!isActive ? (
-                                                                    <button
-                                                                        className={`theme-toggle ${forDisabled && 'opacity-50'}`}
-                                                                        disabled={forDisabled}
-                                                                        onClick={() => handleControlDepartament(rowData?.id, item?.id, true)}
-                                                                        // onClick={() => console.log(rowData?.id, element?.id, item.id, true)}
-                                                                        aria-pressed="false"
-                                                                    >
-                                                                        <span className="right">
-                                                                            <span className="option option-left" aria-hidden></span>
-                                                                            <span className="option option-right" aria-hidden></span>
-                                                                            <span className="knob" aria-hidden></span>
-                                                                        </span>
-                                                                    </button>
-                                                                ) : (
-                                                                    <button
-                                                                        className={`theme-toggle ${forDisabled && 'opacity-50'}`}
-                                                                        disabled={forDisabled}
-                                                                        onClick={() => handleControlDepartament(rowData?.id, item?.id, false)}
-                                                                        aria-pressed="false"
-                                                                        // onClick={() => console.log(user, roles[idx])} aria-pressed="false"
-                                                                    >
-                                                                        <span className="track">
-                                                                            <span className="option option-left" aria-hidden></span>
-
-                                                                            <span className="option option-right" aria-hidden>
-                                                                                <svg
-                                                                                    xmlns="http://www.w3.org/2000/svg"
-                                                                                    width="24"
-                                                                                    height="24"
-                                                                                    fill="none"
-                                                                                    stroke="green"
-                                                                                    stroke-width="2"
-                                                                                    stroke-linecap="round"
-                                                                                    stroke-linejoin="round"
-                                                                                    viewBox="0 0 24 24"
-                                                                                    aria-label="Опубликовано"
-                                                                                >
-                                                                                    <circle cx="12" cy="12" r="10"></circle>
-                                                                                    <path d="M9 12l2 2 4-4"></path>
-                                                                                </svg>
-                                                                            </span>
-
-                                                                            <span className="knob" aria-hidden></span>
-                                                                        </span>
-                                                                    </button>
-                                                                )}
-                                                            </div>
-                                                        </div>
-                                                    );
-                                                }}
-                                            />
-                                        );
-                                    })}
-
-                                    {/* <Column
-                                header="Закрытый"
-                                body={(rowData) => {
-                                    const element = rowData?.course_type_access[0];
-                                    const isActive = Boolean(element?.pivot?.active);
-                                    if (element)
-                                        return (
-                                            <div className="text-center">
-                                                <div className="flex justify-center items-center">
-                                                    {!isActive ? (
-                                                        <button
-                                                            className={`theme-toggle ${forDisabled && 'opacity-50'}`}
-                                                            disabled={forDisabled}
-                                                            // onClick={() => handleControlDepartament(user?.id, roles[idx]?.id, true)}
-                                                            onClick={() => handleControlDepartament(rowData?.id, element?.id, true)}
-                                                            aria-pressed="false"
-                                                            // onClick={() => console.log(user?.roles, roles[idx])} aria-pressed="false"
-                                                        >
-                                                            <span className="right">
-                                                                <span className="option option-left" aria-hidden></span>
-                                                                <span className="option option-right" aria-hidden></span>
-                                                                <span className="knob" aria-hidden></span>
-                                                            </span>
-                                                        </button>
-                                                    ) : (
-                                                        <button
-                                                            className={`theme-toggle ${forDisabled && 'opacity-50'}`}
-                                                            disabled={forDisabled}
-                                                            // onClick={() => handleControlDepartament(user?.id, roles[idx]?.id, false)}
-                                                            onClick={() => handleControlDepartament(rowData?.id, element?.id, false)}
-                                                            aria-pressed="false"
-                                                            // onClick={() => console.log(user, roles[idx])} aria-pressed="false"
-                                                        >
-                                                            <span className="track">
-                                                                <span className="option option-left" aria-hidden></span>
-
-                                                                <span className="option option-right" aria-hidden>
-                                                                    <svg
-                                                                        xmlns="http://www.w3.org/2000/svg"
-                                                                        width="24"
-                                                                        height="24"
-                                                                        fill="none"
-                                                                        stroke="green"
-                                                                        stroke-width="2"
-                                                                        stroke-linecap="round"
-                                                                        stroke-linejoin="round"
-                                                                        viewBox="0 0 24 24"
-                                                                        aria-label="Опубликовано"
-                                                                    >
-                                                                        <circle cx="12" cy="12" r="10"></circle>
-                                                                        <path d="M9 12l2 2 4-4"></path>
-                                                                    </svg>
-                                                                </span>
-
-                                                                <span className="knob" aria-hidden></span>
-                                                            </span>
-                                                        </button>
-                                                    )}
-                                                </div>
-                                            </div>
-                                        );
-                                }}
-                            /> */}
-                                    {/* 
-                            <Column
-                                header="Открытый"
-                                body={(rowData) => {
-                                    const element = rowData?.course_type_access[1];
-                                    const isActive = Boolean(element?.pivot?.active);
-                                    if (element)
-                                        return (
-                                            <div className="text-center">
-                                                <div className="flex justify-center items-center">
-                                                    {!isActive ? (
-                                                        <button
-                                                            className={`theme-toggle ${forDisabled && 'opacity-50'}`}
-                                                            disabled={forDisabled}
-                                                            // onClick={() => handleControlDepartament(user?.id, roles[idx]?.id, true)}
-                                                            onClick={() => handleControlDepartament(rowData?.id, element?.id, true)}
-                                                            aria-pressed="false"
-                                                            // onClick={() => console.log(user?.roles, roles[idx])} aria-pressed="false"
-                                                        >
-                                                            <span className="right">
-                                                                <span className="option option-left" aria-hidden></span>
-                                                                <span className="option option-right" aria-hidden></span>
-                                                                <span className="knob" aria-hidden></span>
-                                                            </span>
-                                                        </button>
-                                                    ) : (
-                                                        <button
-                                                            className={`theme-toggle ${forDisabled && 'opacity-50'}`}
-                                                            disabled={forDisabled}
-                                                            // onClick={() => handleControlDepartament(user?.id, roles[idx]?.id, false)}
-                                                            onClick={() => handleControlDepartament(rowData?.id, element?.id, false)}
-                                                            aria-pressed="false"
-                                                            // onClick={() => console.log(user, roles[idx])} aria-pressed="false"
-                                                        >
-                                                            <span className="track">
-                                                                <span className="option option-left" aria-hidden></span>
-
-                                                                <span className="option option-right" aria-hidden>
-                                                                    <svg
-                                                                        xmlns="http://www.w3.org/2000/svg"
-                                                                        width="24"
-                                                                        height="24"
-                                                                        fill="none"
-                                                                        stroke="green"
-                                                                        stroke-width="2"
-                                                                        stroke-linecap="round"
-                                                                        stroke-linejoin="round"
-                                                                        viewBox="0 0 24 24"
-                                                                        aria-label="Опубликовано"
-                                                                    >
-                                                                        <circle cx="12" cy="12" r="10"></circle>
-                                                                        <path d="M9 12l2 2 4-4"></path>
-                                                                    </svg>
-                                                                </span>
-
-                                                                <span className="knob" aria-hidden></span>
-                                                            </span>
-                                                        </button>
-                                                    )}
-                                                </div>
-                                            </div>
-                                        );
-                                }}
-                            /> */}
-                                </DataTable>
-                            </div>
-                            <div className={`shadow-[0px_-11px_5px_-6px_rgba(0,_0,_0,_0.1)]`}>
-                                <Paginator
-                                    first={(pagination.current_page - 1) * pagination.per_page}
-                                    rows={pagination.per_page}
-                                    totalRecords={pagination.total}
-                                    onPageChange={(e) => handlePageChange(e.page + 1)}
-                                    // template="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
-                                    template={media ? 'FirstPageLink PrevPageLink NextPageLink LastPageLink' : 'FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink'}
-                                />
-                            </div>
-                        </div>
-                    )}
+                        // </TabView> */}
+                    )
+                    }
                 </div>
             )}
         </div>
