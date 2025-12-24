@@ -538,10 +538,6 @@ const AppMenu = () => {
         }
     }, [departament, pathname]);
 
-    useEffect(() => {
-        console.log(adminRole);
-    }, [adminRole]);
-
     return (
         <MenuProvider>
             <FormModal
@@ -599,7 +595,6 @@ const AppMenu = () => {
                                             dateFormat="yy.mm.yy"
                                             className="p-inputtext-sm"
                                             onChange={(e) => {
-                                                console.log(e.value);
                                                 setEditingLesson((prev) => prev && { ...prev, from: e.value });
                                             }}
                                         />

@@ -9,7 +9,6 @@ import { fetchTeacherDashboard } from '@/services/dashboard/workingDashboard';
 import GroupSkeleton from '@/app/components/skeleton/GroupSkeleton';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { useRouter } from 'next/navigation';
-import { fetchRolesList, fetchRolesUsers } from '@/services/roles/roles';
 
 export default function Dashboard() {
     interface CourseTotalLastMonth {
