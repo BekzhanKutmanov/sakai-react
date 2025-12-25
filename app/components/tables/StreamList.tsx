@@ -105,6 +105,7 @@ const StreamList = React.memo(function StreamList({
         // const data = await connectStreams({ course_id: courseValue?.id ? courseValue?.id : null, stream: pendingChanges });
         setSkeleton(true);
         const data = await newConnectStreams({ course_id: courseValue?.id ? courseValue?.id : null, id_stream: id_stream, active: active });
+        console.log(data);
 
         if (data?.success) {
             fetchprop();
@@ -115,42 +116,40 @@ const StreamList = React.memo(function StreamList({
                 value: { severity: 'success', summary: 'Успешно добавлен!', detail: '' }
             });
         } else {
-            if (data?.message) {
-                const teachers = () => {
-                    if (data?.teachers?.length) {
-                        return (
-                            <div className="flex flex-col gap-2">
-                                {data.teachers?.map((item: any, idx: number) => {
-                                    return (
-                                        <div key={idx} className={`flex gap-1 flex-col`}>
-                                            <span>
-                                                {item?.last_name} {item?.name && item?.name[0] + '.'} {item?.father_name && item?.father_name.length > 1 && item?.father_name[0] + '.'}
-                                            </span>
-                                            <small className='text-[var(--mainColor)] underline'>{item?.streams?.map((item: number) => item + ' ')}</small>
-                                        </div>
-                                    );
-                                })}
-                            </div>
-                        );
-                    } else {
-                        return '';
-                    }
-                };
-
-                setMessage({
-                    state: true,
-                    value: { severity: 'error', summary: data?.message, detail: <div style={{ whiteSpace: 'pre-line' }}>{teachers()}</div> }
-                });
-            } else if (data?.response?.status) {
-                if (data?.response?.status == '400') {
+            if (data?.status === 400) {
+                if (data?.teachers?.length) {
+                    const teachers = () => {
+                        if (data?.teachers?.length) {
+                            return (
+                                <div className="flex flex-col gap-2">
+                                    {data.teachers?.map((item: any, idx: number) => {
+                                        return (
+                                            <div key={idx} className={`flex gap-1 flex-col`}>
+                                                <span>
+                                                    {item?.last_name} {item?.name && item?.name[0] + '.'} {item?.father_name && item?.father_name.length > 1 && item?.father_name[0] + '.'}
+                                                </span>
+                                                <small className="text-[var(--mainColor)] underline">{item?.streams?.map((item: number) => item + ' ')}</small>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            );
+                        } else {
+                            return '';
+                        }
+                    };
+                    setMessage({
+                        state: true,
+                        value: { severity: 'error', summary: data?.message, detail: <div style={{ whiteSpace: 'pre-line' }}>{teachers()}</div> }
+                    });
+                } else {
                     setMessage({
                         state: true,
                         value: { severity: 'error', summary: 'Ошибка!', detail: data?.response?.data?.message }
                     });
-                } else {
-                    showError(data.response.status);
                 }
             } else {
+                showError(data.response.status);
                 setMessage({
                     state: true,
                     value: { severity: 'error', summary: 'Ошибка при добавлении', detail: '' }
@@ -234,12 +233,12 @@ const StreamList = React.memo(function StreamList({
                 <div className={`flex flex-column p-2 gap-2`}>
                     <div className="w-full flex justify-between gap-1 items-center">
                         <h3 className="m-0 text-lg">{item?.subject_name.name_ru}</h3>
-                        <small className='underline text-[var(--mainColor)]'>Id: {item?.stream_id}</small>
+                        <small className="underline text-[var(--mainColor)]">Id: {item?.stream_id}</small>
                     </div>
                     <div className="flex flex-column xl:flex-row justify-content-between align-items-center xl:align-items-start flex-1 gap-2">
                         <div className="w-full sm:w-[70%] flex flex-col order-2 xl:order-1 gap-1 items-start text-[12px] sm:text-[14px]">
                             <div className="flex gap-1 items-center text-[var(--mainColor)]">
-                                <span >{item?.subject_type_name?.name_ru}</span>
+                                <span>{item?.subject_type_name?.name_ru}</span>
                             </div>
                             <div className="flex gap-1 items-center">
                                 <span className="text-[var(--mainColor)]">Язык обучения: </span>
@@ -255,7 +254,7 @@ const StreamList = React.memo(function StreamList({
                             </div>
                             <div className="flex gap-1 items-center" title={item?.speciality.name_ru}>
                                 <span className="text-[var(--mainColor)] ">Специальность: </span>
-                                <span className='max-w-[170px] sm:max-w-[800px] text-nowrap text-ellipsis overflow-hidden'>{item?.speciality.name_ru}</span>
+                                <span className="max-w-[170px] sm:max-w-[800px] text-nowrap text-ellipsis overflow-hidden">{item?.speciality.name_ru}</span>
                             </div>
                         </div>
                         <div className="flex flex-col order-1 xl:order-2 align-items-center gap-2">
@@ -328,7 +327,9 @@ const StreamList = React.memo(function StreamList({
                             header={() => <div className="text-[13px]">Специальность</div>}
                             body={(rowData) => (
                                 // <p key={rowData.id}></p>
-                                <div className='max-w-[100px] scrollbar-thin overflow-x-scroll'><p key={rowData.id}>{rowData.speciality.name_ru}</p></div>
+                                <div className="max-w-[100px] scrollbar-thin overflow-x-scroll">
+                                    <p key={rowData.id}>{rowData.speciality.name_ru}</p>
+                                </div>
                             )}
                         ></Column>
 

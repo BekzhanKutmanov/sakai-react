@@ -9,6 +9,7 @@ import { fetchCourseOpenStatus } from '@/services/courses';
 import { controlDepartamentUsers, fetchRolesDepartment } from '@/services/roles/roles';
 import { AudenceType } from '@/types/courseTypes/AudenceTypes';
 import { TabViewChange } from '@/types/tabViewChange';
+import Link from 'next/link';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import { Dropdown, DropdownChangeEvent } from 'primereact/dropdown';
@@ -141,10 +142,10 @@ export default function RolesDepartment() {
     // for tabview
     const handleTabChange = (e: TabViewChange) => {
         setActiveIndex(e.index);
-        if(e.index === 0 || e.index === 1) setRoleStatus(e.index);
+        if (e.index === 0 || e.index === 1) setRoleStatus(e.index);
     };
 
-    // TSX
+    // TSX access
     const mainDepartamentSection = (
         <div className="flex flex-col gap-2">
             <div className="main-bg overflow-x-auto scrollbar-thin">
@@ -154,7 +155,7 @@ export default function RolesDepartment() {
                     <Column
                         header={() => <div className="text-[14px]">ФИО</div>}
                         body={(rowData: any) => (
-                            <div className="text-[14px]">
+                            <div>
                                 {rowData.last_name} {rowData.name} {rowData.father_name}
                             </div>
                         )}
@@ -172,7 +173,7 @@ export default function RolesDepartment() {
                                     return (
                                         <div className="text-center">
                                             <div className="flex justify-center items-center">
-                                                {!isActive ? (
+                                                {!isActive && item.id !== 1 ? (
                                                     <button
                                                         className={`theme-toggle ${forDisabled && 'opacity-50'}`}
                                                         disabled={forDisabled}
@@ -226,6 +227,51 @@ export default function RolesDepartment() {
                             />
                         );
                     })}
+                </DataTable>
+            </div>
+            <div className={`shadow-[0px_-11px_5px_-6px_rgba(0,_0,_0,_0.1)]`}>
+                <Paginator
+                    first={(pagination.current_page - 1) * pagination.per_page}
+                    rows={pagination.per_page}
+                    totalRecords={pagination.total}
+                    onPageChange={(e) => handlePageChange(e.page + 1)}
+                    // template="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
+                    template={media ? 'FirstPageLink PrevPageLink NextPageLink LastPageLink' : 'FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink'}
+                />
+            </div>
+        </div>
+    );
+
+    // TSX checking
+    const checkDepartamentSection = (
+        <div className="flex flex-col gap-2">
+            <div className="main-bg overflow-x-auto scrollbar-thin">
+                {/* <DataTable value={roles || []} emptyMessage="Загрузка" dataKey="id_kafedra" responsiveLayout="stack" breakpoint="960px" rows={5} className='min-w-[640px] overflow-x-auto'> */}
+                <DataTable value={roles || []} dataKey="id" emptyMessage="..." loading={forDisabled} breakpoint="960px" rows={5} className="min-w-[640px] overflow-x-auto">
+                    <Column body={(_, { rowIndex }) => rowIndex + 1} header="#"></Column>
+                    <Column
+                        field="title"
+                        header="Преподаватели"
+                        body={(rowData) => (
+                            <Link href={`/faculty/${'id_kafedra'}/${rowData.id}`} key={rowData.id} className="text-[16px] hover:underline">
+                                {rowData.last_name} {rowData.name} {rowData.father_name}
+                            </Link>
+                        )}
+                    ></Column>
+                    <Column
+                        field="title"
+                        header="Всего курсов"
+                        body={(rowData) => (
+                            <div className="w-full flex justify-center">
+                                <div className="w-[300px] flex gap-1 justify-center items-center">
+                                    <b className="w-full flex justify-end">{rowData.courses}</b>
+                                    <div className="w-full flex items-center gap-1">
+                                        (<span>{rowData.courses_published}</span> <span>утверждённых</span>)
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                    ></Column>
                 </DataTable>
             </div>
             <div className={`shadow-[0px_-11px_5px_-6px_rgba(0,_0,_0,_0.1)]`}>
@@ -352,29 +398,38 @@ export default function RolesDepartment() {
                             <ProgressSpinner style={{ width: '60px', height: '60px' }} />
                         </div>
                     ) : (
-                        // <TabView
-                        //     onTabChange={(e) => handleTabChange(e)}
-                        //     activeIndex={activeIndex}
-                        //     // className="main-bg"
-                        //     pt={{
-                        //         nav: { className: 'flex cursor-pointer' },
-                        //         panelContainer: { className: 'flex-1 pl-4' }
-                        //     }}
-                        // >
-                        //     {/* Departament */}
-                        //     <TabPanel
-                        //         pt={{
-                        //             headerAction: { className: 'font-italic' }
-                        //         }}
-                        //         header="Департамент"
-                        //         className="p-tabview p-tabview-nav p-tabview-selected p-tabview-panels p-tabview-panel"
-                        //     >
-                                mainDepartamentSection
-                        //     {/* </TabPanel>
+                        <TabView
+                            onTabChange={(e) => handleTabChange(e)}
+                            activeIndex={activeIndex}
+                            // className="main-bg"
+                            pt={{
+                                nav: { className: 'flex cursor-pointer' },
+                                panelContainer: { className: 'flex-1 pl-4' }
+                            }}
+                        >
+                            {/* Departament */}
+                            <TabPanel
+                                pt={{
+                                    headerAction: { className: 'font-italic' }
+                                }}
+                                header="Доступ"
+                                // className="p-tabview p-tabview-nav p-tabview-selected p-tabview-panels p-tabview-panel"
+                            >
+                                {mainDepartamentSection}
+                            </TabPanel>
 
-                        // </TabView> */}
-                    )
-                    }
+                            {/* Checking */}
+                            <TabPanel
+                                pt={{
+                                    headerAction: { className: 'font-italic' }
+                                }}
+                                header="Проверка"
+                                // className="p-tabview p-tabview-nav p-tabview-selected p-tabview-panels p-tabview-panel"
+                            >
+                                {checkDepartamentSection}
+                            </TabPanel>
+                        </TabView>
+                    )}
                 </div>
             )}
         </div>
