@@ -78,3 +78,17 @@ export const controlDepartamentUsers = async (worker_id: number | null, course_a
         return err;
     }
 };
+
+// teacher checking
+
+export const fetchTeacherCheck = async () => {
+    try {
+        const res = await axiosInstance.get(`/v1/teacher/controls/public`);
+
+        const data = res.data;
+        return data;
+    } catch (err) {
+        console.log('Ошибка при получении пользователей', err);
+        return err;
+    }
+};

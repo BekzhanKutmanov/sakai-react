@@ -115,7 +115,6 @@ const LoginPage = () => {
 
     const onError = (errors: any) => {
         console.log('Ошибки формы:', errors);
-        alert('baby');
         setMessage({
             state: true,
             value: { severity: 'error', summary: 'Ошибка при авторизации', detail: 'Введите корректные данные' }

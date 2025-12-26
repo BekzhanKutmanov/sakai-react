@@ -5,8 +5,7 @@ import GroupSkeleton from '@/app/components/skeleton/GroupSkeleton';
 import useErrorMessage from '@/hooks/useErrorMessage';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { LayoutContext } from '@/layout/context/layoutcontext';
-import { controlDepartamentUsers, controlRolesUsers, fetchRolesDepartment, fetchRolesList, fetchRolesUsers } from '@/services/roles/roles';
-import { PaginationType } from '@/types/pagination/PaginationType';
+import { controlRolesUsers, fetchRolesList, fetchRolesUsers } from '@/services/roles/roles';
 import { RoleUserType } from '@/types/roles/RoleUserType';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
@@ -34,6 +33,7 @@ export default function Roles() {
     const { setMessage } = useContext(LayoutContext);
     const media = useMediaQuery('(max-width: 640px)');
 
+    const [userFetchGlag, setUserFetchGlag] = useState(false);
     const [roles, setRoles] = useState<Role[] | null>(null);
     const [users, setUsers] = useState<RoleUserType[] | null>(null);
 
@@ -124,7 +124,7 @@ export default function Roles() {
             }, 1000);
             setMessage({ state: true, value: { severity: 'success', summary: 'Успешно изменено!', detail: '' } });
         } else {
-            if(res.response.status === 400){
+            if (res.response.status === 400) {
                 setMessage({ state: true, value: { severity: 'error', summary: res.response.data.message, detail: '' } });
             } else {
                 setMessage({ state: true, value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' } });
@@ -132,7 +132,6 @@ export default function Roles() {
                     showError(res.response.status);
                 }
             }
-
         }
         setForDisabled(false);
     };
@@ -141,6 +140,84 @@ export default function Roles() {
     const handlePageChange = (page: number) => {
         handleFetchUsers(page, search, myedu_id, selectedRole_idType, active);
         setPageState(page);
+    };
+
+    // TSX
+
+    const itemTemplate = (shablonData: any, role: any) => {
+        console.log(shablonData, role);
+
+        if(shablonData){
+            for (const element of shablonData) {
+                console.log(element);
+            }
+            return shablonData.map((item) => {
+                return <div className="w-full flex flex-col justify-start">
+                    <div className="flex gap-1 items-center">
+                        <span className="text-[var(--mainColor)] text-sm mr-1">ФИО: </span>
+                        <div className="text-[14px]">
+                            {item.last_name} {item.name} {item.father_name}
+                        </div>
+                    </div>
+                    
+                </div>;
+            });
+        } 
+        return [];
+
+        // return (
+        //     <div className="col-12">
+        //         <div className="w-full flex flex-col justify-start">
+        //             <div>
+        //                 <div className="flex gap-1 items-center">
+        //                     <span className="text-[var(--mainColor)] text-sm mr-1">ФИО: </span>
+        //                     <div className="text-[14px]">
+        //                         {shablonData.last_name} {shablonData.name} {shablonData.father_name}
+        //                     </div>
+        //                 </div>
+        //                 <div>
+        //                     <span className="text-[var(--mainColor)] text-sm">Балл: </span>
+        //                     <span className="text-sm">{`${shablonData?.max_score}`}</span>
+        //                 </div>
+        //                 {/* <div className="flex gap-1 items-center">
+        //                     <span className="text-[var(--mainColor)] text-sm">На рассмотрение: </span>
+        //                     <label className="custom-radio">
+        //                         <input
+        //                             type="checkbox"
+        //                             className={`customCheckbox`}
+        //                             checked={shablonData.status}
+        //                             onChange={(e) => {
+        //                                 handleEdit(e.target, shablonData);
+        //                             }}
+        //                         />
+        //                         <span className="checkbox-mark"></span>
+        //                     </label>
+        //                 </div> */}
+        //                 <div className="flex gap-1 items-center">
+        //                     <span className="text-[var(--mainColor)] text-sm">Публикация: </span>
+        //                     {shablonData.is_published ? <i className="pi pi-check text-md text-[var(--greenColor)]"></i> : <i className="pi pi-times text-md text-[var(--redColor)]"></i>}
+        //                 </div>
+        //             </div>
+        //             <>
+        //                 {/* <label className="custom-course-radio">
+        //                     <input
+        //                         type="radio"
+        //                         name="radio"
+        //                         onChange={() => {
+        //                             const newValue = forStreamId?.id === shablonData.id ? null : { id: shablonData.id, title: shablonData.title };
+        //                             // Устанавливаем состояние
+        //                             setForStreamId(newValue);
+        //                             setSendStream({ status: false, name: shablonData?.audience_type?.name });
+        //                             setOpenCourseId(shablonData.id);
+        //                         }}
+        //                         checked={forStreamId?.id === shablonData.id}
+        //                     />
+        //                     <span className="radio-course-mark rounded">Связан ({shablonData.connects_count})</span>
+        //                 </label> */}
+        //             </>
+        //         </div>
+        //     </div>
+        // );
     };
 
     useEffect(() => {
@@ -158,8 +235,10 @@ export default function Roles() {
 
         setSearchController(true);
         const delay = setTimeout(() => {
-            handleFetchUsers(pageState, search, myedu_id, selectedRole_idType, active);
-            setMiniProgressSpinner(false);
+            if(userFetchGlag){
+                handleFetchUsers(pageState, search, myedu_id, selectedRole_idType, active);
+                setMiniProgressSpinner(false);
+            }
         }, 1000);
 
         return () => {
@@ -168,7 +247,7 @@ export default function Roles() {
     }, [search]);
 
     useEffect(() => {
-        if (selectedRole_idType) {
+        if (selectedRole_idType && userFetchGlag) {
             handleFetchUsers(pageState, search, myedu_id, selectedRole_idType, active);
         }
     }, [selectedRole_idType]);
@@ -188,7 +267,9 @@ export default function Roles() {
 
         setMyeduController(true);
         const delay = setTimeout(() => {
-            handleFetchUsers(pageState, search, myedu_id, selectedRole_idType, active);
+            if(userFetchGlag) {
+                handleFetchUsers(pageState, search, myedu_id, selectedRole_idType, active);
+            }
             setMyeduProgressSpinner(false);
         }, 1000);
 
@@ -200,6 +281,7 @@ export default function Roles() {
     useEffect(() => {
         handleFetchRoles();
         handleFetchUsers(1, '', null, null, null);
+        setUserFetchGlag(true);
     }, []);
 
     if (mainProgressSpinner)
@@ -253,98 +335,110 @@ export default function Roles() {
                         </div>
                     </div>
 
-                    <div className="main-bg overflow-x-auto scrollbar-thin flex flex-col gap-2">
-                        <DataTable value={users || []} dataKey="id" emptyMessage="..." breakpoint="960px" key={JSON.stringify(forDisabled)} rows={5} className=" min-w-[640px] overflow-x-auto">
-                            <Column header={() => <div className="text-[14px]">#</div>} body={(_, { rowIndex }) => rowIndex + 1} />
+                    {/* main */}
+                    {media ? (
+                        // <DataView
+                        //     value={users || []}
+                        //     itemTemplate={itemTemplate}
+                        //     layout="list" // Отображение в виде сетки, что идеально подходит для карточек
+                        //     rows={5}
+                        //     emptyMessage="Нет данных для отображения"
+                        // />
+                        itemTemplate(users, roles)
+                    ) : (
+                        <div className="main-bg overflow-x-auto scrollbar-thin flex flex-col gap-2">
+                            <DataTable value={users || []} dataKey="id" emptyMessage="..." breakpoint="960px" key={JSON.stringify(forDisabled)} rows={5} className=" min-w-[640px] overflow-x-auto">
+                                <Column header={() => <div className="text-[14px]">#</div>} body={(_, { rowIndex }) => rowIndex + 1} />
 
-                            <Column
-                                header={() => <div className="text-[14px]">ФИО</div>}
-                                body={(rowData: any) => (
-                                    <div className="text-[14px]">
-                                        {rowData.last_name} {rowData.name} {rowData.father_name}
-                                    </div>
-                                )}
-                            />
-                            {roles?.map((role, idx) => {
-                                return (
-                                    <Column
-                                        key={role?.id}
-                                        header={() => <div className="text-[14px]">{role.title}</div>}
-                                        body={(user) => {
-                                            const userRole = user?.roles?.find((r: { id: number }) => r.id === role.id);
+                                <Column
+                                    header={() => <div className="text-[14px]">ФИО</div>}
+                                    body={(rowData: any) => (
+                                        <div className="text-[14px]">
+                                            {rowData.last_name} {rowData.name} {rowData.father_name}
+                                        </div>
+                                    )}
+                                />
+                                {roles?.map((role, idx) => {
+                                    return (
+                                        <Column
+                                            key={role?.id}
+                                            header={() => <div className="text-[14px]">{role.title}</div>}
+                                            body={(user) => {
+                                                const userRole = user?.roles?.find((r: { id: number }) => r.id === role.id);
 
-                                            const isActive = Boolean(userRole?.pivot?.active);
+                                                const isActive = Boolean(userRole?.pivot?.active);
 
-                                            return (
-                                                <div className="text-center">
-                                                    <div className="flex justify-center items-center">
-                                                        {!isActive ? (
-                                                            <button
-                                                                className={`theme-toggle ${forDisabled && 'opacity-50'}`}
-                                                                disabled={forDisabled}
-                                                                onClick={() => handleControlUsersRole(user?.id, roles[idx]?.id, true)}
-                                                                aria-pressed="false"
-                                                                // onClick={() => console.log(user?.roles, roles[idx])} aria-pressed="false"
-                                                            >
-                                                                <span className="right">
-                                                                    <span className="option option-left" aria-hidden></span>
-                                                                    <span className="option option-right" aria-hidden></span>
-                                                                    <span className="knob" aria-hidden></span>
-                                                                </span>
-                                                            </button>
-                                                        ) : (
-                                                            <button
-                                                                className={`theme-toggle ${forDisabled && 'opacity-50'}`}
-                                                                disabled={forDisabled}
-                                                                onClick={() => handleControlUsersRole(user?.id, roles[idx]?.id, false)}
-                                                                aria-pressed="false"
-                                                                // onClick={() => console.log(user, roles[idx])} aria-pressed="false"
-                                                            >
-                                                                <span className="track">
-                                                                    <span className="option option-left" aria-hidden></span>
-
-                                                                    <span className="option option-right" aria-hidden>
-                                                                        <svg
-                                                                            xmlns="http://www.w3.org/2000/svg"
-                                                                            width="24"
-                                                                            height="24"
-                                                                            fill="none"
-                                                                            stroke="green"
-                                                                            stroke-width="2"
-                                                                            stroke-linecap="round"
-                                                                            stroke-linejoin="round"
-                                                                            viewBox="0 0 24 24"
-                                                                            aria-label="Опубликовано"
-                                                                        >
-                                                                            <circle cx="12" cy="12" r="10"></circle>
-                                                                            <path d="M9 12l2 2 4-4"></path>
-                                                                        </svg>
+                                                return (
+                                                    <div className="text-center">
+                                                        <div className="flex justify-center items-center">
+                                                            {!isActive ? (
+                                                                <button
+                                                                    className={`theme-toggle ${forDisabled && 'opacity-50'}`}
+                                                                    disabled={forDisabled}
+                                                                    onClick={() => handleControlUsersRole(user?.id, roles[idx]?.id, true)}
+                                                                    aria-pressed="false"
+                                                                    // onClick={() => console.log(user?.roles, roles[idx])} aria-pressed="false"
+                                                                >
+                                                                    <span className="right">
+                                                                        <span className="option option-left" aria-hidden></span>
+                                                                        <span className="option option-right" aria-hidden></span>
+                                                                        <span className="knob" aria-hidden></span>
                                                                     </span>
+                                                                </button>
+                                                            ) : (
+                                                                <button
+                                                                    className={`theme-toggle ${forDisabled && 'opacity-50'}`}
+                                                                    disabled={forDisabled}
+                                                                    onClick={() => handleControlUsersRole(user?.id, roles[idx]?.id, false)}
+                                                                    aria-pressed="false"
+                                                                    // onClick={() => console.log(user, roles[idx])} aria-pressed="false"
+                                                                >
+                                                                    <span className="track">
+                                                                        <span className="option option-left" aria-hidden></span>
 
-                                                                    <span className="knob" aria-hidden></span>
-                                                                </span>
-                                                            </button>
-                                                        )}
+                                                                        <span className="option option-right" aria-hidden>
+                                                                            <svg
+                                                                                xmlns="http://www.w3.org/2000/svg"
+                                                                                width="24"
+                                                                                height="24"
+                                                                                fill="none"
+                                                                                stroke="green"
+                                                                                stroke-width="2"
+                                                                                stroke-linecap="round"
+                                                                                stroke-linejoin="round"
+                                                                                viewBox="0 0 24 24"
+                                                                                aria-label="Опубликовано"
+                                                                            >
+                                                                                <circle cx="12" cy="12" r="10"></circle>
+                                                                                <path d="M9 12l2 2 4-4"></path>
+                                                                            </svg>
+                                                                        </span>
+
+                                                                        <span className="knob" aria-hidden></span>
+                                                                    </span>
+                                                                </button>
+                                                            )}
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            );
-                                        }}
-                                    />
-                                );
-                            })}
-                        </DataTable>
+                                                );
+                                            }}
+                                        />
+                                    );
+                                })}
+                            </DataTable>
 
-                        <div className={`shadow-[0px_-11px_5px_-6px_rgba(0,_0,_0,_0.1)]`}>
-                            <Paginator
-                                first={(pagination.currentPage - 1) * pagination.perPage}
-                                rows={pagination.perPage}
-                                totalRecords={pagination.total}
-                                onPageChange={(e) => handlePageChange(e.page + 1)}
-                                // template="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
-                                template={media ? 'FirstPageLink PrevPageLink NextPageLink LastPageLink' : 'FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink'}
-                            />
+                            <div className={`shadow-[0px_-11px_5px_-6px_rgba(0,_0,_0,_0.1)]`}>
+                                <Paginator
+                                    first={(pagination.currentPage - 1) * pagination.perPage}
+                                    rows={pagination.perPage}
+                                    totalRecords={pagination.total}
+                                    onPageChange={(e) => handlePageChange(e.page + 1)}
+                                    // template="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
+                                    template={media ? 'FirstPageLink PrevPageLink NextPageLink LastPageLink' : 'FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink'}
+                                />
+                            </div>
                         </div>
-                    </div>
+                    )}
                 </div>
             )}
         </div>

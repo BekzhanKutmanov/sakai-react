@@ -6,7 +6,8 @@ import useErrorMessage from '@/hooks/useErrorMessage';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { LayoutContext } from '@/layout/context/layoutcontext';
 import { fetchCourseOpenStatus } from '@/services/courses';
-import { controlDepartamentUsers, fetchRolesDepartment } from '@/services/roles/roles';
+import { controlDepartamentUsers, fetchRolesDepartment, fetchTeacherCheck } from '@/services/roles/roles';
+import { CourseType } from '@/types/courseType';
 import { AudenceType } from '@/types/courseTypes/AudenceTypes';
 import { TabViewChange } from '@/types/tabViewChange';
 import Link from 'next/link';
@@ -33,6 +34,8 @@ export default function RolesDepartment() {
         role_id: number | null;
     }
 
+    interface TeacherCheckType extends CourseType {}
+
     const showError = useErrorMessage();
     const { setMessage } = useContext(LayoutContext);
 
@@ -40,6 +43,9 @@ export default function RolesDepartment() {
 
     const [roleStatus, setRoleStatus] = useState<0 | 1>(0);
     const [roles, setRoles] = useState<Role[] | null>(null);
+
+    const [teachersCheck, setTeacherCheck] = useState<TeacherCheckType[] | null>(null);
+
     const [skeleton, setSkeleton] = useState(true);
     const [contentNull, setContentNull] = useState<boolean>(false);
     const [mainProgressSpinner, setMainProgressSpinner] = useState(false);
@@ -133,6 +139,26 @@ export default function RolesDepartment() {
         // setForDisabled(false);
     };
 
+    // checking functions
+    const handleFetchTeacherCheck = async () => {
+        setMainProgressSpinner(true);
+        const res = await fetchTeacherCheck();
+        console.log(res);
+
+        if (res?.success) {
+            setTeacherCheck(res?.data?.data);
+            setPagination(res?.data);
+            setContentNull(false);
+        } else {
+            setContentNull(true);
+            setMessage({ state: true, value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' } });
+            if (res?.response?.status) {
+                showError(res.response.status);
+            }
+        }
+        setMainProgressSpinner(false);
+    };
+
     // Ручное управление пагинацией
     const handlePageChange = (page: number) => {
         handleFetchDepartment(page, search, myedu_id, selectedTypeId, active);
@@ -197,7 +223,6 @@ export default function RolesDepartment() {
                                                     >
                                                         <span className="track">
                                                             <span className="option option-left" aria-hidden></span>
-
                                                             <span className="option option-right" aria-hidden>
                                                                 <svg
                                                                     xmlns="http://www.w3.org/2000/svg"
@@ -215,7 +240,6 @@ export default function RolesDepartment() {
                                                                     <path d="M9 12l2 2 4-4"></path>
                                                                 </svg>
                                                             </span>
-
                                                             <span className="knob" aria-hidden></span>
                                                         </span>
                                                     </button>
@@ -247,28 +271,36 @@ export default function RolesDepartment() {
         <div className="flex flex-col gap-2">
             <div className="main-bg overflow-x-auto scrollbar-thin">
                 {/* <DataTable value={roles || []} emptyMessage="Загрузка" dataKey="id_kafedra" responsiveLayout="stack" breakpoint="960px" rows={5} className='min-w-[640px] overflow-x-auto'> */}
-                <DataTable value={roles || []} dataKey="id" emptyMessage="..." loading={forDisabled} breakpoint="960px" rows={5} className="min-w-[640px] overflow-x-auto">
+                <DataTable value={teachersCheck || []} dataKey="id" emptyMessage="..." loading={forDisabled} breakpoint="960px" rows={5} className="min-w-[640px] overflow-x-auto">
                     <Column body={(_, { rowIndex }) => rowIndex + 1} header="#"></Column>
                     <Column
                         field="title"
                         header="Преподаватели"
                         body={(rowData) => (
-                            <Link href={`/faculty/${'id_kafedra'}/${rowData.id}`} key={rowData.id} className="text-[16px] hover:underline">
-                                {rowData.last_name} {rowData.name} {rowData.father_name}
+                            <Link href={`/faculty/${'id_kafedra'}/${rowData.id}`} key={rowData.id} className="text-[14px] hover:underline">
+                                {rowData?.user.last_name} {rowData?.user.name} {rowData?.user.father_name}
                             </Link>
                         )}
                     ></Column>
+
                     <Column
                         field="title"
-                        header="Всего курсов"
+                        header="Курсы"
+                        body={(rowData) => (
+                            <span key={rowData.id} className="text-[14px] ">
+                                {rowData.title}
+                            </span>
+                        )}
+                    ></Column>
+
+                    <Column
+                        field="title"
+                        header="Статус"
                         body={(rowData) => (
                             <div className="w-full flex justify-center">
-                                <div className="w-[300px] flex gap-1 justify-center items-center">
-                                    <b className="w-full flex justify-end">{rowData.courses}</b>
-                                    <div className="w-full flex items-center gap-1">
-                                        (<span>{rowData.courses_published}</span> <span>утверждённых</span>)
-                                    </div>
-                                </div>
+                                <i className={`text-[13px] text-white rounded p-1
+                                    ${rowData?.course_audience_type_id === 2 ? 'bg-[var(--greenColor)]' : rowData?.course_audience_type_id === 3 ? 'bg-[var(--amberColor)]' : ''}
+                                    `}>{rowData?.course_audience_type_id === 2 ? 'Открытый' : rowData?.course_audience_type_id === 3 ? 'Платный' : ''}</i>
                             </div>
                         )}
                     ></Column>
@@ -288,6 +320,12 @@ export default function RolesDepartment() {
     );
 
     // USEEFFECTS
+    useEffect(() => {
+        if (roleStatus) {
+            handleFetchTeacherCheck();
+        }
+    }, [roleStatus]);
+
     useEffect(() => {
         setMiniProgressSpinner(true);
         if (search?.length === 0 && searchController) {
@@ -341,6 +379,10 @@ export default function RolesDepartment() {
             clearTimeout(delay);
         };
     }, [myedu_id]);
+
+    useEffect(() => {
+        console.log(teachersCheck);
+    }, [teachersCheck]);
 
     useEffect(() => {
         handleFetchCourseOpenStatus();
