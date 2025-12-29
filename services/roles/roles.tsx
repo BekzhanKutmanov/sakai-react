@@ -50,7 +50,9 @@ export const controlRolesUsers = async (worker_id: number | null, role_id: numbe
 export const fetchRolesDepartment = async (page: number, search: string | null, myedu_id: string | null, course_audience_type_id: number | null, active: boolean | null) => {
     try {
         const res = await axiosInstance.get(
-            `/roles/department/public?search=${search}&myedu_id=${myedu_id ? Number(myedu_id) : ''}&${course_audience_type_id ? `course_audience_type_id=${Number(course_audience_type_id)}` : 'course_audience_type_id='}${course_audience_type_id ? `${active ? `&active=${active ? 1 : 0}` : '&active='}` : '&active='}&page=${page}&limit=`
+            `/roles/department/public?search=${search}&myedu_id=${myedu_id ? Number(myedu_id) : ''}&${course_audience_type_id ? `course_audience_type_id=${Number(course_audience_type_id)}` : 'course_audience_type_id='}${
+                course_audience_type_id ? `${active ? `&active=${active ? 1 : 0}` : '&active='}` : '&active='
+            }&page=${page}&limit=`
         );
 
         const data = res.data;
@@ -89,6 +91,25 @@ export const fetchTeacherCheck = async () => {
         return data;
     } catch (err) {
         console.log('Ошибка при получении пользователей', err);
+        return err;
+    }
+};
+
+// teacher checking pubclic
+export const teacherCoursePublic = async (course_id: number | null, publicStatus: number, comment: string | null) => {    
+    const payload = {
+        course_id,
+        public: publicStatus,
+        comment
+    };
+
+    try {
+        const res = await axiosInstance.post(`/v1/teacher/controls/public`, payload);   
+
+        const data = res.data;
+        return data;
+    } catch (err) {
+        console.log('Ошибка при публикации открытого урока', err);
         return err;
     }
 };

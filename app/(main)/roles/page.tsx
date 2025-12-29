@@ -144,80 +144,83 @@ export default function Roles() {
 
     // TSX
 
-    const itemTemplate = (shablonData: any, role: any) => {
-        console.log(shablonData, role);
-
-        if(shablonData){
-            for (const element of shablonData) {
-                console.log(element);
-            }
-            return shablonData.map((item) => {
-                return <div className="w-full flex flex-col justify-start">
-                    <div className="flex gap-1 items-center">
-                        <span className="text-[var(--mainColor)] text-sm mr-1">ФИО: </span>
-                        <div className="text-[14px]">
-                            {item.last_name} {item.name} {item.father_name}
+    const itemTemplate = (shablonData: any) => {
+        if (shablonData) {
+            return shablonData.map((item: any) => {
+                return (
+                    <div className="main-bg w-full flex flex-col gap-1 justify-start">
+                        <div className="flex gap-1 items-center">
+                            <b className="text-[14px] text-[var(--mainColor)]">
+                                {item.last_name} {item.name} {item.father_name}
+                            </b>
                         </div>
-                    </div>
-                    
-                </div>;
-            });
-        } 
-        return [];
 
-        // return (
-        //     <div className="col-12">
-        //         <div className="w-full flex flex-col justify-start">
-        //             <div>
-        //                 <div className="flex gap-1 items-center">
-        //                     <span className="text-[var(--mainColor)] text-sm mr-1">ФИО: </span>
-        //                     <div className="text-[14px]">
-        //                         {shablonData.last_name} {shablonData.name} {shablonData.father_name}
-        //                     </div>
-        //                 </div>
-        //                 <div>
-        //                     <span className="text-[var(--mainColor)] text-sm">Балл: </span>
-        //                     <span className="text-sm">{`${shablonData?.max_score}`}</span>
-        //                 </div>
-        //                 {/* <div className="flex gap-1 items-center">
-        //                     <span className="text-[var(--mainColor)] text-sm">На рассмотрение: </span>
-        //                     <label className="custom-radio">
-        //                         <input
-        //                             type="checkbox"
-        //                             className={`customCheckbox`}
-        //                             checked={shablonData.status}
-        //                             onChange={(e) => {
-        //                                 handleEdit(e.target, shablonData);
-        //                             }}
-        //                         />
-        //                         <span className="checkbox-mark"></span>
-        //                     </label>
-        //                 </div> */}
-        //                 <div className="flex gap-1 items-center">
-        //                     <span className="text-[var(--mainColor)] text-sm">Публикация: </span>
-        //                     {shablonData.is_published ? <i className="pi pi-check text-md text-[var(--greenColor)]"></i> : <i className="pi pi-times text-md text-[var(--redColor)]"></i>}
-        //                 </div>
-        //             </div>
-        //             <>
-        //                 {/* <label className="custom-course-radio">
-        //                     <input
-        //                         type="radio"
-        //                         name="radio"
-        //                         onChange={() => {
-        //                             const newValue = forStreamId?.id === shablonData.id ? null : { id: shablonData.id, title: shablonData.title };
-        //                             // Устанавливаем состояние
-        //                             setForStreamId(newValue);
-        //                             setSendStream({ status: false, name: shablonData?.audience_type?.name });
-        //                             setOpenCourseId(shablonData.id);
-        //                         }}
-        //                         checked={forStreamId?.id === shablonData.id}
-        //                     />
-        //                     <span className="radio-course-mark rounded">Связан ({shablonData.connects_count})</span>
-        //                 </label> */}
-        //             </>
-        //         </div>
-        //     </div>
-        // );
+                        {roles?.map((role, idx) => {
+                            const userRole = item?.roles?.find((r: { id: number }) => r.id === role.id);
+                            const isActive = Boolean(userRole?.pivot?.active);
+
+                            return (
+                                <div className="text-center flex justify-between items-start">
+                                    <span className='text-sm'>{idx % 2 === 0 ? 'Администратор' : 'Департамент'}</span>
+
+                                    {/* <span className='text-sm'>{userRole?.id === 1 ? 'Администратор:' : userRole?.id === 2 ? 'Департамент:' : ''}</span> */}
+                                    <div className="flex justify-center items-center">
+                                        {!isActive ? (
+                                            <button
+                                                className={`theme-toggle ${forDisabled && 'opacity-50'}`}
+                                                disabled={forDisabled}
+                                                onClick={() => handleControlUsersRole(item?.id, roles[idx]?.id, true)}
+                                                aria-pressed="false"
+                                                // onClick={() => console.log(user?.roles, roles[idx])} aria-pressed="false"
+                                            >
+                                                <span className="right">
+                                                    <span className="option option-left" aria-hidden></span>
+                                                    <span className="option option-right" aria-hidden></span>
+                                                    <span className="knob" aria-hidden></span>
+                                                </span>
+                                            </button>
+                                        ) : (
+                                            <button
+                                                className={`theme-toggle ${forDisabled && 'opacity-50'}`}
+                                                disabled={forDisabled}
+                                                onClick={() => handleControlUsersRole(item?.id, roles[idx]?.id, false)}
+                                                aria-pressed="false"
+                                                // onClick={() => console.log(user, roles[idx])} aria-pressed="false"
+                                            >
+                                                <span className="track">
+                                                    <span className="option option-left" aria-hidden></span>
+
+                                                    <span className="option option-right" aria-hidden>
+                                                        <svg
+                                                            xmlns="http://www.w3.org/2000/svg"
+                                                            width="24"
+                                                            height="24"
+                                                            fill="none"
+                                                            stroke="green"
+                                                            stroke-width="2"
+                                                            stroke-linecap="round"
+                                                            stroke-linejoin="round"
+                                                            viewBox="0 0 24 24"
+                                                            aria-label="Опубликовано"
+                                                        >
+                                                            <circle cx="12" cy="12" r="10"></circle>
+                                                            <path d="M9 12l2 2 4-4"></path>
+                                                        </svg>
+                                                    </span>
+
+                                                    <span className="knob" aria-hidden></span>
+                                                </span>
+                                            </button>
+                                        )}
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+                );
+            });
+        }
+        return [];
     };
 
     useEffect(() => {
@@ -235,7 +238,7 @@ export default function Roles() {
 
         setSearchController(true);
         const delay = setTimeout(() => {
-            if(userFetchGlag){
+            if (userFetchGlag) {
                 handleFetchUsers(pageState, search, myedu_id, selectedRole_idType, active);
                 setMiniProgressSpinner(false);
             }
@@ -267,7 +270,7 @@ export default function Roles() {
 
         setMyeduController(true);
         const delay = setTimeout(() => {
-            if(userFetchGlag) {
+            if (userFetchGlag) {
                 handleFetchUsers(pageState, search, myedu_id, selectedRole_idType, active);
             }
             setMyeduProgressSpinner(false);
@@ -344,7 +347,7 @@ export default function Roles() {
                         //     rows={5}
                         //     emptyMessage="Нет данных для отображения"
                         // />
-                        itemTemplate(users, roles)
+                        <div className="flex flex-col gap-2">{itemTemplate(users)}</div>
                     ) : (
                         <div className="main-bg overflow-x-auto scrollbar-thin flex flex-col gap-2">
                             <DataTable value={users || []} dataKey="id" emptyMessage="..." breakpoint="960px" key={JSON.stringify(forDisabled)} rows={5} className=" min-w-[640px] overflow-x-auto">
