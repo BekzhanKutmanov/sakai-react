@@ -3,7 +3,6 @@
 import { OptionsType } from '@/types/OptionsType';
 import MyDateTime from '../MyDateTime';
 import { myMainCourseType } from '@/types/myMainCourseType';
-import { Button } from 'primereact/button';
 import Link from 'next/link';
 
 // компонент представляет с собой карточку одного курса
@@ -15,16 +14,12 @@ import Link from 'next/link';
 
 export default function OpenCourseCard({
     course,
-    signBtn,
     link,
     courseShowProp,
-    courseSignup
 }: {
     course: myMainCourseType;
-    signBtn: boolean;
     link: { url: string | null; status: boolean };
     courseShowProp: (course_id: number) => void;
-    courseSignup: (course_id: number) => void;
 }) {
     const options: OptionsType = {
         year: '2-digit',
@@ -93,7 +88,7 @@ export default function OpenCourseCard({
             </div>
 
             <div className="flex items-center gap-1 justify-between">
-                <div className="w-full">
+                {/* <div className="w-full">
                     {signBtn ? (
                         course?.is_signed ? (
                             <Link href={`/openCourse/activeCourse/${course?.id}`}><Button label="Открыть" size="small" className="ml-3 bg-[var(--amberColor)] text-sm mini-button" /></Link>
@@ -105,7 +100,7 @@ export default function OpenCourseCard({
                     ) : (
                         ''
                     )}
-                </div>
+                </div> */}
 
                 {/* data */}
                 <div className="w-full flex justify-end text-[13px] order-1 sm:order-2">

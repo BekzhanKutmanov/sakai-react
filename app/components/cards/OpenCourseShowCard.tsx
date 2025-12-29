@@ -4,6 +4,7 @@ import { OptionsType } from '@/types/OptionsType';
 import MyDateTime from '../MyDateTime';
 import { myMainCourseType } from '@/types/myMainCourseType';
 import { Button } from 'primereact/button';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 
 export default function OpenCourseShowCard({ course, courseSignup }: { course: myMainCourseType; courseSignup: (id: number) => void }) {
     const options: OptionsType = {
@@ -15,7 +16,7 @@ export default function OpenCourseShowCard({ course, courseSignup }: { course: m
         hour12: false // 24-часовой формат
     };
 
-    console.log(course);
+    const media = useMediaQuery('(max-width: 640px)');
 
     return (
         <div className="flex flex-col shadow rounded p-2 sm:p-4 gap-3 w-full">
@@ -33,22 +34,46 @@ export default function OpenCourseShowCard({ course, courseSignup }: { course: m
                 </div>
             </div>
 
-            <div className="flex gap-1 items-center justify-center p-1 w-[270px] bg-[var(--mainBgColor)] rounded">
-                <span>Автор: </span>
-                <div className="flex gap-1 items-center">
-                    <span>{course?.user?.last_name}</span>
-                    <span>{course?.user?.name}</span>
+            <div className="flex items-center text-sm">
+                <span className="bg-[var(--mainBgColor)] p-1">Автор:</span>
+                <div className="bg-[var(--mainBgColor)] flex p-1 gap-1 items-center">
+                    {!media ? (
+                        <>
+                            <span>{course?.user?.last_name}</span>
+                            <span>{course?.user?.name}</span>
+                            <span>{course?.user?.father_name}</span>
+                        </>
+                    ) : (
+                        <>
+                            <span>{course?.user?.last_name}</span>
+                            <span>{course?.user?.name[0]}.</span>
+                            <span>{course?.user?.father_name && course?.user?.father_name[0] + '.'}</span>
+                        </>
+                    )}
                 </div>
             </div>
 
+            <div className='main-bg'>
+                <b>Содержание курса</b>
+                <ul className='flex flex-col gap-2'>
+                    {
+                        course?.lessons?.map((item)=> {
+                            return <li key={item?.id} className='list-disc ml-4'>{item?.title}</li>
+                        })
+                    }
+                </ul>
+            </div>
+
             <div className="flex items-end gap-1 justify-between">
-                {/* {course?.is_signed ? (
-                    <Button label="---" disabled size="small" className="ml-3 bg-[var(--amberColor)] text-sm mini-button" onClick={() => courseSignup(course?.id)} />
-                ) : !course?.is_signed ? (
-                    <Button label="Записаться на курс" size="small" className="ml-3 text-sm mini-button" onClick={() => courseSignup(course?.id)} />
-                ) : (
-                    ''
-                )} */}
+                <div className="w-full">
+                    {course?.is_signed ? (
+                        <Button label="Вы записаны на данный курс" disabled size="small" className=" bg-[var(--amberColor)] text-sm mini-button" onClick={() => courseSignup(course?.id)} />
+                    ) : !course?.is_signed ? (
+                        <Button label="Записаться на курс" size="small" className=" text-sm mini-button" onClick={() => courseSignup(course?.id)} />
+                    ) : (
+                        ''
+                    )}
+                </div>
 
                 {/* data */}
                 <div className="w-full flex justify-end text-[13px] order-1 sm:order-2">

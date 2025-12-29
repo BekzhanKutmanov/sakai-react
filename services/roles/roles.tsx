@@ -83,9 +83,9 @@ export const controlDepartamentUsers = async (worker_id: number | null, course_a
 
 // teacher checking
 
-export const fetchTeacherCheck = async () => {
+export const fetchTeacherCheck = async (page: number | null, search: string | null, myedu_id: string | null, course_audience_type_id: number | null) => {
     try {
-        const res = await axiosInstance.get(`/v1/teacher/controls/public`);
+        const res = await axiosInstance.get(`/v1/teacher/controls/public?search=${search}&${myedu_id ? `myedu_id=${myedu_id}` : 'myedu_id='}&${course_audience_type_id ? `course_audience_type_id=${Number(course_audience_type_id)}` : 'course_audience_type_id='}&page=${page}`);
 
         const data = res.data;
         return data;
@@ -96,7 +96,7 @@ export const fetchTeacherCheck = async () => {
 };
 
 // teacher checking pubclic
-export const teacherCoursePublic = async (course_id: number | null, publicStatus: number, comment: string | null) => {    
+export const teacherCoursePublic = async (course_id: number | null, publicStatus: number | null, comment: string | null) => {    
     const payload = {
         course_id,
         public: publicStatus,

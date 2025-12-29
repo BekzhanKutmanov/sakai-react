@@ -23,7 +23,7 @@ export interface myMainCourseType {
     audience_type: AudenceType;
     is_signed: boolean;
 
-    lessons?: lessonStateType
+    lessons?: lessonStateType[]
 
     // data?: test[];
 }

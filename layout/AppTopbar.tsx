@@ -95,7 +95,7 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
     };
 
     const Notificatoin = () => {
-        const stop = (e:any) => {
+        const stop = (e: any) => {
             e.stopPropagation();
             e.preventDefault();
         };
@@ -111,11 +111,10 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
             }
         }
         // console.log('Массив типов ', typeArr);
-
         return (
             <div onClick={stop} onMouseDown={stop} className={`flex flex-col justify-center p-2 gap-1`}>
                 {groupNotificationVisible ? <i className="cursor-pointer pi pi-times flex justify-end" onClick={() => setGroupNotificationVisible(false)}></i> : ''}
-                
+
                 {/* Отображаем уже сгруппированные например только практические  */}
                 {/* {groupNotificationVisible && groupNotifications?.length > 0
                     ? groupNotifications?.map((item) => {
@@ -157,19 +156,27 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                     typeArr?.length > 2 ? (
                         typeArr.map((el: any) => {
                             return (
-                                <div className='flex gap-1 items-center'>
+                                <div className="flex gap-1 items-center">
                                     <span>Список сообщений </span>
-                                    <b className='cursor-pointer text-[var(--mainColor)] hover:underline' onClick={() => notificationTypeGrouping(el.type.type)}>{el.type.type}</b>
+                                    <b className="cursor-pointer text-[var(--mainColor)] hover:underline" onClick={() => notificationTypeGrouping(el.type.type)}>
+                                        {el.type.type}
+                                    </b>
                                 </div>
                             );
                         })
                     ) : notification?.length > 0 ? (
                         notification?.map((item) => {
                             let path = '';
-                            if (user?.is_working && item?.type?.type === 'practical') {
-                                path = `/students/${item?.meta?.course_id}/${item?.meta?.connect_id}/${item?.meta?.stream_id}/${item?.meta?.student_id}/${item?.from_user?.id}/${item?.meta?.lesson_id}/${item?.meta?.step_id}`;
-                            } else if (user?.is_student && item?.type?.type === 'practical') {
-                                path = `/teaching/lessonView/${item?.meta?.lesson_id}/${item?.meta?.id_curricula}/${item?.meta?.stream_id}/${item?.meta?.step_id}`;
+                            if (user?.is_working) {
+                                if (item?.type?.type === 'practical') {
+                                    path = `/students/${item?.meta?.course_id}/${item?.meta?.connect_id}/${item?.meta?.stream_id}/${item?.meta?.student_id}/${item?.from_user?.id}/${item?.meta?.lesson_id}/${item?.meta?.step_id}`;
+                                } else if (item?.type?.type === 'view'){
+                                    path = `/#`;
+                                }
+                            } else if (user?.is_student ) {
+                                if(item?.type?.type === 'practical') {
+                                    path = `/teaching/lessonView/${item?.meta?.lesson_id}/${item?.meta?.id_curricula}/${item?.meta?.stream_id}/${item?.meta?.step_id}`;
+                                }
                             }
 
                             return (
@@ -606,7 +613,7 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                     ) : (
                         <div className={`hidden lg:block ${media ? 'order-1' : 'order-2'}`}>
                             <Link href={'/auth/login'}>
-                                <FancyLinkBtn btnWidth={'100px'} backround={'--redColor'} effectBg={'--mainColor'} title={'Вход'} btnType={false}/>
+                                <FancyLinkBtn btnWidth={'100px'} backround={'--redColor'} effectBg={'--mainColor'} title={'Вход'} btnType={false} />
                             </Link>
                         </div>
                     )}

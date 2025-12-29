@@ -131,7 +131,7 @@ export default function OpenCourse() {
     };
 
     // signUp
-    const сourseSignup = async (course_id: number) => {
+    const сourseSignup = async (course_id: number) => {        
         const data = await openCourseSignup(course_id);
         console.log(data);
 
@@ -311,7 +311,7 @@ export default function OpenCourse() {
                             return (
                                 <div key={item?.id}>
                                     {/* <OpenCourseShowCard course={item} /> */}
-                                    <OpenCourseCard course={item} signBtn={true} link={{url: null, status: false}} courseShowProp={handleCourseShow} courseSignup={сourseSignup} />
+                                    <OpenCourseCard course={item} link={{url: null, status: false}} courseShowProp={handleCourseShow}/>
                                 </div>
                             );
                         })}

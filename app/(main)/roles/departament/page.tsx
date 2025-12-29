@@ -36,7 +36,9 @@ export default function RolesDepartment() {
         role_id: number | null;
     }
 
-    interface TeacherCheckType extends CourseType {}
+    interface TeacherCheckType extends CourseType {
+        course_audience_type_id: number | null;
+    }
 
     const showError = useErrorMessage();
     const { setMessage } = useContext(LayoutContext);
@@ -63,7 +65,13 @@ export default function RolesDepartment() {
         total: 0,
         per_page: 0
     });
+    const [checkPagination, setCheckPagination] = useState<{ current_page: number; total: number; per_page: number }>({
+        current_page: 1,
+        total: 0,
+        per_page: 0
+    });
     const [pageState, setPageState] = useState<number>(1);
+    const [checkPageState, setCheckPageState] = useState<number>(1);
     const [selectedTypeId, setSelectedTypeId] = useState<Role_idType | null>({ name: 'Все', role_id: null });
     const [cities, setCities] = useState<Role_idType[]>([{ name: 'Все', role_id: null }]);
     const [forDisabled, setForDisabled] = useState(false);
@@ -81,6 +89,7 @@ export default function RolesDepartment() {
         setPublicStatus(null);
     };
 
+    // fetch types
     const handleFetchCourseOpenStatus = async () => {
         const data = await fetchCourseOpenStatus();
         if (data && Array.isArray(data)) {
@@ -110,6 +119,7 @@ export default function RolesDepartment() {
         }
     };
 
+    // fetch roledepartements
     const handleFetchDepartment = async (page: number, search: string, myedu_id: string | null, selectedTypeId: Role_idType | null, active: boolean | null) => {
         setMainProgressSpinner(true);
         const res = await fetchRolesDepartment(page, search, myedu_id, selectedTypeId?.role_id || null, active);
@@ -153,12 +163,12 @@ export default function RolesDepartment() {
     };
 
     // checking functions
-    const handleFetchTeacherCheck = async () => {
+    const handleFetchTeacherCheck = async (page: number | null, search: string | null, myedu_id: string | null, selectedTypeId: Role_idType | null) => {
         setMainProgressSpinner(true);
-        const res = await fetchTeacherCheck();
+        const res = await fetchTeacherCheck(page, search, myedu_id, selectedTypeId?.role_id ? selectedTypeId?.role_id : null);
         if (res?.success) {
             setTeacherCheck(res?.data?.data);
-            setPagination(res?.data);
+            setCheckPagination(res?.data);
             setContentNull(false);
         } else {
             setContentNull(true);
@@ -173,16 +183,17 @@ export default function RolesDepartment() {
     const handleCoursePublic = async (comment: string | null) => {
         setMainProgressSpinner(true);
         const res = await teacherCoursePublic(Number(publicCourseId) || null, publicStatus, comment);
-        console.log(res);
-        
         if (res?.success) {
-            handleFetchTeacherCheck();
+            handleFetchTeacherCheck(checkPageState, search, myedu_id, selectedTypeId);
             setMessage({ state: true, value: { severity: 'success', summary: 'Курс успешно изменен!', detail: '' } });
         } else {
-            setContentNull(true);
-            setMessage({ state: true, value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' } });
-            if (res?.response?.status) {
-                showError(res.response.status);
+            if (res.response.status === 400) {
+                setMessage({ state: true, value: { severity: 'error', summary: res.response.data.message, detail: '' } });
+            } else {
+                setMessage({ state: true, value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' } });
+                if (res?.response?.status) {
+                    showError(res.response.status);
+                }
             }
         }
         setMainProgressSpinner(false);
@@ -194,10 +205,27 @@ export default function RolesDepartment() {
         setPageState(page);
     };
 
+    // Ручное управление пагинацией
+    const handleCheckPageChange = (page: number) => {
+        // handleFetchDepartment(page, search, myedu_id, selectedTypeId, active);
+        handleFetchTeacherCheck(page, search, myedu_id, selectedTypeId);
+        setCheckPageState(page);
+    };
+
     // for tabview
     const handleTabChange = (e: TabViewChange) => {
         setActiveIndex(e.index);
-        if (e.index === 0 || e.index === 1) setRoleStatus(e.index);
+        if (e.index === 0 || e.index === 1) {
+            setSearch('');
+            setMyedu_id(null);
+            setSelectedTypeId({ name: 'Все', role_id: null });
+            setCities([{ name: 'Все', role_id: null }]);
+            setRoleStatus(e.index);
+        }
+
+        if (e.index === 0) {
+            handleFetchCourseOpenStatus();
+        }
     };
 
     // TSX access
@@ -386,7 +414,7 @@ export default function RolesDepartment() {
                             <b className="text-[14px] text-[var(--mainColor)]">
                                 {item?.user.last_name} {item?.user.name} {item?.user.father_name}
                             </b>
-                            <div>
+                            <div className="w-full flex flex-col gap-2">
                                 <span key={item.id} className="text-[14px]">
                                     {item.title}
                                 </span>
@@ -398,6 +426,34 @@ export default function RolesDepartment() {
                                     >
                                         {item?.course_audience_type_id === 2 ? 'Открытый' : item?.course_audience_type_id === 3 ? 'Платный' : ''}
                                     </i>
+                                </div>
+                                <div className="w-full flex justify-end items-center gap-2">
+                                    <div className="flex items-center gap-1 cursor-pointer text-[white] shadow rounded bg-[var(--mainColor)] p-1" style={{ fontSize: '12px' }}>
+                                        <i className="pi pi-check" style={{ fontSize: '12px' }}></i>
+                                        <button
+                                            onClick={() => {
+                                                setPublicStatus(1);
+                                                setPublicState(true);
+                                                setPublicCourseId(item?.id);
+                                                setVisible(true);
+                                            }}
+                                        >
+                                            Опубликовать
+                                        </button>
+                                    </div>
+                                    <div className="flex items-center gap-1 cursor-pointer text-[white] shadow rounded bg-[var(--redColor)] p-1" style={{ fontSize: '12px' }}>
+                                        <i className="pi pi-times" style={{ fontSize: '12px' }}></i>
+                                        <button
+                                            onClick={() => {
+                                                setPublicStatus(0);
+                                                setPublicState(false);
+                                                setPublicCourseId(item?.id);
+                                                setVisible(true);
+                                            }}
+                                        >
+                                            Аннулировать
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -455,9 +511,19 @@ export default function RolesDepartment() {
 
                         <Column
                             field="title"
-                            header="Публикация"
+                            header="Действия"
                             body={(rowData) => (
                                 <div className="w-full flex justify-center items-center gap-4">
+                                    <i
+                                        onClick={() => {
+                                            setPublicStatus(1);
+                                            setPublicState(true);
+                                            setPublicCourseId(rowData?.id);
+                                            setVisible(true);
+                                        }}
+                                        className="cursor-pointer pi pi-check text-[white] shadow rounded-full bg-[var(--mainColor)] p-[5px]"
+                                        style={{ fontSize: '13px' }}
+                                    ></i>
                                     <i
                                         onClick={() => {
                                             setPublicStatus(0);
@@ -468,16 +534,6 @@ export default function RolesDepartment() {
                                         className="cursor-pointer pi pi-times text-[white] shadow rounded-full bg-[red] p-[5px]"
                                         style={{ fontSize: '13px' }}
                                     ></i>
-                                    <i
-                                        onClick={() => {
-                                            setPublicStatus(1);
-                                            setPublicState(true);
-                                            setPublicCourseId(rowData?.id);
-                                            setVisible(true);
-                                        }}
-                                        className="cursor-pointer pi pi-check text-[white] shadow rounded-full bg-[green] p-[5px]"
-                                        style={{ fontSize: '13px' }}
-                                    ></i>
                                 </div>
                             )}
                         ></Column>
@@ -486,10 +542,10 @@ export default function RolesDepartment() {
             )}
             <div className={`shadow-[0px_-11px_5px_-6px_rgba(0,_0,_0,_0.1)]`}>
                 <Paginator
-                    first={(pagination.current_page - 1) * pagination.per_page}
-                    rows={pagination.per_page}
-                    totalRecords={pagination.total}
-                    onPageChange={(e) => handlePageChange(e.page + 1)}
+                    first={(checkPagination.current_page - 1) * checkPagination.per_page}
+                    rows={checkPagination.per_page}
+                    totalRecords={checkPagination.total}
+                    onPageChange={(e) => handleCheckPageChange(e.page + 1)}
                     // template="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
                     template={media ? 'FirstPageLink PrevPageLink NextPageLink LastPageLink' : 'FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink'}
                 />
@@ -502,6 +558,7 @@ export default function RolesDepartment() {
             <Button
                 label={'Назад'}
                 className="reject-button"
+                size="small"
                 icon="pi pi-times"
                 onClick={() => {
                     setVisible(false);
@@ -510,7 +567,8 @@ export default function RolesDepartment() {
             />
 
             <Button
-                label={publicState ? 'Опубликовать' : 'Анулировать'}
+                label={publicState ? 'Опубликовать' : 'Аннулировать'}
+                size="small"
                 icon="pi pi-check"
                 onClick={() => {
                     setVisible(false);
@@ -524,18 +582,40 @@ export default function RolesDepartment() {
     // USEEFFECTS
     useEffect(() => {
         if (roleStatus) {
-            handleFetchTeacherCheck();
+            handleFetchTeacherCheck(checkPageState, search, myedu_id, selectedTypeId);
         }
     }, [roleStatus]);
 
-    useEffect(()=> {
-        console.log(publicStatus);
-    },[publicStatus]);
+    useEffect(() => {
+        if (teachersCheck && teachersCheck?.length > 0) {
+            const uniqAudenceIds = new Set<number>();
+
+            for (const teacher of teachersCheck) {
+                const key: any = teacher?.course_audience_type_id;
+                if (key !== undefined) {
+                    uniqAudenceIds.add(key);
+                }
+            }
+            const idsArray = Array.from(uniqAudenceIds);
+            if (idsArray?.length) {
+                const forCities: Role_idType[] = [{ name: 'Все', role_id: null }];
+                for (const element of idsArray) {
+                    const typeName: string = element === 2 ? 'Открытый' : element === 3 ? 'Платный' : '';
+                    forCities.push({ name: typeName, role_id: element });
+                }
+                setCities(forCities);
+            }
+        }
+    }, [teachersCheck]);
 
     useEffect(() => {
         setMiniProgressSpinner(true);
         if (search?.length === 0 && searchController) {
-            handleFetchDepartment(pageState, search, myedu_id, selectedTypeId, active);
+            if (roleStatus) {
+                handleFetchTeacherCheck(checkPageState, search, myedu_id, selectedTypeId);
+            } else {
+                handleFetchDepartment(pageState, search, myedu_id, selectedTypeId, active);
+            }
             setSearchController(false);
             setMiniProgressSpinner(false);
         }
@@ -547,7 +627,11 @@ export default function RolesDepartment() {
 
         setSearchController(true);
         const delay = setTimeout(() => {
-            handleFetchDepartment(pageState, search, myedu_id, selectedTypeId, active);
+            if (roleStatus) {
+                handleFetchTeacherCheck(checkPageState, search, myedu_id, selectedTypeId);
+            } else {
+                handleFetchDepartment(pageState, search, myedu_id, selectedTypeId, active);
+            }
             setMiniProgressSpinner(false);
         }, 1000);
 
@@ -558,14 +642,23 @@ export default function RolesDepartment() {
 
     useEffect(() => {
         if (selectedTypeId) {
-            handleFetchDepartment(pageState, search, myedu_id, selectedTypeId, active);
+            if (roleStatus) {
+                handleFetchTeacherCheck(checkPageState, search, myedu_id, selectedTypeId);
+            } else {
+                handleFetchDepartment(pageState, search, myedu_id, selectedTypeId, active);
+            }
         }
     }, [selectedTypeId]);
 
     useEffect(() => {
         setMyeduProgressSpinner(true);
         if (myedu_id?.length === 0 && myeduController) {
-            handleFetchDepartment(pageState, search, myedu_id, selectedTypeId, active);
+            if (roleStatus) {
+                handleFetchTeacherCheck(checkPageState, search, myedu_id, selectedTypeId);
+            } else {
+                handleFetchDepartment(pageState, search, myedu_id, selectedTypeId, active);
+            }
+
             setMyeduController(false);
             setMyeduProgressSpinner(false);
         }
@@ -577,7 +670,12 @@ export default function RolesDepartment() {
 
         setMyeduController(true);
         const delay = setTimeout(() => {
-            handleFetchDepartment(pageState, search, myedu_id, selectedTypeId, active);
+            if (roleStatus) {
+                handleFetchTeacherCheck(checkPageState, search, myedu_id, selectedTypeId);
+            } else {
+                handleFetchDepartment(pageState, search, myedu_id, selectedTypeId, active);
+            }
+
             setMyeduProgressSpinner(false);
         }, 1000);
 
@@ -604,27 +702,29 @@ export default function RolesDepartment() {
 
                         <div className="flex flex-col sm:flex-row gap-2 mb-2">
                             <div className="flex gap-3 items-center">
-                                <div className={`flex items-center ${!selectedTypeId?.role_id ? 'opacity-45 pointer-events-none' : ''}`}>
-                                    <label className="custom-radio p-0">
-                                        <input
-                                            type="checkbox"
-                                            checked={active}
-                                            className={`customCheckbox p-0`}
-                                            onChange={() => {
-                                                setActive((prev) => !prev);
-                                                handleFetchDepartment(pageState, search, myedu_id, selectedTypeId, !active);
-                                            }}
-                                        />
-                                        <span className="checkbox-mark"></span>
-                                    </label>
-                                    <p>Активные</p>
-                                </div>
+                                {!roleStatus && (
+                                    <div className={`flex items-center ${!selectedTypeId?.role_id ? 'opacity-45 pointer-events-none' : ''}`}>
+                                        <label className="custom-radio p-0">
+                                            <input
+                                                type="checkbox"
+                                                checked={active}
+                                                className={`customCheckbox p-0`}
+                                                onChange={() => {
+                                                    setActive((prev) => !prev);
+                                                    handleFetchDepartment(pageState, search, myedu_id, selectedTypeId, !active);
+                                                }}
+                                            />
+                                            <span className="checkbox-mark"></span>
+                                        </label>
+                                        <p>Активные</p>
+                                    </div>
+                                )}
                                 <div>
                                     <Dropdown value={selectedTypeId} onChange={(e: DropdownChangeEvent) => setSelectedTypeId(e.value)} options={cities} optionLabel="name" placeholder="..." className="w-[160px] sm:w-full text-sm" />
                                 </div>
                             </div>
                             <div className="w-full flex justify-center sm:justify-start items-center gap-1">
-                                <InputText type="number" placeholder="myedu id" className="w-full sm:max-w-[120px] h-[48px]" onChange={(e) => setMyedu_id(e.target.value)} />
+                                <InputText type="number" placeholder="myedu id" value={myedu_id} className="w-full sm:max-w-[120px] h-[48px]" onChange={(e) => setMyedu_id(e.target.value)} />
                                 <div>{myeduProgressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}</div>
                             </div>
                         </div>
@@ -645,9 +745,8 @@ export default function RolesDepartment() {
                         <TabView
                             onTabChange={(e) => handleTabChange(e)}
                             activeIndex={activeIndex}
-                            // className="main-bg"
                             pt={{
-                                nav: { className: 'flex cursor-pointer' },
+                                nav: { className: 'flex cursor-pointer px-2 pt-2' },
                                 panelContainer: { className: 'flex-1 pl-4' }
                             }}
                         >
@@ -678,7 +777,7 @@ export default function RolesDepartment() {
             )}
 
             <Dialog
-                header={publicState ? 'Опубликовать курс' : 'Анулировать курс'}
+                header={publicState ? 'Опубликовать курс' : 'Аннулировать курс'}
                 visible={visible}
                 className="my-custom-dialog"
                 onHide={() => {
@@ -690,7 +789,7 @@ export default function RolesDepartment() {
             >
                 {
                     <div>
-                        {/* Анулирование */}
+                        {/* Аннулирование */}
                         {publicState ? (
                             <div className="flex flex-col gap-2">
                                 <b className="px-1">Вы уверены что хотите опубликовать курс?</b>
@@ -698,7 +797,7 @@ export default function RolesDepartment() {
                         ) : (
                             <div className="flex flex-col gap-2">
                                 <b className="px-1">Вы уверены что хотите отказать курс?</b>
-                                <InputText onChange={(e)=> setPublicComment(e.target.value)} type="text" placeholder="Опишите причину вашего отказа" />
+                                <InputText onChange={(e) => setPublicComment(e.target.value)} type="text" placeholder="Укажите причину вашего отказа" />
                             </div>
                         )}
                     </div>
