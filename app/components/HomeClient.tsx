@@ -344,32 +344,37 @@ export default function HomeClient() {
                 <CounterBanner statisticValue={statistics} />
 
                 {/* open courses */}
-                {skeleton ? (
-                    <div className="flex flex-wrap gap-2 flex-col sm:flex-row justify-center">
-                        <GroupSkeleton count={1} size={{ width: '300px', height: '300px' }} />
-                        <GroupSkeleton count={1} size={{ width: '300px', height: '300px' }} />
-                        <GroupSkeleton count={1} size={{ width: '300px', height: '300px' }} />
-                        <GroupSkeleton count={1} size={{ width: '300px', height: '300px' }} />
-                        <GroupSkeleton count={1} size={{ width: '300px', height: '300px' }} />
-                    </div>
+
+                {coursesValue?.length > 0 ? (
+                    skeleton ? (
+                        <div className="flex flex-wrap gap-2 flex-col sm:flex-row justify-center">
+                            <GroupSkeleton count={1} size={{ width: '300px', height: '300px' }} />
+                            <GroupSkeleton count={1} size={{ width: '300px', height: '300px' }} />
+                            <GroupSkeleton count={1} size={{ width: '300px', height: '300px' }} />
+                            <GroupSkeleton count={1} size={{ width: '300px', height: '300px' }} />
+                            <GroupSkeleton count={1} size={{ width: '300px', height: '300px' }} />
+                        </div>
+                    ) : (
+                        <div className="main-bg">
+                            <h3 className="text-xl sm:text-2xl text-center mb-4">Открытые онлайн курсы</h3>
+                            <div className="w-full flex flex-wrap justify-center gap-4 mt-5 sm:m-0">
+                                {coursesValue?.map((item, idx) => {
+                                    return <OpenCourse key={item?.id} course={item} index={idx} />;
+                                })}
+                            </div>
+                            <div className={`shadow-[0px_-11px_5px_-6px_rgba(0,_0,_0,_0.1)]`}>
+                                <Paginator
+                                    first={(pagination.currentPage - 1) * pagination.perPage}
+                                    rows={pagination.perPage}
+                                    totalRecords={pagination.total}
+                                    onPageChange={(e) => handlePageChange(e.page + 1)}
+                                    template={media ? 'FirstPageLink PrevPageLink NextPageLink LastPageLink' : 'FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink'}
+                                />
+                            </div>
+                        </div>
+                    )
                 ) : (
-                    <div className="main-bg">
-                        <h3 className="text-xl sm:text-2xl text-center mb-4">Открытые онлайн курсы</h3>
-                        <div className="w-full flex flex-wrap justify-center gap-4 mt-5 sm:m-0">
-                            {coursesValue?.map((item, idx) => {
-                                return <OpenCourse key={item?.id} course={item} index={idx} />;
-                            })}
-                        </div>
-                        <div className={`shadow-[0px_-11px_5px_-6px_rgba(0,_0,_0,_0.1)]`}>
-                            <Paginator
-                                first={(pagination.currentPage - 1) * pagination.perPage}
-                                rows={pagination.perPage}
-                                totalRecords={pagination.total}
-                                onPageChange={(e) => handlePageChange(e.page + 1)}
-                                template={media ? 'FirstPageLink PrevPageLink NextPageLink LastPageLink' : 'FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink'}
-                            />
-                        </div>
-                    </div>
+                    ''
                 )}
 
                 <Sidebar visible={showVisisble} position="bottom" style={{ height: '90vh' }} onHide={() => setShowVisible(false)}>
