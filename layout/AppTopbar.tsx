@@ -171,7 +171,7 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                                 if (item?.type?.type === 'practical') {
                                     path = `/students/${item?.meta?.course_id}/${item?.meta?.connect_id}/${item?.meta?.stream_id}/${item?.meta?.student_id}/${item?.from_user?.id}/${item?.meta?.lesson_id}/${item?.meta?.step_id}`;
                                 } else if (item?.type?.type === 'view'){
-                                    path = `/#`;
+                                    path = `/notifications`;
                                 }
                             } else if (user?.is_student ) {
                                 if(item?.type?.type === 'practical') {

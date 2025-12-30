@@ -41,6 +41,7 @@ export default function OpenCourse() {
     const [progressSpinner, setProgressSpinner] = useState(false);
     const [sendSignupList, setSendSignupList] = useState(false);
     const [mainProgressSpinner, setMainProgressSpinner] = useState(false);
+    const [signUpList, setSignupList] = useState<number[]>([]);
 
     const handleFetchOpenCourse = async (page: number, audence_type_id: number | string, search: string) => {
         setSkeleton(true);
@@ -95,7 +96,6 @@ export default function OpenCourse() {
         setShowVisible(true);
         setSkeleton(true);
         const data = await openCourseShow(course_id);
-        console.log(data);
 
         if (data && Object.values(data)?.length) {
             setCourseDetail(data);
@@ -122,9 +122,8 @@ export default function OpenCourse() {
     const handleSignupList = async (course: any) => {
         course?.forEach((i:{id:number}) => params.append('course_Ids[]', String(i?.id)));
         const data = await signupList(params);
-
         if (data && data?.signed_courses) {
-            return data;
+            return data?.signed_courses;
         } else {
             return null;
         }
@@ -133,8 +132,6 @@ export default function OpenCourse() {
     // signUp
     const сourseSignup = async (course_id: number) => {        
         const data = await openCourseSignup(course_id);
-        console.log(data);
-
         if (data?.success) {
             // handleFetchOpenCourse(1, free === 'paid' ? '3' : free === 'free' ? '2' : '', search);
             const list: any | null = await handleSignupList(coursesValue);
@@ -142,7 +139,7 @@ export default function OpenCourse() {
                 setValueCourses((prev) =>
                     prev.map((item) => ({
                         ...item,
-                        is_signed: list.signed_courses.includes(item.id)
+                        is_signed: list?.signed_courses?.includes(item.id)
                     }))
                 );
                 setMessage({
@@ -221,12 +218,13 @@ export default function OpenCourse() {
         const handleSendSingup = async () => {
             const list: any | null = await handleSignupList(coursesValue);
             if (list) {
-                setValueCourses((prev) =>
-                    prev.map((item) => ({
-                        ...item,
-                        is_signed: list.signed_courses?.includes(item.id)
-                    }))
-                );
+                setSignupList(list);
+                // setValueCourses((prev) =>
+                //     prev.map((item) => ({
+                //         ...item,
+                //         is_signed: list.signed_courses?.includes(item.id)
+                //     }))
+                // );
             }
         };
         if (sendSignupList) {
@@ -330,7 +328,7 @@ export default function OpenCourse() {
             )}
 
             <Sidebar visible={showVisisble} position="bottom" style={{ height: '90vh' }} onHide={() => setShowVisible(false)}>
-                {skeleton ? <GroupSkeleton count={1} size={{ width: '100%', height: '12rem' }} /> : courseDetail ? <OpenCourseShowCard course={courseDetail} courseSignup={сourseSignup}/> : <b className="flex justify-center">Данные не доступны</b>}
+                {skeleton ? <GroupSkeleton count={1} size={{ width: '100%', height: '12rem' }} /> : courseDetail ? <OpenCourseShowCard course={courseDetail} courseSignup={сourseSignup} signUpList={signUpList}/> : <b className="flex justify-center">Данные не доступны</b>}
             </Sidebar>
         </div>
     );

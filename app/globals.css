@@ -10,6 +10,7 @@
 
   --redColor: #EC272F;
   --redBgColor: #EC272F1A;
+  --redWeakColor: #f1383b1a;
   --mainGreenColor: rgb(92, 194, 92);
   --greenColor: rgb(46, 192, 46);
   --greenBgColor: rgb(199, 231, 199);
@@ -141,6 +142,14 @@ input[type="password"]::-ms-clear {
     transform: rotate(360deg);
   }
 }
+
+/* font */
+
+.author_font { 
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+/* font */
 
 /* animate */
 .animateContent{

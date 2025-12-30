@@ -188,6 +188,11 @@ const AppMenu = () => {
                           label: 'Мои активные курсы',
                           icon: 'pi pi-play-circle',
                           to: '/openCourse/activeCourse'
+                      },
+                      {
+                          label: 'Уведомления',
+                          icon: 'pi pi-bell',
+                          to: '/notifications'
                       }
                   ].filter(Boolean) as AppMenuItem[])
                 : []
@@ -264,8 +269,8 @@ const AppMenu = () => {
                       icon: 'pi pi-th-large',
                       to: '/dashboard'
                   },
-                    adminRole?.label ? adminRole : null,
-                    depRole?.label ? depRole : null,
+                  adminRole?.label ? adminRole : null,
+                  depRole?.label ? depRole : null,
                   {
                       label: 'Утвердить курсы',
                       icon: 'pi pi-graduation-cap',
@@ -308,6 +313,11 @@ const AppMenu = () => {
                       label: 'Мои активные курсы',
                       icon: 'pi pi-play-circle',
                       to: '/openCourse/activeCourse'
+                  },
+                  {
+                      label: 'Уведомления',
+                      icon: 'pi pi-bell',
+                      to: '/notifications'
                   }
               ].filter(Boolean) as AppMenuItem[])
             : []
@@ -538,6 +548,10 @@ const AppMenu = () => {
         }
     }, [departament, pathname]);
 
+    useEffect(()=> {
+        console.log(model);
+    },[model]);
+
     return (
         <MenuProvider>
             <FormModal
@@ -690,7 +704,7 @@ const AppMenu = () => {
             </FormModal>
 
             {/* <div className="flex flex-col h-screen"> */}
-            <ul className="layout-menu max-h-[80%] overflow-y-auto scrollbar-thin-y">
+            <ul className={`layout-menu max-h-[80%] overflow-y-auto scrollbar-thin-y ${user?.is_working ? 'shadow-[0px_14px_8px_-9px_rgba(0,_0,_0,_0.1)]' : ''}`}>
                 {model.map((item, i) => {
                     return !item?.seperator ? <AppMenuitem item={item} root={true} index={i} key={item.label} /> : <li className="menu-separator"></li>;
                 })}

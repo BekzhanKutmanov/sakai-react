@@ -487,9 +487,9 @@ export default function RolesDepartment() {
                             field="title"
                             header="Преподаватели"
                             body={(rowData) => (
-                                <Link href={`/faculty/${'id_kafedra'}/${rowData.id}`} key={rowData.id} className="text-[14px] hover:underline">
+                                <span key={rowData.id} className="text-[14px] hover:underline">
                                     {rowData?.user.last_name} {rowData?.user.name} {rowData?.user.father_name}
-                                </Link>
+                                </span>
                             )}
                         ></Column>
 

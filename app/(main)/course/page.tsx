@@ -157,7 +157,7 @@ export default function Course() {
         setSkeleton(true);
         const data = await fetchCourses(page, 10);
         if (data && course) {
-            if(course.data?.length < 1){
+            if (course.data?.length < 1) {
                 setEmptyCourses(true);
             } else {
                 setEmptyCourses(false);
@@ -460,7 +460,19 @@ export default function Course() {
                                 }}
                                 checked={forStreamId?.id === shablonData.id}
                             />
-                            <span className="radio-course-mark rounded">Связан ({shablonData.connects_count})</span>
+                            <span
+                                className="radio-course-mark rounded"
+                                onClick={() => {
+                                    const newValue = forStreamId?.id === shablonData.id ? null : { id: shablonData.id, title: shablonData.title };
+                                    // Устанавливаем состояние
+                                    setForStreamId(newValue);
+                                    setSendStream({ status: false, name: shablonData?.audience_type?.name });
+                                    setOpenCourseId(shablonData.id);
+                                    setActiveIndex(1);
+                                }}
+                            >
+                                Связан ({shablonData.connects_count})
+                            </span>
                         </label>
                     </>
                     {/* Кнопки действий */}
@@ -685,9 +697,9 @@ export default function Course() {
                                 )}
 
                                 {/* table section */}
-                                {emptyCourses ? 
+                                {emptyCourses ? (
                                     <p className="text-[16px] text-center font-bold">{'Пусто'}</p>
-                                : hasCourses ? (
+                                ) : hasCourses ? (
                                     <p className="text-[16px] text-center font-bold">{'Курсы отсутствуют'}</p>
                                 ) : (
                                     <>
@@ -934,7 +946,11 @@ export default function Course() {
 
                     <div className={imagestateStyle}>
                         <div className="w-1/2 order-2 sm:order-1 max-h-[170px] max-w-[300px] overflow-hidden flex justify-center items-center">
-                            {typeof imageState === 'string' ? <img className="w-full object-cover" src={imageState} alt='фото' /> : <img className="w-full object-cover" src={typeof editingLesson.image === 'string' ? editingLesson.image : ''} alt='фото' />}
+                            {typeof imageState === 'string' ? (
+                                <img className="w-full object-cover" src={imageState} alt="фото" />
+                            ) : (
+                                <img className="w-full object-cover" src={typeof editingLesson.image === 'string' ? editingLesson.image : ''} alt="фото" />
+                            )}
                         </div>
                         <div className={`flex flex-col pag-1 order-1 sm:order-2 items-center justify-center ${imageState && 'w-1/2'}`}>
                             <label className="block text-900 font-medium text-[16px] md:text-lg mb-1 md:mb-2">Добавить фото</label>

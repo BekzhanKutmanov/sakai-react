@@ -16,7 +16,7 @@ export default function CounterBanner({statisticValue}: {statisticValue: MainPag
     },[statisticValue]);
 
     return (
-        <div className="w-full h-[300px] relative my-[40px]">
+        <div className="w-full h-[300px] relative my-[50px] sm:my-[40px]">
             <div className="absolute left-1/2 top-0 w-screen -translate-x-1/2 grid sm:grid-cols-2 justify-between lg:grid-cols-4 gap-4 bg-[var(--titleColor)] -z-50 p-[40px] lg:p-[80px] text-white">
                    <div className='flex items-center gap-4'>
                 <div className='relative w-[55px] flex items-center'>

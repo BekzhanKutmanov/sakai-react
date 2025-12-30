@@ -55,7 +55,7 @@ export default function ItemCard({
         <div className={`w-full shadow-md rounded p-3 ${subject.connect && ''}`}>
             <div className="flex flex-col gap-1">
                 <div className={`w-full flex flex-col sm:flex-row justify-between`}>
-                    <b className={`text-lg ${subject.connect && 'font-bold underline text-[var(--mainColor)]'}`}>{lessonName}</b>
+                    <b className={`text-md ${subject.connect && 'font-bold underline text-[var(--mainColor)]'}`}>{lessonName}</b>
                     {subject?.connect && <div>{myProgress()}</div>}
                 </div>
                 {subject?.connect && subject?.progress?.export && (

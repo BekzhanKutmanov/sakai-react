@@ -79,7 +79,7 @@ export default function ActiveCourseList() {
                         return (
                             <div key={item?.id}>
                                 {/* <OpenCourseShowCard course={item} /> */}
-                                <OpenCourseCard course={item} signBtn={false} link={{ url: `/openCourse/activeCourse/${item?.id}`, status: true }} courseShowProp={() => {}} courseSignup={() => {}} />
+                                <OpenCourseCard course={item} link={{ url: `/openCourse/activeCourse/${item?.id}`, status: true }} courseShowProp={() => {}} />
                             </div>
                         );
                     })}

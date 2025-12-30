@@ -4,6 +4,7 @@ import { OptionsType } from '@/types/OptionsType';
 import MyDateTime from '../MyDateTime';
 import { myMainCourseType } from '@/types/myMainCourseType';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 // компонент представляет с собой карточку одного курса
 // отобр. название, фото, тип (платный, бесплатный), дата, (срок), фио препода
@@ -29,6 +30,8 @@ export default function OpenCourseCard({
         // minute: '2-digit',
         hour12: false // 24-часовой формат
     };
+
+    const pathname = usePathname();
 
     const imageBodyTemplate = (product: any) => {
         const image = product.image;
@@ -88,19 +91,9 @@ export default function OpenCourseCard({
             </div>
 
             <div className="flex items-center gap-1 justify-between">
-                {/* <div className="w-full">
-                    {signBtn ? (
-                        course?.is_signed ? (
-                            <Link href={`/openCourse/activeCourse/${course?.id}`}><Button label="Открыть" size="small" className="ml-3 bg-[var(--amberColor)] text-sm mini-button" /></Link>
-                        ) : !course?.is_signed ? (
-                            <Button label="Записаться на курс" size="small" className="ml-3 text-sm mini-button" onClick={() => courseSignup(course?.id)} />
-                        ) : (
-                            ''
-                        )
-                    ) : (
-                        ''
-                    )}
-                </div> */}
+                {pathname !== '/openCourse/activeCourse' ? <div className="cursor-pointer text-sm w-full text-[var(--mainColor)]" onClick={() => courseShowProp(course?.id)}>
+                    Подробнее...
+                </div> : ''}
 
                 {/* data */}
                 <div className="w-full flex justify-end text-[13px] order-1 sm:order-2">
