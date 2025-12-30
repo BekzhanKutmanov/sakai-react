@@ -159,7 +159,7 @@ export default function MainNotificatoin() {
             <div className="main-bg flex flex-col gap-1">
                 {notification?.map((item) => {
                     return (
-                        <div>
+                        <div key={item?.id}>
                             <NotificationItem notificate={item} />
                         </div>
                     );
