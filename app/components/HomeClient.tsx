@@ -357,7 +357,7 @@ export default function HomeClient() {
                         <h3 className="text-xl sm:text-2xl text-center mb-4">Открытые онлайн курсы</h3>
                         <div className="w-full flex flex-wrap justify-center gap-4 mt-5 sm:m-0">
                             {coursesValue?.map((item, idx) => {
-                                return <OpenCourse course={item} index={idx} />;
+                                return <OpenCourse key={item?.id} course={item} index={idx} />;
                             })}
                         </div>
                         <div className={`shadow-[0px_-11px_5px_-6px_rgba(0,_0,_0,_0.1)]`}>
