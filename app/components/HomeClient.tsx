@@ -131,7 +131,7 @@ export default function HomeClient() {
 
     const OpenCourse = ({ course, index }: { course: myMainCourseType; index: number }) => {
         return (
-            <div className="max-h-[430px] min-h-[350px] sm:max-h-[330px] sm:min-h-[330px] w-full sm:min-w-[300px] sm:max-w-[300px] shadow rounded p-2 flex flex-col gap-2 justify-between">
+            <div key={course?.id} className="max-h-[430px] min-h-[350px] sm:max-h-[330px] sm:min-h-[330px] w-full sm:min-w-[300px] sm:max-w-[300px] shadow rounded p-2 flex flex-col gap-2 justify-between">
                 <div className="relative">
                     <div className="flex justify-center items-center">{imageBodyTemplate(course, index)}</div>
                     <div

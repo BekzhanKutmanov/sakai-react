@@ -148,7 +148,7 @@ export default function Roles() {
         if (shablonData) {
             return shablonData.map((item: any) => {
                 return (
-                    <div className="main-bg w-full flex flex-col gap-1 justify-start">
+                    <div key={item?.id} className="main-bg w-full flex flex-col gap-1 justify-start">
                         <div className="flex gap-1 items-center">
                             <b className="text-[14px] text-[var(--mainColor)]">
                                 {item.last_name} {item.name} {item.father_name}
@@ -160,7 +160,7 @@ export default function Roles() {
                             const isActive = Boolean(userRole?.pivot?.active);
 
                             return (
-                                <div className="text-center flex justify-between items-start">
+                                <div key={role?.id} className="text-center flex justify-between items-start">
                                     <span className='text-sm'>{idx % 2 === 0 ? 'Администратор' : 'Департамент'}</span>
 
                                     {/* <span className='text-sm'>{userRole?.id === 1 ? 'Администратор:' : userRole?.id === 2 ? 'Департамент:' : ''}</span> */}

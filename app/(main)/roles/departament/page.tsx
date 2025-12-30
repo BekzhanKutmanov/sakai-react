@@ -233,7 +233,7 @@ export default function RolesDepartment() {
         if (roles) {
             return roles.map((item: any) => {
                 return (
-                    <div className="main-bg w-full flex flex-col gap-1 justify-start">
+                    <div key={item?.id} className="main-bg w-full flex flex-col gap-1 justify-start">
                         <div className="flex gap-1 items-center">
                             <b className="text-[14px] text-[var(--mainColor)]">
                                 {item.last_name} {item.name} {item.father_name}
@@ -244,8 +244,8 @@ export default function RolesDepartment() {
                             const element = item?.course_type_access.find((el: { id: number }) => el.id === role.id);
                             const isActive = Boolean(element?.pivot?.active);
 
-                            return (
-                                <div className="text-center flex justify-between items-start">
+                            return ( 
+                                <div key={role?.id} className="text-center flex justify-between items-start">
                                     <span className="text-sm">{role?.title}</span>
 
                                     <div className="text-center">
@@ -409,7 +409,7 @@ export default function RolesDepartment() {
         if (roles) {
             return roles.map((item: any) => {
                 return (
-                    <div className="main-bg w-full flex flex-col gap-1 justify-start">
+                    <div key={item?.id} className="main-bg w-full flex flex-col gap-1 justify-start">
                         <div className="flex gap-1 flex-col">
                             <b className="text-[14px] text-[var(--mainColor)]">
                                 {item?.user.last_name} {item?.user.name} {item?.user.father_name}
