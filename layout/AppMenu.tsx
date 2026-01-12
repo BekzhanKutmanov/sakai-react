@@ -548,10 +548,6 @@ const AppMenu = () => {
         }
     }, [departament, pathname]);
 
-    useEffect(()=> {
-        console.log(model);
-    },[model]);
-
     return (
         <MenuProvider>
             <FormModal

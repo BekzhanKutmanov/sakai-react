@@ -61,7 +61,7 @@ export default function HomeClient() {
         setSkeleton(true);
         setMainProgressSpinner(true);
         const data = await fetchOpenCourses(page, audence_type_id, search);
-
+        
         if (data && Array.isArray(data.data)) {
             setHasCourses(false);
             setValueCourses(data.data);
