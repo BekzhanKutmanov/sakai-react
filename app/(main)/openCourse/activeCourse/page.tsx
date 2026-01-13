@@ -5,7 +5,7 @@ import { NotFound } from '@/app/components/NotFound';
 import GroupSkeleton from '@/app/components/skeleton/GroupSkeleton';
 import useErrorMessage from '@/hooks/useErrorMessage';
 import { LayoutContext } from '@/layout/context/layoutcontext';
-import { fetchActiveCourses, fetchOpenCourses } from '@/services/openCourse';
+import { fetchActiveCourses } from '@/services/openCourse';
 import { myMainCourseType } from '@/types/myMainCourseType';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import { useContext, useEffect, useState } from 'react';

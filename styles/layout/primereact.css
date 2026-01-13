@@ -56,3 +56,11 @@
     font-size: 12px !important;
     padding: 4px !important;
 }
+
+/* dropdown */
+
+@media screen and (max-width: 440px) {
+  .p-dropdown-panel .p-dropdown-items .p-dropdown-item {
+    padding: 3px 2px;
+  }
+}
