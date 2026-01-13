@@ -6,11 +6,10 @@ import useErrorMessage from '@/hooks/useErrorMessage';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { LayoutContext } from '@/layout/context/layoutcontext';
 import { fetchCourseOpenStatus } from '@/services/courses';
-import { controlDepartamentUsers, fetchRolesDepartment, fetchTeacherCheck, teacherCoursePublic } from '@/services/roles/roles';
+import { controlDepartamentUsers, depCategoryAdd, depCategoryFetch, fetchRolesDepartment, fetchTeacherCheck, teacherCoursePublic } from '@/services/roles/roles';
 import { CourseType } from '@/types/courseType';
 import { AudenceType } from '@/types/courseTypes/AudenceTypes';
 import { TabViewChange } from '@/types/tabViewChange';
-import Link from 'next/link';
 import { Button } from 'primereact/button';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
@@ -36,8 +35,19 @@ export default function RolesDepartment() {
         role_id: number | null;
     }
 
+    interface CategoryId {
+        title: string;
+        id: number | null;
+        description: string;
+    }
+
     interface TeacherCheckType extends CourseType {
         course_audience_type_id: number | null;
+    }
+
+    interface MainCategoryType extends CategoryId {
+        created_at: string,
+        updated_at: string
     }
 
     const showError = useErrorMessage();
@@ -74,6 +84,10 @@ export default function RolesDepartment() {
     const [checkPageState, setCheckPageState] = useState<number>(1);
     const [selectedTypeId, setSelectedTypeId] = useState<Role_idType | null>({ name: 'Все', role_id: null });
     const [cities, setCities] = useState<Role_idType[]>([{ name: 'Все', role_id: null }]);
+
+    const [categorySelectedId, setCategorySelectedId] = useState<CategoryId | null>({ title: 'Все', id: null, description: '' });
+    const [depCategoryes, setCategoryes] = useState<CategoryId[]>([{ title: 'Выберите категорию', id: null, description: '' }]);
+
     const [forDisabled, setForDisabled] = useState(false);
     const [openTypes, setOpenTypes] = useState<AudenceType[]>([]);
     const [activeIndex, setActiveIndex] = useState<number>(0);
@@ -82,11 +96,20 @@ export default function RolesDepartment() {
     const [publicStatus, setPublicStatus] = useState<number | null>(null);
     const [publicState, setPublicState] = useState<boolean | null>(null);
     const [visible, setVisible] = useState<boolean>(false);
+    const [course_category_id, setPublicCategoryId] = useState<number | null>(null);
+
+    const [categoryState, setCategoryState] = useState<boolean | null>(null);
+    const [categoryVisible, setCategoryVisible] = useState<boolean>(false);
+    const [categoryValue, setCategoryValue] = useState<CategoryId>({title: '', description: '', id: null});
+    const [cateroriesList, setCategoriesList] = useState<MainCategoryType[] | null>(null);
 
     const clearValues = () => {
         setPublicCourseId(null);
         setPublicState(null);
         setPublicStatus(null);
+        setCategoryes([{ title: 'Выберите категорию', id: null, description: '' }]);
+        setCategorySelectedId({ title: 'Все', id: null, description: '' });
+        setPublicCategoryId(null);
     };
 
     // fetch types
@@ -182,7 +205,8 @@ export default function RolesDepartment() {
 
     const handleCoursePublic = async (comment: string | null) => {
         setMainProgressSpinner(true);
-        const res = await teacherCoursePublic(Number(publicCourseId) || null, publicStatus, comment);
+        clearValues();
+        const res = await teacherCoursePublic(Number(publicCourseId) || null, publicStatus, comment, course_category_id);
         if (res?.success) {
             handleFetchTeacherCheck(checkPageState, search, myedu_id, selectedTypeId);
             setMessage({ state: true, value: { severity: 'success', summary: 'Курс успешно изменен!', detail: '' } });
@@ -197,6 +221,62 @@ export default function RolesDepartment() {
             }
         }
         setMainProgressSpinner(false);
+    };
+
+    const handleDepCategoryFetch = async () => {
+        const res = await depCategoryFetch();
+        
+        if (res && res?.length) {
+            if(activeIndex === 1) { 
+                handleFetchTeacherCheck(checkPageState, search, myedu_id, selectedTypeId);
+                const forCategoryes = res.map((item: { title: string, id: number, description: string }) => {
+                    return { name: item?.title, id: item?.id, description: item?.description };
+                });
+                if (forCategoryes) {
+                    setCategoryes(forCategoryes);
+                }
+            } else if (activeIndex === 2){
+                setCategoriesList(res);
+            }
+        } else {
+            if (res.response.status === 400) {
+                setMessage({ state: true, value: { severity: 'error', summary: res.response.data.message, detail: '' } });
+            } else {
+                setMessage({ state: true, value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' } });
+                if (res?.response?.status) {
+                    showError(res.response.status);
+                }
+            }
+        }
+    };
+
+    // add category
+
+    const handleCategoryAdd = async () => {
+
+        const res = await depCategoryAdd(categoryValue?.title || '', categoryValue?.description || '');
+        if (res && res?.id) {
+            // handleFetchTeacherCheck(checkPageState, search, myedu_id, selectedTypeId);
+            // const forCategoryes = res.map((item: { title: string, id: number, description: string }) => {
+            //     return { name: item?.title, id: item?.id, description: item?.description };
+            // });
+            // if (forCategoryes) {
+            //     setCategoryes(forCategoryes);
+            // }
+            handleDepCategoryFetch();
+            setMessage({ state: true, value: { severity: 'success', summary: 'Успешно добавлено!', detail: '' } });
+        } 
+        else {
+            if (res.response.status === 400) {
+                setMessage({ state: true, value: { severity: 'error', summary: res.response.data.message, detail: '' } });
+            } else {
+                setMessage({ state: true, value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' } });
+                if (res?.response?.status) {
+                    showError(res.response.status);
+                }
+            }
+        }
+
     };
 
     // Ручное управление пагинацией
@@ -228,6 +308,37 @@ export default function RolesDepartment() {
         }
     };
 
+    const categoryItemTemplate = (option: any) => {
+        return (
+            <div className="w-full flex flex-col">
+                <span className="font-medium text-[13px] sm:text-md">{option.name}</span>
+                {option.description && (
+                    <span className="text-xs text-gray-500 text-[12px] sm:text-sm max-w-[300px] text-wrap word-break sm:text-nowrap sm:max-w-full">
+                        {option.description}
+                    </span>
+                )}
+            </div>
+        );
+    };
+
+    const categoryValueTemplate = (option: any | null) => {
+        if (!option) {
+            return <span className="text-gray-400">...</span>;
+        }
+
+        return (
+            <div className="flex flex-col">
+                <span>{option.name}</span>
+                {option.description && (
+                    <span className="text-xs text-gray-500">
+                        {option.description}
+                    </span>
+                )}
+            </div>
+        );
+    };
+
+
     // TSX access
     const itemAccessTemplate = (roles: any) => {
         if (roles) {
@@ -244,7 +355,7 @@ export default function RolesDepartment() {
                             const element = item?.course_type_access.find((el: { id: number }) => el.id === role.id);
                             const isActive = Boolean(element?.pivot?.active);
 
-                            return ( 
+                            return (
                                 <div key={role?.id} className="text-center flex justify-between items-start">
                                     <span className="text-sm">{role?.title}</span>
 
@@ -270,7 +381,7 @@ export default function RolesDepartment() {
                                                     disabled={forDisabled}
                                                     onClick={() => handleControlDepartament(item?.id, role?.id, false)}
                                                     aria-pressed="false"
-                                                    // onClick={() => console.log(user, roles[idx])} aria-pressed="false"
+                                                // onClick={() => console.log(user, roles[idx])} aria-pressed="false"
                                                 >
                                                     <span className="track">
                                                         <span className="option option-left" aria-hidden></span>
@@ -356,7 +467,7 @@ export default function RolesDepartment() {
                                                             disabled={forDisabled}
                                                             onClick={() => handleControlDepartament(rowData?.id, item?.id, false)}
                                                             aria-pressed="false"
-                                                            // onClick={() => console.log(user, roles[idx])} aria-pressed="false"
+                                                        // onClick={() => console.log(user, roles[idx])} aria-pressed="false"
                                                         >
                                                             <span className="track">
                                                                 <span className="option option-left" aria-hidden></span>
@@ -436,6 +547,7 @@ export default function RolesDepartment() {
                                                 setPublicState(true);
                                                 setPublicCourseId(item?.id);
                                                 setVisible(true);
+                                                handleDepCategoryFetch();
                                             }}
                                         >
                                             Опубликовать
@@ -520,6 +632,7 @@ export default function RolesDepartment() {
                                             setPublicState(true);
                                             setPublicCourseId(rowData?.id);
                                             setVisible(true);
+                                            handleDepCategoryFetch();
                                         }}
                                         className="cursor-pointer pi pi-check text-[white] shadow rounded-full bg-[var(--mainColor)] p-[5px]"
                                         style={{ fontSize: '13px' }}
@@ -553,6 +666,97 @@ export default function RolesDepartment() {
         </div>
     );
 
+    // category crud 
+    const categorySection = (
+        <div className="">
+            {media ? (
+                itemCheckingTemplate(teachersCheck)
+            ) : (
+                <div className="main-bg overflow-x-auto scrollbar-thin">
+                    {/* crud */}
+                    <div>
+                        <p>Здесь вы можете создавать собственные категории для курсов и добавлять их в общие категории</p>
+                        <Button size='small' label='Создать' onClick={() => {
+                            setCategoryVisible(true);
+                        }} />
+                    </div>
+
+                    {/* table */}
+                    {/* <DataTable value={roles || []} emptyMessage="Загрузка" dataKey="id_kafedra" responsiveLayout="stack" breakpoint="960px" rows={5} className='min-w-[640px] overflow-x-auto'> */}
+                    <DataTable value={cateroriesList || []} dataKey="id" emptyMessage="..." loading={forDisabled} breakpoint="960px" rows={5} className="min-w-[640px] overflow-x-auto">
+                        <Column body={(_, { rowIndex }) => rowIndex + 1} header="#"></Column>
+
+                        <Column
+                            field="title"
+                            header="Категории"
+                            body={(rowData) => (
+                                <span key={rowData.id} className="text-[14px] ">
+                                    {rowData.title}
+                                </span>
+                            )}
+                        ></Column>
+
+                        <Column
+                            field="title"
+                            header="Преподаватели"
+                            body={(rowData) => (
+                                <span key={rowData.id} className="text-[14px] hover:underline">
+                                    {rowData?.user.last_name} {rowData?.user.name} {rowData?.user.father_name}
+                                </span>
+                            )}
+                        ></Column>
+
+                        <Column
+                            field="title"
+                            header="Статус"
+                            body={(rowData) => (
+                                <div className="w-full flex justify-center">
+                                    <i
+                                        className={`text-[13px] text-white rounded p-1
+                                    ${rowData?.course_audience_type_id === 2 ? 'bg-[var(--greenColor)]' : rowData?.course_audience_type_id === 3 ? 'bg-[var(--amberColor)]' : ''}
+                                    `}
+                                    >
+                                        {rowData?.course_audience_type_id === 2 ? 'Открытый' : rowData?.course_audience_type_id === 3 ? 'Платный' : ''}
+                                    </i>
+                                </div>
+                            )}
+                        ></Column>
+
+                        <Column
+                            field="title"
+                            header="Действия"
+                            body={(rowData) => (
+                                <div className="w-full flex justify-center items-center gap-4">
+                                    <i
+                                        onClick={() => {
+                                            setPublicStatus(1);
+                                            setPublicState(true);
+                                            setPublicCourseId(rowData?.id);
+                                            setVisible(true);
+                                            handleDepCategoryFetch();
+                                        }}
+                                        className="cursor-pointer pi pi-check text-[white] shadow rounded-full bg-[var(--mainColor)] p-[5px]"
+                                        style={{ fontSize: '13px' }}
+                                    ></i>
+                                    <i
+                                        onClick={() => {
+                                            setPublicStatus(0);
+                                            setPublicState(false);
+                                            setPublicCourseId(rowData?.id);
+                                            setVisible(true);
+                                        }}
+                                        className="cursor-pointer pi pi-times text-[white] shadow rounded-full bg-[red] p-[5px]"
+                                        style={{ fontSize: '13px' }}
+                                    ></i>
+                                </div>
+                            )}
+                        ></Column>
+                    </DataTable>
+                </div>
+            )}
+        </div>
+    );
+
     const footerContent = (
         <div>
             <Button
@@ -569,10 +773,39 @@ export default function RolesDepartment() {
             <Button
                 label={publicState ? 'Опубликовать' : 'Аннулировать'}
                 size="small"
+                className={`${publicState ? categorySelectedId?.id ? '' : 'opacity-50 pointer-events-none' : ''}`}
                 icon="pi pi-check"
                 onClick={() => {
                     setVisible(false);
                     handleCoursePublic(comment);
+                }}
+                autoFocus
+            />
+        </div>
+    );
+
+    const categoryFooterContent = (
+        <div>
+            <Button
+                label={'Назад'}
+                className="reject-button"
+                size="small"
+                icon="pi pi-times"
+                onClick={() => {
+                    setCategoryVisible(false);
+                    clearValues();
+                }}
+            />
+
+            <Button
+                label={!categoryState ? 'Создать' : 'Изменить'}
+                size="small"
+                icon="pi pi-check"
+                onClick={() => {
+                    setCategoryVisible(false);
+                    if(!categoryState) {
+                        handleCategoryAdd();
+                    }
                 }}
                 autoFocus
             />
@@ -756,7 +989,7 @@ export default function RolesDepartment() {
                                     headerAction: { className: 'font-italic' }
                                 }}
                                 header="Доступ"
-                                // className="p-tabview p-tabview-nav p-tabview-selected p-tabview-panels p-tabview-panel"
+                            // className="p-tabview p-tabview-nav p-tabview-selected p-tabview-panels p-tabview-panel"
                             >
                                 {mainDepartamentSection}
                             </TabPanel>
@@ -767,15 +1000,27 @@ export default function RolesDepartment() {
                                     headerAction: { className: 'font-italic' }
                                 }}
                                 header="Проверка"
-                                // className="p-tabview p-tabview-nav p-tabview-selected p-tabview-panels p-tabview-panel"
+                            // className="p-tabview p-tabview-nav p-tabview-selected p-tabview-panels p-tabview-panel"
                             >
                                 {checkDepartamentSection}
+                            </TabPanel>
+
+                            {/* Category crud */}
+                            <TabPanel
+                                pt={{
+                                    headerAction: { className: 'font-italic' }
+                                }}
+                                header="Категории курсов"
+                            // className="p-tabview p-tabview-nav p-tabview-selected p-tabview-panels p-tabview-panel"
+                            >
+                                {categorySection}
                             </TabPanel>
                         </TabView>
                     )}
                 </div>
             )}
 
+            {/* publising */}
             <Dialog
                 header={publicState ? 'Опубликовать курс' : 'Аннулировать курс'}
                 visible={visible}
@@ -792,12 +1037,51 @@ export default function RolesDepartment() {
                         {/* Аннулирование */}
                         {publicState ? (
                             <div className="flex flex-col gap-2">
-                                <b className="px-1">Вы уверены что хотите опубликовать курс?</b>
+                                <b className="px-1">Выберите категорию для курса</b>
+                                <div className='max-w-[95%]'>
+                                    <Dropdown value={categorySelectedId} itemTemplate={categoryItemTemplate} valueTemplate={categoryValueTemplate} onChange={(e: DropdownChangeEvent) => {
+                                        setCategorySelectedId(e.value);
+                                        setPublicCategoryId(e.value?.id);
+                                    }} options={depCategoryes} optionLabel="name" placeholder="..." className="w-full text-sm" />
+                                </div>
                             </div>
                         ) : (
                             <div className="flex flex-col gap-2">
                                 <b className="px-1">Вы уверены что хотите отказать курс?</b>
                                 <InputText onChange={(e) => setPublicComment(e.target.value)} type="text" placeholder="Укажите причину вашего отказа" />
+                            </div>
+                        )}
+                    </div>
+                }
+            </Dialog>
+
+            <Dialog
+                header={!categoryState ? 'Создать категорию' : 'Изменить категорию'}
+                visible={categoryVisible}
+                className="my-custom-dialog"
+                onHide={() => {
+                    if (!categoryVisible) return;
+                    setCategoryVisible(false);
+                    clearValues();
+                }}
+                footer={categoryFooterContent}
+            >
+                {
+                    <div>
+                        {/* Аннулирование */}
+                        {!categoryState ? (
+                            <div className="flex flex-col gap-2">
+                                <InputText type='text' onChange={(e) => {
+                                    setCategoryValue((prev) => ({ ...prev, title: e.target.value }));
+                                }} size={'small'} placeholder='Название категории' />
+                                <InputText type='text' onChange={(e) => {
+                                    setCategoryValue((prev) => ({ ...prev, description: e.target.value }));
+                                }} size={'small'} placeholder='Описание' />
+                            </div>
+                        ) : (
+                            <div className="flex flex-col gap-2">
+                                <InputText type='text' size={'small'} placeholder='Название категории' />
+                                <InputText type='text' size={'small'} placeholder='Описание' />
                             </div>
                         )}
                     </div>

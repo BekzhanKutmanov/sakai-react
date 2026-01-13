@@ -22,12 +22,12 @@ axiosInstance.interceptors.response.use(
         const status = error.response?.status;
         if (status === 401) {
             console.warn('Неавторизован. Удаляю токен...');
-            if (typeof window !== 'undefined') {
-                console.log(window.location.pathname != '/auth/login');
-                if(window.location.pathname != '/auth/login') window.location.href = '/auth/login';
-                localStorage.removeItem('userVisit');
-            }
-            document.cookie = 'access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;';
+            // if (typeof window !== 'undefined') {
+            //     console.log(window.location.pathname != '/auth/login');
+            //     if(window.location.pathname != '/auth/login') window.location.href = '/auth/login';
+            //     localStorage.removeItem('userVisit');
+            // }
+            // document.cookie = 'access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;';
         }
 
         if (status === 403) {

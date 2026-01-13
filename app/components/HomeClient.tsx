@@ -131,7 +131,7 @@ export default function HomeClient() {
 
     const OpenCourse = ({ course, index }: { course: myMainCourseType; index: number }) => {
         return (
-            <div key={course?.id} className="max-h-[430px] min-h-[350px] sm:max-h-[330px] sm:min-h-[330px] w-full sm:min-w-[300px] sm:max-w-[300px] shadow rounded p-2 flex flex-col gap-2 justify-between">
+            <div key={course?.id} className="max-h-[430px] min-h-[350px] sm:max-h-[430px] sm:min-h-[330px] w-full sm:min-w-[300px] sm:max-w-[300px] shadow rounded p-2 flex flex-col gap-2 justify-between">
                 <div className="relative">
                     <div className="flex justify-center items-center">{imageBodyTemplate(course, index)}</div>
                     <div
@@ -151,26 +151,28 @@ export default function HomeClient() {
                             className="cursor-pointer w-full sm:max-w-[350px] break-words text-[var(--mainColor)] underline"
                             // onClick={() => courseShowProp(course?.id)}
                         >
-                            {course?.title}
+                            {/* {course?.title} */}
+                            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Enim laborum minima iusto nobis voluptates sed.
                         </b>
                     ) : (
                         <b
                             className="cursor-pointer w-full sm:max-w-[350px] break-words text-[var(--mainColor)] underline"
                             // onClick={() => courseShowProp(course?.id)}
                         >
-                            {course?.title}
+                            {/* {course?.title} */}
+                            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Enim laborum minima iusto nobis voluptates sed.
                         </b>
                     )}
 
-                    <div className="max-h-[20px] overflow-hidden">
-                        <small className="max-w-[300px] text-nowrap overflow-hidden text-ellipsis ">{course?.description}</small>
+                    <div className="max-h-[20px] overflow-hidden text-ellipsis block">
+                        <small className="max-w-[170px] overflow-hidden text-nowrap  text-ellipsis block ">{course?.description}</small>
                     </div>
                 </div>
 
                 <div>
                     <div className="flex items-center justify-center text-[15px] text-[var(--titleColor)] author_font">
                         {/* <span className="">Автор: </span> */}
-                        <div className="flex gap-1 items-center">
+                        <div className="flex gap-1 items-start max-w-[230px] break-words text-wrap flex-wrap">
                             {!media ? (
                                 <>
                                     <span>{course?.user?.last_name}</span>

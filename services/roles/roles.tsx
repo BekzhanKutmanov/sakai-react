@@ -96,20 +96,52 @@ export const fetchTeacherCheck = async (page: number | null, search: string | nu
 };
 
 // teacher checking pubclic
-export const teacherCoursePublic = async (course_id: number | null, publicStatus: number | null, comment: string | null) => {    
+export const teacherCoursePublic = async (course_id: number | null, publicStatus: number | null, comment: string | null, course_category_id:number | null) => {    
     const payload = {
         course_id,
         public: publicStatus,
-        comment
-    };
+        comment,
+        course_category_id: course_category_id
+    };  
 
     try {
-        const res = await axiosInstance.post(`/v1/teacher/controls/public`, payload);   
+        const res = await axiosInstance.post(`/v1/teacher/controls/public`, payload);
 
         const data = res.data;
         return data;
     } catch (err) {
         console.log('Ошибка при публикации открытого урока', err);
+        return err;
+    }
+};
+
+// departament categoryes
+export const depCategoryFetch = async () => {    
+    try {
+        const res = await axiosInstance.get(`/open/course/category`);   
+
+        const data = res.data;
+        return data;
+    } catch (err) {
+        console.log('Ошибка при получении', err);
+        return err;
+    }
+};
+
+// add 
+export const depCategoryAdd = async (title: string, description: string) => {    
+    const payload = {
+        title,
+        description
+    }
+
+    try {
+        const res = await axiosInstance.post(`/v1/course/category`, payload);   
+
+        const data = res.data;
+        return data;
+    } catch (err) {
+        console.log('Ошибка при создании', err);
         return err;
     }
 };

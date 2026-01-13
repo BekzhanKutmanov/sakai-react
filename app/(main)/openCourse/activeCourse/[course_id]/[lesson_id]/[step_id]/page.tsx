@@ -13,7 +13,7 @@ import { useParams } from 'next/navigation';
 import { Button } from 'primereact/button';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import { useContext, useEffect, useState } from 'react';
-import { fetchActiveStepsDetail, openCoursePracticAdd, openCourseTestAdd } from '@/services/openCourse';
+import { courseOpen, fetchActiveStepsDetail, openCoursePracticAdd, openCourseTestAdd } from '@/services/openCourse';
 
 export default function ActiveLessonDetail() {
     // types
@@ -48,17 +48,7 @@ export default function ActiveLessonDetail() {
     const [courseInfo, setCoursesInfo] = useState<{ title: string; description: string; image: string } | null>(null);
     const [main_id, setMain_id] = useState<predmetType | null>(null);
     const [skeleton, setSkeleton] = useState(false);
-    const [courses, setCourses] = useState<
-        {
-            id: number;
-            connections: { subject_type: string; id: number; user_id: number | null; id_stream: number }[];
-            title: string;
-            description: string;
-            image: string;
-            user: { last_name: string; name: string; father_name: string };
-            lessons: lessonType[];
-        }[]
-    >([]);
+    const [courses, setCourses] = useState<{id: number;connections: { subject_type: string; id: number; user_id: number | null; id_stream: number }[];title: string;description: string;image: string;user: { last_name: string; name: string; father_name: string };lessons: lessonType[];} | null>(null);
     const [docValue, setDocValue] = useState<docValueType>({
         title: '',
         description: '',
@@ -75,6 +65,14 @@ export default function ActiveLessonDetail() {
     const [video, setVideo] = useState<mainStepsType | null>(null);
     const [preview, setPreview] = useState(false);
     const [videoLink, setVideoLink] = useState('');
+
+    // Пуолчаем общие курсы 
+    const handleCourseOpen = async () => {
+        const data = await courseOpen(course_id ? Number(course_id) : null);
+        if (data?.success) {
+            setCourses(data.course);
+        }
+    };
 
     const handleSteps = async () => {
         setSkeleton(true);
@@ -215,10 +213,6 @@ export default function ActiveLessonDetail() {
     };
 
     useEffect(() => {
-        console.log('Step ', steps);
-
-        // const lesson = steps.find((item) => item.id === Number(id));
-        // console.log(lesson, lesson?.type);
         if (steps?.type.name === 'document') {
             setType(steps?.type.name);
             setDocument(steps);
@@ -245,20 +239,14 @@ export default function ActiveLessonDetail() {
     }, [video]);
 
     useEffect(() => {
-        console.log(docValue);
-    }, [docValue]);
-
-    useEffect(() => {
         if (lesson_id) {
-            const forLesson = courses?.find((item) => {
-                return item?.lessons.find((j) => {
-                    if (j?.id === Number(lesson_id)) {
-                        setLessonName(j?.title || '');
-                    }
-                    return j?.id === Number(lesson_id);
-                });
+            courses?.lessons?.forEach((j) => {
+                if (j?.id === Number(lesson_id)) {
+                    setLessonName(j?.title || '');
+                }
             });
-            setCoursesInfo(forLesson || null);
+
+            setCoursesInfo(courses || null);
         }
     }, [courses]);
 
@@ -280,6 +268,7 @@ export default function ActiveLessonDetail() {
     }, [test]);
 
     useEffect(() => {
+        handleCourseOpen();
         handleSteps();
     }, []);
 
@@ -558,16 +547,16 @@ export default function ActiveLessonDetail() {
         <div className="main-bg min-h-[100vh]">
             <div className={`w-full bg-[var(--titleColor)] relative text-white p-4 md:p-3 pb-4`}>
                 <div className="flex flex-col gap-2 items-center">
-                    <div className={`w-full flex items-center gap-2 ${courseInfo?.image && courseInfo?.image.length > 0 ? 'justify-around flex-col sm:flex-row' : 'justify-center'} items-center`}>
+                    <div className={`w-full flex items-center gap-2 ${courseInfo?.image && courseInfo?.image.length > 0 ? 'justify-around flex-col sm:flex-row' : 'justify-center'}`}>
                         <div className="sm:w-1/2 flex flex-col gap-2 items-center">
-                            <h1 className="m-0" style={{ color: 'white', fontSize: media ? '24px' : '28px', textAlign: 'center', margin: '0' }}>
+                            <h1 className="m-0" style={{ color: 'white', fontSize: media ? '24px' : '28px', margin: '0' }}>
                                 {courseInfo?.title}
                             </h1>
-                            <div className="flex items-center justify-end gap-1 flex-col sm:flex-row mt-2">
+                            <div className="flex justify-end gap-1 flex-col sm:flex-row mt-2">
                                 <h3 className="text-white m-0 sm:text-lg">Тема: </h3>
                                 <h3 className="text-white text-[16px] m-0 sm:text-[18px]">{lessonName ? lessonName : '------'}</h3>
                             </div>
-                            <span className="w-[90%] break-words text-center">{courseInfo?.description} </span>
+                            <span className="w-[99%] break-wordsz">{courseInfo?.description} </span>
                         </div>
                         {courseInfo?.image && courseInfo?.image.length > 0 && (
                             <div className="sm:w-1/3">
