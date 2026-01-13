@@ -9,7 +9,7 @@
 }
 
 .p-progressbar .p-progressbar-value {
-  background-color: var(--greenColor) !important;
+  background-color: var(--greenColor) !important; 
 }
 
 .p-menuitem-active > .p-submenu-list {
