@@ -28,7 +28,6 @@ export default function HomeClient() {
 
     const [statistics, setStatistics] = useState<MainPageStatistics | null>(null);
     const [skeleton, setSkeleton] = useState(false);
-    const [mainProgressSpinner, setMainProgressSpinner] = useState(false);
     const [showVisisble, setShowVisible] = useState(false);
     const [hasCourses, setHasCourses] = useState(false);
     const [coursesValue, setValueCourses] = useState<myMainCourseType[]>([]);
@@ -59,7 +58,6 @@ export default function HomeClient() {
 
     const handleFetchOpenCourse = async (page: number, audence_type_id: number | string, search: string) => {
         setSkeleton(true);
-        setMainProgressSpinner(true);
         const data = await fetchOpenCourses(page, audence_type_id, search);
         
         if (data && Array.isArray(data.data)) {
@@ -88,20 +86,7 @@ export default function HomeClient() {
             }
         }
         setSkeleton(false);
-        setMainProgressSpinner(false);
     };
-    const gradients = [
-        'linear-gradient(135deg, #FF512F, #DD2476)', // красно-розовый
-        'linear-gradient(135deg, #FF8008, #FFC837)', // оранжево-жёлтый
-        'linear-gradient(135deg, #00C6FF, #0072FF)', // синий
-        'linear-gradient(135deg, #6A11CB, #2575FC)', // фиолетово-синий
-        'linear-gradient(135deg, #11998E, #38EF7D)', // зелёный
-        'linear-gradient(135deg, #F7971E, #FFD200)', // золотой
-        'linear-gradient(135deg, #FC466B, #3F5EFB)', // розово-синий
-        'linear-gradient(135deg, #36D1DC, #5B86E5)', // голубой
-        'linear-gradient(135deg, #F953C6, #B91D73)', // насыщенный розовый
-        'linear-gradient(135deg, #43E97B, #38F9D7)' // мятный
-    ];
 
     const imageBodyTemplate = (product: any, idx: number) => {
         const image = product.image;
@@ -149,18 +134,14 @@ export default function HomeClient() {
                         <b
                             onClick={() => handleCourseShow(course?.id)}
                             className="cursor-pointer w-full sm:max-w-[350px] break-words text-[var(--mainColor)] underline"
-                            // onClick={() => courseShowProp(course?.id)}
                         >
-                            {/* {course?.title} */}
-                            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Enim laborum minima iusto nobis voluptates sed.
+                            {course?.title}
                         </b>
                     ) : (
                         <b
                             className="cursor-pointer w-full sm:max-w-[350px] break-words text-[var(--mainColor)] underline"
-                            // onClick={() => courseShowProp(course?.id)}
                         >
-                            {/* {course?.title} */}
-                            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Enim laborum minima iusto nobis voluptates sed.
+                            {course?.title}
                         </b>
                     )}
 
@@ -228,6 +209,7 @@ export default function HomeClient() {
     const сourseSignup = async (course_id: number) => {
         const data = await openCourseSignup(course_id);
         if (data?.success) {
+            handleSendSingup();
             setMessage({
                 state: true,
                 value: { severity: 'success', summary: 'Успешное добавление!', detail: '' }
@@ -261,23 +243,19 @@ export default function HomeClient() {
         }
     };
 
-    useEffect(() => {
-        const handleSendSingup = async () => {
-            const list: any | null = await handleSignupList(coursesValue);
-            if (list) {
-                setSignupList(list);
-            }
-        };
-        if (sendSignupList) {
-            handleSendSingup();
+    const handleSendSingup = async () => {
+        const list: any | null = await handleSignupList(coursesValue);
+        if (list) {
+            setSignupList(list);
         }
-    }, [sendSignupList]);
+    };
 
     useEffect(() => {
         if (coursesValue?.length) {
-            setSendSignupList(true);
+            handleSendSingup();
+            // setSendSignupList(true);
         } else {
-            setSendSignupList(false);
+            // setSendSignupList(false);
         }
     }, [coursesValue]);
 
@@ -383,7 +361,7 @@ export default function HomeClient() {
                     {skeleton ? (
                         <GroupSkeleton count={1} size={{ width: '100%', height: '12rem' }} />
                     ) : courseDetail ? (
-                        <OpenCourseShowCard course={courseDetail} courseSignup={сourseSignup} signUpList={signUpList} />
+                        <OpenCourseShowCard course={courseDetail} courseSignup={сourseSignup} signUpList={signUpList} btnDisabled={false}/>
                     ) : (
                         <b className="flex justify-center">Данные не доступны</b>
                     )}

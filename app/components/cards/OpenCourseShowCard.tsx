@@ -7,7 +7,7 @@ import { Button } from 'primereact/button';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { useEffect, useState } from 'react';
 
-export default function OpenCourseShowCard({ course, courseSignup, signUpList }: { course: myMainCourseType; courseSignup: (id: number) => void, signUpList:number[] }) {
+export default function OpenCourseShowCard({ course, courseSignup, signUpList, btnDisabled }: { course: myMainCourseType; courseSignup: (id: number) => void, signUpList:number[], btnDisabled: boolean }) {
     const options: OptionsType = {
         year: '2-digit',
         month: 'short', // 'long', 'short', 'numeric'
@@ -21,6 +21,7 @@ export default function OpenCourseShowCard({ course, courseSignup, signUpList }:
     const [isSigned, setIsSigned] = useState<number | null | undefined>(null);
 
     useEffect(()=> {
+        console.log(signUpList);
         if(signUpList?.length){
             const signupId:number | undefined = signUpList?.find((id)=> id === course?.id);
             setIsSigned(signupId);
@@ -76,9 +77,9 @@ export default function OpenCourseShowCard({ course, courseSignup, signUpList }:
             <div className="flex items-end gap-1 justify-between">
                 <div className="w-full">
                     {typeof isSigned === 'number' ? (
-                        <Button label="Вы записаны на данный курс" disabled size="small" className=" bg-[var(--amberColor)] text-sm mini-button" onClick={() => courseSignup(course?.id)} />
+                        <Button label="Вы записаны" disabled size="small" className=" bg-[var(--amberColor)] text-sm mini-button" onClick={() => courseSignup(course?.id)} />
                     ) : !course?.is_signed ? (
-                        <Button label="Записаться на курс" size="small" className=" text-sm mini-button" onClick={() => courseSignup(course?.id)} />
+                        <Button label="Записаться на курс" disabled={btnDisabled} size="small" className=" text-sm mini-button" onClick={() => courseSignup(course?.id)} />
                     ) : (
                         ''
                     )}

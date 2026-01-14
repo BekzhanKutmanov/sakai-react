@@ -50,8 +50,7 @@ export const controlRolesUsers = async (worker_id: number | null, role_id: numbe
 export const fetchRolesDepartment = async (page: number, search: string | null, myedu_id: string | null, course_audience_type_id: number | null, active: boolean | null) => {
     try {
         const res = await axiosInstance.get(
-            `/roles/department/public?search=${search}&myedu_id=${myedu_id ? Number(myedu_id) : ''}&${course_audience_type_id ? `course_audience_type_id=${Number(course_audience_type_id)}` : 'course_audience_type_id='}${
-                course_audience_type_id ? `${active ? `&active=${active ? 1 : 0}` : '&active='}` : '&active='
+            `/roles/department/public?search=${search}&myedu_id=${myedu_id ? Number(myedu_id) : ''}&${course_audience_type_id ? `course_audience_type_id=${Number(course_audience_type_id)}` : 'course_audience_type_id='}${course_audience_type_id ? `${active ? `&active=${active ? 1 : 0}` : '&active='}` : '&active='
             }&page=${page}&limit=`
         );
 
@@ -96,13 +95,13 @@ export const fetchTeacherCheck = async (page: number | null, search: string | nu
 };
 
 // teacher checking pubclic
-export const teacherCoursePublic = async (course_id: number | null, publicStatus: number | null, comment: string | null, course_category_id:number | null) => {    
+export const teacherCoursePublic = async (course_id: number | null, publicStatus: number | null, comment: string | null, course_category_id: number | null) => {
     const payload = {
         course_id,
         public: publicStatus,
         comment,
         course_category_id: course_category_id
-    };  
+    };
 
     try {
         const res = await axiosInstance.post(`/v1/teacher/controls/public`, payload);
@@ -116,9 +115,9 @@ export const teacherCoursePublic = async (course_id: number | null, publicStatus
 };
 
 // departament categoryes
-export const depCategoryFetch = async () => {    
+export const depCategoryFetch = async () => {
     try {
-        const res = await axiosInstance.get(`/open/course/category`);   
+        const res = await axiosInstance.get(`/open/course/category`);
 
         const data = res.data;
         return data;
@@ -129,19 +128,65 @@ export const depCategoryFetch = async () => {
 };
 
 // add 
-export const depCategoryAdd = async (title: string, description: string) => {    
+export const depCategoryAdd = async (title: string, description: string) => {
     const payload = {
         title,
         description
     }
 
     try {
-        const res = await axiosInstance.post(`/v1/course/category`, payload);   
+        const res = await axiosInstance.post(`/v1/course/category`, payload);
 
         const data = res.data;
         return data;
     } catch (err) {
         console.log('Ошибка при создании', err);
+        return err;
+    }
+};
+
+// delete
+export const depCategoryDelete = async (id: number | null) => {
+    try {
+        const res = await axiosInstance.delete(`/v1/course/category/${id}`);
+
+        const data = res.data;
+        return data;
+    } catch (err) {
+        console.log('Ошибка при удалении', err);
+        return err;
+    }
+};
+
+// update
+export const depCategoryUpdate = async (id: number | null, title: string, description: string) => {
+    
+    const updateData = {
+        title: title,
+        description: description,
+    };
+
+    try {
+        const res = await axiosInstance.post(`/v1/course/category/${id}`, updateData);
+        
+        const data = res.data;
+        return data;
+    } catch (err) {
+        console.log('Ошибка', err);
+        return err;
+    }
+};
+
+// show
+export const depCategoryShow = async (id: number | null) => {
+    try {
+        const res = await axiosInstance.get(`/open/course/category/show/${id}`);
+        // const res = await axiosInstance.get(`/open/course/category/show?id=${id}`);
+
+        const data = res.data;
+        return data;
+    } catch (err) {
+        console.log('Ошибка', err);
         return err;
     }
 };

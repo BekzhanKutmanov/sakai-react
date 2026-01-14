@@ -3,7 +3,7 @@ import { Button } from 'primereact/button';
 import { faPlay } from '@fortawesome/free-solid-svg-icons';
 import MyFontAwesome from '../MyFontAwesome';
 import useShortText from '@/hooks/useShortText';
-import { ReactElement, useEffect, useState } from 'react';
+import {  useState } from 'react';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import { confirmDialog } from 'primereact/confirmdialog';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
@@ -245,7 +245,7 @@ export default function LessonCard({
                                                     label={!media ? 'Удалить' : ''}
                                                     onClick={() => {
                                                         const options = getConfirmOptions(Number(cardValue.id), () => onDelete && onDelete(cardValue.id));
-                                                        confirmDialog(options);
+                                                        confirmDialog(options)
                                                     }}
                                                 />
                                             </div>

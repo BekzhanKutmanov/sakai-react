@@ -6,12 +6,14 @@ import useErrorMessage from '@/hooks/useErrorMessage';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { LayoutContext } from '@/layout/context/layoutcontext';
 import { fetchCourseOpenStatus } from '@/services/courses';
-import { controlDepartamentUsers, depCategoryAdd, depCategoryFetch, fetchRolesDepartment, fetchTeacherCheck, teacherCoursePublic } from '@/services/roles/roles';
+import { controlDepartamentUsers, depCategoryAdd, depCategoryDelete, depCategoryFetch, depCategoryShow, depCategoryUpdate, fetchRolesDepartment, fetchTeacherCheck, teacherCoursePublic } from '@/services/roles/roles';
 import { CourseType } from '@/types/courseType';
 import { AudenceType } from '@/types/courseTypes/AudenceTypes';
 import { TabViewChange } from '@/types/tabViewChange';
+import { getConfirmOptions } from '@/utils/getConfirmOptions';
 import { Button } from 'primereact/button';
 import { Column } from 'primereact/column';
+import { confirmDialog } from 'primereact/confirmdialog';
 import { DataTable } from 'primereact/datatable';
 import { Dialog } from 'primereact/dialog';
 import { Dropdown, DropdownChangeEvent } from 'primereact/dropdown';
@@ -100,8 +102,11 @@ export default function RolesDepartment() {
 
     const [categoryState, setCategoryState] = useState<boolean | null>(null);
     const [categoryVisible, setCategoryVisible] = useState<boolean>(false);
-    const [categoryValue, setCategoryValue] = useState<CategoryId>({title: '', description: '', id: null});
+    const [categoryValue, setCategoryValue] = useState<CategoryId>({ title: '', description: '', id: null });
     const [cateroriesList, setCategoriesList] = useState<MainCategoryType[] | null>(null);
+
+    const [editingLesson, setEditingLesson] = useState<MainCategoryType | null>(null);
+    const [checkOpenCourseEmpty, setCheckOpenCourseEmpty] = useState<boolean>(false);
 
     const clearValues = () => {
         setPublicCourseId(null);
@@ -190,7 +195,12 @@ export default function RolesDepartment() {
         setMainProgressSpinner(true);
         const res = await fetchTeacherCheck(page, search, myedu_id, selectedTypeId?.role_id ? selectedTypeId?.role_id : null);
         if (res?.success) {
-            setTeacherCheck(res?.data?.data);
+            if(res.data.data.length < 1){
+                setCheckOpenCourseEmpty(true);
+            } else {
+                setTeacherCheck(res?.data?.data);
+                setCheckOpenCourseEmpty(false);
+            }
             setCheckPagination(res?.data);
             setContentNull(false);
         } else {
@@ -223,11 +233,20 @@ export default function RolesDepartment() {
         setMainProgressSpinner(false);
     };
 
+    const editing = async (id: number) => {
+        setCategoryVisible(true);
+        setCategoryState(true);
+        const res = await depCategoryShow(id);
+        if (res && res?.id) {
+            setEditingLesson(res);
+        }
+    }
+
     const handleDepCategoryFetch = async () => {
+        setMainProgressSpinner(true);
         const res = await depCategoryFetch();
-        
         if (res && res?.length) {
-            if(activeIndex === 1) { 
+            if (activeIndex === 1) {
                 handleFetchTeacherCheck(checkPageState, search, myedu_id, selectedTypeId);
                 const forCategoryes = res.map((item: { title: string, id: number, description: string }) => {
                     return { name: item?.title, id: item?.id, description: item?.description };
@@ -235,7 +254,7 @@ export default function RolesDepartment() {
                 if (forCategoryes) {
                     setCategoryes(forCategoryes);
                 }
-            } else if (activeIndex === 2){
+            } else if (activeIndex === 2) {
                 setCategoriesList(res);
             }
         } else {
@@ -248,12 +267,11 @@ export default function RolesDepartment() {
                 }
             }
         }
+        setMainProgressSpinner(false);
     };
 
     // add category
-
     const handleCategoryAdd = async () => {
-
         const res = await depCategoryAdd(categoryValue?.title || '', categoryValue?.description || '');
         if (res && res?.id) {
             // handleFetchTeacherCheck(checkPageState, search, myedu_id, selectedTypeId);
@@ -265,7 +283,7 @@ export default function RolesDepartment() {
             // }
             handleDepCategoryFetch();
             setMessage({ state: true, value: { severity: 'success', summary: 'Успешно добавлено!', detail: '' } });
-        } 
+        }
         else {
             if (res.response.status === 400) {
                 setMessage({ state: true, value: { severity: 'error', summary: res.response.data.message, detail: '' } });
@@ -276,7 +294,45 @@ export default function RolesDepartment() {
                 }
             }
         }
+    };
 
+    // delete
+    const handleCategoryDelete = async (id: number | null) => {
+        const res = await depCategoryDelete(id);
+
+        if (res && res?.success) {
+            setMessage({ state: true, value: { severity: 'success', summary: 'Успешно Удалено!', detail: '' } });
+            handleDepCategoryFetch();
+        } else {
+            if (res?.response?.status === 400) {
+                setMessage({ state: true, value: { severity: 'error', summary: res.response.data.message, detail: '' } });
+            } else {
+                setMessage({ state: true, value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' } });
+                if (res?.response?.status) {
+                    showError(res.response.status);
+                }
+            }
+        }
+    };
+
+    // updata
+    const handleCategoryUpdate = async () => {
+        const res = await depCategoryUpdate(editingLesson?.id || null, editingLesson?.title || '', editingLesson?.description || '');
+
+        if (res && res?.success) {
+            handleDepCategoryFetch();
+            setMessage({ state: true, value: { severity: 'success', summary: 'Успешно изменено!', detail: '' } });
+        }
+        else {
+            if (res?.response?.status === 400) {
+                setMessage({ state: true, value: { severity: 'error', summary: res.response.data.message, detail: '' } });
+            } else {
+                setMessage({ state: true, value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' } });
+                if (res?.response?.status) {
+                    showError(res.response.status);
+                }
+            }
+        }
     };
 
     // Ручное управление пагинацией
@@ -337,7 +393,6 @@ export default function RolesDepartment() {
             </div>
         );
     };
-
 
     // TSX access
     const itemAccessTemplate = (roles: any) => {
@@ -582,75 +637,78 @@ export default function RolesDepartment() {
             ) : (
                 <div className="main-bg overflow-x-auto scrollbar-thin">
                     {/* <DataTable value={roles || []} emptyMessage="Загрузка" dataKey="id_kafedra" responsiveLayout="stack" breakpoint="960px" rows={5} className='min-w-[640px] overflow-x-auto'> */}
-                    <DataTable value={teachersCheck || []} dataKey="id" emptyMessage="..." loading={forDisabled} breakpoint="960px" rows={5} className="min-w-[640px] overflow-x-auto">
-                        <Column body={(_, { rowIndex }) => rowIndex + 1} header="#"></Column>
+                    {checkOpenCourseEmpty ? <p>Данных нет</p>
+                        :
+                        <DataTable value={teachersCheck || []} dataKey="id" emptyMessage="..." loading={forDisabled} breakpoint="960px" rows={5} className="min-w-[640px] overflow-x-auto">
+                            <Column body={(_, { rowIndex }) => rowIndex + 1} header="#"></Column>
 
-                        <Column
-                            field="title"
-                            header="Курсы"
-                            body={(rowData) => (
-                                <span key={rowData.id} className="text-[14px] ">
-                                    {rowData.title}
-                                </span>
-                            )}
-                        ></Column>
+                            <Column
+                                field="title"
+                                header="Курсы"
+                                body={(rowData) => (
+                                    <span key={rowData.id} className="text-[14px] ">
+                                        {rowData.title}
+                                    </span>
+                                )}
+                            ></Column>
 
-                        <Column
-                            field="title"
-                            header="Преподаватели"
-                            body={(rowData) => (
-                                <span key={rowData.id} className="text-[14px] hover:underline">
-                                    {rowData?.user.last_name} {rowData?.user.name} {rowData?.user.father_name}
-                                </span>
-                            )}
-                        ></Column>
+                            <Column
+                                field="title"
+                                header="Преподаватели"
+                                body={(rowData) => (
+                                    <span key={rowData.id} className="text-[14px] hover:underline">
+                                        {rowData?.user.last_name} {rowData?.user.name} {rowData?.user.father_name}
+                                    </span>
+                                )}
+                            ></Column>
 
-                        <Column
-                            field="title"
-                            header="Статус"
-                            body={(rowData) => (
-                                <div className="w-full flex justify-center">
-                                    <i
-                                        className={`text-[13px] text-white rounded p-1
-                                    ${rowData?.course_audience_type_id === 2 ? 'bg-[var(--greenColor)]' : rowData?.course_audience_type_id === 3 ? 'bg-[var(--amberColor)]' : ''}
-                                    `}
-                                    >
-                                        {rowData?.course_audience_type_id === 2 ? 'Открытый' : rowData?.course_audience_type_id === 3 ? 'Платный' : ''}
-                                    </i>
-                                </div>
-                            )}
-                        ></Column>
+                            <Column
+                                field="title"
+                                header="Статус"
+                                body={(rowData) => (
+                                    <div className="w-full flex justify-center">
+                                        <i
+                                            className={`text-[13px] text-white rounded p-1
+                                        ${rowData?.course_audience_type_id === 2 ? 'bg-[var(--greenColor)]' : rowData?.course_audience_type_id === 3 ? 'bg-[var(--amberColor)]' : ''}
+                                        `}
+                                        >
+                                            {rowData?.course_audience_type_id === 2 ? 'Открытый' : rowData?.course_audience_type_id === 3 ? 'Платный' : ''}
+                                        </i>
+                                    </div>
+                                )}
+                            ></Column>
 
-                        <Column
-                            field="title"
-                            header="Действия"
-                            body={(rowData) => (
-                                <div className="w-full flex justify-center items-center gap-4">
-                                    <i
-                                        onClick={() => {
-                                            setPublicStatus(1);
-                                            setPublicState(true);
-                                            setPublicCourseId(rowData?.id);
-                                            setVisible(true);
-                                            handleDepCategoryFetch();
-                                        }}
-                                        className="cursor-pointer pi pi-check text-[white] shadow rounded-full bg-[var(--mainColor)] p-[5px]"
-                                        style={{ fontSize: '13px' }}
-                                    ></i>
-                                    <i
-                                        onClick={() => {
-                                            setPublicStatus(0);
-                                            setPublicState(false);
-                                            setPublicCourseId(rowData?.id);
-                                            setVisible(true);
-                                        }}
-                                        className="cursor-pointer pi pi-times text-[white] shadow rounded-full bg-[red] p-[5px]"
-                                        style={{ fontSize: '13px' }}
-                                    ></i>
-                                </div>
-                            )}
-                        ></Column>
-                    </DataTable>
+                            <Column
+                                field="title"
+                                header="Действия"
+                                body={(rowData) => (
+                                    <div className="w-full flex justify-center items-center gap-4">
+                                        <i
+                                            onClick={() => {
+                                                setPublicStatus(1);
+                                                setPublicState(true);
+                                                setPublicCourseId(rowData?.id);
+                                                setVisible(true);
+                                                handleDepCategoryFetch();
+                                            }}
+                                            className="cursor-pointer pi pi-check text-[white] shadow rounded-full bg-[var(--mainColor)] p-[5px]"
+                                            style={{ fontSize: '13px' }}
+                                        ></i>
+                                        <i
+                                            onClick={() => {
+                                                setPublicStatus(0);
+                                                setPublicState(false);
+                                                setPublicCourseId(rowData?.id);
+                                                setVisible(true);
+                                            }}
+                                            className="cursor-pointer pi pi-times text-[white] shadow rounded-full bg-[red] p-[5px]"
+                                            style={{ fontSize: '13px' }}
+                                        ></i>
+                                    </div>
+                                )}
+                            ></Column>
+                        </DataTable>
+                    }
                 </div>
             )}
             <div className={`shadow-[0px_-11px_5px_-6px_rgba(0,_0,_0,_0.1)]`}>
@@ -669,91 +727,53 @@ export default function RolesDepartment() {
     // category crud 
     const categorySection = (
         <div className="">
-            {media ? (
+            {/* {media ? (
                 itemCheckingTemplate(teachersCheck)
-            ) : (
-                <div className="main-bg overflow-x-auto scrollbar-thin">
-                    {/* crud */}
-                    <div>
-                        <p>Здесь вы можете создавать собственные категории для курсов и добавлять их в общие категории</p>
-                        <Button size='small' label='Создать' onClick={() => {
-                            setCategoryVisible(true);
-                        }} />
-                    </div>
-
-                    {/* table */}
-                    {/* <DataTable value={roles || []} emptyMessage="Загрузка" dataKey="id_kafedra" responsiveLayout="stack" breakpoint="960px" rows={5} className='min-w-[640px] overflow-x-auto'> */}
-                    <DataTable value={cateroriesList || []} dataKey="id" emptyMessage="..." loading={forDisabled} breakpoint="960px" rows={5} className="min-w-[640px] overflow-x-auto">
-                        <Column body={(_, { rowIndex }) => rowIndex + 1} header="#"></Column>
-
-                        <Column
-                            field="title"
-                            header="Категории"
-                            body={(rowData) => (
-                                <span key={rowData.id} className="text-[14px] ">
-                                    {rowData.title}
-                                </span>
-                            )}
-                        ></Column>
-
-                        <Column
-                            field="title"
-                            header="Преподаватели"
-                            body={(rowData) => (
-                                <span key={rowData.id} className="text-[14px] hover:underline">
-                                    {rowData?.user.last_name} {rowData?.user.name} {rowData?.user.father_name}
-                                </span>
-                            )}
-                        ></Column>
-
-                        <Column
-                            field="title"
-                            header="Статус"
-                            body={(rowData) => (
-                                <div className="w-full flex justify-center">
-                                    <i
-                                        className={`text-[13px] text-white rounded p-1
-                                    ${rowData?.course_audience_type_id === 2 ? 'bg-[var(--greenColor)]' : rowData?.course_audience_type_id === 3 ? 'bg-[var(--amberColor)]' : ''}
-                                    `}
-                                    >
-                                        {rowData?.course_audience_type_id === 2 ? 'Открытый' : rowData?.course_audience_type_id === 3 ? 'Платный' : ''}
-                                    </i>
-                                </div>
-                            )}
-                        ></Column>
-
-                        <Column
-                            field="title"
-                            header="Действия"
-                            body={(rowData) => (
-                                <div className="w-full flex justify-center items-center gap-4">
-                                    <i
-                                        onClick={() => {
-                                            setPublicStatus(1);
-                                            setPublicState(true);
-                                            setPublicCourseId(rowData?.id);
-                                            setVisible(true);
-                                            handleDepCategoryFetch();
-                                        }}
-                                        className="cursor-pointer pi pi-check text-[white] shadow rounded-full bg-[var(--mainColor)] p-[5px]"
-                                        style={{ fontSize: '13px' }}
-                                    ></i>
-                                    <i
-                                        onClick={() => {
-                                            setPublicStatus(0);
-                                            setPublicState(false);
-                                            setPublicCourseId(rowData?.id);
-                                            setVisible(true);
-                                        }}
-                                        className="cursor-pointer pi pi-times text-[white] shadow rounded-full bg-[red] p-[5px]"
-                                        style={{ fontSize: '13px' }}
-                                    ></i>
-                                </div>
-                            )}
-                        ></Column>
-                    </DataTable>
+            ) : ( */}
+            <div className='my-2 flex flex-col gap-1'>
+                <h3 className='text-[16px] sm:text-lg pb-1 shadow-[var(--bottom-shadow)]'>Здесь вы можете создавать собственные категории для курсов и добавлять их в общие категории</h3>
+                <div className='flex justify-end'>
+                    <Button size='small' label='Создать' onClick={() => {
+                        setCategoryVisible(true);
+                    }} />
                 </div>
-            )}
+            </div>
+            <div className="main-bg overflow-x-auto scrollbar-thin">
+                {/* crud */}
+
+                {/* table */}
+                {/* <DataTable value={roles || []} emptyMessage="Загрузка" dataKey="id_kafedra" responsiveLayout="stack" breakpoint="960px" rows={5} className='min-w-[640px] overflow-x-auto'> */}
+                <DataTable value={cateroriesList || []} dataKey="id" emptyMessage="..." loading={forDisabled} breakpoint="960px" rows={5} className="min-w-[640px] overflow-x-auto">
+                    <Column body={(_, { rowIndex }) => rowIndex + 1} header="#"></Column>
+
+                    <Column
+                        field="title"
+                        header="Категории"
+                        body={(rowData) => (
+                            <span key={rowData.id} className="text-[14px] ">
+                                {rowData.title}
+                            </span>
+                        )}
+                    ></Column>
+
+                    <Column
+                        field="title"
+                        header="Действия"
+                        body={(rowData) => (
+                            <div className="w-full flex justify-center items-center gap-4">
+                                <i className='cursor-pointer pi pi-pencil p-2 text-sm rounded bg-[var(--mainColor)] text-white' onClick={() => {
+                                    editing(rowData?.id);
+                                }}></i>
+                                <i className='cursor-pointer pi pi-trash p-2 text-sm rounded bg-[var(--redColor)] text-white' onClick={() => {
+                                    const options = getConfirmOptions(Number(rowData.id), () => handleCategoryDelete(rowData.id));
+                                    confirmDialog(options);
+                                }}></i>
+                            </div>
+                        )}
+                    ></Column>
+                </DataTable>
+            </div>
+            {/* )} */}
         </div>
     );
 
@@ -793,6 +813,7 @@ export default function RolesDepartment() {
                 icon="pi pi-times"
                 onClick={() => {
                     setCategoryVisible(false);
+                    setCategoryState(false);
                     clearValues();
                 }}
             />
@@ -803,8 +824,12 @@ export default function RolesDepartment() {
                 icon="pi pi-check"
                 onClick={() => {
                     setCategoryVisible(false);
-                    if(!categoryState) {
+                    if (!categoryState) {
                         handleCategoryAdd();
+                    }
+
+                    if (categoryState) {
+                        handleCategoryUpdate();
                     }
                 }}
                 autoFocus
@@ -918,6 +943,12 @@ export default function RolesDepartment() {
     }, [myedu_id]);
 
     useEffect(() => {
+        if (activeIndex === 2) {
+            handleDepCategoryFetch();
+        }
+    }, [activeIndex]);
+
+    useEffect(() => {
         handleFetchCourseOpenStatus();
         handleFetchDepartment(1, '', null, null, null);
     }, []);
@@ -989,6 +1020,7 @@ export default function RolesDepartment() {
                                     headerAction: { className: 'font-italic' }
                                 }}
                                 header="Доступ"
+                                className='text-[13px] sm:text-[18px]'
                             // className="p-tabview p-tabview-nav p-tabview-selected p-tabview-panels p-tabview-panel"
                             >
                                 {mainDepartamentSection}
@@ -1000,6 +1032,7 @@ export default function RolesDepartment() {
                                     headerAction: { className: 'font-italic' }
                                 }}
                                 header="Проверка"
+                                className='text-[13px] sm:text-[18px]'
                             // className="p-tabview p-tabview-nav p-tabview-selected p-tabview-panels p-tabview-panel"
                             >
                                 {checkDepartamentSection}
@@ -1011,6 +1044,7 @@ export default function RolesDepartment() {
                                     headerAction: { className: 'font-italic' }
                                 }}
                                 header="Категории курсов"
+                                className='text-[13px] sm:text-[18px]'
                             // className="p-tabview p-tabview-nav p-tabview-selected p-tabview-panels p-tabview-panel"
                             >
                                 {categorySection}
@@ -1062,6 +1096,7 @@ export default function RolesDepartment() {
                 onHide={() => {
                     if (!categoryVisible) return;
                     setCategoryVisible(false);
+                    setCategoryState(false);
                     clearValues();
                 }}
                 footer={categoryFooterContent}
@@ -1080,8 +1115,8 @@ export default function RolesDepartment() {
                             </div>
                         ) : (
                             <div className="flex flex-col gap-2">
-                                <InputText type='text' size={'small'} placeholder='Название категории' />
-                                <InputText type='text' size={'small'} placeholder='Описание' />
+                                <InputText type='text' size={'small'} value={editingLesson?.title} onChange={(e) => { setEditingLesson((prev) => prev && ({ ...prev, title: e.target.value })) }} placeholder='Название категории' />
+                                <InputText type='text' size={'small'} value={editingLesson?.description} onChange={(e) => { setEditingLesson((prev) => prev && ({ ...prev, description: e.target.value })) }} />
                             </div>
                         )}
                     </div>

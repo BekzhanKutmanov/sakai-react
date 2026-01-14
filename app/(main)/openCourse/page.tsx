@@ -39,9 +39,9 @@ export default function OpenCourse() {
     const [searchController, setSearchController] = useState(false);
     const [showVisisble, setShowVisible] = useState(false);
     const [progressSpinner, setProgressSpinner] = useState(false);
-    const [sendSignupList, setSendSignupList] = useState(false);
     const [mainProgressSpinner, setMainProgressSpinner] = useState(false);
     const [signUpList, setSignupList] = useState<number[]>([]);
+    const [signupDisabled, setSignupDisebled] = useState(false);
 
     const handleFetchOpenCourse = async (page: number, audence_type_id: number | string, search: string) => {
         setSkeleton(true);
@@ -120,7 +120,7 @@ export default function OpenCourse() {
 
     // signup courses list
     const handleSignupList = async (course: any) => {
-        course?.forEach((i:{id:number}) => params.append('course_Ids[]', String(i?.id)));
+        course?.forEach((i: { id: number }) => params.append('course_Ids[]', String(i?.id)));
         const data = await signupList(params);
         if (data && data?.signed_courses) {
             return data?.signed_courses;
@@ -130,10 +130,11 @@ export default function OpenCourse() {
     };
 
     // signUp
-    const сourseSignup = async (course_id: number) => {        
+    const сourseSignup = async (course_id: number) => {
+        setSignupDisebled(true);
         const data = await openCourseSignup(course_id);
         if (data?.success) {
-            // handleFetchOpenCourse(1, free === 'paid' ? '3' : free === 'free' ? '2' : '', search);
+            handleSendSingup();
             const list: any | null = await handleSignupList(coursesValue);
             if (list) {
                 setValueCourses((prev) =>
@@ -169,6 +170,12 @@ export default function OpenCourse() {
                 }
             }
         }
+        setSignupDisebled(false);
+    };
+
+    const handleSendSingup = async () => {
+        const list: any | null = await handleSignupList(coursesValue);
+        if (list) setSignupList(list);          
     };
 
     const clearFilter = () => {
@@ -208,35 +215,15 @@ export default function OpenCourse() {
 
     useEffect(() => {
         if (coursesValue?.length) {
-            setSendSignupList(true);
-        } else {
-            setSendSignupList(false);
-        }
-    }, [coursesValue]);
-
-    useEffect(() => {
-        const handleSendSingup = async () => {
-            const list: any | null = await handleSignupList(coursesValue);
-            if (list) {
-                setSignupList(list);
-                // setValueCourses((prev) =>
-                //     prev.map((item) => ({
-                //         ...item,
-                //         is_signed: list.signed_courses?.includes(item.id)
-                //     }))
-                // );
-            }
-        };
-        if (sendSignupList) {
             handleSendSingup();
         }
-    }, [sendSignupList]);
+    }, [coursesValue]);
 
     useEffect(() => {
         handleFetchOpenCourse(pageState, '', '');
     }, []);
 
-    if(mainProgressSpinner) return <div className='main-bg flex justify-center items-center h-[100vh]'><ProgressSpinner style={{ width: '60px', height: '60px' }} /></div>
+    if (mainProgressSpinner) return <div className='main-bg flex justify-center items-center h-[100vh]'><ProgressSpinner style={{ width: '60px', height: '60px' }} /></div>
 
     if (hasCourses) return <NotFound titleMessage="Данные не доступны" />;
 
@@ -309,7 +296,7 @@ export default function OpenCourse() {
                             return (
                                 <div key={item?.id}>
                                     {/* <OpenCourseShowCard course={item} /> */}
-                                    <OpenCourseCard course={item} link={{url: null, status: false}} courseShowProp={handleCourseShow}/>
+                                    <OpenCourseCard course={item} link={{ url: null, status: false }} courseShowProp={handleCourseShow} courseSignup={сourseSignup} signUpList={signUpList} btnDisabled={signupDisabled}/>
                                 </div>
                             );
                         })}
@@ -328,7 +315,7 @@ export default function OpenCourse() {
             )}
 
             <Sidebar visible={showVisisble} position="bottom" style={{ height: '90vh' }} onHide={() => setShowVisible(false)}>
-                {skeleton ? <GroupSkeleton count={1} size={{ width: '100%', height: '12rem' }} /> : courseDetail ? <OpenCourseShowCard course={courseDetail} courseSignup={сourseSignup} signUpList={signUpList}/> : <b className="flex justify-center">Данные не доступны</b>}
+                {skeleton ? <GroupSkeleton count={1} size={{ width: '100%', height: '12rem' }} /> : courseDetail ? <OpenCourseShowCard course={courseDetail} courseSignup={сourseSignup} signUpList={signUpList} btnDisabled={signupDisabled} /> : <b className="flex justify-center">Данные не доступны</b>}
             </Sidebar>
         </div>
     );

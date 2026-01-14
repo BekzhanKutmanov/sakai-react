@@ -5,6 +5,9 @@ import MyDateTime from '../MyDateTime';
 import { myMainCourseType } from '@/types/myMainCourseType';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import OpenCourseShowCard from './OpenCourseShowCard';
+import { Button } from 'primereact/button';
+import { useEffect, useState } from 'react';
 
 // компонент представляет с собой карточку одного курса
 // отобр. название, фото, тип (платный, бесплатный), дата, (срок), фио препода
@@ -17,10 +20,16 @@ export default function OpenCourseCard({
     course,
     link,
     courseShowProp,
+    courseSignup,
+    signUpList,
+    btnDisabled
 }: {
     course: myMainCourseType;
     link: { url: string | null; status: boolean };
     courseShowProp: (course_id: number) => void;
+    courseSignup: (id: number) => void;
+    signUpList: number[];
+    btnDisabled: boolean;
 }) {
     const options: OptionsType = {
         year: '2-digit',
@@ -32,6 +41,14 @@ export default function OpenCourseCard({
     };
 
     const pathname = usePathname();
+    const [isSigned, setIsSigned] = useState<number | null | undefined>(null);
+
+    useEffect(() => {
+        if (signUpList?.length) {
+            const signupId: number | undefined = signUpList?.find((id) => id === course?.id);
+            setIsSigned(signupId);
+        }
+    }, [signUpList]);
 
     const imageBodyTemplate = (product: any) => {
         const image = product.image;
@@ -52,16 +69,15 @@ export default function OpenCourseCard({
     };
 
     return (
-        <div className="flex flex-col shadow rounded p-2 sm:p-4 gap-3 w-full hover:shadow-lg">
+        <div className="flex flex-col shadow rounded p-2 sm:p-4 sm:pb-2 gap-4 w-full hover:shadow-lg">
             {/* header section */}
             <div className="flex items-start justify-between gap-2 flex-col sm:flex-row">
                 <div className={`w-full flex justify-between gap-1 items-start`}>
                     <Link href={link.url || '#'}>{imageBodyTemplate(course)}</Link>
                     {/* {titlePos === 'left' && <b className="cursor-pointer w-full sm:max-w-[350px] break-words text-[var(--mainColor)] underline" onClick={()=> courseShowProp(course?.id)}>{course?.title}</b>} */}
                     <div
-                        className={`flex sm:hidden gap-1 items-center text-sm text-white rounded p-1 mb-1 ${
-                            course?.audience_type?.name === 'open' ? 'bg-[var(--greenColor)]' : course?.audience_type?.name === 'wallet' ? 'bg-[var(--amberColor)]' : ''
-                        }`}
+                        className={`flex sm:hidden gap-1 items-center text-sm text-white rounded p-1 mb-1 ${course?.audience_type?.name === 'open' ? 'bg-[var(--greenColor)]' : course?.audience_type?.name === 'wallet' ? 'bg-[var(--amberColor)]' : ''
+                            }`}
                     >
                         <i className={course?.audience_type?.icon} style={{ fontSize: '14px' }}></i>
                         <i className="text-[13px]">{course?.audience_type?.name === 'open' ? 'Бесплатный' : course?.audience_type?.name === 'wallet' ? 'Платный' : ''}</i>
@@ -69,9 +85,8 @@ export default function OpenCourseCard({
                 </div>
                 <div className="w-full flex flex-col items-end">
                     <div
-                        className={`hidden sm:flex gap-1 items-center text-sm text-white rounded p-1 mb-1 ${
-                            course?.audience_type?.name === 'open' ? 'bg-[var(--greenColor)]' : course?.audience_type?.name === 'wallet' ? 'bg-[var(--amberColor)]' : ''
-                        }`}
+                        className={`hidden sm:flex gap-1 items-center text-sm text-white rounded p-1 mb-1 ${course?.audience_type?.name === 'open' ? 'bg-[var(--greenColor)]' : course?.audience_type?.name === 'wallet' ? 'bg-[var(--amberColor)]' : ''
+                            }`}
                     >
                         <i className={course?.audience_type?.icon} style={{ fontSize: '14px' }}></i>
                         <i className="text-[13px]">{course?.audience_type?.name === 'open' ? 'Бесплатный' : course?.audience_type?.name === 'wallet' ? 'Платный' : ''}</i>
@@ -90,13 +105,27 @@ export default function OpenCourseCard({
                 </div>
             </div>
 
-            <div className="flex items-center gap-1 justify-between">
-                {pathname !== '/openCourse/activeCourse' ? <div className="cursor-pointer text-sm w-full text-[var(--mainColor)]" onClick={() => courseShowProp(course?.id)}>
-                    Подробнее...
-                </div> : ''}
+            <div className='flex flex-col'>
+                <div className="flex items-center gap-1 justify-between">
+                    {pathname !== '/openCourse/activeCourse' ?
+                        <div className="w-full">
+                            {typeof isSigned === 'number' ? (
+                                <Button label="Вы записаны" disabled size="small" className=" bg-[var(--amberColor)] text-sm mini-button" onClick={() => courseSignup(course?.id)} />
+                            ) : !course?.is_signed ? (
+                                <Button label="Записаться на курс" disabled={btnDisabled} size="small" className=" text-sm mini-button" onClick={() => courseSignup(course?.id)} />
+                            ) : (
+                                ''
+                            )}
+                        </div>
+                        : ''
+                    }
 
+                    {pathname !== '/openCourse/activeCourse' ? <div className="cursor-pointer flex justify-end text-sm w-full text-[var(--mainColor)]" onClick={() => courseShowProp(course?.id)}>
+                        Подробнее...
+                    </div> : ''}
+                </div>
                 {/* data */}
-                <div className="w-full flex justify-end text-[13px] order-1 sm:order-2">
+                <div className="w-full flex justify-end text-[11px] order-1 sm:order-2">
                     <MyDateTime createdAt={course?.created_at} options={options} />
                 </div>
             </div>
