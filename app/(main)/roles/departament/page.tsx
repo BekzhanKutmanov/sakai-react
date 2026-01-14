@@ -6,9 +6,10 @@ import useErrorMessage from '@/hooks/useErrorMessage';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { LayoutContext } from '@/layout/context/layoutcontext';
 import { fetchCourseOpenStatus } from '@/services/courses';
-import { controlDepartamentUsers, depCategoryAdd, depCategoryDelete, depCategoryFetch, depCategoryShow, depCategoryUpdate, fetchRolesDepartment, fetchTeacherCheck, teacherCoursePublic } from '@/services/roles/roles';
+import { controlDepartamentUsers, depCategoryAdd, depCategoryDelete, depCategoryFetch, depCategoryShow, depCategoryUpdate, depLangFetch, fetchRolesDepartment, fetchTeacherCheck, teacherCoursePublic } from '@/services/roles/roles';
 import { CourseType } from '@/types/courseType';
 import { AudenceType } from '@/types/courseTypes/AudenceTypes';
+import { MainLangType } from '@/types/openCourse/MainLangType';
 import { TabViewChange } from '@/types/tabViewChange';
 import { getConfirmOptions } from '@/utils/getConfirmOptions';
 import { Button } from 'primereact/button';
@@ -17,6 +18,7 @@ import { confirmDialog } from 'primereact/confirmdialog';
 import { DataTable } from 'primereact/datatable';
 import { Dialog } from 'primereact/dialog';
 import { Dropdown, DropdownChangeEvent } from 'primereact/dropdown';
+import { InputSwitch } from 'primereact/inputswitch';
 import { InputText } from 'primereact/inputtext';
 import { Paginator } from 'primereact/paginator';
 import { ProgressSpinner } from 'primereact/progressspinner';
@@ -51,6 +53,8 @@ export default function RolesDepartment() {
         created_at: string,
         updated_at: string
     }
+
+    interface SelectLangType extends Pick<MainLangType, 'title' | 'description' | 'id'> { };
 
     const showError = useErrorMessage();
     const { setMessage } = useContext(LayoutContext);
@@ -108,6 +112,13 @@ export default function RolesDepartment() {
     const [editingLesson, setEditingLesson] = useState<MainCategoryType | null>(null);
     const [checkOpenCourseEmpty, setCheckOpenCourseEmpty] = useState<boolean>(false);
 
+    const [langList, setLangList] = useState<MainLangType[] | null>(null);
+    const [langSelectedId, setLangSelectedId] = useState<SelectLangType | null>({ title: 'Все', id: null, description: '', });
+    const [depSelectLang, setSelectLang] = useState<SelectLangType[]>([{ title: 'Выберите категорию', id: null, description: '' }]);
+    const [language_id, setLanguage_id] = useState<number | null>(null);
+
+    const [is_featured, setFeaturedChecked] = useState<boolean>(false);
+
     const clearValues = () => {
         setPublicCourseId(null);
         setPublicState(null);
@@ -115,6 +126,9 @@ export default function RolesDepartment() {
         setCategoryes([{ title: 'Выберите категорию', id: null, description: '' }]);
         setCategorySelectedId({ title: 'Все', id: null, description: '' });
         setPublicCategoryId(null);
+        setLanguage_id(null);
+        setSelectLang([{ title: 'Выберите категорию', id: null, description: '' }]);
+        setLangSelectedId({ title: 'Все', id: null, description: '' });
     };
 
     // fetch types
@@ -195,7 +209,7 @@ export default function RolesDepartment() {
         setMainProgressSpinner(true);
         const res = await fetchTeacherCheck(page, search, myedu_id, selectedTypeId?.role_id ? selectedTypeId?.role_id : null);
         if (res?.success) {
-            if(res.data.data.length < 1){
+            if (res.data.data.length < 1) {
                 setCheckOpenCourseEmpty(true);
             } else {
                 setTeacherCheck(res?.data?.data);
@@ -216,12 +230,12 @@ export default function RolesDepartment() {
     const handleCoursePublic = async (comment: string | null) => {
         setMainProgressSpinner(true);
         clearValues();
-        const res = await teacherCoursePublic(Number(publicCourseId) || null, publicStatus, comment, course_category_id);
+        const res = await teacherCoursePublic(Number(publicCourseId) || null, publicStatus, comment, course_category_id, language_id, is_featured);
         if (res?.success) {
             handleFetchTeacherCheck(checkPageState, search, myedu_id, selectedTypeId);
             setMessage({ state: true, value: { severity: 'success', summary: 'Курс успешно изменен!', detail: '' } });
         } else {
-            if (res.response.status === 400) {
+            if (res?.response?.status === 400) {
                 setMessage({ state: true, value: { severity: 'error', summary: res.response.data.message, detail: '' } });
             } else {
                 setMessage({ state: true, value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' } });
@@ -258,7 +272,7 @@ export default function RolesDepartment() {
                 setCategoriesList(res);
             }
         } else {
-            if (res.response.status === 400) {
+            if (res?.response?.status === 400) {
                 setMessage({ state: true, value: { severity: 'error', summary: res.response.data.message, detail: '' } });
             } else {
                 setMessage({ state: true, value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' } });
@@ -285,7 +299,7 @@ export default function RolesDepartment() {
             setMessage({ state: true, value: { severity: 'success', summary: 'Успешно добавлено!', detail: '' } });
         }
         else {
-            if (res.response.status === 400) {
+            if (res?.response?.status === 400) {
                 setMessage({ state: true, value: { severity: 'error', summary: res.response.data.message, detail: '' } });
             } else {
                 setMessage({ state: true, value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' } });
@@ -324,6 +338,26 @@ export default function RolesDepartment() {
             setMessage({ state: true, value: { severity: 'success', summary: 'Успешно изменено!', detail: '' } });
         }
         else {
+            if (res?.response?.status === 400) {
+                setMessage({ state: true, value: { severity: 'error', summary: res.response.data.message, detail: '' } });
+            } else {
+                setMessage({ state: true, value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' } });
+                if (res?.response?.status) {
+                    showError(res.response.status);
+                }
+            }
+        }
+    };
+
+    // lang
+    const handleDepLangFetch = async () => {
+        const res = await depLangFetch();
+        if (res && res?.success) {
+            if (activeIndex === 1) {
+                // handleFetchTeacherCheck(checkPageState, search, myedu_id, selectedTypeId);
+                setSelectLang(res?.data);
+            }
+        } else {
             if (res?.response?.status === 400) {
                 setMessage({ state: true, value: { severity: 'error', summary: res.response.data.message, detail: '' } });
             } else {
@@ -603,6 +637,7 @@ export default function RolesDepartment() {
                                                 setPublicCourseId(item?.id);
                                                 setVisible(true);
                                                 handleDepCategoryFetch();
+                                                handleDepLangFetch();
                                             }}
                                         >
                                             Опубликовать
@@ -637,7 +672,7 @@ export default function RolesDepartment() {
             ) : (
                 <div className="main-bg overflow-x-auto scrollbar-thin">
                     {/* <DataTable value={roles || []} emptyMessage="Загрузка" dataKey="id_kafedra" responsiveLayout="stack" breakpoint="960px" rows={5} className='min-w-[640px] overflow-x-auto'> */}
-                    {checkOpenCourseEmpty ? <p>Данных нет</p>
+                    {checkOpenCourseEmpty ? <p className='text-center text-md'>Данных нет</p>
                         :
                         <DataTable value={teachersCheck || []} dataKey="id" emptyMessage="..." loading={forDisabled} breakpoint="960px" rows={5} className="min-w-[640px] overflow-x-auto">
                             <Column body={(_, { rowIndex }) => rowIndex + 1} header="#"></Column>
@@ -690,6 +725,7 @@ export default function RolesDepartment() {
                                                 setPublicCourseId(rowData?.id);
                                                 setVisible(true);
                                                 handleDepCategoryFetch();
+                                                handleDepLangFetch();
                                             }}
                                             className="cursor-pointer pi pi-check text-[white] shadow rounded-full bg-[var(--mainColor)] p-[5px]"
                                             style={{ fontSize: '13px' }}
@@ -711,6 +747,7 @@ export default function RolesDepartment() {
                     }
                 </div>
             )}
+            
             <div className={`shadow-[0px_-11px_5px_-6px_rgba(0,_0,_0,_0.1)]`}>
                 <Paginator
                     first={(checkPagination.current_page - 1) * checkPagination.per_page}
@@ -793,7 +830,7 @@ export default function RolesDepartment() {
             <Button
                 label={publicState ? 'Опубликовать' : 'Аннулировать'}
                 size="small"
-                className={`${publicState ? categorySelectedId?.id ? '' : 'opacity-50 pointer-events-none' : ''}`}
+                className={`${publicState ? categorySelectedId?.id && language_id ? '' : 'opacity-50 pointer-events-none' : ''}`}
                 icon="pi pi-check"
                 onClick={() => {
                     setVisible(false);
@@ -1071,12 +1108,36 @@ export default function RolesDepartment() {
                         {/* Аннулирование */}
                         {publicState ? (
                             <div className="flex flex-col gap-2">
-                                <b className="px-1">Выберите категорию для курса</b>
-                                <div className='max-w-[95%]'>
-                                    <Dropdown value={categorySelectedId} itemTemplate={categoryItemTemplate} valueTemplate={categoryValueTemplate} onChange={(e: DropdownChangeEvent) => {
-                                        setCategorySelectedId(e.value);
-                                        setPublicCategoryId(e.value?.id);
-                                    }} options={depCategoryes} optionLabel="name" placeholder="..." className="w-full text-sm" />
+                                <div className="flex flex-col gap-2">
+                                    <b className="px-1">Выберите категорию для курса</b>
+                                    <div className='max-w-[95%]'>
+                                        <Dropdown value={categorySelectedId} itemTemplate={categoryItemTemplate} valueTemplate={categoryValueTemplate} onChange={(e: DropdownChangeEvent) => {
+                                            setCategorySelectedId(e.value);
+                                            setPublicCategoryId(e.value?.id);
+                                        }} options={depCategoryes} optionLabel="name" placeholder="..." className="w-full text-sm" />
+                                    </div>
+                                </div>
+                                <div className="flex flex-col gap-2">
+                                    <b className="px-1">Выберите язык для курса</b>
+                                    <div className='max-w-[95%] flex juctify-center items-start'>
+                                        <Dropdown value={langSelectedId} itemTemplate={categoryItemTemplate} valueTemplate={categoryValueTemplate} onChange={(e: DropdownChangeEvent) => {
+                                            setLangSelectedId(e.value);
+                                            setLanguage_id(e.value?.id);
+                                        }} options={depSelectLang} optionLabel="name" placeholder="..." className="w-full text-sm" />
+                                    </div>
+                                </div>
+                                <div className='flex items-center'>
+                                    <span>Рекомендую</span>
+                                    <label className="custom-radio">
+                                        <input
+                                            type="checkbox"
+                                            className={`customCheckbox`}
+                                            onChange={(e) => {
+                                                setFeaturedChecked(e.target.checked);
+                                            }}
+                                        />
+                                        <span className="checkbox-mark"></span>
+                                    </label>
                                 </div>
                             </div>
                         ) : (
@@ -1089,6 +1150,7 @@ export default function RolesDepartment() {
                 }
             </Dialog>
 
+            {/* catetory */}
             <Dialog
                 header={!categoryState ? 'Создать категорию' : 'Изменить категорию'}
                 visible={categoryVisible}

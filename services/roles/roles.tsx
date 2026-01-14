@@ -95,12 +95,14 @@ export const fetchTeacherCheck = async (page: number | null, search: string | nu
 };
 
 // teacher checking pubclic
-export const teacherCoursePublic = async (course_id: number | null, publicStatus: number | null, comment: string | null, course_category_id: number | null) => {
+export const teacherCoursePublic = async (course_id: number | null, publicStatus: number | null, comment: string | null, course_category_id: number | null, language_id: number | null, is_featured: boolean) => {
     const payload = {
         course_id,
         public: publicStatus,
         comment,
-        course_category_id: course_category_id
+        course_category_id: course_category_id,
+        language_id: language_id,
+        is_featured: is_featured
     };
 
     try {
@@ -187,6 +189,19 @@ export const depCategoryShow = async (id: number | null) => {
         return data;
     } catch (err) {
         console.log('Ошибка', err);
+        return err;
+    }
+};
+
+// departament lang
+export const depLangFetch = async () => {
+    try {
+        const res = await axiosInstance.get(`/open/languages`);
+
+        const data = res.data;
+        return data;
+    } catch (err) {
+        console.log('Ошибка при получении', err);
         return err;
     }
 };

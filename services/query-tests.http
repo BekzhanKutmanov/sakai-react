@@ -34,12 +34,6 @@
 # Authorization: Bearer {{token}} 
 # Content-Type: application/json 
 
-POST https://api-dev.mooc.oshsu.kg/public/api/roles/department/public/control
+GET https://api-dev.mooc.oshsu.kg/public/api/open/courses/for/main
 Authorization: Bearer {{token}} 
 Content-Type: application/json 
-
-{
-    "worker_id" : 10,
-    "course_audience_type_id" : 2,
-    "active": false
-}
