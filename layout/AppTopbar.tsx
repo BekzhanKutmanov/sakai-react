@@ -112,9 +112,10 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
         }
         // console.log('Массив типов ', typeArr);
         return (
-            <div onClick={stop} onMouseDown={stop} className={`flex flex-col justify-center p-2 gap-1`}>
+            <div className={`flex flex-col justify-center p-2 gap-1`}>
                 {groupNotificationVisible ? <i className="cursor-pointer pi pi-times flex justify-end" onClick={() => setGroupNotificationVisible(false)}></i> : ''}
-
+                {/* <span onClick={stop} onMouseDown={stop}>stop</span> */}
+                
                 {/* Отображаем уже сгруппированные например только практические  */}
                 {/* {groupNotificationVisible && groupNotifications?.length > 0
                     ? groupNotifications?.map((item) => {

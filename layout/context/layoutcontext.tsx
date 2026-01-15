@@ -235,6 +235,7 @@ export const LayoutProvider = ({ children }: ChildContainerProps) => {
             {/* <GlobalLoading /> */}
             <MyGlobalLoader/>
             <ConfirmDialog />
+
             {message.state && <Message />}
             {children}
         </LayoutContext.Provider>

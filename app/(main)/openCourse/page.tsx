@@ -9,7 +9,9 @@ import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { LayoutContext } from '@/layout/context/layoutcontext';
 import { fetchOpenCourses, openCourseShow, openCourseSignup, signupList } from '@/services/openCourse';
 import { myMainCourseType } from '@/types/myMainCourseType';
+import { CourseCategoryOption } from '@/types/openCourse/CourseCategoryOption';
 import { Button } from 'primereact/button';
+import { ConfirmDialog } from 'primereact/confirmdialog';
 import { InputText } from 'primereact/inputtext';
 import { Paginator } from 'primereact/paginator';
 import { ProgressSpinner } from 'primereact/progressspinner';
@@ -23,8 +25,8 @@ export default function OpenCourse() {
 
     const params = new URLSearchParams();
     const [mainCourse, setMainCourse] = useState([]);
-    const [coursesValue, setValueCourses] = useState<myMainCourseType[]>([]);
-    const [courseDetail, setCourseDetail] = useState<myMainCourseType | null>(null);
+    const [coursesValue, setValueCourses] = useState<CourseCategoryOption[]>([]);
+    const [courseDetail, setCourseDetail] = useState<CourseCategoryOption | null>(null);
     const [free, setFree] = useState<'free' | 'paid' | null>(null);
     const [search, setSearch] = useState<string>('');
     const [skeleton, setSkeleton] = useState(false);

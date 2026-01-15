@@ -2,7 +2,7 @@
 
 import useErrorMessage from '@/hooks/useErrorMessage';
 import { LayoutContext } from '@/layout/context/layoutcontext';
-import { connectStreams, fetchStreams, newConnectStreams } from '@/services/streams';
+import { fetchStreams, newConnectStreams } from '@/services/streams';
 import { Button } from 'primereact/button';
 import { DataView } from 'primereact/dataview';
 import React, { useContext, useEffect, useState } from 'react';
@@ -116,28 +116,29 @@ const StreamList = React.memo(function StreamList({
                 value: { severity: 'success', summary: 'Успешно добавлен!', detail: '' }
             });
         } else {
+            const teachers = () => {
+                if (data?.teachers?.length) {
+                    return (
+                        <div className="flex flex-col gap-2">
+                            <span>{ data?.message }</span>
+                            {data.teachers?.map((item: any, idx: number) => {
+                                return (
+                                    <div key={idx} className={`flex gap-1 flex-col`}>
+                                        <span>
+                                            {item?.last_name} {item?.name && item?.name[0] + '.'} {item?.father_name && item?.father_name?.length > 1 && item?.father_name[0] + '.'}
+                                        </span>
+                                        <small className="text-[var(--mainColor)] underline">{item?.streams?.map((item: number) => item + ' ')}</small>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    );
+                } else {
+                    return '';
+                }
+            };
             if (data?.status === 400) {
                 if (data?.teachers?.length) {
-                    const teachers = () => {
-                        if (data?.teachers?.length) {
-                            return (
-                                <div className="flex flex-col gap-2">
-                                    {data.teachers?.map((item: any, idx: number) => {
-                                        return (
-                                            <div key={idx} className={`flex gap-1 flex-col`}>
-                                                <span>
-                                                    {item?.last_name} {item?.name && item?.name[0] + '.'} {item?.father_name && item?.father_name.length > 1 && item?.father_name[0] + '.'}
-                                                </span>
-                                                <small className="text-[var(--mainColor)] underline">{item?.streams?.map((item: number) => item + ' ')}</small>
-                                            </div>
-                                        );
-                                    })}
-                                </div>
-                            );
-                        } else {
-                            return '';
-                        }
-                    };
                     setMessage({
                         state: true,
                         value: { severity: 'error', summary: data?.message, detail: <div style={{ whiteSpace: 'pre-line' }}>{teachers()}</div> }
@@ -149,10 +150,10 @@ const StreamList = React.memo(function StreamList({
                     });
                 }
             } else {
-                showError(data.response.status);
+                showError(data?.response?.status);
                 setMessage({
                     state: true,
-                    value: { severity: 'error', summary: 'Ошибка при добавлении', detail: '' }
+                    value: { severity: 'error', summary: data?.teachers?.length ? '' : 'Ошибка при добавлении', detail: data?.teachers?.length ? <div style={{ whiteSpace: 'pre-line' }}>{teachers()}</div> : 'Ошибка при добавлении' }
                 });
             }
         }
@@ -303,7 +304,7 @@ const StreamList = React.memo(function StreamList({
                     setVisible(false);
                     // clearValues();
                 }}
-                // footer={footerContent}
+            // footer={footerContent}
             >
                 {streams && streams.length > 0 ? (
                     <DataTable value={streams} className="w-full my-custom-table" loading={skeleton} dataKey="stream_id" emptyMessage="Нет данных" key={JSON.stringify(pendingChanges)} responsiveLayout="stack" breakpoint="960px" rows={5}>

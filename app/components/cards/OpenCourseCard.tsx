@@ -5,9 +5,11 @@ import MyDateTime from '../MyDateTime';
 import { myMainCourseType } from '@/types/myMainCourseType';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import OpenCourseShowCard from './OpenCourseShowCard';
 import { Button } from 'primereact/button';
 import { useEffect, useState } from 'react';
+import { CourseCategoryOption } from '@/types/openCourse/CourseCategoryOption';
+import { confirmDialog, ConfirmDialog } from 'primereact/confirmdialog';
+import { Dialog } from 'primereact/dialog';
 
 // компонент представляет с собой карточку одного курса
 // отобр. название, фото, тип (платный, бесплатный), дата, (срок), фио препода
@@ -24,7 +26,7 @@ export default function OpenCourseCard({
     signUpList,
     btnDisabled
 }: {
-    course: myMainCourseType;
+    course: CourseCategoryOption;
     link: { url: string | null; status: boolean };
     courseShowProp: (course_id: number) => void;
     courseSignup: (id: number) => void;
@@ -42,6 +44,7 @@ export default function OpenCourseCard({
 
     const pathname = usePathname();
     const [isSigned, setIsSigned] = useState<number | null | undefined>(null);
+    const [selectCourseId, setSelectedCourseId] = useState<number | null>(null);
 
     useEffect(() => {
         if (signUpList?.length) {
@@ -68,8 +71,22 @@ export default function OpenCourseCard({
         );
     };
 
+    const confirm1 = (id: number) => {
+        confirmDialog({
+            message: 'Вы точно хотите записаться на курс?',
+            header: 'Подтверждение',
+            icon: 'pi pi-exclamation-triangle',
+            defaultFocus: 'accept',
+            acceptLabel: 'Записаться',
+            rejectLabel: 'Назад',
+            rejectClassName: 'p-button-secondary reject-button',
+            accept: ()=> courseSignup(id)
+        });
+    };
+
     return (
         <div className="flex flex-col shadow rounded p-2 sm:p-4 sm:pb-2 gap-4 w-full hover:shadow-lg">
+
             {/* header section */}
             <div className="flex items-start justify-between gap-2 flex-col sm:flex-row">
                 <div className={`w-full flex justify-between gap-1 items-start`}>
@@ -106,13 +123,27 @@ export default function OpenCourseCard({
             </div>
 
             <div className='flex flex-col'>
+                {
+                    course?.category?.title ?
+                        <div className='flex items-center gap-2'>
+                            <div className="flex justify-center w-[40px] sm:w-[30px] h-[40px] sm:h-[30px] rounded-full overflow-hidden shadow-2">
+                                <img src={'/layout/images/no-image.png'} alt="Course image" className="w-full object-cover border-round" />
+                            </div>
+                            <p className='text-sm max-w-[300px] break-words'>{course?.category.title}</p>
+                        </div>
+                        : ''
+                }
+
                 <div className="flex items-center gap-1 justify-between">
                     {pathname !== '/openCourse/activeCourse' ?
                         <div className="w-full">
                             {typeof isSigned === 'number' ? (
-                                <Button label="Вы записаны" disabled size="small" className=" bg-[var(--amberColor)] text-sm mini-button" onClick={() => courseSignup(course?.id)} />
+                                <Button label="Вы записаны" disabled size="small" className=" bg-[var(--amberColor)] text-sm mini-button" />
                             ) : !course?.is_signed ? (
-                                <Button label="Записаться на курс" disabled={btnDisabled} size="small" className=" text-sm mini-button" onClick={() => courseSignup(course?.id)} />
+                                <Button label="Записаться на курс" disabled={btnDisabled} size="small" className=" text-sm mini-button" onClick={() => {
+                                    setSelectedCourseId(course?.id);
+                                    confirm1(course?.id);
+                                }} />
                             ) : (
                                 ''
                             )}

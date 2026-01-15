@@ -114,7 +114,7 @@ export default function MainNotificatoin() {
                         <i className="cursor-pointer pi pi-trash text-[white] bg-[var(--redColor)] rounded text-sm p-1" onClick={() => handleDeleteVisible(notificate?.id)}></i>
                         <div className="w-full flex items-center gap-2 justify-between">
                             {<span className="ml-2 max-w-[350px] text-nowrap overflow-hidden text-ellipsis">{notificate?.title}</span>}
-                            <small className=" p-1 bg-[var(--redWeakColor)] rounded">{notificate?.type?.title}</small>
+                            <small className="p-1 bg-[var(--redWeakColor)] rounded">{notificate?.type?.title}</small>
                         </div>
                     </div>
                 </div>

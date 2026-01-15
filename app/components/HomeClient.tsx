@@ -12,16 +12,27 @@ import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { MainPageStatistics } from '@/types/main/MainPageStatistic';
 import { mainPageStatistics } from '@/services/main/main';
 import useErrorMessage from '@/hooks/useErrorMessage';
-import { fetchOpenCourses, openCourseShow, openCourseSignup, signupList } from '@/services/openCourse';
+import { fetchOpenCoursesMainPage, openCourseShow, openCourseSignup, signupList } from '@/services/openCourse';
 import { myMainCourseType } from '@/types/myMainCourseType';
 import MyDateTime from './MyDateTime';
 import { OptionsType } from '@/types/OptionsType';
-import { Paginator } from 'primereact/paginator';
 import GroupSkeleton from './skeleton/GroupSkeleton';
 import { Sidebar } from 'primereact/sidebar';
 import OpenCourseShowCard from './cards/OpenCourseShowCard';
 
 export default function HomeClient() {
+    // types 
+    interface CourseCategoryOption extends myMainCourseType {
+        category: { title: string, id: number | null, description: string | null },
+        is_featured: boolean
+    }
+
+    interface CoursesType {
+        new_courses: string,
+        best_courses: string,
+        popular_courses: string,
+    }
+
     const params = new URLSearchParams();
     const { user, setGlobalLoading, setMessage } = useContext(LayoutContext);
     const showError = useErrorMessage();
@@ -31,15 +42,11 @@ export default function HomeClient() {
     const [showVisisble, setShowVisible] = useState(false);
     const [hasCourses, setHasCourses] = useState(false);
     const [coursesValue, setValueCourses] = useState<myMainCourseType[]>([]);
-    const [pagination, setPagination] = useState<{ currentPage: number; total: number; perPage: number }>({
-        currentPage: 1,
-        total: 0,
-        perPage: 0
-    });
-    const [pageState, setPageState] = useState<number>(1);
-    const [courseDetail, setCourseDetail] = useState<myMainCourseType | null>(null);
+    const [courseDetail, setCourseDetail] = useState<CourseCategoryOption | null>(null);
     const [signUpList, setSignupList] = useState<number[]>([]);
-    const [sendSignupList, setSendSignupList] = useState(false);
+    const [newCourses, setNewCourses] = useState<CourseCategoryOption[]>([]);
+    const [bestCourses, setBestCourses] = useState<CourseCategoryOption[]>([]);
+    const [popularCourses, setPopular_courses] = useState<CourseCategoryOption[]>([]);
 
     const options: OptionsType = {
         year: '2-digit',
@@ -56,37 +63,29 @@ export default function HomeClient() {
         if ((data && data?.students) || data?.workers || data?.course) setStatistics(data);
     };
 
-    const handleFetchOpenCourse = async (page: number, audence_type_id: number | string, search: string) => {
+    const handleFetchNewCourse = async () => {
         setSkeleton(true);
-        const data = await fetchOpenCourses(page, audence_type_id, search);
-        
-        if (data && Array.isArray(data.data)) {
+        const data = await fetchOpenCoursesMainPage();
+        if (data && data?.new_courses) {
             setHasCourses(false);
-            setValueCourses(data.data);
-            setPagination({
-                currentPage: data.current_page,
-                total: data?.total,
-                perPage: data?.per_page
-            });
-        } else {
-            setHasCourses(true);
-            setMessage({
-                state: true,
-                value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
-            });
-            if (data?.response?.status) {
-                if (data?.response?.status == '400') {
-                    setMessage({
-                        state: true,
-                        value: { severity: 'error', summary: 'Ошибка!', detail: data?.response?.data?.message }
-                    });
-                } else {
-                    showError(data.response.status);
-                }
-            }
+            MainCoursesPreperation(data);
+            setNewCourses(data?.new_courses);
+            setBestCourses(data?.best_courses);
+            setPopular_courses(data?.popular_courses);
         }
         setSkeleton(false);
     };
+
+    const MainCoursesPreperation = (data: Record<string, CourseCategoryOption[]>)=> {
+        const forMainCourses = [];
+        for (const key in data) {
+            const coureseTypeItems = data[key];
+            forMainCourses.push(...coureseTypeItems);
+        }        
+        if(forMainCourses?.length){
+            setValueCourses(forMainCourses);
+        }
+    }
 
     const imageBodyTemplate = (product: any, idx: number) => {
         const image = product.image;
@@ -108,28 +107,21 @@ export default function HomeClient() {
         );
     };
 
-    // Ручное управление пагинацией
-    const handlePageChange = (page: number) => {
-        handleFetchOpenCourse(page, '', '');
-        setPageState(page);
-    };
-
-    const OpenCourse = ({ course, index }: { course: myMainCourseType; index: number }) => {
+    const OpenCourse = ({ course, index }: { course: CourseCategoryOption; index: number }) => {
         return (
-            <div key={course?.id} className="max-h-[430px] min-h-[350px] sm:max-h-[430px] sm:min-h-[330px] w-full sm:min-w-[300px] sm:max-w-[300px] shadow rounded p-2 flex flex-col gap-2 justify-between">
+            <div key={course?.id} className="max-h-[410px] min-h-[350px] bg-white w-full sm:min-w-[280px] sm:max-w-[280px] shadow-md rounded p-2 flex flex-col gap-2 justify-between">
                 <div className="relative">
                     <div className="flex justify-center items-center">{imageBodyTemplate(course, index)}</div>
                     <div
-                        className={`absolute top-0 right-0 sm:flex gap-1 items-center text-sm text-white rounded p-1 mb-1 ${
-                            course?.audience_type?.name === 'open' ? 'bg-[var(--greenColor)]' : course?.audience_type?.name === 'wallet' ? 'bg-[var(--amberColor)]' : ''
-                        }`}
+                        className={`absolute top-0 right-0 sm:flex gap-1 items-center text-sm text-white rounded p-1 mb-1 ${course?.audience_type?.name === 'open' ? 'bg-[var(--greenColor)]' : course?.audience_type?.name === 'wallet' ? 'bg-[var(--amberColor)]' : ''
+                            }`}
                     >
                         <i className={course?.audience_type?.icon} style={{ fontSize: '13px' }}></i>
                         <i className="text-[12px]">{course?.audience_type?.name === 'open' ? 'Бесплатный' : course?.audience_type?.name === 'wallet' ? 'Платный' : ''}</i>
                     </div>
                 </div>
 
-                <div className="flex justify-center flex-col items-center">
+                <div className="flex justify-center flex-col">
                     {course.status ? (
                         <b
                             onClick={() => handleCourseShow(course?.id)}
@@ -146,8 +138,24 @@ export default function HomeClient() {
                     )}
 
                     <div className="max-h-[20px] overflow-hidden text-ellipsis block">
-                        <small className="max-w-[170px] overflow-hidden text-nowrap  text-ellipsis block ">{course?.description}</small>
+                        <small className="max-w-[170px] overflow-hidden text-nowrap text-ellipsis block">{course?.description}</small>
                     </div>
+                </div>
+
+                <div className='flex items-center flex-wrap gap-2 justify-between'>
+                    {
+                        course?.category?.title ?
+                            <div className='flex p-1 bg-[var(--redWeakColor)]'>
+                                <p className='text-sm max-w-[300px] break-words'>{course?.category.title}</p>
+                            </div>
+                            : ''
+                    }
+
+                    {
+                        course?.is_featured ?
+                            <i className='pi pi-verified text-[green] shadow ml-2 p-1 rounded-full' title='Рекомендован департаментом'></i>
+                            : ''
+                    }
                 </div>
 
                 <div>
@@ -179,7 +187,7 @@ export default function HomeClient() {
         );
     };
 
-    const handleCourseShow = async (course_id: number) => {
+    const handleCourseShow = async (course_id: number) => {        
         setShowVisible(true);
         setSkeleton(true);
         const data = await openCourseShow(course_id);
@@ -233,7 +241,7 @@ export default function HomeClient() {
     };
 
     // signup courses list
-    const handleSignupList = async (course: any) => {
+    const handleSignupList = async (course: any) => {        
         course?.forEach((i: { id: number }) => params.append('course_Ids[]', String(i?.id)));
         const data = await signupList(params);
         if (data && data?.signed_courses) {
@@ -244,6 +252,7 @@ export default function HomeClient() {
     };
 
     const handleSendSingup = async () => {
+        // current course 
         const list: any | null = await handleSignupList(coursesValue);
         if (list) {
             setSignupList(list);
@@ -253,14 +262,12 @@ export default function HomeClient() {
     useEffect(() => {
         if (coursesValue?.length) {
             handleSendSingup();
-            // setSendSignupList(true);
-        } else {
-            // setSendSignupList(false);
         }
     }, [coursesValue]);
 
     useEffect(() => {
-        handleFetchOpenCourse(pageState, '', '');
+        handleFetchNewCourse();
+        // handleFetchOpenCourse(pageState, '', '');
         setGlobalLoading(true);
         handleMainPageStatistics();
         setTimeout(() => {
@@ -271,7 +278,6 @@ export default function HomeClient() {
 
     return (
         <>
-            {/* <div className='relative  h-[100px] overflow-hidden'><div className='home-bg'></div></div> */}
             <div className="absolute left-0 right-0 top-[96px] w-full home-bg min-h-[500px] max-h-[500px]"></div>
             <div className="relative mt-[98px] px-2 py-[50px] z-[1]">
                 {/* <Link href={`/pdf/1757146212.pdf`}>{"Уроки"}</Link> */}
@@ -325,43 +331,87 @@ export default function HomeClient() {
 
                 {/* open courses */}
 
-                {coursesValue?.length > 0 ? (
-                    skeleton ? (
-                        <div className="flex flex-wrap gap-2 flex-col sm:flex-row justify-center">
-                            <GroupSkeleton count={1} size={{ width: '300px', height: '300px' }} />
-                            <GroupSkeleton count={1} size={{ width: '300px', height: '300px' }} />
-                            <GroupSkeleton count={1} size={{ width: '300px', height: '300px' }} />
-                            <GroupSkeleton count={1} size={{ width: '300px', height: '300px' }} />
-                            <GroupSkeleton count={1} size={{ width: '300px', height: '300px' }} />
-                        </div>
+                <div className='main-bg flex flex-col gap-4'>
+                    {newCourses?.length > 0 ? (
+                        skeleton ? (
+                            <div className="flex flex-wrap gap-2 flex-col sm:flex-row justify-center">
+                                <GroupSkeleton count={1} size={{ width: '300px', height: '300px' }} />
+                                <GroupSkeleton count={1} size={{ width: '300px', height: '300px' }} />
+                                <GroupSkeleton count={1} size={{ width: '300px', height: '300px' }} />
+                                <GroupSkeleton count={1} size={{ width: '300px', height: '300px' }} />
+                                <GroupSkeleton count={1} size={{ width: '300px', height: '300px' }} />
+                            </div>
+                        ) : (
+                            <div className="m-auto">
+                                <h3 className="text-lg sm:text-xl text-center mb-4 font-bold">Новые курсы</h3>
+                                <div className="w-full flex flex-wrap justify-center gap-4 mt-5 sm:m-0">
+                                    {newCourses?.map((item, idx) => {
+                                        return <OpenCourse key={item?.id} course={item} index={idx} />;
+                                    })}
+                                </div>
+                            </div>
+                        )
                     ) : (
-                        <div className="main-bg">
-                            <h3 className="text-xl sm:text-2xl text-center mb-4">Открытые онлайн курсы</h3>
-                            <div className="w-full flex flex-wrap justify-center gap-4 mt-5 sm:m-0">
-                                {coursesValue?.map((item, idx) => {
-                                    return <OpenCourse key={item?.id} course={item} index={idx} />;
-                                })}
+                        ''
+                    )}
+
+                    {popularCourses?.length > 0 ? (
+                        skeleton ? (
+                            <div className="flex flex-wrap gap-2 flex-col sm:flex-row justify-center">
+                                <GroupSkeleton count={1} size={{ width: '300px', height: '300px' }} />
+                                <GroupSkeleton count={1} size={{ width: '300px', height: '300px' }} />
+                                <GroupSkeleton count={1} size={{ width: '300px', height: '300px' }} />
+                                <GroupSkeleton count={1} size={{ width: '300px', height: '300px' }} />
+                                <GroupSkeleton count={1} size={{ width: '300px', height: '300px' }} />
                             </div>
-                            <div className={`shadow-[0px_-11px_5px_-6px_rgba(0,_0,_0,_0.1)]`}>
-                                <Paginator
-                                    first={(pagination.currentPage - 1) * pagination.perPage}
-                                    rows={pagination.perPage}
-                                    totalRecords={pagination.total}
-                                    onPageChange={(e) => handlePageChange(e.page + 1)}
-                                    template={media ? 'FirstPageLink PrevPageLink NextPageLink LastPageLink' : 'FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink'}
-                                />
+                        ) : (
+                            <div className="">
+                                <h3 className="text-lg sm:text-xl text-center mb-4 font-bold">Популярные курсы</h3>
+                                <div className="w-full flex flex-wrap justify-center gap-4 mt-5 sm:m-0">
+                                    {popularCourses?.map((item, idx) => {
+                                        return <OpenCourse key={item?.id} course={item} index={idx} />;
+                                    })}
+                                </div>
                             </div>
-                        </div>
-                    )
-                ) : (
-                    ''
-                )}
+                        )
+                    ) : (
+                        ''
+                    )}
+
+                    {bestCourses?.length > 0 ? (
+                        skeleton ? (
+                            <div className="flex flex-wrap gap-2 flex-col sm:flex-row justify-center">
+                                <GroupSkeleton count={1} size={{ width: '300px', height: '300px' }} />
+                                <GroupSkeleton count={1} size={{ width: '300px', height: '300px' }} />
+                                <GroupSkeleton count={1} size={{ width: '300px', height: '300px' }} />
+                                <GroupSkeleton count={1} size={{ width: '300px', height: '300px' }} />
+                                <GroupSkeleton count={1} size={{ width: '300px', height: '300px' }} />
+                            </div>
+                        ) : (
+                            <div className="">
+                                <h3 className="text-lg sm:text-xl text-center mb-4 font-bold">Рекомендованные департаментом</h3>
+                                <div className="w-full flex flex-wrap justify-center gap-4 mt-5 sm:m-0">
+                                    {bestCourses?.map((item, idx) => {
+                                        return <OpenCourse key={item?.id} course={item} index={idx} />;
+                                    })}
+                                </div>
+                            </div>
+                        )
+                    ) : (
+                        ''
+                    )}
+
+                    {newCourses?.length || bestCourses?.length || popularCourses?.length ? <Link href={'/openCourse'} className='cursor-pointer flex gap-1 items-center justify-end font-[italic] text-[var(--mainColor)]'>
+                        <span className='underline'>Все открытые курсы</span>
+                        <i className='pi pi-arrow-right text-sm font-[italic]'></i>
+                    </Link> : ''}
+                </div>
 
                 <Sidebar visible={showVisisble} position="bottom" style={{ height: '90vh' }} onHide={() => setShowVisible(false)}>
                     {skeleton ? (
                         <GroupSkeleton count={1} size={{ width: '100%', height: '12rem' }} />
                     ) : courseDetail ? (
-                        <OpenCourseShowCard course={courseDetail} courseSignup={сourseSignup} signUpList={signUpList} btnDisabled={false}/>
+                        <OpenCourseShowCard course={courseDetail} courseSignup={сourseSignup} signUpList={signUpList} btnDisabled={false} />
                     ) : (
                         <b className="flex justify-center">Данные не доступны</b>
                     )}

@@ -112,7 +112,6 @@ export default function RolesDepartment() {
     const [editingLesson, setEditingLesson] = useState<MainCategoryType | null>(null);
     const [checkOpenCourseEmpty, setCheckOpenCourseEmpty] = useState<boolean>(false);
 
-    const [langList, setLangList] = useState<MainLangType[] | null>(null);
     const [langSelectedId, setLangSelectedId] = useState<SelectLangType | null>({ title: 'Все', id: null, description: '', });
     const [depSelectLang, setSelectLang] = useState<SelectLangType[]>([{ title: 'Выберите категорию', id: null, description: '' }]);
     const [language_id, setLanguage_id] = useState<number | null>(null);
@@ -398,6 +397,7 @@ export default function RolesDepartment() {
         }
     };
 
+    // category jsx
     const categoryItemTemplate = (option: any) => {
         return (
             <div className="w-full flex flex-col">
@@ -421,6 +421,23 @@ export default function RolesDepartment() {
                 <span>{option.name}</span>
                 {option.description && (
                     <span className="text-xs text-gray-500">
+                        {option.description}
+                    </span>
+                )}
+            </div>
+        );
+    };
+
+    // lang jsx
+    const langItemTemplate = (option: any) => {
+        return (
+            <div className="w-full flex flex-col">
+                <div className='flex gap-1 items-center'>
+                    <img src={`/layout/images/flags/${option?.logo}`} alt="flag" className='w-[20px] h-[20px]' />
+                    <span className="font-medium text-[13px] sm:text-md">{option.title}</span>
+                </div>
+                {option.description && (
+                    <span className="text-xs text-gray-500 text-[12px] sm:text-sm max-w-[300px] text-wrap word-break sm:text-nowrap sm:max-w-full">
                         {option.description}
                     </span>
                 )}
@@ -481,9 +498,9 @@ export default function RolesDepartment() {
                                                                 height="24"
                                                                 fill="none"
                                                                 stroke="green"
-                                                                stroke-width="2"
-                                                                stroke-linecap="round"
-                                                                stroke-linejoin="round"
+                                                                strokeWidth="2"
+                                                                strokeLinecap="round"
+                                                                strokeLinejoin="round"
                                                                 viewBox="0 0 24 24"
                                                                 aria-label="Опубликовано"
                                                             >
@@ -567,9 +584,9 @@ export default function RolesDepartment() {
                                                                         height="24"
                                                                         fill="none"
                                                                         stroke="green"
-                                                                        stroke-width="2"
-                                                                        stroke-linecap="round"
-                                                                        stroke-linejoin="round"
+                                                                        strokeWidth="2"
+                                                                        strokeLinecap="round"
+                                                                        strokeLinejoin="round"
                                                                         viewBox="0 0 24 24"
                                                                         aria-label="Опубликовано"
                                                                     >
@@ -747,7 +764,7 @@ export default function RolesDepartment() {
                     }
                 </div>
             )}
-            
+
             <div className={`shadow-[0px_-11px_5px_-6px_rgba(0,_0,_0,_0.1)]`}>
                 <Paginator
                     first={(checkPagination.current_page - 1) * checkPagination.per_page}
@@ -998,10 +1015,9 @@ export default function RolesDepartment() {
                 <GroupSkeleton count={6} size={{ width: '100%', height: '5rem' }} />
             ) : (
                 <div className="overflow-x-auto scrollbar-thin">
-                    <div className="main-bg mb-2">
+                    <div className={`main-bg mb-2`}>
                         <h3 className="text-xl sm:text-2xl pb-1 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">Департамент</h3>
-
-                        <div className="flex flex-col sm:flex-row gap-2 mb-2">
+                        <div className={`flex flex-col sm:flex-row gap-2 mb-2 ${activeIndex === 2 ? 'opacity-50 pointer-events-none' : ''}`}>
                             <div className="flex gap-3 items-center">
                                 {!roleStatus && (
                                     <div className={`flex items-center ${!selectedTypeId?.role_id ? 'opacity-45 pointer-events-none' : ''}`}>
@@ -1025,12 +1041,12 @@ export default function RolesDepartment() {
                                 </div>
                             </div>
                             <div className="w-full flex justify-center sm:justify-start items-center gap-1">
-                                <InputText type="number" placeholder="myedu id" value={myedu_id} className="w-full sm:max-w-[120px] h-[48px]" onChange={(e) => setMyedu_id(e.target.value)} />
+                                <InputText type="number" placeholder="myedu id" value={myedu_id || ''} className="w-full sm:max-w-[120px] h-[48px]" onChange={(e) => setMyedu_id(e.target.value)} />
                                 <div>{myeduProgressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}</div>
                             </div>
                         </div>
 
-                        <div className="flex items-center relative mb-2">
+                        <div className={`flex items-center relative mb-2 ${activeIndex === 2 ? 'opacity-50 pointer-events-none' : ''}`}>
                             <InputText placeholder="Поиск..." value={search} onChange={(e) => setSearch(e.target.value)} className="w-full p-inputtext-sm p-inputtext-rounded" />
                             <div className="absolute right-1">{miniProgressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}</div>
                         </div>
@@ -1120,7 +1136,7 @@ export default function RolesDepartment() {
                                 <div className="flex flex-col gap-2">
                                     <b className="px-1">Выберите язык для курса</b>
                                     <div className='max-w-[95%] flex juctify-center items-start'>
-                                        <Dropdown value={langSelectedId} itemTemplate={categoryItemTemplate} valueTemplate={categoryValueTemplate} onChange={(e: DropdownChangeEvent) => {
+                                        <Dropdown value={langSelectedId} itemTemplate={langItemTemplate} valueTemplate={categoryValueTemplate} onChange={(e: DropdownChangeEvent) => {
                                             setLangSelectedId(e.value);
                                             setLanguage_id(e.value?.id);
                                         }} options={depSelectLang} optionLabel="name" placeholder="..." className="w-full text-sm" />
@@ -1143,7 +1159,7 @@ export default function RolesDepartment() {
                         ) : (
                             <div className="flex flex-col gap-2">
                                 <b className="px-1">Вы уверены что хотите отказать курс?</b>
-                                <InputText onChange={(e) => setPublicComment(e.target.value)} type="text" placeholder="Укажите причину вашего отказа" />
+                                <InputText value={comment || ''} onChange={(e) => setPublicComment(e.target.value)} type="text" placeholder="Укажите причину вашего отказа" />
                             </div>
                         )}
                     </div>
@@ -1168,17 +1184,17 @@ export default function RolesDepartment() {
                         {/* Аннулирование */}
                         {!categoryState ? (
                             <div className="flex flex-col gap-2">
-                                <InputText type='text' onChange={(e) => {
+                                <InputText type='text' value={categoryValue?.title} onChange={(e) => {
                                     setCategoryValue((prev) => ({ ...prev, title: e.target.value }));
-                                }} size={'small'} placeholder='Название категории' />
-                                <InputText type='text' onChange={(e) => {
+                                }} placeholder='Название категории' />
+                                <InputText type='text' value={categoryValue?.description} onChange={(e) => {
                                     setCategoryValue((prev) => ({ ...prev, description: e.target.value }));
-                                }} size={'small'} placeholder='Описание' />
+                                }} placeholder='Описание' />
                             </div>
                         ) : (
                             <div className="flex flex-col gap-2">
-                                <InputText type='text' size={'small'} value={editingLesson?.title} onChange={(e) => { setEditingLesson((prev) => prev && ({ ...prev, title: e.target.value })) }} placeholder='Название категории' />
-                                <InputText type='text' size={'small'} value={editingLesson?.description} onChange={(e) => { setEditingLesson((prev) => prev && ({ ...prev, description: e.target.value })) }} />
+                                <InputText type='text' value={editingLesson?.title} onChange={(e) => { setEditingLesson((prev) => prev && ({ ...prev, title: e.target.value })) }} placeholder='Название категории' />
+                                <InputText type='text' value={editingLesson?.description} onChange={(e) => { setEditingLesson((prev) => prev && ({ ...prev, description: e.target.value })) }} />
                             </div>
                         )}
                     </div>

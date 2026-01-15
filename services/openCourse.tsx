@@ -176,3 +176,16 @@ export const fetchWeeks = async (params: URLSearchParams ) => {
         return err;
     }
 };
+
+// main page open courses
+export const fetchOpenCoursesMainPage = async () => {
+    try {
+        const res = await axiosInstance.get(`/open/courses/for/main`);
+        const data = await res.data;
+
+        return data;
+    } catch (err) {
+        console.log('Ошибка загрузки:', err);
+        return err;
+    }
+};

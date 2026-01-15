@@ -2,12 +2,12 @@
 
 import { OptionsType } from '@/types/OptionsType';
 import MyDateTime from '../MyDateTime';
-import { myMainCourseType } from '@/types/myMainCourseType';
 import { Button } from 'primereact/button';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { useEffect, useState } from 'react';
+import { CourseCategoryOption } from '@/types/openCourse/CourseCategoryOption';
 
-export default function OpenCourseShowCard({ course, courseSignup, signUpList, btnDisabled }: { course: myMainCourseType; courseSignup: (id: number) => void, signUpList:number[], btnDisabled: boolean }) {
+export default function OpenCourseShowCard({ course, courseSignup, signUpList, btnDisabled }: { course: CourseCategoryOption; courseSignup: (id: number) => void, signUpList: number[], btnDisabled: boolean }) {
     const options: OptionsType = {
         year: '2-digit',
         month: 'short', // 'long', 'short', 'numeric'
@@ -20,13 +20,13 @@ export default function OpenCourseShowCard({ course, courseSignup, signUpList, b
     const media = useMediaQuery('(max-width: 640px)');
     const [isSigned, setIsSigned] = useState<number | null | undefined>(null);
 
-    useEffect(()=> {
-        console.log(signUpList);
-        if(signUpList?.length){
-            const signupId:number | undefined = signUpList?.find((id)=> id === course?.id);
+    useEffect(() => {
+        // console.log(signUpList);
+        if (signUpList?.length) {
+            const signupId: number | undefined = signUpList?.find((id) => id === course?.id);
             setIsSigned(signupId);
         }
-    },[signUpList]);
+    }, [signUpList]);
 
     return (
         <div className="flex flex-col shadow rounded p-2 sm:p-4 gap-3 w-full">
@@ -44,30 +44,39 @@ export default function OpenCourseShowCard({ course, courseSignup, signUpList, b
                 </div>
             </div>
 
-            <div className="flex items-center text-sm">
-                <span className="bg-[var(--mainBgColor)] p-1">Автор:</span>
-                <div className="bg-[var(--mainBgColor)] flex p-1 gap-1 items-center">
-                    {!media ? (
-                        <>
-                            <span>{course?.user?.last_name}</span>
-                            <span>{course?.user?.name}</span>
-                            <span>{course?.user?.father_name}</span>
-                        </>
-                    ) : (
-                        <>
-                            <span>{course?.user?.last_name}</span>
-                            <span>{course?.user?.name[0]}.</span>
-                            <span>{course?.user?.father_name && course?.user?.father_name[0] + '.'}</span>
-                        </>
-                    )}
+            <div className='flex flex-wrap justify-between gap-2 items-center'>
+                <div className="flex items-center text-sm">
+                    <span className="bg-[var(--mainBgColor)] p-1">Автор:</span>
+                    <div className="bg-[var(--mainBgColor)] flex p-1 gap-1 items-center">
+                        {!media ? (
+                            <>
+                                <span>{course?.user?.last_name}</span>
+                                <span>{course?.user?.name}</span>
+                                <span>{course?.user?.father_name}</span>
+                            </>
+                        ) : (
+                            <>
+                                <span>{course?.user?.last_name}</span>
+                                <span>{course?.user?.name[0]}.</span>
+                                <span>{course?.user?.father_name && course?.user?.father_name[0] + '.'}</span>
+                            </>
+                        )}
+                    </div>
                 </div>
+
+                {/* рекомендация */}
+                {
+                    course?.is_featured ?
+                        <i className='pi pi-verified text-[green] shadow ml-2 p-1 rounded-full' title='Рекомендован департаментом'></i>
+                        : ''
+                }
             </div>
 
             <div className='main-bg'>
                 <b>Содержание курса</b>
                 <ul className='flex flex-col gap-2'>
                     {
-                        course?.lessons?.map((item)=> {
+                        course?.lessons?.map((item) => {
                             return <li key={item?.id} className='list-disc ml-4'>{item?.title}</li>
                         })
                     }

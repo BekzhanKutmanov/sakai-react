@@ -12,7 +12,6 @@ import { useContext, useEffect, useState } from 'react';
 export default function UnVerifed() {
     type OptionsType = Intl.DateTimeFormatOptions;
 
-    const media = useMediaQuery('(max-width: 640px)');
     const showError = useErrorMessage();
     const { setMessage, contextFetchVerifed, contextVerifedValue } = useContext(LayoutContext);
 
