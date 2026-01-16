@@ -55,7 +55,7 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
         }
     ];
 
-    const { layoutState, onMenuToggle, user, setUser, setGlobalLoading, setContextNotificationId, contextNotifications, setContextNotifications, handleNotifications } = useContext(LayoutContext);
+    const { layoutState, onMenuToggle, user, setUser, setGlobalLoading, setContextNotificationId, contextNotifications, handleNotifications } = useContext(LayoutContext);
 
     const menubuttonRef = useRef(null);
     const topbarmenuRef = useRef(null);

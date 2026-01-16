@@ -893,30 +893,6 @@ export default function Course() {
                             {progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}
                         </div>
                     </div>
-                    {/* <div className="flex flex-col gap-1 items-center justify-center">
-                        <label className="block text-900 font-medium text-[16px] md:text-lg mb-1 md:mb-2">Видео ссылка</label>
-                        <div className="w-full flex gap-2 items-center">
-                            <InputText
-                                value={editMode ? editingLesson.video_url || '' : courseValue.video_url}
-                                placeholder="https://..."
-                                title="Ссылка должна начинаться с https://!"
-                                disabled={progressSpinner === true ? true : false}
-                                className="w-full"
-                                onChange={(e) => {
-                                    editMode
-                                        ? setEditingLesson((prev) => ({
-                                              ...prev,
-                                              video_url: e.target.value
-                                          }))
-                                        : setCourseValue((prev) => ({
-                                              ...prev,
-                                              video_url: e.target.value
-                                          }));
-                                }}
-                            />
-                            {progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}
-                        </div>
-                    </div> */}
 
                     <div className="flex flex-col gap-1 items-center justify-center">
                         <label className="block text-900 font-medium text-[16px] md:text-lg mb-1 md:mb-2">Описание</label>
@@ -949,7 +925,7 @@ export default function Course() {
                             {typeof imageState === 'string' ? (
                                 <img className="w-full object-cover" src={imageState} alt="фото" />
                             ) : (
-                                <img className="w-full object-cover" src={typeof editingLesson.image === 'string' ? editingLesson.image : ''} alt="фото" />
+                                editingLesson.image ? <img className="w-full object-cover" src={typeof editingLesson.image === 'string' ? editingLesson.image : ''} alt="фото" /> : ''
                             )}
                         </div>
                         <div className={`flex flex-col pag-1 order-1 sm:order-2 items-center justify-center ${imageState && 'w-1/2'}`}>
@@ -967,7 +943,7 @@ export default function Course() {
                                 onSelect={onSelect}
                             />
                             {courseValue.image || editingLesson.image ? (
-                                <div className="mt-2 text-sm text-gray-700 ">
+                                <div className="mt-2 text-sm text-gray-700">
                                     {typeof editingLesson.image === 'string' && (
                                         <>
                                             <b className="text-[12px] text-center w-[300px]">{imageTitle}</b>
