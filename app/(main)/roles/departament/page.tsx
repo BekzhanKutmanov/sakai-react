@@ -430,8 +430,9 @@ export default function RolesDepartment() {
 
     // lang jsx
     const langItemTemplate = (option: any) => {
+
         return (
-            <div className="w-full flex flex-col">
+            <div className="w-full flex flex-col" >
                 <div className='flex gap-1 items-center'>
                     <img src={`/layout/images/flags/${option?.logo}`} alt="flag" className='w-[20px] h-[20px]' />
                     <span className="font-medium text-[13px] sm:text-md">{option.title}</span>
@@ -444,6 +445,21 @@ export default function RolesDepartment() {
             </div>
         );
     };
+
+    const langValueTemplate = (option: any | null) => {
+        if (!option) {
+            return <span className="text-gray-400">...</span>;
+        }
+
+        return (
+            <div className='flex gap-1 items-center'>
+                <img src={`/layout/images/flags/${option?.logo}`} alt="flag" className='w-[20px] h-[20px]' />
+                <span className="font-medium text-[13px] sm:text-md">{option.title}</span>
+            </div>
+
+        );
+    };
+
 
     // TSX access
     const itemAccessTemplate = (roles: any) => {
@@ -1127,7 +1143,7 @@ export default function RolesDepartment() {
                                 <div className="flex flex-col gap-2">
                                     <b className="px-1">Выберите категорию для курса</b>
                                     <div className='max-w-[95%]'>
-                                        <Dropdown value={categorySelectedId} itemTemplate={categoryItemTemplate} valueTemplate={categoryValueTemplate} onChange={(e: DropdownChangeEvent) => {
+                                        <Dropdown value={categorySelectedId} filter itemTemplate={categoryItemTemplate} valueTemplate={categoryValueTemplate} onChange={(e: DropdownChangeEvent) => {
                                             setCategorySelectedId(e.value);
                                             setPublicCategoryId(e.value?.id);
                                         }} options={depCategoryes} optionLabel="name" placeholder="..." className="w-full text-sm" />
@@ -1136,7 +1152,7 @@ export default function RolesDepartment() {
                                 <div className="flex flex-col gap-2">
                                     <b className="px-1">Выберите язык для курса</b>
                                     <div className='max-w-[95%] flex juctify-center items-start'>
-                                        <Dropdown value={langSelectedId} itemTemplate={langItemTemplate} valueTemplate={categoryValueTemplate} onChange={(e: DropdownChangeEvent) => {
+                                        <Dropdown value={langSelectedId} itemTemplate={langItemTemplate} valueTemplate={langValueTemplate} onChange={(e: DropdownChangeEvent) => {
                                             setLangSelectedId(e.value);
                                             setLanguage_id(e.value?.id);
                                         }} options={depSelectLang} optionLabel="name" placeholder="..." className="w-full text-sm" />

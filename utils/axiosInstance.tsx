@@ -22,12 +22,12 @@ axiosInstance.interceptors.response.use(
         const status = error.response?.status;
         if (status === 401) {
             console.warn('Неавторизован. Удаляю токен...');
-            // if (typeof window !== 'undefined') {
-            //     console.log(window.location.pathname != '/auth/login');
-            //     if(window.location.pathname != '/auth/login') window.location.href = '/auth/login';
-            //     localStorage.removeItem('userVisit');
-            // }
-            // document.cookie = 'access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;';
+            if (typeof window !== 'undefined') {
+                console.log(window.location.pathname != '/auth/login');
+                if(window.location.pathname != '/auth/login') window.location.href = '/auth/login';
+                localStorage.removeItem('userVisit');
+            }
+            document.cookie = 'access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;';
         }
 
         if (status === 403) {
@@ -39,12 +39,11 @@ axiosInstance.interceptors.response.use(
 
         if (status === 404) {
             console.warn('404 - Перенаправляю...');
-            
-            // if (typeof window !== 'undefined') {
-            //     window.location.href = '/pages/notfound';
-            //     localStorage.removeItem('userVisit');
-            // }
-            // document.cookie = 'access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;';
+            if (typeof window !== 'undefined') {
+                window.location.href = '/pages/notfound';
+                localStorage.removeItem('userVisit');
+            }
+            document.cookie = 'access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;';
         }
 
         return Promise.reject(error);

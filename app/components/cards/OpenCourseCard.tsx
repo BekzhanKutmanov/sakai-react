@@ -80,7 +80,7 @@ export default function OpenCourseCard({
             acceptLabel: 'Записаться',
             rejectLabel: 'Назад',
             rejectClassName: 'p-button-secondary reject-button',
-            accept: ()=> courseSignup(id)
+            accept: () => courseSignup(id)
         });
     };
 
@@ -108,6 +108,13 @@ export default function OpenCourseCard({
                         <i className={course?.audience_type?.icon} style={{ fontSize: '14px' }}></i>
                         <i className="text-[13px]">{course?.audience_type?.name === 'open' ? 'Бесплатный' : course?.audience_type?.name === 'wallet' ? 'Платный' : ''}</i>
                     </div>
+                    {
+                        course?.category?.title ?
+                            <div className='flex justify-start'>
+                                <p className='p-1 bg-[var(--redWeakColor)] text-[13px] max-w-[300px] break-words'>{course?.category.title}</p>
+                            </div>
+                            : ''
+                    }
                     {link.status ? (
                         <Link href={link.url || '#'}>
                             <b className="cursor-pointer w-full sm:max-w-[350px] break-words text-[var(--mainColor)] underline" onClick={() => courseShowProp(course?.id)}>
@@ -122,18 +129,7 @@ export default function OpenCourseCard({
                 </div>
             </div>
 
-            <div className='flex flex-col'>
-                {
-                    course?.category?.title ?
-                        <div className='flex items-center gap-2'>
-                            <div className="flex justify-center w-[40px] sm:w-[30px] h-[40px] sm:h-[30px] rounded-full overflow-hidden shadow-2">
-                                <img src={'/layout/images/no-image.png'} alt="Course image" className="w-full object-cover border-round" />
-                            </div>
-                            <p className='text-sm max-w-[300px] break-words'>{course?.category.title}</p>
-                        </div>
-                        : ''
-                }
-
+            <div className='flex flex-col gap-1'>
                 <div className="flex items-center gap-1 justify-between">
                     {pathname !== '/openCourse/activeCourse' ?
                         <div className="w-full">

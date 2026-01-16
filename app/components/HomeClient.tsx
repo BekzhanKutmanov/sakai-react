@@ -19,19 +19,10 @@ import { OptionsType } from '@/types/OptionsType';
 import GroupSkeleton from './skeleton/GroupSkeleton';
 import { Sidebar } from 'primereact/sidebar';
 import OpenCourseShowCard from './cards/OpenCourseShowCard';
+import { CourseCategoryOption } from '@/types/openCourse/CourseCategoryOption';
 
 export default function HomeClient() {
     // types 
-    interface CourseCategoryOption extends myMainCourseType {
-        category: { title: string, id: number | null, description: string | null },
-        is_featured: boolean
-    }
-
-    interface CoursesType {
-        new_courses: string,
-        best_courses: string,
-        popular_courses: string,
-    }
 
     const params = new URLSearchParams();
     const { user, setGlobalLoading, setMessage } = useContext(LayoutContext);
@@ -145,7 +136,7 @@ export default function HomeClient() {
                 <div className='flex items-center flex-wrap gap-2 justify-between'>
                     {
                         course?.category?.title ?
-                            <div className='flex p-1 bg-[var(--redWeakColor)]'>
+                            <div className='p-1 bg-[var(--redWeakColor)]'>
                                 <p className='text-sm max-w-[300px] break-words'>{course?.category.title}</p>
                             </div>
                             : ''

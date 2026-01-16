@@ -8,10 +8,13 @@ import useErrorMessage from '@/hooks/useErrorMessage';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { LayoutContext } from '@/layout/context/layoutcontext';
 import { fetchOpenCourses, openCourseShow, openCourseSignup, signupList } from '@/services/openCourse';
+import { depCategoryFetch, depLangFetch } from '@/services/roles/roles';
 import { myMainCourseType } from '@/types/myMainCourseType';
 import { CourseCategoryOption } from '@/types/openCourse/CourseCategoryOption';
+import { MainLangType } from '@/types/openCourse/MainLangType';
 import { Button } from 'primereact/button';
 import { ConfirmDialog } from 'primereact/confirmdialog';
+import { Dropdown, DropdownChangeEvent } from 'primereact/dropdown';
 import { InputText } from 'primereact/inputtext';
 import { Paginator } from 'primereact/paginator';
 import { ProgressSpinner } from 'primereact/progressspinner';
@@ -19,6 +22,15 @@ import { Sidebar } from 'primereact/sidebar';
 import { useContext, useEffect, useState } from 'react';
 
 export default function OpenCourse() {
+    // types
+    interface CategoryId {
+        title: string;
+        id: number | null;
+        description: string;
+    }
+
+    interface SelectLangType extends Pick<MainLangType, 'title' | 'description' | 'id'> { };
+
     const { setMessage } = useContext(LayoutContext);
     const showError = useErrorMessage();
     const media = useMediaQuery('(max-width: 640px)');
@@ -45,29 +57,37 @@ export default function OpenCourse() {
     const [signUpList, setSignupList] = useState<number[]>([]);
     const [signupDisabled, setSignupDisebled] = useState(false);
 
-    const handleFetchOpenCourse = async (page: number, audence_type_id: number | string, search: string) => {
+    const [langSelectedId, setLangSelectedId] = useState<SelectLangType | null>({ title: 'Все', id: null, description: '', });
+    const [depSelectLang, setSelectLang] = useState<SelectLangType[]>([{ title: 'Выберите категорию', id: null, description: '' }]);
+    const [language_id, setLanguage_id] = useState<number | null>(null);
+
+    const [categorySelectedId, setCategorySelectedId] = useState<CategoryId | null>({ title: 'Все', id: null, description: '' });
+    const [depCategoryes, setCategoryes] = useState<CategoryId[]>([{ title: 'Выберите категорию', id: null, description: '' }]);
+
+    const handleFetchOpenCourse = async (page: number, audence_type_id: number | string, search: string, categoryId: number | null, lang_id: number | null) => {
         setSkeleton(true);
         setMainProgressSpinner(true);
-        const data = await fetchOpenCourses(page, audence_type_id, search);
+        const data = await fetchOpenCourses(page, audence_type_id, search, categoryId, lang_id);
 
         if (data && Array.isArray(data.data)) {
             setHasCourses(false);
             setMainCourse(data);
             if (data?.data?.length < 1) {
+
                 setEmptyCourse(true);
             } else {
                 setEmptyCourse(false);
             }
             setValueCourses(data.data);
-            const list: any | null = await handleSignupList(data?.data);
-            if (list) {
-                setValueCourses((prev) =>
-                    prev.map((item) => ({
-                        ...item,
-                        is_signed: list.signed_courses?.includes(item.id)
-                    }))
-                );
-            }
+            // const list: any | null = await handleSignupList(data?.data);
+            // if (list) {
+            //     setValueCourses((prev) =>
+            //         prev.map((item) => ({
+            //             ...item,
+            //             is_signed: list.signed_courses?.includes(item.id)
+            //         }))
+            //     );
+            // }
             setPagination({
                 currentPage: data.current_page,
                 total: data?.total,
@@ -92,6 +112,32 @@ export default function OpenCourse() {
         }
         setSkeleton(false);
         setMainProgressSpinner(false);
+    };
+
+    const handleDepCategoryFetch = async () => {
+        const res = await depCategoryFetch();
+        if (res && res?.length) {
+            const forCategoryes = res.map((item: { title: string, id: number, description: string }) => {
+                return { name: item?.title, id: item?.id, description: item?.description };
+            });
+            if (forCategoryes) {
+                forCategoryes.unshift({ name: 'Все', id: null, description: 'Отобразить все курсы' });
+                setCategoryes(forCategoryes);
+            }
+
+        }
+    };
+
+    // lang
+    const handleDepLangFetch = async () => {
+        const res = await depLangFetch();
+        if (res && res?.success) {
+            const selectLangList = res?.data;
+            if(selectLangList){
+                selectLangList?.unshift({ title: 'Все', id: null, description: 'Отобразить все курсы' });
+                setSelectLang(res?.data);
+            }
+        }
     };
 
     const handleCourseShow = async (course_id: number) => {
@@ -177,24 +223,86 @@ export default function OpenCourse() {
 
     const handleSendSingup = async () => {
         const list: any | null = await handleSignupList(coursesValue);
-        if (list) setSignupList(list);          
+        if (list) setSignupList(list);
     };
 
     const clearFilter = () => {
         setFree(null);
-        handleFetchOpenCourse(pageState, '', '');
+        handleFetchOpenCourse(pageState, '', '', null, null);
     };
 
     // Ручное управление пагинацией
     const handlePageChange = (page: number) => {
-        handleFetchOpenCourse(page, free === 'paid' ? '3' : free === 'free' ? '2' : '', search);
+        handleFetchOpenCourse(page, free === 'paid' ? '3' : free === 'free' ? '2' : '', search, categorySelectedId?.id || null, language_id);
         setPageState(page);
+    };
+
+    // category jsx
+    const categoryItemTemplate = (option: any) => {
+        return (
+            <div className="w-full flex flex-col">
+                <span className="font-medium text-[13px] sm:text-md">{option.name}</span>
+                {option.description && (
+                    <span className="text-xs text-gray-500 text-[12px] sm:text-sm max-w-[300px] text-wrap word-break sm:text-nowrap sm:max-w-full">
+                        {option.description}
+                    </span>
+                )}
+            </div>
+        );
+    };
+
+    const categoryValueTemplate = (option: any | null) => {
+        if (!option) {
+            return <span className="text-gray-400">...</span>;
+        }
+
+        return (
+            <div className="flex flex-col">
+                <span>{option.name}</span>
+                {option.description && (
+                    <span className="text-xs text-gray-500">
+                        {option.description}
+                    </span>
+                )}
+            </div>
+        );
+    };
+
+    // lang jsx
+    const langItemTemplate = (option: any) => {
+        return (
+            <div className="w-full flex flex-col">
+                <div className='flex gap-1 items-center'>
+                    {option?.logo && <img src={`/layout/images/flags/${option?.logo}`} alt="flag" className='w-[20px] h-[20px]' />}
+                    <span className="font-medium text-[13px] sm:text-md">{option.title}</span>
+                </div>
+                {option.description && (
+                    <span className="text-xs text-gray-500 text-[12px] sm:text-sm max-w-[300px] text-wrap word-break sm:text-nowrap sm:max-w-full">
+                        {option.description}
+                    </span>
+                )}
+            </div>
+        );
+    };
+
+    const langValueTemplate = (option: any | null) => {
+        if (!option) {
+            return <span className="text-gray-400">...</span>;
+        }
+
+        return (
+            <div className='flex gap-1 items-center'>
+                {option?.logo && <img src={`/layout/images/flags/${option?.logo}`} alt="flag" className='w-[20px] h-[20px]' />}
+                <span className="font-medium text-[13px] sm:text-md">{option.title}</span>
+            </div>
+
+        );
     };
 
     useEffect(() => {
         setProgressSpinner(true);
         if (search?.length === 0 && searchController) {
-            handleFetchOpenCourse(pageState, free === 'paid' ? '3' : free === 'free' ? '2' : '', search);
+            handleFetchOpenCourse(pageState, free === 'paid' ? '3' : free === 'free' ? '2' : '', search, categorySelectedId?.id || null, language_id);
             setSearchController(false);
             setProgressSpinner(false);
         }
@@ -206,7 +314,7 @@ export default function OpenCourse() {
 
         setSearchController(true);
         const delay = setTimeout(() => {
-            handleFetchOpenCourse(pageState, free === 'paid' ? '3' : free === 'free' ? '2' : '', search);
+            handleFetchOpenCourse(pageState, free === 'paid' ? '3' : free === 'free' ? '2' : '', search, categorySelectedId?.id || null, language_id);
             setProgressSpinner(false);
         }, 1000);
 
@@ -216,13 +324,23 @@ export default function OpenCourse() {
     }, [search]);
 
     useEffect(() => {
+        if (categorySelectedId) handleFetchOpenCourse(pageState, free === 'paid' ? '3' : free === 'free' ? '2' : '', search, categorySelectedId?.id || null, language_id);
+    }, [categorySelectedId]);
+
+    useEffect(() => {
+        if (langSelectedId) handleFetchOpenCourse(pageState, free === 'paid' ? '3' : free === 'free' ? '2' : '', search, categorySelectedId?.id || null, language_id);
+    }, [langSelectedId]);
+
+    useEffect(() => {
         if (coursesValue?.length) {
             handleSendSingup();
         }
     }, [coursesValue]);
 
     useEffect(() => {
-        handleFetchOpenCourse(pageState, '', '');
+        handleFetchOpenCourse(pageState, '', '', null, null);
+        handleDepCategoryFetch(); // получаем категории
+        handleDepLangFetch(); // получаем азыки
     }, []);
 
     if (mainProgressSpinner) return <div className='main-bg flex justify-center items-center h-[100vh]'><ProgressSpinner style={{ width: '60px', height: '60px' }} /></div>
@@ -239,41 +357,65 @@ export default function OpenCourse() {
 
                 {/* filter section */}
                 <div className="flex flex-col gap-2">
-                    <div className="flex flex-col sm:flex-row gap-2 sm:items-center m-2">
-                        <div className="flex gap-3 items-center">
-                            <div className="flex items-center">
-                                <label className="custom-radio p-0">
-                                    <input
-                                        type="checkbox"
-                                        checked={free === 'free'}
-                                        className={`customCheckbox p-0`}
-                                        onChange={() => {
-                                            handleFetchOpenCourse(pageState, 2, search);
-                                            setFree((prev) => (prev === 'free' ? null : 'free'));
-                                        }}
-                                    />
-                                    <span className="checkbox-mark"></span>
-                                </label>
-                                <p>Бесплатные</p>
+                    <div>
+                        <div className="flex flex-col sm:flex-row gap-2 sm:items-center m-2">
+                            <div className="flex gap-3 items-center">
+                                <div className="flex items-center">
+                                    <label className="custom-radio p-0">
+                                        <input
+                                            type="checkbox"
+                                            checked={free === 'free'}
+                                            className={`customCheckbox p-0`}
+                                            onChange={() => {
+                                                handleFetchOpenCourse(pageState, 2, search, categorySelectedId?.id || null, language_id);
+                                                setFree((prev) => (prev === 'free' ? null : 'free'));
+                                            }}
+                                        />
+                                        <span className="checkbox-mark"></span>
+                                    </label>
+                                    <p>Бесплатные</p>
+                                </div>
+                                <div className="flex items-center">
+                                    <label className="custom-radio p-0">
+                                        <input
+                                            type="checkbox"
+                                            checked={free === 'paid'}
+                                            className={`customCheckbox`}
+                                            onChange={() => {
+                                                handleFetchOpenCourse(pageState, 3, search, categorySelectedId?.id || null, language_id);
+                                                setFree((prev) => (prev === 'paid' ? null : 'paid'));
+                                            }}
+                                        />
+                                        <span className="checkbox-mark"></span>
+                                    </label>
+                                    <p>Платные</p>
+                                </div>
                             </div>
-                            <div className="flex items-center">
-                                <label className="custom-radio p-0">
-                                    <input
-                                        type="checkbox"
-                                        checked={free === 'paid'}
-                                        className={`customCheckbox`}
-                                        onChange={() => {
-                                            handleFetchOpenCourse(pageState, 3, search);
-                                            setFree((prev) => (prev === 'paid' ? null : 'paid'));
-                                        }}
-                                    />
-                                    <span className="checkbox-mark"></span>
-                                </label>
-                                <p>Платные</p>
+                            <Button label="Сбросить фильтр" size="small" className="hidden sm:block text-sm p-1" onClick={clearFilter} />
+                        </div>
+                        <div className="flex items-start flex-col sm:flex-row gap-2">
+                            <div className="flex flex-col gap-2">
+                                <b className="px-1">Выберите категорию для курса</b>
+                                <div className='max-w-[95%]'>
+                                    <Dropdown value={categorySelectedId} itemTemplate={categoryItemTemplate} valueTemplate={categoryValueTemplate} onChange={(e: DropdownChangeEvent) => {
+                                        setCategorySelectedId(e.value);
+                                        // setPublicCategoryId(e.value?.id);
+                                    }} options={depCategoryes} optionLabel="name" placeholder="..." className="w-full text-sm" />
+                                </div>
+                            </div>
+                            <div className="flex flex-col gap-2">
+                                <b className="px-1">Выберите язык для курса</b>
+                                <div className='max-w-[95%] flex juctify-center items-start'>
+                                    <Dropdown value={langSelectedId} itemTemplate={langItemTemplate} valueTemplate={langValueTemplate} onChange={(e: DropdownChangeEvent) => {
+                                        setLangSelectedId(e.value);
+                                        setLanguage_id(e.value?.id);
+                                    }} options={depSelectLang} optionLabel="name" placeholder="..." className="w-full text-sm" />
+                                </div>
                             </div>
                         </div>
-                        <Button label="Сбросить фильтр" size="small" className="text-sm p-1" onClick={clearFilter} />
                     </div>
+                    <Button label="Сбросить фильтр" size="small" className="block sm:hidden text-sm p-1" onClick={clearFilter} />
+
                     <div className="flex items-center relative">
                         <InputText placeholder="Поиск..." value={search} onChange={(e) => setSearch(e.target.value)} className="w-full p-inputtext-sm p-inputtext-rounded" />
                         <div className="absolute right-1">{progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}</div>
@@ -298,7 +440,7 @@ export default function OpenCourse() {
                             return (
                                 <div key={item?.id}>
                                     {/* <OpenCourseShowCard course={item} /> */}
-                                    <OpenCourseCard course={item} link={{ url: null, status: false }} courseShowProp={handleCourseShow} courseSignup={сourseSignup} signUpList={signUpList} btnDisabled={signupDisabled}/>
+                                    <OpenCourseCard course={item} link={{ url: null, status: false }} courseShowProp={handleCourseShow} courseSignup={сourseSignup} signUpList={signUpList} btnDisabled={signupDisabled} />
                                 </div>
                             );
                         })}

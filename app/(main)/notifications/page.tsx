@@ -90,9 +90,7 @@ export default function MainNotificatoin() {
                         </Link>
                         <div className="w-full relative flex flex-col items-end">
                             {/* <span className="absolute -top-4 text-sm w-[11px] h-[11px] sm:w-[13px] sm:h-[13px] rounded-full bg-[var(--amberColor)]"></span> */}
-                            <p className="text-[9px] sm:text-[10px] m-0">
-                                <MyDateTime createdAt={notificate?.created_at} options={options} />
-                            </p>
+                            <i className="cursor-pointer pi pi-trash text-[white] bg-[var(--redColor)] rounded text-sm p-1" onClick={() => handleDeleteVisible(notificate?.id)}></i>
                         </div>
                     </div>
 
@@ -111,12 +109,14 @@ export default function MainNotificatoin() {
                             <span className="checkbox-mark"></span>
                         </label>
                         <i className="pi pi-star text-lg p-1"></i> */}
-                        <i className="cursor-pointer pi pi-trash text-[white] bg-[var(--redColor)] rounded text-sm p-1" onClick={() => handleDeleteVisible(notificate?.id)}></i>
-                        <div className="w-full flex items-center gap-2 justify-between">
+                        <div className="w-full flex gap-2 justify-between flex-col sm:flex-row items-start sm:items-center">
                             {<span className="ml-2 max-w-[350px] text-nowrap overflow-hidden text-ellipsis">{notificate?.title}</span>}
                             <small className="p-1 bg-[var(--redWeakColor)] rounded">{notificate?.type?.title}</small>
                         </div>
                     </div>
+                    <p className="w-full text-[9px] sm:text-[10px] m-0 flex justify-end">
+                        <MyDateTime createdAt={notificate?.created_at} options={options} />
+                    </p>
                 </div>
             </div>
         );
