@@ -234,7 +234,7 @@ const AppMenu = () => {
                   },
                   { label: 'План обучения', icon: 'pi pi-fw pi-calendar-clock', to: '/teaching' },
                   {
-                      label: 'Общедоступные курсы',
+                      label: 'Открытые онлайн курсы',
                       icon: 'pi pi-fw pi-globe',
                       to: '/openCourse'
                   },
@@ -305,7 +305,7 @@ const AppMenu = () => {
                       )
                   },
                   {
-                      label: 'Общедоступные курсы',
+                      label: 'Открытые онлайн курсы',
                       icon: 'pi pi-fw pi-globe',
                       to: '/openCourse'
                   },

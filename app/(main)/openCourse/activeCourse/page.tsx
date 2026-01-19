@@ -52,10 +52,27 @@ export default function ActiveCourseList() {
         );
     };
 
+    function ProgressBar({ value = 0, max = 100, height = 'h-3', className = '' }) {
+        const safeMax = typeof max === 'number' && max > 0 ? max : 100;
+        const safeValue = typeof value === 'number' ? Math.max(0, Math.min(value, safeMax)) : 0;
+        const pct = (safeValue / safeMax) * 100;
+
+        return (
+            <div style={{ height: height }} className={`w-full bg-white dark:bg-gray-700 rounded-full overflow-hidden ${className}`} role="progressbar" aria-valuemin={0} aria-valuemax={safeMax} aria-valuenow={safeValue} aria-label="Course progress">
+                <div style={{ width: `${pct}%`, transition: 'width 400ms ease' }} className="bg-[var(--greenColor)] h-full" />
+                <style jsx>{`
+                    /* If you prefer a custom height using the height prop (e.g. 'h-4'),
+                    apply it by targeting\ the inner bar via a wrapper class: */
+                `}</style>
+            </div>
+        );
+    }
+
     const handleFetchActiveCourse = async () => {
         setSkeleton(true);
         setMainProgressSpinner(true);
         const data = await fetchActiveCourses();
+
         if (data?.success) {
             setHasCourses(false);
 
@@ -89,8 +106,7 @@ export default function ActiveCourseList() {
     const MyActiveCourse = ({ item }: { item: CourseCategoryOption }) => {
         const link = { url: `/openCourse/activeCourse/${item?.id}`, status: true };
 
-        return <div className="flex flex-col shadow rounded p-2 sm:p-4 sm:pb-2 gap-4 w-full hover:shadow-lg">
-
+        return <div className="flex flex-col shadow rounded p-2 sm:p-4 sm:pb-2 gap-2 w-full hover:shadow-lg">
             {/* header section */}
             <div className="flex items-start justify-between gap-2">
                 <div className={`w-full flex gap-3 sm:items-center`}>
@@ -130,9 +146,28 @@ export default function ActiveCourseList() {
                 </b>
             )}
 
-            <div className='flex items-center justify-end gap-1 text-sm font-bold'>
-                <span>Балл: </span>
-                <div className='flex items-center gap-1 text-[var(--mainColor)]'>{item?.total_score || 0} / {item?.max_score?.total_score || 0}</div>
+            {/* score, progress */}
+            <div className='flex justify-end sm:items-center gap-3 flex-col sm:flex-row'>
+                <div className='order-2 sm:order-1 flex items-center justiy-center sm:justify-end gap-1 text-sm sm:font-bold'>
+                    <span>Балл: </span>
+                    <div className='flex items-center gap-1 text-[var(--mainColor)]'>{item?.total_score || 0} / {item?.max_score?.total_score || 0}</div>
+                </div>
+
+                <div className="flex flex-col items-center justify-between order-0 sm:order-2 shadow px-1">
+                    <div>
+                        <span className="text-[var(--titleColor)] text-sm">Статус завершения</span>
+                    </div>
+                    <div className="w-full flex items-center gap-1 justify-between order-0 sm:order-2 ">
+                        <div className="flex items-center text-[var(--titleColor)]">
+                            <span className="text-[14px] sm:text-md block sm:w-full">{Math.floor(typeof item?.progress_percent === 'number' ? item?.progress_percent : 0)}</span>
+                            <span>%</span>
+                        </div>
+                        <div className="w-full border-1 rounded border-[green]">
+                            <ProgressBar value={item?.progress_percent ? Number(item?.progress_percent) : 0} max={100} height="7px" className="h-3 sm:min-w-[150px] max-w-[80%]" />
+                        </div>
+                    </div>
+                </div>
+
             </div>
 
             <div className='flex flex-col gap-1'>
@@ -164,9 +199,7 @@ export default function ActiveCourseList() {
                     <GroupSkeleton count={2} size={{ width: '100%', height: '12rem' }} />
                 </>
             ) : emptyCourse ? (
-                <div className="main-bg">
-                    <b className="flex justify-center">Пусто</b>
-                </div>
+                <b className="flex justify-center">Пусто</b>
             ) : (
                 <div className="flex flex-col gap-2">
                     {coursesValue?.map((item) => {
