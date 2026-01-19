@@ -57,8 +57,6 @@ export const deleteCourse = async (id: number) => {
 };
 
 export const updateCourse = async (id: number | null, value: CourseCreateType) => {
-    console.log(value);
-
     url = process.env.NEXT_PUBLIC_BASE_URL + `/v1/teacher/courses/update?course_id=${id}`;
 
     const formData = new FormData();

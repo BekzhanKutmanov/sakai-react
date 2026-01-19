@@ -12,6 +12,7 @@ import { AudenceType } from '@/types/courseTypes/AudenceTypes';
 import { MainLangType } from '@/types/openCourse/MainLangType';
 import { TabViewChange } from '@/types/tabViewChange';
 import { getConfirmOptions } from '@/utils/getConfirmOptions';
+import Link from 'next/link';
 import { Button } from 'primereact/button';
 import { Column } from 'primereact/column';
 import { confirmDialog } from 'primereact/confirmdialog';
@@ -648,9 +649,9 @@ export default function RolesDepartment() {
                                 {item?.user.last_name} {item?.user.name} {item?.user.father_name}
                             </b>
                             <div className="w-full flex flex-col gap-2">
-                                <span key={item.id} className="text-[14px]">
+                                <Link href={`/roles/departament/check?course_id=${item?.id}`} key={item?.id} className="text-[14px] font-bold underline">
                                     {item.title}
-                                </span>
+                                </Link>
                                 <div className="w-full flex justify-end">
                                     <i
                                         className={`text-[13px] text-white rounded p-1
@@ -714,9 +715,9 @@ export default function RolesDepartment() {
                                 field="title"
                                 header="Курсы"
                                 body={(rowData) => (
-                                    <span key={rowData.id} className="text-[14px] ">
+                                    <Link href={`/roles/departament/check?course_id=${rowData?.id}`} key={rowData?.id} className="text-[14px] font-bold text-[var(--mainColor)] underline">
                                         {rowData.title}
-                                    </span>
+                                    </Link>
                                 )}
                             ></Column>
 
@@ -724,7 +725,7 @@ export default function RolesDepartment() {
                                 field="title"
                                 header="Преподаватели"
                                 body={(rowData) => (
-                                    <span key={rowData.id} className="text-[14px] hover:underline">
+                                    <span key={rowData.id} className="text-[14px]">
                                         {rowData?.user.last_name} {rowData?.user.name} {rowData?.user.father_name}
                                     </span>
                                 )}

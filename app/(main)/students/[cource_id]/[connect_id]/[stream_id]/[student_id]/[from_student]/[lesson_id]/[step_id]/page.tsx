@@ -14,7 +14,6 @@ import { CourseType } from '@/types/courseType';
 import { lessonType } from '@/types/lessonType';
 import { mainStepsType } from '@/types/mainStepType';
 import { User } from '@/types/user';
-import { log } from 'console';
 import { useParams, useSearchParams } from 'next/navigation';
 import { Accordion, AccordionTab } from 'primereact/accordion';
 import { useContext, useEffect, useState } from 'react';
@@ -268,7 +267,7 @@ export default function StudentCheck() {
                                                                         handlePracticaDisannul(id_curricula, course_id, id_stream, id, steps_id, message)
                                                                     }
                                                                     isOpened={i?.is_opened || false}
-                                                                    item={i}
+                                                                    // item={i}
                                                                 />
                                                             }
                                                         </div>

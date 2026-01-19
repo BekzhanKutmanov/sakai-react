@@ -28,8 +28,7 @@ export default function LessonInfoCard({
     addPracticaScore,
     addPracticaDisannul,
     skeleton,
-    isOpened,
-    item
+    isOpened
 }: {
     type: string;
     icon: string;
@@ -49,7 +48,6 @@ export default function LessonInfoCard({
     addPracticaScore?: (id: number) => void;
     addPracticaDisannul?: (id_curricula:number, course_id:number, id_stream:number, id:number, steps_id:number, message:string) => void;
     isOpened?: boolean;
-    item?: {};
 }) {
     const { setMessage } = useContext(LayoutContext);
     

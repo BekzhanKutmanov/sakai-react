@@ -56,7 +56,6 @@ export default function ActiveStepCard({
         const newChills = !stepItem?.chills;
         setProgressSpinner(true);
         const data = await openChillsUpdate(course_id, stepId, newChills);
-        console.log(data);
         
         if (data?.success) {
             setProgressSpinner(false);
@@ -195,10 +194,10 @@ export default function ActiveStepCard({
             </div>
             <div className="w-full flex items-center sm:justify-end flex-col sm:flex-row gap-2 sm:max-w-[350px]">
                 <div className="w-1/2 text-sm">
-                    <span>Балл:</span>{' '}
+                    <span>Балл:</span>
                     <span className="text-[var(--mainColor)]">
                         {' '}
-                        {0} / {stepItem?.score || 0}
+                        {stepItem?.answer_score || 0} / {stepItem?.score || 0}
                     </span>
                 </div>
                 <div className="w-full flex justify-center sm:justify-end">{cheelseBtn('test')}</div>

@@ -5,7 +5,7 @@ import { NotFound } from '@/app/components/NotFound';
 import useErrorMessage from '@/hooks/useErrorMessage';
 import { LayoutContext } from '@/layout/context/layoutcontext';
 import { depCourseInfo } from '@/services/faculty';
-import { fetchDepartamentSteps, fetchSteps } from '@/services/steps';
+import { fetchDepartamentSteps } from '@/services/steps';
 import { mainStepsType } from '@/types/mainStepType';
 import { useParams } from 'next/navigation';
 import { Accordion, AccordionTab } from 'primereact/accordion';
@@ -13,14 +13,13 @@ import { Dialog } from 'primereact/dialog';
 import { useContext, useEffect, useState } from 'react';
 
 export default function LessonCheck() {
-    const { setMessage, contextFetchThemes,setContextThemes, contextThemes } = useContext(LayoutContext);
+    const { setMessage, contextFetchThemes, setContextThemes, contextThemes } = useContext(LayoutContext);
     const showError = useErrorMessage();
 
     const { id_kafedra, course_id } = useParams();
 
     const [themes, setThemes] = useState<themeType[]>([]);
     const [themeShow, setThemeShow] = useState(false);
-    const [skeleton, setSkeleton] = useState(false);
     const [hasSteps, setHasSteps] = useState(false);
     const [steps, setSteps] = useState<mainStepsType[]>([]);
     const [activeIndex, setActiveIndex] = useState<number | number[]>(0);
@@ -38,10 +37,8 @@ export default function LessonCheck() {
     };
 
     const handleFetchSteps = async (lesson_id: number) => {
-        setSkeleton(true);
         const data = await fetchDepartamentSteps(Number(lesson_id), Number(id_kafedra));
         if (data.success) {
-            setSkeleton(false);
             if (data.steps?.length < 1) {
                 setHasSteps(true);
             } else {
@@ -49,11 +46,10 @@ export default function LessonCheck() {
                 setSteps(data.steps);
             }
         } else {
-            setSkeleton(false);
             setHasSteps(false);
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Катаа!', detail: 'Кийинчерээк кайталаныз' }
+                value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
             });
             if (data?.response?.status) {
                 showError(data.response.status);

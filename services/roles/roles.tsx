@@ -205,3 +205,29 @@ export const depLangFetch = async () => {
         return err;
     }
 };
+
+// departament course check
+export const depExamination = async (course_id: number | null) => {
+    try {
+        const res = await axiosInstance.get(`/v1/examination/lessons?course_id=${course_id}`);
+
+        const data = res.data;
+        return data;
+    } catch (err) {
+        console.log('Ошибка при получении', err);
+        return err;
+    }
+};
+
+// departament course check
+export const depExaminationSteps = async (lesson_id: number | null) => {
+    try {
+        const res = await axiosInstance.get(`/v1/examination/lessons/show?lesson_id=${lesson_id}`);
+
+        const data = res.data;
+        return data;
+    } catch (err) {
+        console.log('Ошибка при получении', err);
+        return err;
+    }
+};

@@ -14,7 +14,7 @@ export interface myMainCourseType {
     created_at: string;
     id: number;
     image: string;
-    status: true;
+    status: boolean;
     title: string;
     description: string | null; 
     user_id: number;

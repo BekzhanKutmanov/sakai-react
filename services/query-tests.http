@@ -1,4 +1,4 @@
-@token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2FwaS1kZXYubW9vYy5vc2hzdS5rZy9wdWJsaWMvYXBpL2xvZ2luIiwiaWF0IjoxNzY2MzkxODEwLCJleHAiOjE3NjY0MTg4MTAsIm5iZiI6MTc2NjM5MTgxMCwianRpIjoiS1ZxSm9PQkI1eWZZQTFUSCIsInN1YiI6IjEyIiwicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyIsInJvbGVzIjpbXX0.rEXk2g5JgLeUgBS7SCYg0BKoGwRQ-ZJasfNfC-ay8ts
+@token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2FwaS1kZXYubW9vYy5vc2hzdS5rZy9wdWJsaWMvYXBpL2xvZ2luIiwiaWF0IjoxNzY4ODAyNjE4LCJleHAiOjE3Njg4Mjk2MTgsIm5iZiI6MTc2ODgwMjYxOCwianRpIjoidjRja1N0dTBmcWxhamkxRCIsInN1YiI6IjE3NCIsInBydiI6IjIzYmQ1Yzg5NDlmNjAwYWRiMzllNzAxYzQwMDg3MmRiN2E1OTc2ZjciLCJyb2xlcyI6W119.MU0LQTUHKEQPEDTQ2SPYS5lJyxfFvBq3BcY6733FpQ4
 # ###
 
 # http://api.mooc.oshsu.kg/public/api/v1/open/video/types
@@ -34,6 +34,6 @@
 # Authorization: Bearer {{token}} 
 # Content-Type: application/json 
 
-GET https://api-dev.mooc.oshsu.kg/public/api/open/courses/for/main
+GET https://api-dev.mooc.oshsu.kg/public/api/v1/teacher/courses/show?course_id=247
 Authorization: Bearer {{token}} 
 Content-Type: application/json 

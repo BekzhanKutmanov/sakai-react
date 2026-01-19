@@ -13,4 +13,5 @@ export interface mainStepsType {
     chills?: boolean;
     count_attempt?: number;
     answer_id?: boolean | null;
+    answer_score?: number | null;
 }
