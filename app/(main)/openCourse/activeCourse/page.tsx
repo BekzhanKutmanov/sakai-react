@@ -147,8 +147,8 @@ export default function ActiveCourseList() {
             )}
 
             {/* score, progress */}
-            <div className='flex justify-end sm:items-center gap-3 flex-col sm:flex-row'>
-                <div className='order-2 sm:order-1 flex items-center justiy-center sm:justify-end gap-1 text-sm sm:font-bold'>
+            <div className='flex justify-end sm:items-end gap-4 flex-col sm:flex-row'>
+                <div className='order-2 sm:order-1 flex items-center justiy-center sm:justify-end gap-1 text-sm sm:font-bold mb-[1px]'>
                     <span>Балл: </span>
                     <div className='flex items-center gap-1 text-[var(--mainColor)]'>{item?.total_score || 0} / {item?.max_score?.total_score || 0}</div>
                 </div>

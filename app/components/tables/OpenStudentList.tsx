@@ -1,9 +1,6 @@
 'use client';
 
-import Link from 'next/link';
-import { Button } from 'primereact/button';
 import { Column } from 'primereact/column';
-import MyDateTime from '../MyDateTime';
 import { DataTable } from 'primereact/datatable';
 import GroupSkeleton from '../skeleton/GroupSkeleton';
 import { NotFound } from '../NotFound';
@@ -23,8 +20,6 @@ export default function OpenStudentList({ course_id, course_title, close }: { co
         all_score: number;
     }
 
-    const media = useMediaQuery('(max-width: 640px)');
-
     const [studentList, setStudentList] = useState<OpenCourseStudent[]>([]);
     const [hasStudents, setHasStudents] = useState(false);
     const [skeleton, setSkeleton] = useState(false);
@@ -34,7 +29,6 @@ export default function OpenStudentList({ course_id, course_title, close }: { co
     const [weekDays, setWeekDays] = useState<string[] | null>(null);
     const [displayWeekDays, setDisplayWeekDays] = useState<{ student_id: number; activity: string[] }[] | null>(null);
     const [sendStudentIds, setSendStudentIds] = useState<number[] | null>(null);
-    const [currentDay, setCurrentDay] = useState<{ date: string | Date; day: string } | null>(null);
 
     const { setMessage } = useContext(LayoutContext);
     const showError = useErrorMessage();
@@ -239,7 +233,7 @@ export default function OpenStudentList({ course_id, course_title, close }: { co
                 break;
         }
 
-        setCurrentDay({ date: forCurrentDay, day: newDay });
+        // setCurrentDay({ date: forCurrentDay, day: newDay });
         handleFetchOpenStudents();
         const week = findWeekdays(false, '');
         if (week) {

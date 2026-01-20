@@ -105,7 +105,6 @@ const StreamList = React.memo(function StreamList({
         // const data = await connectStreams({ course_id: courseValue?.id ? courseValue?.id : null, stream: pendingChanges });
         setSkeleton(true);
         const data = await newConnectStreams({ course_id: courseValue?.id ? courseValue?.id : null, id_stream: id_stream, active: active });
-        console.log(data);
 
         if (data?.success) {
             fetchprop();

@@ -781,8 +781,8 @@ export default function LessonTest() {
                                 <span className="w-[90%] break-words text-center">{courseInfo?.description} </span>
                             </div>
                             {courseInfo?.image && courseInfo?.image.length > 0 && (
-                                <div className="sm:w-1/3">
-                                    <img src={courseInfo?.image} />
+                                <div className="sm:w-1/3 flex justify-center items-center">
+                                    <img src={courseInfo?.image} className='w-[80%] object-cover shadow-2 border-round'/>
                                 </div>
                             )}
                         </div>
