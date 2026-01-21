@@ -84,9 +84,15 @@ export default function MainNotificatoin() {
                                 <b className="text-[var(--mainColor)] ">{notificate?.title}</b>
                             </Link>
                         </div> */}
-                        <Link href={''} className="flex items-center gap-1 hover:underline">
-                            <b className="m-0 text-sm ">{notificate?.from_user?.last_name}</b>
-                            <b className="m-0 text-sm ">{notificate?.from_user?.name}</b>
+                        <Link href={''} className="hidden sm:flex items-center gap-1 hover:underline text-[13px] sm:text-[16px]">
+                            <b className="m-0">{notificate?.from_user?.last_name}</b>
+                            <b className="m-0">{notificate?.from_user?.name}</b>
+                            <b className="m-0">{notificate?.from_user?.father_name}</b>
+                        </Link>
+                        <Link href={''} className="flex sm:hidden items-center gap-1 hover:underline text-[14px] sm:text-[16px]">
+                            <b className="m-0">{notificate?.from_user?.last_name}</b>
+                            <b className="m-0">{notificate?.from_user?.name[0]}.</b>
+                            <b className="m-0">{notificate?.from_user?.father_name && notificate?.from_user?.father_name[0] != ' ' ? notificate?.from_user?.father_name[0] + '.' : ''}</b>
                         </Link>
                         <div className="w-full relative flex flex-col items-end">
                             {/* <span className="absolute -top-4 text-sm w-[11px] h-[11px] sm:w-[13px] sm:h-[13px] rounded-full bg-[var(--amberColor)]"></span> */}
@@ -110,7 +116,7 @@ export default function MainNotificatoin() {
                         </label>
                         <i className="pi pi-star text-lg p-1"></i> */}
                         <div className="w-full flex gap-2 justify-between flex-col sm:flex-row items-start sm:items-center">
-                            {<span className="ml-2 max-w-[350px] text-nowrap overflow-hidden text-ellipsis">{notificate?.title}</span>}
+                            {notificate?.type?.type !== 'practical' ? <span className="text-[14px] sm:text-[16px] ml-2 max-w-[350px] text-nowrap overflow-hidden text-ellipsis">{notificate?.title}</span> : <></>}
                             <small className="p-1 bg-[var(--redWeakColor)] rounded">{notificate?.type?.title}</small>
                         </div>
                     </div>

@@ -12,6 +12,7 @@ import { useRouter } from 'next/navigation';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Chart } from 'primereact/chart';
+import MyDateTime from '@/app/components/MyDateTime';
 
 export default function Dashboard() {
     interface CourseTotalLastMonth {
@@ -48,6 +49,8 @@ export default function Dashboard() {
         user_id: number
     }
 
+    type OptionsType = Intl.DateTimeFormatOptions;
+
     const { user, departament } = useContext(LayoutContext);
 
     const ref = useRef<HTMLDivElement>(null);
@@ -59,7 +62,6 @@ export default function Dashboard() {
     const [contribution, setContribution] = useState<ContributionDay[] | null>(null);
     const [skeleton, setSkeleton] = useState(false);
     const [performance, setPerformance] = useState<PerformanceType | null>(null);
-    const [performanceDetail, setPerformanceDetail] = useState<PerformanceType | null>(null);
     const [info, setInfo] = useState<InfoType | null>(null);
 
     const [chartData, setChartData] = useState({});
@@ -67,6 +69,13 @@ export default function Dashboard() {
 
     const [chartPieData, setChartPieData] = useState({});
     const [chartPieOptions, setChartPieOptions] = useState({});
+
+    const options: OptionsType = {
+        year: '2-digit',
+        month: 'short', // 'long', 'short', 'numeric'
+        day: '2-digit',
+        hour12: false // 24-часовой формат
+    };
 
     const hanldeTeacherDashboard = async () => {
         setSkeleton(true);
@@ -86,7 +95,6 @@ export default function Dashboard() {
 
     const hanldeFetchPerformance = async () => {
         const data = await fetchDashboardPerformance();
-        console.log(data);
 
         if (data && data?.performance) {
             // setHasCourses(false);
@@ -96,7 +104,6 @@ export default function Dashboard() {
             // setHasCourses(true);
         }
     };
-
 
     useEffect(() => {
         const documentStyle = getComputedStyle(document.documentElement);
@@ -133,8 +140,6 @@ export default function Dashboard() {
     }, [info]);
 
     useEffect(() => {
-        console.log(performance)
-
         const data = {
             labels: ['Курсы(связь) ' + performance?.course_sync_score + "%", "Уведом-я(связь) " + performance?.notification_score + '%', 'Общий рейтинг ' + performance?.total_rate + '%'],
             datasets: [
@@ -280,8 +285,12 @@ export default function Dashboard() {
 
                 {/* kpd */}
                 <div className='main-bg'>
-                    <h3 className='text-xl text-center'>{info?.title}</h3>
-
+                    <h3 className='text-xl text-center shadow-[var(--bottom-shadow)] pb-1'>{info?.title}</h3>
+                    <b className='flex gap-1 items-center mb-1'>
+                        Отчёт за:
+                        <span className='text-sm'>{<MyDateTime createdAt={performance?.study_from || ''} options={options} />}</span> -
+                        <span className='text-sm'>{<MyDateTime createdAt={performance?.study_to || ''} options={options} />}</span>
+                    </b>
                     <div className='flex flex-col gap-2'>
                         <div className='flex flex-col items-center gap-1 text-sm'>
                             <b className='text-md'>Формула: <span className='text-sm'>{info?.formula}</span></b>
