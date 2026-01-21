@@ -5,10 +5,13 @@ import { ContributionDay } from '@/types/ContributionDay';
 import ActivityPage from '@/app/components/Contribution';
 import Link from 'next/link';
 import { useContext, useEffect, useRef, useState } from 'react';
-import { fetchTeacherDashboard } from '@/services/dashboard/workingDashboard';
+import { fetchDashboardPerformance, fetchTeacherDashboard } from '@/services/dashboard/workingDashboard';
 import GroupSkeleton from '@/app/components/skeleton/GroupSkeleton';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { useRouter } from 'next/navigation';
+import { DataTable } from 'primereact/datatable';
+import { Column } from 'primereact/column';
+import { Chart } from 'primereact/chart';
 
 export default function Dashboard() {
     interface CourseTotalLastMonth {
@@ -25,7 +28,27 @@ export default function Dashboard() {
         wallet: CourseTotalLastMonth;
     }
 
-    const { user, departament, setMessage } = useContext(LayoutContext);
+    interface InfoType {
+        formula: string,
+        sections: { name: string, weight: string, description: string }[],
+        title: string
+    }
+
+    interface PerformanceType {
+        course_sync_score: string,
+        created_at: string,
+        details: { courses_count: number, notifs_count: number },
+        id: number,
+        id_edu_year: number,
+        notification_score: string,
+        study_from: string,
+        study_to: string,
+        total_rate: string,
+        updated_at: string,
+        user_id: number
+    }
+
+    const { user, departament } = useContext(LayoutContext);
 
     const ref = useRef<HTMLDivElement>(null);
     const media = useMediaQuery('(max-width: 640px)');
@@ -35,6 +58,15 @@ export default function Dashboard() {
     const [hasCourses, setHasCourses] = useState(false);
     const [contribution, setContribution] = useState<ContributionDay[] | null>(null);
     const [skeleton, setSkeleton] = useState(false);
+    const [performance, setPerformance] = useState<PerformanceType | null>(null);
+    const [performanceDetail, setPerformanceDetail] = useState<PerformanceType | null>(null);
+    const [info, setInfo] = useState<InfoType | null>(null);
+
+    const [chartData, setChartData] = useState({});
+    const [chartOptions, setChartOptions] = useState({});
+
+    const [chartPieData, setChartPieData] = useState({});
+    const [chartPieOptions, setChartPieOptions] = useState({});
 
     const hanldeTeacherDashboard = async () => {
         setSkeleton(true);
@@ -52,8 +84,94 @@ export default function Dashboard() {
         setSkeleton(false);
     };
 
+    const hanldeFetchPerformance = async () => {
+        const data = await fetchDashboardPerformance();
+        console.log(data);
+
+        if (data && data?.performance) {
+            // setHasCourses(false);
+            setPerformance(data?.performance);
+            setInfo(data?.info);
+        } else {
+            // setHasCourses(true);
+        }
+    };
+
+
+    useEffect(() => {
+        const documentStyle = getComputedStyle(document.documentElement);
+        const data = {
+            labels: [info?.sections[0]?.name, info?.sections[1]?.name],
+            datasets: [
+                {
+                    data: [50, 50],
+                    backgroundColor: [
+                        documentStyle.getPropertyValue('--blue-500'),
+                        documentStyle.getPropertyValue('--yellow-500'),
+                        documentStyle.getPropertyValue('--green-500')
+                    ],
+                    hoverBackgroundColor: [
+                        documentStyle.getPropertyValue('--blue-400'),
+                        documentStyle.getPropertyValue('--yellow-400'),
+                        documentStyle.getPropertyValue('--green-400')
+                    ]
+                }
+            ]
+        }
+        const options = {
+            plugins: {
+                legend: {
+                    labels: {
+                        usePointStyle: true
+                    }
+                }
+            }
+        };
+
+        setChartPieData(data);
+        setChartPieOptions(options);
+    }, [info]);
+
+    useEffect(() => {
+        console.log(performance)
+
+        const data = {
+            labels: ['Курсы(связь) ' + performance?.course_sync_score + "%", "Уведом-я(связь) " + performance?.notification_score + '%', 'Общий рейтинг ' + performance?.total_rate + '%'],
+            datasets: [
+                {
+                    label: 'Статистика',
+                    data: [performance?.course_sync_score, performance?.notification_score, performance?.total_rate],
+                    backgroundColor: [
+                        'rgba(255, 159, 64, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(153, 102, 255, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgb(255, 159, 64)',
+                        'rgb(75, 192, 192)',
+                        'rgb(54, 162, 235)',
+                        'rgb(153, 102, 255)'
+                    ],
+                    borderWidth: 1
+                }
+            ]
+        };
+        const options = {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        };
+
+        setChartData(data);
+        setChartOptions(options);
+    }, [performance]);
+
     useEffect(() => {
         hanldeTeacherDashboard();
+        hanldeFetchPerformance();
     }, []);
 
     useEffect(() => {
@@ -158,6 +276,35 @@ export default function Dashboard() {
                         <span>Активность преподавателя</span>
                     </h2>
                     <ActivityPage value={contribution} />
+                </div>
+
+                {/* kpd */}
+                <div className='main-bg'>
+                    <h3 className='text-xl text-center'>{info?.title}</h3>
+
+                    <div className='flex flex-col gap-2'>
+                        <div className='flex flex-col items-center gap-1 text-sm'>
+                            <b className='text-md'>Формула: <span className='text-sm'>{info?.formula}</span></b>
+                            <b className='text-[var(--productQuantityText)]'>{info?.sections[0]?.description}</b>
+                            <b className='text-[var(--orangeColor)]'>{info?.sections[1]?.description}</b>
+                        </div>
+                        <div className='flex items-center sm:items-start gap-1 justify-around flex-col sm:flex-row'>
+                            <DataTable value={[
+                                { label: 'Количество курсов :', value: performance?.details?.courses_count },
+                                { label: 'Количество уведомлений :', value: performance?.details?.notifs_count }
+                            ]} showHeaders={false} className='my-custom-table max-w-[400px] p-2 border-1 border-[#dfe7ef]'>
+                                <Column field="label" />
+                                <Column field="value" />
+                            </DataTable>
+                            <div className="sm:card flex justify-content-center">
+                                <Chart type="pie" data={chartPieData} options={chartPieOptions} className="w-full md:w-20rem" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="card mt-1">
+                        <Chart type="bar" data={chartData} options={chartOptions} />
+                    </div>
                 </div>
             </div>
         );
