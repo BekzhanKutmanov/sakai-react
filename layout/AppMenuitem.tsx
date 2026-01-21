@@ -79,7 +79,7 @@ const AppMenuitem = (props: AppMenuItemProps) => {
                     <Link href={item!.to} replace={item!.replaceUrl} target={item!.target} onClick={(e) => itemClick(e)} className={classNames(item!.class, 'p-ripple', { 'active-route': isActiveRoute })} tabIndex={0} style={{ flexGrow: 1 }}>
                         <i className={classNames('layout-menuitem-icon', item!.icon)}></i>
 
-                        <span className="layout-menuitem-text max-w-[200px] text-nowrap overflow-hidden text-ellipsis block" title={item!.label}> {item!.label}</span>
+                        <span className="layout-menuitem-text text-sm max-w-[200px] text-nowrap overflow-hidden text-ellipsis block" title={item!.label}> {item!.label}</span>
                         {item?.extra && item.extra && <span className="menu-extra">{item.extra}</span>}
 
                         <Ripple />
