@@ -107,229 +107,215 @@ const AppMenu = () => {
     const byStatus: AppMenuItem[] = user?.is_working
         ? pathname.startsWith('/course/')
             ? [
-                {
-                    // key: 'prev',
-                    label: `${courseInfo?.title}`,
-                    icon: 'pi pi-fw pi-arrow-left',
-                    to: '/course'
-                },
-                {
-                    label: 'Темы',
-                    icon: 'pi pi-fw pi-calendar-clock',
-                    items: courseList?.length > 0 ? courseList : []
-                }
-            ]
+                  {
+                      // key: 'prev',
+                      label: `${courseInfo?.title}`,
+                      icon: 'pi pi-fw pi-arrow-left',
+                      to: '/course'
+                  },
+                  {
+                      label: 'Темы',
+                      icon: 'pi pi-fw pi-calendar-clock',
+                      items: courseList?.length > 0 ? courseList : []
+                  }
+              ]
             : !forDepartamentLength
-                ? (user?.is_working && pathname.startsWith('/course')) ||
-                    pathname.startsWith('/students/') ||
-                    pathname.startsWith('/unVerifed') ||
-                    pathname.startsWith('/pdf/') ||
-                    pathname.startsWith('/videoInstruct/') ||
-                    pathname.startsWith('/notification') ||
-                    pathname.startsWith('/dashboard') ||
-                    pathname.startsWith('/openCourse') ||
-                    pathname.startsWith('/roles')
-                    ? ([
-                        {
-                            // key: 'prev',
-                            label: '',
-                            icon: 'pi pi-fw pi-arrow-left',
-                            to: '#',
-                            command: () => {
-                                router.back();
-                            }
-                        },
-                        {
-                            label: 'Главная страница',
-                            icon: 'pi pi-home',
-                            to: '/'
-                        },
-                        {
-                            label: 'Панель управления',
-                            icon: 'pi pi-th-large',
-                            to: '/dashboard'
-                        },
-                        adminRole?.label ? adminRole : null,
-                        depRole?.label ? depRole : null,
-                        {
-                            label: 'Курсы',
-                            icon: 'pi pi-fw pi-book',
-                            to: '/course'
-                        },
-                        {
-                            label: 'Видеоинструкция',
-                            icon: 'pi pi-fw pi-video',
-                            to: '/videoInstruct'
-                        },
-                        {
-                            label: 'Непроверенные задания',
-                            icon: 'pi pi-fw pi-clock',
-                            to: '/unVerifed',
-                            extra: (
-                                <div className="p-overlay-badge">
-                                    {/* Условное отображение красного кружка (бэйджа) */}
-                                    {contextVerifedValue?.length ? (
-                                        <div className="relative">
-                                            <div className={`absolute -right-3 -top-3 px-1 bg-[var(--amberColor)] rounded text-white text-[11px]`}>{contextVerifedValue?.length}</div>
-                                            <button className={`cursor-pointer flex gap-2 items-center px-0 bg-white text-blue-300 p-2 font-bold`} />
-                                        </div>
-                                    ) : (
-                                        ''
-                                    )}
-                                </div>
-                            )
-                        },
-                        {
-                            label: 'Открытые онлайн курсы',
-                            icon: 'pi pi-fw pi-globe',
-                            to: '/openCourse'
-                        },
-                        {
-                            label: 'Мои активные курсы',
-                            icon: 'pi pi-play-circle',
-                            to: '/openCourse/activeCourse'
-                        },
-                        {
-                            label: 'Уведомления',
-                            icon: 'pi pi-bell',
-                            to: '/notifications'
-                        },
-                        {
-                            label: 'Поиск студентов',
-                            icon: 'pi pi-search',
-                            to: '/'
-                        }
-                    ].filter(Boolean) as AppMenuItem[])
-                    : []
+            ? (user?.is_working && pathname.startsWith('/course')) ||
+              pathname.startsWith('/students/') ||
+              pathname.startsWith('/unVerifed') ||
+              pathname.startsWith('/pdf/') ||
+              pathname.startsWith('/videoInstruct/') ||
+              pathname.startsWith('/notification') ||
+              pathname.startsWith('/dashboard') ||
+              pathname.startsWith('/openCourse') ||
+              pathname.startsWith('/roles')
+                ? ([
+                      {
+                          // key: 'prev',
+                          label: '',
+                          icon: 'pi pi-fw pi-arrow-left',
+                          to: '#',
+                          command: () => {
+                              router.back();
+                          }
+                      },
+                      {
+                          label: 'Главная страница',
+                          icon: 'pi pi-home',
+                          to: '/'
+                      },
+                      {
+                          label: 'Панель управления',
+                          icon: 'pi pi-th-large',
+                          to: '/dashboard'
+                      },
+                      adminRole?.label ? adminRole : null,
+                      depRole?.label ? depRole : null,
+                      {
+                          label: 'Курсы',
+                          icon: 'pi pi-fw pi-book',
+                          to: '/course'
+                      },
+                      {
+                          label: 'Видеоинструкция',
+                          icon: 'pi pi-fw pi-video',
+                          to: '/videoInstruct'
+                      },
+                      {
+                          label: 'Непроверенные задания',
+                          icon: 'pi pi-fw pi-clock',
+                          to: '/unVerifed',
+                          extra: (
+                              <div className="p-overlay-badge">
+                                  {/* Условное отображение красного кружка (бэйджа) */}
+                                  {contextVerifedValue?.length ? (
+                                      <div className="relative">
+                                          <div className={`absolute -right-3 -top-3 px-1 bg-[var(--amberColor)] rounded text-white text-[11px]`}>{contextVerifedValue?.length}</div>
+                                          <button className={`cursor-pointer flex gap-2 items-center px-0 bg-white text-blue-300 p-2 font-bold`} />
+                                      </div>
+                                  ) : (
+                                      ''
+                                  )}
+                              </div>
+                          )
+                      },
+                      {
+                          label: 'Открытые онлайн курсы',
+                          icon: 'pi pi-fw pi-globe',
+                          to: '/openCourse'
+                      },
+                      {
+                          label: 'Мои активные курсы',
+                          icon: 'pi pi-play-circle',
+                          to: '/openCourse/activeCourse'
+                      },
+                      {
+                          label: 'Уведомления',
+                          icon: 'pi pi-bell',
+                          to: '/notifications'
+                      },
+                      {
+                          label: 'Поиск студентов',
+                          icon: 'pi pi-search',
+                          to: '/'
+                      }
+                  ].filter(Boolean) as AppMenuItem[])
                 : []
+            : []
         : user?.is_student
-            ? pathname.startsWith('/teaching/lessonView/')
-                ? [
-                    {
-                        label: '',
-                        icon: 'pi pi-fw pi-arrow-left',
-                        to: '#',
-                        command: () => {
-                            router.back();
-                        }
-                    },
-                    {
-                        label: 'Главная страница',
-                        icon: 'pi pi-home',
-                        to: '/'
-                    },
-                    { label: 'План обучения', icon: 'pi pi-fw pi-calendar-clock', to: '/teaching' }
-                    //   pathname.startsWith('/teaching/lesson/') ? { label: 'Темы', icon: 'pi pi-fw pi-book', items: themesStudentList?.length > 0 ? themesStudentList : [] } : { label: '' },
-                    //   pathname.startsWith('/teaching/lessonView/') ? { label: 'Темы', icon: 'pi pi-fw pi-book', items: themesStudentList?.length > 0 ? themesStudentList : [] } : { label: '' }
-                ]
-                : [
-                    {
-                        // key: 'prev',
-                        label: '',
-                        icon: 'pi pi-fw pi-arrow-left',
-                        to: '#',
-                        command: () => {
-                            router.back();
-                        }
-                    },
-                    {
-                        label: 'Главная страница',
-                        icon: 'pi pi-home',
-                        to: '/'
-                    },
-                    { label: 'План обучения', icon: 'pi pi-fw pi-calendar-clock', to: '/teaching' },
-                    {
-                        label: 'Открытые онлайн курсы',
-                        icon: 'pi pi-fw pi-globe',
-                        to: '/openCourse'
-                    },
-                    {
-                        label: 'Мои активные курсы',
-                        icon: 'pi pi-play-circle',
-                        to: '/openCourse/activeCourse'
-                    }
-                    //   pathname.startsWith('/teaching/lesson/') ? { label: 'Темы', icon: 'pi pi-fw pi-book', items: themesStudentList?.length > 0 ? themesStudentList : [] } : { label: '' },
-                ]
-            : [];
+        ? [
+              {
+                  // key: 'prev',
+                  label: '',
+                  icon: 'pi pi-fw pi-arrow-left',
+                  to: '#',
+                  command: () => {
+                      router.back();
+                  }
+              },
+              {
+                  label: 'Главная страница',
+                  icon: 'pi pi-home',
+                  to: '/'
+              },
+              {
+                  label: 'Панель управления',
+                  icon: 'pi pi-th-large',
+                  to: '/studentHome'
+              },
+              { label: 'План обучения', icon: 'pi pi-fw pi-calendar-clock', to: '/teaching' },
+              {
+                  label: 'Открытые онлайн курсы',
+                  icon: 'pi pi-fw pi-globe',
+                  to: '/openCourse'
+              },
+              {
+                  label: 'Мои активные курсы',
+                  icon: 'pi pi-play-circle',
+                  to: '/openCourse/activeCourse'
+              }
+              //   pathname.startsWith('/teaching/lesson/') ? { label: 'Темы', icon: 'pi pi-fw pi-book', items: themesStudentList?.length > 0 ? themesStudentList : [] } : { label: '' },
+          ]
+        : [];
 
     const forDepartament = forDepartamentLength
         ? !pathname.startsWith('/course/') && !pathname.startsWith('/pdf/')
             ? ([
-                {
-                    // key: 'prev',
-                    label: '',
-                    icon: 'pi pi-fw pi-arrow-left',
-                    to: '#',
-                    command: () => {
-                        router.back();
-                    }
-                },
-                {
-                    label: 'Главная страница',
-                    icon: 'pi pi-home',
-                    to: '/'
-                },
-                {
-                    label: 'Панель управления',
-                    icon: 'pi pi-th-large',
-                    to: '/dashboard'
-                },
-                adminRole?.label ? adminRole : null,
-                depRole?.label ? depRole : null,
-                {
-                    label: 'Утвердить курсы',
-                    icon: 'pi pi-graduation-cap',
-                    to: '/faculty'
-                },
-                {
-                    label: 'Курсы',
-                    icon: 'pi pi-fw pi-book',
-                    to: '/course'
-                },
-                {
-                    label: 'Видеоинструкция',
-                    icon: 'pi pi-fw pi-video',
-                    to: '/videoInstruct'
-                },
-                {
-                    label: 'Непроверенные задания',
-                    icon: 'pi pi-fw pi-clock',
-                    to: '/unVerifed',
-                    extra: (
-                        <div className="p-overlay-badge">
-                            {/* Условное отображение красного кружка (бэйджа) */}
-                            {contextVerifedValue?.length ? (
-                                <div className="relative">
-                                    <div className={`absolute -right-3 -top-3 px-1 bg-[var(--amberColor)] rounded text-white text-[11px]`}>{contextVerifedValue?.length}</div>
-                                    <button className={`cursor-pointer flex gap-2 items-center px-0 bg-white text-blue-300 p-2 font-bold`} />
-                                </div>
-                            ) : (
-                                ''
-                            )}
-                        </div>
-                    )
-                },
-                {
-                    label: 'Открытые онлайн курсы',
-                    icon: 'pi pi-fw pi-globe',
-                    to: '/openCourse'
-                },
-                {
-                    label: 'Мои активные курсы',
-                    icon: 'pi pi-play-circle',
-                    to: '/openCourse/activeCourse'
-                },
-                {
-                    label: 'Уведомления',
-                    icon: 'pi pi-bell',
-                    to: '/notifications'
-                },
-                {
-                    label: 'Поиск студентов',
-                    icon: 'pi pi-search',
-                    to: '/'
-                }
-            ].filter(Boolean) as AppMenuItem[])
+                  {
+                      // key: 'prev',
+                      label: '',
+                      icon: 'pi pi-fw pi-arrow-left',
+                      to: '#',
+                      command: () => {
+                          router.back();
+                      }
+                  },
+                  {
+                      label: 'Главная страница',
+                      icon: 'pi pi-home',
+                      to: '/'
+                  },
+                  {
+                      label: 'Панель управления',
+                      icon: 'pi pi-th-large',
+                      to: '/dashboard'
+                  },
+                  adminRole?.label ? adminRole : null,
+                  depRole?.label ? depRole : null,
+                  {
+                      label: 'Утвердить курсы',
+                      icon: 'pi pi-graduation-cap',
+                      to: '/faculty'
+                  },
+                  {
+                      label: 'Курсы',
+                      icon: 'pi pi-fw pi-book',
+                      to: '/course'
+                  },
+                  {
+                      label: 'Видеоинструкция',
+                      icon: 'pi pi-fw pi-video',
+                      to: '/videoInstruct'
+                  },
+                  {
+                      label: 'Непроверенные задания',
+                      icon: 'pi pi-fw pi-clock',
+                      to: '/unVerifed',
+                      extra: (
+                          <div className="p-overlay-badge">
+                              {/* Условное отображение красного кружка (бэйджа) */}
+                              {contextVerifedValue?.length ? (
+                                  <div className="relative">
+                                      <div className={`absolute -right-3 -top-3 px-1 bg-[var(--amberColor)] rounded text-white text-[11px]`}>{contextVerifedValue?.length}</div>
+                                      <button className={`cursor-pointer flex gap-2 items-center px-0 bg-white text-blue-300 p-2 font-bold`} />
+                                  </div>
+                              ) : (
+                                  ''
+                              )}
+                          </div>
+                      )
+                  },
+                  {
+                      label: 'Открытые онлайн курсы',
+                      icon: 'pi pi-fw pi-globe',
+                      to: '/openCourse'
+                  },
+                  {
+                      label: 'Мои активные курсы',
+                      icon: 'pi pi-play-circle',
+                      to: '/openCourse/activeCourse'
+                  },
+                  {
+                      label: 'Уведомления',
+                      icon: 'pi pi-bell',
+                      to: '/notifications'
+                  },
+                  {
+                      label: 'Поиск студентов',
+                      icon: 'pi pi-search',
+                      to: '/'
+                  }
+              ].filter(Boolean) as AppMenuItem[])
             : []
         : [];
 
