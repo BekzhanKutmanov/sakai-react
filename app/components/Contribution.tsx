@@ -31,7 +31,7 @@ const ActivityHeatmap = ({ value }: { value: ContributionDay[] | null }) => {
 
     return (
         <div ref={ref} className="mx-auto w-full overflow-x-auto scrollbar-thin">
-            {value && (
+            {value && value?.length && (
                 <HeatMap
                     value={value} // <-- Используется пропс 'value'
                     startDate={start}

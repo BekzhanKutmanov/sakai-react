@@ -3,14 +3,16 @@
 import useErrorMessage from '@/hooks/useErrorMessage';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { LayoutContext } from '@/layout/context/layoutcontext';
-import { fetchItemsLessons } from '@/services/studentMain';
+import { fetchItemsLessons, fetchStudentActivity, fetchStudentStatistic } from '@/services/studentMain';
 import Link from 'next/link';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import { useContext, useEffect, useRef, useState } from 'react';
 import ActivityPage from '@/app/components/Contribution';
+import { fetchStudentImg } from '@/services/student/studentpage';
+import MyDateTime from '@/app/components/MyDateTime';
+import { OptionsType } from '@/types/OptionsType';
+import { ContributionDay } from '@/types/ContributionDay';
 
-// NOTE: The types below are assumed based on data structures observed in other components.
-// They should be moved to a central types file and verified against the API responses.
 interface PredmetUser {
   last_name: string;
   name: string;
@@ -32,6 +34,12 @@ interface LessonsData {
   [semester: number]: SemesterData;
 }
 
+interface StudentStatistic {
+  all_active_dates: number,
+  last_visit: string,
+  streak: number
+}
+
 export default function StudentHome() {
   const { user, setMessage, contextNotifications } = useContext(LayoutContext);
   const showError = useErrorMessage();
@@ -41,6 +49,18 @@ export default function StudentHome() {
   const [lessonsData, setLessonsData] = useState<LessonsData | null>(null);
   const [loading, setLoading] = useState(false);
   const [totalCourses, setTotalCourses] = useState(0);
+  const [studentImg, setStudentImg] = useState<{ image_url: string, id: string } | null>(null);
+  const [studentStatistic, setStudentStatistic] = useState<StudentStatistic | null>(null);
+  const [contribution, setContribution] = useState<ContributionDay[] | null>(null);
+
+  const options: OptionsType = {
+    year: '2-digit',
+    month: 'short', // 'long', 'short', 'numeric'
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false // 24-часовой формат
+  };
 
   const handleFetchLessons = async () => {
     setLoading(true);
@@ -65,14 +85,29 @@ export default function StudentHome() {
     //   }
     // }
     setLoading(false);
-
   };
 
-  useEffect(() => {
-    if (user?.is_student) {
-      // handleFetchLessons();
+
+  const handleFetchStudentImg = async () => {
+    const data = await fetchStudentImg();
+    if (data && data?.success) {
+      setStudentImg(data?.data);
     }
-  }, [user]);
+  };
+
+  const handleFetchStudentStatistic = async () => {
+    const data = await fetchStudentStatistic();
+    if (data && data?.success) {
+      setStudentStatistic(data?.data);
+    }
+  };
+
+  const handleFetchStudentActivity = async () => {
+    const data = await fetchStudentActivity();
+    if (data && data?.length) {
+      setContribution(data);
+    }
+  };
 
   useEffect(() => {
     if (media) {
@@ -81,6 +116,15 @@ export default function StudentHome() {
       }
     }
   }, [media]);
+
+  useEffect(() => {
+    if (user?.is_student) {
+      // handleFetchLessons();
+      handleFetchStudentImg();
+      handleFetchStudentStatistic();
+      handleFetchStudentActivity();
+    }
+  }, [user]);
 
   if (loading) {
     return (
@@ -95,31 +139,34 @@ export default function StudentHome() {
       {/* Top Section: Greeting and Stats */}
       <div className="flex flex-col xl:flex-row gap-4">
         {/* 1. Greeting Section */}
-        <div className="main-bg flex-1 flex flex-col justify-center p-6 relative overflow-hidden min-h-[200px]">
-          <div className="z-10">
-            <h1 className="text-2xl sm:text-3xl font-bold text-[var(--titleColor)] mb-2">
-              Здравствуйте, {user?.name || 'Студент'}!
-            </h1>
-            <p className="text-lg text-gray-600 mb-4">
-              {user?.last_name} {user?.name} {user?.father_name}
-            </p>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 text-blue-600 text-sm font-medium">
-              <i className="pi pi-id-card"></i>
-              <span>Студент</span>
+        <div className="main-bg flex-1 flex flex-col justify-center p-2 sm:p-6 relative overflow-hidden min-h-[200px]">
+          <div className="z-10 flex flex-col sm:flex-row items-center gap-2">
+            <div className='min-w-[180px] min-h-[180px] max-w-[180px] max-h-[180px] flex items-center justify-center'>
+              <img src={studentImg?.image_url?.length ? studentImg?.image_url : '/layout/images/no-image.png'} alt="Фото" className='w-full object-cover overflow-hidden rounded-full'/>
+            </div>
+            <div>
+              <h1 className="text-2xl sm:text-3xl text-center font-bold text-[var(--titleColor)] mb-2">
+                Здравствуйте, {user?.name || 'Студент'}
+              </h1>
+              <div className='flex flex-col items-center gap-1'>
+                <p className="text-lg text-gray-600 m-0 text-center">
+                  {user?.last_name} {user?.name} {user?.father_name}
+                </p>
+                <div className='flex items-center justify-center gap-1'>
+                  <span className='font-bold px-2 py-1 bg-[var(--greenColor)] text-white text-[13px]'>{contextNotifications?.length}</span>
+                  <span className='text-[13px]'>Уведомлений</span>
+                </div>
+              </div>
             </div>
           </div>
           {/* Decorative background element */}
           <div className="absolute right-0 bottom-0 opacity-10 pointer-events-none">
             <i className="pi pi-user text-[120px] sm:text-[150px] text-[var(--mainColor)] transform translate-x-10 translate-y-10"></i>
           </div>
-          <div className='flex items-center gap-1'>
-            <span className='font-bold px-2 py-1 bg-[var(--greenColor)] text-white text-sm'>{contextNotifications?.length}</span>
-            <span className='text-sm'>Уведомлений</span>
-          </div>
         </div>
 
         {/* 2. Stats Section */}
-        <div className='main-bg flex flex-col justify-center p-6 min-h-[200px]'>
+        <div className='main-bg flex flex-col justify-center p-2 sm:p-6 min-h-[200px]'>
           <h3 className='font-bold'>Предстоящие события</h3>
           <div>
             <p>В ближайщее время событий нет</p>
@@ -132,17 +179,22 @@ export default function StudentHome() {
         {/* activity */}
         <div ref={ref} className="w-full main-bg p-2">
           <h2 style={{ marginBottom: 20 }} className="text-md sm:text-lg flex items-center justify-center gap-2">
-            <span>Активность преподавателя</span>
+            <span>Активность</span>
           </h2>
-          <ActivityPage value={[]} />
-          <div className='flex items-center gap-3 my-2 text-sm'>
+          <ActivityPage value={contribution} />
+
+          <div className='flex items-end gap-3 my-2'>
             <div className='flex items-start flex-col gap-1 font-bold'>
-              <span className='text-[var(--mainColor)]'>xx-xx-xx</span>
-              <span>Последнее посещение</span>
+              <span className='text-[var(--mainColor)]'>{<MyDateTime options={options} createdAt={studentStatistic?.last_visit || ''} />}</span>
+              <span className='text-sm'>Последнее посещение</span>
             </div>
             <div className='flex items-start flex-col gap-1 font-bold'>
-              <span className='text-[var(--mainColor)]'>xx-xx-xx</span>
-              <span>Дней посещено без перерыва</span>
+              <span className='text-[var(--mainColor)] text-lg'>{studentStatistic?.streak}</span>
+              <span className='text-sm'>Дней посещено без перерыва</span>
+            </div>
+            <div className='flex items-start flex-col gap-1 font-bold'>
+              <span className='text-[var(--mainColor)] text-lg'>{studentStatistic?.all_active_dates}</span>
+              <span className='text-sm'>Дней посещено в общем</span>
             </div>
           </div>
         </div>

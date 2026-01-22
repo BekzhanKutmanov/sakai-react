@@ -143,3 +143,28 @@ export const stepPractica = async (step_id: number | null, stream_id: number | n
         return err;
     }
 };
+
+// fetch student activity and statistics
+export const fetchStudentStatistic = async () => {
+    try {
+        const res = await axiosInstance.get(`/v1/student/students-activity`);
+        const data = await res.data;
+
+        return data;
+    } catch (err) {
+        console.log('Ошибка загрузки:', err);
+        return err;
+    }
+};
+
+export const fetchStudentActivity = async () => {
+    try {
+        const res = await axiosInstance.get(`/v1/student/students-activity-stats`);
+        const data = await res.data;
+
+        return data;
+    } catch (err) {
+        console.log('Ошибка загрузки:', err);
+        return err;
+    }
+};
