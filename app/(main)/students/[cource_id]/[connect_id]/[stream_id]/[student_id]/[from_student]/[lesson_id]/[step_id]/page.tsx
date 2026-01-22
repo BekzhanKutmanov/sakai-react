@@ -47,9 +47,7 @@ export default function StudentCheck() {
 
     const handleFetchStreams = async () => {
         mainSetSkeleton(true);
-        const data = await fetchStudentDetail(lesson_id ? Number(lesson_id) : null, connect_id ? Number(connect_id) : null, stream_id ? Number(stream_id) : null, student_id ? Number(student_id) : null, step_id ? Number(step_id) : null);
-        console.log(data);
-        
+        const data = await fetchStudentDetail(lesson_id ? Number(lesson_id) : null, connect_id ? Number(connect_id) : null, stream_id ? Number(stream_id) : null, student_id ? Number(student_id) : null, step_id ? Number(step_id) : null);        
         if (data?.success) {
             // handleStatusView();
             setHasSteps(false);

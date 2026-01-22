@@ -194,11 +194,11 @@ const AppMenu = () => {
                           icon: 'pi pi-bell',
                           to: '/notifications'
                       },
-                      {
-                          label: 'Поиск студентов',
-                          icon: 'pi pi-search',
-                          to: '/'
-                      }
+                    //   {
+                    //       label: 'Поиск студентов',
+                    //       icon: 'pi pi-search',
+                    //       to: '/students/search'
+                    //   }
                   ].filter(Boolean) as AppMenuItem[])
                 : []
             : []
@@ -310,11 +310,11 @@ const AppMenu = () => {
                       icon: 'pi pi-bell',
                       to: '/notifications'
                   },
-                  {
-                      label: 'Поиск студентов',
-                      icon: 'pi pi-search',
-                      to: '/'
-                  }
+                //   {
+                //       label: 'Поиск студентов',
+                //       icon: 'pi pi-search',
+                //       to: '/students/search'
+                //   }
               ].filter(Boolean) as AppMenuItem[])
             : []
         : [];

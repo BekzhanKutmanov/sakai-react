@@ -26,7 +26,6 @@ interface StudentStatistic {
 
 export default function StudentHome() {
     const { user, setMessage, contextNotifications } = useContext(LayoutContext);
-    const showError = useErrorMessage();
     const ref = useRef<HTMLDivElement>(null);
     const media = useMediaQuery('(max-width: 640px)');
 
@@ -41,6 +40,7 @@ export default function StudentHome() {
         day: '2-digit',
         hour: '2-digit',
         minute: '2-digit',
+        second: '2-digit',
         hour12: false // 24-часовой формат
     };
 
@@ -160,15 +160,6 @@ export default function StudentHome() {
                     </div>
                 </div>
             </div>
-            {/* // ) : (
-        // <div className="main-bg p-8 flex flex-col items-center justify-center text-center min-h-[300px]">
-        //   <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-        //     <i className="pi pi-folder-open text-3xl text-gray-400"></i>
-        //   </div>
-        //   <h3 className="text-xl font-semibold text-gray-700 mb-2">Курсы не найдены</h3>
-        //   <p className="text-gray-500 max-w-md">У вас пока нет назначенных курсов. Если вы считаете, что это ошибка, обратитесь в администрацию.</p>
-        // </div>
-      // )} */}
         </div>
     );
 }
