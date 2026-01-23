@@ -25,10 +25,10 @@ const AppFooter = () => {
             const data = await fetchInfo();
             if(data){
                 setUniver({
-                    address_ru: data[0]?.address_ru,
-                    contact_ru: data[0]?.contact_ru,
-                    info_ru: data[0]?.info_ru,
-                    info_en: data[0]?.info_en,
+                    address_ru: data[1]?.address_ru,
+                    contact_ru: data[1]?.contact_ru,
+                    info_ru: data[1]?.info_ru,
+                    info_en: data[1]?.info_en,
                 });
             }
         }
