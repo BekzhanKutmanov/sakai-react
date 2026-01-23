@@ -3,7 +3,7 @@
 import { OptionsType } from '@/types/OptionsType';
 import MyDateTime from '../MyDateTime';
 import { Button } from 'primereact/button';
-import { useMediaQuery } from '@/hooks/useMediaQuery';
+import useMediaQuery from '@/hooks/useMediaQuery';
 import { useEffect, useState } from 'react';
 import { CourseCategoryOption } from '@/types/openCourse/CourseCategoryOption';
 
