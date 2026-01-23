@@ -1,6 +1,6 @@
 'use client';
 
-import { useMediaQuery } from '@/hooks/useMediaQuery';
+import useMediaQuery  from '@/hooks/useMediaQuery';
 
 export default function InfoBanner({ title, titleSize }: { title: string; titleSize: { default: string; sm: string } }) {
     const media = useMediaQuery('(max-width: 640px)');
