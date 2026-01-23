@@ -4,7 +4,7 @@ import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import GroupSkeleton from '../skeleton/GroupSkeleton';
 import { NotFound } from '../NotFound';
-import { useMediaQuery } from '@/hooks/useMediaQuery';
+import useMediaQuery from '@/hooks/useMediaQuery';
 import { useContext, useEffect, useState } from 'react';
 import { mainStreamsType } from '@/types/mainStreamsType';
 import { LayoutContext } from '@/layout/context/layoutcontext';
