@@ -1,6 +1,6 @@
 'use client';
 
-import { useMediaQuery } from '@/hooks/useMediaQuery';
+import useMediaQuery from '@/hooks/useMediaQuery';
 import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 import { ReactNode, useEffect } from 'react';
