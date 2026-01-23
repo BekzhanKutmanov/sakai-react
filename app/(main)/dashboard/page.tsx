@@ -38,7 +38,7 @@ export default function Dashboard() {
     interface PerformanceType {
         course_sync_score: string,
         created_at: string,
-        details: { courses_count: number, notifs_count: number },
+        details: { courses_count: number, notifs_count: number, courses:number, notifs:number },
         id: number,
         id_edu_year: number,
         notification_score: string,
@@ -299,8 +299,8 @@ export default function Dashboard() {
                         </div>
                         <div className='flex items-center sm:items-start gap-1 justify-around flex-col sm:flex-row'>
                             <DataTable value={[
-                                { label: 'Количество курсов :', value: performance?.details?.courses_count },
-                                { label: 'Количество уведомлений :', value: performance?.details?.notifs_count }
+                                { label: 'Количество курсов :', value: performance?.details?.courses },
+                                { label: 'Количество уведомлений :', value: performance?.details?.notifs }
                             ]} showHeaders={false} className='my-custom-table max-w-[400px] p-2 border-1 border-[#dfe7ef]'>
                                 <Column field="label" />
                                 <Column field="value" />

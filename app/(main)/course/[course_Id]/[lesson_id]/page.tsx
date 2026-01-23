@@ -59,7 +59,6 @@ export default function LessonStep() {
     const handleShow = async (LessonId: number | null) => {
         setSkeleton(true);
         const data = await fetchLessonShow(LessonId);
-        console.log(data);
 
         if (data?.lesson) {
             setSkeleton(false);
@@ -252,7 +251,6 @@ export default function LessonStep() {
     const handleUpdateSequence = async (steps: { id: number; step: number }[]) => {
         setSkeleton(true);
         const secuence = await stepSequenceUpdate(lesson_id ? Number(lesson_id) : null, steps);
-        console.log(secuence);
 
         if (secuence?.success) {
             handleFetchSteps(lesson_id);

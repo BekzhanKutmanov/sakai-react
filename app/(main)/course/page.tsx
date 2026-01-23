@@ -349,14 +349,11 @@ export default function Course() {
                 }
             }
         }
-        console.log(data);
     };
 
     const handleAddOpenTypes = async (course_audience_type_id: number, course_id: number) => {
         setSkeleton(true);
         const data = await addOpenTypes(course_audience_type_id, course_id);
-        console.log(data);
-
         if (data && data.success) {
             contextFetchCourse(1);
             setMessage({
