@@ -567,7 +567,7 @@ export default function LessonTest() {
             {steps?.chills ? (
                 <>
                     <span className="pi pi-check-circle text-xl text-[var(--greenColor)] mb-4"> Задание выполнено</span>
-                    <AnswersTable report={report} paginationProp={pagination} />
+                    {/* <AnswersTable report={report} paginationProp={pagination} /> */}
                 </>
             ) : (
                 <div className="flex flex-col gap-2 items-start w-full mt-2">

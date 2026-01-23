@@ -195,12 +195,12 @@ const AppMenu = () => {
                           label: 'Уведомления',
                           icon: 'pi pi-bell',
                           to: '/notifications'
-                      },
-                    //   {
-                    //       label: 'Поиск студентов',
-                    //       icon: 'pi pi-search',
-                    //       to: '/students/search'
-                    //   }
+                      }
+                      //   {
+                      //       label: 'Поиск студентов',
+                      //       icon: 'pi pi-search',
+                      //       to: '/students/search'
+                      //   }
                   ].filter(Boolean) as AppMenuItem[])
                 : []
             : []
@@ -262,9 +262,9 @@ const AppMenu = () => {
                       icon: 'pi pi-th-large',
                       to: '/dashboard'
                   },
-                    zamDekanRole?.label ? zamDekanRole : null,
-                    adminRole?.label ? adminRole : null,
-                    depRole?.label ? depRole : null,
+                  zamDekanRole?.label ? zamDekanRole : null,
+                  adminRole?.label ? adminRole : null,
+                  depRole?.label ? depRole : null,
                   {
                       label: 'Утвердить курсы',
                       icon: 'pi pi-graduation-cap',
@@ -312,12 +312,12 @@ const AppMenu = () => {
                       label: 'Уведомления',
                       icon: 'pi pi-bell',
                       to: '/notifications'
-                  },
-                //   {
-                //       label: 'Поиск студентов',
-                //       icon: 'pi pi-search',
-                //       to: '/students/search'
-                //   }
+                  }
+                  //   {
+                  //       label: 'Поиск студентов',
+                  //       icon: 'pi pi-search',
+                  //       to: '/students/search'
+                  //   }
               ].filter(Boolean) as AppMenuItem[])
             : []
         : [];
@@ -492,6 +492,7 @@ const AppMenu = () => {
                 const forAdmin = forRole.find((item) => item.id === 1);
                 if (forAdmin) {
                     setAdminRole({ label: 'Админ', icon: 'pi pi-shield', to: '/roles', profilact: '' });
+                    setZamDekanRole({ label: 'Проверка преподавателей', icon: 'pi pi-check-square', to: '/roles/teacherCheck', profilact: '' });
                 }
 
                 const forDep = forRole.find((item) => item.id === 2);
@@ -499,10 +500,6 @@ const AppMenu = () => {
                     setDepRole({ label: 'Департамент', icon: 'pi pi-briefcase', to: '/roles/departament', profilact: '' });
                 }
             }
-
-            setZamDekanRole(
-                {label:'Проверка преподавателей', icon: 'pi pi-check-square', to: '/roles/teacherCheck', profilact: ''}
-            );
         }
     }, [user, studentThemeCourse]);
 

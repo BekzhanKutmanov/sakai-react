@@ -7,13 +7,16 @@ import useMediaQuery from '@/hooks/useMediaQuery';
 import { LayoutContext } from '@/layout/context/layoutcontext';
 import { controlRolesUsers, fetchRolesList, fetchRolesUsers } from '@/services/roles/roles';
 import { RoleUserType } from '@/types/roles/RoleUserType';
+import { Button } from 'primereact/button';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
+import { Dialog } from 'primereact/dialog';
 import { Dropdown, DropdownChangeEvent } from 'primereact/dropdown';
 import { InputText } from 'primereact/inputtext';
 import { Paginator } from 'primereact/paginator';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import { useContext, useEffect, useState } from 'react';
+import { set } from 'react-hook-form';
 
 export default function Roles() {
     // types
@@ -27,6 +30,13 @@ export default function Roles() {
     interface Role_idType {
         name: string;
         role_id: number | null;
+    }
+
+    interface RoleState {
+        create: boolean;
+        update: boolean;
+        delete: boolean;
+        show: boolean;
     }
 
     const showError = useErrorMessage();
@@ -56,11 +66,22 @@ export default function Roles() {
     const [selectedRole_idType, setSelectedRole_idType] = useState<Role_idType | null>({ name: 'Все', role_id: null });
     const [cities, setCities] = useState<Role_idType[]>([{ name: 'Все', role_id: null }]);
     const [forDisabled, setForDisabled] = useState(false);
+    const [categoryVisible, setCategoryVisible] = useState<boolean>(false);
+    const [roleState, setRoleState] = useState<RoleState>({
+        create: false,
+        update: false,
+        delete: false,
+        show: true
+    });
+    const [role_id, setRole_id] = useState<number | null>(null);
+    const [user_id, setUser_id] = useState<number | null>(null);
 
     const handleFetchRoles = async () => {
         setSkeleton(true);
         setMainProgressSpinner(true);
         const data = await fetchRolesList();
+        console.log(data);
+
         if (data && Array.isArray(data)) {
             if (data.length > 0) {
                 setContentNull(false);
@@ -114,9 +135,10 @@ export default function Roles() {
         }
     };
 
-    const handleControlUsersRole = async (worker_id: number, selectedRole_idTypeParam: number | null, activeParam: boolean | null) => {
+    const handleControlUsersRole = async (worker_id: number | null, selectedRole_idTypeParam: number | null, activeParam: boolean | null, roleState: RoleState) => {
+        clearValues();
         setForDisabled(true);
-        const res = await controlRolesUsers(worker_id, selectedRole_idTypeParam ? selectedRole_idTypeParam : null, activeParam);
+        const res = await controlRolesUsers(worker_id, selectedRole_idTypeParam ? selectedRole_idTypeParam : null, activeParam, roleState);
         if (res?.success) {
             handleFetchRoles();
             setTimeout(() => {
@@ -134,6 +156,31 @@ export default function Roles() {
             }
         }
         setForDisabled(false);
+    };
+
+    const clearValues = () => {
+        setRole_id(null);
+        setUser_id(null);
+        setRoleState({
+            create: false,
+            update: false,
+            delete: false,
+            show: true
+        });
+    };
+
+    const checkRolesCrud = (user: any, role: number) => {
+        console.log(user, role);
+        const userObj = user?.roles?.find((item: { id: number }) => item?.id === role);
+        console.warn(userObj);
+        if (userObj) {
+            setRoleState({
+                create: userObj?.pivot?.create,
+                update: userObj?.pivot?.update,
+                delete: userObj?.pivot?.delete,
+                show: userObj?.pivot?.read
+            });
+        }
     };
 
     // Ручное управление пагинацией
@@ -161,7 +208,7 @@ export default function Roles() {
 
                             return (
                                 <div key={role?.id} className="text-center flex justify-between items-start">
-                                    <span className='text-sm'>{idx % 2 === 0 ? 'Администратор' : 'Департамент'}</span>
+                                    <span className="text-sm">{idx % 2 === 0 ? 'Администратор' : 'Департамент'}</span>
 
                                     {/* <span className='text-sm'>{userRole?.id === 1 ? 'Администратор:' : userRole?.id === 2 ? 'Департамент:' : ''}</span> */}
                                     <div className="flex justify-center items-center">
@@ -169,7 +216,14 @@ export default function Roles() {
                                             <button
                                                 className={`theme-toggle ${forDisabled && 'opacity-50'}`}
                                                 disabled={forDisabled}
-                                                onClick={() => handleControlUsersRole(item?.id, roles[idx]?.id, true)}
+                                                // onClick={() => handleControlUsersRole(item?.id, roles[idx]?.id, true, roleState)}
+                                                onClick={() => {
+                                                    setCategoryVisible(true);
+                                                    checkRolesCrud(role, role?.id);
+                                                    setRole_id(roles[idx]?.id);
+                                                    setUser_id(shablonData?.id);
+                                                    setActive(true);
+                                                }}
                                                 aria-pressed="false"
                                                 // onClick={() => console.log(user?.roles, roles[idx])} aria-pressed="false"
                                             >
@@ -183,7 +237,14 @@ export default function Roles() {
                                             <button
                                                 className={`theme-toggle ${forDisabled && 'opacity-50'}`}
                                                 disabled={forDisabled}
-                                                onClick={() => handleControlUsersRole(item?.id, roles[idx]?.id, false)}
+                                                // onClick={() => handleControlUsersRole(item?.id, roles[idx]?.id, false, roleState)}
+                                                onClick={() => {
+                                                    setCategoryVisible(true);
+                                                    checkRolesCrud(role, role?.id);
+                                                    setRole_id(roles[idx]?.id);
+                                                    setUser_id(shablonData?.id);
+                                                    setActive(true);
+                                                }}
                                                 aria-pressed="false"
                                                 // onClick={() => console.log(user, roles[idx])} aria-pressed="false"
                                             >
@@ -222,6 +283,10 @@ export default function Roles() {
         }
         return [];
     };
+
+    useEffect(() => {
+        console.log(roleState);
+    }, [categoryVisible, roleState]);
 
     useEffect(() => {
         setMiniProgressSpinner(true);
@@ -286,6 +351,32 @@ export default function Roles() {
         handleFetchUsers(1, '', null, null, null);
         setUserFetchGlag(true);
     }, []);
+
+    const categoryFooterContent = (
+        <div>
+            <Button
+                label={'Назад'}
+                className="reject-button"
+                size="small"
+                icon="pi pi-times"
+                onClick={() => {
+                    setCategoryVisible(false);
+                    clearValues();
+                }}
+            />
+
+            <Button
+                label={'Отправить'}
+                size="small"
+                icon="pi pi-check"
+                onClick={() => {
+                    setCategoryVisible(false);
+                    handleControlUsersRole(user_id, role_id, active, roleState);
+                }}
+                autoFocus
+            />
+        </div>
+    );
 
     if (mainProgressSpinner)
         return (
@@ -378,7 +469,14 @@ export default function Roles() {
                                                                 <button
                                                                     className={`theme-toggle ${forDisabled && 'opacity-50'}`}
                                                                     disabled={forDisabled}
-                                                                    onClick={() => handleControlUsersRole(user?.id, roles[idx]?.id, true)}
+                                                                    // onClick={() => handleControlUsersRole(user?.id, roles[idx]?.id, true)}
+                                                                    onClick={() => {
+                                                                        setCategoryVisible(true);
+                                                                        checkRolesCrud(user, role?.id);
+                                                                        setRole_id(roles[idx]?.id);
+                                                                        setUser_id(user?.id);
+                                                                        setActive(true);
+                                                                    }}
                                                                     aria-pressed="false"
                                                                     // onClick={() => console.log(user?.roles, roles[idx])} aria-pressed="false"
                                                                 >
@@ -392,7 +490,14 @@ export default function Roles() {
                                                                 <button
                                                                     className={`theme-toggle ${forDisabled && 'opacity-50'}`}
                                                                     disabled={forDisabled}
-                                                                    onClick={() => handleControlUsersRole(user?.id, roles[idx]?.id, false)}
+                                                                    // onClick={() => handleControlUsersRole(user?.id, roles[idx]?.id, false)}
+                                                                    onClick={() => {
+                                                                        setCategoryVisible(true);
+                                                                        checkRolesCrud(user, role?.id);
+                                                                        setRole_id(roles[idx]?.id);
+                                                                        setUser_id(user?.id);
+                                                                        setActive(false);
+                                                                    }}
                                                                     aria-pressed="false"
                                                                     // onClick={() => console.log(user, roles[idx])} aria-pressed="false"
                                                                 >
@@ -440,6 +545,99 @@ export default function Roles() {
                                     template={media ? 'FirstPageLink PrevPageLink NextPageLink LastPageLink' : 'FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink'}
                                 />
                             </div>
+
+                            <Dialog
+                                header={'Отправить'}
+                                visible={categoryVisible}
+                                className="my-custom-dialog"
+                                onHide={() => {
+                                    if (!categoryVisible) return;
+                                    setCategoryVisible(false);
+                                    clearValues();
+                                }}
+                                footer={categoryFooterContent}
+                            >
+                                {
+                                    <div className="flex flex-col gap-1">
+                                        <div className="flex items-center gap-2">
+                                            <label className="custom-radio">
+                                                <input
+                                                    type="checkbox"
+                                                    className={`customCheckbox`}
+                                                    checked={roleState?.create}
+                                                    onChange={(e) => {
+                                                        setRoleState((prev) => {
+                                                            return {
+                                                                ...prev,
+                                                                create: !prev?.create
+                                                            };
+                                                        });
+                                                    }}
+                                                />
+                                                <span className="checkbox-mark"></span>
+                                            </label>
+                                            <span>Создать</span>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <label className="custom-radio">
+                                                <input
+                                                    type="checkbox"
+                                                    className={`customCheckbox`}
+                                                    checked={roleState?.update}
+                                                    onChange={(e) => {
+                                                        setRoleState((prev) => {
+                                                            return {
+                                                                ...prev,
+                                                                update: !prev?.update
+                                                            };
+                                                        });
+                                                    }}
+                                                />
+                                                <span className="checkbox-mark"></span>
+                                            </label>
+                                            <span>Изменить</span>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <label className="custom-radio">
+                                                <input
+                                                    type="checkbox"
+                                                    className={`customCheckbox`}
+                                                    checked={roleState?.delete}
+                                                    onChange={(e) => {
+                                                        setRoleState((prev) => {
+                                                            return {
+                                                                ...prev,
+                                                                delete: !prev?.delete
+                                                            };
+                                                        });
+                                                    }}
+                                                />
+                                                <span className="checkbox-mark"></span>
+                                            </label>
+                                            <span>Удалить</span>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <label className="custom-radio">
+                                                <input
+                                                    type="checkbox"
+                                                    className={`customCheckbox`}
+                                                    checked={roleState?.show}
+                                                    onChange={(e) => {
+                                                        setRoleState((prev) => {
+                                                            return {
+                                                                ...prev,
+                                                                show: !prev?.show
+                                                            };
+                                                        });
+                                                    }}
+                                                />
+                                                <span className="checkbox-mark"></span>
+                                            </label>
+                                            <span>Смотреть</span>
+                                        </div>
+                                    </div>
+                                }
+                            </Dialog>
                         </div>
                     )}
                 </div>

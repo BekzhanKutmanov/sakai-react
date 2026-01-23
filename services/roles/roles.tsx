@@ -1,4 +1,5 @@
 import axiosInstance from '@/utils/axiosInstance';
+import { create } from 'node:domain';
 let url = '';
 
 export const fetchRolesList = async () => {
@@ -29,11 +30,17 @@ export const fetchRolesUsers = async (page: number, search: string | null, myedu
     }
 };
 
-export const controlRolesUsers = async (worker_id: number | null, role_id: number | null, active: boolean | null) => {
+export const controlRolesUsers = async (worker_id: number | null, role_id: number | null, active: boolean | null, roleState: {create: boolean; update: boolean; delete: boolean; show: boolean }) => {
+    const roleCheck = !roleState.create && !roleState.update && !roleState.delete && !roleState.show;
+    
     const payload = {
         worker_id,
         role_id,
-        active
+        active: roleCheck ? false : true,
+        create: roleCheck ? false : roleState.create,
+        update: roleCheck ? false : roleState.update,
+        delete: roleCheck ? false : roleState.delete,
+        read: roleCheck ? false : roleState.show
     };
 
     try {
