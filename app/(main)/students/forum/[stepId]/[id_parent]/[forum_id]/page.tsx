@@ -5,7 +5,7 @@ import FormModal from '@/app/components/popUp/FormModal';
 import Redacting from '@/app/components/popUp/Redacting';
 import GroupSkeleton from '@/app/components/skeleton/GroupSkeleton';
 import useErrorMessage from '@/hooks/useErrorMessage';
-import { useMediaQuery } from '@/hooks/useMediaQuery';
+import useMediaQuery from '@/hooks/useMediaQuery';
 import { LayoutContext } from '@/layout/context/layoutcontext';
 import { addForumMessage, deleteMessageForum, forumDetails, forumDetailsShow, updateMessageForum } from '@/services/forum';
 import { getConfirmOptions } from '@/utils/getConfirmOptions';
