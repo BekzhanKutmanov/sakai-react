@@ -80,6 +80,7 @@ const AppMenu = () => {
     const [courseInfo, setCourseInfo] = useState<{ title: string } | null>(null);
     const [forDepartamentLength, setForDepartamentLength] = useState(false);
     const [additional, setAdditional] = useState(false);
+    const [zamDekanRole, setZamDekanRole] = useState<MyApMenuType>({ profilact: '' });
     const [adminRole, setAdminRole] = useState<MyApMenuType>({ profilact: '' });
     const [depRole, setDepRole] = useState<MyApMenuType>({ profilact: '' });
 
@@ -149,6 +150,7 @@ const AppMenu = () => {
                           icon: 'pi pi-th-large',
                           to: '/dashboard'
                       },
+                      zamDekanRole?.label ? zamDekanRole : null,
                       adminRole?.label ? adminRole : null,
                       depRole?.label ? depRole : null,
                       {
@@ -260,8 +262,9 @@ const AppMenu = () => {
                       icon: 'pi pi-th-large',
                       to: '/dashboard'
                   },
-                  adminRole?.label ? adminRole : null,
-                  depRole?.label ? depRole : null,
+                    zamDekanRole?.label ? zamDekanRole : null,
+                    adminRole?.label ? adminRole : null,
+                    depRole?.label ? depRole : null,
                   {
                       label: 'Утвердить курсы',
                       icon: 'pi pi-graduation-cap',
@@ -496,6 +499,10 @@ const AppMenu = () => {
                     setDepRole({ label: 'Департамент', icon: 'pi pi-briefcase', to: '/roles/departament', profilact: '' });
                 }
             }
+
+            setZamDekanRole(
+                {label:'Проверка преподавателей', icon: 'pi pi-check-square', to: '/roles/teacherCheck', profilact: ''}
+            );
         }
     }, [user, studentThemeCourse]);
 

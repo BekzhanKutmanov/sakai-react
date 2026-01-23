@@ -1,7 +1,6 @@
 'use client';
 
-import useErrorMessage from '@/hooks/useErrorMessage';
-import { useMediaQuery } from '@/hooks/useMediaQuery';
+import useMediaQuery from '@/hooks/useMediaQuery';
 import { LayoutContext } from '@/layout/context/layoutcontext';
 import { fetchStudentActivity, fetchStudentStatistic } from '@/services/studentMain';
 import { ProgressSpinner } from 'primereact/progressspinner';
@@ -11,12 +10,6 @@ import { fetchStudentImg } from '@/services/student/studentpage';
 import MyDateTime from '@/app/components/MyDateTime';
 import { OptionsType } from '@/types/OptionsType';
 import { ContributionDay } from '@/types/ContributionDay';
-
-interface PredmetUser {
-    last_name: string;
-    name: string;
-    father_name: string;
-}
 
 interface StudentStatistic {
     all_active_dates: number;

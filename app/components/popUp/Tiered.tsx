@@ -4,7 +4,7 @@ import { useRef } from 'react';
 import { Button } from 'primereact/button';
 import { TieredMenu } from 'primereact/tieredmenu';
 import type { TieredMenu as TieredMenuRef } from 'primereact/tieredmenu'; 
-import { useMediaQuery } from '@/hooks/useMediaQuery';
+import useMediaQuery from '@/hooks/useMediaQuery';
 // import type { Menu, Menu as MenuRef } from 'primereact/menu';
 
 import { MenuItem } from 'primereact/menuitem';

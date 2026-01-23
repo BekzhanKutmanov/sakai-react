@@ -1,4 +1,4 @@
-@token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2FwaS1kZXYubW9vYy5vc2hzdS5rZy9wdWJsaWMvYXBpL2xvZ2luIiwiaWF0IjoxNzY4ODk0ODk2LCJleHAiOjE3Njg5MjE4OTYsIm5iZiI6MTc2ODg5NDg5NiwianRpIjoiaFNBMkpHaEF5N1FxZ1JjbSIsInN1YiI6IjEyIiwicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyIsInJvbGVzIjpbXX0.npJwsokWbHgDijgDBes7LwYK4kp_H7gmWm4iQI-NClQ
+@token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2FwaS1kZXYubW9vYy5vc2hzdS5rZy9wdWJsaWMvYXBpL2xvZ2luIiwiaWF0IjoxNzY5MTM3MTg1LCJleHAiOjE3NjkxNjQxODUsIm5iZiI6MTc2OTEzNzE4NSwianRpIjoiTXVnQzd2WkxYZWd6dlJXbyIsInN1YiI6IjE3NSIsInBydiI6IjIzYmQ1Yzg5NDlmNjAwYWRiMzllNzAxYzQwMDg3MmRiN2E1OTc2ZjcifQ.dwM24PN6i7oUfmAUrwvhtC9tIgMhNFIQEP-PK0T1UAI
 # ###
 
 # http://api.mooc.oshsu.kg/public/api/v1/open/video/types
@@ -34,6 +34,6 @@
 # Authorization: Bearer {{token}} 
 # Content-Type: application/json 
 
-GET https://api-dev.mooc.oshsu.kg/public/api/v1/teacher/dashboard/performance
+GET https://api-dev.mooc.oshsu.kg/public/api/v1/teacher/controls/practical-lessons
 Authorization: Bearer {{token}} 
 Content-Type: application/json 

@@ -1,12 +1,11 @@
 'use client';
 
 import useErrorMessage from '@/hooks/useErrorMessage';
-import { useMediaQuery } from '@/hooks/useMediaQuery';
+import useMediaQuery from '@/hooks/useMediaQuery';
 import { LayoutContext } from '@/layout/context/layoutcontext';
 import { chillsUpdate } from '@/services/studentMain';
 import { lessonType } from '@/types/lessonType';
 import Link from 'next/link';
-import { useParams } from 'next/navigation';
 import { Button } from 'primereact/button';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import { useContext, useState } from 'react';

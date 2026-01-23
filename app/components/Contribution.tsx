@@ -2,8 +2,7 @@
 import React, { useEffect, useRef } from 'react';
 import HeatMap from '@uiw/react-heat-map'; // <-- Новый импорт!
 import { ContributionDay } from '@/types/ContributionDay';
-import { User } from '@/types/user';
-import { useMediaQuery } from '@/hooks/useMediaQuery';
+import useMediaQuery from '@/hooks/useMediaQuery';
 
 // Интерфейс для данных остается прежним (но у HeatMap используется prop 'value')
 

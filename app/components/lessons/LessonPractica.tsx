@@ -10,7 +10,7 @@ import { ProgressSpinner } from 'primereact/progressspinner';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import LessonCard from '../cards/LessonCard';
-import { useMediaQuery } from '@/hooks/useMediaQuery';
+import useMediaQuery from '@/hooks/useMediaQuery';
 import { addPractica, deletePractica, fetchElement, stepSequenceUpdate, updatePractica } from '@/services/steps';
 import { mainStepsType } from '@/types/mainStepType';
 import useErrorMessage from '@/hooks/useErrorMessage';

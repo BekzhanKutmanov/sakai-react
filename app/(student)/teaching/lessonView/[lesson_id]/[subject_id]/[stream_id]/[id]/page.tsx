@@ -6,10 +6,9 @@ const PDFreader = dynamic(() => import('@/app/components/pdfComponents/PDFreader
 
 import { NotFound } from '@/app/components/NotFound';
 import useErrorMessage from '@/hooks/useErrorMessage';
-import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { LayoutContext } from '@/layout/context/layoutcontext';
 import { statusView } from '@/services/notifications';
-import { fetchItemsLessons, fetchMainLesson, fetchStudentSteps, fetchSubjects, stepPractica, stepTest } from '@/services/studentMain';
+import { fetchAnwerReport, fetchItemsLessons, fetchMainLesson, fetchStudentSteps, fetchSubjects, stepPractica, stepTest } from '@/services/studentMain';
 import { docValueType } from '@/types/docValueType';
 import { lessonType } from '@/types/lessonType';
 import { mainStepsType } from '@/types/mainStepType';
@@ -20,6 +19,8 @@ import { useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { StepApi } from '@/types/Step/StepApi/StepApi';
 import Link from 'next/link';
+import AnswersTable from '@/app/components/tables/AnswersTable';
+import useMediaQuery from '@/hooks/useMediaQuery';
 
 export default function LessonTest() {
     // types
@@ -100,6 +101,14 @@ export default function LessonTest() {
     const [video, setVideo] = useState<mainStepsType | null>(null);
     const [preview, setPreview] = useState(false);
     const [videoLink, setVideoLink] = useState('');
+
+    const [pagination, setPagination] = useState<{ currentPage: number; total: number; perPage: number }>({
+        currentPage: 1,
+        total: 0,
+        perPage: 0
+    });
+
+    const [report, setReport] = useState<[] | null>(null);
 
     // fetch lessons
     const handleFetchLessons = async () => {
@@ -556,7 +565,10 @@ export default function LessonTest() {
             </div> */}
 
             {steps?.chills ? (
-                <span className="pi pi-check-circle text-xl mb-1 text-[var(--greenColor)]"> Задание выполнено</span>
+                <>
+                    <span className="pi pi-check-circle text-xl text-[var(--greenColor)] mb-4"> Задание выполнено</span>
+                    <AnswersTable report={report} paginationProp={pagination} />
+                </>
             ) : (
                 <div className="flex flex-col gap-2 items-start w-full mt-2">
                     <span className="pi pi-check-circle text-lg mb-1 text-[var(--mainColor)] shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)] pb-1"> Задание после изучения материала, загрузи свой файл с решением.</span>
@@ -722,7 +734,12 @@ export default function LessonTest() {
         </div>
     );
 
-    if(mainProgressSpinner) return <div className='main-bg flex justify-center items-center h-[100vh]'><ProgressSpinner style={{ width: '60px', height: '60px' }} /></div>
+    if (mainProgressSpinner)
+        return (
+            <div className="main-bg flex justify-center items-center h-[100vh]">
+                <ProgressSpinner style={{ width: '60px', height: '60px' }} />
+            </div>
+        );
 
     return (
         <div className="main-bg min-h-[100vh] w-full relative flex flex-col gap-3 justify-between">
@@ -782,7 +799,7 @@ export default function LessonTest() {
                             </div>
                             {courseInfo?.image && courseInfo?.image.length > 0 && (
                                 <div className="sm:w-1/3 flex justify-center items-center">
-                                    <img src={courseInfo?.image} className='w-[80%] object-cover shadow-2 border-round'/>
+                                    <img src={courseInfo?.image} className="w-[80%] object-cover shadow-2 border-round" />
                                 </div>
                             )}
                         </div>

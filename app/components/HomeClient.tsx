@@ -8,7 +8,7 @@ import Link from 'next/link';
 import VideoPlay from './VideoPlay';
 import FancyLinkBtn from './buttons/FancyLinkBtn';
 import { LayoutContext } from '@/layout/context/layoutcontext';
-import { useMediaQuery } from '@/hooks/useMediaQuery';
+import useMediaQuery from '@/hooks/useMediaQuery';
 import { MainPageStatistics } from '@/types/main/MainPageStatistic';
 import { mainPageStatistics } from '@/services/main/main';
 import useErrorMessage from '@/hooks/useErrorMessage';

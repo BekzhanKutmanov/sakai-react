@@ -18,7 +18,7 @@ import { lessonType } from '@/types/lessonType';
 import { NotFound } from '../NotFound';
 import { EditableLesson } from '@/types/editableLesson';
 import { Dropdown } from 'primereact/dropdown';
-import { useMediaQuery } from '@/hooks/useMediaQuery';
+import useMediaQuery from '@/hooks/useMediaQuery';
 import { useRouter } from 'next/navigation';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import { Dialog } from 'primereact/dialog';

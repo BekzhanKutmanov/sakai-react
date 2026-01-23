@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { fetchDashboardPerformance, fetchTeacherDashboard } from '@/services/dashboard/workingDashboard';
 import GroupSkeleton from '@/app/components/skeleton/GroupSkeleton';
-import { useMediaQuery } from '@/hooks/useMediaQuery';
+import useMediaQuery from '@/hooks/useMediaQuery';
 import { useRouter } from 'next/navigation';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';

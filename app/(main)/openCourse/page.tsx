@@ -5,7 +5,7 @@ import OpenCourseShowCard from '@/app/components/cards/OpenCourseShowCard';
 import { NotFound } from '@/app/components/NotFound';
 import GroupSkeleton from '@/app/components/skeleton/GroupSkeleton';
 import useErrorMessage from '@/hooks/useErrorMessage';
-import { useMediaQuery } from '@/hooks/useMediaQuery';
+import useMediaQuery from '@/hooks/useMediaQuery';
 import { LayoutContext } from '@/layout/context/layoutcontext';
 import { fetchOpenCourses, openCourseShow, openCourseSignup, signupList } from '@/services/openCourse';
 import { depCategoryFetch, depLangFetch } from '@/services/roles/roles';
@@ -231,11 +231,11 @@ export default function OpenCourse() {
         handleFetchOpenCourse(pageState, '', '', null, null);
     };
 
-    // Ручное управление пагинацией
-    const handlePageChange = (page: number) => {
-        handleFetchOpenCourse(page, free === 'paid' ? '3' : free === 'free' ? '2' : '', search, categorySelectedId?.id || null, language_id);
-        setPageState(page);
-    };
+        // Ручное управление пагинацией
+        const handlePageChange = (page: number) => {
+            handleFetchOpenCourse(page, free === 'paid' ? '3' : free === 'free' ? '2' : '', search, categorySelectedId?.id || null, language_id);
+            setPageState(page);
+        };
 
     // category jsx
     const categoryItemTemplate = (option: any) => {
@@ -448,7 +448,7 @@ export default function OpenCourse() {
                     <div className={`shadow-[0px_-11px_5px_-6px_rgba(0,_0,_0,_0.1)]`}>
                         <Paginator
                             first={(pagination.currentPage - 1) * pagination.perPage}
-                            rows={pagination.perPage}
+                            rows={pagination.perPage}   
                             totalRecords={pagination.total}
                             onPageChange={(e) => handlePageChange(e.page + 1)}
                             // template="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"

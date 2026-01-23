@@ -17,7 +17,7 @@ import FormModal from '../popUp/FormModal';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { testType } from '@/types/testType';
 import GroupSkeleton from '../skeleton/GroupSkeleton';
-import { useMediaQuery } from '@/hooks/useMediaQuery';
+import useMediaQuery from '@/hooks/useMediaQuery';
 import { FileUpload } from 'primereact/fileupload';
 
 export default function LessonTest({

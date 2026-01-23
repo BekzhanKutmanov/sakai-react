@@ -168,3 +168,15 @@ export const fetchStudentActivity = async () => {
         return err;
     }
 };
+
+export const fetchAnwerReport = async (page: number | null, specialityId:number | null, search: string | null) => {
+    try {
+        const res = await axiosInstance.get(`/v1/teacher/controls/practical-lessons?${specialityId ? `id_speciality=${specialityId}` : ''}${search ? `&search=${search}` : ''}&page=${page}`);
+        const data = await res.data;
+
+        return data;
+    } catch (err) {
+        console.log('Ошибка загрузки:', err);
+        return err;
+    }
+};

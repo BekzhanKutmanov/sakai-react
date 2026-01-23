@@ -24,7 +24,7 @@ import { myMainCourseType } from '@/types/myMainCourseType';
 import StreamList from '@/app/components/tables/StreamList';
 import { TabPanel, TabView } from 'primereact/tabview';
 import { TabViewChange } from '@/types/tabViewChange';
-import { useMediaQuery } from '@/hooks/useMediaQuery';
+import useMediaQuery  from '@/hooks/useMediaQuery';
 import useShortText from '@/hooks/useShortText';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import { DataView } from 'primereact/dataview';

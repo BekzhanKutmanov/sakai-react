@@ -2,7 +2,7 @@
 
 import { NotFound } from '@/app/components/NotFound';
 import useErrorMessage from '@/hooks/useErrorMessage';
-import { useMediaQuery } from '@/hooks/useMediaQuery';
+import useMediaQuery from '@/hooks/useMediaQuery';
 import { LayoutContext } from '@/layout/context/layoutcontext';
 import { statusView } from '@/services/notifications';
 import { fetchItemsLessons, fetchStudentSteps, fetchSubjects, stepPractica, stepTest } from '@/services/studentMain';

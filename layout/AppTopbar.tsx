@@ -7,7 +7,7 @@ import FancyLinkBtn from '@/app/components/buttons/FancyLinkBtn';
 import { classNames } from 'primereact/utils';
 import { AppTopbarRef } from '@/types';
 import { LayoutContext } from './context/layoutcontext';
-import { useMediaQuery } from '@/hooks/useMediaQuery';
+import useMediaQuery from '@/hooks/useMediaQuery';
 import { usePathname } from 'next/navigation';
 import { logout } from '@/utils/logout';
 import GroupSkeleton from '@/app/components/skeleton/GroupSkeleton';
