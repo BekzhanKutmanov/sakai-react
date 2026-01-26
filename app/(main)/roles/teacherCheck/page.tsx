@@ -225,7 +225,7 @@ const TeacherCheckPage = () => {
                     </div>
                 </div>
 
-                {!skeleton ? (
+                {skeleton ? (
                     <div className="main-bg flex justify-center items-center my-3">
                         <ProgressSpinner style={{ width: '50px', height: '50px' }} />
                     </div>
