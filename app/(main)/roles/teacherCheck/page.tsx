@@ -225,11 +225,7 @@ const TeacherCheckPage = () => {
                     </div>
                 </div>
 
-                {skeleton ? (
-                    <div className="main-bg flex justify-center items-center my-3">
-                        <ProgressSpinner style={{ width: '50px', height: '50px' }} />
-                    </div>
-                ) : hasReport ? (
+                {hasReport ? (
                     <div className="flex justify-center items-center flex-col gap-2 h-[50vh]">
                         <i className="pi pi-folder-open text-3xl"></i>
                         <h3 className="text-xl font-semibold text-gray-700 mb-2">Ошибка загрузки</h3>
@@ -239,12 +235,16 @@ const TeacherCheckPage = () => {
                         <i className="pi pi-folder-open text-3xl"></i>
                         <h3 className="text-lg sm:text-xl font-semibold text-gray-700 mb-2">Ничего не найдено</h3>
                     </div>
+                ) : skeleton ? (
+                    <div className="main-bg flex justify-center items-center my-3">
+                        <ProgressSpinner style={{ width: '50px', height: '50px' }} />
+                    </div>
                 ) : media ? (
                     <MobileTable />
                 ) : (
                     <DesktopTable />
                 )}
-                {skeleton && (
+                {!skeleton && (
                     <Paginator
                         first={(pagination.currentPage - 1) * pagination.perPage}
                         rows={pagination.perPage}

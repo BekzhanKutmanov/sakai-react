@@ -66,15 +66,20 @@ const AnswersTable = ({ report }: { report: any }) => {
                 <div className="inline-flex flex-col gap-2 p-1 border-gray-200 rounded bg-white font-sans">
                     <div className="flex items-center gap-2">
                         <div className="tracking-wider text-gray-400 font-semibold">Дата создания: {report?.created_at ? new Date(report.created_at).toLocaleDateString() : '—'}</div>
-                        <i className="pi pi-calendar-clock"></i>
+                        <i className="pi pi-calendar-clock text-[var(--mainColor)]"></i>
                     </div>
 
                     <div className="flex items-center gap-2">
                         {report?.my_score ? (
                             // Вариант: Проверено (Строго, без лишних красок)
-                            <div className="flex items-center gap-2">
-                                <span className="font-medium text-gray-700">Статус: Проверено</span>
-                                <i className="pi pi-check-circle ml-1"></i>
+                            <div className='flex flex-col gap-1'>
+                                <div className="flex items-center gap-2">
+                                    <span className="font-medium text-gray-700">Статус: Проверено</span>
+                                    <i className="pi pi-check-circle ml-1 text-[green]"></i>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <span className="font-medium text-gray-700">Балл: <b className='text-[var(--mainColor)]'>{report?.my_score}</b></span>
+                                </div>
                             </div>
                         ) : (
                             // Вариант: Ожидание (С мягкой анимацией точки)
