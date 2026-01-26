@@ -46,8 +46,8 @@ const TeacherCheckPage = () => {
 
     // Ручное управление пагинацией
     const handlePageChange = (page: number) => {
-        handleAnswersReport(currentSpecialityId, search);
         setPageState(page);
+        handleAnswersReport(page, currentSpecialityId, search);
     };
 
     const handleFetchFaculty = async () => {
@@ -70,9 +70,9 @@ const TeacherCheckPage = () => {
     };
 
     // Вызываем отчет ответов
-    const handleAnswersReport = async (specialityId: number | null, search: string | null) => {
+    const handleAnswersReport = async (page: number, specialityId: number | null, search: string | null) => {
         setSkeleton(true);
-        const data = await fetchAnwerReport(pageState, specialityId, search);
+        const data = await fetchAnwerReport(page, specialityId, search);
         if (data?.success) {
             setPagination({
                 currentPage: data?.data?.current_page,
@@ -97,7 +97,7 @@ const TeacherCheckPage = () => {
     useEffect(() => {
         setProgressSpinner(true);
         if (search?.length === 0 && searchController) {
-            handleAnswersReport(currentSpecialityId, search);
+            handleAnswersReport(pageState, currentSpecialityId, search);
             setSearchController(false);
             setProgressSpinner(false);
         }
@@ -109,7 +109,7 @@ const TeacherCheckPage = () => {
 
         setSearchController(true);
         const delay = setTimeout(() => {
-            handleAnswersReport(currentSpecialityId, search);
+            handleAnswersReport(pageState, currentSpecialityId, search);
             setProgressSpinner(false);
         }, 1000);
 
@@ -134,13 +134,13 @@ const TeacherCheckPage = () => {
         if (speciality) {
             setCurrentSpecialityId(speciality?.id);
             const specialityId = speciality?.id;
-            handleAnswersReport(specialityId, search);
+            handleAnswersReport(pageState, specialityId, search);
         }
     }, [speciality]);
 
     useEffect(() => {
         handleFetchFaculty();
-        handleAnswersReport(currentSpecialityId, search);
+        handleAnswersReport(pageState, currentSpecialityId, search);
     }, []);
 
     const teacherNameBodyTemplate = (rowData: Report) => {
