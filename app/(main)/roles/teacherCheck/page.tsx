@@ -41,6 +41,7 @@ const TeacherCheckPage = () => {
     const [currentFacultyId, setCurrentFacultyId] = useState<number | null>(null);
     const [currentSpecialityId, setCurrentSpecialityId] = useState<number | null>(null);
     const [progressSpinner, setProgressSpinner] = useState(false);
+    const [skeleton, setSkeleton] = useState(false);
     const [search, setSearch] = useState<string>('');
 
     // Ручное управление пагинацией
@@ -70,12 +71,13 @@ const TeacherCheckPage = () => {
 
     // Вызываем отчет ответов
     const handleAnswersReport = async (specialityId: number | null, search: string | null) => {
+        setSkeleton(true);
         const data = await fetchAnwerReport(pageState, specialityId, search);
         if (data?.success) {
             setPagination({
-                currentPage: data.current_page,
-                total: data?.total,
-                perPage: data?.per_page
+                currentPage: data?.data?.current_page,
+                total: data?.data?.total,
+                perPage: data?.data?.per_page
             });
             if (data?.data?.data?.length > 0) {
                 setEmpty(false);
@@ -88,6 +90,7 @@ const TeacherCheckPage = () => {
         } else {
             setHasReport(true);
         }
+        setSkeleton(false);
         setProgressSpinner(false);
     };
 
@@ -156,7 +159,7 @@ const TeacherCheckPage = () => {
 
     const DesktopTable = () => (
         <div className="card">
-            <DataTable value={report || []} rows={5} tableStyle={{ minWidth: '50rem' }} className="text-sm">
+            <DataTable value={report || []} rows={5} tableStyle={{ minWidth: '50rem' }} className="text-sm" emptyMessage="...">
                 <Column body={(_, { rowIndex }) => rowIndex + 1} header="#" style={{ width: '20px' }}></Column>
                 <Column header="Преподаватели" body={teacherNameBodyTemplate} style={{ width: '50%' }} />
                 <Column header="Непроверенные задания" body={uncheckedAssignmentsBodyTemplate} style={{ width: '50%' }} />
@@ -222,7 +225,11 @@ const TeacherCheckPage = () => {
                     </div>
                 </div>
 
-                {hasReport ? (
+                {!skeleton ? (
+                    <div className="main-bg flex justify-center items-center my-3">
+                        <ProgressSpinner style={{ width: '50px', height: '50px' }} />
+                    </div>
+                ) : hasReport ? (
                     <div className="flex justify-center items-center flex-col gap-2 h-[50vh]">
                         <i className="pi pi-folder-open text-3xl"></i>
                         <h3 className="text-xl font-semibold text-gray-700 mb-2">Ошибка загрузки</h3>
@@ -237,15 +244,16 @@ const TeacherCheckPage = () => {
                 ) : (
                     <DesktopTable />
                 )}
+                {skeleton && (
+                    <Paginator
+                        first={(pagination.currentPage - 1) * pagination.perPage}
+                        rows={pagination.perPage}
+                        totalRecords={pagination.total}
+                        onPageChange={(e) => handlePageChange(e.page + 1)}
+                        template="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
+                    />
+                )}
             </div>
-            <Paginator
-                first={(pagination.currentPage - 1) * pagination.perPage}
-                rows={pagination.perPage}
-                totalRecords={pagination.total}
-                onPageChange={(e) => handlePageChange(e.page + 1)}
-                // template="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
-                // template={media ? 'FirstPageLink PrevPageLink NextPageLink LastPageLink' : 'FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink'}
-            />
         </div>
     );
 };
