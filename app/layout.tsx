@@ -10,6 +10,7 @@ import '../styles/layout/layout.scss';
 import '../styles/demo/Demos.scss';
 
 import '../styles/layout/openCourse.css';
+import '../styles/layout/animations.css';
 import './globals.css';
 
 interface RootLayoutProps {

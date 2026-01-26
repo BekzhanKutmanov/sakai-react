@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import MobileAnswersTable from './MobileAnswersTable';
@@ -12,7 +12,7 @@ interface Answer {
     teacherResponseDate: string;
 }
 
-const AnswersTable = ({report, paginationProp}: {report: any, paginationProp: { currentPage: number; total: number; perPage: number }}) => {
+const AnswersTable = ({ report }: { report: any }) => {
     const media = useMediaQuery(`(max-width: 640px)`);
 
     const answers: Answer[] = [
@@ -24,7 +24,10 @@ const AnswersTable = ({report, paginationProp}: {report: any, paginationProp: { 
     ];
 
     const [pageState, setPageState] = useState<number>(1);
-    const [pagination, setPagination] = useState<{ currentPage: number; total: number; perPage: number }>(paginationProp);
+
+    // useEffect(() => {
+    //     console.log(report);
+    // }, [report]);
 
     // Ручное управление пагинацией
     const handlePageChange = (page: number) => {
@@ -49,25 +52,43 @@ const AnswersTable = ({report, paginationProp}: {report: any, paginationProp: { 
     return (
         <div>
             <h3 className="text-xl shadow-[var(--bottom-shadow)] m-0 pb-2">Отчёт</h3>
-            {media ? (
+            {/* {media ? (
                 <MobileAnswersTable />
-            ) : (
-                <div className="my-2">
-                    <DataTable value={answers} tableStyle={{ minWidth: '50rem' }} rows={5} className="text-sm">
-                        <Column field="themeName" header="Название темы" style={{ width: '35%' }}></Column>
-                        <Column field="submissionDate" header="Дата отправки" style={{ width: '25%' }}></Column>
+            ) : ( */}
+            <div className="my-2">
+                {/* <DataTable value={answers} tableStyle={{ minWidth: '50rem' }} rows={5} className="text-sm">
+                        <Column field="created_add" header="Дата создания" style={{ width: '25%' }}></Column>
                         <Column field="teacherResponse" header="Ответ преподавателя" body={teacherResponseTemplate} style={{ width: '25%' }}></Column>
-                        <Column field="teacherResponseDate" header="Дата ответа" style={{ width: '15%' }}></Column>
-                    </DataTable>
+                    </DataTable> */}
+
+                {/* {report?.map((item: any) => {
+                    return ( */}
+                <div className="inline-flex flex-col gap-2 p-1 border-gray-200 rounded bg-white font-sans">
+                    <div className="flex items-center gap-2">
+                        <div className="tracking-wider text-gray-400 font-semibold">Дата создания: {report?.created_at ? new Date(report.created_at).toLocaleDateString() : '—'}</div>
+                        <i className="pi pi-calendar-clock"></i>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                        {report?.my_score ? (
+                            // Вариант: Проверено (Строго, без лишних красок)
+                            <div className="flex items-center gap-2">
+                                <span className="font-medium text-gray-700">Статус: Проверено</span>
+                                <i className="pi pi-check-circle ml-1"></i>
+                            </div>
+                        ) : (
+                            // Вариант: Ожидание (С мягкой анимацией точки)
+                            <div className="flex items-center gap-2">
+                                <span className="font-medium text-blue-900">Статус: На проверке</span>
+                                <i className="pi pi-spinner-dotted pi-spin ml-1"></i>
+                            </div>
+                        )}
+                    </div>
                 </div>
-            )}
-            <Paginator
-                first={(pagination.currentPage - 1) * pagination.perPage}
-                rows={pagination.perPage}
-                totalRecords={pagination.total}
-                onPageChange={(e) => handlePageChange(e.page + 1)}
-                template="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
-            />
+                {/* );
+                })} */}
+            </div>
+            {/* )} */}
         </div>
     );
 };

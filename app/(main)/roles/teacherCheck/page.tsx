@@ -35,13 +35,13 @@ const TeacherCheckPage = () => {
     const [timeModeOptions, setTimeModeOptions] = useState<any>(null);
     const [searchController, setSearchController] = useState(false);
 
-    const [speciality, setSpecialyty] = useState<{ name_ru: string; code: number | null; id: number | null } | null>({ name_ru: '', code: null, id: null });
+    const [speciality, setSpecialyty] = useState<{ name_ru: string; code: number | null; id: number | null } | null>(null);
     const [specialityOptions, setSpecialityOptions] = useState<any>(null);
 
     const [currentFacultyId, setCurrentFacultyId] = useState<number | null>(null);
     const [currentSpecialityId, setCurrentSpecialityId] = useState<number | null>(null);
     const [progressSpinner, setProgressSpinner] = useState(false);
-    const [search, setSearch] = useState<string | null>(null);
+    const [search, setSearch] = useState<string>('');
 
     // Ручное управление пагинацией
     const handlePageChange = (page: number) => {
@@ -51,40 +51,18 @@ const TeacherCheckPage = () => {
 
     const handleFetchFaculty = async () => {
         const data = await fetchFaculty();
-        console.log(data);
-
         if (data && data?.length) {
+            const alls = { name_ru: 'Все', code: null, id: null };
+            data.unshift(alls);
             setTimeModeOptions(data);
         }
     };
 
-    useEffect(() => {
-        if (timeMode?.id) {
-            setCurrentFacultyId(timeMode?.id);
-        }
-    }, [timeMode]);
-
-    useEffect(() => {
-        if (currentFacultyId) {
-            handleStudentSpeciality(currentFacultyId);
-        }
-    }, [currentFacultyId]);
-
-    useEffect(() => {
-        if (speciality) {
-            setCurrentSpecialityId(speciality?.id);
-            const specialityId = speciality?.id;
-            console.log(currentFacultyId);
-
-            handleAnswersReport(specialityId, search);
-        }
-    }, [speciality]);
-
     const handleStudentSpeciality = async (id_faculty: number) => {
         const data = await fetchSpeciality(id_faculty);
-        console.log(data);
-
         if (data && data?.length) {
+            const alls = { name_ru: 'Все', code: null, id: null };
+            data.unshift(alls);
             setSpecialityOptions(data);
             // setStudents(data?.data);
         }
@@ -93,18 +71,16 @@ const TeacherCheckPage = () => {
     // Вызываем отчет ответов
     const handleAnswersReport = async (specialityId: number | null, search: string | null) => {
         const data = await fetchAnwerReport(pageState, specialityId, search);
-        console.log(data);
-
-        if (data) {
+        if (data?.success) {
             setPagination({
                 currentPage: data.current_page,
                 total: data?.total,
                 perPage: data?.per_page
             });
-            if (data?.data?.length > 0) {
+            if (data?.data?.data?.length > 0) {
                 setEmpty(false);
-                setReport(data?.data);
-            } else {
+                setReport(data.data.data);
+            } else if (data?.data?.data?.length < 1) {
                 setEmpty(true);
                 setReport(null);
             }
@@ -138,6 +114,26 @@ const TeacherCheckPage = () => {
             clearTimeout(delay);
         };
     }, [search]);
+
+    useEffect(() => {
+        if (timeMode?.id) {
+            setCurrentFacultyId(timeMode?.id);
+        }
+    }, [timeMode]);
+
+    useEffect(() => {
+        if (currentFacultyId) {
+            handleStudentSpeciality(currentFacultyId);
+        }
+    }, [currentFacultyId]);
+
+    useEffect(() => {
+        if (speciality) {
+            setCurrentSpecialityId(speciality?.id);
+            const specialityId = speciality?.id;
+            handleAnswersReport(specialityId, search);
+        }
+    }, [speciality]);
 
     useEffect(() => {
         handleFetchFaculty();
@@ -248,7 +244,7 @@ const TeacherCheckPage = () => {
                 totalRecords={pagination.total}
                 onPageChange={(e) => handlePageChange(e.page + 1)}
                 // template="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
-                template={media ? 'FirstPageLink PrevPageLink NextPageLink LastPageLink' : 'FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink'}
+                // template={media ? 'FirstPageLink PrevPageLink NextPageLink LastPageLink' : 'FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink'}
             />
         </div>
     );

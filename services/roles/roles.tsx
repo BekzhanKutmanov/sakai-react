@@ -30,17 +30,20 @@ export const fetchRolesUsers = async (page: number, search: string | null, myedu
     }
 };
 
-export const controlRolesUsers = async (worker_id: number | null, role_id: number | null, active: boolean | null, roleState: {create: boolean; update: boolean; delete: boolean; show: boolean }) => {
-    const roleCheck = !roleState.create && !roleState.update && !roleState.delete && !roleState.show;
-    
+export const controlRolesUsers = async (worker_id: number | null, role_id: number | null, active: boolean | null, roleState: { create: boolean; update: boolean; delete: boolean; show: boolean }) => {
+    const hasAnyRole = roleState.create || roleState.update || roleState.delete || roleState.show;
+
+    // Итоговое значение (принудительно приводим к Boolean через !!)
+    let processingActive = !!hasAnyRole;
+
     const payload = {
         worker_id,
         role_id,
-        active: roleCheck ? false : true,
-        create: roleCheck ? false : roleState.create,
-        update: roleCheck ? false : roleState.update,
-        delete: roleCheck ? false : roleState.delete,
-        read: roleCheck ? false : roleState.show
+        active: processingActive,
+        create: roleState.create,
+        update: roleState.update,
+        delete: roleState.delete,
+        read: roleState.show
     };
 
     try {
@@ -57,7 +60,8 @@ export const controlRolesUsers = async (worker_id: number | null, role_id: numbe
 export const fetchRolesDepartment = async (page: number, search: string | null, myedu_id: string | null, course_audience_type_id: number | null, active: boolean | null) => {
     try {
         const res = await axiosInstance.get(
-            `/roles/department/public?search=${search}&myedu_id=${myedu_id ? Number(myedu_id) : ''}&${course_audience_type_id ? `course_audience_type_id=${Number(course_audience_type_id)}` : 'course_audience_type_id='}${course_audience_type_id ? `${active ? `&active=${active ? 1 : 0}` : '&active='}` : '&active='
+            `/roles/department/public?search=${search}&myedu_id=${myedu_id ? Number(myedu_id) : ''}&${course_audience_type_id ? `course_audience_type_id=${Number(course_audience_type_id)}` : 'course_audience_type_id='}${
+                course_audience_type_id ? `${active ? `&active=${active ? 1 : 0}` : '&active='}` : '&active='
             }&page=${page}&limit=`
         );
 
@@ -91,7 +95,9 @@ export const controlDepartamentUsers = async (worker_id: number | null, course_a
 
 export const fetchTeacherCheck = async (page: number | null, search: string | null, myedu_id: string | null, course_audience_type_id: number | null) => {
     try {
-        const res = await axiosInstance.get(`/v1/teacher/controls/public?search=${search}&${myedu_id ? `myedu_id=${myedu_id}` : 'myedu_id='}&${course_audience_type_id ? `course_audience_type_id=${Number(course_audience_type_id)}` : 'course_audience_type_id='}&page=${page}`);
+        const res = await axiosInstance.get(
+            `/v1/teacher/controls/public?search=${search}&${myedu_id ? `myedu_id=${myedu_id}` : 'myedu_id='}&${course_audience_type_id ? `course_audience_type_id=${Number(course_audience_type_id)}` : 'course_audience_type_id='}&page=${page}`
+        );
 
         const data = res.data;
         return data;
@@ -136,12 +142,12 @@ export const depCategoryFetch = async () => {
     }
 };
 
-// add 
+// add
 export const depCategoryAdd = async (title: string, description: string) => {
     const payload = {
         title,
         description
-    }
+    };
 
     try {
         const res = await axiosInstance.post(`/v1/course/category`, payload);
@@ -169,15 +175,14 @@ export const depCategoryDelete = async (id: number | null) => {
 
 // update
 export const depCategoryUpdate = async (id: number | null, title: string, description: string) => {
-    
     const updateData = {
         title: title,
-        description: description,
+        description: description
     };
 
     try {
         const res = await axiosInstance.post(`/v1/course/category/${id}`, updateData);
-        
+
         const data = res.data;
         return data;
     } catch (err) {

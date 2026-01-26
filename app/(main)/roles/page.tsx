@@ -80,7 +80,6 @@ export default function Roles() {
         setSkeleton(true);
         setMainProgressSpinner(true);
         const data = await fetchRolesList();
-        console.log(data);
 
         if (data && Array.isArray(data)) {
             if (data.length > 0) {
@@ -170,9 +169,7 @@ export default function Roles() {
     };
 
     const checkRolesCrud = (user: any, role: number) => {
-        console.log(user, role);
         const userObj = user?.roles?.find((item: { id: number }) => item?.id === role);
-        console.warn(userObj);
         if (userObj) {
             setRoleState({
                 create: userObj?.pivot?.create,
@@ -205,7 +202,6 @@ export default function Roles() {
                         {roles?.map((role, idx) => {
                             const userRole = item?.roles?.find((r: { id: number }) => r.id === role.id);
                             const isActive = Boolean(userRole?.pivot?.active);
-
                             return (
                                 <div key={role?.id} className="text-center flex justify-between items-start">
                                     <span className="text-sm">{idx % 2 === 0 ? 'Администратор' : 'Департамент'}</span>
@@ -219,9 +215,9 @@ export default function Roles() {
                                                 // onClick={() => handleControlUsersRole(item?.id, roles[idx]?.id, true, roleState)}
                                                 onClick={() => {
                                                     setCategoryVisible(true);
-                                                    checkRolesCrud(role, role?.id);
+                                                    checkRolesCrud(item, role?.id);
                                                     setRole_id(roles[idx]?.id);
-                                                    setUser_id(shablonData?.id);
+                                                    setUser_id(item?.id);
                                                     setActive(true);
                                                 }}
                                                 aria-pressed="false"
@@ -240,9 +236,9 @@ export default function Roles() {
                                                 // onClick={() => handleControlUsersRole(item?.id, roles[idx]?.id, false, roleState)}
                                                 onClick={() => {
                                                     setCategoryVisible(true);
-                                                    checkRolesCrud(role, role?.id);
+                                                    checkRolesCrud(item, role?.id);
                                                     setRole_id(roles[idx]?.id);
-                                                    setUser_id(shablonData?.id);
+                                                    setUser_id(item?.id);
                                                     setActive(true);
                                                 }}
                                                 aria-pressed="false"
@@ -283,10 +279,6 @@ export default function Roles() {
         }
         return [];
     };
-
-    useEffect(() => {
-        console.log(roleState);
-    }, [categoryVisible, roleState]);
 
     useEffect(() => {
         setMiniProgressSpinner(true);
@@ -545,101 +537,104 @@ export default function Roles() {
                                     template={media ? 'FirstPageLink PrevPageLink NextPageLink LastPageLink' : 'FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink'}
                                 />
                             </div>
-
-                            <Dialog
-                                header={'Отправить'}
-                                visible={categoryVisible}
-                                className="my-custom-dialog"
-                                onHide={() => {
-                                    if (!categoryVisible) return;
-                                    setCategoryVisible(false);
-                                    clearValues();
-                                }}
-                                footer={categoryFooterContent}
-                            >
-                                {
-                                    <div className="flex flex-col gap-1">
-                                        <div className="flex items-center gap-2">
-                                            <label className="custom-radio">
-                                                <input
-                                                    type="checkbox"
-                                                    className={`customCheckbox`}
-                                                    checked={roleState?.create}
-                                                    onChange={(e) => {
-                                                        setRoleState((prev) => {
-                                                            return {
-                                                                ...prev,
-                                                                create: !prev?.create
-                                                            };
-                                                        });
-                                                    }}
-                                                />
-                                                <span className="checkbox-mark"></span>
-                                            </label>
-                                            <span>Создать</span>
-                                        </div>
-                                        <div className="flex items-center gap-2">
-                                            <label className="custom-radio">
-                                                <input
-                                                    type="checkbox"
-                                                    className={`customCheckbox`}
-                                                    checked={roleState?.update}
-                                                    onChange={(e) => {
-                                                        setRoleState((prev) => {
-                                                            return {
-                                                                ...prev,
-                                                                update: !prev?.update
-                                                            };
-                                                        });
-                                                    }}
-                                                />
-                                                <span className="checkbox-mark"></span>
-                                            </label>
-                                            <span>Изменить</span>
-                                        </div>
-                                        <div className="flex items-center gap-2">
-                                            <label className="custom-radio">
-                                                <input
-                                                    type="checkbox"
-                                                    className={`customCheckbox`}
-                                                    checked={roleState?.delete}
-                                                    onChange={(e) => {
-                                                        setRoleState((prev) => {
-                                                            return {
-                                                                ...prev,
-                                                                delete: !prev?.delete
-                                                            };
-                                                        });
-                                                    }}
-                                                />
-                                                <span className="checkbox-mark"></span>
-                                            </label>
-                                            <span>Удалить</span>
-                                        </div>
-                                        <div className="flex items-center gap-2">
-                                            <label className="custom-radio">
-                                                <input
-                                                    type="checkbox"
-                                                    className={`customCheckbox`}
-                                                    checked={roleState?.show}
-                                                    onChange={(e) => {
-                                                        setRoleState((prev) => {
-                                                            return {
-                                                                ...prev,
-                                                                show: !prev?.show
-                                                            };
-                                                        });
-                                                    }}
-                                                />
-                                                <span className="checkbox-mark"></span>
-                                            </label>
-                                            <span>Смотреть</span>
-                                        </div>
-                                    </div>
-                                }
-                            </Dialog>
                         </div>
                     )}
+                    <Dialog
+                        header={'Отправить'}
+                        visible={categoryVisible}
+                        className="my-custom-dialog"
+                        onHide={() => {
+                            if (!categoryVisible) return;
+                            setCategoryVisible(false);
+                            clearValues();
+                        }}
+                        footer={categoryFooterContent}
+                    >
+                        {
+                            <div className="flex flex-col gap-1">
+                                <div className="flex items-center gap-2">
+                                    <label className="custom-radio">
+                                        <input
+                                            type="checkbox"
+                                            className={`customCheckbox`}
+                                            checked={roleState?.create}
+                                            onChange={(e) => {
+                                                setRoleState((prev) => {
+                                                    return {
+                                                        ...prev,
+                                                        create: !prev?.create
+                                                    };
+                                                });
+                                            }}
+                                        />
+                                        <span className="checkbox-mark ml-3" style={{ fontSize: '16px' }}>
+                                            Создать
+                                        </span>
+                                    </label>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <label className="custom-radio">
+                                        <input
+                                            type="checkbox"
+                                            className={`customCheckbox`}
+                                            checked={roleState?.update}
+                                            onChange={(e) => {
+                                                setRoleState((prev) => {
+                                                    return {
+                                                        ...prev,
+                                                        update: !prev?.update
+                                                    };
+                                                });
+                                            }}
+                                        />
+                                        <span className="checkbox-mark ml-3" style={{ fontSize: '16px' }}>
+                                            Изменить
+                                        </span>
+                                    </label>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <label className="custom-radio">
+                                        <input
+                                            type="checkbox"
+                                            className={`customCheckbox`}
+                                            checked={roleState?.delete}
+                                            onChange={(e) => {
+                                                setRoleState((prev) => {
+                                                    return {
+                                                        ...prev,
+                                                        delete: !prev?.delete
+                                                    };
+                                                });
+                                            }}
+                                        />
+                                        <span className="checkbox-mark ml-3" style={{ fontSize: '16px' }}>
+                                            Удалить
+                                        </span>
+                                    </label>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <label className="custom-radio">
+                                        <input
+                                            type="checkbox"
+                                            className={`customCheckbox`}
+                                            checked={roleState?.show}
+                                            onChange={(e) => {
+                                                setRoleState((prev) => {
+                                                    return {
+                                                        ...prev,
+                                                        show: !prev?.show
+                                                    };
+                                                });
+                                            }}
+                                        />
+                                        <span className="checkbox-mark ml-3" style={{ fontSize: '16px' }}>
+                                            Смотреть
+                                        </span>
+                                    </label>
+                                </div>
+                            </div>
+                        }
+                    </Dialog>
                 </div>
             )}
         </div>

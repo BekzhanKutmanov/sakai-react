@@ -42,6 +42,10 @@ export default function LessonTest() {
         prevStep: StepApi;
     }
 
+    interface ReportStep extends mainStepsType { 
+        my_score?: number | null;
+    }
+
     const { lesson_id, subject_id, stream_id, id } = useParams();
     const params = new URLSearchParams();
 
@@ -51,7 +55,7 @@ export default function LessonTest() {
     const { user, setMessage, setContextNewStudentThemes, contextNotificationId, setContextNotificationId, contextNotifications, setContextNotifications, handleNotifications, contextLastSubjectPageVisit, setContextLastSubjectPageVisit } =
         useContext(LayoutContext);
 
-    const [steps, setMainSteps] = useState<mainStepsType | null>(null);
+    const [steps, setMainSteps] = useState<ReportStep | null>(null);
     const [hasSteps, setHasSteps] = useState(false);
     const [progressSpinner, setProgressSpinner] = useState(false);
     const [mainProgressSpinner, setMainProgressSpinner] = useState(false);
@@ -567,7 +571,6 @@ export default function LessonTest() {
             {steps?.chills ? (
                 <>
                     <span className="pi pi-check-circle text-xl text-[var(--greenColor)] mb-4"> Задание выполнено</span>
-                    {/* <AnswersTable report={report} paginationProp={pagination} /> */}
                 </>
             ) : (
                 <div className="flex flex-col gap-2 items-start w-full mt-2">
@@ -611,6 +614,7 @@ export default function LessonTest() {
                     </div>
                 </div>
             )}
+            <AnswersTable report={steps} />
         </div>
     );
 
