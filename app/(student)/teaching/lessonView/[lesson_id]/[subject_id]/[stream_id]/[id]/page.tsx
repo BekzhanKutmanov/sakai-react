@@ -559,15 +559,6 @@ export default function LessonTest() {
                 </div>
             </div>
 
-            {/* <div>
-                <span className="pi pi-envelope text-lg mb-1 text-[var(--mainColor)] shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)] pb-1"> Сообщения от преподавателя</span>
-
-                <ul className="pl-2 w-[95%]">
-                    <li className="list-disc ml-[15px] text-sm break-words">Loremipsumdolorsitametconsecteturadipisicingelit. Mollitia, illum.</li>
-                    <li className="list-disc ml-[15px]">Lorem ipsum dolor sit amet consectetur adipisicing elit. Mollitia, illum.</li>
-                </ul>
-            </div> */}
-
             {steps?.chills ? (
                 <>
                     <span className="pi pi-check-circle text-xl text-[var(--greenColor)] mb-4"> Задание выполнено</span>
