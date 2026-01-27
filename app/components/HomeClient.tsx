@@ -322,7 +322,7 @@ export default function HomeClient() {
 
                 {/* open courses */}
 
-                <div className='main-bg flex flex-col gap-4'>
+                <div className={`flex flex-col gap-4 ${newCourses?.length || bestCourses?.length || popularCourses?.length ? 'main-bg' : ''}`}>
                     {newCourses?.length > 0 ? (
                         skeleton ? (
                             <div className="flex flex-wrap gap-2 flex-col sm:flex-row justify-center">

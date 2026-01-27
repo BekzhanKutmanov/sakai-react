@@ -225,7 +225,7 @@ const TeacherCheckPage = () => {
                     </div>
                 </div>
 
-                {hasReport ? (
+                {hasReport ? ( 
                     <div className="flex justify-center items-center flex-col gap-2 h-[50vh]">
                         <i className="pi pi-folder-open text-3xl"></i>
                         <h3 className="text-xl font-semibold text-gray-700 mb-2">Ошибка загрузки</h3>

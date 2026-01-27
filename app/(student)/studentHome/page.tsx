@@ -10,6 +10,7 @@ import { fetchStudentImg } from '@/services/student/studentpage';
 import MyDateTime from '@/app/components/MyDateTime';
 import { OptionsType } from '@/types/OptionsType';
 import { ContributionDay } from '@/types/ContributionDay';
+import Link from 'next/link';
 
 interface StudentStatistic {
     all_active_dates: number;
@@ -34,7 +35,8 @@ export default function StudentHome() {
         hour: '2-digit',
         minute: '2-digit',
         second: '2-digit',
-        hour12: false // 24-часовой формат
+        hour12: false, // 24-часовой формат
+        timeZone: 'UTC'
     };
 
     const handleFetchStudentImg = async () => {
@@ -111,6 +113,7 @@ export default function StudentHome() {
                                     <span className="text-[13px]">Уведомлений</span>
                                 </div>
                             </div>
+                            <Link className='text-center my-2 block sm:hidden' href={'/teaching'}>В план обучения</Link>
                         </div>
                     </div>
                     {/* Decorative background element */}
