@@ -62,12 +62,12 @@ const StudentCheckPage = ({ params }: { params: { course_id: string; id: string 
         // mainSetSkeleton(false);
     };
 
-    const header = !courseShow && !courseShow?.title ? <h1 className="text-2xl bg-[var(--titleColor)] text-white text-center p-3">{'courseShow?.title'}</h1> : '';
+    // const header = !courseShow && !courseShow?.title ? <h1 className="text-2xl bg-[var(--titleColor)] text-white text-center p-3">{'courseShow?.title'}</h1> : '';
 
     return (
         <div className="grid">
             <div className="col-12">
-                {header}
+                {/* {header} */}
                 <div className="card">
                     <h3 className="font-bold text-xl mb-3">Темы Курса</h3>
                     <Accordion activeIndex={activeIndex} onTabChange={(e) => setActiveIndex(e.index as number | null)}>
