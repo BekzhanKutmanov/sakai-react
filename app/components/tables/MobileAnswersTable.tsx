@@ -1,65 +1,89 @@
 import React from 'react';
 
 interface Answer {
-    themeName: string;
-    submissionDate: string;
-    teacherResponse: boolean;
-    teacherResponseDate: string;
+    details: {
+        answered_at: string | null;
+        comment: string | null;
+    }[];
 }
 
-const MobileAnswersTable = () => {
-    const answers: Answer[] = [
-        { themeName: 'Введение в React', submissionDate: '2024-01-15', teacherResponse: true, teacherResponseDate: '2024-01-16' },
-        { themeName: 'Компоненты и пропсы', submissionDate: '2024-01-22', teacherResponse: true, teacherResponseDate: '2024-01-23' },
-        { themeName: 'Состояние и жизненный цикл', submissionDate: '2024-01-29', teacherResponse: false, teacherResponseDate: '-' },
-        { themeName: 'Обработка событий', submissionDate: '2024-02-05', teacherResponse: true, teacherResponseDate: '2024-02-06' },
-        { themeName: 'Условный рендеринг', submissionDate: '2024-02-12', teacherResponse: false, teacherResponseDate: '-' },
-    ];
+interface Details {
+    answered_at: string | null;
+    comment: string | null;
+}
+
+const MobileAnswersTable = ({ answers }: { answers: any }) => {
+
+    const teacherResponseTemplate = (rowData: Details) => {
+        return rowData.answered_at && rowData.answered_at?.length ? (
+            rowData.comment ? (
+                <div className="flex items-center">
+                    <i className="pi pi-times text-[red]" style={{ fontSize: '12px' }}></i>
+                    <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">{rowData.comment}</span>
+                </div>
+            ) : (
+                <div className="flex items-center">
+                    <i className="pi pi-check text-[green]" style={{ fontSize: '12px' }}></i>
+                    <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Ответил</span>
+                </div>
+            )
+        ) : (
+            <div className="flex items-center">
+                <i className="pi pi-times text-[red]" style={{ fontSize: '12px' }}></i>
+                <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Пока проверка не завершена</span>
+            </div>
+        );
+    };
 
     return (
-        <div className="bg-white shadow overflow-hidden sm:rounded-md">
-            <ul className="divide-y divide-gray-200">
-                {answers.map((answer, index) => (
-                    <li key={index}>
-                        <div className="px-4 py-4 sm:px-6">
-                            <div className="flex items-center justify-between">
-                                <p className="text-sm font-medium text-indigo-600 truncate">
-                                    {answer.themeName}
-                                </p>
-                                {answer.teacherResponse ? (
-                                    <div className='flex items-center gap-1'>
-                                        <i className='pi pi-check text-[green]]' style={{fontSize: '12px'}}></i>
-                                        <span className="flex-shrink-0 inline-block py-0.5 text-xs font-semibold leading-5 rounded-full bg-green-100 text-green-800">
-                                            Ответил
-                                        </span>
-                                    </div>
-                                ) : (
-                                    <div className='flex items-center gap-1'>
-                                        <i className='pi pi-times text-[red]' style={{fontSize: '12px'}}></i>
-                                        <span className="flex-shrink-0 inline-block py-0.5 text-xs font-semibold leading-5 rounded-full bg-red-100 text-red-800">
-                                            Нет ответа
-                                        </span>
-                                    </div>
-                                )}
-                            </div>
-                            <div className="mt-2 sm:flex sm:justify-between">
+        <div className='flex flex-col gap-2'>
+            {answers?.details?.length > 0 ? (
+                <div className="bg-white shadow overflow-hidden sm:rounded-md">
+                    <ul className="divide-y divide-gray-200">
+                        <li>
+                            <div className="px-4 py-4 sm:px-6 flex flex-col gap-2">
                                 <div className="sm:flex">
-                                    <p className="flex items-center text-sm text-gray-500">
-                                        <span className="font-medium mr-1">Дата отправки:</span>
-                                        {answer.submissionDate}
-                                    </p>
+                                    <p className="flex items-center text-sm text-gray-500">{answers?.details[0]?.answered_at && <span className="font-medium mr-1">Дата ответа: {answers?.details[0]?.answered_at}</span>}</p>
                                 </div>
-                                <div className="mt-2 flex items-center text-sm text-gray-500 sm:mt-0">
-                                    <p>
-                                        <span className="font-medium mr-1">Дата ответа:</span>
-                                        {answer.teacherResponseDate}
-                                    </p>
-                                </div>
+                                {answers?.details?.length > 0 && teacherResponseTemplate(answers?.details[0])}
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            ) : (
+                ''
+            )}
+            <div className="inline-flex flex-col gap-2 p-1 border-gray-200 rounded bg-white font-sans">
+                <div className="flex items-center gap-2">
+                    <div className="tracking-wider text-gray-400 font-semibold">Дата создания: {answers?.created_at ? new Date(answers.created_at).toLocaleDateString() : '—'}</div>
+                    <i className="pi pi-calendar-clock text-[var(--mainColor)]"></i>
+                </div>
+
+                <div className="flex items-center gap-2">
+                    {/* {answers?.my_score ? ( */}
+                    {/* // Вариант: Проверено (Строго, без лишних красок) */}
+                    {answers?.my_score && (
+                        <div className="flex flex-col gap-1">
+                            <div className="flex items-center gap-2">
+                                <span className="font-medium text-gray-700">Статус: Проверено</span>
+                                <i className="pi pi-check-circle ml-1 text-[green]"></i>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <span className="font-medium text-gray-700">
+                                    Балл: <b className="text-[var(--mainColor)]">{answers?.my_score}</b>
+                                </span>
                             </div>
                         </div>
-                    </li>
-                ))}
-            </ul>
+                    )}
+                    {/* // ) : (
+                                //     // Вариант: Ожидание (С мягкой анимацией точки)
+                                //     <div className="flex items-center gap-2">
+                                //         <span className="font-medium text-blue-900">Статус: На проверке</span>
+                                //         <i className="pi pi-spinner-dotted pi-spin ml-1"></i>
+                                //     </div>
+                                // )} */}
+                </div>
+            </div>
         </div>
     );
 };

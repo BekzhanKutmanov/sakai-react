@@ -42,8 +42,9 @@ export default function LessonTest() {
         prevStep: StepApi;
     }
 
-    interface ReportStep extends mainStepsType { 
+    interface ReportStep extends mainStepsType {
         my_score?: number | null;
+        details: { is_correct: boolean }[];
     }
 
     const { lesson_id, subject_id, stream_id, id } = useParams();
@@ -617,14 +618,16 @@ export default function LessonTest() {
                 </div>
             )}
             <div className="lesson-card-border shadow rounded p-2">
-                <div className="flex justify-between gap-1 items-center flex-col sm:flex-row shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">
+                <div className="flex justify-between gap-1 items-center flex-col sm:flex-row shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)] p-2">
                     <div className="flex gap-1 items-center">
                         <span className="sm:text-[18px]">{steps?.type?.title}</span>
                         <i className={`${steps?.type?.logo} text-2xl`}></i>
                     </div>
-                    <div className="flex items-center gap-1 my-2">
-                        <span className="text-[var(--mainColor)]">Балл за задание: </span>
-                        <b className="text-[16px] sm:text-[18px] ">{`${steps?.score}`}</b>
+                    <div className="flex items-center gap-4 my-2">
+                        <div className="flex items-center gap-1">
+                            <span className="text-[var(--mainColor)]">Балл за задание: </span>
+                            <b className="text-[16px] sm:text-[18px] ">{`${steps?.score}`}</b>
+                        </div>
                     </div>
                 </div>
                 <div className="flex flex-col gap-2 p-1 sm:p-2">
@@ -677,7 +680,7 @@ export default function LessonTest() {
             {steps?.count_attempt && steps?.count_attempt >= 3 ? (
                 <span className="pi pi-check-circle text-xl mb-1 text-[var(--greenColor)]"> Задание выполнено</span>
             ) : (
-                <div className="w-full">
+                <div className="w-full mt-2">
                     <Button
                         label="Отправить"
                         disabled={progressSpinner || !answer || !answerCheck}
@@ -685,6 +688,39 @@ export default function LessonTest() {
                             handleAddTest();
                         }}
                     />
+                </div>
+            )}
+
+            {/* История ответов */}
+            {steps?.details && steps.details.length > 0 && (
+                <div className="mt-4">
+                    <h3 className="text-xl m-0 pb-2">История ответов</h3>
+                    <div className="flex flex-col gap-3 mt-2">
+                        {(steps.details as any[]).map((attempt, index) => (
+                            <div key={index} className={`p-2 rounded-sm shadow border-l-4`}>
+                                <div className="flex justify-between items-center">
+                                    <span className="text-gray-700">Попытка #{index + 1}</span>
+                                    {attempt.is_correct ? (
+                                        <span className="flex items-center gap-2 text-[green] font-semibold">
+                                            <i className="pi pi-check-circle"></i>
+                                            <span>Верно</span>
+                                        </span>
+                                    ) : (
+                                        <span className="flex items-center gap-2 text-[red] font-semibold">
+                                            <i className="pi pi-times-circle"></i>
+                                            <span>Неверно</span>
+                                        </span>
+                                    )}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
+            {steps?.my_score != null && (
+                <div className="flex items-center justify-end gap-1 mt-1">
+                    <span className="text-[var(--mainColor)]">Ваш итоговый балл: </span>
+                    <b className="text-[16px] sm:text-[18px]">{`${steps.my_score}`}</b>
                 </div>
             )}
         </div>
