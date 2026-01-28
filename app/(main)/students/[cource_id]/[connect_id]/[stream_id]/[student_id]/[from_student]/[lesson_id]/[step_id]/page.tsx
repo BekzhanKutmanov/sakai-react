@@ -249,21 +249,26 @@ export default function StudentCheck() {
                                                                     totalScore={i?.score}
                                                                     type={i.type.name}
                                                                     icon={i.type.logo}
+                                                                   
                                                                     title={element?.content?.title}
                                                                     checkTitle={i?.type?.title}
                                                                     description={element?.content?.description || ''}
+                                                                    
                                                                     documentUrl={{ document: element?.content?.document, document_path: element?.content?.document_path }}
                                                                     video_link={element?.content?.link}
                                                                     link={element?.content?.url}
                                                                     test={{ content: element?.content.content, answers: element?.content.answers, score: element?.content.score }}
                                                                     answerList={i?.ListAnswer}
                                                                     videoStart={() => {}}
+                                                                    
                                                                     skeleton={skeleton}
+                                                                    
                                                                     getValues={() => handleFetchElement(i?.lesson_id, i?.id)}
                                                                     addPracticaScore={(score) => handlePracticaScoreAdd(i?.id, score)}
                                                                     addPracticaDisannul={(id_curricula: number, course_id: number, id_stream: number, id: number, steps_id: number, message: string) =>
                                                                         handlePracticaDisannul(id_curricula, course_id, id_stream, id, steps_id, message)
                                                                     }
+                                                                    
                                                                     isOpened={i?.is_opened || false}
                                                                     // item={i}
                                                                 />
