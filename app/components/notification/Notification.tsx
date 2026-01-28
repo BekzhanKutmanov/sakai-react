@@ -8,20 +8,20 @@ import MyDateTime from '../MyDateTime';
 import { OptionsType } from '@/types/OptionsType';
 import { it } from 'node:test';
 
+// types
+interface NotificationGroupUi {
+    title: string;
+    type: { type: string; title: string };
+    created_at: string;
+    from_user: { last_name: string; name: string };
+}
+
+interface NotificationGroup {
+    id: number;
+    meta: { course_id: number; connect_id: number; stream_id: number; student_id: number; lesson_id: number; step_id: number };
+}
+
 export default function Notification({ notification }: { notification: mainNotification[] }) {
-    // types
-    interface NotificationGroupUi {
-        title: string;
-        type: { type: string; title: string };
-        created_at: string;
-        from_user: { last_name: string; name: string };
-    }
-
-    interface NotificationGroup {
-        id: number;
-        meta: { course_id: number; connect_id: number; stream_id: number; student_id: number; lesson_id: number; step_id: number };
-    }
-
     const { user, setContextNotificationId } = useContext(LayoutContext);
 
     const [mainNotification, setMainNotification] = useState<mainNotification[]>([]);
@@ -42,6 +42,46 @@ export default function Notification({ notification }: { notification: mainNotif
         setGroupNotificationVisible(false);
         const forGroup = notification.filter((item) => item.type.type === type);
         return forGroup;
+    };
+
+    const stop = (e: any) => {
+        e.stopPropagation();
+        e.preventDefault();
+    };
+
+    const findPath = (item: mainNotification) => {
+        let findPathResult = '';
+        if (user?.is_working) {
+            if (item?.type?.type === 'practical') {
+                findPathResult = `/students/${item?.meta?.course_id}/${item?.meta?.connect_id}/${item?.meta?.stream_id}/${item?.meta?.student_id}/${item?.from_user?.id}/${item?.meta?.lesson_id}/${item?.meta?.step_id}`;
+            } else if (item?.type?.type === 'view') {
+                findPathResult = `/notifications`;
+            }
+        } else if (user?.is_student) {
+            if (item?.type?.type === 'practical') {
+                findPathResult = `/teaching/lessonView/${item?.meta?.lesson_id}/${item?.meta?.id_curricula}/${item?.meta?.stream_id}/${item?.meta?.step_id}`;
+            }
+        }
+        return findPathResult;
+    };
+
+    const groupingSection = (item: NotificationGroupUi) => {
+        return (
+            <div className="flex gap-1 items-center px-2 py-1">
+                <b
+                    className="cursor-pointer text-[var(--mainColor)] hover:underline"
+                    onMouseDown={stop}
+                    onClick={(e) => {
+                        stop(e);
+                        const forNotification = notificationTypeGrouping(item?.type?.type);
+                        setMainNotification(forNotification);
+                        setGroupingFl(true);
+                    }}
+                >
+                    {item?.type?.title}
+                </b>
+            </div>
+        );
     };
 
     useEffect(() => {
@@ -67,55 +107,14 @@ export default function Notification({ notification }: { notification: mainNotif
         }
     }, []);
 
-    const stop = (e: any) => {
-        e.stopPropagation();
-        e.preventDefault();
-    };
-
-    const findPath = (item: mainNotification) => {
-        let findPathResult = '';
-        if (user?.is_working) {
-            if (item?.type?.type === 'practical') {
-                findPathResult = `/students/${item?.meta?.course_id}/${item?.meta?.connect_id}/${item?.meta?.stream_id}/${item?.meta?.student_id}/${item?.from_user?.id}/${item?.meta?.lesson_id}/${item?.meta?.step_id}`;
-            } else if (item?.type?.type === 'view') {
-                findPathResult = `/notifications`;
-            }
-        } else if (user?.is_student) {
-            if (item?.type?.type === 'practical') {
-                findPathResult = `/teaching/lessonView/${item?.meta?.lesson_id}/${item?.meta?.id_curricula}/${item?.meta?.stream_id}/${item?.meta?.step_id}`;
-            }
-        }
-        return findPathResult;
-    };
-
-    const groupingSection = (item: NotificationGroupUi) => {
-        return (
-            <div className="flex gap-1 items-center p-1">
-                <b
-                    className="cursor-pointer text-[var(--mainColor)] hover:underline"
-                    onMouseDown={stop}
-                    onClick={(e) => {
-                        stop(e);
-                        const forNotification = notificationTypeGrouping(item?.type?.type);
-                        setMainNotification(forNotification);
-                        setGroupingFl(true);
-                    }}
-                >
-                    {item?.type?.title}
-                </b>
-            </div>
-        );
-    };
-
-    // console.log('Массив типов ', typeArr);
     return (
         <div className={`flex flex-col justify-center p-2 gap-1`}>
             {groupNotificationVisible ? (
                 <div className="flex items-center gap-1 justify-between p-2">
-                    <h3 className="m-0 font-bold text-[17px]">Список сообщений </h3>
+                    <h3 className="m-0 p-0 font-bold text-[17px]">Список сообщений </h3>
                     <i
                         className="cursor-pointer pi pi-times flex justify-end"
-                        style={{fontSize: '12px'}}
+                        style={{ fontSize: '12px' }}
                         onClick={(e) => {
                             stop(e);
                             setGroupNotificationVisible(false);
@@ -135,7 +134,7 @@ export default function Notification({ notification }: { notification: mainNotif
                         setGroupingFl(false);
                     }}
                 >
-                    <i className="pi pi-times flex justify-end" style={{fontSize: '12px'}}></i>
+                    <i className="pi pi-times flex justify-end" style={{ fontSize: '12px' }}></i>
                     <span>Все</span>
                 </div>
             )}
