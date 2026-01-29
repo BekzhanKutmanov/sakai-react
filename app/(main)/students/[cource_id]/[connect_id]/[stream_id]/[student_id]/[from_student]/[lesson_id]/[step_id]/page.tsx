@@ -188,7 +188,7 @@ export default function StudentCheck() {
                     return null;
                 }
             });
-
+                                                                                           
             // Вычисляем сумму баллов студента
             let total = 0;
             for (let i = 0; i < lessons.length; i++) {

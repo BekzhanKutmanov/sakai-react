@@ -2,8 +2,6 @@
 
 import React, { useState } from 'react';
 import { Accordion, AccordionTab } from 'primereact/accordion';
-import { Card } from 'primereact/card';
-import { Avatar } from 'primereact/avatar';
 import { CourseType } from '@/types/courseType';
 import { fetchCourseInfo } from '@/services/courses';
 
@@ -54,12 +52,22 @@ const StudentCheckPage = ({ params }: { params: { course_id: string; id: string 
 
     // Получаем данные о курсе
     const handleCourseShow = async () => {
-        // mainSetSkeleton(true);
-        // const data = await fetchCourseInfo(cource_id ? Number(cource_id) : null);
-        // if (data?.success) {
-        //     setCourseShow(data?.course);
-        // }
-        // mainSetSkeleton(false);
+        mainSetSkeleton(true);
+        const data = await fetchCourseInfo(null);
+        if (data?.success) {
+            setCourseShow(data?.course);
+        }
+        mainSetSkeleton(false);
+    };
+
+    // Получаем уроки?
+    const handle = async () => {
+        mainSetSkeleton(true);
+        const data = await fetchCourseInfo(null);
+        if (data?.success) {
+            setCourseShow(data?.course);
+        }
+        mainSetSkeleton(false);
     };
 
     // const header = !courseShow && !courseShow?.title ? <h1 className="text-2xl bg-[var(--titleColor)] text-white text-center p-3">{'courseShow?.title'}</h1> : '';

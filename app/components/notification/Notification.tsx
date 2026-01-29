@@ -6,7 +6,6 @@ import Link from 'next/link';
 import { useContext, useEffect, useState } from 'react';
 import MyDateTime from '../MyDateTime';
 import { OptionsType } from '@/types/OptionsType';
-import { it } from 'node:test';
 
 // types
 interface NotificationGroupUi {
@@ -14,11 +13,6 @@ interface NotificationGroupUi {
     type: { type: string; title: string };
     created_at: string;
     from_user: { last_name: string; name: string };
-}
-
-interface NotificationGroup {
-    id: number;
-    meta: { course_id: number; connect_id: number; stream_id: number; student_id: number; lesson_id: number; step_id: number };
 }
 
 export default function Notification({ notification }: { notification: mainNotification[] }) {
