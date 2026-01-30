@@ -441,6 +441,7 @@ export const addOpenTypes = async (course_audience_type_id: number, course_id: n
     }
 };
 
+// archive
 export const archiveCourse = async (course_id: number, copy_have: boolean) => {
     const payload = {
         course_id: course_id,
@@ -456,7 +457,18 @@ export const archiveCourse = async (course_id: number, copy_have: boolean) => {
 
         return res.data;
     } catch (err) {
-        console.log('Ошибка при добавлении типа курса', err);
+        console.log('Ошибка при архивации курса', err);
+        return err;
+    }
+};
+
+export const fetchArchivedCourses = async () => {
+    try {
+        const res = await axiosInstance.get(`/v1/course/archive/list`);
+
+        return res.data;
+    } catch (err) {
+        console.log('Ошибка при получении ', err);
         return err;
     }
 };
