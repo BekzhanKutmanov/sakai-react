@@ -1,7 +1,7 @@
 'use client';
 
 import FormModal from '@/app/components/popUp/FormModal';
-import { addCourse, addOpenTypes, deleteCourse, fetchCourseInfo, fetchCourseOpenStatus, fetchCourses, updateCourse, veryfyCourse } from '@/services/courses';
+import { addCourse, addOpenTypes, archiveCourse, deleteCourse, fetchCourseInfo, fetchCourseOpenStatus, fetchCourses, updateCourse, veryfyCourse } from '@/services/courses';
 import { Button } from 'primereact/button';
 import { FileUpload, FileUploadSelectEvent } from 'primereact/fileupload';
 import { InputText } from 'primereact/inputtext';
@@ -24,7 +24,7 @@ import { myMainCourseType } from '@/types/myMainCourseType';
 import StreamList from '@/app/components/tables/StreamList';
 import { TabPanel, TabView } from 'primereact/tabview';
 import { TabViewChange } from '@/types/tabViewChange';
-import useMediaQuery  from '@/hooks/useMediaQuery';
+import useMediaQuery from '@/hooks/useMediaQuery';
 import useShortText from '@/hooks/useShortText';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import { DataView } from 'primereact/dataview';
@@ -32,6 +32,7 @@ import { FileWithPreview } from '@/types/fileuploadPreview';
 import { Dialog } from 'primereact/dialog';
 import { AudenceType } from '@/types/courseTypes/AudenceTypes';
 import OpenStudentList from '@/app/components/tables/OpenStudentList';
+import { confirmDialog } from 'primereact/confirmdialog';
 
 export default function Course() {
     const { setMessage, setGlobalLoading, course, contextFetchCourse, setMainCourseId } = useContext(LayoutContext);
@@ -72,6 +73,7 @@ export default function Course() {
     const [pageState, setPageState] = useState<number>(1);
     const [openTypes, setOpenTypes] = useState<AudenceType[]>([]);
     const [openCourseId, setOpenCourseId] = useState<number | null>(null);
+    // const [copy_have, setCopy_have] = useState<boolean>(false);
 
     const [isTall, setIsTall] = useState(false);
 
@@ -377,6 +379,62 @@ export default function Course() {
         setSkeleton(false);
     };
 
+    const onInbox = async (id: number, copy_have: boolean) => {
+        const data = await archiveCourse(id, copy_have);
+        if (data?.success) {
+            contextFetchCourse(1);
+            setMessage({
+                state: true,
+                value: { severity: 'success', summary: 'Архивирование прошло успешно', detail: '' }
+            });
+        } else {
+            if (data?.response?.status) {
+                if (data?.response?.status == '400') {
+                    setMessage({
+                        state: true,
+                        value: { severity: 'error', summary: 'Ошибка!', detail: data?.response?.data?.message }
+                    });
+                } else {
+                    showError(data.response.status);
+                }
+            }
+        }
+    };
+
+    const inboxConfirm = (id: number) => {
+        let copy_have = false;
+        confirmDialog({
+            message: (
+                <div className="flex flex-col gap-1">
+                    <b>Курс будет сохранён в текущем состоянии и навсегда перемещён в архив без возможности восстановления.</b>
+                    <span className="text-sm">Курс будет доступен только в архиве</span>
+                    <div className="flex items-center text-sm">
+                        <span>Оставить копию курса</span>
+                        <label className="custom-radio">
+                            <input
+                                type="checkbox"
+                                className={`customCheckbox`}
+                                onChange={(e) => {
+                                    // setCopy_have(e.target.checked);
+                                    copy_have = e.target.checked;
+                                }}
+                            />
+                            <span className="checkbox-mark"></span>
+                        </label>
+                    </div>
+                </div>
+            ),
+            header: 'Архивация курса',
+            icon: 'pi pi-exclamation-triangle',
+            defaultFocus: 'accept',
+            acceptLabel: 'Архивировать',
+            rejectLabel: 'Назад',
+            rejectClassName: 'p-button-secondary reject-button',
+            className: 'w-[50%]',
+            accept: () => onInbox(id, copy_have)
+        });
+    };
+
     const itemTemplate = (shablonData: any) => {
         return (
             <div className="col-12">
@@ -401,7 +459,7 @@ export default function Course() {
                         </div>
                         {tableMedia && (
                             <div className="flex flex-column sm:flex-row gap-2 sm:mt-0">
-                                <Redacting redactor={getRedactor(shablonData, { onEdit: edit, getConfirmOptions, onDelete: handleDeleteCourse })} textSize={'14px'} />
+                                <Redacting redactor={getRedactor(shablonData, { onEdit: edit, getConfirmOptions, onDelete: handleDeleteCourse }, inboxConfirm)} textSize={'14px'} />
                             </div>
                         )}
                     </div>
@@ -440,7 +498,7 @@ export default function Course() {
                         </div>
                         <div className="flex gap-1 items-center">
                             <span className="text-[var(--mainColor)] text-sm">Публикация: </span>
-                            {shablonData.is_published ? <i className="pi pi-check text-md text-[var(--greenColor)]"></i> : <i className="pi pi-times text-md text-[var(--redColor)]"></i>}
+                            {shablonData.is_published ? <i className="pi pi-check-circle text-md text-[var(--greenColor)]"></i> : <i className="pi pi-times-circle text-md text-[var(--redColor)]"></i>}
                         </div>
                     </div>
                     <>
@@ -477,7 +535,7 @@ export default function Course() {
                         <div className="flex flex-column sm:flex-row gap-2 sm:mt-0">
                             {/* <Button icon="pi pi-pencil" className="p-button-rounded" onClick={() => edit(shablonData)} /> */}
                             {/* <Button icon="pi pi-trash" className="p-button-rounded p-button-danger" onClick={() => handleDeleteCourse(shablonData.id)} /> */}
-                            <Redacting redactor={getRedactor(shablonData, { onEdit: edit, getConfirmOptions, onDelete: handleDeleteCourse })} textSize={'14px'} />
+                            <Redacting redactor={getRedactor(shablonData, { onEdit: edit, getConfirmOptions, onDelete: handleDeleteCourse }, inboxConfirm)} textSize={'14px'} />
                         </div>
                     )}
                 </div>
@@ -779,12 +837,7 @@ export default function Course() {
                                                         <Column
                                                             header={() => <div className="text-[13px]">Публикация</div>}
                                                             style={{ margin: '0 3px', textAlign: 'center' }}
-                                                            body={(rowData) => {
-                                                                // if(rowData?.audience_type?.name === 'lock'){
-                                                                return rowData.is_published ? <i className="pi pi-check text-md text-[var(--greenColor)]"></i> : <i className="pi pi-times text-md text-[var(--redColor)]"></i>;
-                                                                // }
-                                                                // return <i className='pi pi-minus'></i>
-                                                            }}
+                                                            body={(rowData) => rowData.is_published ? <i className="pi pi-check-circle text-md text-[var(--greenColor)]"></i> : <i className="pi pi-times-circle text-md text-[var(--redColor)]"></i>}
                                                         ></Column>
                                                         <Column
                                                             header={() => <div className="text-[13px]">Потоки</div>}
@@ -819,7 +872,7 @@ export default function Course() {
                                                             className="flex items-center justify-center h-[60px] border-b-0"
                                                             body={(rowData) => (
                                                                 <div className="flex items-center gap-2" key={rowData.id}>
-                                                                    <Redacting redactor={getRedactor(rowData, { onEdit: edit, getConfirmOptions, onDelete: handleDeleteCourse })} textSize={'14px'} />
+                                                                    <Redacting redactor={getRedactor(rowData, { onEdit: edit, getConfirmOptions, onDelete: handleDeleteCourse }, inboxConfirm)} textSize={'14px'} />
                                                                 </div>
                                                             )}
                                                         />
@@ -921,8 +974,10 @@ export default function Course() {
                         <div className="w-1/2 order-2 sm:order-1 max-h-[170px] max-w-[300px] overflow-hidden flex justify-center items-center">
                             {typeof imageState === 'string' ? (
                                 <img className="w-full object-cover" src={imageState} alt="фото" />
+                            ) : editingLesson.image ? (
+                                <img className="w-full object-cover" src={typeof editingLesson.image === 'string' ? editingLesson.image : ''} alt="фото" />
                             ) : (
-                                editingLesson.image ? <img className="w-full object-cover" src={typeof editingLesson.image === 'string' ? editingLesson.image : ''} alt="фото" /> : ''
+                                ''
                             )}
                         </div>
                         <div className={`flex flex-col pag-1 order-1 sm:order-2 items-center justify-center ${imageState && 'w-1/2'}`}>

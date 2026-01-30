@@ -20,7 +20,6 @@ import { Button } from 'primereact/button';
 import { Calendar } from 'primereact/calendar';
 import { Nullable } from 'primereact/ts-helpers';
 import { addLocale } from 'primereact/api';
-import { UserRoles } from '@/types/roles/RoleUserType';
 
 const AppMenu = () => {
     // types
@@ -129,7 +128,8 @@ const AppMenu = () => {
               pathname.startsWith('/notification') ||
               pathname.startsWith('/dashboard') ||
               pathname.startsWith('/openCourse') ||
-              pathname.startsWith('/roles')
+              pathname.startsWith('/roles') ||
+              pathname.startsWith('/archive')
                 ? ([
                       {
                           // key: 'prev',
@@ -200,6 +200,11 @@ const AppMenu = () => {
                           label: 'Поиск студентов',
                           icon: 'pi pi-search',
                           to: '/students/search'
+                      },
+                      {
+                          label: 'Архив курсов',
+                          icon: 'pi pi-inbox',
+                          to: '/archive'
                       }
                   ].filter(Boolean) as AppMenuItem[])
                 : []
@@ -317,6 +322,11 @@ const AppMenu = () => {
                       label: 'Поиск студентов',
                       icon: 'pi pi-search',
                       to: '/students/search'
+                  },
+                  {
+                      label: 'Архив курсов',
+                      icon: 'pi pi-inbox',
+                      to: '/archive'
                   }
               ].filter(Boolean) as AppMenuItem[])
             : []

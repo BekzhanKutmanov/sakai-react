@@ -440,3 +440,23 @@ export const addOpenTypes = async (course_audience_type_id: number, course_id: n
         return err;
     }
 };
+
+export const archiveCourse = async (course_id: number, copy_have: boolean) => {
+    const payload = {
+        course_id: course_id,
+        copy_have: copy_have ? 1 : 0
+    }
+
+    try {
+        const res = await axiosInstance.post(`/v1/course/archive`, payload, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        });
+
+        return res.data;
+    } catch (err) {
+        console.log('Ошибка при добавлении типа курса', err);
+        return err;
+    }
+};

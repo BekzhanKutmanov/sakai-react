@@ -12,7 +12,7 @@ interface redactorValueType {
     type?: string;
 }
 
-export const getRedactor = (redactorValues: redactorValueType, handlers: RedactorType) => [
+export const getRedactor = (redactorValues: redactorValueType, handlers: RedactorType, onInBox: (id:number)=> void) => [
     {
         label: '',
         icon: 'pi pi-pencil',
@@ -30,6 +30,13 @@ export const getRedactor = (redactorValues: redactorValueType, handlers: Redacto
             confirmDialog(options);
             // }
             // }
+        }
+    },
+    {
+        label: '',
+        icon: 'pi pi-inbox',
+        command: () => {
+           onInBox(redactorValues?.id);
         }
     }
 ];

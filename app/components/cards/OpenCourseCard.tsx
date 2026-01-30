@@ -2,14 +2,12 @@
 
 import { OptionsType } from '@/types/OptionsType';
 import MyDateTime from '../MyDateTime';
-import { myMainCourseType } from '@/types/myMainCourseType';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Button } from 'primereact/button';
 import { useEffect, useState } from 'react';
 import { CourseCategoryOption } from '@/types/openCourse/CourseCategoryOption';
-import { confirmDialog, ConfirmDialog } from 'primereact/confirmdialog';
-import { Dialog } from 'primereact/dialog';
+import { confirmDialog } from 'primereact/confirmdialog';
 
 // компонент представляет с собой карточку одного курса
 // отобр. название, фото, тип (платный, бесплатный), дата, (срок), фио препода
