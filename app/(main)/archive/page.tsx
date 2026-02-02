@@ -92,7 +92,7 @@ const ArchivePage = () => {
                             <div className="mb-3 text-gray-500">Дата архивации: {new Date(course?.archive_course?.created_at).toLocaleDateString()}</div>
                             <div className="flex align-items-center justify-content-center md:justify-content-start gap-4">
                                 <div>
-                                    <span className="font-semibold">Сохранён в курсах: </span>
+                                    <span className="font-semibold">Копия: </span>
                                     {publishedBodyTemplate(course)}
                                 </div>
                                 {/* <div> */}
@@ -173,7 +173,7 @@ const ArchivePage = () => {
                     <Column body={(_, { rowIndex }) => rowIndex + 1} header="#" style={{ width: '20px' }}></Column>
                     <Column header="Фото" body={imageBodyTemplate} style={{ width: '10%' }} />
                     <Column field="title" header="Название" />
-                    <Column header="Имеет копию" body={publishedBodyTemplate} />
+                    <Column header="Копию" body={publishedBodyTemplate} />
                     <Column header="Дата архивации" body={(rowData)=> new Date(rowData?.archive_course?.created_at).toLocaleDateString()} />
                     {/* <Column field="max_score" header="Балл" />
                     <Column header="На рассмотрение" body={reviewBodyTemplate} />

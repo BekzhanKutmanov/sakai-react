@@ -64,3 +64,18 @@
     padding: 3px 2px;
   }
 }
+
+.small-dropdown.p-dropdown {
+  /* height: 28px; */
+  font-size: 14px;
+}
+
+.small-dropdown .p-dropdown-label {
+  font-size: 14px;
+  /* padding: 4px 8px; */
+  line-height: 1.2;
+}
+
+.small-dropdown .p-dropdown-trigger {
+  width: 24px;
+}

@@ -5,7 +5,7 @@ import { addCourse, addOpenTypes, archiveCourse, deleteCourse, fetchCourseInfo, 
 import { Button } from 'primereact/button';
 import { FileUpload, FileUploadSelectEvent } from 'primereact/fileupload';
 import { InputText } from 'primereact/inputtext';
-import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import React, { use, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { LayoutContext } from '@/layout/context/layoutcontext';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { DataTable } from 'primereact/datatable';
@@ -30,6 +30,7 @@ import { ProgressSpinner } from 'primereact/progressspinner';
 import { DataView } from 'primereact/dataview';
 import { FileWithPreview } from '@/types/fileuploadPreview';
 import { Dialog } from 'primereact/dialog';
+import { Dropdown, DropdownChangeEvent } from 'primereact/dropdown';
 import { AudenceType } from '@/types/courseTypes/AudenceTypes';
 import OpenStudentList from '@/app/components/tables/OpenStudentList';
 import { confirmDialog } from 'primereact/confirmdialog';
@@ -77,6 +78,55 @@ export default function Course() {
 
     const [isTall, setIsTall] = useState(false);
 
+    const [filters, setFilters] = useState<{
+        course_audience_type_id: number | null;
+        is_published: boolean | null;
+        status: boolean | null;
+    }>({
+        course_audience_type_id: null,
+        is_published: null,
+        status: null
+    });
+
+    const audienceTypeOptions = [
+        { label: 'Все (статус)', value: null },
+        { label: 'Закрытый', value: 1 },
+        { label: 'Открытый', value: 2 },
+        { label: 'Платный', value: 3 }
+    ];
+
+    const publishedOptions = [
+        { label: 'Все (публикация)', value: null },
+        { label: 'Опубликован', value: true },
+        { label: 'Не опубликован', value: false }
+    ];
+
+    const statusOptions = [
+        { label: 'Все (рассмотрение)', value: null },
+        { label: 'На рассмотрении', value: true },
+        { label: 'Не на рассмотрении', value: false }
+    ];
+
+    const handleFilterChange = (e: DropdownChangeEvent) => {
+        let value;
+        if(typeof e.value === 'object') {
+            value = null;
+        } else {
+            value = e.value;
+        }
+        
+        setFilters((prev) => ({ ...prev, [e.target.name]: value }));
+    };
+
+    const resetFilters = () => {
+        setFilters({
+            course_audience_type_id: null,
+            is_published: null,
+            status: null
+        });
+        // Here you would also refetch the data without filters
+    };
+
     const showError = useErrorMessage();
 
     const toggleSkeleton = () => {
@@ -98,7 +148,7 @@ export default function Course() {
 
         const data = await veryfyCourse(forSentStreams);
         if (data.success) {
-            contextFetchCourse(1);
+            handleFetchCourse(1,filters);
             setPageState(1);
             setMessage({
                 state: true,
@@ -155,21 +205,29 @@ export default function Course() {
         }
     };
 
-    const handleFetchCourse = async (page = 1) => {
-        setSkeleton(true);
-        const data = await fetchCourses(page, 10);
-        if (data && course) {
-            if (course.data?.length < 1) {
-                setEmptyCourses(true);
-            } else {
+    const handleFetchCourse = async (
+        page = 1,
+        filters: {
+            course_audience_type_id: number | null;
+            is_published: boolean | null;
+            status: boolean | null;
+        }
+    ) => {
+        setSkeleton(true);        
+        const data = await fetchCourses(page, 10, filters?.course_audience_type_id, filters?.is_published, filters?.status);
+        
+        if (data && data?.courses) {
+            if (data?.courses?.data?.length > 0) {
                 setEmptyCourses(false);
+            } else {
+                setEmptyCourses(true);
             }
             setHasCourses(false);
-            setValueCourses(course.data);
+            setValueCourses(data.courses.data);
             setPagination({
-                currentPage: course.current_page,
-                total: course?.total,
-                perPage: course?.per_page
+                currentPage: data?.courses?.current_page,
+                total: data?.courses?.total,
+                perPage: data?.courses?.per_page
             });
         } else {
             setHasCourses(true);
@@ -188,7 +246,7 @@ export default function Course() {
         setSkeleton(true);
         const data = await addCourse(courseValue);
         if (data?.success) {
-            contextFetchCourse(1);
+            handleFetchCourse(1, filters);
             setPageState(1);
             setMessage({
                 state: true,
@@ -211,7 +269,7 @@ export default function Course() {
         const data = await deleteCourse(id);
         if (data?.success) {
             // setGlobalCourseId(null);
-            contextFetchCourse(1);
+            handleFetchCourse(1, filters);
             setPageState(1);
             setMessage({
                 state: true,
@@ -249,7 +307,7 @@ export default function Course() {
         const data = await updateCourse(selectedCourse, editingLesson);
         if (data?.success) {
             toggleSkeleton();
-            contextFetchCourse(1);
+            handleFetchCourse(1, filters);
             setPageState(1);
             clearValues();
             setEditMode(false);
@@ -313,7 +371,7 @@ export default function Course() {
     // Ручное управление пагинацией
     const handlePageChange = (page: number) => {
         // setGlobalCourseId(null);
-        contextFetchCourse(page);
+        handleFetchCourse(page, filters);
         setPageState(page);
     };
 
@@ -357,7 +415,7 @@ export default function Course() {
         setSkeleton(true);
         const data = await addOpenTypes(course_audience_type_id, course_id);
         if (data && data.success) {
-            contextFetchCourse(1);
+            handleFetchCourse(1, filters);
             setMessage({
                 state: true,
                 value: { severity: 'success', summary: data.message, detail: '' }
@@ -382,7 +440,7 @@ export default function Course() {
     const onInbox = async (id: number, copy_have: boolean) => {
         const data = await archiveCourse(id, copy_have);
         if (data?.success) {
-            contextFetchCourse(1);
+            handleFetchCourse(1, filters);
             setMessage({
                 state: true,
                 value: { severity: 'success', summary: 'Архивирование прошло успешно', detail: '' }
@@ -543,12 +601,41 @@ export default function Course() {
         );
     };
 
+    const courseFiltered = () => (
+        <div className="mt-4 sm:mt-3 sm:py-3 border-round-lg">
+            {/* <h5 className="m-0 mb-4 text-xl" onClick={()=> setCourseFilteredState((prev)=> prev = !prev)}>Фильтры</h5> */}
+            <div className="grid formgrid p-fluid gap-3 sm:gap-1">
+                <div className="field col-12 md:col-6 lg:col-3">
+                    <span className="p-float-label">
+                        <Dropdown id="course_audience_type_id" name="course_audience_type_id" value={filters.course_audience_type_id} options={audienceTypeOptions} onChange={handleFilterChange} className="w-full small-dropdown" />
+                        <label htmlFor="course_audience_type_id text-sm">Статус курса</label>
+                    </span>
+                </div>
+                <div className="field col-12 md:col-6 lg:col-3">
+                    <span className="p-float-label">
+                        <Dropdown id="status" name="status" value={filters.status} options={statusOptions} onChange={handleFilterChange} className="w-full small-dropdown" style={{ width: '150px', fontSize: '12px' }} />
+                        <label htmlFor="status">Рассмотрение</label>
+                    </span>
+                </div>
+                <div className="field col-12 md:col-6 lg:col-3">
+                    <span className="p-float-label">
+                        <Dropdown id="is_published" name="is_published" value={filters.is_published} options={publishedOptions} onChange={handleFilterChange} className="w-full small-dropdown" />
+                        <label htmlFor="is_published">Публикация</label>
+                    </span>
+                </div>
+                <div className="field col-12 md:col-6 lg:col-3 flex align-items-center">
+                    <Button label="Сбросить" icon="pi pi-replay" className="p-button-outlined w-full text-white" onClick={resetFilters} size="small" />
+                </div>
+            </div>
+        </div>
+    );
+
     const imagestateStyle = imageState || editingLesson.image ? 'flex gap-1 items-center justify-between flex-col sm:flex-row' : '';
     const imageTitle = useShortText(typeof editingLesson.image === 'string' ? editingLesson.image : '', 20);
 
     // usecallback
     const callbackFetchCourse = useCallback(() => {
-        contextFetchCourse(pageState);
+        handleFetchCourse(pageState, filters);
     }, [pageState]);
 
     const callbackSetIndex = useCallback(() => {
@@ -563,7 +650,7 @@ export default function Course() {
     const memoForStreamId = useMemo(() => (forStreamId?.id ? forStreamId : null), [forStreamId?.id]);
 
     useEffect(() => {
-        contextFetchCourse(1);
+        // handleFetchCourse(1, filters);
         setPageState(1);
         setGlobalLoading(true);
         setTimeout(() => {
@@ -572,13 +659,13 @@ export default function Course() {
     }, []);
 
     useEffect(() => {
-        handleFetchCourse();
+        handleFetchCourse(1, filters);
         if (course?.data?.length > 5) {
             setIsTall(true);
         } else {
             setIsTall(false);
         }
-    }, [course]);
+    }, [courseValue, filters]);
 
     useEffect(() => {
         const title = editMode ? editingLesson.title.trim() : courseValue.title.trim();
@@ -588,19 +675,6 @@ export default function Course() {
             setForStart(true);
         }
     }, [courseValue.title, editingLesson.title]);
-
-    // useEffect(() => {
-    //     if (globalCourseId != null) {
-    //         const exists = coursesValue.some((c: { id: number }) => c.id === globalCourseId.id);
-    //         if (exists) {
-    //             // setForStreamId({ id: globalCourseId.id, title: globalCourseId.title || '' });
-    //         } else {
-    //             // setForStreamId({ id: coursesValue[0].id, title: coursesValue[0].title });
-    //         }
-    //     } else {
-    //         // setForStreamId({ id: coursesValue[0].id, title: coursesValue[0].title });
-    //     }
-    // }, [coursesValue]);
 
     useEffect(() => {
         const handleShow = async () => {
@@ -626,7 +700,7 @@ export default function Course() {
     }, [editMode]);
 
     const tableData = useMemo(() => {
-        return coursesValue.map((item) => ({ ...item, __isActive: forStreamId?.id === item.id }));
+        return coursesValue?.map((item) => ({ ...item, __isActive: forStreamId?.id === item.id }));
     }, [coursesValue, forStreamId]);
 
     return (
@@ -692,6 +766,7 @@ export default function Course() {
                                                 }}
                                             />
                                         </div>
+                                        {/* {skeleton ? <div className='flex items-center gap-1 flex-wrap justify-center sm:justify-start'><GroupSkeleton count={1} size={{height: '40px', width: '250px'}}/> <GroupSkeleton count={1} size={{height: '40px', width: '250px'}}/> <GroupSkeleton count={1} size={{height: '40px', width: '250px'}}/> </div> : courseFiltered()} */}
                                         <DataView
                                             value={coursesValue}
                                             itemTemplate={itemTemplate}
@@ -737,7 +812,7 @@ export default function Course() {
                                 {skeleton ? (
                                     <GroupSkeleton count={1} size={{ width: '100%', height: '5rem' }} />
                                 ) : (
-                                    <div className="flex flex-col md:flex-row justify-between md:items-center mb-4 py-2 gap-1 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">
+                                    <div className="flex flex-col md:flex-row justify-between md:items-center mb-2 py-2 gap-1 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">
                                         <h3 className="text-[32px] m-0">Курсы</h3>
                                         <Button
                                             label="Добавить курс"
@@ -750,6 +825,8 @@ export default function Course() {
                                         />
                                     </div>
                                 )}
+
+                                {skeleton ? <div className='flex items-center gap-1 flex-wrap justify-center sm:justify-start'><GroupSkeleton count={1} size={{height: '40px', width: '250px'}}/> <GroupSkeleton count={1} size={{height: '40px', width: '250px'}}/> <GroupSkeleton count={1} size={{height: '40px', width: '250px'}}/> </div> : courseFiltered()}
 
                                 {/* table section */}
                                 {emptyCourses ? (
@@ -837,7 +914,7 @@ export default function Course() {
                                                         <Column
                                                             header={() => <div className="text-[13px]">Публикация</div>}
                                                             style={{ margin: '0 3px', textAlign: 'center' }}
-                                                            body={(rowData) => rowData.is_published ? <i className="pi pi-check-circle text-md text-[var(--greenColor)]"></i> : <i className="pi pi-times-circle text-md text-[var(--redColor)]"></i>}
+                                                            body={(rowData) => (rowData.is_published ? <i className="pi pi-check-circle text-md text-[var(--greenColor)]"></i> : <i className="pi pi-times-circle text-md text-[var(--redColor)]"></i>)}
                                                         ></Column>
                                                         <Column
                                                             header={() => <div className="text-[13px]">Потоки</div>}

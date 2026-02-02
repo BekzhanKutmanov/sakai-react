@@ -9,6 +9,7 @@ import { OptionsType } from '@/types/OptionsType';
 
 // types
 interface NotificationGroupUi {
+    id: number;
     title: string;
     type: { type: string; title: string };
     created_at: string;
@@ -61,7 +62,7 @@ export default function Notification({ notification }: { notification: mainNotif
 
     const groupingSection = (item: NotificationGroupUi) => {
         return (
-            <div className="flex gap-1 items-center px-2 py-1">
+            <div key={item?.id} className="flex gap-1 items-center px-2 py-1">
                 <b
                     className="cursor-pointer text-[var(--mainColor)] hover:underline"
                     onMouseDown={stop}
@@ -106,14 +107,17 @@ export default function Notification({ notification }: { notification: mainNotif
             {groupNotificationVisible ? (
                 <div className="flex items-center gap-1 justify-between p-2">
                     <h3 className="m-0 p-0 font-bold text-[17px]">Список сообщений </h3>
-                    <i
-                        className="cursor-pointer pi pi-times flex justify-end"
-                        style={{ fontSize: '12px' }}
-                        onClick={(e) => {
-                            stop(e);
-                            setGroupNotificationVisible(false);
-                        }}
-                    ></i>
+                    <div className='cursor-pointer flex items-center gap-1 justify-between'>
+                        <i
+                            className="pi pi-times flex justify-end"
+                            style={{ fontSize: '12px' }}
+                            onClick={(e) => {
+                                stop(e);
+                                setGroupNotificationVisible(false);
+                            }}
+                        ></i>
+                        <span>Все</span>
+                    </div>
                 </div>
             ) : (
                 ''

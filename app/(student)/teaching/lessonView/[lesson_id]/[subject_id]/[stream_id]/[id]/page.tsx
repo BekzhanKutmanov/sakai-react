@@ -8,7 +8,7 @@ import { NotFound } from '@/app/components/NotFound';
 import useErrorMessage from '@/hooks/useErrorMessage';
 import { LayoutContext } from '@/layout/context/layoutcontext';
 import { statusView } from '@/services/notifications';
-import { fetchAnwerReport, fetchItemsLessons, fetchMainLesson, fetchStudentSteps, fetchSubjects, stepPractica, stepTest } from '@/services/studentMain';
+import { fetchItemsLessons, fetchMainLesson, fetchStudentSteps, fetchSubjects, stepPractica, stepTest } from '@/services/studentMain';
 import { docValueType } from '@/types/docValueType';
 import { lessonType } from '@/types/lessonType';
 import { mainStepsType } from '@/types/mainStepType';
@@ -136,6 +136,7 @@ export default function LessonTest() {
 
     const handleStatusView = async (notification_id: number | null) => {
         if (notification_id) {
+
             const data = await statusView(Number(notification_id));
             if (user?.is_working || user?.is_student) {
                 handleNotifications();

@@ -5,9 +5,13 @@ import { Nullable } from 'primereact/ts-helpers';
 
 let url = '';
 
-export const fetchCourses = async (page: number | null, limit: number | null) => {
+export const fetchCourses = async (page: number | null, limit: number | null, course_audience_type: number | null, is_published: boolean | null, status: boolean | null) => {
+    const publishid = is_published != null ? `&is_published=${is_published ? 1 : 0}` : '';
+    const statusid = status != null ? `&status=${status ? 1 : 0}` : '';
+    const course_audience_type_id = course_audience_type != null ? `&course_audience_type_id=${course_audience_type}` : '';
+
     try {
-        const res = await axiosInstance.get(`/v1/teacher/courses?page=${Number(page)}&limit=${limit}`);
+        const res = await axiosInstance.get(`/v1/teacher/courses?page=${Number(page)}${publishid}${statusid}${course_audience_type_id}&limit=${limit}`);
         const data = await res.data;
 
         return data;
@@ -23,7 +27,7 @@ export const addCourse = async (value: CourseCreateType) => {
     formData.append('description', value.description);
     if (value.image instanceof File) {
         formData.append('image', value.image);
-    }
+    }             
     formData.append('video_url', value.video_url);
 
     try {
