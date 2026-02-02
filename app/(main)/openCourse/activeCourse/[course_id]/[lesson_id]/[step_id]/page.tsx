@@ -109,7 +109,6 @@ export default function ActiveLessonDetail() {
     //     console.log(notification_id);
     //     if (notification_id) {
     //         const data = await statusView(Number(notification_id));
-    //         console.log(data);
 
     //         setContextNotificationId(null);
     //     }

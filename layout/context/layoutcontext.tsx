@@ -17,6 +17,7 @@ import { getNotifications, unVerifedSteps } from '@/services/notifications';
 import { mainNotification } from '@/types/mainNotification';
 import MyGlobalLoader from '@/app/components/loading/MyGlobalLoader';
 import { UserRoles } from '@/types/roles/RoleUserType';
+import { LocalizationProvider } from './localizationcontext';
 
 export const LayoutContext = createContext({} as LayoutContextProps);
 
@@ -231,13 +232,15 @@ export const LayoutProvider = ({ children }: ChildContainerProps) => {
 
     return (
         <LayoutContext.Provider value={value}>
-            <SessionManager />
-            {/* <GlobalLoading /> */}
-            <MyGlobalLoader/>
-            <ConfirmDialog />
+            <LocalizationProvider>
+                <SessionManager />
+                {/* <GlobalLoading /> */}
+                <MyGlobalLoader/>
+                <ConfirmDialog />
 
-            {message.state && <Message />}
-            {children}
+                {message.state && <Message />}
+                {children}
+            </LocalizationProvider>
         </LayoutContext.Provider>
     );
 };

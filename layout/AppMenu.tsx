@@ -21,7 +21,10 @@ import { Calendar } from 'primereact/calendar';
 import { Nullable } from 'primereact/ts-helpers';
 import { addLocale } from 'primereact/api';
 
+import { useLocalization } from './context/localizationcontext';
+
 const AppMenu = () => {
+    const { translations } = useLocalization();
     // types
     interface LessonInfoUi {
         title: string;
@@ -90,15 +93,15 @@ const AppMenu = () => {
     const showError = useErrorMessage();
 
     const ruLocale = {
-        firstDayOfWeek: 1, // Понедельник
-        dayNames: ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'],
-        dayNamesShort: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
-        dayNamesMin: ['В', 'П', 'В', 'С', 'Ч', 'П', 'С'],
-        monthNames: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
-        monthNamesShort: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'],
-        today: 'Сегодня',
-        clear: 'Очистить',
-        dateFormat: 'dd.mm.yy', // Ваш предпочтительный формат
+        firstDayOfWeek: 1, // Monday
+        dayNames: translations.dayNames,
+        dayNamesShort: translations.dayNamesShort,
+        dayNamesMin: translations.dayNamesMin,
+        monthNames: translations.monthNames,
+        monthNamesShort: translations.monthNamesShort,
+        today: translations.today,
+        clear: translations.clear,
+        dateFormat: 'dd.mm.yy', // Your preferred format
         weekHeader: 'Нд'
     };
 
@@ -141,12 +144,12 @@ const AppMenu = () => {
                           }
                       },
                       {
-                          label: 'Главная страница',
+                          label: translations.mainPage,
                           icon: 'pi pi-home',
                           to: '/'
                       },
                       {
-                          label: 'Панель управления',
+                          label: translations.controlPanel,
                           icon: 'pi pi-th-large',
                           to: '/dashboard'
                       },
@@ -154,17 +157,17 @@ const AppMenu = () => {
                       adminRole?.label ? adminRole : null,
                       depRole?.label ? depRole : null,
                       {
-                          label: 'Курсы',
+                          label: translations.courses,
                           icon: 'pi pi-fw pi-book',
                           to: '/course'
                       },
                       {
-                          label: 'Видеоинструкция',
+                          label: translations.videoInstruction,
                           icon: 'pi pi-fw pi-video',
                           to: '/videoInstruct'
                       },
                       {
-                          label: 'Непроверенные задания',
+                          label: translations.unverifiedTasks,
                           icon: 'pi pi-fw pi-clock',
                           to: '/unVerifed',
                           extra: (
@@ -182,27 +185,27 @@ const AppMenu = () => {
                           )
                       },
                       {
-                          label: 'Открытые онлайн курсы',
+                          label: translations.openOnlineCourses,
                           icon: 'pi pi-fw pi-globe',
                           to: '/openCourse'
                       },
                       {
-                          label: 'Мои активные курсы',
+                          label: translations.myActiveCourses,
                           icon: 'pi pi-play-circle',
                           to: '/openCourse/activeCourse'
                       },
                       {
-                          label: 'Уведомления',
+                          label: translations.notifications,
                           icon: 'pi pi-bell',
                           to: '/notifications'
                       },
                       {
-                          label: 'Поиск студентов',
+                          label: translations.searchStudents,
                           icon: 'pi pi-search',
                           to: '/students/search'
                       },
                       {
-                          label: 'Архив курсов',
+                          label: translations.archiveCourses,
                           icon: 'pi pi-inbox',
                           to: '/archive'
                       }
@@ -221,23 +224,23 @@ const AppMenu = () => {
                   }
               },
               {
-                  label: 'Главная страница',
+                  label: translations.mainPage,
                   icon: 'pi pi-home',
                   to: '/'
               },
               {
-                  label: 'Панель управления',
+                  label: translations.controlPanel,
                   icon: 'pi pi-th-large',
                   to: '/studentHome'
               },
               { label: 'План обучения', icon: 'pi pi-fw pi-calendar-clock', to: '/teaching' },
               {
-                  label: 'Открытые онлайн курсы',
+                  label: translations.openOnlineCourses,
                   icon: 'pi pi-fw pi-globe',
                   to: '/openCourse'
               },
               {
-                  label: 'Мои активные курсы',
+                  label: translations.myActiveCourses,
                   icon: 'pi pi-play-circle',
                   to: '/openCourse/activeCourse'
               }
@@ -258,12 +261,12 @@ const AppMenu = () => {
                       }
                   },
                   {
-                      label: 'Главная страница',
+                      label: translations.mainPage,
                       icon: 'pi pi-home',
                       to: '/'
                   },
                   {
-                      label: 'Панель управления',
+                      label: translations.controlPanel,
                       icon: 'pi pi-th-large',
                       to: '/dashboard'
                   },
@@ -271,22 +274,22 @@ const AppMenu = () => {
                   adminRole?.label ? adminRole : null,
                   depRole?.label ? depRole : null,
                   {
-                      label: 'Утвердить курсы',
+                      label: translations.approveCourses,
                       icon: 'pi pi-graduation-cap',
                       to: '/faculty'
                   },
                   {
-                      label: 'Курсы',
+                      label: translations.courses,
                       icon: 'pi pi-fw pi-book',
                       to: '/course'
                   },
                   {
-                      label: 'Видеоинструкция',
+                      label: translations.videoInstruction,
                       icon: 'pi pi-fw pi-video',
                       to: '/videoInstruct'
                   },
                   {
-                      label: 'Непроверенные задания',
+                      label: translations.unverifiedTasks,
                       icon: 'pi pi-fw pi-clock',
                       to: '/unVerifed',
                       extra: (
@@ -304,27 +307,27 @@ const AppMenu = () => {
                       )
                   },
                   {
-                      label: 'Открытые онлайн курсы',
+                      label: translations.openOnlineCourses,
                       icon: 'pi pi-fw pi-globe',
                       to: '/openCourse'
                   },
                   {
-                      label: 'Мои активные курсы',
+                      label: translations.myActiveCourses,
                       icon: 'pi pi-play-circle',
                       to: '/openCourse/activeCourse'
                   },
                   {
-                      label: 'Уведомления',
+                      label: translations.notifications,
                       icon: 'pi pi-bell',
                       to: '/notifications'
                   },
                   {
-                      label: 'Поиск студентов',
+                      label: translations.searchStudents,
                       icon: 'pi pi-search',
                       to: '/students/search'
                   },
                   {
-                      label: 'Архив курсов',
+                      label: translations.archiveCourses,
                       icon: 'pi pi-inbox',
                       to: '/archive'
                   }
@@ -501,13 +504,13 @@ const AppMenu = () => {
             if (forRole && forRole?.length > 0) {
                 const forAdmin = forRole.find((item) => item.id === 1);
                 if (forAdmin) {
-                    setAdminRole({ label: 'Админ', icon: 'pi pi-shield', to: '/roles', profilact: '' });
-                    setZamDekanRole({ label: 'Проверка преподавателей', icon: 'pi pi-check-square', to: '/roles/teacherCheck', profilact: '' });
+                    setAdminRole({ label: translations.admin, icon: 'pi pi-shield', to: '/roles', profilact: '' });
+                    setZamDekanRole({ label: translations.teacherCheck, icon: 'pi pi-check-square', to: '/roles/teacherCheck', profilact: '' });
                 }
 
                 const forDep = forRole.find((item) => item.id === 2);
                 if (forDep) {
-                    setDepRole({ label: 'Департамент', icon: 'pi pi-briefcase', to: '/roles/departament', profilact: '' });
+                    setDepRole({ label: translations.department, icon: 'pi pi-briefcase', to: '/roles/departament', profilact: '' });
                 }
             }
         }
@@ -561,7 +564,7 @@ const AppMenu = () => {
     return (
         <MenuProvider>
             <FormModal
-                title={'Обновить тему'}
+                title={translations.edit}
                 fetchValue={() => {
                     handleUpdate();
                 }}
@@ -569,7 +572,7 @@ const AppMenu = () => {
                 visible={visible}
                 setVisible={setVisisble}
                 start={false}
-                footerValue={{ footerState: true, reject: 'Назад', next: 'Сохранить' }}
+                footerValue={{ footerState: true, reject: translations.back, next: translations.save }}
             >
                 <div className="flex flex-col gap-1">
                     <div className="flex flex-col w-full items-center gap-2">
@@ -587,7 +590,7 @@ const AppMenu = () => {
                         <div className="w-full flex flex-col gap-1 items-center justify-center">
                             <InputText
                                 type="text"
-                                placeholder="Название"
+                                placeholder={translations.courseName}
                                 className="w-[90%]"
                                 value={editingLesson?.title && editingLesson?.title}
                                 onChange={(e) => {
@@ -640,7 +643,7 @@ const AppMenu = () => {
             </FormModal>
 
             <FormModal
-                title={'Добавить тему'}
+                title={translations.add}
                 fetchValue={() => {
                     handleAddTheme();
                 }}
@@ -718,7 +721,7 @@ const AppMenu = () => {
             {pathname.startsWith('/course/') && (
                 <div>
                     <div className="p-4 mt-auto">
-                        <Button label="Добавить тему" icon={'pi pi-plus'} className="cursor-pointer w-full py-2 px-4 rounded-lg transition" onClick={() => setThemeAddVisisble(true)}></Button>
+                        <Button label={translations.add} icon={'pi pi-plus'} className="cursor-pointer w-full py-2 px-4 rounded-lg transition" onClick={() => setThemeAddVisisble(true)}></Button>
                     </div>
                     <div className="flex justify-center gap-1 items-center">
                         <b>Всего баллов за курс</b>

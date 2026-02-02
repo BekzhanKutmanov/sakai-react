@@ -32,7 +32,6 @@ export default function ActiveCourseDetail() {
     const handleCourseOpen = async () => {
         setSkeleton(true);
         const data = await courseOpen(course_id ? Number(course_id) : null);
-        console.log(data);
 
         if (data?.success) {
             setHasCourses(false);
@@ -66,7 +65,6 @@ export default function ActiveCourseDetail() {
     const handleSteps = async (lesson_id: number | null) => {
         setSkeleton(true);
         const data = await fetchActiveSteps(course_id ? Number(course_id) : null, lesson_id);
-        console.log(data);
 
         if (data?.success) {
             setHasSteps(false);

@@ -16,7 +16,10 @@ import { Button } from 'primereact/button';
 import { getToken } from '@/utils/auth';
 import { ProgressSpinner } from 'primereact/progressspinner';
 
+import { useLocalization } from '../../../../layout/context/localizationcontext';
+
 const LoginPage = () => {
+    const { translations } = useLocalization();
     const { setUser, setMessage, setDepartament, departament } = useContext(LayoutContext);
     // const containerClassName = classNames('surface-ground flex align-items-center justify-content-center min-h-screen min-w-screen overflow-hidden', { 'p-input-filled': layoutConfig.inputStyle === 'filled' });
     const [showPassword, setShowPassword] = useState(false);
@@ -144,7 +147,7 @@ const LoginPage = () => {
             {/* <InfoBanner title="Кирүү" titleSize={{ default: '30px', sm: '40px' }} /> */}
             <div className="flex gap-4 flex-column lg:flex-row items-center justify-evenly px-4 mb-8">
                 <div className={`w-[90%] sm:w-[500px] shadow-2xl bg-white py-6 px-3 md:py-8 sm:px-4 md:px-8 rounded`}>
-                    <h1 className="text-3xl sm:text-4xl font-bold inline-block border-b-2 pb-1 border-[var(--mainColor)]">Вход в mooc</h1>
+                    <h1 className="text-3xl sm:text-4xl font-bold inline-block border-b-2 pb-1 border-[var(--mainColor)]">{translations.login}</h1>
                     <form onSubmit={handleSubmit(onSubmit, onError)} noValidate className="w-full flex flex-col gap-4">
                         <div className="flex flex-col">
                             <InputText {...register('email')} id="email1" type="text" placeholder="email@oshsu.kg" className="w-[100%] p-2 sm:p-3" />
@@ -172,11 +175,11 @@ const LoginPage = () => {
                         </div>
 
                         <div className={`${disabledState ? 'opacity-50 pointer-events-none' : ''} `}>
-                            <FancyLinkBtn btnWidth={'100%'} backround={'--mainColor'} effectBg={'--titleColor'} title={'Войти'} btnType={true}/>
+                            <FancyLinkBtn btnWidth={'100%'} backround={'--mainColor'} effectBg={'--titleColor'} title={translations.login} btnType={true}/>
                         </div>
                     </form>
                     <Link href={'/'} className="mt-2 w-full">
-                        <FancyLinkBtn btnWidth={'100%'} backround={'--mainColor'} effectBg={'--titleColor'} title={'В главную'} btnType={false}/>
+                        <FancyLinkBtn btnWidth={'100%'} backround={'--mainColor'} effectBg={'--titleColor'} title={translations.mainPage} btnType={false}/>
                     </Link> 
                 </div>
             </div>
