@@ -404,10 +404,6 @@ export default function Forum() {
         }
     }, [forumValue]);
 
-    useEffect(() => {
-        console.log('currentpage', forumValuse);
-    }, [forumValuse]);
-
     return (
         <div className="main-bg">
             <div className="flex flex-col gap-4">

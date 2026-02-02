@@ -173,7 +173,7 @@ const ArchivePage = () => {
                     <Column body={(_, { rowIndex }) => rowIndex + 1} header="#" style={{ width: '20px' }}></Column>
                     <Column header="Фото" body={imageBodyTemplate} style={{ width: '10%' }} />
                     <Column field="title" header="Название" />
-                    <Column header="Копию" body={publishedBodyTemplate} />
+                    <Column header="Копия" body={publishedBodyTemplate} />
                     <Column header="Дата архивации" body={(rowData)=> new Date(rowData?.archive_course?.created_at).toLocaleDateString()} />
                     {/* <Column field="max_score" header="Балл" />
                     <Column header="На рассмотрение" body={reviewBodyTemplate} />

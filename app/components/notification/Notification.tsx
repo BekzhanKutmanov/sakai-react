@@ -106,8 +106,8 @@ export default function Notification({ notification }: { notification: mainNotif
         <div className={`flex flex-col justify-center p-2 gap-1`}>
             {groupNotificationVisible ? (
                 <div className="flex items-center gap-1 justify-between p-2">
-                    <h3 className="m-0 p-0 font-bold text-[17px]">Список сообщений </h3>
-                    <div className='cursor-pointer flex items-center gap-1 justify-between'>
+                    <h3 className="m-0 p-0 font-bold text-[13px] sm:text-[17px]">Список сообщений </h3>
+                    <div className='cursor-pointer flex items-center gap-1 justify-between text-[12px] sm:text-[14px]'>
                         <i
                             className="pi pi-times flex justify-end"
                             style={{ fontSize: '12px' }}
@@ -125,7 +125,7 @@ export default function Notification({ notification }: { notification: mainNotif
 
             {groupingFl && (
                 <div
-                    className="cursor-pointer flex items-center justify-end gap-1 text-sm"
+                    className="cursor-pointer flex items-center justify-end gap-1 text-[12px] sm:text-[14px]"
                     onClick={(e) => {
                         stop(e);
                         setMainNotification(notification);
