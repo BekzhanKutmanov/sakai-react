@@ -34,6 +34,7 @@ import { Dropdown, DropdownChangeEvent } from 'primereact/dropdown';
 import { AudenceType } from '@/types/courseTypes/AudenceTypes';
 import OpenStudentList from '@/app/components/tables/OpenStudentList';
 import { confirmDialog } from 'primereact/confirmdialog';
+import { Nullable } from 'primereact/ts-helpers';
 
 export default function Course() {
     const { setMessage, setGlobalLoading, course, contextFetchCourse, setMainCourseId } = useContext(LayoutContext);
@@ -108,7 +109,7 @@ export default function Course() {
     ];
 
     const handleFilterChange = (e: DropdownChangeEvent) => {
-        let value;
+        let value:any | null = null;
         if(typeof e.value === 'object') {
             value = null;
         } else {
