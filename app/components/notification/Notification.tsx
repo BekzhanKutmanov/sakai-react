@@ -82,7 +82,7 @@ export default function Notification({ notification }: { notification: mainNotif
     useEffect(() => {
         setMainNotification(notification);
     }, [notification]);
-
+    
     // Получаем массив разных типов
     useEffect(() => {
         const typeArr: NotificationGroupUi[] = [];
