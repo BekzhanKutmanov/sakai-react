@@ -1,7 +1,7 @@
 export interface UserRoles {
     created_at: string;
     id: number;
-    pivot: { user_id: number; role_id: number; active: boolean; created_at: string; updated_at: string };
+    pivot: { user_id: number; role_id: number; active: boolean; created_at: string; updated_at: string, read: boolean };
     title: string;
     updated_at: string
 }

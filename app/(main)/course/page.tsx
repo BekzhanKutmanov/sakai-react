@@ -847,7 +847,7 @@ export default function Course() {
                                                                             <div>
                                                                                 {/* <OpenStudentList /> */}
                                                                                 <div ref={topRef}>
-                                                                                    <DataTable value={tableData} dataKey="id" emptyMessage={translations.loading} breakpoint="960px" rows={5} className="my-custom-table">
+                                                                                    <DataTable value={tableData} dataKey="id" emptyMessage={translations.loading} breakpoint="960px" rows={5} className="my-custom-table hover:bg-slate-50/50 transition-colors">
                                                                                         <Column body={(_, { rowIndex }) => rowIndex + 1} header="#" style={{ width: '20px' }}></Column>
                                                                                         <Column
                                                                                             style={{ width: '70px' }}
@@ -857,6 +857,7 @@ export default function Course() {
                                                                                                 </div>
                                                                                             )}
                                                                                             body={imageBodyTemplate}
+                                                                                            className='hover:bg-slate-50/50 transition-colors'
                                                                                         ></Column>
                                 
                                                                                         <Column
@@ -878,6 +879,7 @@ export default function Course() {
                                                                                                     {rowData.title}
                                                                                                 </Link>
                                                                                             )}
+                                                                                            className='hover:bg-slate-50/50 transition-colors'
                                                                                         ></Column>
                                                                                         <Column
                                                                                             style={{ width: '70px' }}
@@ -894,8 +896,9 @@ export default function Course() {
                                                                                                     <i className={`${rowData?.audience_type?.icon}`}></i>
                                                                                                 </Button>
                                                                                             )}
+                                                                                            className='hover:bg-slate-50/50 transition-colors'
                                                                                         ></Column>
-                                                                                        <Column field="title" header={() => <div className="text-[13px]">Балл</div>} body={(rowData) => <span key={rowData.id}>{rowData.max_score}</span>}></Column>
+                                                                                        <Column field="title" className='hover:bg-slate-50/50 transition-colors' header={() => <div className="text-[13px]">Балл</div>} body={(rowData) => <span key={rowData.id}>{rowData.max_score}</span>}></Column>
                                                                                         <Column
                                                                                             header={() => <div className="text-[13px]">{translations.onReview}</div>}
                                                                                             style={{ margin: '0 3px', textAlign: 'center' }}
@@ -914,10 +917,12 @@ export default function Course() {
                                                                                                     </label>
                                                                                                 </>
                                                                                             )}
+                                                                                            className='hover:bg-slate-50/50 transition-colors'
                                                                                         ></Column>
                                                                                         <Column
                                                                                             header={() => <div className="text-[13px]">{translations.published}</div>}
                                                                                             style={{ margin: '0 3px', textAlign: 'center' }}
+                                                                                            className='hover:bg-slate-50/50 transition-colors'
                                                                                             body={(rowData) => (rowData.is_published ? <i className="pi pi-check-circle text-md text-[var(--greenColor)]"></i> : <i className="pi pi-times-circle text-md text-[var(--redColor)]"></i>)}
                                                                                         ></Column>
                                                                                         <Column
@@ -948,9 +953,10 @@ export default function Course() {
                                                                                                     </>
                                                                                                 );
                                                                                             }}
+                                                                                            className='hover:bg-slate-50/50 transition-colors'
                                                                                         ></Column>
                                                                                         <Column
-                                                                                            className="flex items-center justify-center h-[60px] border-b-0"
+                                                                                            className="flex items-center justify-center h-[60px] border-b-0 hover:bg-slate-50/50 transition-colors"
                                                                                             body={(rowData) => (
                                                                                                 <div className="flex items-center gap-2" key={rowData.id}>
                                                                                                     <Redacting redactor={getRedactor(rowData, { onEdit: edit, getConfirmOptions, onDelete: handleDeleteCourse }, inboxConfirm)} textSize={'14px'} />

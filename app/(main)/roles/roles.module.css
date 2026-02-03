@@ -1,0 +1,18 @@
+.linkWrap {
+  margin-top: 2rem;
+  text-align: center;
+}
+.linkBtn {
+  display: inline-block;
+  background: #1976d2;
+  color: #fff;
+  padding: 0.7rem 1.5rem;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+.linkBtn:hover {
+  background: #1565c0;
+}

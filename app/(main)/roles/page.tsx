@@ -80,6 +80,7 @@ export default function Roles() {
         setSkeleton(true);
         setMainProgressSpinner(true);
         const data = await fetchRolesList();
+        console.log(data);
 
         if (data && Array.isArray(data)) {
             if (data.length > 0) {
@@ -107,6 +108,8 @@ export default function Roles() {
 
     const handleFetchUsers = async (page: number, search: string, myedu_id: string | null, selectedRole_idType: Role_idType | null, active: boolean | null) => {
         const res = await fetchRolesUsers(page, search, myedu_id, selectedRole_idType?.role_id ? selectedRole_idType?.role_id : null, active);
+        console.log(res);
+
         if (res?.success) {
             setPagination({
                 currentPage: res?.data?.current_page,
@@ -114,11 +117,22 @@ export default function Roles() {
                 perPage: res?.data?.per_page
             });
             const validRolesPosition = res?.data?.data?.map((item: any) => {
+                // console.log(item);
+
                 if (item?.roles?.length > 1) {
-                    const [first, second] = item.roles;
+                    // const [first, second] = item.roles;
+                    // return {
+                    //     ...item,
+                    //     roles: [second, first]
+                    // };
+                    const newRoles = [...item.roles];
+
+                    // меняем местами первые два
+                    [newRoles[0], newRoles[1]] = [newRoles[1], newRoles[0]];
+
                     return {
                         ...item,
-                        roles: [second, first]
+                        roles: newRoles
                     };
                 }
                 return item;
@@ -451,7 +465,7 @@ export default function Roles() {
                                             header={() => <div className="text-[14px]">{role.title}</div>}
                                             body={(user) => {
                                                 const userRole = user?.roles?.find((r: { id: number }) => r.id === role.id);
-
+                                                
                                                 const isActive = Boolean(userRole?.pivot?.active);
 
                                                 return (

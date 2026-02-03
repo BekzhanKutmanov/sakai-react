@@ -243,3 +243,49 @@ export const depExaminationSteps = async (lesson_id: number | null) => {
         return err;
     }
 };
+
+// reductor fetch
+export const fethcReductor = async (page: number,search: string | null) => {    
+    try {
+        const res = await axiosInstance.get(`/v1/reducer/student-task?page=${page}${search ? `&search=${search}` : ''}`);
+
+        const data = res.data;
+        return data;
+    } catch (err) {
+        console.log('Ошибка при получении', err);
+        return err;
+    }
+};
+
+export const fetchStudentData = async (id_student: number) => {    
+    try {
+        const res = await axiosInstance.get(`/v1/reducer/student-task/info?id_student=${id_student}`);
+
+        const data = res.data;
+        return data;
+    } catch (err) {
+        console.log('Ошибка при получении', err);
+        return err;
+    }
+};
+
+export const studentCancel = async (all: boolean, course_id: number , title: string, answer_ids: any, id_student: number, description: string) => {        
+    const payload = {
+        all,
+        course_id,
+        title,
+        answer_ids,
+        id_student,
+        description
+    };
+
+    try {
+        const res = await axiosInstance.post(`/v1/reducer/student-task/cancel`, payload);
+
+        const data = res.data;
+        return data;
+    } catch (err) {
+        console.log('Ошибка при получении', err);
+        return err;
+    }
+};

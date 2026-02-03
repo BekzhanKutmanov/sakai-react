@@ -1,0 +1,67 @@
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.07);
+}
+.title {
+  font-size: 1.6rem;
+  font-weight: 600;
+  margin-bottom: 1.2rem;
+  color: #1a237e;
+  text-align: center;
+}
+.refreshBtn {
+  margin-bottom: 1.2rem;
+  display: block;
+  margin-left: auto;
+  margin-right: 0;
+}
+.loadingWrap {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  margin-bottom: 1rem;
+}
+.loadingText {
+  font-size: 1.1rem;
+  color: #1976d2;
+}
+.errorMsg {
+  margin-bottom: 1rem;
+}
+.tableWrap {
+  overflow-x: auto;
+}
+.dataTable {
+  min-width: 350px;
+  font-size: 1rem;
+}
+.colFio {
+  min-width: 180px;
+}
+.colId {
+  min-width: 120px;
+}
+.colSpec {
+  min-width: 140px;
+}
+@media (max-width: 600px) {
+  .container {
+    padding: 0.5rem 0.2rem;
+    border-radius: 0;
+    box-shadow: none;
+  }
+  .title {
+    font-size: 1.2rem;
+  }
+  .dataTable {
+    font-size: 0.95rem;
+  }
+  .refreshBtn {
+    width: 100%;
+    margin: 0 0 1rem 0;
+  }
+}

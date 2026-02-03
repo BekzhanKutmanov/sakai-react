@@ -100,7 +100,7 @@ const StudentSearchPage = () => {
                     style={{ minWidth: '14rem' }}
                 />
                 <Column field="email" header={() => <span className="text-sm">Email</span>} sortable style={{ minWidth: '14rem' }} />
-                <Column field="myedu_id" header={() => <span className="text-sm">Л/н</span>} sortable sortField="status" style={{ minWidth: '8rem' }} />
+                <Column field="myedu_id" header={() => <span className="text-sm">Л/н</span>} body={(rowData) => <span className="bg-slate-100 text-slate-600 text-[10px] font-bold px-2 py-1 rounded-full border border-slate-200 shrink-0 ml-2">{rowData?.myedu_id}</span>} sortable sortField="status" style={{ minWidth: '8rem' }} />
             </DataTable>
         </div>
     );

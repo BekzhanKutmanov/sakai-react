@@ -45,6 +45,7 @@ const AppMenu = () => {
         name: string;
         id: number | null;
         active: boolean;
+        read: boolean
     }
 
     interface MyApMenuType {
@@ -85,6 +86,7 @@ const AppMenu = () => {
     const [zamDekanRole, setZamDekanRole] = useState<MyApMenuType>({ profilact: '' });
     const [adminRole, setAdminRole] = useState<MyApMenuType>({ profilact: '' });
     const [depRole, setDepRole] = useState<MyApMenuType>({ profilact: '' });
+    const [testRole, setTestRole] = useState<MyApMenuType>({ profilact: '' });
 
     const [themesStudentList, setThemesStudentList] = useState<{ key?: string; label: string; id: number; to: string; items?: AppMenuItem[] }[]>([]);
     const [startDeadline, setStartDeadline] = useState<Nullable<Date>>(null);
@@ -156,6 +158,7 @@ const AppMenu = () => {
                       zamDekanRole?.label ? zamDekanRole : null,
                       adminRole?.label ? adminRole : null,
                       depRole?.label ? depRole : null,
+                      testRole?.label ? testRole : null,
                       {
                           label: translations.courses,
                           icon: 'pi pi-fw pi-book',
@@ -273,6 +276,7 @@ const AppMenu = () => {
                   zamDekanRole?.label ? zamDekanRole : null,
                   adminRole?.label ? adminRole : null,
                   depRole?.label ? depRole : null,
+                    testRole?.label ? testRole : null,
                   {
                       label: translations.approveCourses,
                       icon: 'pi pi-graduation-cap',
@@ -492,10 +496,13 @@ const AppMenu = () => {
             const forRole: ForLinkRole[] = [];
             roles.forEach((role) => {
                 if (role?.pivot?.active) {
+                    console.log(role.pivot);
+                    
                     const timeRole: ForLinkRole = {
                         name: role.title,
                         id: role.id,
-                        active: true
+                        active: true,
+                        read: role?.pivot?.read,
                     };
 
                     forRole.push(timeRole);
@@ -511,6 +518,12 @@ const AppMenu = () => {
                 const forDep = forRole.find((item) => item.id === 2);
                 if (forDep) {
                     setDepRole({ label: translations.department, icon: 'pi pi-briefcase', to: '/roles/departament', profilact: '' });
+                }
+
+                const forReduct = forRole.find((item) => item.id === 3);
+                console.log(forReduct);
+                if (forReduct && forReduct?.read) {
+                    setTestRole({ label: 'Редуктор', icon: 'pi pi-users', to: '/roles/students', profilact: '' });
                 }
             }
         }
