@@ -523,7 +523,7 @@ const AppMenu = () => {
                 const forReduct = forRole.find((item) => item.id === 3);
                 console.log(forReduct);
                 if (forReduct && forReduct?.read) {
-                    setTestRole({ label: 'Редуктор', icon: 'pi pi-users', to: '/roles/students', profilact: '' });
+                    setTestRole({ label: 'Аннулирование работ', icon: 'pi pi-users', to: '/roles/students', profilact: '' });
                 }
             }
         }
