@@ -74,12 +74,12 @@ export default function StudentsPage() {
     };
 
     const studentsMobile = (student: any) => (
-        <div className="p-4 w-full">
+        <div className="p-2 w-full">
             <div key={student.id}>
                 <div className="bg-white rounded-lg shadow-md p-4 border-l-4 border-blue-500">
                     <div className="flex justify-between items-start mb-3">
                         <div className="font-bold text-[#1e293b] leading-tight">
-                            <Link href={`/roles/students/${student?.id}`} className="text-[#1e293b] cursor-pointer flex gap-1 underline">
+                            <Link href={`/roles/students/${student?.id}`} className="text-[#1e293b] cursor-pointer flex flex-wrap gap-1 underline">
                                 <span>{student?.last_name}</span>
                                 <span>{student?.name}</span>
                                 <span>{student?.father_name}</span>
@@ -92,8 +92,9 @@ export default function StudentsPage() {
                         <span className="block uppercase font-semibold text-[10px] text-slate-400 mb-1">Специальность:</span>
                         {student.speciality ? student.speciality?.name_ru : ''}
                     </div>
-                    <Link href={`/roles/students/${student?.id}`}>
-                        <button className="cursor-pointer w-full bg-[var(--mainColor)] hover:opacity-90 text-white px-4 py-3 rounded-lg flex items-center justify-center gap-2 text-sm font-medium transition-all active:scale-[0.98]">
+                    <Link href={`/roles/students/${student?.id}`} className='flex gap-1 cursor-pointer w-full bg-[var(--mainColor)] hover:opacity-90 text-white px-4 py-3 rounded-lg items-center justify-center text-sm font-medium transition-all active:scale-[0.98]'>
+                        <i className='pi pi-book text-white text-sm'></i>
+                        <button>
                             Просмотреть работы
                         </button>
                     </Link>
@@ -106,7 +107,7 @@ export default function StudentsPage() {
         return (
             <div>
                 {/* --- МОБИЛЬНАЯ ВЕРСИЯ (Список карточек) --- */}
-                <div className="w-full flex justify-center">
+                <div className="w-full">
                     <div className="grid grid-cols-1 justify-content-center gap-2 md:hidden">{students.map((student) => studentsMobile(student))}</div>
                 </div>
 
@@ -145,7 +146,7 @@ export default function StudentsPage() {
                                             <td className="py-4 px-6 text-right">
                                                 <Link href={`/roles/students/${student?.id}`}>
                                                     <button className="cursor-pointer bg-[var(--mainColor)] hover:opacity-90 text-white px-4 py-2 rounded-lg flex items-center gap-2 text-sm font-medium transition-all shadow-sm">
-                                                        {/* <FileText size={18} /> */}
+                                                        <i className='pi pi-book text-white text-sm'></i>
                                                         Просмотреть работы
                                                     </button>
                                                 </Link>
