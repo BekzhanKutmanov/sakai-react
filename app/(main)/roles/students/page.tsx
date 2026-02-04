@@ -38,6 +38,7 @@ export default function StudentsPage() {
     const [progressSpinner, setProgressSpinner] = useState(false);
     const [searchController, setSearchController] = useState(false);
     const [empty, setEmpty] = useState(false);
+    const [hideInstruction, setHideInstructon] = useState<boolean>();
 
     // Асинхронная функция для будущего запроса
     const handleFetchReductor = async (page: number = 1, search: string) => {
@@ -66,8 +67,6 @@ export default function StudentsPage() {
 
     // Ручное управление пагинацией
     const handlePageChange = (page: number) => {
-        console.log(page);
-
         // setGlobalCourseId(null);
         handleFetchReductor(page, search);
         setPageState(page);
@@ -92,11 +91,12 @@ export default function StudentsPage() {
                         <span className="block uppercase font-semibold text-[10px] text-slate-400 mb-1">Специальность:</span>
                         {student.speciality ? student.speciality?.name_ru : ''}
                     </div>
-                    <Link href={`/roles/students/${student?.id}`} className='flex gap-1 cursor-pointer w-full bg-[var(--mainColor)] hover:opacity-90 text-white px-4 py-3 rounded-lg items-center justify-center text-sm font-medium transition-all active:scale-[0.98]'>
-                        <i className='pi pi-book text-white text-sm'></i>
-                        <button>
-                            Просмотреть работы
-                        </button>
+                    <Link
+                        href={`/roles/students/${student?.id}`}
+                        className="flex gap-1 cursor-pointer w-full bg-[var(--mainColor)] hover:opacity-90 text-white px-4 py-3 rounded-lg items-center justify-center text-sm font-medium transition-all active:scale-[0.98]"
+                    >
+                        <i className="pi pi-book text-white text-sm"></i>
+                        <button>Просмотреть работы</button>
                     </Link>
                 </div>
             </div>
@@ -146,7 +146,7 @@ export default function StudentsPage() {
                                             <td className="py-4 px-6 text-right">
                                                 <Link href={`/roles/students/${student?.id}`}>
                                                     <button className="cursor-pointer bg-[var(--mainColor)] hover:opacity-90 text-white px-4 py-2 rounded-lg flex items-center gap-2 text-sm font-medium transition-all shadow-sm">
-                                                        <i className='pi pi-book text-white text-sm'></i>
+                                                        <i className="pi pi-book text-white text-sm"></i>
                                                         Просмотреть работы
                                                     </button>
                                                 </Link>
@@ -175,6 +175,20 @@ export default function StudentsPage() {
         );
     }
 
+    const instructionSection = (
+        <div className="bg-[#eff6ff] border border-[#dbeafe] rounded-xl p-4 mb-4 flex gap-3">
+            <i className="pi pi-info text-[#2563eb] shrink-0 mt-0.5 pi pi-info-circle text-xl"></i>
+            <div className="text-sm text-[#1e40af] leading-relaxed">
+                <p className="font-semibold mb-1">Инструкция для редуктора</p>
+                <p>Выберите студента из списка ниже, чтобы просмотреть все его работы. На странице студента вы сможете аннулировать работы, если были выявлены нарушения академической честности или другие причины для аннулирования.</p>
+            </div>
+            <i onClick={()=> {
+                localStorage.setItem('hideInstruction', 'true');
+                setHideInstructon(false);
+            }} className='pi pi-times cursor-pointer'></i>
+        </div>
+    );
+
     useEffect(() => {
         setProgressSpinner(true);
         if (search?.length === 0 && searchController) {
@@ -201,6 +215,10 @@ export default function StudentsPage() {
 
     useEffect(() => {
         handleFetchReductor(1, search);
+        const hide = localStorage.getItem('hideInstruction');
+        if (hide) setHideInstructon(false);
+        else setHideInstructon(true);
+
     }, []);
 
     return (
@@ -221,14 +239,7 @@ export default function StudentsPage() {
                     </div>
 
                     {/* Блок инструкции */}
-                    <div className="bg-[#eff6ff] border border-[#dbeafe] rounded-xl p-4 mb-4 flex gap-3">
-                        <i className="pi pi-info text-[#2563eb] shrink-0 mt-0.5 pi pi-info-circle text-xl"></i>
-                        <div className="text-sm text-[#1e40af] leading-relaxed">
-                            <p className="font-semibold mb-1">Инструкция для редуктора</p>
-                            <p>Выберите студента из списка ниже, чтобы просмотреть все его работы. На странице студента вы сможете аннулировать работы, если были выявлены нарушения академической честности или другие причины для аннулирования.</p>
-                        </div>
-                        {/* <i className='pi pi-times cursor-pointer'></i> */}
-                    </div>
+                    {hideInstruction && instructionSection}
 
                     {/* Поиск */}
                     <div className="flex border border-slate-200 rounded-xl py-3 pl-3 items-center gap-3 w-full bg-white mb-4 shadow-sm focus:border-blue-500 focus:ring-blue-500/20 transition-all">

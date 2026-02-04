@@ -41,7 +41,6 @@ interface Course {
 
 const StudentDetailPage = ({ params }: { params: { student_id: string } }) => {
     const { id_student } = useParams();
-    console.log(id_student);
     const { setMessage } = useContext(LayoutContext);
     const showError = useErrorMessage();
 
@@ -54,14 +53,12 @@ const StudentDetailPage = ({ params }: { params: { student_id: string } }) => {
     const [dialogVisible, setDialogVisible] = useState<boolean>(false);
     const [annulmentReason, setAnnulmentReason] = useState<string>('');
     const [description, setDescription] = useState<string>('');
-    const [fakeCheck, setFakeCheck] = useState(false);
 
     // --- Шаблон для запроса данных ---
     const handleFetchStudentData = async () => {
         setLoading(true);
         setError(null);
         const data = await fetchStudentData(Number(id_student));
-        console.log(data);
         if (data && Array.isArray(data)) {
             setCourses(data);
         } else {
@@ -74,7 +71,6 @@ const StudentDetailPage = ({ params }: { params: { student_id: string } }) => {
         setError(null);
 
         const data = await studentCancel(false, Number(currentCourseId), annulmentReason, answer_ids, Number(id_student), description);
-        console.log(data);
         if (data) {
             handleFetchStudentData();
             setMessage({
@@ -98,14 +94,6 @@ const StudentDetailPage = ({ params }: { params: { student_id: string } }) => {
         handleFetchStudentData();
     }, [params.student_id]);
 
-    useEffect(() => {
-        console.log(answer_ids);
-    }, [answer_ids]);
-
-    useEffect(() => {
-        console.log(currentCourseId);
-    }, [currentCourseId]);
-
     // Рендер контента
     if (loading) {
         return (
@@ -118,10 +106,6 @@ const StudentDetailPage = ({ params }: { params: { student_id: string } }) => {
     if (error) {
         return <Message severity="error" text={error} />;
     }
-
-    // if (!student) {
-    //     return <Message severity="info" text="Информация о студенте не найдена." />;
-    // }
 
     const studentInfo = (
         <Card className="mb-4">
@@ -141,10 +125,10 @@ const StudentDetailPage = ({ params }: { params: { student_id: string } }) => {
             <h3 className="mb-3 text-xl sm:text-2xl font-bold">Аннулирование курсов</h3>
 
             {courses.length === 0 ? (
-                <Message severity="info" text="У студента пока нет назначенных курсов." />
+                <b className='main-bg w-full flex justify-center'>У студента пока нет назначенных курсов</b>
             ) : (
                 <>
-                    <Accordion activeIndex={0}>
+                       <Accordion activeIndex={0}>
                         {courses.map((course: any, idx) => (
                             <AccordionTab
                                 key={course.id}
@@ -173,10 +157,10 @@ const StudentDetailPage = ({ params }: { params: { student_id: string } }) => {
                                                             setCurrentCourseId(course.id);
                                                             if (e.target.checked) {
                                                                 setAnswerIds(course.lesson_step_answers.map((step: any) => step.id));
-                                                                setFakeCheck(true);
+                                                                // setFakeCheck(true);
                                                             } else {
                                                                 setAnswerIds([]);
-                                                                setFakeCheck(false);
+                                                                // setFakeCheck(false);
                                                             }
                                                         }}
                                                     />
@@ -189,7 +173,7 @@ const StudentDetailPage = ({ params }: { params: { student_id: string } }) => {
                                             <div className="w-full">
                                                 {course.lesson_step_answers.map((step: any) => (
                                                     <div key={step.id} className="flex w-full">
-                                                        <div className="flex justify-between flex-col sm:flex-row sm:items-center gap-2 p-3 rounded h-full w-full">
+                                                        <div className="flex justify-between flex-col sm:flex-row sm:items-center gap-2 rounded-sm h-full w-full shadow p-2 hover:bg-slate-50/50 transition-colors">
                                                             <div className="flex items-start sm:items-center w-full gap-2">
                                                                 <label className="custom-radio">
                                                                     <input
