@@ -15,11 +15,17 @@ import { useParams } from 'next/navigation';
 import { InputText } from 'primereact/inputtext';
 import { LayoutContext } from '@/layout/context/layoutcontext';
 import useErrorMessage from '@/hooks/useErrorMessage';
+import { fetchSpeciality, fetchStudentSearchDetail } from '@/services/student/studentSearch';
+import GroupSkeleton from '@/app/components/skeleton/GroupSkeleton';
+import { Dropdown } from 'primereact/dropdown';
+import { fetchFaculty } from '@/services/faculty';
 
 // Типизация данных (можно вынести в отдельные файлы в /types)
 interface Student {
     id: string;
     name: string;
+    last_name: string;
+    father_name: string;
     email: string;
     avatar: string;
     faculty: string;
@@ -53,7 +59,19 @@ const StudentDetailPage = ({ params }: { params: { student_id: string } }) => {
     const [dialogVisible, setDialogVisible] = useState<boolean>(false);
     const [annulmentReason, setAnnulmentReason] = useState<string>('');
     const [description, setDescription] = useState<string>('');
+    const [skeleton, setSkeleton] = useState<boolean>(false);
+    const [timeMode, setTimeMode] = useState<{ name_ru: string; code: number | null; id: number | null } | null>({ name_ru: '', code: null, id: null });
+    const [timeModeOptions, setTimeModeOptions] = useState<any>(null);
+    const [searchController, setSearchController] = useState(false);
 
+    const [speciality, setSpecialyty] = useState<{ name_ru: string; code: number | null; id: number | null } | null>(null);
+    const [specialityOptions, setSpecialityOptions] = useState<any>(null);
+
+    const [currentFacultyId, setCurrentFacultyId] = useState<number | null>(null);
+    const [currentSpecialityId, setCurrentSpecialityId] = useState<number | null>(null);
+    const [progressSpinner, setProgressSpinner] = useState(false);
+
+    
     // --- Шаблон для запроса данных ---
     const handleFetchStudentData = async () => {
         setLoading(true);
@@ -64,6 +82,15 @@ const StudentDetailPage = ({ params }: { params: { student_id: string } }) => {
         } else {
         }
         setLoading(false);
+    };
+
+    const handleFetchStudentDetail = async () => {
+        setSkeleton(true);
+        const data = await fetchStudentSearchDetail(Number(id_student));
+        if (data?.success) {
+            setStudent(data?.student);
+        }
+        setSkeleton(false);
     };
 
     const handlestudentCancel = async () => {
@@ -94,6 +121,16 @@ const StudentDetailPage = ({ params }: { params: { student_id: string } }) => {
         handleFetchStudentData();
     }, [params.student_id]);
 
+    useEffect(() => {
+        if (timeMode?.id) {
+            setCurrentFacultyId(timeMode?.id);
+        }
+    }, [timeMode]);
+
+    useEffect(() => {
+        handleFetchStudentDetail();
+    }, []);
+
     // Рендер контента
     if (loading) {
         return (
@@ -107,28 +144,34 @@ const StudentDetailPage = ({ params }: { params: { student_id: string } }) => {
         return <Message severity="error" text={error} />;
     }
 
-    const studentInfo = (
-        <Card className="mb-4">
-            <div className="flex align-items-center">
-                {/* <img src={student.avatar} alt={student.name} className="mr-4 border-circle" style={{ width: '100px', height: '100px' }} /> */}
-                {/* <div>
-                    <h2 className="mt-0 mb-1">{student.name}</h2>
-                    <p className="text-color-secondary mt-0 mb-1">{student.email}</p>
-                    <p className="text-color-secondary mt-0 mb-0">{student.faculty}</p>
-                </div> */}
+    const StudentInfo = () => {
+        return (
+            <div className="mb-4">
+                <div className="bg-white rounded-2xl shadow-lg border-gray-200 p-4">
+                    <div className="flex flex-col gap-2">
+                        {/* ФИО Студента */}
+                        <div className="space-y-1">
+                            <h1 className="sm:text-xl font-bold text-gray-800">
+                                {student?.last_name} {student?.name} {student?.father_name}
+                            </h1>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </Card>
-    );
+        );
+    };
 
     return (
         <div className="p-2 sm:p-4">
             <h3 className="mb-3 text-xl sm:text-2xl font-bold">Аннулирование курсов</h3>
 
+            {skeleton ? <GroupSkeleton count={1} size={{ width: '100%', height: '100px' }} /> : <StudentInfo />}
+
             {courses.length === 0 ? (
-                <b className='main-bg w-full flex justify-center'>У студента пока нет назначенных курсов</b>
+                <b className="main-bg w-full flex justify-center">У студента пока нет назначенных курсов</b>
             ) : (
                 <>
-                       <Accordion activeIndex={0}>
+                    <Accordion activeIndex={0}>
                         {courses.map((course: any, idx) => (
                             <AccordionTab
                                 key={course.id}
@@ -145,30 +188,38 @@ const StudentDetailPage = ({ params }: { params: { student_id: string } }) => {
                                 <div className="flex flex-col">
                                     {course?.lesson_step_answers.length > 0 ? (
                                         <>
-                                            <div className="flex items-center mb-2 w-full justify-end">
-                                                <label className="custom-radio">
-                                                    <input
-                                                        type="checkbox"
-                                                        className={`customCheckbox`}
-                                                        checked={currentCourseId === course.id && answer_ids.length === course.lesson_step_answers.length}
-                                                        onChange={(e) => {
-                                                            console.log(e.target.checked, course);
-
-                                                            setCurrentCourseId(course.id);
-                                                            if (e.target.checked) {
-                                                                setAnswerIds(course.lesson_step_answers.map((step: any) => step.id));
-                                                                // setFakeCheck(true);
-                                                            } else {
-                                                                setAnswerIds([]);
-                                                                // setFakeCheck(false);
-                                                            }
-                                                        }}
-                                                    />
-                                                    <span className="checkbox-mark"></span>
-                                                </label>
-                                                <label htmlFor={`select-all-${course.id}`} className="ml-2 font-bold">
-                                                    Выбрать все
-                                                </label>
+                                            <div className="w-full flex justify-between gap-2 items-start mb-4 flex-col sm:flex-row">
+                                                {/* Предмет  */}
+                                                <div className="space-y-1 ml-2 w-full">
+                                                    <p className="text-sm text-gray-500 font-medium uppercase tracking-wider">Предмет</p>
+                                                    <div className="flex items-center gap-2 w-full">
+                                                        <span className="w-1 h-2 rounded-full bg-[var(--mainColor)]"></span>
+                                                        <p className="text-lg text-slate-800 font-semibold text-[14px] sm:text-[16px]">{course?.subject?.name_ru}</p>
+                                                    </div>
+                                                </div>
+                                                <div className="flex items-center mb-2 w-full justify-end">
+                                                    <label className="custom-radio">
+                                                        <input
+                                                            type="checkbox"
+                                                            className={`customCheckbox`}
+                                                            checked={currentCourseId === course.id && answer_ids.length === course.lesson_step_answers.length}
+                                                            onChange={(e) => {
+                                                                setCurrentCourseId(course.id);
+                                                                if (e.target.checked) {
+                                                                    setAnswerIds(course.lesson_step_answers.map((step: any) => step.id));
+                                                                    // setFakeCheck(true);
+                                                                } else {
+                                                                    setAnswerIds([]);
+                                                                    // setFakeCheck(false);
+                                                                }
+                                                            }}
+                                                        />
+                                                        <span className="checkbox-mark"></span>
+                                                    </label>
+                                                    <label htmlFor={`select-all-${course.id}`} className="ml-2 font-bold">
+                                                        Выбрать все
+                                                    </label>
+                                                </div>
                                             </div>
                                             <div className="w-full">
                                                 {course.lesson_step_answers.map((step: any) => (
@@ -182,8 +233,6 @@ const StudentDetailPage = ({ params }: { params: { student_id: string } }) => {
                                                                         value={step.id}
                                                                         // checked={answer_ids.includes(step.id)}
                                                                         onChange={(e) => {
-                                                                            console.log(e.target.checked, course);
-
                                                                             if (currentCourseId !== course.id) {
                                                                                 setAnswerIds([step.id]);
                                                                                 setCurrentCourseId(course.id);

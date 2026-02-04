@@ -147,6 +147,9 @@ export const LayoutProvider = ({ children }: ChildContainerProps) => {
         }
     };
 
+    // filter state roles/students/page
+    const [contextFilterState, setContextFilterState] = useState<{faculty_id: number | null, specialyti_id: number | null} | null>(null);
+
     useEffect(() => {
         // if (pathname === '/course' && !departament.name) {
         if (pathname.startsWith('/pdf') || pathname.startsWith('/videoInstruct')) {
@@ -227,7 +230,10 @@ export const LayoutProvider = ({ children }: ChildContainerProps) => {
         handleNotifications,
 
         contextUserRole, 
-        setContextUserRole
+        setContextUserRole,
+
+        contextFilterState, 
+        setContextFilterState
     };
 
     return (

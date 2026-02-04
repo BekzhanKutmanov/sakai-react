@@ -496,8 +496,6 @@ const AppMenu = () => {
             const forRole: ForLinkRole[] = [];
             roles.forEach((role) => {
                 if (role?.pivot?.active) {
-                    console.log(role.pivot);
-                    
                     const timeRole: ForLinkRole = {
                         name: role.title,
                         id: role.id,
@@ -521,9 +519,8 @@ const AppMenu = () => {
                 }
 
                 const forReduct = forRole.find((item) => item.id === 3);
-                console.log(forReduct);
                 if (forReduct && forReduct?.read) {
-                    setTestRole({ label: 'Аннулирование работ', icon: 'pi pi-users', to: '/roles/students', profilact: '' });
+                    setTestRole({ label: 'Аннулирование работ', icon: 'pi pi-users', to: '/roles/students/1', profilact: '' });
                 }
             }
         }

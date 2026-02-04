@@ -30,7 +30,6 @@ const StudentDetailPage = () => {
     const handleFetchStudentDetail = async () => {
         // setSkeleton(true);
         const data = await fetchStudentSearchDetail(Number(id_student));
-        console.log(data);
         if (data?.success) {
             setStudentDetail(data?.student);
             setCourses(data?.data);
@@ -41,7 +40,6 @@ const StudentDetailPage = () => {
 
     const handleFetchStudentImg = async () => {
         const data = await fetchStudentSearchImg(Number(id_student));
-        console.log(data);
         if (data?.success) {
             setImg({ image_url: data?.data?.image_url, id: data?.data?.id });
         }

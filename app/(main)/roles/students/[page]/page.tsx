@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { ProgressSpinner } from 'primereact/progressspinner';
@@ -15,6 +15,11 @@ import { RoleUserType } from '@/types/roles/RoleUserType';
 import { Paginator } from 'primereact/paginator';
 import useMediaQuery from '@/hooks/useMediaQuery';
 import { NotFound } from '@/app/components/NotFound';
+import { fetchFaculty } from '@/services/faculty';
+import { fetchSpeciality } from '@/services/student/studentSearch';
+import { Dropdown } from 'primereact/dropdown';
+import { useParams, useRouter } from 'next/navigation';
+import { LayoutContext } from '@/layout/context/layoutcontext';
 
 interface Student extends RoleUserType {
     speciality: {
@@ -23,7 +28,10 @@ interface Student extends RoleUserType {
 }
 
 export default function StudentsPage() {
+    const { contextFilterState, setContextFilterState } = useContext(LayoutContext);
+
     const media = useMediaQuery('(max-width: 640px)');
+    const { page } = useParams();
 
     const [students, setStudents] = useState<Student[]>([]);
     const [loading, setLoading] = useState(false);
@@ -33,19 +41,47 @@ export default function StudentsPage() {
         total: 0,
         perPage: 0
     });
-    const [pageState, setPageState] = useState<number>(1);
+    const [pageState, setPageState] = useState<number>(Number(page));
     const [search, setSearch] = useState<string>('');
     const [progressSpinner, setProgressSpinner] = useState(false);
     const [searchController, setSearchController] = useState(false);
     const [empty, setEmpty] = useState(false);
     const [hideInstruction, setHideInstructon] = useState<boolean>();
+    const [timeMode, setTimeMode] = useState<{ name_ru: string; code: number | null; id: number | null } | null>({ name_ru: '', code: null, id: null });
+    const [timeModeOptions, setTimeModeOptions] = useState<any>(null);
+
+    const [speciality, setSpecialyty] = useState<{ name_ru: string; code: number | null; id: number | null } | null>(null);
+    const [specialityOptions, setSpecialityOptions] = useState<any>(null);
+
+    const [currentFacultyId, setCurrentFacultyId] = useState<number | null>(null);
+    const [currentSpecialityId, setCurrentSpecialityId] = useState<number | null>(null);
+
+    const router = useRouter();
+
+    const handleFetchFaculty = async () => {
+        const data = await fetchFaculty();
+        if (data && data?.length) {
+            const alls = { name_ru: 'Все', code: null, id: null };
+            data.unshift(alls);
+            setTimeModeOptions(data);
+        }
+    };
+
+    const handleStudentSpeciality = async (id_faculty: number) => {
+        const data = await fetchSpeciality(id_faculty);
+        if (data && data?.length) {
+            const alls = { name_ru: 'Все', code: null, id: null };
+            data.unshift(alls);
+            setSpecialityOptions(data);
+            // setStudents(data?.data);
+        }
+    };
 
     // Асинхронная функция для будущего запроса
-    const handleFetchReductor = async (page: number = 1, search: string) => {
+    const handleFetchReductor = async (page: number = pageState, search: string, specialityId: number | null) => {
         setLoading(true);
         setError(null);
-
-        const data = await fethcReductor(page, search);
+        const data = await fethcReductor(page, search, specialityId);
 
         if (data && data?.current_page) {
             setPagination({
@@ -67,9 +103,10 @@ export default function StudentsPage() {
 
     // Ручное управление пагинацией
     const handlePageChange = (page: number) => {
+        router.push(`/roles/students/${page}`);
         // setGlobalCourseId(null);
-        handleFetchReductor(page, search);
-        setPageState(page);
+        // handleFetchReductor(page, search, currentSpecialityId);
+        // setPageState(page);
     };
 
     const studentsMobile = (student: any) => (
@@ -78,7 +115,7 @@ export default function StudentsPage() {
                 <div className="bg-white rounded-lg shadow-md p-4 border-l-4 border-blue-500">
                     <div className="flex justify-between items-start mb-3">
                         <div className="font-bold text-[#1e293b] leading-tight">
-                            <Link href={`/roles/students/${student?.id}`} className="text-[#1e293b] cursor-pointer flex flex-wrap gap-1 underline">
+                            <Link href={`/roles/students/1/${student?.id}`} className="text-[#1e293b] cursor-pointer flex flex-wrap gap-1 underline">
                                 <span>{student?.last_name}</span>
                                 <span>{student?.name}</span>
                                 <span>{student?.father_name}</span>
@@ -92,7 +129,7 @@ export default function StudentsPage() {
                         {student.speciality ? student.speciality?.name_ru : ''}
                     </div>
                     <Link
-                        href={`/roles/students/${student?.id}`}
+                        href={`/roles/students/1/${student?.id}`}
                         className="flex gap-1 cursor-pointer w-full bg-[var(--mainColor)] hover:opacity-90 text-white px-4 py-3 rounded-lg items-center justify-center text-sm font-medium transition-all active:scale-[0.98]"
                     >
                         <i className="pi pi-book text-white text-sm"></i>
@@ -133,7 +170,7 @@ export default function StudentsPage() {
                                     {students.map((student) => (
                                         <tr key={student.id} className="hover:bg-slate-50/50 transition-colors">
                                             <td className="py-4 pl-3 font-bold">
-                                                <Link href={`/roles/students/${student?.id}`} className="text-[#1e293b] cursor-pointer flex gap-1 underline">
+                                                <Link href={`/roles/students/1/${student?.id}`} className="text-[#1e293b] cursor-pointer flex gap-1 underline">
                                                     <span>{student?.last_name}</span>
                                                     <span>{student?.name}</span>
                                                     <span>{student?.father_name}</span>
@@ -144,7 +181,7 @@ export default function StudentsPage() {
                                             </td>
                                             <td className="py-4 px-6 text-slate-600 text-sm">{student.speciality ? student.speciality?.name_ru : ''}</td>
                                             <td className="py-4 px-6 text-right">
-                                                <Link href={`/roles/students/${student?.id}`}>
+                                                <Link href={`/roles/students/1/${student?.id}`}>
                                                     <button className="cursor-pointer bg-[var(--mainColor)] hover:opacity-90 text-white px-4 py-2 rounded-lg flex items-center gap-2 text-sm font-medium transition-all shadow-sm">
                                                         <i className="pi pi-book text-white text-sm"></i>
                                                         Просмотреть работы
@@ -182,17 +219,20 @@ export default function StudentsPage() {
                 <p className="font-semibold mb-1">Инструкция для редуктора</p>
                 <p>Выберите студента из списка ниже, чтобы просмотреть все его работы. На странице студента вы сможете аннулировать работы, если были выявлены нарушения академической честности или другие причины для аннулирования.</p>
             </div>
-            <i onClick={()=> {
-                localStorage.setItem('hideInstruction', 'true');
-                setHideInstructon(false);
-            }} className='pi pi-times cursor-pointer'></i>
+            <i
+                onClick={() => {
+                    localStorage.setItem('hideInstruction', 'true');
+                    setHideInstructon(false);
+                }}
+                className="pi pi-times cursor-pointer"
+            ></i>
         </div>
     );
 
     useEffect(() => {
         setProgressSpinner(true);
         if (search?.length === 0 && searchController) {
-            handleFetchReductor(pageState, search);
+            handleFetchReductor(pageState, search, currentSpecialityId);
             setSearchController(false);
             setProgressSpinner(false);
         }
@@ -204,7 +244,7 @@ export default function StudentsPage() {
 
         setSearchController(true);
         const delay = setTimeout(() => {
-            handleFetchReductor(pageState, search);
+            handleFetchReductor(pageState, search, currentSpecialityId);
             setProgressSpinner(false);
         }, 1000);
 
@@ -214,11 +254,59 @@ export default function StudentsPage() {
     }, [search]);
 
     useEffect(() => {
-        handleFetchReductor(1, search);
+        if (timeMode?.id) {
+            setCurrentFacultyId(timeMode?.id);
+            setContextFilterState((prev: any) => ({ ...prev, faculty_id: timeMode?.id }));
+        }
+    }, [timeMode]);
+
+    useEffect(() => {
+        if (contextFilterState?.faculty_id && timeModeOptions?.length) {
+            const selected = timeModeOptions.find((item: any) => item.id === contextFilterState.faculty_id);
+
+            if (selected) {
+                setTimeMode(selected);
+            }
+        }
+    }, [timeModeOptions, contextFilterState?.faculty_id]);
+
+    useEffect(() => {
+        if (currentFacultyId) {
+            handleStudentSpeciality(currentFacultyId);
+        }
+    }, [currentFacultyId]);
+
+    // useEffect(() => {
+    //     if (speciality) {
+    //         setCurrentSpecialityId(speciality?.id);
+    //         const specialityId = speciality?.id;
+    //         handleFetchReductor(pageState, search, specialityId);
+    //     }
+    // }, [speciality]);
+
+    useEffect(() => {
+        if (speciality && speciality.id !== currentSpecialityId) {
+            setCurrentSpecialityId(speciality.id);
+            handleFetchReductor(pageState, search, speciality.id);
+        }
+    }, [speciality]);
+
+    useEffect(() => {
+        if (specialityOptions?.length && contextFilterState?.speciality_id !== undefined) {
+            const selected = specialityOptions.find((item: any) => item.id === contextFilterState.speciality_id);
+
+            if (selected) {
+                setSpecialyty(selected);
+            }
+        }
+    }, [specialityOptions, contextFilterState?.speciality_id]);
+
+    useEffect(() => {
+        handleFetchReductor(pageState, search, currentSpecialityId);
+        handleFetchFaculty();
         const hide = localStorage.getItem('hideInstruction');
         if (hide) setHideInstructon(false);
         else setHideInstructon(true);
-
     }, []);
 
     return (
@@ -240,6 +328,38 @@ export default function StudentsPage() {
 
                     {/* Блок инструкции */}
                     {hideInstruction && instructionSection}
+
+                    {/* filter */}
+                    <div className="main-bg flex flex-col gap-1 my-1">
+                        <div className=" flex sm:items-center gap-2 flex-col sm:flex-row mb-2">
+                            <div className="sm:max-w-[60%] overflow-hidden flex flex-col items-start gap-2">
+                                <b className="px-1 inline">Выберите факультет</b>
+                                <div className="sm:max-w-[60%] overflow-hidden flex juctify-center items-start">
+                                    <Dropdown value={timeMode} optionLabel="name_ru" options={timeModeOptions} onChange={(e) => setTimeMode(e.value)} placeholder="Выберите факультет" className="text-wrap word-break sm:text-nowrap sm:max-w-full" />
+                                </div>
+                            </div>
+
+                            <div className="sm:max-w-[60%] overflow-hidden flex flex-col gap-2">
+                                <b className="px-1">Выберите специальность</b>
+                                <div className="sm:max-w-[60%] overflow-hidden flex juctify-center items-start">
+                                    <Dropdown
+                                        value={speciality}
+                                        optionLabel="name_ru"
+                                        options={specialityOptions}
+                                        onChange={(e) => {
+                                            setSpecialyty(e.value);
+                                            setContextFilterState((prev: any) => ({
+                                                ...prev,
+                                                speciality_id: e.value?.id ?? null
+                                            }));
+                                        }}
+                                        placeholder="Выберите специальность"
+                                        className={`${!specialityOptions ? 'pointer-events-none opacity-50' : ''} w-full text-sm`}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
                     {/* Поиск */}
                     <div className="flex border border-slate-200 rounded-xl py-3 pl-3 items-center gap-3 w-full bg-white mb-4 shadow-sm focus:border-blue-500 focus:ring-blue-500/20 transition-all">

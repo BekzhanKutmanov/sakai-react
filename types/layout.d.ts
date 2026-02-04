@@ -105,7 +105,10 @@ export interface LayoutContextProps {
     handleNotifications: ()=> void,
 
     contextUserRole: UserRoles | null, 
-    setContextUserRole
+    setContextUserRole,
+
+    contextFilterState, 
+    setContextFilterState
     // message: { state: boolean; value: MessageType };
     // setMessage: React.Dispatch<React.SetStateAction<{ state: boolean; value: MessageType }>>;
 }
