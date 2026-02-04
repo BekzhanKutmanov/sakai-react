@@ -111,13 +111,13 @@ export default function Course() {
     ];
 
     const handleFilterChange = (e: DropdownChangeEvent) => {
-        let value:any | null = null;
-        if(typeof e.value === 'object') {
+        let value: any | null = null;
+        if (typeof e.value === 'object') {
             value = null;
         } else {
             value = e.value;
         }
-        
+
         setFilters((prev) => ({ ...prev, [e.target.name]: value }));
     };
 
@@ -151,29 +151,29 @@ export default function Course() {
 
         const data = await veryfyCourse(forSentStreams);
         if (data.success) {
-            handleFetchCourse(1,filters);
+            handleFetchCourse(1, filters);
             setPageState(1);
             setMessage({
                 state: true,
-                value: { severity: 'success', summary: 'Успешно добавлен!', detail: '' }
+                value: { severity: 'success', summary: 'Успешно изменено!', detail: '' }
             });
         } else {
             setSkeleton(false);
             if (data.response.data.cause) {
                 setMessage({
                     state: true,
-                    value: { severity: 'error', summary: 'Ошибка!', detail: data.response.data.cause }
+                    value: { severity: 'error', summary: translations.errorTitle, detail: data.response.data.cause }
                 });
             } else if (data?.response?.status) {
                 if (data?.response?.status == '400') {
                     setMessage({
                         state: true,
-                        value: { severity: 'error', summary: 'Ошибка!', detail: data?.response?.data?.message }
+                        value: { severity: 'error', summary: translations.errorTitle, detail: data?.response?.data?.message }
                     });
                 } else if (data?.response?.status == '422') {
                     setMessage({
                         state: true,
-                        value: { severity: 'error', summary: 'Ошибка!', detail: data?.response?.data?.message }
+                        value: { severity: 'error', summary: translations.errorTitle, detail: data?.response?.data?.message }
                     });
                 } else {
                     showError(data.response.status);
@@ -181,7 +181,7 @@ export default function Course() {
             } else {
                 setMessage({
                     state: true,
-                    value: { severity: 'error', summary: 'Не удалось добавить курс', detail: '' }
+                    value: { severity: 'error', summary: translations.addCourseError, detail: '' }
                 });
             }
         }
@@ -216,9 +216,9 @@ export default function Course() {
             status: boolean | null;
         }
     ) => {
-        setSkeleton(true);        
+        setSkeleton(true);
         const data = await fetchCourses(page, 10, filters?.course_audience_type_id, filters?.is_published, filters?.status);
-        
+
         if (data && data?.courses) {
             if (data?.courses?.data?.length > 0) {
                 setEmptyCourses(false);
@@ -236,7 +236,7 @@ export default function Course() {
             setHasCourses(true);
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
+                value: { severity: 'error', summary: translations.errorTitle, detail: translations.tryAgainLater }
             });
             if (data?.response?.status) {
                 showError(data.response.status);
@@ -253,12 +253,12 @@ export default function Course() {
             setPageState(1);
             setMessage({
                 state: true,
-                value: { severity: 'success', summary: 'Успешно добавлен!', detail: '' }
+                value: { severity: 'success', summary: translations.successAdd, detail: '' }
             });
         } else {
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка при добавлении!', detail: '' }
+                value: { severity: 'error', summary: translations.addError, detail: '' }
             });
             if (data?.response?.status) {
                 showError(data.response.status);
@@ -446,7 +446,7 @@ export default function Course() {
             handleFetchCourse(1, filters);
             setMessage({
                 state: true,
-                value: { severity: 'success', summary: 'Архивирование прошло успешно', detail: '' }
+                value: { severity: 'success', summary: translations.archiveSuccess, detail: '' }
             });
         } else {
             if (data?.response?.status) {
@@ -489,7 +489,7 @@ export default function Course() {
             icon: 'pi pi-exclamation-triangle',
             defaultFocus: 'accept',
             // acceptLabel: translations.archive,
-            acceptLabel: 'Архивировать',
+            acceptLabel: translations.archive,
             rejectLabel: translations.back,
             rejectClassName: 'p-button-secondary reject-button',
             className: 'w-[50%]',
@@ -528,7 +528,7 @@ export default function Course() {
                     <div>{imageBodyTemplate(shablonData)}</div>
                     <div className="w-full flex flex-col justify-start">
                         <div className="flex gap-1 items-center">
-                            <span className="text-[var(--mainColor)] text-sm mr-1">Статус: </span>
+                            <span className="text-[var(--mainColor)] text-sm mr-1">{translations.status} </span>
                             <Button
                                 size="small"
                                 className="p-2"
@@ -541,11 +541,11 @@ export default function Course() {
                             </Button>
                         </div>
                         <div>
-                            <span className="text-[var(--mainColor)] text-sm">Балл: </span>
+                            <span className="text-[var(--mainColor)] text-sm">{translations.score} </span>
                             <span className="text-sm">{`${shablonData?.max_score}`}</span>
                         </div>
                         <div className="flex gap-1 items-center">
-                            <span className="text-[var(--mainColor)] text-sm">На рассмотрение: </span>
+                            <span className="text-[var(--mainColor)] text-sm">{translations.onReview} </span>
                             <label className="custom-radio">
                                 <input
                                     type="checkbox"
@@ -559,7 +559,7 @@ export default function Course() {
                             </label>
                         </div>
                         <div className="flex gap-1 items-center">
-                            <span className="text-[var(--mainColor)] text-sm">Публикация: </span>
+                            <span className="text-[var(--mainColor)] text-sm">{translations.publication} </span>
                             {shablonData.is_published ? <i className="pi pi-check-circle text-md text-[var(--greenColor)]"></i> : <i className="pi pi-times-circle text-md text-[var(--redColor)]"></i>}
                         </div>
                     </div>
@@ -588,7 +588,7 @@ export default function Course() {
                                     setActiveIndex(1);
                                 }}
                             >
-                                Связан ({shablonData.connects_count})
+                                {translations.connected} ({shablonData.connects_count})
                             </span>
                         </label>
                     </>
@@ -794,320 +794,335 @@ export default function Course() {
                                 pt={{
                                     headerAction: { className: 'font-italic' }
                                 }}
-                                header="Потоки"
-                                                                 className="p-tabview p-tabview-nav p-tabview-selected p-tabview-panels p-tabview-panel"
-                                                            >
-                                                                <div className="w-full block sm:w-1/2">
-                                                                    {sendStream.name === 'lock' ? (
-                                                                        <StreamList callIndex={activeIndex} courseValue={memoForStreamId} isMobile={true} fetchprop={callbackFetchCourse} toggleIndex={callbackSetIndex} close={callbackClose} />
-                                                                    ) : (
-                                                                        <OpenStudentList course_id={openCourseId} course_title={forStreamId?.title || null} close={callbackSetIndex} />
-                                                                    )}
+                                header={translations.streams}
+                                className="p-tabview p-tabview-nav p-tabview-selected p-tabview-panels p-tabview-panel"
+                            >
+                                <div className="w-full block sm:w-1/2">
+                                    {sendStream.name === 'lock' ? (
+                                        <StreamList callIndex={activeIndex} courseValue={memoForStreamId} isMobile={true} fetchprop={callbackFetchCourse} toggleIndex={callbackSetIndex} close={callbackClose} />
+                                    ) : (
+                                        <OpenStudentList course_id={openCourseId} course_title={forStreamId?.title || null} close={callbackSetIndex} />
+                                    )}
+                                </div>
+                            </TabPanel>
+                        </TabView>
+                    </div>
+                ) : (
+                    // Десктопный курс
+                    <div className="w-full flex justify-between items-start gap-2 xl:gap-5">
+                        {sendStream.status ? (
+                            <div className="w-full">
+                                {/* info section */}
+                                {skeleton ? (
+                                    <GroupSkeleton count={1} size={{ width: '100%', height: '5rem' }} />
+                                ) : (
+                                    <div className="flex flex-col md:flex-row justify-between md:items-center mb-2 py-2 gap-1 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">
+                                        <h3 className="text-[32px] m-0">{translations.courses}</h3>
+                                        <Button
+                                            label={translations.addCourse}
+                                            icon="pi pi-plus"
+                                            onClick={() => {
+                                                setEditMode(false);
+                                                clearValues();
+                                                setFormVisible(true);
+                                            }}
+                                        />
+                                    </div>
+                                )}
+
+                                {skeleton ? (
+                                    <div className="flex items-center gap-1 flex-wrap justify-center sm:justify-start">
+                                        <GroupSkeleton count={1} size={{ height: '40px', width: '250px' }} /> <GroupSkeleton count={1} size={{ height: '40px', width: '250px' }} /> <GroupSkeleton count={1} size={{ height: '40px', width: '250px' }} />{' '}
+                                    </div>
+                                ) : (
+                                    courseFiltered()
+                                )}
+
+                                {/* table section */}
+                                {emptyCourses ? (
+                                    <p className="text-[16px] text-center font-bold">{translations.noData}</p>
+                                ) : hasCourses ? (
+                                    <p className="text-[16px] text-center font-bold">{translations.noCourses}</p>
+                                ) : (
+                                    <>
+                                        {skeleton ? (
+                                            <div className="w-full">
+                                                <GroupSkeleton count={coursesValue?.length || 5} size={{ width: '100%', height: '4rem' }} />
+                                            </div>
+                                        ) : (
+                                            <div>
+                                                {/* <OpenStudentList /> */}
+                                                <div ref={topRef}>
+                                                    <DataTable value={tableData} dataKey="id" emptyMessage={translations.loading} breakpoint="960px" rows={5} className="my-custom-table hover:bg-slate-50/50 transition-colors">
+                                                        <Column body={(_, { rowIndex }) => rowIndex + 1} header="#" style={{ width: '20px' }}></Column>
+                                                        <Column
+                                                            style={{ width: '70px' }}
+                                                            header={() => (
+                                                                <div className="flex justify-center">
+                                                                    <i className="pi pi-images text-xl"></i>
                                                                 </div>
-                                                            </TabPanel>
-                                                        </TabView>
-                                                    </div>
-                                                ) : (
-                                                    // Десктопный курс
-                                                    <div className="w-full flex justify-between items-start gap-2 xl:gap-5">
-                                                        {sendStream.status ? (
-                                                            <div className="w-full">
-                                                                {/* info section */}
-                                                                {skeleton ? (
-                                                                    <GroupSkeleton count={1} size={{ width: '100%', height: '5rem' }} />
-                                                                ) : (
-                                                                    <div className="flex flex-col md:flex-row justify-between md:items-center mb-2 py-2 gap-1 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">
-                                                                        <h3 className="text-[32px] m-0">{translations.courses}</h3>
-                                                                        <Button
-                                                                            label={translations.addCourse}
-                                                                            icon="pi pi-plus"
-                                                                            onClick={() => {
-                                                                                setEditMode(false);
-                                                                                clearValues();
-                                                                                setFormVisible(true);
+                                                            )}
+                                                            body={imageBodyTemplate}
+                                                            className="hover:bg-slate-50/50 transition-colors"
+                                                        ></Column>
+
+                                                        <Column
+                                                            field="title"
+                                                            header={() => <div className="text-[13px]">{translations.courseName}</div>}
+                                                            body={(rowData) => (
+                                                                <Link
+                                                                    href={`/course/${rowData.id}/${'null'}`}
+                                                                    onClick={() => {
+                                                                        setGlobalLoading(true);
+                                                                        setTimeout(() => {
+                                                                            setGlobalLoading(false);
+                                                                        }, 1200);
+                                                                        setMainCourseId(rowData.id);
+                                                                    }}
+                                                                    key={rowData.id}
+                                                                    className="max-w-sm break-words"
+                                                                >
+                                                                    {rowData.title}
+                                                                </Link>
+                                                            )}
+                                                            className="hover:bg-slate-50/50 transition-colors"
+                                                        ></Column>
+                                                        <Column
+                                                            style={{ width: '70px' }}
+                                                            header={() => <div className="text-[13px]">{translations.courseStatus}</div>}
+                                                            body={(rowData) => (
+                                                                <Button
+                                                                    size="small"
+                                                                    className="p-2"
+                                                                    onClick={() => {
+                                                                        setSelectedCourse(rowData?.id);
+                                                                        handleFetchCourseOpenStatus();
+                                                                    }}
+                                                                >
+                                                                    <i className={`${rowData?.audience_type?.icon}`}></i>
+                                                                </Button>
+                                                            )}
+                                                            className="hover:bg-slate-50/50 transition-colors"
+                                                        ></Column>
+                                                        <Column
+                                                            field="title"
+                                                            className="hover:bg-slate-50/50 transition-colors"
+                                                            header={() => <div className="text-[13px]">{translations.score}</div>}
+                                                            body={(rowData) => <span key={rowData.id}>{rowData.max_score}</span>}
+                                                        ></Column>
+                                                        <Column
+                                                            header={() => <div className="text-[13px]">{translations.onReview}</div>}
+                                                            style={{ margin: '0 3px', textAlign: 'center' }}
+                                                            body={(rowData) => (
+                                                                <>
+                                                                    <label className="custom-radio">
+                                                                        <input
+                                                                            type="checkbox"
+                                                                            className={`customCheckbox`}
+                                                                            checked={rowData.status}
+                                                                            onChange={(e) => {
+                                                                                handleEdit(e.target, rowData);
                                                                             }}
                                                                         />
-                                                                    </div>
-                                                                )}
-                                
-                                                                {skeleton ? <div className='flex items-center gap-1 flex-wrap justify-center sm:justify-start'><GroupSkeleton count={1} size={{height: '40px', width: '250px'}}/> <GroupSkeleton count={1} size={{height: '40px', width: '250px'}}/> <GroupSkeleton count={1} size={{height: '40px', width: '250px'}}/> </div> : courseFiltered()}
-                                
-                                                                {/* table section */}
-                                                                {emptyCourses ? (
-                                                                    <p className="text-[16px] text-center font-bold">{translations.noData}</p>
-                                                                ) : hasCourses ? (
-                                                                    <p className="text-[16px] text-center font-bold">{translations.noCourses}</p>
-                                                                ) : (
+                                                                        <span className="checkbox-mark"></span>
+                                                                    </label>
+                                                                </>
+                                                            )}
+                                                            className="hover:bg-slate-50/50 transition-colors"
+                                                        ></Column>
+                                                        <Column
+                                                            header={() => <div className="text-[13px]">{translations.published}</div>}
+                                                            style={{ margin: '0 3px', textAlign: 'center' }}
+                                                            className="hover:bg-slate-50/50 transition-colors"
+                                                            body={(rowData) => (rowData.is_published ? <i className="pi pi-check-circle text-md text-[var(--greenColor)]"></i> : <i className="pi pi-times-circle text-md text-[var(--redColor)]"></i>)}
+                                                        ></Column>
+                                                        <Column
+                                                            header={() => <div className="text-[13px]">{translations.streams}</div>}
+                                                            style={{ margin: '0 3px', textAlign: 'center' }}
+                                                            body={(rowData) => {
+                                                                const isChecked = forStreamId?.id === rowData.id;
+                                                                return (
                                                                     <>
-                                                                        {skeleton ? (
-                                                                            <div className="w-full">
-                                                                                <GroupSkeleton count={coursesValue?.length || 5} size={{ width: '100%', height: '4rem' }} />
-                                                                            </div>
-                                                                        ) : (
-                                                                            <div>
-                                                                                {/* <OpenStudentList /> */}
-                                                                                <div ref={topRef}>
-                                                                                    <DataTable value={tableData} dataKey="id" emptyMessage={translations.loading} breakpoint="960px" rows={5} className="my-custom-table hover:bg-slate-50/50 transition-colors">
-                                                                                        <Column body={(_, { rowIndex }) => rowIndex + 1} header="#" style={{ width: '20px' }}></Column>
-                                                                                        <Column
-                                                                                            style={{ width: '70px' }}
-                                                                                            header={() => (
-                                                                                                <div className="flex justify-center">
-                                                                                                    <i className="pi pi-images text-xl"></i>
-                                                                                                </div>
-                                                                                            )}
-                                                                                            body={imageBodyTemplate}
-                                                                                            className='hover:bg-slate-50/50 transition-colors'
-                                                                                        ></Column>
-                                
-                                                                                        <Column
-                                                                                            field="title"
-                                                                                            header={() => <div className="text-[13px]">{translations.courseName}</div>}
-                                                                                            body={(rowData) => (
-                                                                                                <Link
-                                                                                                    href={`/course/${rowData.id}/${'null'}`}
-                                                                                                    onClick={() => {
-                                                                                                        setGlobalLoading(true);
-                                                                                                        setTimeout(() => {
-                                                                                                            setGlobalLoading(false);
-                                                                                                        }, 1200);
-                                                                                                        setMainCourseId(rowData.id);
-                                                                                                    }}
-                                                                                                    key={rowData.id}
-                                                                                                    className="max-w-sm break-words"
-                                                                                                >
-                                                                                                    {rowData.title}
-                                                                                                </Link>
-                                                                                            )}
-                                                                                            className='hover:bg-slate-50/50 transition-colors'
-                                                                                        ></Column>
-                                                                                        <Column
-                                                                                            style={{ width: '70px' }}
-                                                                                            header={() => <div className="text-[13px]">{translations.courseStatus}</div>}
-                                                                                            body={(rowData) => (
-                                                                                                <Button
-                                                                                                    size="small"
-                                                                                                    className="p-2"
-                                                                                                    onClick={() => {
-                                                                                                        setSelectedCourse(rowData?.id);
-                                                                                                        handleFetchCourseOpenStatus();
-                                                                                                    }}
-                                                                                                >
-                                                                                                    <i className={`${rowData?.audience_type?.icon}`}></i>
-                                                                                                </Button>
-                                                                                            )}
-                                                                                            className='hover:bg-slate-50/50 transition-colors'
-                                                                                        ></Column>
-                                                                                        <Column field="title" className='hover:bg-slate-50/50 transition-colors' header={() => <div className="text-[13px]">Балл</div>} body={(rowData) => <span key={rowData.id}>{rowData.max_score}</span>}></Column>
-                                                                                        <Column
-                                                                                            header={() => <div className="text-[13px]">{translations.onReview}</div>}
-                                                                                            style={{ margin: '0 3px', textAlign: 'center' }}
-                                                                                            body={(rowData) => (
-                                                                                                <>
-                                                                                                    <label className="custom-radio">
-                                                                                                        <input
-                                                                                                            type="checkbox"
-                                                                                                            className={`customCheckbox`}
-                                                                                                            checked={rowData.status}
-                                                                                                            onChange={(e) => {
-                                                                                                                handleEdit(e.target, rowData);
-                                                                                                            }}
-                                                                                                        />
-                                                                                                        <span className="checkbox-mark"></span>
-                                                                                                    </label>
-                                                                                                </>
-                                                                                            )}
-                                                                                            className='hover:bg-slate-50/50 transition-colors'
-                                                                                        ></Column>
-                                                                                        <Column
-                                                                                            header={() => <div className="text-[13px]">{translations.published}</div>}
-                                                                                            style={{ margin: '0 3px', textAlign: 'center' }}
-                                                                                            className='hover:bg-slate-50/50 transition-colors'
-                                                                                            body={(rowData) => (rowData.is_published ? <i className="pi pi-check-circle text-md text-[var(--greenColor)]"></i> : <i className="pi pi-times-circle text-md text-[var(--redColor)]"></i>)}
-                                                                                        ></Column>
-                                                                                        <Column
-                                                                                            header={() => <div className="text-[13px]">{translations.streams}</div>}
-                                                                                            style={{ margin: '0 3px', textAlign: 'center' }}
-                                                                                            body={(rowData) => {
-                                                                                                const isChecked = forStreamId?.id === rowData.id;
-                                                                                                return (
-                                                                                                    <>
-                                                                                                        <label className="custom-course-radio">
-                                                                                                            <input
-                                                                                                                type="radio"
-                                                                                                                name="radio"
-                                                                                                                onChange={() => {
-                                                                                                                    const newValue = { id: rowData.id, title: rowData.title };
-                                                                                                                    // setGlobalCourseId(newValue);
-                                                                                                                    setForStreamId(newValue);
-                                                                                                                    // setSendStream({ status: false, name: rowData?.audience_type?.name });
-                                                                                                                    setOpenCourseId(rowData.id);
-                                                                                                                }}
-                                                                                                                onClick={() => {
-                                                                                                                    setSendStream({ status: false, name: rowData?.audience_type?.name });
-                                                                                                                }}
-                                                                                                                checked={isChecked}
-                                                                                                            />
-                                                                                                            <span className="radio-course-mark rounded">{translations.connects} ({rowData.connects_count})</span>
-                                                                                                        </label>
-                                                                                                    </>
-                                                                                                );
-                                                                                            }}
-                                                                                            className='hover:bg-slate-50/50 transition-colors'
-                                                                                        ></Column>
-                                                                                        <Column
-                                                                                            className="flex items-center justify-center h-[60px] border-b-0 hover:bg-slate-50/50 transition-colors"
-                                                                                            body={(rowData) => (
-                                                                                                <div className="flex items-center gap-2" key={rowData.id}>
-                                                                                                    <Redacting redactor={getRedactor(rowData, { onEdit: edit, getConfirmOptions, onDelete: handleDeleteCourse }, inboxConfirm)} textSize={'14px'} />
-                                                                                                </div>
-                                                                                            )}
-                                                                                        />
-                                                                                    </DataTable>
-                                                                                </div>
-                                                                                <div className={`${isTall ? 'mt-[20px]' : 'mt-[5px]'} shadow-[0px_-11px_5px_-6px_rgba(0,_0,_0,_0.1)]`}>
-                                                                                    <Paginator
-                                                                                        first={(pagination.currentPage - 1) * pagination.perPage}
-                                                                                        rows={pagination.perPage}
-                                                                                        totalRecords={pagination.total}
-                                                                                        onPageChange={(e) => handlePageChange(e.page + 1)}
-                                                                                        template="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
-                                                                                    />
-                                                                                </div>
-                                                                            </div>
-                                                                        )}
+                                                                        <label className="custom-course-radio">
+                                                                            <input
+                                                                                type="radio"
+                                                                                name="radio"
+                                                                                onChange={() => {
+                                                                                    const newValue = { id: rowData.id, title: rowData.title };
+                                                                                    // setGlobalCourseId(newValue);
+                                                                                    setForStreamId(newValue);
+                                                                                    // setSendStream({ status: false, name: rowData?.audience_type?.name });
+                                                                                    setOpenCourseId(rowData.id);
+                                                                                }}
+                                                                                onClick={() => {
+                                                                                    setSendStream({ status: false, name: rowData?.audience_type?.name });
+                                                                                }}
+                                                                                checked={isChecked}
+                                                                            />
+                                                                            <span className="radio-course-mark rounded">
+                                                                                {translations.connects} ({rowData.connects_count})
+                                                                            </span>
+                                                                        </label>
                                                                     </>
-                                                                )}
-                                                            </div>
-                                                        ) : (
-                                                            <div className="w-full">
-                                                                {sendStream.name === 'lock' ? (
-                                                                    <StreamList isMobile={false} callIndex={1} courseValue={memoForStreamId} fetchprop={callbackFetchCourse} close={callbackClose} />
-                                                                ) : (
-                                                                    <OpenStudentList course_id={openCourseId} course_title={forStreamId?.title || null} close={callbackClose} />
-                                                                )}
-                                                            </div>
-                                                        )}
-                                                    </div>
-                                                )}
-                                            </div>
-                                
-                                            {/* modal window */}
-                                            <FormModal
-                                                title={editMode ? translations.edit : translations.add}
-                                                fetchValue={editMode ? handleUpdateCourse : handleAddCourse}
-                                                clearValues={clearValues}
-                                                visible={formVisible}
-                                                setVisible={setFormVisible}
-                                                start={forStart}
-                                                footerValue={{ footerState: editMode, reject: translations.back, next: translations.save }}
-                                            >
-                                                <div className="flex flex-col gap-1">
-                                                    <div className="flex flex-col gap-1 items-center justify-center">
-                                                        <div className="w-full flex justify-center gap-3 items-center">
-                                                            <label className="block text-900 font-medium text-md md:text-lg">{translations.courseName}</label>
-                                                        </div>
-                                                        <div className="w-full flex gap-2 items-center">
-                                                            <div className="p-inputgroup flex-1">
-                                                                <InputText
-                                                                    value={editMode ? editingLesson.title || '' : courseValue.title}
-                                                                    placeholder={translations.courseName}
-                                                                    disabled={progressSpinner === true ? true : false}
-                                                                    className="w-[100%]"
-                                                                    onChange={(e) => {
-                                                                        editMode
-                                                                            ? setEditingLesson((prev) => ({
-                                                                                  ...prev,
-                                                                                  title: e.target.value
-                                                                              }))
-                                                                            : setCourseValue((prev) => ({
-                                                                                  ...prev,
-                                                                                  title: e.target.value
-                                                                              }));
-                                                                    }}
-                                                                />
-                                                            </div>
-                                                            {progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}
-                                                        </div>
-                                                    </div>
-                                
-                                                    <div className="flex flex-col gap-1 items-center justify-center">
-                                                        <label className="block text-900 font-medium text-[16px] md:text-lg mb-1 md:mb-2">{translations.courseDescription}</label>
-                                                        <div className="w-full flex gap-2 justify-center items-center">
-                                                            <InputTextarea
-                                                                // autoResize
-                                                                value={editMode ? editingLesson.description || '' : courseValue.description}
-                                                                disabled={progressSpinner === true ? true : false}
-                                                                rows={3}
-                                                                cols={30}
-                                                                className="w-[300px] sm:w-full h-[100px]"
-                                                                onChange={(e) => {
-                                                                    editMode
-                                                                        ? setEditingLesson((prev) => ({
-                                                                              ...prev,
-                                                                              description: e.target.value
-                                                                          }))
-                                                                        : setCourseValue((prev) => ({
-                                                                              ...prev,
-                                                                              description: e.target.value
-                                                                          }));
-                                                                }}
-                                                            />
-                                                            {progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}
-                                                        </div>
-                                                    </div>
-                                
-                                                    <div className={imagestateStyle}>
-                                                        <div className="w-1/2 order-2 sm:order-1 max-h-[170px] max-w-[300px] overflow-hidden flex justify-center items-center">
-                                                            {typeof imageState === 'string' ? (
-                                                                <img className="w-full object-cover" src={imageState} alt="фото" />
-                                                            ) : editingLesson.image ? (
-                                                                <img className="w-full object-cover" src={typeof editingLesson.image === 'string' ? editingLesson.image : ''} alt="фото" />
-                                                            ) : (
-                                                                ''
-                                                            )}
-                                                        </div>
-                                                        <div className={`flex flex-col pag-1 order-1 sm:order-2 items-center justify-center ${imageState && 'w-1/2'}`}>
-                                                            <label className="block text-900 font-medium text-[16px] md:text-lg mb-1 md:mb-2">Добавить фото</label>
-                                                            <FileUpload
-                                                                ref={fileUploadRef}
-                                                                mode="basic"
-                                                                chooseLabel="Фото"
-                                                                style={{ fontSize: '12px', textWrap: 'wrap' }}
-                                                                className="max-w-[200px]"
-                                                                customUpload
-                                                                name="demo[]"
-                                                                accept="image/*"
-                                                                maxFileSize={1000000}
-                                                                onSelect={onSelect}
-                                                            />
-                                                            {courseValue.image || editingLesson.image ? (
-                                                                <div className="mt-2 text-sm text-gray-700">
-                                                                    {typeof editingLesson.image === 'string' && (
-                                                                        <>
-                                                                            <b className="text-[12px] text-center w-[300px]">{imageTitle}</b>
-                                                                        </>
-                                                                    )}
+                                                                );
+                                                            }}
+                                                            className="hover:bg-slate-50/50 transition-colors"
+                                                        ></Column>
+                                                        <Column
+                                                            className="flex items-center justify-center h-[60px] border-b-0 hover:bg-slate-50/50 transition-colors"
+                                                            body={(rowData) => (
+                                                                <div className="flex items-center gap-2" key={rowData.id}>
+                                                                    <Redacting redactor={getRedactor(rowData, { onEdit: edit, getConfirmOptions, onDelete: handleDeleteCourse }, inboxConfirm)} textSize={'14px'} />
                                                                 </div>
-                                                            ) : (
-                                                                <b className="text-[12px] text-red-500">jpeg, png, jpg</b>
                                                             )}
-                                                            <div className="flex items-center gap-1">{(editingLesson.image || imageState) && <Button icon={'pi pi-trash'} className="trash-button" onClick={clearFile} />}</div>
-                                                        </div>
-                                                    </div>
+                                                        />
+                                                    </DataTable>
                                                 </div>
-                                            </FormModal>
-                                
-                                            {/* open status window */}
-                                            <Dialog
-                                                header={translations.courseStatus}
-                                                visible={audenceTypeVisible}
-                                                className="w-[90%] sm:w-[400px]"
-                                                onHide={() => {
-                                                    if (!audenceTypeVisible) return;
-                                                    setAudenceTypeVisible(false);
-                                                }}
-                                            >                <div className="flex flex-col gap-1">
+                                                <div className={`${isTall ? 'mt-[20px]' : 'mt-[5px]'} shadow-[0px_-11px_5px_-6px_rgba(0,_0,_0,_0.1)]`}>
+                                                    <Paginator
+                                                        first={(pagination.currentPage - 1) * pagination.perPage}
+                                                        rows={pagination.perPage}
+                                                        totalRecords={pagination.total}
+                                                        onPageChange={(e) => handlePageChange(e.page + 1)}
+                                                        template="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
+                                                    />
+                                                </div>
+                                            </div>
+                                        )}
+                                    </>
+                                )}
+                            </div>
+                        ) : (
+                            <div className="w-full">
+                                {sendStream.name === 'lock' ? (
+                                    <StreamList isMobile={false} callIndex={1} courseValue={memoForStreamId} fetchprop={callbackFetchCourse} close={callbackClose} />
+                                ) : (
+                                    <OpenStudentList course_id={openCourseId} course_title={forStreamId?.title || null} close={callbackClose} />
+                                )}
+                            </div>
+                        )}
+                    </div>
+                )}
+            </div>
+
+            {/* modal window */}
+            <FormModal
+                title={editMode ? translations.edit : translations.add}
+                fetchValue={editMode ? handleUpdateCourse : handleAddCourse}
+                clearValues={clearValues}
+                visible={formVisible}
+                setVisible={setFormVisible}
+                start={forStart}
+                footerValue={{ footerState: editMode, reject: translations.back, next: translations.save }}
+            >
+                <div className="flex flex-col gap-1">
+                    <div className="flex flex-col gap-1 items-center justify-center">
+                        <div className="w-full flex justify-center gap-3 items-center">
+                            <label className="block text-900 font-medium text-md md:text-lg">{translations.courseName}</label>
+                        </div>
+                        <div className="w-full flex gap-2 items-center">
+                            <div className="p-inputgroup flex-1">
+                                <InputText
+                                    value={editMode ? editingLesson.title || '' : courseValue.title}
+                                    placeholder={translations.courseName}
+                                    disabled={progressSpinner === true ? true : false}
+                                    className="w-[100%]"
+                                    onChange={(e) => {
+                                        editMode
+                                            ? setEditingLesson((prev) => ({
+                                                  ...prev,
+                                                  title: e.target.value
+                                              }))
+                                            : setCourseValue((prev) => ({
+                                                  ...prev,
+                                                  title: e.target.value
+                                              }));
+                                    }}
+                                />
+                            </div>
+                            {progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}
+                        </div>
+                    </div>
+
+                    <div className="flex flex-col gap-1 items-center justify-center">
+                        <label className="block text-900 font-medium text-[16px] md:text-lg mb-1 md:mb-2">{translations.courseDescription}</label>
+                        <div className="w-full flex gap-2 justify-center items-center">
+                            <InputTextarea
+                                // autoResize
+                                value={editMode ? editingLesson.description || '' : courseValue.description}
+                                disabled={progressSpinner === true ? true : false}
+                                rows={3}
+                                cols={30}
+                                className="w-[300px] sm:w-full h-[100px]"
+                                onChange={(e) => {
+                                    editMode
+                                        ? setEditingLesson((prev) => ({
+                                              ...prev,
+                                              description: e.target.value
+                                          }))
+                                        : setCourseValue((prev) => ({
+                                              ...prev,
+                                              description: e.target.value
+                                          }));
+                                }}
+                            />
+                            {progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}
+                        </div>
+                    </div>
+
+                    <div className={imagestateStyle}>
+                        <div className="w-1/2 order-2 sm:order-1 max-h-[170px] max-w-[300px] overflow-hidden flex justify-center items-center">
+                            {typeof imageState === 'string' ? (
+                                <img className="w-full object-cover" src={imageState} alt={translations.photo} />
+                            ) : editingLesson.image ? (
+                                <img className="w-full object-cover" src={typeof editingLesson.image === 'string' ? editingLesson.image : ''} alt={translations.photo} />
+                            ) : (
+                                ''
+                            )}
+                        </div>
+                        <div className={`flex flex-col pag-1 order-1 sm:order-2 items-center justify-center ${imageState && 'w-1/2'}`}>
+                            <label className="block text-900 font-medium text-[16px] md:text-lg mb-1 md:mb-2">{translations.addPhoto}</label>
+                            <FileUpload
+                                ref={fileUploadRef}
+                                mode="basic"
+                                chooseLabel={translations.photo}
+                                style={{ fontSize: '12px', textWrap: 'wrap' }}
+                                className="max-w-[200px]"
+                                customUpload
+                                name="demo[]"
+                                accept="image/*"
+                                maxFileSize={1000000}
+                                onSelect={onSelect}
+                            />
+                            {courseValue.image || editingLesson.image ? (
+                                <div className="mt-2 text-sm text-gray-700">
+                                    {typeof editingLesson.image === 'string' && (
+                                        <>
+                                            <b className="text-[12px] text-center w-[300px]">{imageTitle}</b>
+                                        </>
+                                    )}
+                                </div>
+                            ) : (
+                                <b className="text-[12px] text-red-500">jpeg, png, jpg</b>
+                            )}
+                            <div className="flex items-center gap-1">{(editingLesson.image || imageState) && <Button icon={'pi pi-trash'} className="trash-button" onClick={clearFile} />}</div>
+                        </div>
+                    </div>
+                </div>
+            </FormModal>
+
+            {/* open status window */}
+            <Dialog
+                header={translations.courseStatus}
+                visible={audenceTypeVisible}
+                className="w-[90%] sm:w-[400px]"
+                onHide={() => {
+                    if (!audenceTypeVisible) return;
+                    setAudenceTypeVisible(false);
+                }}
+            >
+                {' '}
+                <div className="flex flex-col gap-1">
                     {skeleton ? (
                         <GroupSkeleton count={1} size={{ width: '100%', height: '5rem' }} />
                     ) : (

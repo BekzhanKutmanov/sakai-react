@@ -21,8 +21,10 @@ import { confirmDialog } from 'primereact/confirmdialog';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
 import React, { useContext, useEffect, useRef, useState } from 'react';
+import { useLocalization } from '@/layout/context/localizationcontext';
 
 export default function LessonStep() {
+    const { translations } = useLocalization();
     const param = useParams();
     const course_id = param.course_Id;
     const scrollRef = useRef<HTMLDivElement>(null);
@@ -436,9 +438,9 @@ export default function LessonStep() {
                     {lessonInfoState?.title}
                 </h2>
                 {lessonInfoState?.from && lessonInfoState?.to && (
-                    <div className="w-full flex justify-center sm:justify-start gap-1 items-center text-[12px]" title="Этот урок будет доступен до определённой даты. После окончания срока доступ к материалам будет закрыт">
+                    <div className="w-full flex justify-center sm:justify-start gap-1 items-center text-[12px]" title={translations.lessonAvailability}>
                         <div className="flex gap-1 items-center p-1 bg-[var(--borderBottomColor)] rounded text-black">
-                            <span>Доступен с:</span>
+                            <span>{translations.availableFrom}</span>
                             {lessonInfoState?.from}
                             <span>-</span>
                             {lessonInfoState?.to}
@@ -447,7 +449,7 @@ export default function LessonStep() {
                 )}
                 {media && contextThemes && contextThemes?.max_sum_score ? (
                     <div className="flex justify-center gap-1 items-center">
-                        <span className="text-sm">Балл за курс</span>
+                        <span className="text-sm">{translations.courseScore}</span>
                         <b className="font-semibold">{contextThemes?.max_sum_score}</b>
                     </div>
                 ) : (
@@ -480,7 +482,7 @@ export default function LessonStep() {
                 <span className="flex gap-1 items-center">
                     <span className="text-[13px] sm:text-sm">{idx + 1} </span>
                     {item?.type?.name === 'practical' || item?.type?.name === 'test' ? (
-                        <span title={`${item.score} балл`} className="text-[11px]">
+                        <span title={`${item.score} ${translations.scoreUnit}`} className="text-[11px]">
                             ({item.score})
                         </span>
                     ) : (
@@ -515,7 +517,7 @@ export default function LessonStep() {
     if (themeNull) {
         return (
             <div>
-                <NotFound titleMessage="Темы отсутствуют" />
+                <NotFound titleMessage={translations.noThemes} />
             </div>
         );
     }
@@ -524,7 +526,7 @@ export default function LessonStep() {
         <div className="main-bg">
             {/* modal sectoin */}
             <Dialog
-                header={'Выберите тип шага'}
+                header={translations.selectStepType}
                 visible={formVisible}
                 className="w-[90%] sm:w-[400px]"
                 onHide={() => {
@@ -534,7 +536,7 @@ export default function LessonStep() {
             >
                 <div className="flex flex-col gap-1">
                     <div className="flex flex-col">
-                        <span>Позиция:</span>
+                        <span>{translations.position}</span>
                         <InputText
                             type="number"
                             placeholder={lastStep ? String(lastStep + 1) : ''}
@@ -593,30 +595,29 @@ export default function LessonStep() {
                                         onClick={() => {
                                             setToggleDocGenerate(false);
                                         }}
-                                    ></b>
-                                    <div className="flex items-center gap-1">
-                                        <b>Выберите свой документ в формате Word — из его содержания будет автоматически создан тест.</b>
-                                    </div>
-                                </div>
-                            </div>
-                        ) : toggleDragSteps ? (
-                            <div className="flex flex-col gap-2 items-start">
-                                <div className="flex flex-col gap-2">
-                                    <div className="flex flex-col sm:flex-row gap-2 items-start sm:items-center ">
-                                        <b className="pi pi-times cursor-pointer sm:text-xl text-[var(--mainColor)]" onClick={() => setToggleDragSteps(false)}></b>
-                                        <div className="flex items-center gap-1">
-                                            <b className="">Тест генерируется искусственным интеллектом</b>
-                                            <i className="pi pi-microchip-ai text-xl"></i>
-                                        </div>
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                        <span className="text-sm text-black">
-                                            Варианты тестов будут более продуманными если передать ваш документ <span className="opacity-60 text-[13px]">(необязательно)</span>
-                                        </span>
-                                        {/* <span className="text-[13px]">Кол-о документов: {documentSteps?.length || 0}</span> */}
-                                    </div>
-                                </div>
-                                {documentSteps?.length > 0 && (
+                                                                         ></b>
+                                                                         <div className="flex items-center gap-1">
+                                                                             <b>{translations.wordTestGeneration}</b>
+                                                                         </div>
+                                                                     </div>
+                                                                 </div>
+                                                             ) : toggleDragSteps ? (
+                                                                 <div className="flex flex-col gap-2 items-start">
+                                                                     <div className="flex flex-col gap-2">
+                                                                         <div className="flex flex-col sm:flex-row gap-2 items-start sm:items-center ">
+                                                                             <b className="pi pi-times cursor-pointer sm:text-xl text-[var(--mainColor)]" onClick={() => setToggleDragSteps(false)}></b>
+                                                                             <div className="flex items-center gap-1">
+                                                                                 <b className="">{translations.aiTestGeneration}</b>
+                                                                                 <i className="pi pi-microchip-ai text-xl"></i>
+                                                                             </div>
+                                                                         </div>
+                                                                         <div className="flex items-center gap-2">
+                                                                             <span className="text-sm text-black">
+                                                                                 {translations.testVariantsHint} <span className="opacity-60 text-[13px]">{translations.optional}</span>
+                                                                             </span>
+                                                                             {/* <span className="text-[13px]">Кол-о документов: {documentSteps?.length || 0}</span> */}
+                                                                         </div>
+                                                                     </div>                                {documentSteps?.length > 0 && (
                                     <div ref={scrollRef} className={`flex gap-2 max-w-[550px] sm:max-w-[800px] overflow-x-auto scrollbar-thin ${media ? (steps.length >= 6 ? 'right-shadow' : '') : steps.length >= 12 ? 'right-shadow' : ''}`}>
                                         {documentSteps?.map((item, idx) => {
                                             return (
@@ -663,14 +664,14 @@ export default function LessonStep() {
 
             {hasSteps && (
                 <div>
-                    <NotFound titleMessage="Шаги отсутствует" />
+                    <NotFound titleMessage={translations.noSteps} />
                 </div>
             )}
             {element?.step.type.title && (
                 <div className="shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)] mt-3 pb-1 flex items-center flex-col sm:flex-row gap-1">
                     <span className="sm:text-[18px]">{element?.step.type.title}</span> -
                     <div>
-                        (<b className="mr-1">{element?.step?.step === 0 ? '1' : element?.step?.step}</b> позиция)
+                        (<b className="mr-1">{element?.step?.step === 0 ? '1' : element?.step?.step}</b> {translations.positionUnit})
                     </div>
                 </div>
             )}
@@ -766,7 +767,7 @@ export default function LessonStep() {
             <div className="flex justify-end mt-1">
                 <Button
                     icon={'pi pi-trash'}
-                    label="Удалить шаг"
+                    label={translations.deleteStep}
                     disabled={hasSteps || toggleDragSteps}
                     className="hover:bg-[var(--mainBorder)] transition trash-button"
                     onClick={() => {

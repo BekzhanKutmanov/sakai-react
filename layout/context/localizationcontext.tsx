@@ -96,6 +96,49 @@ const localizationData = {
         create: 'Создать',
         change: 'Изменить',
         view: 'Смотреть',
+
+        // Messages
+        successAdd: 'Успешно добавлен!',
+        errorTitle: 'Ошибка!',
+        addCourseError: 'Не удалось добавить курс',
+        tryAgainLater: 'Повторите позже',
+        addError: 'Ошибка при добавлении!',
+        deleteSuccess: 'Успешно удалено!',
+        deleteError: 'Ошибка при удалении!',
+        updateSuccess: 'Успешно изменено!',
+        updateError: 'Ошибка при изменении!',
+        errorTryAgainLater: 'Ошибка, повторите позже',
+        archiveSuccess: 'Архивирование прошло успешно',
+        
+        // table
+        numberSign: '#',
+        publication: 'Публикация',
+        score: 'Балл',
+
+        // buttons
+        archive: 'Архивировать',
+        addPhoto: 'Добавить фото',
+        photo: 'Фото',
+        
+        // others
+        status: 'Статус',
+        connected: 'Связан',
+
+        // lesson page
+        lessonAvailability: 'Этот урок будет доступен до определённой даты. После окончания срока доступ к материалам будет закрыт',
+        availableFrom: 'Доступен с:',
+        courseScore: 'Балл за курс',
+        scoreUnit: 'балл',
+        noThemes: 'Темы отсутствуют',
+        selectStepType: 'Выберите тип шага',
+        position: 'Позиция',
+        wordTestGeneration: 'Выберите свой документ в формате Word — из его содержания будет автоматически создан тест.',
+        aiTestGeneration: 'Тест генерируется искусственным интеллектом',
+        testVariantsHint: 'Варианты тестов будут более продуманными если передать ваш документ',
+        optional: '(необязательно)',
+        noSteps: 'Шаги отсутствует',
+        positionUnit: 'позиция',
+        deleteStep: 'Удалить шаг',
         
     },
     ky: {
@@ -191,6 +234,49 @@ const localizationData = {
         create: 'Түзүү',
         change: 'Өзгөртүү',
         view: 'Көрүү',
+
+        // Messages
+        successAdd: 'Успешно добавлен!',
+        errorTitle: 'Ошибка!',
+        addCourseError: 'Не удалось добавить курс',
+        tryAgainLater: 'Повторите позже',
+        addError: 'Ошибка при добавлении!',
+        deleteSuccess: 'Успешно удалено!',
+        deleteError: 'Ошибка при удалении!',
+        updateSuccess: 'Успешно изменено!',
+        updateError: 'Ошибка при изменении!',
+        errorTryAgainLater: 'Ошибка, повторите позже',
+        archiveSuccess: 'Архивирование прошло успешно',
+        
+        // table
+        numberSign: '#',
+        publication: 'Публикация',
+        score: 'Балл',
+
+        // buttons
+        archive: 'Архивировать',
+        addPhoto: 'Добавить фото',
+        photo: 'Фото',
+        
+        // others
+        status: 'Статус',
+        connected: 'Связан',
+
+        // lesson page
+        lessonAvailability: 'Этот урок будет доступен до определённой даты. После окончания срока доступ к материалам будет закрыт',
+        availableFrom: 'Доступен с:',
+        courseScore: 'Балл за курс',
+        scoreUnit: 'балл',
+        noThemes: 'Темы отсутствуют',
+        selectStepType: 'Выберите тип шага',
+        position: 'Позиция',
+        wordTestGeneration: 'Выберите свой документ в формате Word — из его содержания будет автоматически создан тест.',
+        aiTestGeneration: 'Тест генерируется искусственным интеллектом',
+        testVariantsHint: 'Варианты тестов будут более продуманными если передать ваш документ',
+        optional: '(необязательно)',
+        noSteps: 'Шаги отсутствует',
+        positionUnit: 'позиция',
+        deleteStep: 'Удалить шаг',
     }
 };
 
