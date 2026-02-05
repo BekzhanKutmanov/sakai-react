@@ -43,6 +43,7 @@ export default function StudentsPage() {
     });
     const [pageState, setPageState] = useState<number>(Number(page));
     const [search, setSearch] = useState<string>('');
+    const [skeleton, setSkeleton] = useState<boolean>(false);
     const [progressSpinner, setProgressSpinner] = useState(false);
     const [searchController, setSearchController] = useState(false);
     const [empty, setEmpty] = useState(false);
@@ -81,8 +82,9 @@ export default function StudentsPage() {
     const handleFetchReductor = async (page: number = pageState, search: string, specialityId: number | null) => {
         setLoading(true);
         setError(null);
-        const data = await fethcReductor(page, search, specialityId);
+        setSkeleton(true);
 
+        const data = await fethcReductor(page, search, specialityId);
         if (data && data?.current_page) {
             setPagination({
                 currentPage: data?.current_page,
