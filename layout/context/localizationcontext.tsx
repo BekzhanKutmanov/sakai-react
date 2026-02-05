@@ -1,9 +1,11 @@
-"use client";
+'use client';
 import React, { useState, createContext, useContext, useEffect } from 'react';
 
 // IMPORTANT: The Kyrgyz translations are machine-translated and should be reviewed by a native speaker.
 const localizationData = {
     ru: {
+        oshSU: 'ОшГУ',
+
         // General
         search: 'Поиск',
         profile: 'Профиль',
@@ -30,14 +32,21 @@ const localizationData = {
         yes: 'Да',
         no: 'Нет',
         confirmation: 'Подтверждение',
-        
+
+        // Home
+        convenientOnlineLearningSpace: 'Удобное онлайн-пространство для обучения',
+        welcomeToDistanceLearningPortal: 'Добро пожаловать на портал дистанционного обучения!',
+        weUniteUniversityProjects: 'Мы объединяем проекты университета в сфере онлайн-образования:',
+        openOnlineHome: 'Открытые онлайн-курсы',
+        higherEducationPrograms: 'Программы высшего образования',
+
         // AppTopbar
         oldMooc: 'Старый Mooc',
         digitalCampusOshSU: 'Цифровой кампус ОшГУ',
         login: 'Вход',
         exit: 'Выход',
         notification: 'Уведомление',
-        
+
         // AppMenu
         mainPage: 'Главная страница',
         controlPanel: 'Панель управления',
@@ -54,7 +63,7 @@ const localizationData = {
         teacherCheck: 'Проверка преподавателей',
         department: 'Департамент',
         themes: 'Темы',
-        
+
         // Calendar
         firstDayOfWeek: 'Понедельник',
         dayNames: ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'],
@@ -64,7 +73,7 @@ const localizationData = {
         monthNamesShort: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'],
         today: 'Сегодня',
         clear: 'Очистить',
-        
+
         // Course page
         addCourse: 'Добавить курс',
         courseName: 'Название курса',
@@ -90,7 +99,7 @@ const localizationData = {
         reset: 'Сбросить',
         noCourses: 'Курсы отсутствуют',
         addStream: 'Добавить поток',
-        
+
         // Roles page
         active: 'Активные',
         create: 'Создать',
@@ -109,7 +118,7 @@ const localizationData = {
         updateError: 'Ошибка при изменении!',
         errorTryAgainLater: 'Ошибка, повторите позже',
         archiveSuccess: 'Архивирование прошло успешно',
-        
+
         // table
         numberSign: '#',
         publication: 'Публикация',
@@ -119,7 +128,9 @@ const localizationData = {
         archive: 'Архивировать',
         addPhoto: 'Добавить фото',
         photo: 'Фото',
-        
+        teacherBtn: 'Преподаватель',
+        studentBtn: 'Студент',
+
         // others
         status: 'Статус',
         connected: 'Связан',
@@ -139,9 +150,33 @@ const localizationData = {
         noSteps: 'Шаги отсутствует',
         positionUnit: 'позиция',
         deleteStep: 'Удалить шаг',
-        
+        trainingPlan: 'План обучения',
+        cancellationOfWorks: 'Аннулирование работ',
+        addAdditionally: 'Дополнительно',
+        lessonsAvailableUntilDate: 'Уроки будут доступны только до указанного срока',
+        start: 'Начало',
+        end: 'Конец',
+        title: 'Название',
+        totalPointsForCourse: 'Всего баллов за курс',
+        weekHeader: 'Нд',
+
+        // counterbanner
+        coursesAndVideoLessons: 'Курсы и видеоуроки',
+        registeredStudents: 'Зарегистрированные студенты',
+        teachers: 'Преподаватели',
+        satisfactionLevel: 'Уровень удовлетворённости',
+
+        // openCourses
+        newCourses: 'Новые курсы',
+        popularCourses: 'Популярные курсы',
+        recommendedByDepartment: 'Рекомендованные департаментом',
+        allOpenCourses: 'Все открытые курсы',
+        dataNotAvailable: 'Данные недоступны',
+        videoTourMainBuilding: 'Видеоэкскурсия по главному зданию',
     },
     ky: {
+        oshSU: 'ОшМУ',
+
         // General
         search: 'Издөө',
         profile: 'Профиль',
@@ -168,14 +203,21 @@ const localizationData = {
         yes: 'Ооба',
         no: 'Жок',
         confirmation: 'Ырастоо',
-        
+
+        // Home
+        convenientOnlineLearningSpace: 'Окуу үчүн ыңгайлуу онлайн мейкиндик',
+        welcomeToDistanceLearningPortal: 'Аралыктан окутуу порталына кош келиңиз!',
+        weUniteUniversityProjects: 'Биз университеттин онлайн-билим берүү багытындагы долбоорлорун бириктиребиз:',
+        openOnlineHome: 'Ачык онлайн курстар',
+        higherEducationPrograms: 'Жогорку билим программалары',
+
         // AppTopbar
         oldMooc: 'Эски Mooc',
         digitalCampusOshSU: 'ОшМУнун санариптик кампусу',
         login: 'Кирүү',
         exit: 'Чыгуу',
         notification: 'Билдирүү',
-        
+
         // AppMenu
         mainPage: 'Башкы бет',
         controlPanel: 'Башкаруу панели',
@@ -202,7 +244,7 @@ const localizationData = {
         monthNamesShort: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'],
         today: 'Бүгүн',
         clear: 'Тазалоо',
-        
+
         // Course page
         addCourse: 'Курс кошуу',
         courseName: 'Курстун аталышы',
@@ -228,7 +270,7 @@ const localizationData = {
         reset: 'Тазалоо',
         noCourses: 'Курстар жок',
         addStream: 'Агым кошуу',
-        
+
         // Roles page
         active: 'Активдүүлөр',
         create: 'Түзүү',
@@ -247,17 +289,19 @@ const localizationData = {
         updateError: 'Ошибка при изменении!',
         errorTryAgainLater: 'Ошибка, повторите позже',
         archiveSuccess: 'Архивирование прошло успешно',
-        
+
         // table
         numberSign: '#',
         publication: 'Публикация',
         score: 'Балл',
 
         // buttons
-        archive: 'Архивировать',
-        addPhoto: 'Добавить фото',
+        archive: 'Архивдөө',
+        addPhoto: 'Сүрөт кошуу',
         photo: 'Фото',
-        
+        teacherBtn: 'Окутуучу',
+        studentBtn: 'Студент',
+
         // others
         status: 'Статус',
         connected: 'Связан',
@@ -276,8 +320,31 @@ const localizationData = {
         optional: '(необязательно)',
         noSteps: 'Шаги отсутствует',
         positionUnit: 'позиция',
-        deleteStep: 'Удалить шаг',
-    }
+        deleteStep: 'Өчүрүү',
+        trainingPlan: 'Окуу планы',
+        cancellationOfWorks: 'Жумуштарды жокко чыгаруу',
+        addAdditionally: 'Кошумча',
+        lessonsAvailableUntilDate: 'Сабактар белгиленген күнгө чейин гана жеткиликтүү болот',
+        start: 'Башталышы',
+        end: 'Аягы',
+        title: 'Аталышы',
+        totalPointsForCourse: 'Курс үчүн жалпы баллдар',
+        weekHeader: 'Ап',
+
+        // counterbanner
+        coursesAndVideoLessons: 'Курстар жана видео сабактар',
+        registeredStudents: 'Катталган студенттер',
+        teachers: 'Окутуучулар',
+        satisfactionLevel: 'Канааттануу деңгээли',
+  
+        // open courses
+        newCourses: 'Жаңы курстар',
+        popularCourses: 'Популярдуу курстар',
+        recommendedByDepartment: 'Департамент тарабынан сунушталган',
+        allOpenCourses: 'Бардык ачык курстар',
+        dataNotAvailable: 'Маалымат жеткиликтүү эмес',
+        videoTourMainBuilding: 'Башкы корпус боюнча видеоэкскурсия',
+    },
 };
 
 type Language = 'ru' | 'ky';
@@ -307,11 +374,7 @@ export const LocalizationProvider = ({ children }: { children: React.ReactNode }
 
     const translations = localizationData[language];
 
-    return (
-        <LocalizationContext.Provider value={{ language, translations, setLanguage: handleSetLanguage }}>
-            {children}
-        </LocalizationContext.Provider>
-    );
+    return <LocalizationContext.Provider value={{ language, translations, setLanguage: handleSetLanguage }}>{children}</LocalizationContext.Provider>;
 };
 
 export const useLocalization = () => {

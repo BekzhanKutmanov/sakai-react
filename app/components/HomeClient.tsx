@@ -20,11 +20,13 @@ import GroupSkeleton from './skeleton/GroupSkeleton';
 import { Sidebar } from 'primereact/sidebar';
 import OpenCourseShowCard from './cards/OpenCourseShowCard';
 import { CourseCategoryOption } from '@/types/openCourse/CourseCategoryOption';
+import { useLocalization } from '@/layout/context/localizationcontext';
 
 export default function HomeClient() {
     // types 
 
     const params = new URLSearchParams();
+    const { translations } = useLocalization();
     const { user, setGlobalLoading, setMessage } = useContext(LayoutContext);
     const showError = useErrorMessage();
 
@@ -287,26 +289,25 @@ export default function HomeClient() {
                                         className="hidden lg:block absolute top-[-100px] left-[-10px] animateContent"
                                     />
                                     <span className="w-full text-center" data-aos="fade-up" data-aos-delay="900" data-aos-duration="1000" data-aos-once="true">
-                                        УДОБНОЕ ОНЛАЙН-ПРОСТРАНСТВО ДЛЯ ОБУЧЕНИЯ
+                                        {translations.convenientOnlineLearningSpace}
                                     </span>
                                 </div>
                                 <h2 data-aos="fade-down" data-aos-delay="900" data-aos-duration="1000" data-aos-once="true" className="text-center text-[30px] sm:text-[50px]">
-                                    Добро пожаловать на портал дистанционного обучения!
+                                    {translations.welcomeToDistanceLearningPortal}
                                 </h2>
                                 <div data-aos="fade-up" data-aos-delay="900" data-aos-duration="1000" data-aos-once="true" className="text-center text-[var(--titleColor)]">
-                                    {' '}
-                                    Мы объединяем проекты университета в сфере онлайн-образования:
+                                    {translations.weUniteUniversityProjects}
                                     <ul className="list-disc m-auto my-4 max-w-[300px] flex flex-col items-start">
-                                        <li>открытые онлайн-курсы</li>
-                                        <li>программы высшего образования</li>
+                                        <li>{translations.openOnlineHome}</li>
+                                        <li>{translations.higherEducationPrograms}</li>
                                     </ul>
                                     {user ? (
                                         <Link href={user.is_working ? '/course' : user.is_student ? '/teaching' : ''}>
-                                            <FancyLinkBtn btnWidth={'200px'} backround={'--mainColor'} effectBg={'--titleColor'} title={user.is_working ? 'Преподаватель' : user.is_student ? 'Студент' : ''} btnType={false} />
+                                            <FancyLinkBtn btnWidth={'200px'} backround={'--mainColor'} effectBg={'--titleColor'} title={user.is_working ? translations.teacherBtn : user.is_student ? translations.studentBtn : ''} btnType={false} />
                                         </Link>
                                     ) : media ? (
                                         <Link href={'/auth/login'}>
-                                            <FancyLinkBtn btnWidth={'200px'} backround={'--mainColor'} effectBg={'--titleColor'} title={'Вход'} btnType={false} />
+                                            <FancyLinkBtn btnWidth={'200px'} backround={'--mainColor'} effectBg={'--titleColor'} title={translations.login} btnType={false} />
                                         </Link>
                                     ) : (
                                         ''
@@ -334,7 +335,7 @@ export default function HomeClient() {
                             </div>
                         ) : (
                             <div className="m-auto">
-                                <h3 className="text-lg sm:text-xl text-center mb-4 font-bold">Новые курсы</h3>
+                                <h3 className="text-lg sm:text-xl text-center mb-4 font-bold">{translations.newCourses}</h3>
                                 <div className="w-full flex flex-wrap justify-center gap-4 mt-5 sm:m-0">
                                     {newCourses?.map((item, idx) => {
                                         return <OpenCourse key={item?.id} course={item} index={idx} />;
@@ -357,7 +358,7 @@ export default function HomeClient() {
                             </div>
                         ) : (
                             <div className="">
-                                <h3 className="text-lg sm:text-xl text-center mb-4 font-bold">Популярные курсы</h3>
+                                <h3 className="text-lg sm:text-xl text-center mb-4 font-bold">{translations.popularCourses}</h3>
                                 <div className="w-full flex flex-wrap justify-center gap-4 mt-5 sm:m-0">
                                     {popularCourses?.map((item, idx) => {
                                         return <OpenCourse key={item?.id} course={item} index={idx} />;
@@ -380,7 +381,7 @@ export default function HomeClient() {
                             </div>
                         ) : (
                             <div className="">
-                                <h3 className="text-lg sm:text-xl text-center mb-4 font-bold">Рекомендованные департаментом</h3>
+                                <h3 className="text-lg sm:text-xl text-center mb-4 font-bold">{translations.recommendedByDepartment}</h3>
                                 <div className="w-full flex flex-wrap justify-center gap-4 mt-5 sm:m-0">
                                     {bestCourses?.map((item, idx) => {
                                         return <OpenCourse key={item?.id} course={item} index={idx} />;
@@ -393,7 +394,7 @@ export default function HomeClient() {
                     )}
 
                     {newCourses?.length || bestCourses?.length || popularCourses?.length ? <Link href={'/openCourse'} className='cursor-pointer flex gap-1 items-center justify-end font-[italic] text-[var(--mainColor)]'>
-                        <span className='underline'>Все открытые курсы</span>
+                        <span className='underline'>{translations.allOpenCourses}</span>
                         <i className='pi pi-arrow-right text-sm font-[italic]'></i>
                     </Link> : ''}
                 </div>
@@ -404,14 +405,14 @@ export default function HomeClient() {
                     ) : courseDetail ? (
                         <OpenCourseShowCard course={courseDetail} courseSignup={сourseSignup} signUpList={signUpList} btnDisabled={false} />
                     ) : (
-                        <b className="flex justify-center">Данные не доступны</b>
+                        <b className="flex justify-center">{translations.dataNotAvailable}</b>
                     )}
                 </Sidebar>
 
                 {/* Oshgu Video */}
                 <div>
                     <h2 className="text-[22px] p-4 text-center">
-                        Видеоэкскурсия по главному зданию <span className="text-[var(--mainColor)]">ОшГУ</span>
+                        {translations.videoTourMainBuilding} <span className="text-[var(--mainColor)]">{translations.oshSU}</span>
                     </h2>
                 </div>
                 <VideoPlay />

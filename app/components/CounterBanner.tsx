@@ -3,8 +3,11 @@ import { faCircle, faChalkboard, faUserGraduate, faBookOpen, faShieldHeart } fro
 import MyFontAwesome from './MyFontAwesome';
 import CountUp from 'react-countup';
 import { MainPageStatistics } from '@/types/main/MainPageStatistic';
+import { useLocalization } from '@/layout/context/localizationcontext';
 
 export default function CounterBanner({statisticValue}: {statisticValue: MainPageStatistics | null}) {
+    const { translations } = useLocalization();
+    
     const [statistics, setStatistics] = useState<MainPageStatistics | null>(null);
 
     useEffect(()=> {
@@ -25,7 +28,7 @@ export default function CounterBanner({statisticValue}: {statisticValue: MainPag
                 </div>
                 <div className='flex flex-col'>
                     <div className='text-[22px] sm:text-[30px]'><CountUp start={0} end={statistics?.course || 0 } duration={4} /><span>+</span></div>
-                    <span className='text-[12px] lg:text-[14px]'>Курсы & видео уроки</span>
+                    <span className='text-[12px] lg:text-[14px]'>{translations.coursesAndVideoLessons}</span>
                 </div>
             </div>
 
@@ -36,7 +39,7 @@ export default function CounterBanner({statisticValue}: {statisticValue: MainPag
                 </div>
                 <div className='flex flex-col'>
                     <div className='text-[22px] lg:text-[26px]'><CountUp start={0} end={statistics?.students || 0 } duration={4} /><span>+</span></div>
-                    <span className='text-[12px] lg:text-[14px]'>Зарегистрированные студенты</span>
+                    <span className='text-[12px] lg:text-[14px]'>{translations.registeredStudents}</span>
                 </div>
             </div>
 
@@ -47,7 +50,7 @@ export default function CounterBanner({statisticValue}: {statisticValue: MainPag
                 </div>
                 <div className='flex flex-col'>
                     <div className='text-[22px] lg:text-[26px]'><CountUp start={0} end={statistics?.workers || 0 } duration={4} /><span>+</span></div>
-                    <span className='text-[12px] lg:text-[14px]'>Преподаватели</span>
+                    <span className='text-[12px] lg:text-[14px]'>{translations.teachers}</span>
                 </div>
             </div>
 
@@ -58,7 +61,7 @@ export default function CounterBanner({statisticValue}: {statisticValue: MainPag
                 </div>
                 <div className='flex flex-col'>
                     <div className='text-[22px] lg:text-[26px]'><CountUp start={0} end={100} duration={4} /><span>%</span></div>
-                    <span className='text-[12px] lg:text-[14px]'>Уровень удовлетворённости</span>
+                    <span className='text-[12px] lg:text-[14px]'>{translations.satisfactionLevel}</span>
                 </div>
             </div>
             </div>

@@ -104,7 +104,7 @@ const AppMenu = () => {
         today: translations.today,
         clear: translations.clear,
         dateFormat: 'dd.mm.yy', // Your preferred format
-        weekHeader: 'Нд'
+        weekHeader: translations.weekHeader
     };
 
     addLocale('ru', ruLocale);
@@ -119,7 +119,7 @@ const AppMenu = () => {
                       to: '/course'
                   },
                   {
-                      label: 'Темы',
+                      label: translations.themes,
                       icon: 'pi pi-fw pi-calendar-clock',
                       items: courseList?.length > 0 ? courseList : []
                   }
@@ -236,7 +236,7 @@ const AppMenu = () => {
                   icon: 'pi pi-th-large',
                   to: '/studentHome'
               },
-              { label: 'План обучения', icon: 'pi pi-fw pi-calendar-clock', to: '/teaching' },
+              { label: translations.trainingPlan, icon: 'pi pi-fw pi-calendar-clock', to: '/teaching' },
               {
                   label: translations.openOnlineCourses,
                   icon: 'pi pi-fw pi-globe',
@@ -520,7 +520,7 @@ const AppMenu = () => {
 
                 const forReduct = forRole.find((item) => item.id === 3);
                 if (forReduct && forReduct?.read) {
-                    setTestRole({ label: 'Аннулирование работ', icon: 'pi pi-users', to: '/roles/students/1', profilact: '' });
+                    setTestRole({ label: translations.cancellationOfWorks, icon: 'pi pi-users', to: '/roles/students/1', profilact: '' });
                 }
             }
         }
@@ -532,7 +532,7 @@ const AppMenu = () => {
                 label: `${idx + 1}. ${item.title}`,
                 id: item.id,
                 to: `/course/${course_Id}/${item.id}`,
-                score: `Балл: ${item.steps_sum_score == null ? 0 : item.steps_sum_score}`,
+                score: `${translations.score}: ${item.steps_sum_score == null ? 0 : item.steps_sum_score}`,
                 onEdit: () => {
                     selectedForEditing(item.id);
                 },
@@ -587,7 +587,7 @@ const AppMenu = () => {
                 <div className="flex flex-col gap-1">
                     <div className="flex flex-col w-full items-center gap-2">
                         <div className="w-full flex flex-col justify-center items-center">
-                            <span>Позиция:</span>
+                            <span>{translations.position}:</span>
                             <InputText
                                 type="number"
                                 value={String(editingLesson?.sequence_number)}
@@ -612,16 +612,16 @@ const AppMenu = () => {
                         </div>
                     </div>
                     <span className="w-[90%] cursor-pointer ml-1 text-[13px] sm:text-sm text-[var(--mainColor)] flex justify-end" onClick={() => setAdditional((prev) => !prev)}>
-                        Дополнительно {additional ? '-' : '+'}
+                        {translations.addAdditionally} {additional ? '-' : '+'}
                     </span>
                     {additional && (
                         <>
-                            <p className="text-sm sm:text-[16px] py-2 text-center">Уроки будут доступны только до указанного срока</p>
+                            <p className="text-sm sm:text-[16px] py-2 text-center">{translations.lessonsAvailableUntilDate}</p>
                             <div className="w-full flex flex-col">
                                 <div className="w-full flex flex-col sm:flex-row justify-evenly items-center gap-1">
                                     <div className="flex flex-col items-center">
                                         {/* {editingLesson.from} */}
-                                        <span className="text-sm">Начало</span>
+                                        <span className="text-sm">{translations.start}</span>
                                         <Calendar
                                             value={editingLesson ? editingLesson.from : null}
                                             locale="ru" // Указываем русскую локаль
@@ -634,7 +634,7 @@ const AppMenu = () => {
                                     </div>
                                     <div className="flex flex-col items-center">
                                         {/* {editingLesson.to} */}
-                                        <span className="text-sm">Конец</span>
+                                        <span className="text-sm">{translations.end}</span>
                                         <Calendar
                                             value={editingLesson ? editingLesson.to : null}
                                             locale="ru" // Указываем русскую локаль
@@ -664,7 +664,7 @@ const AppMenu = () => {
             >
                 <div className="flex flex-col w-full items-center gap-2">
                     <div className="w-full flex flex-col justify-center items-center">
-                        <span>Позиция:</span>
+                        <span>{translations.position}:</span>
                         <InputText
                             type="number"
                             // className="w-[50px] sm:w-[70px]"
@@ -675,7 +675,7 @@ const AppMenu = () => {
                         />
                     </div>
                     <div className="w-full flex flex-col gap-1 items-center justify-center">
-                        <span>Название</span>
+                        <span>{translations.title}</span>
                         <InputText
                             type="text"
                             className="w-[90%]"
@@ -688,15 +688,15 @@ const AppMenu = () => {
                         <b style={{ color: 'red', fontSize: '12px' }}>{errors.title?.message}</b>
                     </div>
                     <span className="w-[90%] cursor-pointer ml-1 text-[13px] sm:text-sm text-[var(--mainColor)] flex justify-end" onClick={() => setAdditional((prev) => !prev)}>
-                        Дополнительно {additional ? '-' : '+'}
+                        {translations.addAdditionally} {additional ? '-' : '+'}
                     </span>
                     {additional && (
                         <>
-                            <p className="text-sm sm:text-[16px] py-2 text-center">Уроки будут доступны только до указанного срока</p>
+                            <p className="text-sm sm:text-[16px] py-2 text-center">{translations.lessonsAvailableUntilDate}</p>
                             <div className="w-full flex flex-col">
                                 <div className="w-full flex flex-col sm:flex-row justify-evenly items-center gap-1">
                                     <div className="flex flex-col items-center">
-                                        <span className="text-sm">Начало</span>
+                                        <span className="text-sm">{translations.start}</span>
                                         <Calendar
                                             value={startDeadline}
                                             locale="ru" // Указываем русскую локаль
@@ -706,7 +706,7 @@ const AppMenu = () => {
                                         />
                                     </div>
                                     <div className="flex flex-col items-center">
-                                        <span className="text-sm">Конец</span>
+                                        <span className="text-sm">{translations.end}</span>
                                         <Calendar
                                             value={endDeadline}
                                             locale="ru" // Указываем русскую локаль
@@ -734,7 +734,7 @@ const AppMenu = () => {
                         <Button label={translations.add} icon={'pi pi-plus'} className="cursor-pointer w-full py-2 px-4 rounded-lg transition" onClick={() => setThemeAddVisisble(true)}></Button>
                     </div>
                     <div className="flex justify-center gap-1 items-center">
-                        <b>Всего баллов за курс</b>
+                        <b>{translations.totalPointsForCourse}</b>
                         <span className="text-[var(--mainColor)]">{contextThemes?.max_sum_score}</span>
                     </div>
                 </div>
