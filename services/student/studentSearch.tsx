@@ -50,3 +50,31 @@ export const fetchSpeciality = async (id: number | null) => {
         return err;
     }
 };
+
+// fetch student for cut
+export const fetchStudentCut = async (id_student: number) => {
+    try {
+        const res = await axiosInstance.get(`/v1/reducer/student-task/connections?id_student=${id_student}`);
+        const data = await res.data;
+
+        return data;
+    } catch (err) {
+        console.log('Ошибка загрузки:', err);
+        return err;
+    }
+};
+
+// cut
+export const cutStudentConnect = async (id_student: number) => {
+    const payload = {};
+    
+    try {
+        const res = await axiosInstance.post(`/v1/reducer/student-task/connections?id_student=${id_student}`, payload);
+        const data = await res.data;
+
+        return data;
+    } catch (err) {
+        console.log('Ошибка загрузки:', err);
+        return err;
+    }
+};

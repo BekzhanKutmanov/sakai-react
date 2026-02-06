@@ -2,13 +2,11 @@
 import React, { useState, createContext, useEffect } from 'react';
 import { LayoutState, ChildContainerProps, LayoutConfig, LayoutContextProps } from '@/types';
 import SessionManager from '@/app/components/SessionManager';
-import GlobalLoading from '@/app/components/loading/GlobalLoading';
 import Message from '@/app/components/messages/Message';
 import { ConfirmDialog } from 'primereact/confirmdialog';
 import { User } from '@/types/user';
 import { MessageType } from '@/types/messageType';
 import { fetchCourses, fetchThemes } from '@/services/courses';
-import { fetchStudentThemes } from '@/services/studentMain';
 import { myMainCourseType } from '@/types/myMainCourseType';
 import { usePathname } from 'next/navigation';
 import { LastStepVisit } from '@/types/Step/visits/lastStepVisit/LastStepVist';
@@ -165,6 +163,11 @@ export const LayoutProvider = ({ children }: ChildContainerProps) => {
                 ...prev,
                 staticMenuDesktopInactive: false
             }));
+        }
+
+        // Обнуление фильтрации в аннулизрвание студентов
+        if (!pathname.startsWith('/roles/students')) {
+            setContextFilterState(null);
         }
     }, [pathname, departament]);
 

@@ -1,11 +1,7 @@
 'use client';
 
 import React, { useContext, useEffect, useState } from 'react';
-import { DataTable } from 'primereact/datatable';
-import { Column } from 'primereact/column';
 import { ProgressSpinner } from 'primereact/progressspinner';
-import { Button } from 'primereact/button';
-import { Message } from 'primereact/message';
 import 'primereact/resources/themes/lara-light-blue/theme.css';
 import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
@@ -43,7 +39,6 @@ export default function StudentsPage() {
     });
     const [pageState, setPageState] = useState<number>(Number(page));
     const [search, setSearch] = useState<string>('');
-    const [skeleton, setSkeleton] = useState<boolean>(false);
     const [progressSpinner, setProgressSpinner] = useState(false);
     const [searchController, setSearchController] = useState(false);
     const [empty, setEmpty] = useState(false);
@@ -82,8 +77,6 @@ export default function StudentsPage() {
     const handleFetchReductor = async (page: number = pageState, search: string, specialityId: number | null) => {
         setLoading(true);
         setError(null);
-        setSkeleton(true);
-
         const data = await fethcReductor(page, search, specialityId);
         if (data && data?.current_page) {
             setPagination({
@@ -313,65 +306,66 @@ export default function StudentsPage() {
 
     return (
         <div className="bg-white p-4 rounded-2xl shadow-md">
-            {error ? (
-                <div className="mb-4 flex justify-center">
-                    <NotFound titleMessage="Данные не доступны" />
+            <div className="min-h-screen font-sans text-[#1e293b]">
+                {/* Заголовок */}
+                <div className="flex items-center gap-3 mb-4">
+                    <i className="pi pi-users text-white bg-[#2563eb] p-2 text-4xl rounded-lg"></i>
+                    <div>
+                        <h1 className="m-0 mb-1 text-3xl font-bold tracking-tight">Панель редуктора</h1>
+                        <p className="text-slate-500">Управление работами студентов</p>
+                    </div>
                 </div>
-            ) : (
-                <div className="min-h-screen font-sans text-[#1e293b]">
-                    {/* Заголовок */}
-                    <div className="flex items-center gap-3 mb-4">
-                        <i className="pi pi-users text-white bg-[#2563eb] p-2 text-4xl rounded-lg"></i>
-                        <div>
-                            <h1 className="m-0 mb-1 text-3xl font-bold tracking-tight">Панель редуктора</h1>
-                            <p className="text-slate-500">Управление работами студентов</p>
-                        </div>
-                    </div>
 
-                    {/* Блок инструкции */}
-                    {hideInstruction && instructionSection}
+                {/* Блок инструкции */}
+                {hideInstruction && instructionSection}
 
-                    {/* filter */}
-                    <div className="main-bg flex flex-col gap-1 my-1">
-                        <div className=" flex sm:items-center gap-2 flex-col sm:flex-row mb-2">
-                            <div className="sm:max-w-[60%] overflow-hidden flex flex-col items-start gap-2">
-                                <b className="px-1 inline">Выберите факультет</b>
-                                <div className="sm:max-w-[60%] overflow-hidden flex juctify-center items-start">
-                                    <Dropdown value={timeMode} optionLabel="name_ru" options={timeModeOptions} onChange={(e) => setTimeMode(e.value)} placeholder="Выберите факультет" className="text-wrap word-break sm:text-nowrap sm:max-w-full" />
-                                </div>
+                {/* filter */}
+                <div className="main-bg flex flex-col gap-1 my-1">
+                    <div className=" flex sm:items-center gap-2 flex-col sm:flex-row mb-2">
+                        <div className="sm:max-w-[60%] overflow-hidden flex flex-col items-start gap-2">
+                            <b className="px-1 inline">Выберите факультет</b>
+                            <div className="sm:max-w-[60%] overflow-hidden flex juctify-center items-start">
+                                <Dropdown value={timeMode} optionLabel="name_ru" options={timeModeOptions} onChange={(e) => setTimeMode(e.value)} placeholder="Выберите факультет" className="text-wrap word-break sm:text-nowrap sm:max-w-full" />
                             </div>
+                        </div>
 
-                            <div className="sm:max-w-[60%] overflow-hidden flex flex-col gap-2">
-                                <b className="px-1">Выберите специальность</b>
-                                <div className="sm:max-w-[60%] overflow-hidden flex juctify-center items-start">
-                                    <Dropdown
-                                        value={speciality}
-                                        optionLabel="name_ru"
-                                        options={specialityOptions}
-                                        onChange={(e) => {
-                                            setSpecialyty(e.value);
-                                            setContextFilterState((prev: any) => ({
-                                                ...prev,
-                                                speciality_id: e.value?.id ?? null
-                                            }));
-                                        }}
-                                        placeholder="Выберите специальность"
-                                        className={`${!specialityOptions ? 'pointer-events-none opacity-50' : ''} w-full text-sm`}
-                                    />
-                                </div>
+                        <div className="sm:max-w-[60%] overflow-hidden flex flex-col gap-2">
+                            <b className="px-1">Выберите специальность</b>
+                            <div className="sm:max-w-[60%] overflow-hidden flex juctify-center items-start">
+                                <Dropdown
+                                    value={speciality}
+                                    optionLabel="name_ru"
+                                    options={specialityOptions}
+                                    onChange={(e) => {
+                                        setSpecialyty(e.value);
+                                        setContextFilterState((prev: any) => ({
+                                            ...prev,
+                                            speciality_id: e.value?.id ?? null
+                                        }));
+                                    }}
+                                    placeholder="Выберите специальность"
+                                    className={`${!specialityOptions ? 'pointer-events-none opacity-50' : ''} w-full text-sm`}
+                                />
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    {/* Поиск */}
-                    <div className="flex border border-slate-200 rounded-xl py-3 pl-3 items-center gap-3 w-full bg-white mb-4 shadow-sm focus:border-blue-500 focus:ring-blue-500/20 transition-all">
-                        <i className="pi pi-search"></i>
-                        <input value={search} onChange={(e) => setSearch(e.target.value)} type="text" placeholder="Поиск по ФИО" className="w-full pr-4 outline-none" />
+                {/* Поиск */}
+                <div className="relative flex border border-slate-200 rounded-xl py-2 sm:py-3 pl-3 items-center gap-3 w-full bg-white mb-4 shadow-sm focus:border-blue-500 focus:ring-blue-500/20 transition-all">
+                    <i className="pi pi-search text-sm"></i>
+                    <input value={search} onChange={(e) => setSearch(e.target.value)} type="text" placeholder="Поиск по ФИО" className="w-full pr-4 outline-none" />
+                    <div className="absolute right-1">{progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}</div>
+                </div>
+
+                {error ? (
+                    <div className="mb-4 flex justify-center">
+                        <NotFound titleMessage="Данные не доступны" />
                     </div>
-
+                ) : (
                     <EditorPanel />
-                </div>
-            )}
+                )}
+            </div>
         </div>
     );
 }

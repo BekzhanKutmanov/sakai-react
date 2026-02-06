@@ -15,7 +15,8 @@ export default function VideoInstruct() {
     const [videoValues, setVideoValues] = useState([
         { title: 'Видеоинструкция по использованию образовательного портала Mooc', src: 'https://youtu.be/bw7XkQJJR7c?si=oHMueDAL32hA60K5' },
         { title: 'Подтверждение курсов на портале дистанционного обучения для заведующих кафедрами', src: 'https://www.youtube.com/watch?v=dkjm2fTIQm0' },
-        { title: 'Тестовая система ОшГУ. Онлайн-прокторинг', src: 'https://www.youtube.com/watch?v=4sYYaXc8Ywg' }
+        { title: 'Тестовая система ОшГУ. Онлайн-прокторинг', src: 'https://www.youtube.com/watch?v=4sYYaXc8Ywg' },
+        { title: 'Проверка практических работ студентов', src: 'https://www.youtube.com/watch?v=tZnm__h0z14' },
     ]);
 
     const router = useRouter();

@@ -21,7 +21,6 @@ export default function OpenCourseShowCard({ course, courseSignup, signUpList, b
     const [isSigned, setIsSigned] = useState<number | null | undefined>(null);
 
     useEffect(() => {
-        // console.log(signUpList);
         if (signUpList?.length) {
             const signupId: number | undefined = signUpList?.find((id) => id === course?.id);
             setIsSigned(signupId);

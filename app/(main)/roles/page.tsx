@@ -16,7 +16,6 @@ import { InputText } from 'primereact/inputtext';
 import { Paginator } from 'primereact/paginator';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import { useContext, useEffect, useState } from 'react';
-import { set } from 'react-hook-form';
 
 export default function Roles() {
     // types
