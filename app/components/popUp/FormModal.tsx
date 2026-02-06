@@ -1,9 +1,9 @@
-'use client';
+﻿'use client';
 
-import useMediaQuery from '@/hooks/useMediaQuery';
 import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 import { ReactNode, useEffect } from 'react';
+import { useLocalization } from '@/layout/context/localizationcontext';
 
 export default function FormModal({
     children,
@@ -24,11 +24,12 @@ export default function FormModal({
     start: boolean;
     footerValue?: { footerState: boolean; reject: string; next: string };
 }) {
+    const { translations } = useLocalization();
 
     const footerContent = (
         <div>
             <Button
-                label={footerValue?.footerState ? footerValue.reject : 'Назад'}
+                label={footerValue?.footerState ? footerValue.reject : translations.back}
                 className="reject-button"
                 icon="pi pi-times"
                 onClick={() => {
@@ -38,7 +39,7 @@ export default function FormModal({
             />
 
             <Button
-                label={footerValue?.footerState ? footerValue.next : 'Добавить'}
+                label={footerValue?.footerState ? footerValue.next : translations.add}
                 disabled={start}
                 icon="pi pi-check"
                 onClick={() => {
@@ -68,3 +69,4 @@ export default function FormModal({
         </div>
     );
 }
+

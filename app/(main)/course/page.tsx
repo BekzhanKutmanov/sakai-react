@@ -770,6 +770,16 @@ export default function Course() {
                                                 }}
                                             />
                                         </div>
+                                        
+                                        {skeleton ? (
+                                            <div className="flex items-center gap-1 flex-wrap justify-center sm:justify-start">
+                                                <GroupSkeleton count={1} size={{ height: '40px', width: '250px' }} /> <GroupSkeleton count={1} size={{ height: '40px', width: '250px' }} />{' '}
+                                                <GroupSkeleton count={1} size={{ height: '40px', width: '250px' }} />{' '}
+                                            </div>
+                                        ) : (
+                                            courseFiltered()
+                                        )}
+
                                         {/* {skeleton ? <div className='flex items-center gap-1 flex-wrap justify-center sm:justify-start'><GroupSkeleton count={1} size={{height: '40px', width: '250px'}}/> <GroupSkeleton count={1} size={{height: '40px', width: '250px'}}/> <GroupSkeleton count={1} size={{height: '40px', width: '250px'}}/> </div> : courseFiltered()} */}
                                         <DataView
                                             value={coursesValue}

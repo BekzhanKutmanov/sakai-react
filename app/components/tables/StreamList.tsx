@@ -13,6 +13,7 @@ import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { mainStreamsType } from '@/types/mainStreamsType';
 import Link from 'next/link';
+import { useLocalization } from '@/layout/context/localizationcontext';
 
 const StreamList = React.memo(function StreamList({
     callIndex,
@@ -31,6 +32,7 @@ const StreamList = React.memo(function StreamList({
 }) {
     const { setMessage } = useContext(LayoutContext);
     const showError = useErrorMessage();
+    const { translations } = useLocalization();
 
     const [streams, setStreams] = useState<mainStreamsType[]>([]);
     const [hasStreams, setHasStreams] = useState(false);
@@ -241,19 +243,19 @@ const StreamList = React.memo(function StreamList({
                                 <span>{item?.subject_type_name?.name_ru}</span>
                             </div>
                             <div className="flex gap-1 items-center">
-                                <span className="text-[var(--mainColor)]">Язык обучения: </span>
+                                <span className="text-[var(--mainColor)]">{translations.languageOfStudy}: </span>
                                 <span>{item?.language?.name}</span>
                             </div>
                             <div className="flex gap-1 items-center">
-                                <span className="text-[var(--mainColor)]">Год обучения: </span>
+                                <span className="text-[var(--mainColor)]">{translations.studyYear}: </span>
                                 <span className="font-semibold">20{item?.id_edu_year}</span>
                             </div>
                             <div className="flex gap-1 items-center">
-                                <span className="text-[var(--mainColor)]">Период: </span>
+                                <span className="text-[var(--mainColor)]">{translations.period}: </span>
                                 <span>{item?.period.name_ru}</span>
                             </div>
                             <div className="flex gap-1 items-center" title={item?.speciality.name_ru}>
-                                <span className="text-[var(--mainColor)] ">Специальность: </span>
+                                <span className="text-[var(--mainColor)] ">{translations.speciality}: </span>
                                 <span className="max-w-[170px] sm:max-w-[800px] text-nowrap text-ellipsis overflow-hidden">{item?.speciality.name_ru}</span>
                             </div>
                         </div>
@@ -262,7 +264,7 @@ const StreamList = React.memo(function StreamList({
                             <span className="bg-[var(--greenColor)] text-[12px] text-white p-1 rounded">{item?.edu_form?.name_ru}</span>
                             {item.connect_id && (
                                 <Link href={`/students/${courseValue?.id}/${item.connect_id}/${item.stream_id}`} className="underline text-sm">
-                                    Студенты
+                                    {translations.students}
                                 </Link>
                             )}
                         </div>
@@ -287,7 +289,7 @@ const StreamList = React.memo(function StreamList({
         }
         return (
             <div className="flex flex-col gap-2 justify-center items-center m-4">
-                <p className="text-[16px] text-center font-bold">Нет связанных потоков</p>
+                <p className="text-[16px] text-center font-bold">{translations.noLinkedStreams}</p>
             </div>
         );
     };
@@ -295,7 +297,7 @@ const StreamList = React.memo(function StreamList({
     return (
         <>
             <Dialog
-                header={'Потоки'}
+                header={translations.streams}
                 visible={visible}
                 className={`${streams.length < 1 ? '' : 'w-[95%]'}`}
                 onHide={() => {
@@ -306,15 +308,15 @@ const StreamList = React.memo(function StreamList({
             // footer={footerContent}
             >
                 {streams && streams.length > 0 ? (
-                    <DataTable value={streams} className="w-full my-custom-table" loading={skeleton} dataKey="stream_id" emptyMessage="Нет данных" key={JSON.stringify(pendingChanges)} responsiveLayout="stack" breakpoint="960px" rows={5}>
-                        <Column body={(_, { rowIndex }) => rowIndex + 1} header={() => <div className="text-[13px]">#</div>}></Column>
+                    <DataTable value={streams} className="w-full my-custom-table" loading={skeleton} dataKey="stream_id" emptyMessage={translations.noData} key={JSON.stringify(pendingChanges)} responsiveLayout="stack" breakpoint="960px" rows={5}>
+                        <Column body={(_, { rowIndex }) => rowIndex + 1} header={() => <div className="text-[13px]">{translations.numberSign}</div>}></Column>
                         <Column body={(rowIndex) => <span>{rowIndex.stream_id}</span>} header={() => <div className="text-[13px]">ID</div>}></Column>
                         {/* <Column body={imageBodyTemplate}></Column> */}
 
                         <Column
                             className="hover:text-[red]!"
                             field="title"
-                            header={() => <div className="text-[13px]">Название</div>}
+                            header={() => <div className="text-[13px]">{translations.streamName}</div>}
                             body={(rowData) => (
                                 // <p key={rowData.id}></p>
                                 <p key={rowData.id}>{rowData.subject_name.name_ru}</p>
@@ -324,7 +326,7 @@ const StreamList = React.memo(function StreamList({
                         <Column
                             className="hover:text-[red]!"
                             field="title"
-                            header={() => <div className="text-[13px]">Специальность</div>}
+                            header={() => <div className="text-[13px]">{translations.speciality}</div>}
                             body={(rowData) => (
                                 // <p key={rowData.id}></p>
                                 <div className="max-w-[100px] scrollbar-thin overflow-x-scroll">
@@ -333,19 +335,19 @@ const StreamList = React.memo(function StreamList({
                             )}
                         ></Column>
 
-                        <Column header={() => <div>Язык обучения</div>} body={(rowData) => <p key={rowData.id}>{rowData.language.name}</p>}></Column>
+                        <Column header={() => <div>{translations.languageOfStudy}</div>} body={(rowData) => <p key={rowData.id}>{rowData.language.name}</p>}></Column>
 
-                        <Column field="title" header={() => <div className="text-[13px]">Год обучения</div>} body={(rowData) => <p key={rowData.id}>20{rowData.id_edu_year}</p>}></Column>
-                        <Column field="title" header={() => <div className="text-[13px]">Период </div>} body={(rowData) => <p key={rowData.id}>{rowData.period.name_ru}</p>}></Column>
+                        <Column field="title" header={() => <div className="text-[13px]">{translations.studyYear}</div>} body={(rowData) => <p key={rowData.id}>20{rowData.id_edu_year}</p>}></Column>
+                        <Column field="title" header={() => <div className="text-[13px]">{translations.period}</div>} body={(rowData) => <p key={rowData.id}>{rowData.period.name_ru}</p>}></Column>
 
-                        <Column field="title" header={() => <div className="text-[13px]">Семестр</div>} body={(rowData) => <p key={rowData.id}>{rowData.semester.name_ru}</p>}></Column>
+                        <Column field="title" header={() => <div className="text-[13px]">{translations.semester}</div>} body={(rowData) => <p key={rowData.id}>{rowData.semester.name_ru}</p>}></Column>
 
-                        <Column field="title" header={() => <div className="text-[13px]">Форма обучения</div>} body={(rowData) => <p key={rowData.id}>{rowData.edu_form.name_ru}</p>}></Column>
+                        <Column field="title" header={() => <div className="text-[13px]">{translations.studyForm}</div>} body={(rowData) => <p key={rowData.id}>{rowData.edu_form.name_ru}</p>}></Column>
 
-                        <Column field="title" header={() => <div className="text-[13px]">Тип обучения</div>} body={(rowData) => <p key={rowData.id}>{rowData.subject_type_name.short_name_ru}</p>}></Column>
+                        <Column field="title" header={() => <div className="text-[13px]">{translations.studyType}</div>} body={(rowData) => <p key={rowData.id}>{rowData.subject_type_name.short_name_ru}</p>}></Column>
 
                         <Column
-                            header={() => <div className="text-[13px]">Связь к потоку</div>}
+                            header={() => <div className="text-[13px]">{translations.streamConnection}</div>}
                             style={{ margin: '0 3px', textAlign: 'center' }}
                             body={(rowData) => (
                                 <>
@@ -374,7 +376,7 @@ const StreamList = React.memo(function StreamList({
                         ></Column>
                     </DataTable>
                 ) : (
-                    <p className="text-[16px] text-center font-bold">Данные временно не доступны</p>
+                    <p className="text-[16px] text-center font-bold">{translations.dataTemporarilyUnavailable}</p>
                 )}
             </Dialog>
             {callIndex === 1 && (
@@ -394,7 +396,7 @@ const StreamList = React.memo(function StreamList({
                                         {/* </span> */}
                                         <div className="min-w-[110px]">
                                             <Button
-                                                label={emptyCourse ? 'Добавить поток' : 'Потоки'}
+                                                label={emptyCourse ? translations.addStream : translations.streams}
                                                 icon="pi pi-link"
                                                 className="w-full"
                                                 onClick={() => {
@@ -411,14 +413,14 @@ const StreamList = React.memo(function StreamList({
 
                     {hasStreams ? (
                         <>
-                            <p className="text-[16px] text-center font-bold">Потоков пока нет или курс не связан с потоками</p>
+                            <p className="text-[16px] text-center font-bold">{translations.noStreamsOrNotLinked}</p>
                         </>
                     ) : (
                         <div className="flex flex-col gap-2 sm:gap-2">
                             {isMobile && (
                                 <div className="w-full flex flex-col items-center gap-1">
                                     <Button
-                                        label="Добавить"
+                                        label={translations.add}
                                         className="w-full"
                                         icon="pi pi-link"
                                         onClick={() => {
@@ -428,7 +430,7 @@ const StreamList = React.memo(function StreamList({
                                     />
 
                                     <Button
-                                        label="Курсы"
+                                        label={translations.courses}
                                         className="w-full"
                                         icon="pi pi-arrow-left"
                                         onClick={() => {
@@ -444,7 +446,7 @@ const StreamList = React.memo(function StreamList({
                                 ) : (
                                     <>
                                         <div>
-                                            <DataView value={streams} listTemplate={listTemplate} emptyMessage="..." />
+                                            <DataView value={streams} listTemplate={listTemplate} emptyMessage={translations.noData} />
                                         </div>
                                     </>
                                 )}

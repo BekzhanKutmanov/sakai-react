@@ -2,7 +2,7 @@
 import React, { useState, createContext, useContext, useEffect } from 'react';
 
 // IMPORTANT: The Kyrgyz translations are machine-translated and should be reviewed by a native speaker.
-const localizationData = {
+export const localizationData = {
     ru: {
         oshSU: 'ОшГУ',
 
@@ -32,6 +32,8 @@ const localizationData = {
         yes: 'Да',
         no: 'Нет',
         confirmation: 'Подтверждение',
+        deleteHeader: 'Удаление',
+        confirmDeleteMessage: 'Вы действительно хотите удалить?',
 
         // Home
         convenientOnlineLearningSpace: 'Удобное онлайн-пространство для обучения',
@@ -124,6 +126,21 @@ const localizationData = {
         publication: 'Публикация',
         score: 'Балл',
 
+        // Stream list
+        streamName: 'Название',
+        speciality: 'Специальность',
+        languageOfStudy: 'Язык обучения',
+        studyYear: 'Год обучения',
+        period: 'Период',
+        semester: 'Семестр',
+        studyForm: 'Форма обучения',
+        studyType: 'Тип обучения',
+        streamConnection: 'Связь к потоку',
+        students: 'Студенты',
+        noLinkedStreams: 'Нет связанных потоков',
+        dataTemporarilyUnavailable: 'Данные временно недоступны',
+        noStreamsOrNotLinked: 'Потоков пока нет или курс не связан с потоками',
+
         // buttons
         archive: 'Архивировать',
         addPhoto: 'Добавить фото',
@@ -203,6 +220,8 @@ const localizationData = {
         yes: 'Ооба',
         no: 'Жок',
         confirmation: 'Ырастоо',
+        deleteHeader: 'Өчүрүү',
+        confirmDeleteMessage: 'Чын эле өчүргүңүз келеби?',
 
         // Home
         convenientOnlineLearningSpace: 'Окуу үчүн ыңгайлуу онлайн мейкиндик',
@@ -295,6 +314,21 @@ const localizationData = {
         publication: 'Публикация',
         score: 'Балл',
 
+        // Stream list
+        streamName: 'Аталышы',
+        speciality: 'Адистик',
+        languageOfStudy: 'Окуу тили',
+        studyYear: 'Окуу жылы',
+        period: 'Период',
+        semester: 'Семестр',
+        studyForm: 'Окуу формасы',
+        studyType: 'Окуу түрү',
+        streamConnection: 'Агымга байланыш',
+        students: 'Студенттер',
+        noLinkedStreams: 'Байланышкан агымдар жок',
+        dataTemporarilyUnavailable: 'Маалымат убактылуу жеткиликсиз',
+        noStreamsOrNotLinked: 'Азырынча агымдар жок же курс агымдарга байланышкан эмес',
+
         // buttons
         archive: 'Архивдөө',
         addPhoto: 'Сүрөт кошуу',
@@ -347,7 +381,7 @@ const localizationData = {
     },
 };
 
-type Language = 'ru' | 'ky';
+export type Language = 'ru' | 'ky';
 
 interface LocalizationContextType {
     language: Language;
