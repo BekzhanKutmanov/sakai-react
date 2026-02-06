@@ -224,6 +224,22 @@ export default function StudentsPage() {
         </div>
     );
 
+    const facultiItemeTemplate = (option: any) => {
+        return (
+            <div className="w-full flex flex-col">
+                <span className="items-center max-w-[300px] overflow-hidden text-wrap word-break sm:text-nowrap sm:max-w-full text-sm">{option.name_ru}</span>
+            </div>
+        );
+    };
+
+    const specialityItemeTemplate = (option: any) => {
+        return (
+            <div className="w-full flex flex-col">
+                <span className="items-center max-w-[300px] overflow-hidden text-wrap word-break sm:text-nowrap sm:max-w-full text-sm">{option.name_ru}</span>
+            </div>
+        );
+    };
+
     useEffect(() => {
         setProgressSpinner(true);
         if (search?.length === 0 && searchController) {
@@ -325,7 +341,15 @@ export default function StudentsPage() {
                         <div className="sm:max-w-[60%] overflow-hidden flex flex-col items-start gap-2">
                             <b className="px-1 inline">Выберите факультет</b>
                             <div className="sm:max-w-[60%] overflow-hidden flex juctify-center items-start">
-                                <Dropdown value={timeMode} optionLabel="name_ru" options={timeModeOptions} onChange={(e) => setTimeMode(e.value)} placeholder="Выберите факультет" className="text-wrap word-break sm:text-nowrap sm:max-w-full" />
+                                <Dropdown
+                                    value={timeMode}
+                                    optionLabel="name_ru"
+                                    itemTemplate={facultiItemeTemplate}
+                                    options={timeModeOptions}
+                                    onChange={(e) => setTimeMode(e.value)}
+                                    placeholder="Выберите факультет"
+                                    className="text-wrap word-break sm:text-nowrap sm:max-w-full"
+                                />
                             </div>
                         </div>
 
@@ -336,6 +360,7 @@ export default function StudentsPage() {
                                     value={speciality}
                                     optionLabel="name_ru"
                                     options={specialityOptions}
+                                    itemTemplate={specialityItemeTemplate}
                                     onChange={(e) => {
                                         setSpecialyty(e.value);
                                         setContextFilterState((prev: any) => ({

@@ -392,9 +392,9 @@ export default function OpenCourse() {
                             <Button label="Сбросить фильтр" size="small" className="hidden sm:block text-sm p-1" onClick={clearFilter} />
                         </div>
                         <div className="flex items-start flex-col sm:flex-row gap-2">
-                            <div className="flex flex-col gap-2">
+                            <div className="flex flex-col gap-2 max-w-[80%] overflow-x-hidden">
                                 <b className="px-1">Выберите категорию для курса</b>
-                                <div className='max-w-[95%]'>
+                                <div>
                                     <Dropdown value={categorySelectedId} itemTemplate={categoryItemTemplate} valueTemplate={categoryValueTemplate} onChange={(e: DropdownChangeEvent) => {
                                         setCategorySelectedId(e.value);
                                         // setPublicCategoryId(e.value?.id);
