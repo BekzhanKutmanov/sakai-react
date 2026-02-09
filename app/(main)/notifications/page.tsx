@@ -122,13 +122,13 @@ export default function MainNotificatoin() {
                                     {notificate?.meta?.title && (
                                         <>
                                             <span>Причина:</span>
-                                            <div className={`p-2 rounded-sm shadow border-l-4`}>
-                                                <b className="ml-2 text-[13px] sm:text-[14px] text-[var(--mainColor)]">{notificate?.meta?.title}</b>
-                                            </div>
+                                            <ul className={`list-disc p-2 rounded-sm `}>
+                                                <li className="ml-2 text-[13px] sm:text-[14px] text-[var(--mainColor)]">{notificate?.meta?.title}</li>
+                                            </ul>
 
-                                            <div className={`p-2 rounded-sm shadow border-l-4`}>
-                                                <b className="ml-2 text-[13px] sm:text-[14px] text-[var(--mainColor)]">{notificate?.meta?.description}</b>
-                                            </div>
+                                            <ul className={`list-disc p-2 rounded-sm`}>
+                                                <li className="ml-2 text-[13px] sm:text-[14px] text-[var(--mainColor)]">{notificate?.meta?.description}</li>
+                                            </ul>
                                         </>
                                     )}
                                 </div>

@@ -45,7 +45,7 @@ const AppMenu = () => {
         name: string;
         id: number | null;
         active: boolean;
-        read: boolean
+        read: boolean;
     }
 
     interface MyApMenuType {
@@ -246,6 +246,11 @@ const AppMenu = () => {
                   label: translations.myActiveCourses,
                   icon: 'pi pi-play-circle',
                   to: '/openCourse/activeCourse'
+              },
+              {
+                  label: translations.notifications,
+                  icon: 'pi pi-bell',
+                  to: '/notifications'
               }
               //   pathname.startsWith('/teaching/lesson/') ? { label: 'Темы', icon: 'pi pi-fw pi-book', items: themesStudentList?.length > 0 ? themesStudentList : [] } : { label: '' },
           ]
@@ -276,7 +281,7 @@ const AppMenu = () => {
                   zamDekanRole?.label ? zamDekanRole : null,
                   adminRole?.label ? adminRole : null,
                   depRole?.label ? depRole : null,
-                    testRole?.label ? testRole : null,
+                  testRole?.label ? testRole : null,
                   {
                       label: translations.approveCourses,
                       icon: 'pi pi-graduation-cap',
@@ -500,7 +505,7 @@ const AppMenu = () => {
                         name: role.title,
                         id: role.id,
                         active: true,
-                        read: role?.pivot?.read,
+                        read: role?.pivot?.read
                     };
 
                     forRole.push(timeRole);

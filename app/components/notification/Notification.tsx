@@ -55,6 +55,8 @@ export default function Notification({ notification }: { notification: mainNotif
         } else if (user?.is_student) {
             if (item?.type?.type === 'practical') {
                 findPathResult = `/teaching/lessonView/${item?.meta?.lesson_id}/${item?.meta?.id_curricula}/${item?.meta?.stream_id}/${item?.meta?.step_id}`;
+            } else if (item?.type?.type === 'view') {
+                findPathResult = `/notifications`;
             }
         }
         return findPathResult;
@@ -82,7 +84,7 @@ export default function Notification({ notification }: { notification: mainNotif
     useEffect(() => {
         setMainNotification(notification);
     }, [notification]);
-    
+
     // Получаем массив разных типов
     useEffect(() => {
         const typeArr: NotificationGroupUi[] = [];
@@ -107,7 +109,7 @@ export default function Notification({ notification }: { notification: mainNotif
             {groupNotificationVisible ? (
                 <div className="flex items-center gap-1 justify-between p-2">
                     <h3 className="m-0 p-0 font-bold text-[13px] sm:text-[17px]">Список сообщений </h3>
-                    <div className='cursor-pointer flex items-center gap-1 justify-between text-[12px] sm:text-[14px]'>
+                    <div className="cursor-pointer flex items-center gap-1 justify-between text-[12px] sm:text-[14px]">
                         <i
                             className="pi pi-times flex justify-end"
                             style={{ fontSize: '12px' }}
