@@ -1,6 +1,7 @@
 'use client';
 
 import MyDateTime from '@/app/components/MyDateTime';
+import { NotFound } from '@/app/components/NotFound';
 import useErrorMessage from '@/hooks/useErrorMessage';
 import { LayoutContext } from '@/layout/context/layoutcontext';
 import { statusView } from '@/services/notifications';
@@ -19,6 +20,7 @@ export default function MainNotificatoin() {
     const [notification, setNotification] = useState<mainNotification[]>([]);
 
     const [searchSpinner, setSearchSpinner] = useState(false);
+    const [empty, setEmpty] = useState(false);
     const [search, setSearch] = useState<string | null>(null);
     const [pendingChanges, setPendingChanges] = useState<any>([]);
 
@@ -146,7 +148,12 @@ export default function MainNotificatoin() {
 
     useEffect(() => {
         if (contextNotifications) {
-            setNotification(contextNotifications);
+            if (contextNotifications.length > 0) {
+                setNotification(contextNotifications);
+                setEmpty(false);
+            } else {
+                setEmpty(true);
+            }
         }
     }, [contextNotifications]);
 
@@ -181,13 +188,19 @@ export default function MainNotificatoin() {
 
             {/* main */}
             <div className="flex flex-col gap-2 sm:gap-3 mt-2">
-                {notification?.map((item) => {
-                    return (
-                        <div key={item?.id}>
-                            <NotificationItem notificate={item} />
-                        </div>
-                    );
-                })}
+                {!empty ? (
+                    <div className='flex justify-center'>
+                        <NotFound titleMessage="Данных нет" />
+                    </div>
+                ) : (
+                    notification?.map((item) => {
+                        return (
+                            <div key={item?.id}>
+                                <NotificationItem notificate={item} />
+                            </div>
+                        );
+                    })
+                )}
             </div>
         </div>
     );
