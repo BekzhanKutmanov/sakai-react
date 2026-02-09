@@ -1,4 +1,4 @@
-@token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2FwaS1kZXYubW9vYy5vc2hzdS5rZy9wdWJsaWMvYXBpL2xvZ2luIiwiaWF0IjoxNzY5MTM3MTg1LCJleHAiOjE3NjkxNjQxODUsIm5iZiI6MTc2OTEzNzE4NSwianRpIjoiTXVnQzd2WkxYZWd6dlJXbyIsInN1YiI6IjE3NSIsInBydiI6IjIzYmQ1Yzg5NDlmNjAwYWRiMzllNzAxYzQwMDg3MmRiN2E1OTc2ZjcifQ.dwM24PN6i7oUfmAUrwvhtC9tIgMhNFIQEP-PK0T1UAI
+@token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2FwaS1kZXYubW9vYy5vc2hzdS5rZy9wdWJsaWMvYXBpL2xvZ2luIiwiaWF0IjoxNzcwNjI2NzQxLCJleHAiOjE3NzA2NTM3NDEsIm5iZiI6MTc3MDYyNjc0MSwianRpIjoiN3NxVTFmOWdDVXZYTk9ySCIsInN1YiI6IjEyIiwicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyJ9.BygQeNRm9226u0P4DifRpF3keoicz0lF9tujpSh0cj8
 # ###
 
 # http://api.mooc.oshsu.kg/public/api/v1/open/video/types
@@ -28,12 +28,12 @@
 #     "password": "010270Ja"
 # }
 
-# test  
+# test 
 
 # GET https://api-dev.mooc.oshsu.kg/public/api/v1/notifications
 # Authorization: Bearer {{token}} 
 # Content-Type: application/json 
 
-GET https://api-dev.mooc.oshsu.kg/public/api/v1/teacher/controls/practical-lessons
+GET https://api-dev.mooc.oshsu.kg/public/api/v1/reducer/student-task/connections?id_student=175
 Authorization: Bearer {{token}} 
 Content-Type: application/json 

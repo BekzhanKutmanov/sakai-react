@@ -56,6 +56,7 @@ const StudentDetailPage = ({ params }: { params: { student_id: string } }) => {
     const [answer_ids, setAnswerIds] = useState<string[]>([]);
     const [currentCourseId, setCurrentCourseId] = useState<string | null>(null);
     const [dialogVisible, setDialogVisible] = useState<boolean>(false);
+    const [instructVisible, setInstructVisible] = useState<boolean>(false);
     const [annulmentReason, setAnnulmentReason] = useState<string>('');
     const [description, setDescription] = useState<string>('');
     const [skeleton, setSkeleton] = useState<boolean>(false);
@@ -164,7 +165,7 @@ const StudentDetailPage = ({ params }: { params: { student_id: string } }) => {
             {skeleton ? <GroupSkeleton count={1} size={{ width: '100%', height: '100px' }} /> : <StudentInfo />}
 
             <>
-                {/* <TabView
+                <TabView
                     onTabChange={(e) => handleTabChange(e)}
                     activeIndex={activeIndex}
                     // className="main-bg"
@@ -172,14 +173,14 @@ const StudentDetailPage = ({ params }: { params: { student_id: string } }) => {
                         nav: { className: 'flex flex-wrap text-sm' },
                         panelContainer: { className: 'flex-1 pl-4' }
                     }}
-                > */}
-                    {/* <TabPanel
+                >
+                    <TabPanel
                         pt={{
                             headerAction: { className: 'font-italic' }
                         }}
                         header={'Аннулирование'}
                         className="p-tabview p-tabview-nav p-tabview-selected p-tabview-panels p-tabview-panel"
-                    > */}
+                    >
                         {courses.length === 0 ? (
                             <b className="main-bg w-full flex justify-center">У студента пока нет назначенных курсов</b>
                         ) : (
@@ -247,7 +248,7 @@ const StudentDetailPage = ({ params }: { params: { student_id: string } }) => {
                                                                 <div key={step.id} className="flex w-full flex-col">
                                                                     {step?.test && (
                                                                         <div className="flex justify-between flex-col sm:flex-row sm:items-center gap-2 rounded-sm h-full w-full shadow p-2 hover:bg-slate-50/50 transition-colors">
-                                                                            <div className="flex items-start sm:items-center w-full gap-2">
+                                                                            <div className="flex items-center w-full gap-2">
                                                                                 {fakeCheck ? (
                                                                                     <>
                                                                                         <label className="custom-radio">
@@ -295,11 +296,11 @@ const StudentDetailPage = ({ params }: { params: { student_id: string } }) => {
                                                                                         </label>
                                                                                     </>
                                                                                 )}
-                                                                                <div className="flex items-start sm:items-center gap-2">
-                                                                                    <div className="hidden sm:flex p-2 bg-[#c38598] shadow-xl min-w-[40px] min-h-[40px] w-[40px] h-[40px] justify-center items-center rounded">
-                                                                                        <i className={`pi  pi-list-check text-white`}></i>
+                                                                                <div className="flex items-center gap-2">
+                                                                                    <div className="flex p-2 bg-[#c38598] shadow-xl min-w-[40px] min-h-[40px] w-[40px] h-[40px] justify-center items-center rounded">
+                                                                                        <i className={`pi pi-list-check text-white`}></i>
                                                                                     </div>
-                                                                                    <span className="font-bold">{step?.test?.content || 'Тест'}</span>
+                                                                                    <span className="font-bold max-w-[70%] sm:max-w-[90%] break-words">{step?.test?.content || 'Тест'}</span>
                                                                                 </div>
                                                                             </div>
                                                                             <div className="flex sm:w-full justify-end">
@@ -310,7 +311,7 @@ const StudentDetailPage = ({ params }: { params: { student_id: string } }) => {
 
                                                                     {step?.practical && (
                                                                         <div className="flex justify-between flex-col sm:flex-row sm:items-center gap-2 rounded-sm h-full w-full shadow p-2 hover:bg-slate-50/50 transition-colors">
-                                                                            <div className="flex items-start sm:items-center w-full gap-2">
+                                                                            <div className="flex items-center w-full gap-2">
                                                                                 {/* <label className="custom-radio">
                                                                                     <input
                                                                                         type="checkbox"
@@ -384,10 +385,10 @@ const StudentDetailPage = ({ params }: { params: { student_id: string } }) => {
                                                                                     </>
                                                                                 )}
                                                                                 <div className="flex items-start sm:items-center gap-2">
-                                                                                    <div className="hidden sm:flex p-2 bg-[var(--yellowColor)] shadow-xl min-w-[40px] min-h-[40px] w-[40px] h-[40px] justify-center items-center rounded">
+                                                                                    <div className="flex p-2 bg-[var(--yellowColor)] shadow-xl min-w-[40px] min-h-[40px] w-[40px] h-[40px] justify-center items-center rounded">
                                                                                         <i className={`pi pi-pen-to-square text-white`}></i>
                                                                                     </div>
-                                                                                    <span className="font-bold">{step?.practical?.title || 'Практическая работа'}</span>
+                                                                                    <span className="font-bold max-w-[70%] sm:max-w-[90%] break-words">{step?.practical?.title || 'Практическая работа'}</span>
                                                                                 </div>
                                                                             </div>
                                                                             <div className="flex sm:w-full justify-end">
@@ -413,32 +414,37 @@ const StudentDetailPage = ({ params }: { params: { student_id: string } }) => {
                                 </div>
                             </div>
                         )}
-                    {/* </TabPanel> */}
+                    </TabPanel>
 
-                    {/* <TabPanel
+                    <TabPanel
                         pt={{
                             headerAction: { className: 'font-italic' }
                         }}
                         header={'Управление'}
                         className="p-tabview p-tabview-nav p-tabview-selected p-tabview-panels p-tabview-panel"
                     >
-                        <div className="w-full block sm:w-1/2">
+                        <div className="w-full block sm:w-1/2 font-sans text-sm">
+                            <div onClick={()=> setInstructVisible(true)} className="cursor-pointer flex items-center gap-1 justify-end text-[var(--mainColor)] ">
+                                <i className="pi pi-info-circle p-1 rounded-full"></i>
+                                <span className="underline">Инструкция</span>
+                            </div>
                             <CoursesCut id_student={Number(id_student)} />
                         </div>
-                    </TabPanel> */}
-                {/* </TabView> */}
+                    </TabPanel>
+                </TabView>
 
                 <Dialog
                     header="Причина аннулирования"
                     visible={dialogVisible}
-                    style={{ width: '50vw' }}
+                    className='w-[90%] sm:w-[60%]'
                     onHide={() => setDialogVisible(false)}
                     footer={
                         <div>
-                            <Button label="Отмена" icon="pi pi-times" onClick={() => setDialogVisible(false)} className="" />
+                            <Button label="Отмена" icon="pi pi-times" onClick={() => setDialogVisible(false)} className="p-button-secondary reject-button" />
                             <Button
-                                label="Отправить"
+                                label="Аннулировать"
                                 icon="pi pi-check"
+                                className="p-button-danger accept-button"
                                 onClick={() => {
                                     setDialogVisible(false);
                                     handlestudentCancel();
@@ -457,6 +463,16 @@ const StudentDetailPage = ({ params }: { params: { student_id: string } }) => {
                             <InputText type="text" value={annulmentReason} placeholder="Тема" className="my-2" onChange={(e) => setAnnulmentReason(e.target.value)} />
                             <InputTextarea id="reason" value={description} placeholder="Описание" onChange={(e) => setDescription(e.target.value)} rows={5} />
                         </div>
+                    </div>
+                </Dialog>
+
+                <Dialog header="Инструкция" visible={instructVisible} className='w-[90%] sm:w-[60%]' onHide={() => setInstructVisible(false)}>
+                    <div className="main-bg">
+                        <p>
+                            В данном разделе отображается список предметов, потоков и курсов, связанных со студентами. При изменении потока студента (например, при переводе в другой поток) в системе могут остаться лишние или некорректные связи — так
+                            называемые «мусорные» данные. Эти данные могут мешать корректной работе системы, в том числе при <b>назначении модулей студенту</b>. В этом разделе вы можете просмотреть все связанные предметы, потоки и курсы, проверить их
+                            актуальность и удалить лишние или ошибочные связи, чтобы избежать проблем в дальнейшем
+                        </p>
                     </div>
                 </Dialog>
             </>

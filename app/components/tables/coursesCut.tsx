@@ -13,6 +13,8 @@ interface ConnectType {
     earned_score: number;
     final_mark: number;
     potential_score: number;
+    course_id: number;
+    id_stream: number;
 }
 
 interface CurricullaType {
@@ -33,17 +35,15 @@ export default function CoursesCut({ id_student }: { id_student: number | null }
 
     const handleFetchStudentDetail = async () => {
         const data = await fetchStudentCut(Number(id_student));
-        console.log(data);
         if (data?.success) {
             setStudent(data?.data);
         }
         setSkeleton(false);
     };
 
-    const handleCut = async () => {
+    const handleCut = async (id_student: number, course_id: number, id_stream: number) => {
         setSkeleton(true);
-        const data = await cutStudentConnect(Number(id_student));
-        console.log(data);
+        const data = await cutStudentConnect(Number(id_student), course_id, id_stream);
         if (data?.success) {
             handleFetchStudentDetail();
             setMessage({
@@ -72,10 +72,12 @@ export default function CoursesCut({ id_student }: { id_student: number | null }
             header: 'Подтверждение',
             icon: 'pi pi-exclamation-triangle',
             defaultFocus: 'accept',
+
             acceptLabel: 'Удалить',
             rejectLabel: 'Назад',
             rejectClassName: 'p-button-secondary reject-button',
-            accept: () => handleCut()
+            acceptClassName: 'p-button-danger accept-button',
+            accept: () => handleCut(Number(id_student), item?.course_id, item?.id_stream)
         });
     };
 
@@ -104,6 +106,7 @@ export default function CoursesCut({ id_student }: { id_student: number | null }
                                     <span className={`pi ${item?.active ? 'pi-check-circle' : 'pi-pause-circle'} text-[11px]`}></span>
                                     {item?.active ? 'Активен' : 'Неактивен'}
                                 </span>
+                                <span className="text-[12px] text-[var(--mainColor)]">ID {item?.id_stream}</span>
                             </div>
                             <div className="flex flex-wrap items-center gap-2 ">
                                 <span className="text-[13px] text-[#7a7a7a]">Собрал:</span>
@@ -165,10 +168,15 @@ export default function CoursesCut({ id_student }: { id_student: number | null }
                                     <span className="text-[15px] font-semibold">{item?.total_potential}</span>
                                 </div>
                             </div>
+
                             <div className="flex flex-col gap-2">
                                 <span className="text-[13px] text-[#7a7a7a]">Предмет</span>
-                                <b>{item?.subject_name}</b>
+                                <div className='flex items-center'>
+                                    <b>{item?.subject_name}</b>
+                                    <span className="ml-3 text-[12px] text-[var(--mainColor)]">{item?.id_curricula}</span>
+                                </div>
                             </div>
+
                             <div className="flex flex-col gap-2 mt-1">
                                 <span className="text-[13px] text-[#7a7a7a]">Связанные потоки</span>
                                 {renderConnects(item?.connects || [], item)}
@@ -185,7 +193,9 @@ export default function CoursesCut({ id_student }: { id_student: number | null }
             return (
                 <tr>
                     <td colSpan={4} className="w-full py-6 text-center text-[14px] text-[#7a7a7a]">
-                        <div className='w-full flex justify-center'><ProgressSpinner style={{ width: '45px', height: '45px' }} /></div>
+                        <div className="w-full flex justify-center">
+                            <ProgressSpinner style={{ width: '45px', height: '45px' }} />
+                        </div>
                     </td>
                 </tr>
             );
@@ -206,7 +216,11 @@ export default function CoursesCut({ id_student }: { id_student: number | null }
             return (
                 <tr key={`${item?.id_curricula}-${index}`} className={`border-b border-[#f0f0f0] ${rowAlert} hover:bg-green-50 transition-colors duration-200`}>
                     <td className="p-3 align-top text-[14px] text-[#4B4563] font-semibold">{index + 1}</td>
-                    <td className="font-semibold p-3 align-top">{item?.subject_name}</td>
+                    <td className="font-semibold p-3 align-top">
+                        <div>
+                            <span>{item?.subject_name}</span> <span className="ml-3 text-[12px] text-[var(--mainColor)]">{item?.id_curricula}</span>{' '}
+                        </div>
+                    </td>
                     <td className="p-3 align-top text-[14px]">
                         <div className="flex flex-col gap-1">
                             <div className="flex items-center gap-2">

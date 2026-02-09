@@ -65,11 +65,11 @@ export const fetchStudentCut = async (id_student: number) => {
 };
 
 // cut
-export const cutStudentConnect = async (id_student: number) => {
-    const payload = {};
+export const cutStudentConnect = async ( id_student: number,  course_id: number, id_stream: number,) => {
+    const payload = {course_id, id_stream, id_student};
     
     try {
-        const res = await axiosInstance.post(`/v1/reducer/student-task/connections?id_student=${id_student}`, payload);
+        const res = await axiosInstance.post(`/v1/reducer/student-task/delete`, payload);
         const data = await res.data;
 
         return data;
