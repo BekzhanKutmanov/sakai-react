@@ -17,10 +17,12 @@ import FormModal from '../popUp/FormModal';
 import GroupSkeleton from '../skeleton/GroupSkeleton';
 import { contentType } from '@/types/contentType';
 import { linkValueType } from '@/types/linkValueType';
+import { useLocalization } from '@/layout/context/localizationcontext';
 
 export default function LessonLink({ element, content, fetchPropElement, clearProp }: { element: mainStepsType; content: any; fetchPropElement: (id: number) => void; clearProp: boolean }) {
     const showError = useErrorMessage();
     const { setMessage } = useContext(LayoutContext);
+    const { translations } = useLocalization();
 
     const [editingLesson, setEditingLesson] = useState<linkValueType>({ title: '', description: '', url: '' });
     const [visible, setVisisble] = useState(false);
@@ -246,10 +248,18 @@ export default function LessonLink({ element, content, fetchPropElement, clearPr
 
     return (
         <div>
-            <FormModal title={'Обновить урок'} fetchValue={() => handleUpdateLink()} clearValues={clearValues} visible={visible} setVisible={setVisisble} start={false} footerValue={{ footerState: true, reject: 'Назад', next: 'Сохранить' }}>
+            <FormModal
+                title={translations.updateLesson}
+                fetchValue={() => handleUpdateLink()}
+                clearValues={clearValues}
+                visible={visible}
+                setVisible={setVisisble}
+                start={false}
+                footerValue={{ footerState: true, reject: translations.back, next: translations.save }}
+            >
                 <div className="flex flex-col gap-1">
                     <div className="w-full flex flex-col">
-                        <span>Позиция шага:</span>
+                        <span>{translations.stepPosition}:</span>
                         <InputText
                             type="number"
                             value={String(editingLesson?.stepPos) || ''}
@@ -269,7 +279,7 @@ export default function LessonLink({ element, content, fetchPropElement, clearPr
                         <InputText
                             id="usefulLink"
                             type="url"
-                            placeholder={'Загрузить ссылку'}
+                            placeholder={translations.linkLabel}
                             value={editingLesson.url}
                             className="w-full"
                             onChange={(e) => {
@@ -282,7 +292,7 @@ export default function LessonLink({ element, content, fetchPropElement, clearPr
                     <InputText
                         id="title"
                         type="text"
-                        placeholder={'Название'}
+                        placeholder={translations.title}
                         value={editingLesson.title}
                         onChange={(e) => {
                             setEditingLesson((prev) => ({ ...prev, title: e.target.value }));
@@ -290,13 +300,13 @@ export default function LessonLink({ element, content, fetchPropElement, clearPr
                         }}
                     />
                     <b style={{ color: 'red', fontSize: '12px' }}>{errors.title?.message}</b>
-                    {additional.link && <InputText placeholder="Описание" value={editingLesson.description} onChange={(e) => setEditingLesson((prev) => ({ ...prev, description: e.target.value }))} className="w-full" />}
+                    {additional.link && <InputText placeholder={translations.description} value={editingLesson.description} onChange={(e) => setEditingLesson((prev) => ({ ...prev, description: e.target.value }))} className="w-full" />}
 
                     <div className="flex relative">
                         {/* <Button disabled={!!errors.title || !editingLesson.file} label="Сохранить" onClick={handleAddDoc} /> */}
                         <div className="absolute">
                             <span className="cursor-pointer ml-1 text-[13px] sm:text-sm text-[var(--mainColor)]" onClick={() => setAdditional((prev) => ({ ...prev, link: !prev.link }))}>
-                                Дополнительно {additional.link ? '-' : '+'}
+                                {translations.addAdditionally} {additional.link ? '-' : '+'}
                             </span>
                         </div>
                     </div>

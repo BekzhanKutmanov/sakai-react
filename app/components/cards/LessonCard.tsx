@@ -8,6 +8,7 @@ import { ProgressSpinner } from 'primereact/progressspinner';
 import { confirmDialog } from 'primereact/confirmdialog';
 import useMediaQuery from '@/hooks/useMediaQuery';
 import Link from 'next/link';
+import { useLocalization } from '@/layout/context/localizationcontext';
 
 export default function LessonCard({
     status,
@@ -36,6 +37,7 @@ export default function LessonCard({
     videoVisible?: (id: string | null) => void;
     answers?: { id?: number | null; text: string; is_correct: boolean }[];
 }) {
+    const { translations } = useLocalization();
     const forShortTitle = useShortText(cardValue.title, 200);
     const shortTitle = type.typeValue !== 'practica' ? forShortTitle : cardValue.title;
     const shortDoc = useShortText(cardValue?.document || '', 100);
@@ -79,11 +81,11 @@ export default function LessonCard({
                     </div>
                 </div>
             </div>
-            <img src={(cardValue.photo && cardValue.photo) || '/layout/images/no-image.png'} className="w-full sm:w-[200px] max-h-[400px] object-cover" alt="Видео" />
+            <img src={(cardValue.photo && cardValue.photo) || '/layout/images/no-image.png'} className="w-full sm:w-[200px] max-h-[400px] object-cover" alt={translations.videoAlt} />
         </div>
     );
 
-    const btnLabel = type.typeValue === 'doc' || type.typeValue === 'practica' ? 'Открыть' : type.typeValue === 'link' ? 'Перейти' : '';
+    const btnLabel = type.typeValue === 'doc' || type.typeValue === 'practica' ? translations.open : type.typeValue === 'link' ? translations.goTo : '';
 
     return (
         <div className="w-full flex flex-col items-start gap-2">
@@ -105,7 +107,7 @@ export default function LessonCard({
                                 <div className="w-full flex justify-between items-center">
                                     <div>
                                         <div className="flex items-center justify-start gap-1">
-                                            <span className="text-[var(--mainColor)] sm:text-lg">Балл: </span>
+                                            <span className="text-[var(--mainColor)] sm:text-lg">{translations.score}: </span>
                                             <b className="text-[16px] sm:text-[18px]">{`${cardValue.score}`}</b>
                                         </div>
                                     </div>
@@ -135,7 +137,7 @@ export default function LessonCard({
                         {type.typeValue === 'practica' && cardValue.url ? (
                             <div className="flex sm:items-center  gap-2 flex-col sm:flex-row">
                                 <Link href={cardValue?.url} target="_blank" className="underline">
-                                    Ссылка:
+                                    {translations.linkLabel}:
                                 </Link>
                                 <span className="flex max-w-[500px] break-words">{cardValue?.url}</span>
                             </div>
@@ -191,8 +193,8 @@ export default function LessonCard({
                                             <div className="flex gap-1 items-center">
                                                 <Button
                                                     onClick={lessonCardEvents}
-                                                    className={`w-full ${btnLabel === 'Открыть' ? 'flex justify-center pi pi-eye h-[31px] sm:h-[38px]' : ''}`}
-                                                    label={btnLabel !== 'Открыть' ? btnLabel : ' '}
+                                                    className={`w-full ${btnLabel === translations.open ? 'flex justify-center pi pi-eye h-[31px] sm:h-[38px]' : ''}`}
+                                                    label={btnLabel !== translations.open ? btnLabel : ' '}
                                                     disabled={progressSpinner === true ? true : false}
                                                 />
                                                 {progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}
@@ -213,12 +215,12 @@ export default function LessonCard({
                                     )}
                                     {type.typeValue === 'link' && (
                                         <div className="flex gap-1 items-center">
-                                            <Button
-                                                onClick={lessonCardEvents}
-                                                className={`w-full ${btnLabel === 'Открыть' ? 'flex pi pi-eye h-[31px] sm:h-[38px]' : btnLabel === 'Перейти' ? 'flex pi pi-link h-[31px] sm:h-[38px]' : ' '}`}
-                                                label={btnLabel !== 'Открыть' && btnLabel !== 'Перейти' ? btnLabel : ' '}
-                                                disabled={progressSpinner === true ? true : false}
-                                            />
+                                                <Button
+                                                    onClick={lessonCardEvents}
+                                                    className={`w-full ${btnLabel === translations.open ? 'flex pi pi-eye h-[31px] sm:h-[38px]' : btnLabel === translations.goTo ? 'flex pi pi-link h-[31px] sm:h-[38px]' : ' '}`}
+                                                    label={btnLabel !== translations.open && btnLabel !== translations.goTo ? btnLabel : ' '}
+                                                    disabled={progressSpinner === true ? true : false}
+                                                />
                                             {progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}
                                         </div>
                                     )}
@@ -232,7 +234,7 @@ export default function LessonCard({
                                                 )} */}
                                                 <Button
                                                     icon={'pi pi-pencil'}
-                                                    label={!media ? 'Редактировать' : ''}
+                                                    label={!media ? translations.edit : ''}
                                                     size="small"
                                                     onClick={() => {
                                                         onSelected && onSelected(cardValue.id, cardValue?.type || '');
@@ -242,7 +244,7 @@ export default function LessonCard({
                                                     className="trash-button"
                                                     icon={'pi pi-trash'}
                                                     size="small"
-                                                    label={!media ? 'Удалить' : ''}
+                                                    label={!media ? translations.delete : ''}
                                                     onClick={() => {
                                                         const options = getConfirmOptions(Number(cardValue.id), () => onDelete && onDelete(cardValue.id));
                                                         confirmDialog(options)

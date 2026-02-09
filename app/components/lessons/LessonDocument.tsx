@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { lessonSchema } from '@/schemas/lessonSchema';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -18,6 +18,7 @@ import { LayoutContext } from '@/layout/context/layoutcontext';
 import FormModal from '../popUp/FormModal';
 import GroupSkeleton from '../skeleton/GroupSkeleton';
 import { contentType } from '@/types/contentType';
+import { useLocalization } from '@/layout/context/localizationcontext';
 
 export default function LessonDocument({ element, content, fetchPropElement, clearProp }: { element: mainStepsType; content: any; fetchPropElement: (id: number) => void; clearProp: boolean }) {
     interface docValueType {
@@ -32,6 +33,7 @@ export default function LessonDocument({ element, content, fetchPropElement, cle
     const fileUploadRef = useRef<FileUpload>(null);
     const showError = useErrorMessage();
     const { setMessage } = useContext(LayoutContext);
+    const { translations } = useLocalization();
 
     const [editingLesson, setEditingLesson] = useState<docValueType | null>({ title: 'string', description: '', file: null });
     const [visible, setVisisble] = useState(false);
@@ -333,7 +335,7 @@ export default function LessonDocument({ element, content, fetchPropElement, cle
     return (
         <div>
             <FormModal
-                title={'Обновить урок'}
+                title={translations.updateLesson}
                 fetchValue={() => {
                     handleUpdateDoc();
                 }}
@@ -341,12 +343,12 @@ export default function LessonDocument({ element, content, fetchPropElement, cle
                 visible={visible}
                 setVisible={setVisisble}
                 start={false}
-                footerValue={{ footerState: true, reject: 'Назад', next: 'Сохранить' }}
+                footerValue={{ footerState: true, reject: translations.back, next: translations.save }}
             >
                 <div className="flex flex-col gap-1">
                     <div className="flex flex-col gap-1 items-center justify-center">
                         <div className="w-full flex flex-col">
-                            <span>Позиция шага:</span>
+                            <span>{translations.stepPosition}:</span>
                             <InputText
                                 type="number"
                                 value={String(editingLesson?.stepPos) || ''}
@@ -383,7 +385,7 @@ export default function LessonDocument({ element, content, fetchPropElement, cle
                         <div className="w-full">
                             <InputText
                                 type="text"
-                                placeholder="Название"
+                                placeholder={translations.title}
                                 className="w-full"
                                 value={editingLesson?.title && editingLesson?.title}
                                 onChange={(e) => {
@@ -394,11 +396,11 @@ export default function LessonDocument({ element, content, fetchPropElement, cle
                             <b style={{ color: 'red', fontSize: '12px' }}>{errors.title?.message}</b>
                         </div>
                         <InputText
-                            placeholder="Описание"
+                            placeholder={translations.description}
                             value={editingLesson?.description !== 'null' ? editingLesson?.description : ''}
                             onChange={(e) => setEditingLesson((prev) => prev && { ...prev, description: e.target.value })}
                             className="w-full"
-                        />
+                        />  
                     </div>
                 </div>
             </FormModal>
@@ -406,3 +408,4 @@ export default function LessonDocument({ element, content, fetchPropElement, cle
         </div>
     );
 }
+

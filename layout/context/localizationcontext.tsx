@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 import React, { useState, createContext, useContext, useEffect } from 'react';
 
 // IMPORTANT: The Kyrgyz translations are machine-translated and should be reviewed by a native speaker.
@@ -23,8 +23,12 @@ export const localizationData = {
         send: 'Отправить',
         close: 'Закрыть',
         open: 'Открыть',
+        goTo: 'Перейти',
+        linkLabel: 'Ссылка',
+        videoAlt: 'Видео',
         copy: 'Копировать',
         copied: 'Скопировано',
+        description: 'Описание',
         error: 'Ошибка',
         success: 'Успех',
         loading: 'Загрузка',
@@ -41,6 +45,7 @@ export const localizationData = {
         weUniteUniversityProjects: 'Мы объединяем проекты университета в сфере онлайн-образования:',
         openOnlineHome: 'Открытые онлайн-курсы',
         higherEducationPrograms: 'Программы высшего образования',
+        backHome: 'Перейти в главную страницу',
 
         // AppTopbar
         oldMooc: 'Старый Mooc',
@@ -167,6 +172,12 @@ export const localizationData = {
         noSteps: 'Шаги отсутствует',
         positionUnit: 'позиция',
         deleteStep: 'Удалить шаг',
+        updateLesson: 'Обновить урок',
+        stepPosition: 'Позиция шага',
+        questionPlaceholder: 'Вопрос...',
+        addVariant: 'Добавить вариант',
+        fileTooLarge: 'Файл слишком большой!',
+        maxFileSize10mb: 'Разрешено максимум 10 MB.',
         trainingPlan: 'План обучения',
         cancellationOfWorks: 'Аннулирование работ',
         addAdditionally: 'Дополнительно',
@@ -189,7 +200,7 @@ export const localizationData = {
         recommendedByDepartment: 'Рекомендованные департаментом',
         allOpenCourses: 'Все открытые курсы',
         dataNotAvailable: 'Данные недоступны',
-        videoTourMainBuilding: 'Видеоэкскурсия по главному зданию',
+        videoTourMainBuilding: 'Видеоэкскурсия по главному зданию'
     },
     ky: {
         oshSU: 'ОшМУ',
@@ -211,8 +222,12 @@ export const localizationData = {
         send: 'Жөнөтүү',
         close: 'Жабуу',
         open: 'Ачуу',
+        goTo: 'Өтүү',
+        linkLabel: 'Шилтеме',
+        videoAlt: 'Видео',
         copy: 'Көчүрүү',
         copied: 'Көчүрүлдү',
+        description: 'Сүрөттөмө',
         error: 'Ката',
         success: 'Ийгилик',
         loading: 'Жүктөлүүдө',
@@ -229,7 +244,7 @@ export const localizationData = {
         weUniteUniversityProjects: 'Биз университеттин онлайн-билим берүү багытындагы долбоорлорун бириктиребиз:',
         openOnlineHome: 'Ачык онлайн курстар',
         higherEducationPrograms: 'Жогорку билим программалары',
-
+        backHome: 'Башкы бетке кайтуу',
         // AppTopbar
         oldMooc: 'Эски Mooc',
         digitalCampusOshSU: 'ОшМУнун санариптик кампусу',
@@ -335,50 +350,55 @@ export const localizationData = {
         photo: 'Фото',
         teacherBtn: 'Окутуучу',
         studentBtn: 'Студент',
-
         // others
-        status: 'Статус',
-        connected: 'Связан',
+        status: 'Абалы',
+        connected: 'Байланышкан',
 
         // lesson page
-        lessonAvailability: 'Этот урок будет доступен до определённой даты. После окончания срока доступ к материалам будет закрыт',
-        availableFrom: 'Доступен с:',
-        courseScore: 'Балл за курс',
+        lessonAvailability: 'Бул сабак белгиленген күнгө чейин гана жеткиликтүү болот. Мөөнөт бүткөндөн кийин материалдарга кирүү жабылат',
+        availableFrom: 'Жеткиликтүү болгон күн:',
+        courseScore: 'Курс үчүн балл',
         scoreUnit: 'балл',
-        noThemes: 'Темы отсутствуют',
-        selectStepType: 'Выберите тип шага',
-        position: 'Позиция',
-        wordTestGeneration: 'Выберите свой документ в формате Word — из его содержания будет автоматически создан тест.',
-        aiTestGeneration: 'Тест генерируется искусственным интеллектом',
-        testVariantsHint: 'Варианты тестов будут более продуманными если передать ваш документ',
-        optional: '(необязательно)',
-        noSteps: 'Шаги отсутствует',
-        positionUnit: 'позиция',
+        noThemes: 'Темалар жок',
+        selectStepType: 'Кадамдын түрүн тандаңыз',
+        position: 'Орду',
+        wordTestGeneration: 'Word форматындагы документиңизди тандаңыз — анын мазмунунун негизинде тест автоматтык түрдө түзүлөт.',
+        aiTestGeneration: 'Тест жасалма интеллект тарабынан түзүлөт',
+        testVariantsHint: 'Документиңизди жиберсеңиз, тест варианттары сапаттуу болот',
+        optional: '(милдеттүү эмес)',
+        noSteps: 'Кадамдар жок',
+        positionUnit: 'орун',
         deleteStep: 'Өчүрүү',
+        updateLesson: 'Сабакты жаңыртуу',
+        stepPosition: 'Кадамдын орду',
+        questionPlaceholder: 'Суроо...',
+        addVariant: 'Вариант кошуу',
+        fileTooLarge: 'Файл өтө чоң!',
+        maxFileSize10mb: 'Эң көбү 10 MB уруксат.',
         trainingPlan: 'Окуу планы',
         cancellationOfWorks: 'Жумуштарды жокко чыгаруу',
-        addAdditionally: 'Кошумча',
+        addAdditionally: 'Кошумча кошуу',
         lessonsAvailableUntilDate: 'Сабактар белгиленген күнгө чейин гана жеткиликтүү болот',
         start: 'Башталышы',
         end: 'Аягы',
         title: 'Аталышы',
         totalPointsForCourse: 'Курс үчүн жалпы баллдар',
-        weekHeader: 'Ап',
+        weekHeader: 'Апта',
 
         // counterbanner
         coursesAndVideoLessons: 'Курстар жана видео сабактар',
         registeredStudents: 'Катталган студенттер',
         teachers: 'Окутуучулар',
         satisfactionLevel: 'Канааттануу деңгээли',
-  
+
         // open courses
         newCourses: 'Жаңы курстар',
         popularCourses: 'Популярдуу курстар',
         recommendedByDepartment: 'Департамент тарабынан сунушталган',
         allOpenCourses: 'Бардык ачык курстар',
         dataNotAvailable: 'Маалымат жеткиликтүү эмес',
-        videoTourMainBuilding: 'Башкы корпус боюнча видеоэкскурсия',
-    },
+        videoTourMainBuilding: 'Башкы корпус боюнча видеоэкскурсия'
+    }
 };
 
 export type Language = 'ru' | 'ky';

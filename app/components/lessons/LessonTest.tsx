@@ -19,6 +19,7 @@ import { testType } from '@/types/testType';
 import GroupSkeleton from '../skeleton/GroupSkeleton';
 import useMediaQuery from '@/hooks/useMediaQuery';
 import { FileUpload } from 'primereact/fileupload';
+import { useLocalization } from '@/layout/context/localizationcontext';
 
 export default function LessonTest({
     preparation,
@@ -53,6 +54,7 @@ export default function LessonTest({
     const { setMessage } = useContext(LayoutContext);
     const media = useMediaQuery('(max-width: 640px)');
     const fileUploadRef = useRef<FileUpload>(null);
+    const { translations } = useLocalization();
 
     const [editingLesson, setEditingLesson] = useState<{ title: string; score: number; stepPos?: number } | null>({ title: '', score: 0 });
     const [visible, setVisisble] = useState(false);
@@ -565,7 +567,7 @@ export default function LessonTest({
     return (
         <div>
             <FormModal
-                title={'Обновить урок'}
+                title={translations.updateLesson}
                 fetchValue={() => {
                     handleUpdateTest();
                 }}
@@ -573,12 +575,12 @@ export default function LessonTest({
                 visible={visible}
                 setVisible={setVisisble}
                 start={false}
-                footerValue={{ footerState: true, reject: 'Назад', next: 'Сохранить' }}
+                footerValue={{ footerState: true, reject: translations.back, next: translations.save }}
             >
                 <div className="flex flex-col gap-1">
                     <div className="w-full lesson-card-border flex flex-col gap-2 sm:items-center shadow rounded p-1 sm:p-2">
                         <div className="w-full flex flex-col">
-                            <span>Позиция шага:</span>
+                            <span>{translations.stepPosition}:</span>
                             <InputText
                                 type="number"
                                 value={String(editingLesson?.stepPos) || ''}
@@ -598,7 +600,7 @@ export default function LessonTest({
                             <div className="w-full">
                                 <InputTextarea
                                     id="title"
-                                    placeholder={'Вопрос...'}
+                                    placeholder={translations.questionPlaceholder}
                                     value={editingLesson?.title && editingLesson.title}
                                     style={{ resize: 'none', width: '100%' }}
                                     onChange={(e) => {
@@ -612,7 +614,7 @@ export default function LessonTest({
                                 <InputText
                                     type="number"
                                     className="w-[70px]"
-                                    placeholder="Балл"
+                                    placeholder={translations.score}
                                     value={String(editingLesson?.score)}
                                     onChange={(e) => {
                                         setEditingLesson((prev) => prev && { ...prev, score: Number(e.target.value) });
@@ -648,7 +650,7 @@ export default function LessonTest({
                                 );
                             })}
 
-                            <Button label="Добавить вариант" onClick={addOption} disabled={optionAddBtn} icon="pi pi-plus" className="p-1 ml-4" style={{ fontSize: '14px' }} />
+                            <Button label={translations.addVariant} onClick={addOption} disabled={optionAddBtn} icon="pi pi-plus" className="p-1 ml-4" style={{ fontSize: '14px' }} />
                         </div>
                     </div>
                 </div>
