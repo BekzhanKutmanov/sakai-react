@@ -701,7 +701,7 @@ export default function LessonTest() {
                             <div key={index} className={`p-2 rounded-sm shadow border-l-4`}>
                                 <div className="flex justify-between items-center">
                                     <span className="text-gray-700">Попытка #{index + 1}</span>
-                                    {attempt.is_correct ? (
+                                    {attempt.is_correct ? ( 
                                         <span className="flex items-center gap-2 text-[green] font-semibold">
                                             <i className="pi pi-check-circle"></i>
                                             <span>Верно</span>

@@ -76,27 +76,27 @@ export default function MainNotificatoin() {
             }
         }
         return (
-            <div>
-                <div className={`w-full flex flex-col justify-center shadow p-1 gap-2`}>
-                    <div className="flex justify-between items-center">
+            <div className="w-full">
+                <div className="w-full flex flex-col justify-center bg-white/70 backdrop-blur rounded-lg border border-[var(--surface-border)] shadow-sm p-3 sm:p-4 gap-2 sm:gap-3">
+                    <div className="flex justify-between items-start gap-3">
                         {/* <div className="w-full flex justify-between">
                             <Link className="cursor-pointer hover:underline" href={'path'}>
                                 <b className="text-[var(--mainColor)] ">{notificate?.title}</b>
                             </Link>
                         </div> */}
-                        <Link href={''} className="hidden sm:flex items-center gap-1 hover:underline text-[13px] sm:text-[16px]">
+                        <Link href={''} className="hidden sm:flex items-center gap-1 hover:underline text-[13px] sm:text-[15px] text-[var(--text-color)]">
                             <b className="m-0">{notificate?.from_user?.last_name}</b>
                             <b className="m-0">{notificate?.from_user?.name}</b>
                             <b className="m-0">{notificate?.from_user?.father_name}</b>
                         </Link>
-                        <Link href={''} className="flex sm:hidden items-center gap-1 hover:underline text-[14px] sm:text-[16px]">
+                        <Link href={''} className="flex sm:hidden items-center gap-1 hover:underline text-[14px] text-[var(--text-color)]">
                             <b className="m-0">{notificate?.from_user?.last_name}</b>
                             <b className="m-0">{notificate?.from_user?.name[0]}.</b>
                             <b className="m-0">{notificate?.from_user?.father_name && notificate?.from_user?.father_name[0] != ' ' ? notificate?.from_user?.father_name[0] + '.' : ''}</b>
                         </Link>
                         <div className="w-full relative flex flex-col items-end">
                             {/* <span className="absolute -top-4 text-sm w-[11px] h-[11px] sm:w-[13px] sm:h-[13px] rounded-full bg-[var(--amberColor)]"></span> */}
-                            <i className="cursor-pointer pi pi-trash text-[white] bg-[var(--redColor)] rounded text-sm p-1" onClick={() => handleDeleteVisible(notificate?.id)}></i>
+                            <i className="cursor-pointer pi pi-trash text-white bg-[var(--redColor)] rounded-md text-xs sm:text-sm px-2 py-1 hover:opacity-90" onClick={() => handleDeleteVisible(notificate?.id)}></i>
                         </div>
                     </div>
 
@@ -116,11 +116,27 @@ export default function MainNotificatoin() {
                         </label>
                         <i className="pi pi-star text-lg p-1"></i> */}
                         <div className="w-full flex gap-2 justify-between flex-col sm:flex-row items-start sm:items-center">
-                            {notificate?.type?.type !== 'practical' ? <span className="text-[14px] sm:text-[16px] ml-2 max-w-[350px] text-nowrap overflow-hidden text-ellipsis">{notificate?.title}</span> : <></>}
-                            <small className="p-1 bg-[var(--redWeakColor)] rounded">{notificate?.type?.title}</small>
+                            <div className="flex flex-col gap-2">
+                                <span className="text-[14px] sm:text-[15px] font-medium max-w-[420px] text-nowrap overflow-hidden text-ellipsis">{notificate?.title}</span>
+                                <div className="flex flex-col gap-2">
+                                    {notificate?.meta?.title && (
+                                        <>
+                                            <span>Причина:</span>
+                                            <div className={`p-2 rounded-sm shadow border-l-4`}>
+                                                <b className="ml-2 text-[13px] sm:text-[14px] text-[var(--mainColor)]">{notificate?.meta?.title}</b>
+                                            </div>
+
+                                            <div className={`p-2 rounded-sm shadow border-l-4`}>
+                                                <b className="ml-2 text-[13px] sm:text-[14px] text-[var(--mainColor)]">{notificate?.meta?.description}</b>
+                                            </div>
+                                        </>
+                                    )}
+                                </div>
+                            </div>
+                            <small className="px-2 py-1 bg-[var(--redWeakColor)] rounded-md text-[11px] sm:text-[12px] whitespace-nowrap">{notificate?.type?.title}</small>
                         </div>
                     </div>
-                    <p className="w-full text-[9px] sm:text-[10px] m-0 flex justify-end">
+                    <p className="w-full text-[10px] sm:text-[11px] m-0 flex justify-end text-[var(--text-color-secondary)]">
                         <MyDateTime createdAt={notificate?.created_at} options={options} />
                     </p>
                 </div>
@@ -142,7 +158,9 @@ export default function MainNotificatoin() {
 
     return (
         <div className="main-bg">
-            <h3 className="text-xl sm:text-2xl shadow-[var(--bottom-shadow)]">Уведомления</h3>
+            <div className="w-full flex items-center justify-between">
+                <h3 className="text-xl sm:text-2xl font-semibold tracking-tight text-[var(--text-color)] shadow-[var(--bottom-shadow)]">Уведомления</h3>
+            </div>
 
             {/* <div className="relative w-full flex justify-center sm:justify-start items-center gap-1 my-2">
                 <InputText type="text" placeholder="Поиск..." value={search} className="w-full h-[48px]" onChange={(e) => setSearch(e.target.value)} />
@@ -162,7 +180,7 @@ export default function MainNotificatoin() {
             </div> */}
 
             {/* main */}
-            <div className="main-bg flex flex-col gap-1">
+            <div className="flex flex-col gap-2 sm:gap-3 mt-2">
                 {notification?.map((item) => {
                     return (
                         <div key={item?.id}>

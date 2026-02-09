@@ -32,8 +32,9 @@ const StreamList = React.memo(function StreamList({
 }) {
     const { setMessage } = useContext(LayoutContext);
     const showError = useErrorMessage();
-    const { translations } = useLocalization();
-
+    
+    const { language, translations } = useLocalization();
+    
     const [streams, setStreams] = useState<mainStreamsType[]>([]);
     const [hasStreams, setHasStreams] = useState(false);
     const [skeleton, setSkeleton] = useState(false);
@@ -42,6 +43,7 @@ const StreamList = React.memo(function StreamList({
     const [emptyCourse, setEmptyCourse] = useState(false);
     const [sendStream_id, setSendStream_id] = useState<number | null>(null);
     const [active, setActive] = useState(false);
+    const [nameLang, setNameLang] = useState<'name_ru' | 'name_kg'>('name_ru');
 
     // const shortTitle = useShortText(courseValue?.title ? courseValue?.title : '', 40, 'right');
 
@@ -206,6 +208,14 @@ const StreamList = React.memo(function StreamList({
         // });
     };
 
+    useEffect(()=> {
+        if(language === 'ru'){
+            setNameLang('name_ru');
+        }else if(language === 'ky'){
+            setNameLang('name_kg');
+        }
+    },[language]);
+
     useEffect(() => {
         toggleSkeleton();
         if (courseValue?.id) {
@@ -234,7 +244,7 @@ const StreamList = React.memo(function StreamList({
             <div className={`w-full ${bgClass}`} key={item?.stream_id}>
                 <div className={`flex flex-column p-2 gap-2`}>
                     <div className="w-full flex justify-between gap-1 items-center">
-                        <h3 className="m-0 text-lg">{item?.subject_name.name_ru}</h3>
+                        <h3 className="m-0 text-lg">{item?.subject_name[nameLang]}</h3>
                         <small className="underline text-[var(--mainColor)]">Id: {item?.stream_id}</small>
                     </div>
                     <div className="flex flex-column xl:flex-row justify-content-between align-items-center xl:align-items-start flex-1 gap-2">
@@ -252,16 +262,16 @@ const StreamList = React.memo(function StreamList({
                             </div>
                             <div className="flex gap-1 items-center">
                                 <span className="text-[var(--mainColor)]">{translations.period}: </span>
-                                <span>{item?.period.name_ru}</span>
+                                <span>{item?.period[nameLang]}</span>
                             </div>
                             <div className="flex gap-1 items-center" title={item?.speciality.name_ru}>
                                 <span className="text-[var(--mainColor)] ">{translations.speciality}: </span>
-                                <span className="max-w-[170px] sm:max-w-[800px] text-nowrap text-ellipsis overflow-hidden">{item?.speciality.name_ru}</span>
+                                <span className="max-w-[170px] sm:max-w-[800px] text-nowrap text-ellipsis overflow-hidden">{item?.speciality[nameLang]}</span>
                             </div>
                         </div>
                         <div className="flex flex-col order-1 xl:order-2 align-items-center gap-2">
                             <span className="font-semibold">{item?.semester?.name_ru}</span>
-                            <span className="bg-[var(--greenColor)] text-[12px] text-white p-1 rounded">{item?.edu_form?.name_ru}</span>
+                            <span className="bg-[var(--greenColor)] text-[12px] text-white p-1 rounded">{item?.edu_form[nameLang]}</span>
                             {item.connect_id && (
                                 <Link href={`/students/${courseValue?.id}/${item.connect_id}/${item.stream_id}`} className="underline text-sm">
                                     {translations.students}

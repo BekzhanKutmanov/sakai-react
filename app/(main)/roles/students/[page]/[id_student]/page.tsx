@@ -17,6 +17,7 @@ import { TabPanel, TabView } from 'primereact/tabview';
 import { TabViewChange } from '@/types/tabViewChange';
 import CoursesCut from '@/app/components/tables/coursesCut';
 import { set } from 'react-hook-form';
+import { useLocalStorage } from 'primereact/hooks';
 
 // Типизация данных (можно вынести в отдельные файлы в /types)
 interface Student {
@@ -59,6 +60,8 @@ const StudentDetailPage = ({ params }: { params: { student_id: string } }) => {
     const [description, setDescription] = useState<string>('');
     const [skeleton, setSkeleton] = useState<boolean>(false);
     const [activeIndex, setActiveIndex] = useState<number>(0);
+    const [fakeCheck, setFakeCheck] = useState(false);
+    const [accrodionIndex, setAccrodionIndex] = useState(0);
 
     // --- Шаблон для запроса данных ---
     const handleFetchStudentData = async () => {
@@ -66,7 +69,7 @@ const StudentDetailPage = ({ params }: { params: { student_id: string } }) => {
         setError(null);
         const data = await fetchStudentData(Number(id_student));
         if (data && Array.isArray(data)) {
-            setCourses(data);   
+            setCourses(data);
         } else {
             setError(true);
         }
@@ -90,9 +93,12 @@ const StudentDetailPage = ({ params }: { params: { student_id: string } }) => {
     const handlestudentCancel = async () => {
         setLoading(true);
         setError(null);
+        setDescription('');
+        setAnnulmentReason('');
 
         const data = await studentCancel(false, Number(currentCourseId), annulmentReason, answer_ids, Number(id_student), description);
         if (data) {
+            setAnswerIds([]);
             handleFetchStudentData();
             setMessage({
                 state: true,
@@ -115,6 +121,10 @@ const StudentDetailPage = ({ params }: { params: { student_id: string } }) => {
         handleFetchStudentData();
     }, [params.student_id]);
 
+    // useEffect(()=> {
+    //     console.log(answer_ids);
+    // },[answer_ids])
+
     useEffect(() => {
         handleFetchStudentDetail();
     }, []);
@@ -123,7 +133,7 @@ const StudentDetailPage = ({ params }: { params: { student_id: string } }) => {
     if (loading) {
         return (
             <div className="flex justify-content-center align-items-center" style={{ minHeight: '60vh' }}>
-                <ProgressSpinner style={{width: '45px', height: "45px"}}/>
+                <ProgressSpinner style={{ width: '45px', height: '45px' }} />
             </div>
         );
     }
@@ -150,11 +160,11 @@ const StudentDetailPage = ({ params }: { params: { student_id: string } }) => {
     };
 
     return (
-        <div className="p-2 sm:p-4">
+        <div className="px-2 sm:px-4">
             {skeleton ? <GroupSkeleton count={1} size={{ width: '100%', height: '100px' }} /> : <StudentInfo />}
 
             <>
-                <TabView
+                {/* <TabView
                     onTabChange={(e) => handleTabChange(e)}
                     activeIndex={activeIndex}
                     // className="main-bg"
@@ -162,19 +172,27 @@ const StudentDetailPage = ({ params }: { params: { student_id: string } }) => {
                         nav: { className: 'flex flex-wrap text-sm' },
                         panelContainer: { className: 'flex-1 pl-4' }
                     }}
-                >
-                    <TabPanel
+                > */}
+                    {/* <TabPanel
                         pt={{
                             headerAction: { className: 'font-italic' }
                         }}
                         header={'Аннулирование'}
                         className="p-tabview p-tabview-nav p-tabview-selected p-tabview-panels p-tabview-panel"
-                    >
+                    > */}
                         {courses.length === 0 ? (
                             <b className="main-bg w-full flex justify-center">У студента пока нет назначенных курсов</b>
                         ) : (
                             <div className="w-full block sm:w-1/2">
-                                <Accordion activeIndex={0}>
+                                <Accordion
+                                    activeIndex={accrodionIndex}
+                                    onTabChange={(e: any) => {
+                                        setAccrodionIndex(e.index);
+                                        setFakeCheck(false);
+                                        setCurrentCourseId(null);
+                                        setAnswerIds([]);
+                                    }}
+                                >
                                     {courses.map((course: any, idx) => (
                                         <AccordionTab
                                             key={course.id}
@@ -210,10 +228,10 @@ const StudentDetailPage = ({ params }: { params: { student_id: string } }) => {
                                                                             setCurrentCourseId(course.id);
                                                                             if (e.target.checked) {
                                                                                 setAnswerIds(course.lesson_step_answers.map((step: any) => step.id));
-                                                                                // setFakeCheck(true);
+                                                                                setFakeCheck(true);
                                                                             } else {
                                                                                 setAnswerIds([]);
-                                                                                // setFakeCheck(false);
+                                                                                setFakeCheck(false);
                                                                             }
                                                                         }}
                                                                     />
@@ -226,46 +244,157 @@ const StudentDetailPage = ({ params }: { params: { student_id: string } }) => {
                                                         </div>
                                                         <div className="w-full">
                                                             {course.lesson_step_answers.map((step: any) => (
-                                                                <div key={step.id} className="flex w-full">
-                                                                    <div className="flex justify-between flex-col sm:flex-row sm:items-center gap-2 rounded-sm h-full w-full shadow p-2 hover:bg-slate-50/50 transition-colors">
-                                                                        <div className="flex items-start sm:items-center w-full gap-2">
-                                                                            <label className="custom-radio">
-                                                                                <input
-                                                                                    type="checkbox"
-                                                                                    className={`customCheckbox`}
-                                                                                    value={step.id}
-                                                                                    // checked={answer_ids.includes(step.id)}
-                                                                                    onChange={(e) => {
-                                                                                        if (currentCourseId !== course.id) {
-                                                                                            setAnswerIds([step.id]);
-                                                                                            setCurrentCourseId(course.id);
-                                                                                        } else {
-                                                                                            const selectedIds = [...answer_ids];
-                                                                                            if (e.target.checked) {
-                                                                                                selectedIds.push(step.id);
-                                                                                            } else {
-                                                                                                const index = selectedIds.indexOf(step.id);
-                                                                                                if (index > -1) {
-                                                                                                    selectedIds.splice(index, 1);
-                                                                                                }
-                                                                                            }
-                                                                                            setAnswerIds(selectedIds);
-                                                                                        }
-                                                                                    }}
-                                                                                />
-                                                                                <span className="checkbox-mark"></span>
-                                                                            </label>
-                                                                            <div className="flex items-start sm:items-center gap-2">
-                                                                                <div className="hidden sm:flex p-2 bg-[#c38598] shadow-xl min-w-[40px] min-h-[40px] w-[40px] h-[40px] justify-center items-center rounded">
-                                                                                    <i className={`pi  pi-list-check text-white`}></i>
+                                                                <div key={step.id} className="flex w-full flex-col">
+                                                                    {step?.test && (
+                                                                        <div className="flex justify-between flex-col sm:flex-row sm:items-center gap-2 rounded-sm h-full w-full shadow p-2 hover:bg-slate-50/50 transition-colors">
+                                                                            <div className="flex items-start sm:items-center w-full gap-2">
+                                                                                {fakeCheck ? (
+                                                                                    <>
+                                                                                        <label className="custom-radio">
+                                                                                            <input
+                                                                                                key={fakeCheck ? 'fake' : 'real'}
+                                                                                                type="checkbox"
+                                                                                                className={`customCheckbox`}
+                                                                                                value={step.id}
+                                                                                                checked={true}
+                                                                                                onChange={(e) => {
+                                                                                                    setFakeCheck(false);
+                                                                                                    setAnswerIds([]);
+                                                                                                }}
+                                                                                            />
+                                                                                            <span className="checkbox-mark"></span>
+                                                                                        </label>
+                                                                                    </>
+                                                                                ) : (
+                                                                                    <>
+                                                                                        <label className="custom-radio">
+                                                                                            <input
+                                                                                                key={fakeCheck ? 'fake' : 'real'}
+                                                                                                type="checkbox"
+                                                                                                className={`customCheckbox`}
+                                                                                                value={step.id}
+                                                                                                onChange={(e) => {
+                                                                                                    if (currentCourseId !== course.id) {
+                                                                                                        setAnswerIds([step.id]);
+                                                                                                        setCurrentCourseId(course.id);
+                                                                                                    } else {
+                                                                                                        const selectedIds = [...answer_ids];
+                                                                                                        if (e.target.checked) {
+                                                                                                            selectedIds.push(step.id);
+                                                                                                        } else {
+                                                                                                            const index = selectedIds.indexOf(step.id);
+                                                                                                            if (index > -1) {
+                                                                                                                selectedIds.splice(index, 1);
+                                                                                                            }
+                                                                                                        }
+                                                                                                        setAnswerIds(selectedIds);
+                                                                                                    }
+                                                                                                }}
+                                                                                            />
+                                                                                            <span className="checkbox-mark"></span>
+                                                                                        </label>
+                                                                                    </>
+                                                                                )}
+                                                                                <div className="flex items-start sm:items-center gap-2">
+                                                                                    <div className="hidden sm:flex p-2 bg-[#c38598] shadow-xl min-w-[40px] min-h-[40px] w-[40px] h-[40px] justify-center items-center rounded">
+                                                                                        <i className={`pi  pi-list-check text-white`}></i>
+                                                                                    </div>
+                                                                                    <span className="font-bold">{step?.test?.content || 'Тест'}</span>
                                                                                 </div>
-                                                                                <span className="font-bold">{step?.test?.content || 'Тест'}</span>
+                                                                            </div>
+                                                                            <div className="flex sm:w-full justify-end">
+                                                                                <span className="text-sm">Балл: {step?.test?.score}</span>
                                                                             </div>
                                                                         </div>
-                                                                        <div className="flex sm:w-full justify-end">
-                                                                            <span className="text-sm">Балл: {step?.test?.score}</span>
+                                                                    )}
+
+                                                                    {step?.practical && (
+                                                                        <div className="flex justify-between flex-col sm:flex-row sm:items-center gap-2 rounded-sm h-full w-full shadow p-2 hover:bg-slate-50/50 transition-colors">
+                                                                            <div className="flex items-start sm:items-center w-full gap-2">
+                                                                                {/* <label className="custom-radio">
+                                                                                    <input
+                                                                                        type="checkbox"
+                                                                                        className={`customCheckbox`}
+                                                                                        value={step.id}
+                                                                                        // checked={answer_ids.includes(step.id)}
+                                                                                        onChange={(e) => {
+                                                                                            if (currentCourseId !== course.id) {
+                                                                                                setAnswerIds([step.id]);
+                                                                                                setCurrentCourseId(course.id);
+                                                                                            } else {
+                                                                                                const selectedIds = [...answer_ids];
+                                                                                                if (e.target.checked) {
+                                                                                                    selectedIds.push(step.id);
+                                                                                                } else {
+                                                                                                    const index = selectedIds.indexOf(step.id);
+                                                                                                    if (index > -1) {
+                                                                                                        selectedIds.splice(index, 1);
+                                                                                                    }
+                                                                                                }
+                                                                                                setAnswerIds(selectedIds);
+                                                                                            }
+                                                                                        }}
+                                                                                    />
+                                                                                    <span className="checkbox-mark"></span>
+                                                                                </label> */}
+                                                                                {fakeCheck ? (
+                                                                                    <>
+                                                                                        <label className="custom-radio">
+                                                                                            <input
+                                                                                                key={fakeCheck ? 'fake' : 'real'}
+                                                                                                type="checkbox"
+                                                                                                className={`customCheckbox`}
+                                                                                                value={step.id}
+                                                                                                checked={true}
+                                                                                                onChange={(e) => {
+                                                                                                    setFakeCheck(false);
+                                                                                                }}
+                                                                                            />
+                                                                                            <span className="checkbox-mark"></span>
+                                                                                        </label>
+                                                                                    </>
+                                                                                ) : (
+                                                                                    <>
+                                                                                        <label className="custom-radio">
+                                                                                            <input
+                                                                                                key={fakeCheck ? 'fake' : 'real'}
+                                                                                                type="checkbox"
+                                                                                                className={`customCheckbox`}
+                                                                                                value={step.id}
+                                                                                                onChange={(e) => {
+                                                                                                    if (currentCourseId !== course.id) {
+                                                                                                        setAnswerIds([step.id]);
+                                                                                                        setCurrentCourseId(course.id);
+                                                                                                    } else {
+                                                                                                        const selectedIds = [...answer_ids];
+                                                                                                        if (e.target.checked) {
+                                                                                                            selectedIds.push(step.id);
+                                                                                                        } else {
+                                                                                                            const index = selectedIds.indexOf(step.id);
+                                                                                                            if (index > -1) {
+                                                                                                                selectedIds.splice(index, 1);
+                                                                                                            }
+                                                                                                        }
+                                                                                                        setAnswerIds(selectedIds);
+                                                                                                    }
+                                                                                                }}
+                                                                                            />
+                                                                                            <span className="checkbox-mark"></span>
+                                                                                        </label>
+                                                                                    </>
+                                                                                )}
+                                                                                <div className="flex items-start sm:items-center gap-2">
+                                                                                    <div className="hidden sm:flex p-2 bg-[var(--yellowColor)] shadow-xl min-w-[40px] min-h-[40px] w-[40px] h-[40px] justify-center items-center rounded">
+                                                                                        <i className={`pi pi-pen-to-square text-white`}></i>
+                                                                                    </div>
+                                                                                    <span className="font-bold">{step?.practical?.title || 'Практическая работа'}</span>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div className="flex sm:w-full justify-end">
+                                                                                <span className="text-sm">Балл: {step?.practical?.score}</span>
+                                                                            </div>
                                                                         </div>
-                                                                    </div>
+                                                                    )}
                                                                 </div>
                                                             ))}
                                                         </div>
@@ -284,20 +413,20 @@ const StudentDetailPage = ({ params }: { params: { student_id: string } }) => {
                                 </div>
                             </div>
                         )}
-                    </TabPanel>
+                    {/* </TabPanel> */}
 
-                    <TabPanel
+                    {/* <TabPanel
                         pt={{
                             headerAction: { className: 'font-italic' }
                         }}
-                        header={'Удаление'}
+                        header={'Управление'}
                         className="p-tabview p-tabview-nav p-tabview-selected p-tabview-panels p-tabview-panel"
                     >
                         <div className="w-full block sm:w-1/2">
                             <CoursesCut id_student={Number(id_student)} />
                         </div>
-                    </TabPanel>
-                </TabView>
+                    </TabPanel> */}
+                {/* </TabView> */}
 
                 <Dialog
                     header="Причина аннулирования"
@@ -311,9 +440,6 @@ const StudentDetailPage = ({ params }: { params: { student_id: string } }) => {
                                 label="Отправить"
                                 icon="pi pi-check"
                                 onClick={() => {
-                                    console.log('Annulment Reason:', annulmentReason);
-                                    console.log('Selected Answer IDs:', answer_ids);
-                                    // Here you would typically make an API call
                                     setDialogVisible(false);
                                     handlestudentCancel();
                                     // setAnnulmentReason('');

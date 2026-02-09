@@ -13,6 +13,8 @@ export interface mainNotification {
         student_id: number;
         lesson_id: number;
         step_id: number;
+        title: string;
+        description: string;
     };
     redirect_url: string;
     is_view: boolean;

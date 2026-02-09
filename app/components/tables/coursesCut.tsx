@@ -8,16 +8,20 @@ import { ProgressSpinner } from 'primereact/progressspinner';
 import React, { useContext, useEffect, useState } from 'react';
 
 interface ConnectType {
-    subject_name: string;
-    subject_details: { name_ru: string; name_kg: string; name_en: string; requirement: string };
-    max_score: { course_id: number; course_title: string; total_score: number };
+    active: boolean;
+    course_name: string;
+    earned_score: number;
+    final_mark: number;
+    potential_score: number;
 }
 
 interface CurricullaType {
     connects: ConnectType[];
     id_curricula: number;
-    is_exceeded: boolean;
-    total_score: number;
+    is_score_exceeded: boolean;
+    total_earned: number;
+    total_potential: number;
+    subject_name: string;
 }
 
 export default function CoursesCut({ id_student }: { id_student: number | null }) {
@@ -75,15 +79,15 @@ export default function CoursesCut({ id_student }: { id_student: number | null }
         });
     };
 
-    const renderStatusBadge = (isOk: boolean) => {
+    const renderStatusBadge = (hasIssue: boolean) => {
         const baseClasses = 'inline-flex items-center px-2 py-1 rounded text-[13px] font-medium';
-        if (!isOk) {
-            return <span className={`pi pi-check-circle text-[green] ${baseClasses}`}></span>;
+        if (hasIssue) {
+            return <span className={`pi pi-times-circle text-[red] ${baseClasses}`}></span>;
         }
-        return <span className={`pi pi-times-circle text-[red] ${baseClasses}`}></span>;
+        return <span className={`pi pi-check-circle text-[green] ${baseClasses}`}></span>;
     };
 
-    const renderConnects = (connects: ConnectType[]) => {
+    const renderConnects = (connects: ConnectType[], item: CurricullaType) => {
         if (!connects || connects?.length < 1) {
             return <span className="text-[13px] text-[#7a7a7a]">Нет связанных потоков</span>;
         }
@@ -91,17 +95,23 @@ export default function CoursesCut({ id_student }: { id_student: number | null }
         return (
             <div className="flex flex-col gap-2">
                 {connects?.map((item, idx) => (
-                    <div key={`${item?.subject_name}-${idx}`} className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4 rounded border-2 sm:border border-[#efefef]">
+                    <div key={`${item?.course_name}-${idx}`} className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4 rounded border-2 sm:border border-[#efefef]">
                         <div className="flex flex-col gap-1 p-2 ">
                             <div className="flex flex-wrap items-center gap-2">
-                                <span className="text-[13px] text-[#7a7a7a]">Предмет:</span>
-                                <span className="font-semibold text-[14px]">{item?.subject_name}</span>
+                                <span className="text-[13px] text-[#7a7a7a]">Курс:</span>
+                                <span className="font-semibold text-[14px]">{item?.course_name}</span>
+                                <span className={`inline-flex items-center gap-1 rounded-full px-2 py-[2px] text-[11px] font-semibold ${item?.active ? 'bg-[#e8fff1] text-[#0f7b36]' : 'bg-[#f4f4f4] text-[#7a7a7a]'}`}>
+                                    <span className={`pi ${item?.active ? 'pi-check-circle' : 'pi-pause-circle'} text-[11px]`}></span>
+                                    {item?.active ? 'Активен' : 'Неактивен'}
+                                </span>
                             </div>
                             <div className="flex flex-wrap items-center gap-2 ">
-                                <span className="text-[13px] text-[#7a7a7a]">Курс:</span>
-                                <span className="text-[14px] max-w-[340px] text-ellipsis text-nowrap overflow-hidden">{item?.max_score?.course_title}</span>
-                                <span className="text-[13px] text-[#7a7a7a]">Балл:</span>
-                                <span className="text-[14px] font-semibold">{item?.max_score?.total_score}</span>
+                                <span className="text-[13px] text-[#7a7a7a]">Собрал:</span>
+                                <span className="text-[14px] font-semibold">{item?.earned_score}</span>
+                                <span className="text-[13px] text-[#7a7a7a]">Потенциал:</span>
+                                <span className="text-[14px]">{item?.potential_score}</span>
+                                <span className="text-[13px] text-[#7a7a7a]">Модуль:</span>
+                                <span className="text-[14px] font-semibold">{item?.final_mark || '-'}</span>
                             </div>
                         </div>
                         <div className="pr-2 flex justify-end sm:justify-start">
@@ -138,20 +148,30 @@ export default function CoursesCut({ id_student }: { id_student: number | null }
         return (
             <div className="flex flex-col gap-3">
                 {student.map((item, index) => {
-                    const cardAlert = item?.is_exceeded === true ? 'border-[#f5bcbc] bg-[#fff7f7]' : 'border-[#ededed]';
+                    const cardAlert = item?.is_score_exceeded === true ? 'border-[#f5bcbc] bg-[#fff7f7]' : 'border-[#ededed]';
                     return (
-                        <div key={`${item?.id_curricula}-${index}`} className={`rounded border p-3 ${cardAlert}`}>
+                        <div key={`${item?.id_curricula}-${index}`} className={`rounded border p-2 ${cardAlert}`}>
                             <div className="flex items-center justify-between mb-2">
                                 <span className="text-[14px] font-semibold text-[#4B4563]">#{index + 1}</span>
-                                {renderStatusBadge(Boolean(item?.is_exceeded))}
+                                {renderStatusBadge(Boolean(item?.is_score_exceeded))}
                             </div>
                             <div className="flex flex-col gap-1 mb-3">
-                                <span className="text-[13px] text-[#7a7a7a]">Макс. балл</span>
-                                <span className="text-[15px] font-semibold">{item?.total_score}</span>
+                                <div className="flex items-center gap-2">
+                                    <span className="text-[13px] text-[#7a7a7a]">Собрал баллов</span>
+                                    <span className="text-[15px] font-semibold">{item?.total_earned}</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <span className="text-[13px] text-[#7a7a7a]">Макс. возможный балл</span>
+                                    <span className="text-[15px] font-semibold">{item?.total_potential}</span>
+                                </div>
                             </div>
                             <div className="flex flex-col gap-2">
+                                <span className="text-[13px] text-[#7a7a7a]">Предмет</span>
+                                <b>{item?.subject_name}</b>
+                            </div>
+                            <div className="flex flex-col gap-2 mt-1">
                                 <span className="text-[13px] text-[#7a7a7a]">Связанные потоки</span>
-                                {renderConnects(item?.connects || [])}
+                                {renderConnects(item?.connects || [], item)}
                             </div>
                         </div>
                     );
@@ -164,8 +184,8 @@ export default function CoursesCut({ id_student }: { id_student: number | null }
         if (skeleton) {
             return (
                 <tr>
-                    <td colSpan={4} className="py-6 text-center text-[14px] text-[#7a7a7a]">
-                        <ProgressSpinner style={{ width: '45px', height: '45px' }} />
+                    <td colSpan={4} className="w-full py-6 text-center text-[14px] text-[#7a7a7a]">
+                        <div className='w-full flex justify-center'><ProgressSpinner style={{ width: '45px', height: '45px' }} /></div>
                     </td>
                 </tr>
             );
@@ -182,18 +202,26 @@ export default function CoursesCut({ id_student }: { id_student: number | null }
         }
 
         return student.map((item, index) => {
-            const rowAlert = item?.is_exceeded === true ? 'bg-[#fff7f7]' : '';
+            const rowAlert = item?.is_score_exceeded === true ? 'bg-[#fff7f7]' : '';
             return (
                 <tr key={`${item?.id_curricula}-${index}`} className={`border-b border-[#f0f0f0] ${rowAlert} hover:bg-green-50 transition-colors duration-200`}>
                     <td className="p-3 align-top text-[14px] text-[#4B4563] font-semibold">{index + 1}</td>
+                    <td className="font-semibold p-3 align-top">{item?.subject_name}</td>
                     <td className="p-3 align-top text-[14px]">
                         <div className="flex flex-col gap-1">
-                            <span className="text-[13px] text-[#7a7a7a]">Макс. балл</span>
-                            <span className="font-semibold text-[15px]">{item?.total_score}</span>
+                            <div className="flex items-center gap-2">
+                                <span className="text-[13px] text-[#7a7a7a]">Собрал баллов</span>
+                                <span className="font-semibold text-[15px]">{item?.total_earned}</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <span className="text-[13px] text-[#7a7a7a]">Макс. возможный балл</span>
+                                <span className="font-semibold text-[15px]">{item?.total_potential}</span>
+                            </div>
                         </div>
                     </td>
-                    <td className="p-3 align-top">{renderStatusBadge(Boolean(item?.is_exceeded))}</td>
-                    <td className="p-3 align-top">{renderConnects(item?.connects || [])}</td>
+                    {/* <td className="p-3 align-top">{item?.subject_name}</td> */}
+                    <td className="p-3 align-top">{renderStatusBadge(Boolean(item?.is_score_exceeded))}</td>
+                    <td className="p-3 align-top">{renderConnects(item?.connects || [], item)}</td>
                 </tr>
             );
         });
@@ -213,8 +241,9 @@ export default function CoursesCut({ id_student }: { id_student: number | null }
                         <thead className="text-[#4B4563]">
                             <tr>
                                 <th className="text-left font-semibold p-3 w-[60px]">#</th>
-                                <th className="text-left font-semibold p-3 w-[140px]">Макс. балл</th>
-                                <th className="text-left font-semibold p-3 w-[180px]">Статус</th>
+                                <th className="text-left font-semibold p-3">Предметы</th>
+                                <th className="text-left font-semibold p-3 w-[180px]">Итоги</th>
+                                <th className="text-left font-semibold p-3 w-[180px]">Лимит баллов</th>
                                 <th className="text-left font-semibold p-3">Связанные потоки</th>
                             </tr>
                         </thead>
@@ -223,7 +252,7 @@ export default function CoursesCut({ id_student }: { id_student: number | null }
                 </div>
                 <div className="hidden sm:flex items-center gap-2 mt-2 text-[13px] text-[#7a7a7a]">
                     <span className="w-[10px] h-[10px] rounded-sm bg-[#fff7f7] border border-[#f5bcbc]"></span>
-                    <span>Строки с отметкой выделены, если есть проблемы по статусу</span>
+                    <span>Строки с отметкой выделены, если есть проблемы по лимиту</span>
                 </div>
             </div>
         </div>
