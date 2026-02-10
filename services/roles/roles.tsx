@@ -19,7 +19,7 @@ export const fetchRolesList = async () => {
 export const fetchRolesUsers = async (page: number, search: string | null, myedu_id: string | null, role_id: number | null, active: boolean | null) => {
     try {
         const res = await axiosInstance.get(
-            `/roles/users?search=${search}&myedu_id=${myedu_id ? Number(myedu_id) : 0}&${role_id ? `role_id=${role_id}` : 'role_id='}${role_id ? `${active ? `&active=${active ? 1 : 0}` : '&active='}` : '&active='}&page=${page}&limit=`
+            `/roles/users?search=${search}&myedu_id=${myedu_id ? Number(myedu_id) : 0}&${role_id ? `role_id=${role_id}` : 'role_id='}${role_id ? `${active ? `&active=${active ? 1 : 0}` : '&active='}` : '&active='}${!search ? `&page=${page}` : ''}`
         );
 
         const data = res.data;
@@ -62,7 +62,7 @@ export const fetchRolesDepartment = async (page: number, search: string | null, 
         const res = await axiosInstance.get(
             `/roles/department/public?search=${search}&myedu_id=${myedu_id ? Number(myedu_id) : ''}&${course_audience_type_id ? `course_audience_type_id=${Number(course_audience_type_id)}` : 'course_audience_type_id='}${
                 course_audience_type_id ? `${active ? `&active=${active ? 1 : 0}` : '&active='}` : '&active='
-            }&page=${page}&limit=`
+            }${!search ? `&page=${page}` : ''}`
         );
 
         const data = res.data;
@@ -245,9 +245,9 @@ export const depExaminationSteps = async (lesson_id: number | null) => {
 };
 
 // reductor fetch
-export const fethcReductor = async (page: number,search: string | null, specialityId: number | null) => {    
+export const fethcReductor = async (page: number, search: string | null, specialityId: number | null) => {
     try {
-        const res = await axiosInstance.get(`/v1/reducer/student-task?page=${page}${search ? `&search=${search}` : ''}${specialityId ? `&speciality_id=${specialityId}` : ''}`);
+        const res = await axiosInstance.get(`/v1/reducer/student-task?${search ? `&search=${search}` : `page=${page}`}${specialityId ? `&speciality_id=${specialityId}` : ''}`);
 
         const data = res.data;
         return data;

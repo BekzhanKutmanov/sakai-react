@@ -302,7 +302,7 @@ export default function HomeClient() {
                                         <li>{translations.higherEducationPrograms}</li>
                                     </ul>
                                     {user ? (
-                                        <Link href={user.is_working ? '/course' : user.is_student ? '/teaching' : ''}>
+                                        <Link href={user.is_working ? '/course/1' : user.is_student ? '/teaching' : ''}>
                                             <FancyLinkBtn btnWidth={'200px'} backround={'--mainColor'} effectBg={'--titleColor'} title={user.is_working ? translations.teacherBtn : user.is_student ? translations.studentBtn : ''} btnType={false} />
                                         </Link>
                                     ) : media ? (

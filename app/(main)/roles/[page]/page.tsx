@@ -7,6 +7,8 @@ import useMediaQuery from '@/hooks/useMediaQuery';
 import { LayoutContext } from '@/layout/context/layoutcontext';
 import { controlRolesUsers, fetchRolesList, fetchRolesUsers } from '@/services/roles/roles';
 import { RoleUserType } from '@/types/roles/RoleUserType';
+import { useParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { Button } from 'primereact/button';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
@@ -16,27 +18,29 @@ import { InputText } from 'primereact/inputtext';
 import { Paginator } from 'primereact/paginator';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import { useContext, useEffect, useState } from 'react';
+// types
+interface Role {
+    id: number;
+    title: string;
+    created_at: string;
+    updated_at: string;
+}
+
+interface Role_idType {
+    name: string;
+    role_id: number | null;
+}
+
+interface RoleState {
+    create: boolean;
+    update: boolean;
+    delete: boolean;
+    show: boolean;
+}
 
 export default function Roles() {
-    // types
-    interface Role {
-        id: number;
-        title: string;
-        created_at: string;
-        updated_at: string;
-    }
-
-    interface Role_idType {
-        name: string;
-        role_id: number | null;
-    }
-
-    interface RoleState {
-        create: boolean;
-        update: boolean;
-        delete: boolean;
-        show: boolean;
-    }
+    const { page } = useParams();
+    const router = useRouter();
 
     const showError = useErrorMessage();
     const { setMessage } = useContext(LayoutContext);
@@ -61,7 +65,7 @@ export default function Roles() {
         total: 0,
         perPage: 0
     });
-    const [pageState, setPageState] = useState<number>(1);
+    // const [Number(page), setNumber(page)] = useState<number>(1);
     const [selectedRole_idType, setSelectedRole_idType] = useState<Role_idType | null>({ name: 'Все', role_id: null });
     const [cities, setCities] = useState<Role_idType[]>([{ name: 'Все', role_id: null }]);
     const [forDisabled, setForDisabled] = useState(false);
@@ -79,8 +83,6 @@ export default function Roles() {
         setSkeleton(true);
         setMainProgressSpinner(true);
         const data = await fetchRolesList();
-        console.log(data);
-
         if (data && Array.isArray(data)) {
             if (data.length > 0) {
                 setContentNull(false);
@@ -154,7 +156,7 @@ export default function Roles() {
         if (res?.success) {
             handleFetchRoles();
             setTimeout(() => {
-                handleFetchUsers(pageState, search, myedu_id, selectedRole_idType, active);
+                handleFetchUsers(Number(page), search, myedu_id, selectedRole_idType, active);
             }, 1000);
             setMessage({ state: true, value: { severity: 'success', summary: 'Успешно изменено!', detail: '' } });
         } else {
@@ -195,8 +197,9 @@ export default function Roles() {
 
     // Ручное управление пагинацией
     const handlePageChange = (page: number) => {
-        handleFetchUsers(page, search, myedu_id, selectedRole_idType, active);
-        setPageState(page);
+        router.push(`/roles/${page}`)
+        // handleFetchUsers(page, search, myedu_id, selectedRole_idType, active);
+        // setNumber(page)(page);
     };
 
     // TSX
@@ -296,7 +299,7 @@ export default function Roles() {
     useEffect(() => {
         setMiniProgressSpinner(true);
         if (search?.length === 0 && searchController) {
-            handleFetchUsers(pageState, search, myedu_id, selectedRole_idType, active);
+            handleFetchUsers(Number(page), search, myedu_id, selectedRole_idType, active);
             setSearchController(false);
             setMiniProgressSpinner(false);
         }
@@ -309,7 +312,7 @@ export default function Roles() {
         setSearchController(true);
         const delay = setTimeout(() => {
             if (userFetchGlag) {
-                handleFetchUsers(pageState, search, myedu_id, selectedRole_idType, active);
+                handleFetchUsers(Number(page), search, myedu_id, selectedRole_idType, active);
                 setMiniProgressSpinner(false);
             }
         }, 1000);
@@ -321,14 +324,14 @@ export default function Roles() {
 
     useEffect(() => {
         if (selectedRole_idType && userFetchGlag) {
-            handleFetchUsers(pageState, search, myedu_id, selectedRole_idType, active);
+            handleFetchUsers(Number(page), search, myedu_id, selectedRole_idType, active);
         }
     }, [selectedRole_idType]);
 
     useEffect(() => {
         setMyeduProgressSpinner(true);
         if (myedu_id?.length === 0 && myeduController) {
-            handleFetchUsers(pageState, search, myedu_id, selectedRole_idType, active);
+            handleFetchUsers(Number(page), search, myedu_id, selectedRole_idType, active);
             setMyeduController(false);
             setMyeduProgressSpinner(false);
         }
@@ -341,7 +344,7 @@ export default function Roles() {
         setMyeduController(true);
         const delay = setTimeout(() => {
             if (userFetchGlag) {
-                handleFetchUsers(pageState, search, myedu_id, selectedRole_idType, active);
+                handleFetchUsers(Number(page), search, myedu_id, selectedRole_idType, active);
             }
             setMyeduProgressSpinner(false);
         }, 1000);
@@ -411,7 +414,7 @@ export default function Roles() {
                                             className={`customCheckbox p-0`}
                                             onChange={() => {
                                                 setActive((prev) => !prev);
-                                                handleFetchUsers(pageState, search, myedu_id, selectedRole_idType, !active);
+                                                handleFetchUsers(Number(page), search, myedu_id, selectedRole_idType, !active);
                                             }}
                                         />
                                         <span className="checkbox-mark"></span>
@@ -464,7 +467,7 @@ export default function Roles() {
                                             header={() => <div className="text-[14px]">{role.title}</div>}
                                             body={(user) => {
                                                 const userRole = user?.roles?.find((r: { id: number }) => r.id === role.id);
-                                                
+
                                                 const isActive = Boolean(userRole?.pivot?.active);
 
                                                 return (

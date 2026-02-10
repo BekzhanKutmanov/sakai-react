@@ -36,11 +36,15 @@ import OpenStudentList from '@/app/components/tables/OpenStudentList';
 import { confirmDialog } from 'primereact/confirmdialog';
 
 import { useLocalization } from '@/layout/context/localizationcontext';
+import { useParams, useRouter } from 'next/navigation';
 
 export default function Course() {
+    const {page} = useParams();
+
     const { translations } = useLocalization();
     const { setMessage, setGlobalLoading, course, contextFetchCourse, setMainCourseId } = useContext(LayoutContext);
 
+    const router = useRouter();
     const topRef = useRef<HTMLDivElement>(null);
     const media = useMediaQuery('(max-width: 640px)');
     const tableMedia = useMediaQuery('(max-width: 577px)');
@@ -74,7 +78,7 @@ export default function Course() {
     const [forStreamId, setForStreamId] = useState<{ id: number | null; title: string } | null>(null);
     const [sendStream, setSendStream] = useState<{ status: boolean; name: 'lock' | 'open' | 'wallet' | '' }>({ status: true, name: 'lock' });
     // const [globalCourseId, setGlobalCourseId] = useState<{ id: number | null; title: string | null } | null>(null);
-    const [pageState, setPageState] = useState<number>(1);
+    // const [pageState, setPageState] = useState<number>(Number(page));
     const [openTypes, setOpenTypes] = useState<AudenceType[]>([]);
     const [openCourseId, setOpenCourseId] = useState<number | null>(null);
     // const [copy_have, setCopy_have] = useState<boolean>(false);
@@ -151,8 +155,8 @@ export default function Course() {
 
         const data = await veryfyCourse(forSentStreams);
         if (data.success) {
-            handleFetchCourse(1, filters);
-            setPageState(1);
+            handleFetchCourse(Number(page), filters);
+            // setPageState(1);
             setMessage({
                 state: true,
                 value: { severity: 'success', summary: 'Успешно изменено!', detail: '' }
@@ -209,7 +213,7 @@ export default function Course() {
     };
 
     const handleFetchCourse = async (
-        page = 1,
+        page: number,
         filters: {
             course_audience_type_id: number | null;
             is_published: boolean | null;
@@ -249,8 +253,8 @@ export default function Course() {
         setSkeleton(true);
         const data = await addCourse(courseValue);
         if (data?.success) {
-            handleFetchCourse(1, filters);
-            setPageState(1);
+            handleFetchCourse(Number(page), filters);
+            // setPageState(1);
             setMessage({
                 state: true,
                 value: { severity: 'success', summary: translations.successAdd, detail: '' }
@@ -272,8 +276,8 @@ export default function Course() {
         const data = await deleteCourse(id);
         if (data?.success) {
             // setGlobalCourseId(null);
-            handleFetchCourse(1, filters);
-            setPageState(1);
+            handleFetchCourse(Number(page), filters);
+            // setPageState(1);
             setMessage({
                 state: true,
                 value: { severity: 'success', summary: 'Успешно удалено!', detail: '' }
@@ -310,8 +314,8 @@ export default function Course() {
         const data = await updateCourse(selectedCourse, editingLesson);
         if (data?.success) {
             toggleSkeleton();
-            handleFetchCourse(1, filters);
-            setPageState(1);
+            handleFetchCourse(Number(page), filters);
+            // setPageState(1);
             clearValues();
             setEditMode(false);
             setSelectedCourse(null);
@@ -374,8 +378,9 @@ export default function Course() {
     // Ручное управление пагинацией
     const handlePageChange = (page: number) => {
         // setGlobalCourseId(null);
-        handleFetchCourse(page, filters);
-        setPageState(page);
+        // handleFetchCourse(page, filters);
+        // setPageState(page);
+        router.push(`/course/${page}`);
     };
 
     const edit = (rowData: number | null) => {
@@ -418,7 +423,7 @@ export default function Course() {
         setSkeleton(true);
         const data = await addOpenTypes(course_audience_type_id, course_id);
         if (data && data.success) {
-            handleFetchCourse(1, filters);
+            handleFetchCourse(Number(page), filters);
             setMessage({
                 state: true,
                 value: { severity: 'success', summary: data.message, detail: '' }
@@ -443,7 +448,7 @@ export default function Course() {
     const onInbox = async (id: number, copy_have: boolean) => {
         const data = await archiveCourse(id, copy_have);
         if (data?.success) {
-            handleFetchCourse(1, filters);
+            handleFetchCourse(Number(page), filters);
             setMessage({
                 state: true,
                 value: { severity: 'success', summary: translations.archiveSuccess, detail: '' }
@@ -506,7 +511,7 @@ export default function Course() {
                     <div className={`w-full flex-1 ${tableMedia && 'flex items-center gap-1 justify-between'}`}>
                         <div className="font-bold text-md mb-2">
                             <Link
-                                href={`/course/${shablonData.id}/${'null'}`}
+                                href={`/course/detail/${shablonData.id}/${'null'}`}
                                 className="max-w-sm break-words"
                                 onClick={() => {
                                     setMainCourseId(shablonData.id);
@@ -706,8 +711,8 @@ export default function Course() {
 
     // usecallback
     const callbackFetchCourse = useCallback(() => {
-        handleFetchCourse(pageState, filters);
-    }, [pageState]);
+        handleFetchCourse(Number(page), filters);
+    }, [page]);
 
     const callbackSetIndex = useCallback(() => {
         setActiveIndex(0);
@@ -721,8 +726,8 @@ export default function Course() {
     const memoForStreamId = useMemo(() => (forStreamId?.id ? forStreamId : null), [forStreamId?.id]);
 
     useEffect(() => {
-        // handleFetchCourse(1, filters);
-        setPageState(1);
+        // handleFetchCourseNumber((page), filters);
+        // setPageState(1);
         setGlobalLoading(true);
         setTimeout(() => {
             setGlobalLoading(false);
@@ -730,7 +735,7 @@ export default function Course() {
     }, []);
 
     useEffect(() => {
-        handleFetchCourse(1, filters);
+        handleFetchCourse(Number(page), filters);
         if (course?.data?.length > 5) {
             setIsTall(true);
         } else {
@@ -948,7 +953,7 @@ export default function Course() {
                                                             header={() => <div className="text-[13px]">{translations.courseName}</div>}
                                                             body={(rowData) => (
                                                                 <Link
-                                                                    href={`/course/${rowData.id}/${'null'}`}
+                                                                    href={`/course/detail/${rowData.id}/${'null'}`}
                                                                     onClick={() => {
                                                                         setGlobalLoading(true);
                                                                         setTimeout(() => {

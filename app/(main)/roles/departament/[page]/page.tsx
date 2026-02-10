@@ -13,6 +13,7 @@ import { MainLangType } from '@/types/openCourse/MainLangType';
 import { TabViewChange } from '@/types/tabViewChange';
 import { getConfirmOptions } from '@/utils/getConfirmOptions';
 import Link from 'next/link';
+import { useParams, useRouter } from 'next/navigation';
 import { Button } from 'primereact/button';
 import { Column } from 'primereact/column';
 import { confirmDialog } from 'primereact/confirmdialog';
@@ -26,36 +27,39 @@ import { ProgressSpinner } from 'primereact/progressspinner';
 import { TabPanel, TabView } from 'primereact/tabview';
 import { useContext, useEffect, useState } from 'react';
 
+// types
+interface Role {
+    id: number;
+    title: string;
+    created_at: string;
+    updated_at: string;
+}
+
+interface Role_idType {
+    name: string;
+    role_id: number | null;
+}
+
+interface CategoryId {
+    title: string;
+    id: number | null;
+    description: string;
+}
+
+interface TeacherCheckType extends CourseType {
+    course_audience_type_id: number | null;
+}
+
+interface MainCategoryType extends CategoryId {
+    created_at: string;
+    updated_at: string;
+}
+
+interface SelectLangType extends Pick<MainLangType, 'title' | 'description' | 'id'> {}
+
 export default function RolesDepartment() {
-    // types
-    interface Role {
-        id: number;
-        title: string;
-        created_at: string;
-        updated_at: string;
-    }
-
-    interface Role_idType {
-        name: string;
-        role_id: number | null;
-    }
-
-    interface CategoryId {
-        title: string;
-        id: number | null;
-        description: string;
-    }
-
-    interface TeacherCheckType extends CourseType {
-        course_audience_type_id: number | null;
-    }
-
-    interface MainCategoryType extends CategoryId {
-        created_at: string,
-        updated_at: string
-    }
-
-    interface SelectLangType extends Pick<MainLangType, 'title' | 'description' | 'id'> { };
+    const { page } = useParams();
+    const router = useRouter();
 
     const showError = useErrorMessage();
     const { setMessage } = useContext(LayoutContext);
@@ -87,7 +91,6 @@ export default function RolesDepartment() {
         total: 0,
         per_page: 0
     });
-    const [pageState, setPageState] = useState<number>(1);
     const [checkPageState, setCheckPageState] = useState<number>(1);
     const [selectedTypeId, setSelectedTypeId] = useState<Role_idType | null>({ name: 'Все', role_id: null });
     const [cities, setCities] = useState<Role_idType[]>([{ name: 'Все', role_id: null }]);
@@ -113,7 +116,7 @@ export default function RolesDepartment() {
     const [editingLesson, setEditingLesson] = useState<MainCategoryType | null>(null);
     const [checkOpenCourseEmpty, setCheckOpenCourseEmpty] = useState<boolean>(false);
 
-    const [langSelectedId, setLangSelectedId] = useState<SelectLangType | null>({ title: 'Все', id: null, description: '', });
+    const [langSelectedId, setLangSelectedId] = useState<SelectLangType | null>({ title: 'Все', id: null, description: '' });
     const [depSelectLang, setSelectLang] = useState<SelectLangType[]>([{ title: 'Выберите категорию', id: null, description: '' }]);
     const [language_id, setLanguage_id] = useState<number | null>(null);
 
@@ -187,7 +190,7 @@ export default function RolesDepartment() {
         console.log(res);
         if (res?.success) {
             setTimeout(() => {
-                handleFetchDepartment(pageState, search, myedu_id, selectedTypeId, active);
+                handleFetchDepartment(Number(page), search, myedu_id, selectedTypeId, active);
             }, 1000);
             setMessage({ state: true, value: { severity: 'success', summary: 'Успешно изменено!', detail: '' } });
         } else {
@@ -254,7 +257,7 @@ export default function RolesDepartment() {
         if (res && res?.id) {
             setEditingLesson(res);
         }
-    }
+    };
 
     const handleDepCategoryFetch = async () => {
         setMainProgressSpinner(true);
@@ -262,7 +265,7 @@ export default function RolesDepartment() {
         if (res && res?.length) {
             if (activeIndex === 1) {
                 handleFetchTeacherCheck(checkPageState, search, myedu_id, selectedTypeId);
-                const forCategoryes = res.map((item: { title: string, id: number, description: string }) => {
+                const forCategoryes = res.map((item: { title: string; id: number; description: string }) => {
                     return { name: item?.title, id: item?.id, description: item?.description };
                 });
                 if (forCategoryes) {
@@ -297,8 +300,7 @@ export default function RolesDepartment() {
             // }
             handleDepCategoryFetch();
             setMessage({ state: true, value: { severity: 'success', summary: 'Успешно добавлено!', detail: '' } });
-        }
-        else {
+        } else {
             if (res?.response?.status === 400) {
                 setMessage({ state: true, value: { severity: 'error', summary: res.response.data.message, detail: '' } });
             } else {
@@ -336,8 +338,7 @@ export default function RolesDepartment() {
         if (res && res?.success) {
             handleDepCategoryFetch();
             setMessage({ state: true, value: { severity: 'success', summary: 'Успешно изменено!', detail: '' } });
-        }
-        else {
+        } else {
             if (res?.response?.status === 400) {
                 setMessage({ state: true, value: { severity: 'error', summary: res.response.data.message, detail: '' } });
             } else {
@@ -371,8 +372,7 @@ export default function RolesDepartment() {
 
     // Ручное управление пагинацией
     const handlePageChange = (page: number) => {
-        handleFetchDepartment(page, search, myedu_id, selectedTypeId, active);
-        setPageState(page);
+        router.push(`/roles/departament/${page}`)
     };
 
     // Ручное управление пагинацией
@@ -403,11 +403,7 @@ export default function RolesDepartment() {
         return (
             <div className="w-full flex flex-col">
                 <span className="font-medium text-[13px] sm:text-md">{option.name}</span>
-                {option.description && (
-                    <span className="text-xs text-gray-500 text-[12px] sm:text-sm max-w-[300px] text-wrap word-break sm:text-nowrap sm:max-w-full">
-                        {option.description}
-                    </span>
-                )}
+                {option.description && <span className="text-xs text-gray-500 text-[12px] sm:text-sm max-w-[300px] text-wrap word-break sm:text-nowrap sm:max-w-full">{option.description}</span>}
             </div>
         );
     };
@@ -420,29 +416,20 @@ export default function RolesDepartment() {
         return (
             <div className="flex flex-col">
                 <span>{option.name}</span>
-                {option.description && (
-                    <span className="text-xs text-gray-500">
-                        {option.description}
-                    </span>
-                )}
+                {option.description && <span className="text-xs text-gray-500">{option.description}</span>}
             </div>
         );
     };
 
     // lang jsx
     const langItemTemplate = (option: any) => {
-
         return (
-            <div className="w-full flex flex-col" >
-                <div className='flex gap-1 items-center'>
-                    <img src={`/layout/images/flags/${option?.logo}`} alt="flag" className='w-[20px] h-[20px]' />
+            <div className="w-full flex flex-col">
+                <div className="flex gap-1 items-center">
+                    <img src={`/layout/images/flags/${option?.logo}`} alt="flag" className="w-[20px] h-[20px]" />
                     <span className="font-medium text-[13px] sm:text-md">{option.title}</span>
                 </div>
-                {option.description && (
-                    <span className="text-xs text-gray-500 text-[12px] sm:text-sm max-w-[300px] text-wrap word-break sm:text-nowrap sm:max-w-full">
-                        {option.description}
-                    </span>
-                )}
+                {option.description && <span className="text-xs text-gray-500 text-[12px] sm:text-sm max-w-[300px] text-wrap word-break sm:text-nowrap sm:max-w-full">{option.description}</span>}
             </div>
         );
     };
@@ -453,14 +440,12 @@ export default function RolesDepartment() {
         }
 
         return (
-            <div className='flex gap-1 items-center'>
-                <img src={`/layout/images/flags/${option?.logo}`} alt="flag" className='w-[20px] h-[20px]' />
+            <div className="flex gap-1 items-center">
+                <img src={`/layout/images/flags/${option?.logo}`} alt="flag" className="w-[20px] h-[20px]" />
                 <span className="font-medium text-[13px] sm:text-md">{option.title}</span>
             </div>
-
         );
     };
-
 
     // TSX access
     const itemAccessTemplate = (roles: any) => {
@@ -504,7 +489,7 @@ export default function RolesDepartment() {
                                                     disabled={forDisabled}
                                                     onClick={() => handleControlDepartament(item?.id, role?.id, false)}
                                                     aria-pressed="false"
-                                                // onClick={() => console.log(user, roles[idx])} aria-pressed="false"
+                                                    // onClick={() => console.log(user, roles[idx])} aria-pressed="false"
                                                 >
                                                     <span className="track">
                                                         <span className="option option-left" aria-hidden></span>
@@ -590,7 +575,7 @@ export default function RolesDepartment() {
                                                             disabled={forDisabled}
                                                             onClick={() => handleControlDepartament(rowData?.id, item?.id, false)}
                                                             aria-pressed="false"
-                                                        // onClick={() => console.log(user, roles[idx])} aria-pressed="false"
+                                                            // onClick={() => console.log(user, roles[idx])} aria-pressed="false"
                                                         >
                                                             <span className="track">
                                                                 <span className="option option-left" aria-hidden></span>
@@ -706,8 +691,9 @@ export default function RolesDepartment() {
             ) : (
                 <div className="main-bg overflow-x-auto scrollbar-thin">
                     {/* <DataTable value={roles || []} emptyMessage="Загрузка" dataKey="id_kafedra" responsiveLayout="stack" breakpoint="960px" rows={5} className='min-w-[640px] overflow-x-auto'> */}
-                    {checkOpenCourseEmpty ? <p className='text-center text-md'>Данных нет</p>
-                        :
+                    {checkOpenCourseEmpty ? (
+                        <p className="text-center text-md">Данных нет</p>
+                    ) : (
                         <DataTable value={teachersCheck || []} dataKey="id" emptyMessage="..." loading={forDisabled} breakpoint="960px" rows={5} className="min-w-[640px] overflow-x-auto">
                             <Column body={(_, { rowIndex }) => rowIndex + 1} header="#"></Column>
 
@@ -778,7 +764,7 @@ export default function RolesDepartment() {
                                 )}
                             ></Column>
                         </DataTable>
-                    }
+                    )}
                 </div>
             )}
 
@@ -795,18 +781,22 @@ export default function RolesDepartment() {
         </div>
     );
 
-    // category crud 
+    // category crud
     const categorySection = (
         <div className="">
             {/* {media ? (
                 itemCheckingTemplate(teachersCheck)
             ) : ( */}
-            <div className='my-2 flex flex-col gap-1'>
-                <h3 className='text-[16px] sm:text-lg pb-1 shadow-[var(--bottom-shadow)]'>Здесь вы можете создавать собственные категории для курсов и добавлять их в общие категории</h3>
-                <div className='flex justify-end'>
-                    <Button size='small' label='Создать' onClick={() => {
-                        setCategoryVisible(true);
-                    }} />
+            <div className="my-2 flex flex-col gap-1">
+                <h3 className="text-[16px] sm:text-lg pb-1 shadow-[var(--bottom-shadow)]">Здесь вы можете создавать собственные категории для курсов и добавлять их в общие категории</h3>
+                <div className="flex justify-end">
+                    <Button
+                        size="small"
+                        label="Создать"
+                        onClick={() => {
+                            setCategoryVisible(true);
+                        }}
+                    />
                 </div>
             </div>
             <div className="main-bg overflow-x-auto scrollbar-thin">
@@ -832,13 +822,19 @@ export default function RolesDepartment() {
                         header="Действия"
                         body={(rowData) => (
                             <div className="w-full flex justify-center items-center gap-4">
-                                <i className='cursor-pointer pi pi-pencil p-2 text-sm rounded bg-[var(--mainColor)] text-white' onClick={() => {
-                                    editing(rowData?.id);
-                                }}></i>
-                                <i className='cursor-pointer pi pi-trash p-2 text-sm rounded bg-[var(--redColor)] text-white' onClick={() => {
-                                    const options = getConfirmOptions(Number(rowData.id), () => handleCategoryDelete(rowData.id));
-                                    confirmDialog(options);
-                                }}></i>
+                                <i
+                                    className="cursor-pointer pi pi-pencil p-2 text-sm rounded bg-[var(--mainColor)] text-white"
+                                    onClick={() => {
+                                        editing(rowData?.id);
+                                    }}
+                                ></i>
+                                <i
+                                    className="cursor-pointer pi pi-trash p-2 text-sm rounded bg-[var(--redColor)] text-white"
+                                    onClick={() => {
+                                        const options = getConfirmOptions(Number(rowData.id), () => handleCategoryDelete(rowData.id));
+                                        confirmDialog(options);
+                                    }}
+                                ></i>
                             </div>
                         )}
                     ></Column>
@@ -864,7 +860,7 @@ export default function RolesDepartment() {
             <Button
                 label={publicState ? 'Опубликовать' : 'Аннулировать'}
                 size="small"
-                className={`${publicState ? categorySelectedId?.id && language_id ? '' : 'opacity-50 pointer-events-none' : ''}`}
+                className={`${publicState ? (categorySelectedId?.id && language_id ? '' : 'opacity-50 pointer-events-none') : ''}`}
                 icon="pi pi-check"
                 onClick={() => {
                     setVisible(false);
@@ -943,7 +939,7 @@ export default function RolesDepartment() {
             if (roleStatus) {
                 handleFetchTeacherCheck(checkPageState, search, myedu_id, selectedTypeId);
             } else {
-                handleFetchDepartment(pageState, search, myedu_id, selectedTypeId, active);
+                handleFetchDepartment(Number(page), search, myedu_id, selectedTypeId, active);
             }
             setSearchController(false);
             setMiniProgressSpinner(false);
@@ -959,7 +955,7 @@ export default function RolesDepartment() {
             if (roleStatus) {
                 handleFetchTeacherCheck(checkPageState, search, myedu_id, selectedTypeId);
             } else {
-                handleFetchDepartment(pageState, search, myedu_id, selectedTypeId, active);
+                handleFetchDepartment(Number(page), search, myedu_id, selectedTypeId, active);
             }
             setMiniProgressSpinner(false);
         }, 1000);
@@ -974,7 +970,7 @@ export default function RolesDepartment() {
             if (roleStatus) {
                 handleFetchTeacherCheck(checkPageState, search, myedu_id, selectedTypeId);
             } else {
-                handleFetchDepartment(pageState, search, myedu_id, selectedTypeId, active);
+                handleFetchDepartment(Number(page), search, myedu_id, selectedTypeId, active);
             }
         }
     }, [selectedTypeId]);
@@ -985,7 +981,7 @@ export default function RolesDepartment() {
             if (roleStatus) {
                 handleFetchTeacherCheck(checkPageState, search, myedu_id, selectedTypeId);
             } else {
-                handleFetchDepartment(pageState, search, myedu_id, selectedTypeId, active);
+                handleFetchDepartment(Number(page), search, myedu_id, selectedTypeId, active);
             }
 
             setMyeduController(false);
@@ -1002,7 +998,7 @@ export default function RolesDepartment() {
             if (roleStatus) {
                 handleFetchTeacherCheck(checkPageState, search, myedu_id, selectedTypeId);
             } else {
-                handleFetchDepartment(pageState, search, myedu_id, selectedTypeId, active);
+                handleFetchDepartment(Number(page), search, myedu_id, selectedTypeId, active);
             }
 
             setMyeduProgressSpinner(false);
@@ -1045,7 +1041,7 @@ export default function RolesDepartment() {
                                                 className={`customCheckbox p-0`}
                                                 onChange={() => {
                                                     setActive((prev) => !prev);
-                                                    handleFetchDepartment(pageState, search, myedu_id, selectedTypeId, !active);
+                                                    handleFetchDepartment(Number(page), search, myedu_id, selectedTypeId, !active);
                                                 }}
                                             />
                                             <span className="checkbox-mark"></span>
@@ -1090,8 +1086,8 @@ export default function RolesDepartment() {
                                     headerAction: { className: 'font-italic' }
                                 }}
                                 header="Доступ"
-                                className='text-[13px] sm:text-[18px]'
-                            // className="p-tabview p-tabview-nav p-tabview-selected p-tabview-panels p-tabview-panel"
+                                className="text-[13px] sm:text-[18px]"
+                                // className="p-tabview p-tabview-nav p-tabview-selected p-tabview-panels p-tabview-panel"
                             >
                                 {mainDepartamentSection}
                             </TabPanel>
@@ -1102,8 +1098,8 @@ export default function RolesDepartment() {
                                     headerAction: { className: 'font-italic' }
                                 }}
                                 header="Проверка"
-                                className='text-[13px] sm:text-[18px]'
-                            // className="p-tabview p-tabview-nav p-tabview-selected p-tabview-panels p-tabview-panel"
+                                className="text-[13px] sm:text-[18px]"
+                                // className="p-tabview p-tabview-nav p-tabview-selected p-tabview-panels p-tabview-panel"
                             >
                                 {checkDepartamentSection}
                             </TabPanel>
@@ -1114,8 +1110,8 @@ export default function RolesDepartment() {
                                     headerAction: { className: 'font-italic' }
                                 }}
                                 header="Категории курсов"
-                                className='text-[13px] sm:text-[18px]'
-                            // className="p-tabview p-tabview-nav p-tabview-selected p-tabview-panels p-tabview-panel"
+                                className="text-[13px] sm:text-[18px]"
+                                // className="p-tabview p-tabview-nav p-tabview-selected p-tabview-panels p-tabview-panel"
                             >
                                 {categorySection}
                             </TabPanel>
@@ -1143,23 +1139,42 @@ export default function RolesDepartment() {
                             <div className="flex flex-col gap-2">
                                 <div className="flex flex-col gap-2">
                                     <b className="px-1">Выберите категорию для курса</b>
-                                    <div className='max-w-[95%]'>
-                                        <Dropdown value={categorySelectedId} filter itemTemplate={categoryItemTemplate} valueTemplate={categoryValueTemplate} onChange={(e: DropdownChangeEvent) => {
-                                            setCategorySelectedId(e.value);
-                                            setPublicCategoryId(e.value?.id);
-                                        }} options={depCategoryes} optionLabel="name" placeholder="..." className="w-full text-sm" />
+                                    <div className="max-w-[95%]">
+                                        <Dropdown
+                                            value={categorySelectedId}
+                                            filter
+                                            itemTemplate={categoryItemTemplate}
+                                            valueTemplate={categoryValueTemplate}
+                                            onChange={(e: DropdownChangeEvent) => {
+                                                setCategorySelectedId(e.value);
+                                                setPublicCategoryId(e.value?.id);
+                                            }}
+                                            options={depCategoryes}
+                                            optionLabel="name"
+                                            placeholder="..."
+                                            className="w-full text-sm"
+                                        />
                                     </div>
                                 </div>
                                 <div className="flex flex-col gap-2">
                                     <b className="px-1">Выберите язык для курса</b>
-                                    <div className='max-w-[95%] flex juctify-center items-start'>
-                                        <Dropdown value={langSelectedId} itemTemplate={langItemTemplate} valueTemplate={langValueTemplate} onChange={(e: DropdownChangeEvent) => {
-                                            setLangSelectedId(e.value);
-                                            setLanguage_id(e.value?.id);
-                                        }} options={depSelectLang} optionLabel="name" placeholder="..." className="w-full text-sm" />
+                                    <div className="max-w-[95%] flex juctify-center items-start">
+                                        <Dropdown
+                                            value={langSelectedId}
+                                            itemTemplate={langItemTemplate}
+                                            valueTemplate={langValueTemplate}
+                                            onChange={(e: DropdownChangeEvent) => {
+                                                setLangSelectedId(e.value);
+                                                setLanguage_id(e.value?.id);
+                                            }}
+                                            options={depSelectLang}
+                                            optionLabel="name"
+                                            placeholder="..."
+                                            className="w-full text-sm"
+                                        />
                                     </div>
                                 </div>
-                                <div className='flex items-center'>
+                                <div className="flex items-center">
                                     <span>Рекомендую</span>
                                     <label className="custom-radio">
                                         <input
@@ -1201,17 +1216,40 @@ export default function RolesDepartment() {
                         {/* Аннулирование */}
                         {!categoryState ? (
                             <div className="flex flex-col gap-2">
-                                <InputText type='text' value={categoryValue?.title} onChange={(e) => {
-                                    setCategoryValue((prev) => ({ ...prev, title: e.target.value }));
-                                }} placeholder='Название категории' />
-                                <InputText type='text' value={categoryValue?.description} onChange={(e) => {
-                                    setCategoryValue((prev) => ({ ...prev, description: e.target.value }));
-                                }} placeholder='Описание' />
+                                <InputText
+                                    type="text"
+                                    value={categoryValue?.title}
+                                    onChange={(e) => {
+                                        setCategoryValue((prev) => ({ ...prev, title: e.target.value }));
+                                    }}
+                                    placeholder="Название категории"
+                                />
+                                <InputText
+                                    type="text"
+                                    value={categoryValue?.description}
+                                    onChange={(e) => {
+                                        setCategoryValue((prev) => ({ ...prev, description: e.target.value }));
+                                    }}
+                                    placeholder="Описание"
+                                />
                             </div>
                         ) : (
                             <div className="flex flex-col gap-2">
-                                <InputText type='text' value={editingLesson?.title} onChange={(e) => { setEditingLesson((prev) => prev && ({ ...prev, title: e.target.value })) }} placeholder='Название категории' />
-                                <InputText type='text' value={editingLesson?.description} onChange={(e) => { setEditingLesson((prev) => prev && ({ ...prev, description: e.target.value })) }} />
+                                <InputText
+                                    type="text"
+                                    value={editingLesson?.title}
+                                    onChange={(e) => {
+                                        setEditingLesson((prev) => prev && { ...prev, title: e.target.value });
+                                    }}
+                                    placeholder="Название категории"
+                                />
+                                <InputText
+                                    type="text"
+                                    value={editingLesson?.description}
+                                    onChange={(e) => {
+                                        setEditingLesson((prev) => prev && { ...prev, description: e.target.value });
+                                    }}
+                                />
                             </div>
                         )}
                     </div>

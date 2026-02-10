@@ -11,6 +11,7 @@ import { fetchOpenCourses, openCourseShow, openCourseSignup, signupList } from '
 import { depCategoryFetch, depLangFetch } from '@/services/roles/roles';
 import { CourseCategoryOption } from '@/types/openCourse/CourseCategoryOption';
 import { MainLangType } from '@/types/openCourse/MainLangType';
+import { useParams, useRouter } from 'next/navigation';
 import { Button } from 'primereact/button';
 import { Dropdown, DropdownChangeEvent } from 'primereact/dropdown';
 import { InputText } from 'primereact/inputtext';
@@ -19,16 +20,18 @@ import { ProgressSpinner } from 'primereact/progressspinner';
 import { Sidebar } from 'primereact/sidebar';
 import { useContext, useEffect, useState } from 'react';
 
+// types
+interface CategoryId {
+    title: string;
+    id: number | null;
+    description: string;
+}
+
+interface SelectLangType extends Pick<MainLangType, 'title' | 'description' | 'id'> {}
+
 export default function OpenCourse() {
-    // types
-    interface CategoryId {
-        title: string;
-        id: number | null;
-        description: string;
-    }
-
-    interface SelectLangType extends Pick<MainLangType, 'title' | 'description' | 'id'> { };
-
+    const { page } = useParams();
+    const router = useRouter();
     const { setMessage } = useContext(LayoutContext);
     const showError = useErrorMessage();
     const media = useMediaQuery('(max-width: 640px)');
@@ -42,7 +45,7 @@ export default function OpenCourse() {
     const [skeleton, setSkeleton] = useState(false);
     const [hasCourses, setHasCourses] = useState(false);
     const [emptyCourse, setEmptyCourse] = useState(false);
-    const [pageState, setPageState] = useState<number>(1);
+    // const [Number(page), setPageState] = useState<number>(1);
     const [pagination, setPagination] = useState<{ currentPage: number; total: number; perPage: number }>({
         currentPage: 1,
         total: 0,
@@ -55,7 +58,7 @@ export default function OpenCourse() {
     const [signUpList, setSignupList] = useState<number[]>([]);
     const [signupDisabled, setSignupDisebled] = useState(false);
 
-    const [langSelectedId, setLangSelectedId] = useState<SelectLangType | null>({ title: 'Все', id: null, description: '', });
+    const [langSelectedId, setLangSelectedId] = useState<SelectLangType | null>({ title: 'Все', id: null, description: '' });
     const [depSelectLang, setSelectLang] = useState<SelectLangType[]>([{ title: 'Выберите категорию', id: null, description: '' }]);
     const [language_id, setLanguage_id] = useState<number | null>(null);
 
@@ -71,7 +74,6 @@ export default function OpenCourse() {
             setHasCourses(false);
             setMainCourse(data);
             if (data?.data?.length < 1) {
-
                 setEmptyCourse(true);
             } else {
                 setEmptyCourse(false);
@@ -115,14 +117,13 @@ export default function OpenCourse() {
     const handleDepCategoryFetch = async () => {
         const res = await depCategoryFetch();
         if (res && res?.length) {
-            const forCategoryes = res.map((item: { title: string, id: number, description: string }) => {
+            const forCategoryes = res.map((item: { title: string; id: number; description: string }) => {
                 return { name: item?.title, id: item?.id, description: item?.description };
             });
             if (forCategoryes) {
                 forCategoryes.unshift({ name: 'Все', id: null, description: 'Отобразить все курсы' });
                 setCategoryes(forCategoryes);
             }
-
         }
     };
 
@@ -131,7 +132,7 @@ export default function OpenCourse() {
         const res = await depLangFetch();
         if (res && res?.success) {
             const selectLangList = res?.data;
-            if(selectLangList){
+            if (selectLangList) {
                 selectLangList?.unshift({ title: 'Все', id: null, description: 'Отобразить все курсы' });
                 setSelectLang(res?.data);
             }
@@ -226,25 +227,22 @@ export default function OpenCourse() {
 
     const clearFilter = () => {
         setFree(null);
-        handleFetchOpenCourse(pageState, '', '', null, null);
+        handleFetchOpenCourse(Number(page), '', '', null, null);
     };
 
-        // Ручное управление пагинацией
-        const handlePageChange = (page: number) => {
-            handleFetchOpenCourse(page, free === 'paid' ? '3' : free === 'free' ? '2' : '', search, categorySelectedId?.id || null, language_id);
-            setPageState(page);
-        };
+    // Ручное управление пагинацией
+    const handlePageChange = (page: number) => {
+        router.push(`/openCourse/${page}`);
+        // handleFetchOpenCourse(page, free === 'paid' ? '3' : free === 'free' ? '2' : '', search, categorySelectedId?.id || null, language_id);
+        // Number(setpage)(page);
+    };
 
     // category jsx
     const categoryItemTemplate = (option: any) => {
         return (
             <div className="w-full flex flex-col">
                 <span className="font-medium text-[13px] sm:text-md">{option.name}</span>
-                {option.description && (
-                    <span className="text-xs text-gray-500 text-[12px] sm:text-sm max-w-[300px] text-wrap word-break sm:text-nowrap sm:max-w-full">
-                        {option.description}
-                    </span>
-                )}
+                {option.description && <span className="text-xs text-gray-500 text-[12px] sm:text-sm max-w-[300px] text-wrap word-break sm:text-nowrap sm:max-w-full">{option.description}</span>}
             </div>
         );
     };
@@ -257,11 +255,7 @@ export default function OpenCourse() {
         return (
             <div className="flex flex-col">
                 <span>{option.name}</span>
-                {option.description && (
-                    <span className="text-xs text-gray-500">
-                        {option.description}
-                    </span>
-                )}
+                {option.description && <span className="text-xs text-gray-500">{option.description}</span>}
             </div>
         );
     };
@@ -270,15 +264,11 @@ export default function OpenCourse() {
     const langItemTemplate = (option: any) => {
         return (
             <div className="w-full flex flex-col">
-                <div className='flex gap-1 items-center'>
-                    {option?.logo && <img src={`/layout/images/flags/${option?.logo}`} alt="flag" className='w-[20px] h-[20px]' />}
+                <div className="flex gap-1 items-center">
+                    {option?.logo && <img src={`/layout/images/flags/${option?.logo}`} alt="flag" className="w-[20px] h-[20px]" />}
                     <span className="font-medium text-[13px] sm:text-md">{option.title}</span>
                 </div>
-                {option.description && (
-                    <span className="text-xs text-gray-500 text-[12px] sm:text-sm max-w-[300px] text-wrap word-break sm:text-nowrap sm:max-w-full">
-                        {option.description}
-                    </span>
-                )}
+                {option.description && <span className="text-xs text-gray-500 text-[12px] sm:text-sm max-w-[300px] text-wrap word-break sm:text-nowrap sm:max-w-full">{option.description}</span>}
             </div>
         );
     };
@@ -289,18 +279,17 @@ export default function OpenCourse() {
         }
 
         return (
-            <div className='flex gap-1 items-center'>
-                {option?.logo && <img src={`/layout/images/flags/${option?.logo}`} alt="flag" className='w-[20px] h-[20px]' />}
+            <div className="flex gap-1 items-center">
+                {option?.logo && <img src={`/layout/images/flags/${option?.logo}`} alt="flag" className="w-[20px] h-[20px]" />}
                 <span className="font-medium text-[13px] sm:text-md">{option.title}</span>
             </div>
-
         );
     };
 
     useEffect(() => {
         setProgressSpinner(true);
         if (search?.length === 0 && searchController) {
-            handleFetchOpenCourse(pageState, free === 'paid' ? '3' : free === 'free' ? '2' : '', search, categorySelectedId?.id || null, language_id);
+            handleFetchOpenCourse(Number(page), free === 'paid' ? '3' : free === 'free' ? '2' : '', search, categorySelectedId?.id || null, language_id);
             setSearchController(false);
             setProgressSpinner(false);
         }
@@ -312,7 +301,7 @@ export default function OpenCourse() {
 
         setSearchController(true);
         const delay = setTimeout(() => {
-            handleFetchOpenCourse(pageState, free === 'paid' ? '3' : free === 'free' ? '2' : '', search, categorySelectedId?.id || null, language_id);
+            handleFetchOpenCourse(Number(page), free === 'paid' ? '3' : free === 'free' ? '2' : '', search, categorySelectedId?.id || null, language_id);
             setProgressSpinner(false);
         }, 1000);
 
@@ -322,11 +311,11 @@ export default function OpenCourse() {
     }, [search]);
 
     useEffect(() => {
-        if (categorySelectedId) handleFetchOpenCourse(pageState, free === 'paid' ? '3' : free === 'free' ? '2' : '', search, categorySelectedId?.id || null, language_id);
+        if (categorySelectedId) handleFetchOpenCourse(Number(page), free === 'paid' ? '3' : free === 'free' ? '2' : '', search, categorySelectedId?.id || null, language_id);
     }, [categorySelectedId]);
 
     useEffect(() => {
-        if (langSelectedId) handleFetchOpenCourse(pageState, free === 'paid' ? '3' : free === 'free' ? '2' : '', search, categorySelectedId?.id || null, language_id);
+        if (langSelectedId) handleFetchOpenCourse(Number(page), free === 'paid' ? '3' : free === 'free' ? '2' : '', search, categorySelectedId?.id || null, language_id);
     }, [langSelectedId]);
 
     useEffect(() => {
@@ -336,12 +325,17 @@ export default function OpenCourse() {
     }, [coursesValue]);
 
     useEffect(() => {
-        handleFetchOpenCourse(pageState, '', '', null, null);
+        handleFetchOpenCourse(Number(page), '', '', null, null);
         handleDepCategoryFetch(); // получаем категории
         handleDepLangFetch(); // получаем азыки
     }, []);
 
-    if (mainProgressSpinner) return <div className='main-bg flex justify-center items-center h-[100vh]'><ProgressSpinner style={{ width: '60px', height: '60px' }} /></div>
+    if (mainProgressSpinner)
+        return (
+            <div className="main-bg flex justify-center items-center h-[100vh]">
+                <ProgressSpinner style={{ width: '60px', height: '60px' }} />
+            </div>
+        );
 
     if (hasCourses) return <NotFound titleMessage="Данные не доступны" />;
 
@@ -365,7 +359,7 @@ export default function OpenCourse() {
                                             checked={free === 'free'}
                                             className={`customCheckbox p-0`}
                                             onChange={() => {
-                                                handleFetchOpenCourse(pageState, 2, search, categorySelectedId?.id || null, language_id);
+                                                handleFetchOpenCourse(Number(page), 2, search, categorySelectedId?.id || null, language_id);
                                                 setFree((prev) => (prev === 'free' ? null : 'free'));
                                             }}
                                         />
@@ -380,7 +374,7 @@ export default function OpenCourse() {
                                             checked={free === 'paid'}
                                             className={`customCheckbox`}
                                             onChange={() => {
-                                                handleFetchOpenCourse(pageState, 3, search, categorySelectedId?.id || null, language_id);
+                                                handleFetchOpenCourse(Number(page), 3, search, categorySelectedId?.id || null, language_id);
                                                 setFree((prev) => (prev === 'paid' ? null : 'paid'));
                                             }}
                                         />
@@ -395,19 +389,37 @@ export default function OpenCourse() {
                             <div className="flex flex-col gap-2 max-w-[80%] overflow-x-hidden">
                                 <b className="px-1">Выберите категорию для курса</b>
                                 <div>
-                                    <Dropdown value={categorySelectedId} itemTemplate={categoryItemTemplate} valueTemplate={categoryValueTemplate} onChange={(e: DropdownChangeEvent) => {
-                                        setCategorySelectedId(e.value);
-                                        // setPublicCategoryId(e.value?.id);
-                                    }} options={depCategoryes} optionLabel="name" placeholder="..." className="w-full text-sm" />
+                                    <Dropdown
+                                        value={categorySelectedId}
+                                        itemTemplate={categoryItemTemplate}
+                                        valueTemplate={categoryValueTemplate}
+                                        onChange={(e: DropdownChangeEvent) => {
+                                            setCategorySelectedId(e.value);
+                                            // setPublicCategoryId(e.value?.id);
+                                        }}
+                                        options={depCategoryes}
+                                        optionLabel="name"
+                                        placeholder="..."
+                                        className="w-full text-sm"
+                                    />
                                 </div>
                             </div>
                             <div className="flex flex-col gap-2">
                                 <b className="px-1">Выберите язык для курса</b>
-                                <div className='max-w-[95%] flex juctify-center items-start'>
-                                    <Dropdown value={langSelectedId} itemTemplate={langItemTemplate} valueTemplate={langValueTemplate} onChange={(e: DropdownChangeEvent) => {
-                                        setLangSelectedId(e.value);
-                                        setLanguage_id(e.value?.id);
-                                    }} options={depSelectLang} optionLabel="name" placeholder="..." className="w-full text-sm" />
+                                <div className="max-w-[95%] flex juctify-center items-start">
+                                    <Dropdown
+                                        value={langSelectedId}
+                                        itemTemplate={langItemTemplate}
+                                        valueTemplate={langValueTemplate}
+                                        onChange={(e: DropdownChangeEvent) => {
+                                            setLangSelectedId(e.value);
+                                            setLanguage_id(e.value?.id);
+                                        }}
+                                        options={depSelectLang}
+                                        optionLabel="name"
+                                        placeholder="..."
+                                        className="w-full text-sm"
+                                    />
                                 </div>
                             </div>
                         </div>
@@ -446,7 +458,7 @@ export default function OpenCourse() {
                     <div className={`shadow-[0px_-11px_5px_-6px_rgba(0,_0,_0,_0.1)]`}>
                         <Paginator
                             first={(pagination.currentPage - 1) * pagination.perPage}
-                            rows={pagination.perPage}   
+                            rows={pagination.perPage}
                             totalRecords={pagination.total}
                             onPageChange={(e) => handlePageChange(e.page + 1)}
                             // template="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
@@ -457,7 +469,13 @@ export default function OpenCourse() {
             )}
 
             <Sidebar visible={showVisisble} position="bottom" style={{ height: '90vh' }} onHide={() => setShowVisible(false)}>
-                {skeleton ? <GroupSkeleton count={1} size={{ width: '100%', height: '12rem' }} /> : courseDetail ? <OpenCourseShowCard course={courseDetail} courseSignup={сourseSignup} signUpList={signUpList} btnDisabled={signupDisabled} /> : <b className="flex justify-center">Данные не доступны</b>}
+                {skeleton ? (
+                    <GroupSkeleton count={1} size={{ width: '100%', height: '12rem' }} />
+                ) : courseDetail ? (
+                    <OpenCourseShowCard course={courseDetail} courseSignup={сourseSignup} signUpList={signUpList} btnDisabled={signupDisabled} />
+                ) : (
+                    <b className="flex justify-center">Данные не доступны</b>
+                )}
             </Sidebar>
         </div>
     );

@@ -110,13 +110,16 @@ const AppMenu = () => {
     addLocale('ru', ruLocale);
 
     const byStatus: AppMenuItem[] = user?.is_working
-        ? pathname.startsWith('/course/')
+        ? pathname.startsWith('/course/detail/')
             ? [
                   {
                       // key: 'prev',
                       label: `${courseInfo?.title}`,
                       icon: 'pi pi-fw pi-arrow-left',
-                      to: '/course'
+                      //   to: '/course/'
+                      command: () => {
+                          router.back();
+                      }
                   },
                   {
                       label: translations.themes,
@@ -132,8 +135,8 @@ const AppMenu = () => {
               pathname.startsWith('/videoInstruct/') ||
               pathname.startsWith('/notification') ||
               pathname.startsWith('/dashboard') ||
-              pathname.startsWith('/openCourse') ||
-              pathname.startsWith('/roles') ||
+              pathname.startsWith('/openCourse/') ||
+              pathname.startsWith('/roles/') ||
               pathname.startsWith('/archive')
                 ? ([
                       {
@@ -162,7 +165,7 @@ const AppMenu = () => {
                       {
                           label: translations.courses,
                           icon: 'pi pi-fw pi-book',
-                          to: '/course'
+                          to: '/course/1'
                       },
                       {
                           label: translations.videoInstruction,
@@ -190,7 +193,7 @@ const AppMenu = () => {
                       {
                           label: translations.openOnlineCourses,
                           icon: 'pi pi-fw pi-globe',
-                          to: '/openCourse'
+                          to: '/openCourse/1'
                       },
                       {
                           label: translations.myActiveCourses,
@@ -240,7 +243,7 @@ const AppMenu = () => {
               {
                   label: translations.openOnlineCourses,
                   icon: 'pi pi-fw pi-globe',
-                  to: '/openCourse'
+                  to: '/openCourse/1'
               },
               {
                   label: translations.myActiveCourses,
@@ -257,7 +260,7 @@ const AppMenu = () => {
         : [];
 
     const forDepartament = forDepartamentLength
-        ? !pathname.startsWith('/course/') && !pathname.startsWith('/pdf/')
+        ? !pathname.startsWith('/course/:id/') && !pathname.startsWith('/pdf/')
             ? ([
                   {
                       // key: 'prev',
@@ -290,7 +293,7 @@ const AppMenu = () => {
                   {
                       label: translations.courses,
                       icon: 'pi pi-fw pi-book',
-                      to: '/course'
+                      to: '/course/1'
                   },
                   {
                       label: translations.videoInstruction,
@@ -318,7 +321,7 @@ const AppMenu = () => {
                   {
                       label: translations.openOnlineCourses,
                       icon: 'pi pi-fw pi-globe',
-                      to: '/openCourse'
+                      to: '/openCourse/1'
                   },
                   {
                       label: translations.myActiveCourses,
@@ -514,13 +517,13 @@ const AppMenu = () => {
             if (forRole && forRole?.length > 0) {
                 const forAdmin = forRole.find((item) => item.id === 1);
                 if (forAdmin) {
-                    setAdminRole({ label: translations.admin, icon: 'pi pi-shield', to: '/roles', profilact: '' });
+                    setAdminRole({ label: translations.admin, icon: 'pi pi-shield', to: '/roles/1', profilact: '' });
                     setZamDekanRole({ label: translations.teacherCheck, icon: 'pi pi-check-square', to: '/roles/teacherCheck', profilact: '' });
                 }
 
                 const forDep = forRole.find((item) => item.id === 2);
                 if (forDep) {
-                    setDepRole({ label: translations.department, icon: 'pi pi-briefcase', to: '/roles/departament', profilact: '' });
+                    setDepRole({ label: translations.department, icon: 'pi pi-briefcase', to: '/roles/departament/1', profilact: '' });
                 }
 
                 const forReduct = forRole.find((item) => item.id === 3);
@@ -536,7 +539,7 @@ const AppMenu = () => {
             const newThemes = contextThemes.lessons?.data?.map((item: any, idx: number) => ({
                 label: `${idx + 1}. ${item.title}`,
                 id: item.id,
-                to: `/course/${course_Id}/${item.id}`,
+                to: `/course/detail/${course_Id}/${item.id}`,
                 score: `${translations.score}: ${item.steps_sum_score == null ? 0 : item.steps_sum_score}`,
                 onEdit: () => {
                     selectedForEditing(item.id);
@@ -733,7 +736,7 @@ const AppMenu = () => {
                     return !item?.seperator ? <AppMenuitem item={item} root={true} index={i} key={item.label} /> : <li className="menu-separator"></li>;
                 })}
             </ul>
-            {pathname.startsWith('/course/') && (
+            {pathname.startsWith('/course/detail/') && (
                 <div>
                     <div className="p-4 mt-auto">
                         <Button label={translations.add} icon={'pi pi-plus'} className="cursor-pointer w-full py-2 px-4 rounded-lg transition" onClick={() => setThemeAddVisisble(true)}></Button>

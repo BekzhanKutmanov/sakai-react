@@ -27,6 +27,7 @@ export default function LessonStep() {
     const { translations } = useLocalization();
     const param = useParams();
     const course_id = param.course_Id;
+    const page = param.page;
     const scrollRef = useRef<HTMLDivElement>(null);
     const router = useRouter();
     const prevLessonsRef = useRef<Array<{ id: number; title: string }> | null>(null);
@@ -55,7 +56,7 @@ export default function LessonStep() {
     const [documentSteps, setDocumentSteps] = useState<mainStepsType[]>([]);
 
     const changeUrl = (lessonId: number | null) => {
-        router.replace(`/course/${course_id}/${lessonId ? lessonId : null}`);
+        router.replace(`/course/detail/${course_id}/${lessonId ? lessonId : null}`);
     };
 
     const handleShow = async (LessonId: number | null) => {

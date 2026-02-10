@@ -215,7 +215,7 @@ export default function Dashboard() {
                 ) : (
                     !hasCourses && (
                         <div className="flex items-start gap-2 justify-around lg:justify-between flex-wrap mb-2">
-                            <Link href={'/course'} className="main-bg flex flex-col gap-1 w-full md:!w-[250px] px-4 min-h-[132px] hover:underline">
+                            <Link href={'/course/1'} className="main-bg flex flex-col gap-1 w-full md:!w-[250px] px-4 min-h-[132px] hover:underline">
                                 <div className="flex justify-between gap-1 items-start">
                                     <b className="underline text-[var(--bodyColor)]">Все курсы</b>
                                     <i className="pi pi-fw pi-book text-xl p-1 px-3 flex justify-center rounded bg-[var(--productQuantityBg)] text-[var(--productQuantityText)]"></i>
@@ -229,7 +229,7 @@ export default function Dashboard() {
                                     ''
                                 )}
                             </Link>
-                            <Link href={'/course'} className="main-bg flex flex-col gap-1 w-full md:!w-[250px] px-4 min-h-[132px] hover:underline">
+                            <Link href={'/course/1'} className="main-bg flex flex-col gap-1 w-full md:!w-[250px] px-4 min-h-[132px] hover:underline">
                                 <div className="flex justify-between gap-1 items-start">
                                     <b className="underline text-[var(--bodyColor)]">Закрытые курсы</b>
                                     <i className="pi pi-fw pi-lock text-xl p-1 px-3 flex justify-center rounded bg-[var(--productQuantityBg)] text-[var(--productQuantityText)]"></i>
@@ -243,7 +243,7 @@ export default function Dashboard() {
                                     ''
                                 )}
                             </Link>
-                            <Link href={'/course'} className="main-bg flex flex-col gap-1 w-full md:!w-[250px] px-4 min-h-[132px] hover:underline">
+                            <Link href={'/course/1'} className="main-bg flex flex-col gap-1 w-full md:!w-[250px] px-4 min-h-[132px] hover:underline">
                                 <div className="flex justify-between gap-1 items-start">
                                     <b className="underline text-[var(--bodyColor)]">Открытые курсы</b>
                                     <i className="pi pi-fw pi-lock-open text-xl p-1 px-3 flex justify-center rounded bg-[var(--productQuantityBg)] text-[var(--productQuantityText)]"></i>
@@ -257,7 +257,7 @@ export default function Dashboard() {
                                     ''
                                 )}
                             </Link>
-                            <Link href={'/course'} className="main-bg flex flex-col gap-1 w-full md:!w-[250px] px-4 min-h-[132px] hover:underline">
+                            <Link href={'/course/1'} className="main-bg flex flex-col gap-1 w-full md:!w-[250px] px-4 min-h-[132px] hover:underline">
                                 <div className="flex justify-between gap-1 items-start">
                                     <b className="underline text-[var(--bodyColor)]">Платные курсы</b>
                                     <i className="pi pi-fw pi-wallet text-xl p-1 px-3 flex justify-center rounded bg-[var(--productQuantityBg)] text-[var(--productQuantityText)]"></i>
