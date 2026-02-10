@@ -2,7 +2,6 @@
 import useErrorMessage from '@/hooks/useErrorMessage';
 import { LayoutContext } from '@/layout/context/layoutcontext';
 import { cutStudentConnect, fetchStudentCut } from '@/services/student/studentSearch';
-import { studentType } from '@/types/studentType';
 import { confirmDialog } from 'primereact/confirmdialog';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import React, { useContext, useEffect, useState } from 'react';
@@ -24,7 +23,7 @@ interface CurricullaType {
     total_earned: number;
     total_potential: number;
     subject_name: string;
-}
+}    
 
 export default function CoursesCut({ id_student }: { id_student: number | null }) {
     const { setMessage } = useContext(LayoutContext);

@@ -188,7 +188,7 @@ export default function MainNotificatoin() {
 
             {/* main */}
             <div className="flex flex-col gap-2 sm:gap-3 mt-2">
-                {!empty ? (
+                {empty ? (
                     <div className='flex justify-center'>
                         <NotFound titleMessage="Данных нет" />
                     </div>

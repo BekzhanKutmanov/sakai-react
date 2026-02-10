@@ -20,9 +20,9 @@ export default function LessonInfoCard({
     video_link,
 
     videoStart,
-    
+
     test,
-    
+
     getValues,
     answerList,
     addPracticaScore,
@@ -41,16 +41,16 @@ export default function LessonInfoCard({
     test?: { content: string; answers: { id: number | null; text: string; is_correct: boolean }[]; score: number | null };
     contentType?: string;
     totalScore?: number | null;
-    answerList?: { answer_id: number | null; file: string; score: number | null; id_curricula: number; course_id: number; id_parent: number | null; id_stream: number; student_id: number; lesson_id: number; id:number; steps_id: number };
+    answerList?: { answer_id: number | null; file: string; score: number | null; id_curricula: number; course_id: number; id_parent: number | null; id_stream: number; student_id: number; lesson_id: number; id: number; steps_id: number };
     checkTitle?: string | null;
     skeleton?: boolean;
     getValues?: () => void;
     addPracticaScore?: (id: number) => void;
-    addPracticaDisannul?: (id_curricula:number, course_id:number, id_stream:number, id:number, steps_id:number, message:string) => void;
+    addPracticaDisannul?: (id_curricula: number, course_id: number, id_stream: number, id: number, steps_id: number, message: string) => void;
     isOpened?: boolean;
 }) {
     const { setMessage } = useContext(LayoutContext);
-    
+
     const [testCall, setTestCall] = useState(false);
     const [answerTest, setAnswerTest] = useState<{ text: string } | null>(null);
     const [docCall, setDocCall] = useState(false);
@@ -377,26 +377,46 @@ export default function LessonInfoCard({
                     </div>
                 ) : (
                     test?.answers && (
-                        <div className="flex flex-col justify-center gap-2 w-full">
-                            <div className="flex gap-1 items-center flex-col md:flex-row border-b-1 pb-1 border-[var(--borderBottomColor)]">
-                                <span className="max-w-[800px] text-wrap break-all">{test?.content}</span>
+                        <div className="flex flex-col justify-center gap-3 w-full">
+                            <div className="rounded-xl border border-slate-100 bg-white/80 p-3 sm:p-4 shadow-sm">
+                                <div className="flex items-center gap-2 mb-2">
+                                    <i className="pi pi-question-circle text-[var(--mainColor)]"></i>
+                                    <span className="text-[12px] uppercase tracking-wide text-slate-500">Вопрос</span>
+                                </div>
+                                <div className="flex gap-1 items-center flex-col md:flex-row border-b-1 pb-2 border-[var(--borderBottomColor)]">
+                                    <span className="max-w-[800px] text-wrap break-all">{test?.content}</span>
+                                </div>
                             </div>
-                            <div className="flex flex-col gap-1 justify-center">
-                                {test?.answers.map((item) => {
-                                    return (
-                                        <div key={item.id}>
-                                            <label className="custom-radio opacity-[60%]">
-                                                <input disabled checked={item?.is_correct} type="radio" name="radio" />
-                                                <span className="radio-mark min-w-[18px]"></span>
-                                                <span>{item.text}</span>
-                                            </label>
-                                        </div>
-                                    );
-                                })}
+
+                            <div className="rounded-xl border border-slate-100 bg-white p-3 sm:p-4 shadow-sm">
+                                <div className="flex items-center gap-2 mb-2">
+                                    <i className="pi pi-list text-[var(--mainColor)]"></i>
+                                    <span className="text-[12px] uppercase tracking-wide text-slate-500">Варианты</span>
+                                </div>
+                                <div className="flex flex-col gap-2 justify-center">
+                                    {test?.answers.map((item) => {
+                                        return (
+                                            <div key={item.id} className="rounded-lg border border-slate-100 bg-slate-50/60 p-2">
+                                                <label className="custom-radio opacity-[85%]">
+                                                    <input disabled checked={item?.is_correct} type="radio" name="radio" />
+                                                    <span className="radio-mark min-w-[18px]"></span>
+                                                    <span>{item.text}</span>
+                                                </label>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
                             </div>
-                            <div className="flex items-center gap-1 pl-[7px]">
-                                <span className="text-[var(--mainColor)]">Ответ студента: </span>
-                                <b className="">{answerTest?.text || '?'}</b>
+
+                            <div className="rounded-xl border border-slate-100 bg-white/90 p-3 sm:p-4 shadow-sm">
+                                <div className="flex items-center gap-2 mb-2">
+                                    <i className="pi pi-user text-[var(--mainColor)]"></i>
+                                    <span className="text-[12px] uppercase tracking-wide text-slate-500">Ответ студента</span>
+                                </div>
+                                <div className="flex items-center gap-2 pl-[7px]">
+                                    <span className="text-[var(--mainColor)]">Ответ студента: </span>
+                                    <b className="">{answerTest?.text || '?'}</b>
+                                </div>
                             </div>
                         </div>
                     )
@@ -454,39 +474,46 @@ export default function LessonInfoCard({
                     </div>
                 ) : (
                     <div className="flex flex-col justify-between gap-4 w-full">
-                        <div className="flex flex-col gap-1 w-full">
-                            {documentUrl ? (
-                                documentUrl.document_path && hasPdf ? (
-                                    <a className="flex gap-2" href={documentUrl.document_path} download target="_blank" rel="noopener noreferrer">
-                                        <span className="max-w-[800px] text-wrap break-all font-bold hover:underline">{title}</span>
-                                    </a>
+                        <div className="w-full rounded-xl border border-slate-100 bg-white/80 p-3 sm:p-4 shadow-sm">
+                            <div className="flex items-center gap-2 mb-2">
+                                <i className="pi pi-clipboard text-[var(--mainColor)]"></i>
+                                <span className="text-[12px] uppercase tracking-wide text-slate-500">Задание</span>
+                            </div>
+                            <div className="flex flex-col gap-1 w-full">
+                                {documentUrl ? (
+                                    documentUrl.document_path && hasPdf ? (
+                                        <a className="flex gap-2" href={documentUrl.document_path} download target="_blank" rel="noopener noreferrer">
+                                            <span className="max-w-[800px] text-wrap break-all font-bold hover:underline">{title}</span>
+                                        </a>
+                                    ) : (
+                                        <div className="flex gap-2">
+                                            <span className="max-w-[800px] text-wrap break-all font-bold">{title}</span>
+                                        </div>
+                                    )
                                 ) : (
                                     <div className="flex gap-2">
                                         <span className="max-w-[800px] text-wrap break-all font-bold">{title}</span>
                                     </div>
-                                )
-                            ) : (
-                                <div className="flex gap-2">
-                                    <span className="max-w-[800px] text-wrap break-all font-bold">{title}</span>
-                                </div>
-                            )}
-                            {/* <p className="max-w-[800px] text-wrap break-all">{description}</p> */}
-                            {description && description !== 'null' && <div dangerouslySetInnerHTML={{ __html: description }} />}
+                                )}
+                                {/* <p className="max-w-[800px] text-wrap break-all">{description}</p> */}
+                                {description && description !== 'null' && <div dangerouslySetInnerHTML={{ __html: description }} />}
+                            </div>
                         </div>
-                        <div className="flex flex-col gap-2 w-full">
-                            <div className="flex items-center gap-1">
-                                <span className="text-[var(--mainColor)] text-sm">Документ: </span>
+
+                        <div className="grid grid-cols-1 ml-1 sm:grid-cols-2 gap-3 w-full">
+                            <div className="flex items-center gap-2 rounded-lg border border-slate-100 bg-white p-2 shadow-sm">
+                                <span className="text-[var(--mainColor)] text-sm whitespace-nowrap">Документ:</span>
                                 {documentUrl && documentUrl.document_path && hasPdf ? (
-                                    <a className={`flex gap-2 pi pi-file-arrow-up text-xl text-white bg-[var(--mainColor)] p-1 rounded`} href={documentUrl && documentUrl.document_path} download target="_blank" rel="noopener noreferrer"></a>
+                                    <a className={`flex gap-2 pi pi-file-arrow-up text-lg text-white bg-[var(--mainColor)] p-1.5 rounded`} href={documentUrl && documentUrl.document_path} download target="_blank" rel="noopener noreferrer"></a>
                                 ) : (
-                                    <span className={`flex gap-2 pi pi-file-arrow-up text-xl text-white bg-[gray] p-1 rounded`} rel="noopener noreferrer"></span>
+                                    <span className={`flex gap-2 pi pi-file-arrow-up text-lg text-white bg-[gray] p-1.5 rounded`} rel="noopener noreferrer"></span>
                                 )}
                             </div>
 
-                            <div className="flex gap-2 items-center shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">
-                                <span className="text-[var(--mainColor)] text-sm">Ссылка: </span>
+                            <div className="flex gap-2 items-center rounded-lg border border-slate-100 bg-white p-2 shadow-sm">
+                                <span className="text-[var(--mainColor)] text-sm whitespace-nowrap">Ссылка:</span>
                                 {link ? (
-                                    <a href={link ? String(link) : ''} className="max-w-[800px] text-[13px] text-wrap break-all" target="_blank">
+                                    <a href={link ? String(link) : ''} className="max-w-[800px] text-[13px] text-wrap break-all hover:underline" target="_blank">
                                         {link}
                                     </a>
                                 ) : (
@@ -495,77 +522,91 @@ export default function LessonInfoCard({
                                     </b>
                                 )}
                             </div>
+                        </div>
 
-                            {contentType === 'check' && (
-                                <div className="flex gap-1 flex-col mt-2">
-                                    <div className="flex items-center gap-1">
-                                        <b>Ответ студента: </b>
-                                        <span className="text-sm max-w-[400px] break-words">
-                                            {answerList?.file && answerList?.file && hasAnswerPdf ? (
-                                                <a className={`flex gap-2 pi pi-file-arrow-up text-xl text-white bg-[var(--mainColor)] p-1 rounded`} href={answerList?.file && answerList?.file} download target="_blank" rel="noopener noreferrer"></a>
-                                            ) : (
-                                                <b>?</b>
-                                            )}
-                                        </span>
+                        {contentType === 'check' && (
+                            <div className="rounded-xl border border-slate-100 bg-white/90 p-3 shadow-sm">
+                                <div className="flex items-center justify-between gap-2 flex-wrap mb-2">
+                                    <div className="flex items-center gap-2">
+                                        <i className="pi pi-user text-[var(--mainColor)]"></i>
+                                        <span className="text-[12px] uppercase tracking-wide text-slate-500">Ответ студента</span>
                                     </div>
                                     {answerList?.file && answerList?.file && hasAnswerPdf && (
-                                        <div className="flex flex-col justify-center items-start">
-                                            {answerList?.score ? (
-                                                <b>
-                                                    Балл отправлен <span className="text-[var(--mainColor)]">{answerList?.score}</span>
-                                                </b>
-                                            ) : (
-                                                <div className="w-full flex flex-col gap-2">
-                                                    <div className="flex flex-col gap-1">
-                                                        <b className="text-sm">Поставить балл студенту</b>
-                                                        <div className="w-full flex items-center gap-1">
-                                                            <InputText
-                                                                type="number"
-                                                                placeholder={`Макс. ${totalScore}`}
-                                                                className="w-[70%] sm:w-[80%]"
-                                                                onChange={(e) => {
-                                                                    setPracticaScore((prev) => ({ ...prev, score: Number(e.target.value) }));
-                                                                }}
-                                                            />
-                                                            <Button
-                                                                label="Отправить"
-                                                                size="small"
-                                                                onClick={() => {
-                                                                    setPracticaCall(false);
-                                                                    addPracticaScore && addPracticaScore(Number(practicaScore?.score));
-                                                                }}
-                                                            />
-                                                        </div>
-                                                    </div>
-
-                                                    <div className="flex flex-col gap-1">
-                                                        <b className="text-sm">Анулировать ответ студента</b>
-                                                        <div className="w-full flex items-center gap-1">
-                                                            <InputText
-                                                                type="text"
-                                                                className="w-[70%] sm:w-[80%]"
-                                                                onChange={(e) => {
-                                                                    setPracticaMessage((prev) => prev = e.target.value );
-                                                                }}
-                                                            />
-                                                            <Button
-                                                                label="Отправить"
-                                                                size="small"
-                                                                onClick={() => {
-                                                                    if(answerList){
-                                                                        addPracticaDisannul && addPracticaDisannul(answerList?.id_curricula, answerList?.course_id, answerList?.id_stream, answerList?.id, answerList?.steps_id, practicaMessage);
-                                                                    }
-                                                                }}
-                                                            />
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            )}
+                                        <div className="flex items-center gap-2 px-2 py-1 rounded-full text-[12px] border border-slate-100 bg-slate-50 text-slate-600">
+                                            <i className={`pi ${answerList?.score ? 'pi-check-circle text-green-600' : 'pi-clock text-amber-600'}`}></i>
+                                            <span>{answerList?.score ? 'Сдано' : 'На проверке'}</span>
                                         </div>
                                     )}
                                 </div>
-                            )}
-                        </div>
+
+                                <div className="flex items-center gap-2">
+                                    <b>Ответ студента: </b>
+                                    <span className="text-sm max-w-[400px] break-words">
+                                        {answerList?.file && answerList?.file && hasAnswerPdf ? (
+                                            <a className={`flex gap-2 pi pi-file-arrow-up text-lg text-white bg-[var(--mainColor)] p-1.5 rounded`} href={answerList?.file && answerList?.file} download target="_blank" rel="noopener noreferrer"></a>
+                                        ) : (
+                                            <b>?</b>
+                                        )}
+                                    </span>
+                                </div>
+
+                                {answerList?.file && answerList?.file && hasAnswerPdf && (
+                                    <div className="flex flex-col justify-center items-start mt-2">
+                                        {answerList?.score ? (
+                                            <b>
+                                                Балл отправлен <span className="text-[var(--mainColor)]">{answerList?.score}</span>
+                                            </b>
+                                        ) : (
+                                            <div className="w-full flex flex-col gap-3">
+                                                <div className="flex flex-col gap-1">
+                                                    <b className="text-sm">Поставить балл студенту</b>
+                                                    <div className="w-full flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+                                                        <InputText
+                                                            type="number"
+                                                            placeholder={`Макс. ${totalScore}`}
+                                                            className="w-full sm:max-w-[75%]"
+                                                            onChange={(e) => {
+                                                                setPracticaScore((prev) => ({ ...prev, score: Number(e.target.value) }));
+                                                            }}
+                                                        />
+                                                        <Button
+                                                            label="Отправить"
+                                                            size="small"
+                                                            onClick={() => {
+                                                                setPracticaCall(false);
+                                                                addPracticaScore && addPracticaScore(Number(practicaScore?.score));
+                                                            }}
+                                                        />
+                                                    </div>
+                                                </div>
+
+                                                <div className="flex flex-col gap-1">
+                                                    <b className="text-sm">Анулировать ответ студента</b>
+                                                    <div className="w-full flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+                                                        <InputText
+                                                            type="text"
+                                                            className="w-full sm:max-w-[75%]"
+                                                            onChange={(e) => {
+                                                                setPracticaMessage((prev) => (prev = e.target.value));
+                                                            }}
+                                                        />
+                                                        <Button
+                                                            label="Отправить"
+                                                            size="small"
+                                                            onClick={() => {
+                                                                if (answerList) {
+                                                                    addPracticaDisannul && addPracticaDisannul(answerList?.id_curricula, answerList?.course_id, answerList?.id_stream, answerList?.id, answerList?.steps_id, practicaMessage);
+                                                                }
+                                                            }}
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
+                        )}
                     </div>
                 )}
             </>
@@ -650,3 +691,5 @@ export default function LessonInfoCard({
         </div>
     );
 }
+
+

@@ -608,7 +608,7 @@ export default function Course() {
     const courseFiltered = () => (
         <div className="mt-4 sm:mt-3 sm:py-3 border-round-lg">
             {/* <h5 className="m-0 mb-4 text-xl" onClick={()=> setCourseFilteredState((prev)=> prev = !prev)}>Фильтры</h5> */}
-            <div className="grid formgrid p-fluid gap-3 sm:gap-1">
+            {/* <div className="grid formgrid p-fluid gap-3 sm:gap-1">
                 <div className="field col-12 md:col-6 lg:col-3">
                     <span className="p-float-label">
                         <Dropdown id="course_audience_type_id" name="course_audience_type_id" value={filters.course_audience_type_id} options={audienceTypeOptions} onChange={handleFilterChange} className="w-full small-dropdown" />
@@ -629,6 +629,73 @@ export default function Course() {
                 </div>
                 <div className="field col-12 md:col-6 lg:col-3 flex align-items-center">
                     <Button label={translations.reset} icon="pi pi-replay" className="p-button-outlined w-full text-white" onClick={resetFilters} size="small" />
+                </div>
+            </div> */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 p-4 bg-gray-50/50 rounded-2xl text-sm">
+                {/* Селект: Тип аудитории */}
+                <div className="flex flex-col gap-2">
+                    <label htmlFor="course_audience_type_id" className="text-xs font-semibold text-gray-500 ml-1 uppercase tracking-wider">
+                        {translations.courseStatus}
+                    </label>
+                    <Dropdown
+                        id="course_audience_type_id"
+                        name="course_audience_type_id"
+                        value={filters.course_audience_type_id}
+                        options={audienceTypeOptions}
+                        onChange={handleFilterChange}
+                        placeholder="Выберите тип"
+                        className="w-full shadow-sm ring-1 ring-gray-200 rounded-xl hover:shadow-md transition-all duration-300 bg-white"
+                        pt={{
+                            root: { className: 'h-9 items-center' }
+                        }}
+                    />
+                </div>
+
+                {/* Селект: На проверке */}
+                <div className="flex flex-col gap-2">
+                    <label htmlFor="status" className="text-xs font-semibold text-gray-500 ml-1 uppercase tracking-wider">
+                        {translations.onReview}
+                    </label>
+                    <Dropdown
+                        id="status"
+                        name="status"
+                        value={filters.status}
+                        options={statusOptions}
+                        onChange={handleFilterChange}
+                        className="w-full shadow-sm ring-1 ring-gray-200 rounded-xl hover:shadow-md transition-all duration-300 bg-white"
+                        pt={{
+                            root: { className: 'h-9 items-center' }
+                        }}
+                    />
+                </div>
+
+                {/* Селект: Опубликовано */}
+                <div className="flex flex-col gap-2 mr-2">
+                    <label htmlFor="is_published" className="text-xs font-semibold text-gray-500 ml-1 uppercase tracking-wider">
+                        {translations.published}
+                    </label>
+                    <Dropdown
+                        id="is_published"
+                        name="is_published"
+                        value={filters.is_published}
+                        options={publishedOptions}
+                        onChange={handleFilterChange}
+                        className="w-full shadow-sm ring-1 ring-gray-200 rounded-xl hover:shadow-md transition-all duration-300 bg-white"
+                        pt={{
+                            root: { className: 'h-9 items-center' }
+                        }}
+                    />
+                </div>
+
+                {/* Кнопка сброса */}
+                <div className="flex items-end">
+                    <Button
+                        label={translations.reset}
+                        icon="pi pi-refresh"
+                        onClick={resetFilters}
+                        className="w-full py-2 bg-white text-gray-700 border-0 shadow-sm ring-1 ring-gray-200 rounded-xl hover:bg-gray-50 hover:text-red-500 transition-all duration-200 flex justify-center gap-2"
+                        size="small"
+                    />
                 </div>
             </div>
         </div>
@@ -770,7 +837,7 @@ export default function Course() {
                                                 }}
                                             />
                                         </div>
-                                        
+
                                         {skeleton ? (
                                             <div className="flex items-center gap-1 flex-wrap justify-center sm:justify-start">
                                                 <GroupSkeleton count={1} size={{ height: '40px', width: '250px' }} /> <GroupSkeleton count={1} size={{ height: '40px', width: '250px' }} />{' '}
@@ -823,9 +890,9 @@ export default function Course() {
                         {sendStream.status ? (
                             <div className="w-full">
                                 {/* info section */}
-                                {skeleton ? (
+                                {/* {skeleton ? (
                                     <GroupSkeleton count={1} size={{ width: '100%', height: '5rem' }} />
-                                ) : (
+                                ) : ( */}
                                     <div className="flex flex-col md:flex-row justify-between md:items-center mb-2 py-2 gap-1 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">
                                         <h3 className="text-[32px] m-0">{translations.courses}</h3>
                                         <Button
@@ -838,7 +905,7 @@ export default function Course() {
                                             }}
                                         />
                                     </div>
-                                )}
+                                {/* // )} */}
 
                                 {skeleton ? (
                                     <div className="flex items-center gap-1 flex-wrap justify-center sm:justify-start">

@@ -102,11 +102,11 @@ export default function HomeClient() {
 
     const OpenCourse = ({ course, index }: { course: CourseCategoryOption; index: number }) => {
         return (    
-            <div key={course?.id} className="max-h-[410px] min-h-[350px] bg-white w-full sm:min-w-[280px] sm:max-w-[280px] shadow-md rounded p-2 flex flex-col gap-2 justify-between">
-                <div className="relative">
-                    <div className="flex justify-center items-center">{imageBodyTemplate(course, index)}</div>
+            <div key={course?.id} className="group max-h-[420px] min-h-[360px] bg-white w-full sm:min-w-[280px] sm:max-w-[280px] border border-slate-100 shadow-sm rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 flex flex-col gap-3">
+                <div className="relative p-3 pb-0">
+                    <div className="flex justify-center items-center rounded-xl overflow-hidden bg-slate-50">{imageBodyTemplate(course, index)}</div>
                     <div
-                        className={`absolute top-0 right-0 sm:flex gap-1 items-center text-sm text-white rounded p-1 mb-1 ${course?.audience_type?.name === 'open' ? 'bg-[var(--greenColor)]' : course?.audience_type?.name === 'wallet' ? 'bg-[var(--amberColor)]' : ''
+                        className={`absolute top-3 right-3 sm:flex gap-1 items-center text-[12px] text-white rounded-full px-2 py-1 shadow ${course?.audience_type?.name === 'open' ? 'bg-[var(--greenColor)]' : course?.audience_type?.name === 'wallet' ? 'bg-[var(--amberColor)]' : ''
                             }`}
                     >
                         <i className={course?.audience_type?.icon} style={{ fontSize: '13px' }}></i>
@@ -114,45 +114,45 @@ export default function HomeClient() {
                     </div>
                 </div>
 
-                <div className="flex justify-center flex-col">
+                <div className="flex justify-center flex-col px-3">
                     {course.status ? (
                         <b
                             onClick={() => handleCourseShow(course?.id)}
-                            className="cursor-pointer w-full sm:max-w-[350px] break-words text-[var(--mainColor)] underline"
+                            className="cursor-pointer w-full sm:max-w-[350px] break-words text-[var(--mainColor)] underline underline-offset-4 decoration-[var(--mainColor)]/40 hover:decoration-[var(--mainColor)]"
                         >
                             {course?.title}
                         </b>
                     ) : (
                         <b
-                            className="cursor-pointer w-full sm:max-w-[350px] break-words text-[var(--mainColor)] underline"
+                            className="cursor-pointer w-full sm:max-w-[350px] break-words text-[var(--mainColor)] underline underline-offset-4 decoration-[var(--mainColor)]/40 hover:decoration-[var(--mainColor)]"
                         >
                             {course?.title}
                         </b>
                     )}
 
-                    <div className="max-h-[20px] overflow-hidden text-ellipsis block">
-                        <small className="max-w-[170px] overflow-hidden text-nowrap text-ellipsis block">{course?.description}</small>
+                    <div className="max-h-[40px] overflow-hidden text-ellipsis block mt-1">
+                        <small className="max-w-[220px] overflow-hidden text-nowrap text-ellipsis block text-slate-600">{course?.description}</small>
                     </div>
                 </div>
 
-                <div className='flex items-center flex-wrap gap-2 justify-between'>
+                <div className='flex items-center flex-wrap gap-2 justify-between px-3'>
                     {
                         course?.category?.title ?
-                            <div className='p-1 bg-[var(--redWeakColor)]'>
-                                <p className='text-sm max-w-[300px] break-words'>{course?.category.title}</p>
+                            <div className='px-2 py-1 bg-[var(--redWeakColor)]/60 rounded-full border border-[var(--redWeakColor)]'>
+                                <p className='text-[12px] max-w-[260px] break-words text-[var(--titleColor)]'>{course?.category.title}</p>
                             </div>
                             : ''
                     }
 
                     {
                         course?.is_featured ?
-                            <i className='pi pi-verified text-[green] shadow ml-2 p-1 rounded-full' title='Рекомендован департаментом'></i>
+                            <i className='pi pi-verified text-[green] bg-green-50 border border-green-100 ml-2 p-1 rounded-full shadow-sm' title='Рекомендован департаментом'></i>
                             : ''
                     }
                 </div>
 
-                <div>
-                    <div className="flex items-center justify-center text-[15px] text-[var(--titleColor)] author_font">
+                <div className="mt-auto px-3 pb-3">
+                    <div className="flex items-center justify-center text-[14px] text-[var(--titleColor)] author_font">
                         {/* <span className="">Автор: </span> */}
                         <div className="flex gap-1 items-start max-w-[230px] break-words text-wrap flex-wrap">
                             {!media ? (
@@ -172,7 +172,7 @@ export default function HomeClient() {
                     </div>
 
                     {/* data */}
-                    <div className="w-full flex justify-end text-[11px] order-1 sm:order-2">
+                    <div className="w-full flex justify-end text-[11px] text-slate-500 order-1 sm:order-2 mt-2">
                         <MyDateTime createdAt={course?.created_at} options={options} />
                     </div>
                 </div>
@@ -393,9 +393,9 @@ export default function HomeClient() {
                         ''
                     )}
 
-                    {newCourses?.length || bestCourses?.length || popularCourses?.length ? <Link href={'/openCourse'} className='cursor-pointer flex gap-1 items-center justify-end font-[italic] text-[var(--mainColor)]'>
+                    {newCourses?.length || bestCourses?.length || popularCourses?.length ? <Link href={'/openCourse'} className='font-sans cursor-pointer flex gap-1 items-center justify-end text-sm text-[var(--mainColor)]'>
                         <span className='underline'>{translations.allOpenCourses}</span>
-                        <i className='pi pi-arrow-right text-sm font-[italic]'></i>
+                        <i className='pi pi-arrow-right font-sans' style={{fontSize: '12px'}}></i>
                     </Link> : ''}
                 </div>
 
@@ -420,3 +420,6 @@ export default function HomeClient() {
         </>
     );
 }
+
+
+
