@@ -128,7 +128,7 @@ const AppMenu = () => {
                   }
               ]
             : !forDepartamentLength
-            ? (user?.is_working && pathname.startsWith('/course')) ||
+            ? (user?.is_working && pathname.startsWith('/course/1')) ||
               pathname.startsWith('/students/') ||
               pathname.startsWith('/unVerifed') ||
               pathname.startsWith('/pdf/') ||
