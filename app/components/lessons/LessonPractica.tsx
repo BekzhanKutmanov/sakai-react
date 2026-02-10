@@ -19,6 +19,7 @@ import FormModal from '../popUp/FormModal';
 import GroupSkeleton from '../skeleton/GroupSkeleton';
 import { Editor, EditorTextChangeEvent } from 'primereact/editor';
 import { contentType } from '@/types/contentType';
+import { useLocalization } from '@/layout/context/localizationcontext';
 
 export default function LessonPractica({ element, content, fetchPropElement, fetchPropThemes, clearProp }: { element: mainStepsType; content: any; fetchPropElement: (id: number) => void; fetchPropThemes: () => void; clearProp: boolean }) {
     interface docValueType {
@@ -29,6 +30,8 @@ export default function LessonPractica({ element, content, fetchPropElement, fet
         score: number | null;
         stepPos?: number;
     }
+
+    const { translations } = useLocalization();
 
     const router = useRouter();
     const media = useMediaQuery('(max-width: 640px)');
@@ -367,12 +370,12 @@ export default function LessonPractica({ element, content, fetchPropElement, fet
                             {/* <Button disabled={!!errors.title || !docValue.file} label="Сохранить" onClick={handleAddDoc} /> */}
                             <div className="absolute">
                                 <span className="cursor-pointer ml-1 text-[13px] sm:text-sm text-[var(--mainColor)]" onClick={() => setAdditional((prev) => ({ ...prev, doc: !prev.doc }))}>
-                                    Дополнительно {additional.doc ? '-' : '+'}
+                                    {translations.addAdditionally}  {additional.doc ? '-' : '+'}
                                 </span>
                             </div>
                             <div className="w-full flex gap-1 justify-center items-center mt-4 sm:m-0">
                                 <Button
-                                    label="Сохранить"
+                                    label={translations.save}
                                     disabled={progressSpinner || !docValue.title.length || !!errors.title || !docValue.description.length || !docValue.score}
                                     onClick={() => {
                                         handleAddPracica();
@@ -403,7 +406,7 @@ export default function LessonPractica({ element, content, fetchPropElement, fet
     return (
         <div>
             <FormModal
-                title={'Обновить урок'}
+                title={translations.updateLesson}
                 fetchValue={() => {
                     handleUpdateDoc();
                 }}
@@ -411,7 +414,7 @@ export default function LessonPractica({ element, content, fetchPropElement, fet
                 visible={visible}
                 setVisible={setVisisble}
                 start={false}
-                footerValue={{ footerState: true, reject: 'Назад', next: 'Сохранить' }}
+                footerValue={{ footerState: true, reject: translations.back, next: translations.save }}
             >
                 <div className="flex flex-col gap-1">
                     <div className="flex flex-col gap-1 items-center justify-center">

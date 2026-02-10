@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import MyDateTime from '@/app/components/MyDateTime';
 import { NotFound } from '@/app/components/NotFound';
@@ -6,6 +6,7 @@ import GroupSkeleton from '@/app/components/skeleton/GroupSkeleton';
 import useErrorMessage from '@/hooks/useErrorMessage';
 import useMediaQuery from '@/hooks/useMediaQuery';
 import { LayoutContext } from '@/layout/context/layoutcontext';
+import { useLocalization } from '@/layout/context/localizationcontext';
 import { fetchScoreValues, fetchStreams, fetchStreamStudents, sendMyeduScore } from '@/services/streams';
 import { mainStreamsType } from '@/types/mainStreamsType';
 import { OptionsType } from '@/types/OptionsType';
@@ -42,6 +43,7 @@ export default function StudentList() {
     const [studentScore, setStudentScore] = useState<number | null>(null);
 
     const { setMessage } = useContext(LayoutContext);
+    const { translations } = useLocalization();
     const showError = useErrorMessage();
 
     const options: OptionsType = {
@@ -51,7 +53,7 @@ export default function StudentList() {
         hour: '2-digit',
         minute: '2-digit',
         second: '2-digit',
-        hour12: false // 24-часовой формат
+        hour12: false // 24-С‡Р°СЃРѕРІРѕР№ С„РѕСЂРјР°С‚
     };
 
     // functions
@@ -63,7 +65,7 @@ export default function StudentList() {
             } else {
                 setMessage({
                     state: true,
-                    value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
+                    value: { severity: 'error', summary: translations.errorTitle, detail: translations.tryAgainLater }
                 });
                 if (data?.response?.status) {
                     showError(data.response.status);
@@ -82,7 +84,7 @@ export default function StudentList() {
             setHasList(true);
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
+                value: { severity: 'error', summary: translations.errorTitle, detail: translations.tryAgainLater }
             });
             if (data?.response?.status) {
                 showError(data.response.status);
@@ -150,13 +152,13 @@ export default function StudentList() {
             }
             setMessage({
                 state: true,
-                value: { severity: 'success', summary: 'Успешно отправлен!', detail: '' }
+                value: { severity: 'success', summary: translations.sendSuccess, detail: '' }
             });
         } else {
             if (data?.response?.status == '400') {
                 setMessage({
                     state: true,
-                    value: { severity: 'error', summary: 'Ошибка!', detail: data?.response?.data?.message }
+                    value: { severity: 'error', summary: translations.errorTitle, detail: data?.response?.data?.message }
                 });
             } else {
                 showError(data.response.status);
@@ -170,7 +172,7 @@ export default function StudentList() {
     const footerContent = (
         <div>
             <Button
-                label={'Назад'}
+                label={translations.back}
                 className="reject-button"
                 icon="pi pi-times"
                 size="small"
@@ -182,7 +184,7 @@ export default function StudentList() {
             />
 
             <Button
-                label={'Отправить'}
+                label={translations.send}
                 icon="pi pi-check"
                 size="small"
                 onClick={() => {
@@ -234,15 +236,15 @@ export default function StudentList() {
                                 {/* <span>{stream?.teacher?.name}</span> */}
                             </div>
                             <div className="flex gap-1 items-center">
-                                <span>Язык обучения: </span>
+                                <span>{translations.languageOfStudy}: </span>
                                 <span className="font-semibold">{stream?.language?.name}</span>
                             </div>
                             <div className="flex gap-1 items-center">
-                                <span>Год обучения: </span>
+                                <span>{translations.studyYear}: </span>
                                 <span className="font-semibold">20{stream?.id_edu_year}</span>
                             </div>
                             <div className="flex gap-1 items-center">
-                                <span>Период: </span>
+                                <span>{translations.period}: </span>
                                 <span className="font-semibold">{stream?.period.name_ru}</span>
                             </div>
                             <div>
@@ -255,18 +257,18 @@ export default function StudentList() {
 
             {/* table section */}
             {hasList ? (
-                <NotFound titleMessage={'Данные временно не доступны'} />
+                <NotFound titleMessage={translations.dataTemporarilyUnavailable} />
             ) : (
                 <div>
                     {skeleton ? (
                         <GroupSkeleton count={studentList.length} size={{ width: '100%', height: '4rem' }} />
                     ) : (
                         <>
-                            <DataTable value={studentList} dataKey="id" emptyMessage="Загрузка" loading={skeleton} breakpoint="960px" rows={5} className="mini-table">
-                                <Column body={(_, { rowIndex }) => rowIndex + 1} header="#" style={{ width: '20px' }}></Column>
+                            <DataTable value={studentList} dataKey="id" emptyMessage={translations.loading} loading={skeleton} breakpoint="960px" rows={5} className="mini-table">
+                                <Column body={(_, { rowIndex }) => rowIndex + 1} header={translations.numberSign} style={{ width: '20px' }}></Column>
                                 <Column
                                     field="title"
-                                    header="ФИО"
+                                    header={translations.fullName}
                                     style={{ width: '50%' }}
                                     body={(rowData) => (
                                         <div className="flex gap-1" key={rowData?.id}>
@@ -278,7 +280,7 @@ export default function StudentList() {
                                 ></Column>
 
                                 <Column
-                                    header="Балл"
+                                    header={translations.score}
                                     className="flex items-center border-b-0"
                                     body={(rowData) => (
                                         <div className="flex items-center gap-2" key={rowData?.id}>
@@ -289,12 +291,12 @@ export default function StudentList() {
                                                         <i
                                                             onClick={() => handleFetchScoreValues(Number(stream_id), rowData?.id || null, rowData?.score)}
                                                             className="cursor-pointer pi pi-upload bg-[var(--mainColor)] text-white p-2 px-3 rounded"
-                                                            title="Сохранить в myedu"
+                                                            title={translations.saveToMyedu}
                                                         ></i>
                                                     ) : (
                                                         ''
                                                     )}
-                                                    {/* <i onClick={()=> console.log(rowData)} className="cursor-pointer pi pi-upload bg-[var(--mainColor)] text-white p-2 px-3 rounded" title="Сохранить в myedu"></i> */}
+                                                    {/* <i onClick={()=> console.log(rowData)} className="cursor-pointer pi pi-upload bg-[var(--mainColor)] text-white p-2 px-3 rounded" title={translations.saveToMyedu}></i> */}
                                                     {/* <Button icon={'pi pi-arrow-right'} size='small' style={{ fontSize: '13px', padding: '4px 4px'}} label="myedu" /> */}
                                                 </div>
                                             ) : (
@@ -305,7 +307,7 @@ export default function StudentList() {
                                 />
 
                                 <Column
-                                    header="Последнее посещение"
+                                    header={translations.lastVisit}
                                     // style={{ width: '20%' }}
                                     body={(rowData) => (
                                         <div className="flex items-center gap-2" key={rowData?.id}>
@@ -316,7 +318,7 @@ export default function StudentList() {
                                 />
 
                                 <Column
-                                    header="Выполненные действия"
+                                    header={translations.completedActions}
                                     body={(rowData) => (
                                         <div className="flex items-center gap-2" key={rowData?.id}>
                                             {rowData?.last_movement && (
@@ -325,7 +327,7 @@ export default function StudentList() {
                                                         pathname: `/students/${cource_id}/${connect_id}/${stream_id}/${rowData?.id}/optional/optional/optional`
                                                     }}
                                                 >
-                                                    <Button label="Данные" />
+                                                    <Button label={translations.dataLabel} />
                                                 </Link>
                                             )}
                                         </div>
@@ -339,7 +341,7 @@ export default function StudentList() {
 
             {/* dialog */}
             <Dialog
-                header={'Окно подтверждение'}
+                header={translations.confirmationWindow}
                 className="p-2 w-[90%] sm:w-[600px] max-h-[400px]"
                 visible={myEduInfoVisible}
                 onHide={() => {
@@ -353,7 +355,7 @@ export default function StudentList() {
                 <>
                     {hasScoreValue ? (
                         <div>
-                            <b className="flex justify-center">Данные не доступны</b>
+                            <b className="flex justify-center">{translations.dataNotAvailable}</b>
                         </div>
                     ) : (
                         <div className="flex flex-col gap-2">
@@ -363,7 +365,7 @@ export default function StudentList() {
                                         <div className="flex items-center gap-1 justify-between">
                                             <b className="sm:text-md">{item?.course?.title}</b>
                                             <div className="text-sm">
-                                                <span>Id:</span> <span className="text-[var(--mainColor)]"> {item?.id_stream}</span>
+                                                <span>{translations.idLabel}:</span> <span className="text-[var(--mainColor)]"> {item?.id_stream}</span>
                                             </div>
                                         </div>
                                         <div className="flex items-center gap-1 justify-between">
@@ -371,7 +373,7 @@ export default function StudentList() {
                                                 {item?.teacher?.last_name} {item?.teacher?.name}
                                             </p>
                                             <div className="text-sm">
-                                                <span>Балл:</span> <span className="text-[var(--mainColor)]"> {item?.score || 0}</span>
+                                                <span>{translations.score}:</span> <span className="text-[var(--mainColor)]"> {item?.score || 0}</span>
                                             </div>
                                         </div>
                                     </div>
@@ -384,3 +386,7 @@ export default function StudentList() {
         </div>
     );
 }
+
+
+
+

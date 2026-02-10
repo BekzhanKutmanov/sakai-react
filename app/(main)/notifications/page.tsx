@@ -1,9 +1,10 @@
-'use client';
+﻿'use client';
 
 import MyDateTime from '@/app/components/MyDateTime';
 import { NotFound } from '@/app/components/NotFound';
 import useErrorMessage from '@/hooks/useErrorMessage';
 import { LayoutContext } from '@/layout/context/layoutcontext';
+import { useLocalization } from '@/layout/context/localizationcontext';
 import { statusView } from '@/services/notifications';
 import { mainNotification } from '@/types/mainNotification';
 import { OptionsType } from '@/types/OptionsType';
@@ -16,6 +17,7 @@ import { useContext, useEffect, useState } from 'react';
 
 export default function MainNotificatoin() {
     const { user, setMessage, contextNotifications, setContextNotifications, handleNotifications } = useContext(LayoutContext);
+    const { translations } = useLocalization();
 
     const [notification, setNotification] = useState<mainNotification[]>([]);
 
@@ -30,7 +32,7 @@ export default function MainNotificatoin() {
         day: '2-digit',
         hour: '2-digit',
         minute: '2-digit',
-        hour12: false // 24-часовой формат
+        hour12: false // 24-С‡Р°СЃРѕРІРѕР№ С„РѕСЂРјР°С‚
     };
 
     const showError = useErrorMessage();
@@ -41,12 +43,12 @@ export default function MainNotificatoin() {
             if (data?.success) {
                 setMessage({
                     state: true,
-                    value: { severity: 'success', summary: 'Успешно удалено', detail: '' }
+                    value: { severity: 'success', summary: 'РЈСЃРїРµС€РЅРѕ СѓРґР°Р»РµРЅРѕ', detail: '' }
                 });
             } else {
                 setMessage({
                     state: true,
-                    value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
+                    value: { severity: 'error', summary: 'РћС€РёР±РєР°!', detail: 'РџРѕРІС‚РѕСЂРёС‚Рµ РїРѕР·Р¶Рµ' }
                 });
                 if (data?.response?.status) {
                     showError(data.response.status);
@@ -123,7 +125,7 @@ export default function MainNotificatoin() {
                                 <div className="flex flex-col gap-2">
                                     {notificate?.meta?.title && (
                                         <>
-                                            <span>Причина:</span>
+                                            <span>{translations.reason}:</span>
                                             <ul className={`list-disc p-2 rounded-sm `}>
                                                 <li className="ml-2 text-[13px] sm:text-[14px] text-[var(--mainColor)]">{notificate?.meta?.title}</li>
                                             </ul>
@@ -166,22 +168,22 @@ export default function MainNotificatoin() {
     return (
         <div className="main-bg">
             <div className="w-full flex items-center justify-between">
-                <h3 className="text-xl sm:text-2xl font-semibold tracking-tight text-[var(--text-color)] shadow-[var(--bottom-shadow)]">Уведомления</h3>
+                <h3 className="text-xl sm:text-2xl font-semibold tracking-tight text-[var(--text-color)] shadow-[var(--bottom-shadow)]">{translations.notifications}</h3>
             </div>
 
             {/* <div className="relative w-full flex justify-center sm:justify-start items-center gap-1 my-2">
-                <InputText type="text" placeholder="Поиск..." value={search} className="w-full h-[48px]" onChange={(e) => setSearch(e.target.value)} />
+                <InputText type="text" placeholder="РџРѕРёСЃРє..." value={search} className="w-full h-[48px]" onChange={(e) => setSearch(e.target.value)} />
                 <div className="absolute right-2">{!searchSpinner && <i className="pi pi-search"></i>}</div>
                 <div className="absolute right-2">{searchSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}</div>
             </div> */}
             {/* 
             <div className="flex items-center gap-2 my-2 px-2">
                 <div className="flex items-center gap-1">
-                    <span>Избранные</span>
+                    <span>РР·Р±СЂР°РЅРЅС‹Рµ</span>
                     <i className="pi pi-star-fill"></i>
                 </div>
                 <div className="flex items-center gap-1">
-                    <span>Архив</span>
+                    <span>РђСЂС…РёРІ</span>
                     <i className="pi pi-trash"></i>
                 </div>
             </div> */}
@@ -189,8 +191,8 @@ export default function MainNotificatoin() {
             {/* main */}
             <div className="flex flex-col gap-2 sm:gap-3 mt-2">
                 {empty ? (
-                    <div className='flex justify-center'>
-                        <NotFound titleMessage="Данных нет" />
+                    <div className="flex justify-center">
+                        <NotFound titleMessage={translations.noData} />
                     </div>
                 ) : (
                     notification?.map((item) => {
@@ -205,3 +207,4 @@ export default function MainNotificatoin() {
         </div>
     );
 }
+

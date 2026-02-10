@@ -15,6 +15,7 @@ import { LayoutContext } from '@/layout/context/layoutcontext';
 import FormModal from '../popUp/FormModal';
 import GroupSkeleton from '../skeleton/GroupSkeleton';
 import { contentType } from '@/types/contentType';
+import { useLocalization } from '@/layout/context/localizationcontext';
 
 export default function LessonForum({ element, content, fetchPropElement, clearProp }: { element: mainStepsType; content: any; fetchPropElement: (id: number) => void; clearProp: boolean }) {
     interface linkValueType {
@@ -23,6 +24,8 @@ export default function LessonForum({ element, content, fetchPropElement, clearP
         url: string;
         stepPos?: number;
     }
+
+    const { translations } = useLocalization();
 
     const showError = useErrorMessage();
     const { setMessage } = useContext(LayoutContext);
@@ -191,7 +194,7 @@ export default function LessonForum({ element, content, fetchPropElement, clearP
                             <b style={{ color: 'red', fontSize: '12px' }}>{errors.title?.message}</b>
                         </div>
                         <div className="w-full flex gap-1 justify-center items-center mt-4 sm:m-0">
-                            <Button label="Сохранить" disabled={progressSpinner || !forumValue.title.length || !!errors.title} onClick={() => handleAddForum()} />
+                            <Button label={translations.save} disabled={progressSpinner || !forumValue.title.length || !!errors.title} onClick={() => handleAddForum()} />
                             {progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}
                         </div>
                     </div>

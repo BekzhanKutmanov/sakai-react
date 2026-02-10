@@ -128,7 +128,7 @@ const AppMenu = () => {
                   }
               ]
             : !forDepartamentLength
-            ? (user?.is_working && pathname.startsWith('/course/1')) ||
+            ? (user?.is_working && pathname.startsWith('/course/')) ||
               pathname.startsWith('/students/') ||
               pathname.startsWith('/unVerifed') ||
               pathname.startsWith('/pdf/') ||
@@ -260,7 +260,7 @@ const AppMenu = () => {
         : [];
 
     const forDepartament = forDepartamentLength
-        ? !pathname.startsWith('/course/:id/') && !pathname.startsWith('/pdf/')
+        ? !pathname.startsWith('/course//') && !pathname.startsWith('/pdf/')
             ? ([
                   {
                       // key: 'prev',

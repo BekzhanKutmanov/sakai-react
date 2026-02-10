@@ -299,12 +299,12 @@ export default function LessonDocument({ element, content, fetchPropElement, cle
                             {/* <Button disabled={!!errors.title || !docValue.file} label="Сохранить" onClick={handleAddDoc} /> */}
                             <div className="absolute">
                                 <span className="cursor-pointer ml-1 text-[13px] sm:text-sm text-[var(--mainColor)]" onClick={() => setAdditional((prev) => ({ ...prev, doc: !prev.doc }))}>
-                                    Дополнительно {additional.doc ? '-' : '+'}
+                                    {translations.addAdditionally} {additional.doc ? '-' : '+'}
                                 </span>
                             </div>
                             <div className="w-full flex gap-1 justify-center items-center mt-4 sm:m-0">
                                 <Button
-                                    label="Сохранить"
+                                    label={translations.save}
                                     disabled={progressSpinner || !docValue.title.length || !!errors.title || !docValue.file}
                                     onClick={() => {
                                         handleAddDoc();

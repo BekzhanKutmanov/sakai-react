@@ -219,11 +219,11 @@ export default function LessonLink({ element, content, fetchPropElement, clearPr
                             {/* <Button disabled={!!errors.title || !docValue.file} label="Сактоо" onClick={handleAddDoc} /> */}
                             <div className="absolute">
                                 <span className="cursor-pointer ml-1 text-[13px] sm:text-sm text-[var(--mainColor)]" onClick={() => setAdditional((prev) => ({ ...prev, link: !prev.link }))}>
-                                    Дополнительно {additional.link ? '-' : '+'}
+                                    {translations.addAdditionally} {additional.link ? '-' : '+'}
                                 </span>
                             </div>
                             <div className="w-full flex gap-1 justify-center items-center mt-4 sm:m-0">
-                                <Button label="Сохранить" disabled={progressSpinner || !linkValue.title.length || !!errors.title || !linkValue.url.length} onClick={() => handleAddLink()} />
+                                <Button label={translations.save} disabled={progressSpinner || !linkValue.title.length || !!errors.title || !linkValue.url.length} onClick={() => handleAddLink()} />
                                 {progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}
                             </div>
                         </div>
@@ -303,7 +303,7 @@ export default function LessonLink({ element, content, fetchPropElement, clearPr
                     {additional.link && <InputText placeholder={translations.description} value={editingLesson.description} onChange={(e) => setEditingLesson((prev) => ({ ...prev, description: e.target.value }))} className="w-full" />}
 
                     <div className="flex relative">
-                        {/* <Button disabled={!!errors.title || !editingLesson.file} label="Сохранить" onClick={handleAddDoc} /> */}
+                        {/* <Button disabled={!!errors.title || !editingLesson.file} label={translations.save} onClick={handleAddDoc} /> */}
                         <div className="absolute">
                             <span className="cursor-pointer ml-1 text-[13px] sm:text-sm text-[var(--mainColor)]" onClick={() => setAdditional((prev) => ({ ...prev, link: !prev.link }))}>
                                 {translations.addAdditionally} {additional.link ? '-' : '+'}

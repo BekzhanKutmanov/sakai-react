@@ -18,6 +18,7 @@ import { LayoutContext } from '@/layout/context/layoutcontext';
 import FormModal from '../popUp/FormModal';
 import { FileWithPreview } from '@/types/fileuploadPreview';
 import GroupSkeleton from '../skeleton/GroupSkeleton';
+import { useLocalization } from '@/layout/context/localizationcontext';
 
 export default function LessonVideo({ element, content, fetchPropElement, clearProp }: { element: mainStepsType; content: any; fetchPropElement: (id: number) => void; clearProp: boolean }) {
     interface contentType {
@@ -46,6 +47,7 @@ export default function LessonVideo({ element, content, fetchPropElement, clearP
         cover: File | null;
         stepPos?: number;
     }
+    const { translations } = useLocalization();
 
     const fileUploadRef = useRef<FileUpload>(null);
 
@@ -303,11 +305,11 @@ export default function LessonVideo({ element, content, fetchPropElement, clearP
                                 {/* <Button disabled={!!errors.title || !docValue.file} label="Добавить" onClick={handleAddDoc} /> */}
                                 <div className="absolute">
                                     <span className="cursor-pointer ml-1 text-[13px] sm:text-sm text-[var(--mainColor)]" onClick={() => setAdditional((prev) => ({ ...prev, video: !prev.video }))}>
-                                        Дополнительно {additional.video ? '-' : '+'}
+                                        {translations.addAdditionally} {additional.video ? '-' : '+'}
                                     </span>
                                 </div>
                                 <div className="w-full flex gap-1 justify-center items-center mt-4 sm:m-0">
-                                    <Button label="Сохранить" disabled={progressSpinner || !videoValue.title.length || !videoValue.video_link?.length || !!errors.title || !!errors.usefulLink} onClick={() => handleAddVideo()} />
+                                    <Button label={translations.save} disabled={progressSpinner || !videoValue.title.length || !videoValue.video_link?.length || !!errors.title || !!errors.usefulLink} onClick={() => handleAddVideo()} />
                                     {progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}
                                 </div>
                             </div>
@@ -398,7 +400,7 @@ export default function LessonVideo({ element, content, fetchPropElement, clearP
 
     return (
         <div>
-            <FormModal title={'Обновить урок'} fetchValue={() => handleUpdateVideo()} clearValues={clearValues} visible={visible} setVisible={setVisisble} start={false} footerValue={{ footerState: true, reject: 'Назад', next: 'Сохранить' }}>
+            <FormModal title={translations.updateLesson} fetchValue={() => handleUpdateVideo()} clearValues={clearValues} visible={visible} setVisible={setVisisble} start={false} footerValue={{ footerState: true, reject: translations.back, next: translations.save }}>
                 <div className="flex flex-col gap-1">
                     <div className="flex flex-col gap-1 items-center justify-center">
                         <div className="w-full flex flex-col">

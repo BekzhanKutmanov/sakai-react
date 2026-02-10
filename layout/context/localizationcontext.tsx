@@ -33,11 +33,19 @@ export const localizationData = {
         success: 'Успех',
         loading: 'Загрузка',
         noData: 'Нет данных',
+        reason: 'Причина',
         yes: 'Да',
         no: 'Нет',
         confirmation: 'Подтверждение',
+        confirmationWindow: 'Окно подтверждения',
         deleteHeader: 'Удаление',
         confirmDeleteMessage: 'Вы действительно хотите удалить?',
+        fullName: 'ФИО',
+        lastVisit: 'Последнее посещение',
+        completedActions: 'Выполненные действия',
+        dataLabel: 'Данные',
+        idLabel: 'Id',
+        saveToMyedu: 'Сохранить в myedu',
 
         // Home
         convenientOnlineLearningSpace: 'Удобное онлайн-пространство для обучения',
@@ -125,6 +133,7 @@ export const localizationData = {
         updateError: 'Ошибка при изменении!',
         errorTryAgainLater: 'Ошибка, повторите позже',
         archiveSuccess: 'Архивирование прошло успешно',
+        sendSuccess: 'Успешно отправлен!',
 
         // table
         numberSign: '#',
@@ -232,11 +241,19 @@ export const localizationData = {
         success: 'Ийгилик',
         loading: 'Жүктөлүүдө',
         noData: 'Маалымат жок',
+        reason: 'Себеби',
         yes: 'Ооба',
         no: 'Жок',
         confirmation: 'Ырастоо',
+        confirmationWindow: 'Ырастоо терезеси',
         deleteHeader: 'Өчүрүү',
         confirmDeleteMessage: 'Чын эле өчүргүңүз келеби?',
+        fullName: 'АЖӨ',
+        lastVisit: 'Акыркы кирүү',
+        completedActions: 'Аткарылган аракеттер',
+        dataLabel: 'Маалыматтар',
+        idLabel: 'Id',
+        saveToMyedu: "myedu'га сактоо",
 
         // Home
         convenientOnlineLearningSpace: 'Окуу үчүн ыңгайлуу онлайн мейкиндик',
@@ -323,6 +340,7 @@ export const localizationData = {
         updateError: 'Ошибка при изменении!',
         errorTryAgainLater: 'Ошибка, повторите позже',
         archiveSuccess: 'Архивирование прошло успешно',
+        sendSuccess: 'Ийгиликтуу жөнөтүлдү!',
 
         // table
         numberSign: '#',
