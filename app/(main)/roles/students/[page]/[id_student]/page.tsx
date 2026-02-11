@@ -16,8 +16,6 @@ import GroupSkeleton from '@/app/components/skeleton/GroupSkeleton';
 import { TabPanel, TabView } from 'primereact/tabview';
 import { TabViewChange } from '@/types/tabViewChange';
 import CoursesCut from '@/app/components/tables/coursesCut';
-import { set } from 'react-hook-form';
-import { useLocalStorage } from 'primereact/hooks';
 
 // Типизация данных (можно вынести в отдельные файлы в /types)
 interface Student {

@@ -340,13 +340,13 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                                                   </div>
                                               ) : (
                                                   <div className={`flex items-center gap-3 ${!media ? 'order-2' : 'order-3'} `}>
-                                                      <button
+                                                      {/* <button
                                                           type="button"
                                                           onClick={() => setLanguage(language === 'ru' ? 'ky' : 'ru')}
                                                           className="p-link"
                                                       >
                                                           {language.toUpperCase()}
-                                                      </button>
+                                                      </button> */}
                                                       <Link className="text-[var(--titleColor)] text-sm hover:text-[var(--mainColor)]" href={'https://oldmooc.oshsu.kg/'} target="_blank">
                                                           {translations.oldMooc}
                                                       </Link>
