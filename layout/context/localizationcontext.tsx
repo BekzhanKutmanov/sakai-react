@@ -209,7 +209,17 @@ export const localizationData = {
         recommendedByDepartment: 'Рекомендованные департаментом',
         allOpenCourses: 'Все открытые курсы',
         dataNotAvailable: 'Данные недоступны',
-        videoTourMainBuilding: 'Видеоэкскурсия по главному зданию'
+        videoTourMainBuilding: 'Видеоэкскурсия по главному зданию',
+        readOnly: 'Только для чтения',
+        archiveReadOnlyNotice: 'Эти курсы были заархивированы. Данные хранятся как история и не могут быть изменены или восстановлены.',
+        archiveDate: 'Дата архивации',
+
+        // user 
+        personalShortNumber: 'Л/н',
+        personalNumber: 'Личный номер',
+        yearBirdth: 'Год рождения',
+        passed: 'Сдан',
+        failed: 'Не сдан',
     },
     ky: {
         oshSU: 'ОшМУ',
@@ -248,7 +258,7 @@ export const localizationData = {
         confirmationWindow: 'Ырастоо терезеси',
         deleteHeader: 'Өчүрүү',
         confirmDeleteMessage: 'Чын эле өчүргүңүз келеби?',
-        fullName: 'АЖӨ',
+        fullName: 'Аты жөнү',
         lastVisit: 'Акыркы кирүү',
         completedActions: 'Аткарылган аракеттер',
         dataLabel: 'Маалыматтар',
@@ -415,7 +425,17 @@ export const localizationData = {
         recommendedByDepartment: 'Департамент тарабынан сунушталган',
         allOpenCourses: 'Бардык ачык курстар',
         dataNotAvailable: 'Маалымат жеткиликтүү эмес',
-        videoTourMainBuilding: 'Башкы корпус боюнча видеоэкскурсия'
+        videoTourMainBuilding: 'Башкы корпус боюнча видеоэкскурсия',
+        readOnly: 'Окуу үчүн гана',
+        archiveReadOnlyNotice: 'Бул курстар архивделген. Маалыматтар тарых катары сакталат жана өзгөртүүгө же калыбына келтирүүгө болбойт.',
+        archiveDate: 'Архивделген күнү',
+
+        // user 
+        personalShortNumber: 'Ж/н',
+        personalNumber: 'Жеке номер',
+        yearBirdth: 'Туулган жылы',
+        passed: 'Тапшырды',
+        failed: 'Тапшырган жок',
     }
 };
 
@@ -456,3 +476,4 @@ export const useLocalization = () => {
     }
     return context;
 };
+

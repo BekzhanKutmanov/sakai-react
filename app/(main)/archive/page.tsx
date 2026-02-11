@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useState, useEffect } from 'react';
 import { DataTable } from 'primereact/datatable';
@@ -11,6 +11,7 @@ import useMediaQuery from '@/hooks/useMediaQuery';
 import SubTitle from '@/app/components/SubTitle';
 import { fetchArchivedCourses } from '@/services/courses';
 import { myMainCourseType } from '@/types/myMainCourseType';
+import { useLocalization } from '@/layout/context/localizationcontext';
 
 interface ArchivedCourse extends myMainCourseType {
     archive_course: {
@@ -28,6 +29,7 @@ const ArchivePage = () => {
     const [loading, setLoading] = useState<boolean>(true);
     const [expandedRows, setExpandedRows] = useState<any>(null);
     const isMobile = useMediaQuery('(max-width: 768px)');
+    const { translations } = useLocalization();
 
     // Обновленная функция запроса с новыми моковыми данными
     const handleFetchArchivedCourses = async () => {
@@ -89,10 +91,10 @@ const ArchivePage = () => {
                         </div>
                         <div className="md:w-3/4 text-center md:text-left">
                             <div className="text-xl font-bold">{course.title}</div>
-                            <div className="mb-3 text-gray-500">Дата архивации: {new Date(course?.archive_course?.created_at).toLocaleDateString()}</div>
+                            <div className="mb-3 text-gray-500">{translations.archiveDate}: {new Date(course?.archive_course?.created_at).toLocaleDateString()}</div>
                             <div className="flex align-items-center justify-content-center md:justify-content-start gap-4">
                                 <div>
-                                    <span className="font-semibold">Копия: </span>
+                                    <span className="font-semibold">{translations.copy}: </span>
                                     {publishedBodyTemplate(course)}
                                 </div>
                                 {/* <div> */}
@@ -131,7 +133,7 @@ const ArchivePage = () => {
         );
     };
 
-    const header = <SubTitle title="Архив Курсов" mobileTitleSize="xl" titleSize="2xl" />;
+    const header = <SubTitle title={translations.archiveCourses} mobileTitleSize="xl" titleSize="2xl" />;
 
     if (loading) {
         return (
@@ -147,8 +149,8 @@ const ArchivePage = () => {
                 <div className="flex items-center">
                     <i className="pi pi-info-circle mr-3 "></i>
                     <div>
-                        <p className="font-bold">Только для чтения</p>
-                        <p className="text-sm">Эти курсы были заархивированы. Данные хранятся как история и не могут быть изменены или восстановлены.</p>
+                        <p className="font-bold">{translations.readOnly}</p>
+                        <p className="text-sm">{translations.archiveReadOnlyNotice}</p>
                     </div>
                 </div>
             </div>
@@ -170,11 +172,11 @@ const ArchivePage = () => {
                     rows={5}
                 >
                     {/* <Column expander style={{ width: '3em' }} /> */}
-                    <Column body={(_, { rowIndex }) => rowIndex + 1} header="#" style={{ width: '20px' }}></Column>
-                    <Column header="Фото" body={imageBodyTemplate} style={{ width: '10%' }} />
-                    <Column field="title" header="Название" />
-                    <Column header="Копия" body={publishedBodyTemplate} />
-                    <Column header="Дата архивации" body={(rowData)=> new Date(rowData?.archive_course?.created_at).toLocaleDateString()} />
+                    <Column body={(_, { rowIndex }) => rowIndex + 1} header={translations.numberSign} style={{ width: '20px' }}></Column>
+                    <Column header={translations.photo} body={imageBodyTemplate} style={{ width: '10%' }} />
+                    <Column field="title" header={translations.title} />
+                    <Column header={translations.copy} body={publishedBodyTemplate} />
+                    <Column header={translations.archiveDate} body={(rowData)=> new Date(rowData?.archive_course?.created_at).toLocaleDateString()} />
                     {/* <Column field="max_score" header="Балл" />
                     <Column header="На рассмотрение" body={reviewBodyTemplate} />
                     <Column header="Публикация" body={publishedBodyTemplate} />
@@ -186,3 +188,4 @@ const ArchivePage = () => {
 };
 
 export default ArchivePage;
+

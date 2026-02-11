@@ -2,6 +2,7 @@
 
 import GroupSkeleton from '@/app/components/skeleton/GroupSkeleton';
 import useMediaQuery from '@/hooks/useMediaQuery';
+import { useLocalization } from '@/layout/context/localizationcontext';
 import { fetchStudentDetail } from '@/services/streams';
 import { fetchStudentSearchDetail, fetchStudentSearchImg } from '@/services/student/studentSearch';
 import { RoleUserType } from '@/types/roles/RoleUserType';
@@ -19,6 +20,8 @@ interface StudentInfo {
 }
 
 const StudentDetailPage = () => {
+    const { translations } = useLocalization();
+    
     const { id_student } = useParams();
     const media = useMediaQuery('(max-width: 640px)');
 
@@ -51,7 +54,7 @@ const StudentDetailPage = () => {
                 <thead className="bg-gray-100">
                     <tr>
                         <th scope="col" className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Название курса
+                            {translations.courseName}
                         </th>
                         <th scope="col" className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Модуль
@@ -75,12 +78,12 @@ const StudentDetailPage = () => {
                                     {course?.modules?.length ? (
                                         <div className="flex items-center gap-1">
                                             <i className="pi pi-check text-[green]" style={{ fontSize: '12px' }}></i>
-                                            <span>Сдан</span>
+                                            <span>{translations.passed}</span>
                                         </div>
                                     ) : (
                                         <div className="flex items-center gap-1">
                                             <i className="pi pi-times text-[red]" style={{ fontSize: '12px' }}></i>
-                                            <span>Не сдан</span>
+                                            <span>{translations.failed}</span>
                                         </div>
                                     )}
                                 </div>
@@ -113,12 +116,12 @@ const StudentDetailPage = () => {
                             {course?.modules?.length ? (
                                 <div className="flex items-center gap-1">
                                     <i className="pi pi-check text-[green]" style={{ fontSize: '12px' }}></i>
-                                    <b>Сдан</b>
+                                    <b>{translations.passed}</b>
                                 </div>
                             ) : (
                                 <div className="flex items-center gap-1">
                                     <i className="pi pi-times text-[red]" style={{ fontSize: '12px' }}></i>
-                                    <b>Не сдан</b>
+                                    <b>{translations.failed}</b>
                                 </div>
                             )}
                         </div>
@@ -158,10 +161,10 @@ const StudentDetailPage = () => {
                         <p className="text-gray-600 mt-2">{studentDetail?.email}</p>
                         <div className="mt-4 space-y-2 text-gray-700">
                             <p>
-                                <strong>Личный номер:</strong> <span className="text-[var(--mainColor)]">{studentDetail?.myedu_id}</span>
+                                <strong>{translations.personalNumber}:</strong> <span className="text-[var(--mainColor)]">{studentDetail?.myedu_id}</span>
                             </p>
                             <p>
-                                <strong>Год рождения:</strong> <span className="text-[var(--mainColor)]">{studentDetail?.birth_date || '-'}</span>
+                                <strong>{translations.yearBirdth}:</strong> <span className="text-[var(--mainColor)]">{studentDetail?.birth_date || '-'}</span>
                             </p>
                         </div>
                     </div>
@@ -169,7 +172,7 @@ const StudentDetailPage = () => {
 
                 {/* Courses Section */}
                 <div>
-                    <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-4">Курсы</h2>
+                    <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-4">{translations.courses}</h2>
                     {media ? coursesMobile : coursesTable}
                 </div>
             </div>

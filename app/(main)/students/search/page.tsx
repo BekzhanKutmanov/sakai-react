@@ -9,6 +9,7 @@ import { fetchStudentsForTeacher } from '@/services/student/studentSearch';
 import SubTitle from '@/app/components/SubTitle';
 import Link from 'next/link';
 import useMediaQuery from '@/hooks/useMediaQuery';
+import { useLocalization } from '@/layout/context/localizationcontext';
 
 type Student = {
     id: number;
@@ -22,6 +23,8 @@ type Student = {
 };
 
 const StudentSearchPage = () => {
+    const { translations } = useLocalization();
+
     const [searchTerm, setSearchTerm] = useState('');
     const [debouncedTerm, setDebouncedTerm] = useState('');
     const [students, setStudents] = useState<Student[]>([]);
@@ -70,10 +73,10 @@ const StudentSearchPage = () => {
 
     const searchSection = (
         <div className="main-bg flex flex-col gap-1">
-            <SubTitle title="Студенты" titleSize="2xl" mobileTitleSize="xl" />
+            <SubTitle title={translations.students} titleSize="2xl" mobileTitleSize="xl" />
             <span className="p-input-icon-left">
                 <div className="flex items-center relative">
-                    <InputText placeholder="Поиск..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="w-full p-inputtext-sm p-inputtext-rounded" />
+                    <InputText placeholder={translations.search} value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="w-full p-inputtext-sm p-inputtext-rounded" />
                     <div className="absolute right-1">{progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}</div>
                 </div>
             </span>
@@ -86,7 +89,7 @@ const StudentSearchPage = () => {
                 <Column body={(_, { rowIndex }) => rowIndex + 1} header="#" style={{ width: '20px' }} />
                 <Column
                     field="name"
-                    header={() => <span className="text-sm">ФИО</span>}
+                    header={() => <span className="text-sm">{translations.fullName}</span>}
                     sortable
                     body={(rowData) => {
                         return (
@@ -100,7 +103,14 @@ const StudentSearchPage = () => {
                     style={{ minWidth: '14rem' }}
                 />
                 <Column field="email" header={() => <span className="text-sm">Email</span>} sortable style={{ minWidth: '14rem' }} />
-                <Column field="myedu_id" header={() => <span className="text-sm">Л/н</span>} body={(rowData) => <span className="bg-slate-100 text-slate-600 text-[10px] font-bold px-2 py-1 rounded-full border border-slate-200 shrink-0 ml-2">{rowData?.myedu_id}</span>} sortable sortField="status" style={{ minWidth: '8rem' }} />
+                <Column
+                    field="myedu_id"
+                    header={() => <span className="text-sm">{translations.personalShortNumber}</span>}
+                    body={(rowData) => <span className="bg-slate-100 text-slate-600 text-[10px] font-bold px-2 py-1 rounded-full border border-slate-200 shrink-0 ml-2">{rowData?.myedu_id}</span>}
+                    sortable
+                    sortField="status"
+                    style={{ minWidth: '8rem' }}
+                />
             </DataTable>
         </div>
     );
@@ -140,7 +150,7 @@ const StudentSearchPage = () => {
                     <ProgressSpinner style={{ width: '50px', height: '50px' }} animationDuration=".5s" />
                 </div>
             ) : studentEmpty ? (
-                <b className='main-bg text-center '>Студенты не найдены</b>
+                <b className="main-bg text-center ">Студенты не найдены</b>
             ) : isMobile ? (
                 studentsMobile
             ) : (

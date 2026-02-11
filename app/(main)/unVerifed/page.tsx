@@ -1,10 +1,11 @@
-'use client';
+﻿'use client';
 
 import MyDateTime from '@/app/components/MyDateTime';
 import { NotFound } from '@/app/components/NotFound';
 import GroupSkeleton from '@/app/components/skeleton/GroupSkeleton';
 import useErrorMessage from '@/hooks/useErrorMessage';
 import { LayoutContext } from '@/layout/context/layoutcontext';
+import { useLocalization } from '@/layout/context/localizationcontext';
 import Link from 'next/link';
 import { useContext, useEffect, useState } from 'react';
 
@@ -13,6 +14,7 @@ export default function UnVerifed() {
 
     const showError = useErrorMessage();
     const { setMessage, contextFetchVerifed, contextVerifedValue } = useContext(LayoutContext);
+    const { language, translations } = useLocalization();
 
     const [skeleton, setSkeleton] = useState(false);
     const [hasThemes, setHasThemes] = useState(false);
@@ -84,14 +86,14 @@ export default function UnVerifed() {
     return (
         <div className="main-bg">
             {hasThemes ? (
-                <NotFound titleMessage="Данных нет" />
+                <NotFound titleMessage={translations.noData} />
             ) : skeleton ? (
                 <div className="w-full">
                     <GroupSkeleton count={2} size={{ width: '100%', height: '5rem' }} />
                 </div>
             ) : (
                 <>
-                    <h3 className="text-xl pb-1 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">Непроверенные практические задания</h3>
+                    <h3 className="text-xl pb-1 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">{translations.unverifiedTasks}</h3>
                     {tasks?.map((item) => {
                         return (
                             <div key={item?.answer?.id}>
@@ -102,7 +104,7 @@ export default function UnVerifed() {
                                             onClick={() => console.log(item?.answer?.course_id, item?.connect_id, item?.answer?.id_stream, item?.answer?.student?.myedu_id, item?.answer?.student?.id, item?.answer?.lesson_id, item?.answer?.steps_id)}
                                             href={`/students/${item?.answer?.course_id}/${item?.connect_id}/${item?.answer?.id_stream}/${item?.answer?.student?.myedu_id}/${item?.answer?.student?.id}/${item?.answer?.lesson_id}/${item?.answer?.steps_id}`}
                                         >
-                                            <b className="text-[var(--mainColor)] underline">Практическое задание</b>
+                                            <b className="text-[var(--mainColor)] underline">{language === 'ky' ? 'Практикалык тапшырма' : 'Практическое задание'}</b>
                                         </Link>
                                         <span className="text-sm w-[13px] h-[13px] rounded-full bg-[var(--amberColor)]"></span>
                                     </div>
@@ -116,7 +118,7 @@ export default function UnVerifed() {
                                                 href={`/students/${item?.answer?.course_id}/${item?.connect_id}/${item?.answer?.id_stream}/${item?.answer?.student?.myedu_id}/${item?.answer?.student?.id}/${item?.answer?.lesson_id}/${item?.answer?.steps_id}`}
                                                 className="cursor-pointer m-0 text-[12px] sm:text-[13px] text-[var(--mainColor)] flex items-center gap-1"
                                             >
-                                                <span className="text-[var(--mainColor)]">Перейти</span> <i style={{ fontSize: '10px' }} className="pi pi-arrow-right text-[var(--mainColor)]"></i>
+                                                <span className="text-[var(--mainColor)]">{translations.goTo}</span> <i style={{ fontSize: '10px' }} className="pi pi-arrow-right text-[var(--mainColor)]"></i>
                                             </Link>
                                         </div>
                                         <div className="w-full relative flex mt-1">
@@ -134,3 +136,4 @@ export default function UnVerifed() {
         </div>
     );
 }
+
