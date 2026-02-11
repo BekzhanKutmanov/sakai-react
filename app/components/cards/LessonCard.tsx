@@ -38,10 +38,7 @@ export default function LessonCard({
     answers?: { id?: number | null; text: string; is_correct: boolean }[];
 }) {
     const { translations } = useLocalization();
-    const forShortTitle = useShortText(cardValue.title, 200);
-    const shortTitle = type.typeValue !== 'practica' ? forShortTitle : cardValue.title;
     const shortDoc = useShortText(cardValue?.document || '', 100);
-    const shortDescription = useShortText(cardValue.desctiption ? cardValue.desctiption : '', 200);
 
     const shortUrl = useShortText(cardValue?.url ? cardValue?.url : '', 100);
     const [progressSpinner, setProgressSpinner] = useState(false);

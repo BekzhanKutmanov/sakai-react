@@ -43,12 +43,12 @@ export default function MainNotificatoin() {
             if (data?.success) {
                 setMessage({
                     state: true,
-                    value: { severity: 'success', summary: 'РЈСЃРїРµС€РЅРѕ СѓРґР°Р»РµРЅРѕ', detail: '' }
+                    value: { severity: 'success', summary: 'Успешно удалено!', detail: '' }
                 });
             } else {
                 setMessage({
                     state: true,
-                    value: { severity: 'error', summary: 'РћС€РёР±РєР°!', detail: 'РџРѕРІС‚РѕСЂРёС‚Рµ РїРѕР·Р¶Рµ' }
+                    value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
                 });
                 if (data?.response?.status) {
                     showError(data.response.status);

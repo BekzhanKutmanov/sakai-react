@@ -4,6 +4,7 @@ import { Column } from 'primereact/column';
 import MobileAnswersTable from './MobileAnswersTable';
 import useMediaQuery from '@/hooks/useMediaQuery';
 import { Paginator } from 'primereact/paginator';
+import { Button } from 'primereact/button';
 
 interface Answer {
     themeName: string;
@@ -12,6 +13,7 @@ interface Answer {
     teacherResponseDate: string;
     answered_at: string | null;
     comment: string | null;
+    file: string | null;
 }
 
 const AnswersTable = ({ report }: { report: any }) => {
@@ -56,13 +58,27 @@ const AnswersTable = ({ report }: { report: any }) => {
         <div>
             <h3 className="text-xl m-0 pb-2">Отчёт</h3>
             {media ? (
-                <MobileAnswersTable answers={report}/>
+                <MobileAnswersTable answers={report} />
             ) : (
                 <div className="my-2">
                     {report?.details?.length > 0 && (
                         <DataTable value={report?.details} tableStyle={{ minWidth: '50rem' }} emptyMessage={'...'} rows={5} className="text-sm">
                             <Column field="answered_at" header="Дата ответа"></Column>
                             <Column field="teacherResponse" header="Ответ преподавателя" body={teacherResponseTemplate}></Column>
+                            <Column
+                                header="Ответ студента"
+                                className='flex justify-center'
+                                body={(rowData) => {
+                                    return (
+                                        <>
+                                            <a href={rowData?.file} download target="_blank" rel="noopener noreferrer">
+                                                {' '}
+                                                <i className='pi pi-file-arrow-up p-2 rounded bg-[var(--mainColor)] text-white'></i>
+                                            </a>
+                                        </>
+                                    );
+                                }}
+                            ></Column>
                         </DataTable>
                     )}
 
