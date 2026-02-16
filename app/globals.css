@@ -21,9 +21,10 @@
   --bodyColor: #555555;
   --whiteColor: #ffffff;
   --borderBottomColor: #e5e7eb;
+  --whiteHoverColor: #fdfdff;
   --amberColor: #f7634d;
   --productQuantityBg: #d0e1fd;
-  --productQuantityText: #3b82f6;
+  --productQuantityText: #3b82f6; 
   --fontSize: 16px;
   --transition: 0.5s;
 

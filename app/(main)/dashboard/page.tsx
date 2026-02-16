@@ -128,6 +128,7 @@ export default function Dashboard() {
         const options = {
             plugins: {
                 legend: {
+                    position: 'bottom',
                     labels: {
                         usePointStyle: true
                     }
@@ -163,6 +164,7 @@ export default function Dashboard() {
             ]
         };
         const options = {
+            maintainAspectRatio: false,
             scales: {
                 y: {
                     beginAtZero: true
@@ -284,35 +286,39 @@ export default function Dashboard() {
                 </div>
 
                 {/* kpd */}
-                <div className='main-bg'>
-                    <h3 className='text-xl text-center shadow-[var(--bottom-shadow)] pb-1'>{info?.title}</h3>
-                    <b className='flex gap-1 items-center mb-1'>
+                <div className='main-bg p-3 sm:p-4'>
+                    <h3 className='text-xl text-center shadow-[var(--bottom-shadow)] pb-2 mb-2'>{info?.title}</h3>
+                    <b className='flex flex-wrap gap-1 items-center mb-3 text-sm sm:text-base'>
                         Отчёт за:
                         <span className='text-sm'>{<MyDateTime createdAt={performance?.study_from || ''} options={options} />}</span> -
                         <span className='text-sm'>{<MyDateTime createdAt={performance?.study_to || ''} options={options} />}</span>
                     </b>
-                    <div className='flex flex-col gap-2'>
-                        <div className='flex flex-col items-center gap-1 text-sm'>
+                    <div className='flex flex-col gap-3'>
+                        <div className='flex flex-col items-center gap-1 text-sm text-center'>
                             <b className='text-md'>Формула: <span className='text-sm'>{info?.formula}</span></b>
                             <b className='text-[var(--productQuantityText)]'>{info?.sections[0]?.description}</b>
                             <b className='text-[var(--orangeColor)]'>{info?.sections[1]?.description}</b>
                         </div>
-                        <div className='flex items-center sm:items-start gap-1 justify-around flex-col sm:flex-row'>
+                        <div className='flex justify-around flex-col sm:flex-row gap-3 items-center'>
                             <DataTable value={[
                                 { label: 'Количество курсов :', value: performance?.details?.courses },
                                 { label: 'Количество уведомлений :', value: performance?.details?.notifs }
-                            ]} showHeaders={false} className='my-custom-table max-w-[400px] p-2 border-1 border-[#dfe7ef]'>
+                            ]} showHeaders={false} className='my-custom-table w-full max-w-[520px] p-3 border-1 border-[#dfe7ef] rounded-md bg-white/40'>
                                 <Column field="label" />
                                 <Column field="value" />
                             </DataTable>
-                            <div className="sm:card flex justify-content-center">
-                                <Chart type="pie" data={chartPieData} options={chartPieOptions} className="w-full md:w-20rem" />
+                            <div className="sm:card flex justify-center">
+                                <div className="w-full max-w-[280px] aspect-square">
+                                    <Chart type="pie" data={chartPieData} options={chartPieOptions} className="w-full h-full" />
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <div className="card mt-1">
-                        <Chart type="bar" data={chartData} options={chartOptions} />
+                    <div className="card mt-3 p-2 sm:p-3 border-1 border-[#e6edf3] rounded-md bg-white/30">
+                        <div className="w-full h-56 sm:h-64 md:h-72">
+                            <Chart type="bar" data={chartData} options={chartOptions} className="w-full h-full" />
+                        </div>
                     </div>
                 </div>
             </div>

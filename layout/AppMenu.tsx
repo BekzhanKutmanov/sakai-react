@@ -137,7 +137,8 @@ const AppMenu = () => {
               pathname.startsWith('/dashboard') ||
               pathname.startsWith('/openCourse/') ||
               pathname.startsWith('/roles/') ||
-              pathname.startsWith('/archive')
+              pathname.startsWith('/archive') ||
+              pathname.startsWith('/module')
                 ? ([
                       {
                           // key: 'prev',
@@ -214,6 +215,11 @@ const AppMenu = () => {
                           label: translations.archiveCourses,
                           icon: 'pi pi-inbox',
                           to: '/archive'
+                      },
+                      {
+                          label: translations.module,
+                          icon: 'pi pi-calendar',
+                          to: '/module/1'
                       }
                   ].filter(Boolean) as AppMenuItem[])
                 : []
@@ -342,6 +348,11 @@ const AppMenu = () => {
                       label: translations.archiveCourses,
                       icon: 'pi pi-inbox',
                       to: '/archive'
+                  },
+                  {
+                      label: translations.module,
+                      icon: 'pi pi-calendar',
+                      to: '/module/1'
                   }
               ].filter(Boolean) as AppMenuItem[])
             : []
@@ -731,7 +742,7 @@ const AppMenu = () => {
             </FormModal>
 
             {/* <div className="flex flex-col h-screen"> */}
-            <ul className={`layout-menu max-h-[80%] overflow-y-auto scrollbar-thin-y`}>
+            <ul className={`layout-menu max-h-[90%] overflow-y-auto scrollbar-thin-y`}>
                 {model.map((item, i) => {
                     return !item?.seperator ? <AppMenuitem item={item} root={true} index={i} key={item.label} /> : <li className="menu-separator"></li>;
                 })}

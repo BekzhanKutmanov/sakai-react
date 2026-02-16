@@ -162,7 +162,7 @@ const TeacherCheckPage = () => {
             <DataTable value={report || []} rows={5} tableStyle={{ minWidth: '50rem' }} className="text-sm" emptyMessage="...">
                 <Column body={(_, { rowIndex }) => rowIndex + 1} header="#" style={{ width: '20px' }}></Column>
                 <Column header="Преподаватели" body={teacherNameBodyTemplate} style={{ width: '50%' }} />
-                <Column header="Непроверенные задания" body={uncheckedAssignmentsBodyTemplate} style={{ width: '50%' }} />
+                <Column header="Непроверенные задания" className='w-full flex justify-center' body={uncheckedAssignmentsBodyTemplate} style={{ width: '50%' }} />
             </DataTable>
         </div>
     );

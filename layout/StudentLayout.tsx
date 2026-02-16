@@ -9,6 +9,7 @@ import AppTopbar from './AppTopbar';
 import { LayoutContext } from './context/layoutcontext';
 import { ChildContainerProps, LayoutState, AppTopbarRef } from '@/types';
 import { usePathname, useSearchParams } from 'next/navigation';
+import Link from 'next/link';
 
 const StudentLayout = ({ children }: ChildContainerProps) => {
     const { layoutConfig, layoutState, setLayoutState, user } = useContext(LayoutContext);
@@ -129,16 +130,26 @@ const StudentLayout = ({ children }: ChildContainerProps) => {
                     {/* <AppFooter /> */}
 
                     {/* bottom menu */}
-                    {/* <div className='sticky bottom-0 bg-[white] my-border-top p-3 rounded'>
-                        <div className='flex justify-around items-center gap-2'> 
-                            <Link href='/'><i className={`${pathname === '/' ? 'bg-[var(--mainColor)] text-[white]' : ''} cursor-pointer pi pi-home text-md p-2 rounded-full border text-[var(--mainColor)]`}></i></Link>
-                            <Link href=''><i className={`${pathname.startsWith('/teaching/') ? 'bg-[var(--mainColor)] text-[white]' : ''} cursor-pointer pi pi-bell text-md p-2 rounded-full border text-[var(--mainColor)]`}></i></Link>
-                            <Link href=''><i className={`${pathname === 'l' ? 'bg-[var(--mainColor)] text-[white]' : ''} cursor-pointer pi pi-comment text-md p-2 rounded-full border text-[var(--mainColor)]`}></i></Link>
-                            <Link href='/teaching'><i className={`${pathname === '/teaching' ? 'bg-[var(--mainColor)] text-[white]' : ''} cursor-pointer pi pi-book text-md p-2 rounded-full border text-[var(--mainColor)]`}></i></Link>
+                    {/* {!pathname.startsWith('/teaching/lessonView/') && (
+                        <div className="sticky bottom-0 bg-[white] my-border-top p-3 rounded">
+                            <div className="flex justify-around items-center gap-2">
+                                <Link href="/">
+                                    <i className={`${pathname === '/' ? 'bg-[var(--mainColor)] text-[white]' : ''} cursor-pointer pi pi-home text-md p-2 rounded-full border text-[var(--mainColor)]`}></i>
+                                </Link>
+                                <Link href="/teaching">
+                                    <i className={`${pathname.startsWith('/teaching') ? 'bg-[var(--mainColor)] text-[white]' : ''} cursor-pointer pi pi-calendar-clock text-md p-2 rounded-full border text-[var(--mainColor)]`}></i>
+                                </Link>
+                                <Link href="/studentHome">
+                                    <i className={`${pathname === '/studentHome' ? 'bg-[var(--mainColor)] text-[white]' : ''} cursor-pointer pi pi-th-large text-md p-2 rounded-full border text-[var(--mainColor)]`}></i>
+                                </Link>
+                                <Link href="/teaching">
+                                    <i className={`${pathname === '/notifications' ? 'bg-[var(--mainColor)] text-[white]' : ''} cursor-pointer pi pi-bell text-md p-2 rounded-full border text-[var(--mainColor)]`}></i>
+                                </Link>
+                            </div>
                         </div>
-                    </div> */}
+                    )} */}
                 </div>
-                {/* <AppConfig /> */}   
+                {/* <AppConfig /> */}
                 <div className="layout-mask"></div>
             </div>
         </React.Fragment>

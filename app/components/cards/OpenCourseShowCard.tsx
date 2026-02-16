@@ -105,9 +105,9 @@ export default function OpenCourseShowCard({ course, courseSignup, signUpList, b
             <div className="flex items-end gap-1 justify-between">
                 <div className="w-full">
                     {typeof isSigned === 'number' ? (
-                        <Button label="Вы записаны" disabled size="small" className=" bg-[var(--amberColor)] text-sm mini-button" onClick={() => courseSignup(course?.id)} />
+                        <Button label="Вы записаны" disabled size="small" className="bg-[var(--amberColor)] px-1 py-1.5" style={{ fontSize: '12px' }} onClick={() => courseSignup(course?.id)} />
                     ) : !course?.is_signed ? (
-                        <Button label="Записаться на курс" disabled={btnDisabled} size="small" className=" text-sm mini-button" onClick={() => courseSignup(course?.id)} />
+                        <Button label="Записаться на курс" disabled={btnDisabled} size="small" className="hover:opacity-90 text-white font-medium transition-all shadow-sm px-1 py-1.5" style={{fontSize: '12px'}} onClick={() => courseSignup(course?.id)} />
                     ) : (
                         ''
                     )}

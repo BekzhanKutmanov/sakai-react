@@ -132,9 +132,9 @@ export default function OpenCourseCard({
                     {pathname !== '/openCourse/activeCourse' ?
                         <div className="w-full">
                             {typeof isSigned === 'number' ? (
-                                <Button label="Вы записаны" disabled size="small" className=" bg-[var(--amberColor)] text-sm mini-button" />
+                                <Button label="Вы записаны" disabled size="small" className="bg-[var(--amberColor)] px-1 py-1.5" style={{fontSize: '12px'}}/>
                             ) : !course?.is_signed ? (
-                                <Button label="Записаться на курс" disabled={btnDisabled} size="small" className=" text-sm mini-button" onClick={() => {
+                                <Button label="Записаться на курс" disabled={btnDisabled} size="small" className="hover:opacity-90 text-white font-medium transition-all shadow-sm px-1 py-1.5" style={{fontSize: '12px'}} onClick={() => {
                                     setSelectedCourseId(course?.id);
                                     confirm1(course?.id);
                                 }} />

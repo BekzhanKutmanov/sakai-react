@@ -167,7 +167,7 @@ const ArchivePage = () => {
                     // rowExpansionTemplate={rowExpansionTemplate}
                     loading={loading}
                     emptyMessage="..."
-                    className="p-datatable-striped filter transition-all duration-300 text-sm my-custom-table"
+                    className="p-datatable-striped filter transition-all duration-300 text-sm "
                     removableSort
                     rows={5}
                 >
