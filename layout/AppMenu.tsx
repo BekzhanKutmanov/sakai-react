@@ -749,13 +749,13 @@ const AppMenu = () => {
             </ul>
             {pathname.startsWith('/course/detail/') && (
                 <div>
-                    <div className="p-4 mt-auto">
+                    <div className="p-3 pb-2 mt-auto">
                         <Button label={translations.add} icon={'pi pi-plus'} className="cursor-pointer w-full py-2 px-4 rounded-lg transition" onClick={() => setThemeAddVisisble(true)}></Button>
                     </div>
                     <div className="flex justify-center gap-1 items-center">
                         <b>{translations.totalPointsForCourse}</b>
                         <span className="text-[var(--mainColor)]">{contextThemes?.max_sum_score}</span>
-                    </div>
+                    </div>  
                 </div>
             )}
             {/* </div> */}

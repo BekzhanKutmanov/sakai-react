@@ -4,6 +4,7 @@ import OpenCourseCard from '@/app/components/cards/OpenCourseCard';
 import OpenCourseShowCard from '@/app/components/cards/OpenCourseShowCard';
 import { NotFound } from '@/app/components/NotFound';
 import GroupSkeleton from '@/app/components/skeleton/GroupSkeleton';
+import SubTitle from '@/app/components/SubTitle';
 import useErrorMessage from '@/hooks/useErrorMessage';
 import useMediaQuery from '@/hooks/useMediaQuery';
 import { LayoutContext } from '@/layout/context/layoutcontext';
@@ -341,14 +342,14 @@ export default function OpenCourse() {
 
     return (
         <div className="flex flex-col gap-2">
-            <div className="main-bg">
+            <div className="main-bg p-2 sm:p-4">
                 {/* header section */}
-                <div>
-                    <h1 className="text-xl sm:text-2xl m-0 mb-2 pb-1 shadow-[var(--bottom-shadow)]">Курсы</h1>
+                <div className='shadow-[var(--bottom-shadow)] pb-3'> 
+                    <SubTitle mobileTitleSize='xl' titleSize='2xl' title='Курсы'/>
                 </div>
 
                 {/* filter section */}
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-col gap-2 mt-2">
                     <div>
                         <div className="flex flex-col sm:flex-row gap-2 sm:items-center m-2">
                             <div className="flex gap-3 items-center">

@@ -78,7 +78,7 @@ export const localizationData = {
         teacherCheck: 'Проверка преподавателей',
         department: 'Департамент',
         themes: 'Темы',
-        module: 'Модульный график',
+        module: 'Экспорт модулей',
 
         // Calendar
         firstDayOfWeek: 'Понедельник',
@@ -296,7 +296,7 @@ export const localizationData = {
         teacherCheck: 'Окутуучуларды текшерүү',
         department: 'Департамент',
         themes: 'Темалар',
-        module: 'Модулдук график',
+        module: 'Экспорт модулей',
 
         // Calendar
         firstDayOfWeek: 'Дүйшөмбү',

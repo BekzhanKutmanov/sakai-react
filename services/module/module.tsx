@@ -46,3 +46,23 @@ export const sheduleSave = async (from: Nullable<Date>, to: Nullable<Date>, id_p
         return err;
     }
 };
+
+export const sheduleDiactivate = async (id_period: number | null, id_semester: number | null, id_speciality: number | null, id_stream: number | null) => {
+    
+    const payload = {
+        id_period: id_period,
+        id_semester: id_semester,
+        id_speciality: id_speciality,
+        id_stream: id_stream
+    }
+
+    console.log(payload);
+
+    try {
+        const res = await axiosInstance.post('/v1/schedule/module/deactivate', payload);
+        return res.data;
+    } catch (err) {
+        console.log('Ошибка при получении', err);
+        return err;
+    }
+};

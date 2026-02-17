@@ -3,42 +3,39 @@
 import { fetchFaculty } from '@/services/faculty';
 import { fetchSpeciality } from '@/services/student/studentSearch';
 import { Dropdown } from 'primereact/dropdown';
-import { InputText } from 'primereact/inputtext';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import { useContext, useEffect, useState } from 'react';
 import ModuleChartCard from '@/app/components/cards/ModuleChartCard';
-import { set } from 'react-hook-form';
 import SubTitle from '@/app/components/SubTitle';
-import { fetchModuleShedule, fetchSemestr, sheduleSave } from '@/services/module/module';
+import { fetchModuleShedule, fetchSemestr, sheduleDiactivate, sheduleSave } from '@/services/module/module';
 import { Button } from 'primereact/button';
-import { Accordion, AccordionTab } from 'primereact/accordion';
-import Message from '@/app/components/messages/Message';
-import { connect } from 'http2';
-import { log } from 'console';
 import { confirmDialog } from 'primereact/confirmdialog';
 import { Panel } from 'primereact/panel';
 import { Dialog } from 'primereact/dialog';
 import { Calendar } from 'primereact/calendar';
 import { Nullable } from 'primereact/ts-helpers';
 import { LayoutContext } from '@/layout/context/layoutcontext';
+import useErrorMessage from '@/hooks/useErrorMessage';
+import { useLocalization } from '@/layout/context/localizationcontext';
 
 export default function Module() {
-    const params = new URLSearchParams();
     const { setMessage } = useContext(LayoutContext);
+    const showError = useErrorMessage();
+    const { translations } = useLocalization();
 
     const [timeMode, setTimeMode] = useState<{ name_ru: string; code: number | null; id: number | null } | null>({ name_ru: '', code: null, id: null });
     const [timeModeOptions, setTimeModeOptions] = useState<any>(null);
-    const [searchController, setSearchController] = useState(false);
 
     const [speciality, setSpecialyty] = useState<{ name_ru: string; code: number | null; id: number | null } | null>(null);
     const [specialityOptions, setSpecialityOptions] = useState<any>([]);
 
     const [currentFacultyId, setCurrentFacultyId] = useState<number | null>(null);
     const [currentSpecialityId, setCurrentSpecialityId] = useState<number | number[] | null>(null);
+    const [diactivateSp, setDiactivateSp] = useState<number | null>(null);
+    const [diactivateCt, setDiactivateCt] = useState<number | null>(null);
 
     const [period, setPeriod] = useState<{ name_ru: string; code: number | null; id: number | null } | null>(null);
     const [periodOptions, setPeriodOptions] = useState<any>([
-        { name_ru: 'Все', id: null },
         { name_ru: 'Летний', id: 1 },
         { name_ru: 'Зимний', id: 2 }
     ]);
@@ -47,11 +44,9 @@ export default function Module() {
     const [semestrOptions, setSemestrOptions] = useState<any>([]);
 
     const [progressSpinner, setProgressSpinner] = useState(false);
-    const [skeleton, setSkeleton] = useState(false);
-    const [search, setSearch] = useState<string>('');
-
+    const [miniSpinner, setMiniSpinner] = useState(false);
+    
     const [connectIds, setConnectIds] = useState<number[] | null>(null);
-    const [currentStream, setCurrentStream] = useState<any>(null);
     const [connects, setConnects] = useState<any>([]);
 
     const [openIndex, setOpenIndex] = useState<number | null>(null);
@@ -59,8 +54,8 @@ export default function Module() {
     // const [allSelectFl, setAllSelectFl] = useState([{ state: false, id: null }]);
     const [allSelectFl, setAllSelectFl] = useState<number[]>([]);
 
-    const [accrodionIndex, setAccrodionIndex] = useState(0);
     const [emptySpeciality, setEmptySpeciality] = useState(false);
+    const [startDisplay, setStartDisplay] = useState(true);
 
     const [from, setFrom] = useState<Nullable<Date>>(null);
     const [to, setTo] = useState<Nullable<Date>>(null);
@@ -69,19 +64,28 @@ export default function Module() {
 
     const handleFetchFaculty = async () => {
         const data = await fetchFaculty();
-        if (data && data?.length) {
-            // const alls = { name_ru: 'Все', code: null, id: null };
-            // data.unshift(alls);
+        if (data && data?.length > 0) {
             setTimeModeOptions(data);
+        } else {
+            setMessage({
+                state: true,
+                value: { severity: 'error', summary: translations.errorTitle, detail: translations.tryAgainLater }
+            });
+            if (data?.response?.status) {
+                showError(data.response.status);
+            }
         }
     };
 
     const handleStudentSpeciality = async (id_faculty: number) => {
+        setMiniSpinner(true);
+        setStartDisplay(false);
         const data = await fetchSpeciality(id_faculty);
         if (data && data?.length) {
             setSpecialityOptions(data);
             // setStudents(data?.data);
         }
+        setMiniSpinner(false);
     };
 
     const handleFetchModuleShedule = async (specialityIds: any, periodId: number | null, semesterId: number | null) => {
@@ -92,6 +96,7 @@ export default function Module() {
         if (data && data?.length > 0) {
             setConnects(data);
             setEmptySpeciality(false);
+            startSpecialityCheck(data);
             startSheduleCheck(data);
         } else {
             setEmptySpeciality(true);
@@ -126,22 +131,47 @@ export default function Module() {
                 state: true,
                 value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
             });
+            setProgressSpinner(false);  
         }
-        setProgressSpinner(false);
     };
 
-    const handleEdit = (id: number, e: { checked: boolean }, specialityId: number) => {
+    const handleDiactivate = async (spId: number | null, ctId: number | null) => {
+        setProgressSpinner(true);
+        const data = await sheduleDiactivate(period?.id ? period?.id : null, semestr?.id ? semestr?.id : null, spId, ctId);
+        console.log(data);
+        if (data && data?.success) {
+            setMessage({
+                state: true,
+                value: { severity: 'success', summary: data?.message, detail: '' }
+            });
+            handleFetchModuleShedule(currentSpecialityId, period?.id ? period?.id : null, semestr?.id ? semestr?.id : null);
+        } else {
+            setMessage({
+                state: true,
+                value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
+            });
+            setProgressSpinner(false);  
+        }
+    };
+
+    const handleEdit = (id: number, e: { checked: boolean }, specialityId: number, active: boolean) => {
+        console.log(active);
+        
         if (e.checked) {
-            // console.warn('clear ');
             if (connectIds) {
                 !connectIds?.includes(id) && setConnectIds([...connectIds, id]);
             } else {
                 setConnectIds([id]);
             }
         } else {
-            setAllSelectFl((prev) => prev && prev?.filter((id) => id !== specialityId));
-            // console.warn('no clear ');
-            setConnectIds((prev) => prev && prev?.filter((item) => item !== id));
+            if(active){
+                setDiactivateCt(id);
+                confirm1(null, id);
+            } else {
+                setAllSelectFl((prev) => prev && prev?.filter((id) => id !== specialityId));
+                setConnectIds((prev) => prev && prev?.filter((item) => item !== id));
+            }
+
         }
     };
 
@@ -161,16 +191,30 @@ export default function Module() {
         }
     };
 
-    const confirm1 = (id: number) => {
+    const startSpecialityCheck = (speciality: number[]) => {
+        if (speciality) {
+            console.log(speciality);
+            const activeSpecialityIds = speciality
+                .filter((s: any) => s?.checking)
+                .map((s: any) => s?.id);
+            
+            console.log(activeSpecialityIds); // [1, 3, 4]
+            if (activeSpecialityIds) {
+                setAllSelectFl(activeSpecialityIds);
+            }
+        }
+    };
+
+    const confirm1 = (spId: number | null, ctId: number | null ) => {
         confirmDialog({
-            message: 'Вы точно хотите записаться на курс?',
+            message: 'Вы точно хотите изменить?',
             header: 'Подтверждение',
             icon: 'pi pi-exclamation-triangle',
             defaultFocus: 'accept',
-            acceptLabel: 'Записаться',
+            acceptLabel: 'Изменить',
             rejectLabel: 'Назад',
             rejectClassName: 'p-button-secondary reject-button',
-            accept: () => console.log(id)
+            accept: () => handleDiactivate(spId, ctId)
         });
     };
 
@@ -200,10 +244,6 @@ export default function Module() {
             }
         }
     }, [speciality]);
-
-    useEffect(() => {
-        setCurrentStream(connects[accrodionIndex]?.streams);
-    }, [accrodionIndex]);
 
     useEffect(() => {
         console.log('specialitys', allSelectFl);
@@ -252,37 +292,38 @@ export default function Module() {
     );
 
     return (
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-3">
             {/* filter */}
-            <div className="main-bg flex flex-col gap-1 my-1 p-3 sm:p-4">
-                <div className="shadow-[var(--bottom-shadow)] pb-2">
-                    <SubTitle mobileTitleSize="xl" title="График модулей" titleSize="2xl" />
+            <div className="main-bg flex flex-col gap-4 my-2 p-4 rounded-lg">
+                <div className="shadow-[var(--bottom-shadow)] pb-3">
+                    <SubTitle mobileTitleSize="xl" title="Экспорт модулей" titleSize="2xl" />
                 </div>
-                <div className="flex sm:items-center gap-2 flex-col sm:flex-row my-2 ">
-                    <div className="sm:max-w-[40%] overflow-hidden flex flex-col items-start gap-2">
+                <div className="flex items-center  gap-3 flex-col sm:flex-row">
+                    <div className="w-full min-w-0 flex flex-col gap-2">
                         <b className="px-1 inline">Выберите факультет</b>
-                        <div className="sm:max-w-[40%] overflow-hidden flex juctify-center items-start">
-                            <Dropdown value={timeMode} optionLabel="name_ru" options={timeModeOptions} onChange={(e) => setTimeMode(e.value)} placeholder="Выберите факультет" className="text-wrap word-break sm:text-nowrap sm:max-w-full" />
+                        <div className="w-full flex items-center">
+                            <Dropdown value={timeMode} optionLabel="name_ru" options={timeModeOptions} onChange={(e) => setTimeMode(e.value)} placeholder="Выберите факультет" className="w-full text-sm" />
                         </div>
                     </div>
 
-                    <div className="sm:max-w-[40%] overflow-hidden flex flex-col gap-2">
+                    <div className="w-full min-w-0 flex flex-col gap-2 mr-1">
                         <b className="px-1">Специальность</b>
-                        <div className="sm:max-w-[40%] overflow-hidden flex juctify-center items-start">
+                        <div className="w-full flex items-center">
                             <Dropdown
                                 value={speciality}
                                 optionLabel="name_ru"
                                 options={specialityWithAll}
                                 onChange={(e) => setSpecialyty(e.value)}
                                 placeholder="Выберите специальность"
-                                className={`${specialityOptions?.length < 1 ? 'pointer-events-none opacity-50' : ''} w-full text-sm`}
+                                className={`${specialityOptions?.length < 1 ? 'pointer-events-none opacity-50' : ''} w-full text-sm `}
                             />
+                            {miniSpinner && <div><ProgressSpinner style={{width: '17px', height: '17px'}}/></div>}
                         </div>
                     </div>
 
-                    <div className="sm:max-w-[60%] overflow-hidden flex flex-col gap-2">
+                    <div className="w-full min-w-0 flex flex-col gap-2">
                         <b className="px-1">Период</b>
-                        <div className="sm:max-w-[60%] overflow-hidden flex juctify-center items-start">
+                        <div className="w-full flex items-center">
                             <Dropdown
                                 value={period}
                                 optionLabel="name_ru"
@@ -294,124 +335,148 @@ export default function Module() {
                         </div>
                     </div>
 
-                    <div className="sm:max-w-[60%] overflow-hidden flex flex-col gap-2">
+                    <div className="w-full min-w-0 flex flex-col gap-2">
                         <b className="px-1">Семестр</b>
-                        <div className="sm:max-w-[60%] overflow-hidden flex juctify-center items-start">
+                        <div className="w-full flex items-center">
                             <Dropdown
                                 value={semestr}
                                 optionLabel="name_ru"
                                 options={semestrOptions}
                                 onChange={(e) => setSemestr(e.value)}          
                                 placeholder="Выберите семестр"
-                                className={`${specialityOptions?.length < 1 ? 'pointer-events-none opacity-50' : ''} w-full text-sm`}
+                                className={`${specialityOptions?.length < 1 || miniSpinner ? 'pointer-events-none opacity-50' : ''} w-full text-sm`}
                             />
                         </div>
                     </div>
                 </div>
 
-                <div className="flex">
+                <div className="flex justify-end">
                     <Button
-                        className=""
+                        className="px-4"
                         label="Поиск"
+                        disabled={speciality?.name_ru ? false : true}
                         onClick={() => {
                             handleFetchModuleShedule(currentSpecialityId, period?.id ? period?.id : null, semestr?.id ? semestr?.id : null);
                         }}
                     />
                 </div>
             </div>
-            <div>
-                {emptySpeciality ? (
-                    <div className="main-bg my-4 flex justify-center">
-                        <b>Данных нет</b>
-                    </div>
-                ) : progressSpinner ? (
-                    <div className="main-bg my-4 flex justify-center">
-                        <ProgressSpinner style={{ width: '45px', height: '45px' }} />
-                    </div>
-                ) : (
-                    <div className="main-bg flex flex-col gap-3">
-                        {connects.map((course: any, idx: number) => {
-                            const isOpen = openIndex === idx;
-                            return (
-                                <Panel
-                                    key={course.id}
-                                    toggleable
-                                    collapsed={!isOpen}
-                                    onToggle={() => {
-                                        setOpenIndex(isOpen ? null : idx);
-                                        // setConnectIds([]);
-                                    }}
-                                    className="w-full"
-                                    header={
-                                        <div className="flex items-center justify-between w-full">
-                                            {/* ЛЕВАЯ ЧАСТЬ */}
-                                            <div className="flex items-center gap-3">
-                                                <div className="flex items-center shrink-0">
-                                                    <label className="custom-radio text-xl leading-none">
-                                                        <input
-                                                            type="checkbox"
-                                                            className={`customCheckbox p-2`}
-                                                            checked={allSelectFl.some((s) => s === course?.id) ? true : false}
-                                                            onChange={(e) => {
-                                                                setAllSelectFl((prev) => {
-                                                                    const exists = prev.includes(course.id);
-                                                                    if (exists) {
-                                                                        const streamArr = course?.streams?.map((stream: any) => stream.id_stream);
-                                                                        setConnectIds((prev) => prev && prev.filter((id) => !streamArr?.includes(id)));
-                                                                        return prev.filter((id) => id !== course.id);
-                                                                    } else {
-                                                                        const forConnects = course?.streams?.map((stream: any) => {
-                                                                            return stream?.id_stream;
-                                                                        });
-                                                                        if (connectIds) {
-                                                                            const f = [...connectIds];
-                                                                            setConnectIds([...f, ...forConnects]);
-                                                                        } else {
-                                                                            setConnectIds(forConnects);
-                                                                        }
-                                                                        return [...prev, course.id];
-                                                                    }
-                                                                });
-                                                            }}
-                                                        />
-                                                        <span className="checkbox-mark"></span>
-                                                    </label>
-                                                </div>
-                                                <span className="font-semibold">
-                                                    {idx + 1}. {course.name_ru}
-                                                </span>
-                                            </div>
-                                        </div>
-                                    }
-                                >
-                                    <div className="flex flex-col gap-2 mt-2 w-full">
-                                        {course?.streams?.length > 0 ? (
-                                            course.streams.map((item: any) => (
-                                                <ModuleChartCard
-                                                    key={item?.id}
-                                                    title={item?.subject_data?.name_ru}
-                                                    shedule={item?.schedule}
-                                                    connectId={item?.id_stream}
-                                                    handleEdit={(id, checked) => handleEdit(id, checked, course?.id)}
-                                                    allIds={connectIds}
-                                                    date="---"
-                                                />
-                                            ))
-                                        ) : (
-                                            <div className="main-bg flex justify-center">
-                                                <b>Данных нет</b>
-                                            </div>
-                                        )}
-                                    </div>
-                                </Panel>
-                            );
-                        })}
-                        <div className="flex justify-end">
-                            <Button label="Сохранить" disabled={saveBtnDisabled} onClick={() => setVisible(true)} className="" />
+
+            {startDisplay ? 
+                <div className='main-bg flex justify-center p-4'>
+                    <i className='pi pi-calendar text-4xl'></i>
+                </div>
+                : 
+                <div>
+                    {progressSpinner ? (
+                        <div className="main-bg my-2 flex justify-center p-6 rounded-lg">
+                            <ProgressSpinner style={{ width: '45px', height: '45px' }} />
                         </div>
-                    </div>
-                )}
-            </div>
+                    ) : 
+                        emptySpeciality ? (
+                            <div className="main-bg my-2 flex justify-center p-6 rounded-lg">
+                                <b>Данных нет</b>
+                            </div>
+                    ) : (
+                        <div className="main-bg flex flex-col gap-4 p-3 sm:p-4 rounded-lg">
+                            {connects.map((course: any, idx: number) => {
+                                const isOpen = openIndex === idx;
+                                return (
+                                    <Panel
+                                        key={course.id}
+                                        toggleable
+                                        collapsed={!isOpen}
+                                        onToggle={() => {
+                                            setOpenIndex(isOpen ? null : idx);
+                                            // setConnectIds([]);
+                                        }}
+                                        className="w-full p-2"
+                                        header={
+                                            <div className="flex items-center justify-between w-full gap-1 sm:gap-3">
+                                                <div className="flex items-center gap-1 sm:gap-3 min-w-0">
+                                                    <div className="flex items-center shrink-0">
+                                                        <label className="custom-radio text-xl leading-none">
+                                                            <input
+                                                                type="checkbox"
+                                                                className={`customCheckbox p-2`}
+                                                                checked={allSelectFl.some((s) => s === course?.id) ? true : false}
+                                                                onChange={(e) => {
+                                                                    const exists = allSelectFl?.includes(course?.id);
+                                                                    if (exists) {
+                                                                        console.log(course);
+                                                                        if(course?.checking){
+                                                                            setDiactivateSp(course.id);
+                                                                            confirm1(course?.id, null);
+                                                                        } else {
+                                                                            setAllSelectFl((prev) => {
+                                                                                const streamArr = course?.streams?.map((stream: any) => stream.id_stream);
+                                                                                setConnectIds((prev) => prev && prev.filter((id) => !streamArr?.includes(id)));
+                                                                                return prev.filter((id) => id !== course.id);
+                                                                            })
+                                                                        }
+                                                                    } else {
+                                                                        setAllSelectFl((prev) => {
+                                                                            // const exists = prev.includes(course?.id);
+                                                                            // if (exists) {
+                                                                            //     setDiactivateSp(course.id);
+                                                                            //     const streamArr = course?.streams?.map((stream: any) => stream.id_stream);
+                                                                            //     setConnectIds((prev) => prev && prev.filter((id) => !streamArr?.includes(id)));
+                                                                            //     return prev.filter((id) => id !== course.id);
+                                                                            // } else {
+                                                                                const forConnects = course?.streams?.map((stream: any) => {
+                                                                                    return stream?.id_stream;
+                                                                                });
+                                                                                if (connectIds) {
+                                                                                    const f = [...connectIds];
+                                                                                    setConnectIds([...f, ...forConnects]);
+                                                                                } else {
+                                                                                    setConnectIds(forConnects);
+                                                                                }
+                                                                                return [...prev, course.id];
+                                                                            // }
+                                                                        });
+                                                                    }
+                                                                }}
+                                                            />
+                                                            <span className="checkbox-mark"></span>
+                                                        </label>
+                                                    </div>
+                                                    <span className="font-semibold max-w-[90%] sm:w-full text-[15px] sm:text-[16px] break-words">
+                                                        {idx + 1}. {course.name_ru}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        }
+                                    >
+                                        <div className="flex flex-col gap-3 mt-3 w-full">
+                                            {course?.streams?.length > 0 ? (
+                                                course.streams.map((item: any) => (
+                                                    <ModuleChartCard
+                                                        key={item?.id}
+                                                        title={item?.subject_data?.name_ru}
+                                                        connectId={item?.id_stream}
+                                                        handleEdit={(id, checked) => handleEdit(id, checked, course?.id, item?.schedule?.active)}
+                                                        allIds={connectIds}
+                                                        date={{from: item?.schedule?.from, to: item?.schedule?.to}}
+                                                    />
+                                                ))
+                                            ) : (
+                                                <div className="main-bg flex justify-center p-4 rounded-md">
+                                                    <b>Данных нет</b>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </Panel>
+                                );
+                            })}
+                            <div className="flex justify-end pt-2">
+                                <Button label="Сохранить" disabled={saveBtnDisabled} onClick={() => setVisible(true)} className="px-4" />
+                            </div>
+                        </div>
+                    )}
+                </div>
+            }
+
             <Dialog
                 header={'Изменить график модулей'}
                 visible={visible}
@@ -423,8 +488,8 @@ export default function Module() {
             >
                 <div>
                     <div className="w-full flex flex-col">
-                        <div className="w-full flex flex-col sm:flex-row justify-evenly items-center gap-1">
-                            <div className="flex flex-col items-center">
+                        <div className="w-full flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+                            <div className="flex flex-col items-center sm:items-start">
                                 <span className="text-sm">Начало модуля</span>
                                 <Calendar
                                     value={from}
@@ -434,7 +499,7 @@ export default function Module() {
                                     onChange={(e) => setFrom(e.value)}
                                 />
                             </div>
-                            <div className="flex flex-col items-center">
+                            <div className="flex flex-col items-center sm:items-start">
                                 <span className="text-sm">Конец модуля</span>
                                 <Calendar
                                     value={to}
