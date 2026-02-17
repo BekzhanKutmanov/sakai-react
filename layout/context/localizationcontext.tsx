@@ -98,7 +98,6 @@ export const localizationData = {
         courseType: 'Тип курса',
         closed: 'Закрытый',
         openCourse: 'Открытый',
-        paid: 'Платный',
         published: 'Опубликован',
         notPublished: 'Не опубликован',
         onReview: 'На рассмотрении',
@@ -215,12 +214,45 @@ export const localizationData = {
         archiveReadOnlyNotice: 'Эти курсы были заархивированы. Данные хранятся как история и не могут быть изменены или восстановлены.',
         archiveDate: 'Дата архивации',
 
-        // user 
+        // user
         personalShortNumber: 'Л/н',
         personalNumber: 'Личный номер',
         yearBirdth: 'Год рождения',
         passed: 'Сдан',
         failed: 'Не сдан',
+
+        // Dashboard
+        teacher: 'Преподаватель',
+        headOfDepartment: 'Зав. кафедрой',
+        allCourses: 'Все курсы',
+        createdLast30Days: 'созданы за последние 30 дней',
+        closedCourses: 'Закрытые курсы',
+        openCoursesTitle: 'Открытые курсы',
+        paidCourses: 'Платные курсы',
+        teacherActivity: 'Активность преподавателя',
+        reportFor: 'Отчёт за:',
+        formula: 'Формула:',
+        coursesCount: 'Количество курсов :',
+        notificationsCount: 'Количество уведомлений :',
+        statistics: 'Статистика',
+        coursesConnection: 'Курсы(связь) ',
+        notificationsConnection: 'Уведом-я(связь) ',
+        totalRating: 'Общий рейтинг ',
+
+        // OpenCourse Page
+        selectCategory: 'Выберите категорию для курса',
+        selectLanguage: 'Выберите язык для курса',
+        resetFilter: 'Сбросить фильтр',
+        free: 'Бесплатные',
+        paid: 'Платные',
+        showAllCourses: 'Отобразить все курсы',
+        selectCategoryPlaceholder: 'Выберите категорию',
+
+        // Roles Page
+        adminTitle: 'Админ',
+        myeduIdPlaceholder: 'myedu id',
+        administrator: 'Администратор',
+        successChanged: 'Успешно изменено!',
     },
     ky: {
         oshSU: 'ОшМУ',
@@ -316,7 +348,6 @@ export const localizationData = {
         courseType: 'Курстун түрү',
         closed: 'Жабык',
         openCourse: 'Ачык',
-        paid: 'Акылуу',
         published: 'Жарыяланды',
         notPublished: 'Жарыяланган жок',
         onReview: 'Кароодо',
@@ -432,12 +463,45 @@ export const localizationData = {
         archiveReadOnlyNotice: 'Бул курстар архивделген. Маалыматтар тарых катары сакталат жана өзгөртүүгө же калыбына келтирүүгө болбойт.',
         archiveDate: 'Архивделген күнү',
 
-        // user 
+        // user
         personalShortNumber: 'Ж/н',
         personalNumber: 'Жеке номер',
         yearBirdth: 'Туулган жылы',
         passed: 'Тапшырды',
         failed: 'Тапшырган жок',
+
+        // Dashboard
+        teacher: 'Окутуучу',
+        headOfDepartment: 'Кафедра башчысы',
+        allCourses: 'Бардык курстар',
+        createdLast30Days: 'акыркы 30 күндө түзүлгөн',
+        closedCourses: 'Жабык курстар',
+        openCoursesTitle: 'Ачык курстар',
+        paidCourses: 'Акылуу курстар',
+        teacherActivity: 'Окутуучунун активдүүлүгү',
+        reportFor: 'Отчет:',
+        formula: 'Формула:',
+        coursesCount: 'Курстардын саны :',
+        notificationsCount: 'Билдирүүлөрдүн саны :',
+        statistics: 'Статистика',
+        coursesConnection: 'Курстар(байланыш) ',
+        notificationsConnection: 'Билдирүүлөр(байланыш) ',
+        totalRating: 'Жалпы рейтинг ',
+
+        // OpenCourse Page
+        selectCategory: 'Курс үчүн категорияны тандаңыз',
+        selectLanguage: 'Курс үчүн тилди тандаңыз',
+        resetFilter: 'Фильтрди тазалоо',
+        free: 'Акысыз',
+        paid: 'Акылуу',
+        showAllCourses: 'Бардык курстарды көрсөтүү',
+        selectCategoryPlaceholder: 'Категорияны тандаңыз',
+
+        // Roles Page
+        adminTitle: 'Админ',
+        myeduIdPlaceholder: 'myedu id',
+        administrator: 'Администратор',
+        successChanged: 'Ийгиликтүү өзгөртүлдү!',
     }
 };
 
@@ -478,4 +542,3 @@ export const useLocalization = () => {
     }
     return context;
 };
-

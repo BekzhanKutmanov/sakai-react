@@ -22,40 +22,43 @@ import { Nullable } from 'primereact/ts-helpers';
 import { addLocale } from 'primereact/api';
 
 import { useLocalization } from './context/localizationcontext';
+import useMediaQuery from '@/hooks/useMediaQuery';
+
+// types
+interface LessonInfoUi {
+    title: string;
+    sequence_number: number | null;
+    from: Nullable<Date> | null;
+    to: Nullable<Date> | null;
+}
+
+interface test {
+    label: string;
+    id: number;
+    to?: string;
+    items?: [];
+    command?: () => void;
+}
+
+interface ForLinkRole {
+    name: string;
+    id: number | null;
+    active: boolean;
+    read: boolean;
+}
+
+interface MyApMenuType {
+    label?: string;
+    to?: string;
+    icon?: string;
+    profilact?: string;
+}
 
 const AppMenu = () => {
     const { translations } = useLocalization();
-    // types
-    interface LessonInfoUi {
-        title: string;
-        sequence_number: number | null;
-        from: Nullable<Date> | null;
-        to: Nullable<Date> | null;
-    }
-
-    interface test {
-        label: string;
-        id: number;
-        to?: string;
-        items?: [];
-        command?: () => void;
-    }
-
-    interface ForLinkRole {
-        name: string;
-        id: number | null;
-        active: boolean;
-        read: boolean;
-    }
-
-    interface MyApMenuType {
-        label?: string;
-        to?: string;
-        icon?: string;
-        profilact: string;
-    }
-
     const { user, setMessage, setDeleteQuery, setUpdateeQuery, contextFetchThemes, contextThemes, departament, contextNewStudentThemes, contextVerifedValue, setContextVerifedValue, contextFetchVerifed } = useContext(LayoutContext);
+
+    const media = useMediaQuery('(max-width: 640px)');
 
     // validate
     const {
@@ -91,6 +94,25 @@ const AppMenu = () => {
     const [themesStudentList, setThemesStudentList] = useState<{ key?: string; label: string; id: number; to: string; items?: AppMenuItem[] }[]>([]);
     const [startDeadline, setStartDeadline] = useState<Nullable<Date>>(null);
     const [endDeadline, setEndDeadline] = useState<Nullable<Date>>(null);
+
+    const [studentMobileMenu, setStudentMobileMenu] = useState<AppMenuItem[]>([
+        {
+            label: translations.mainPage,
+            icon: 'pi pi-home',
+            to: '/'
+        },
+        {
+            label: translations.controlPanel,
+            icon: 'pi pi-th-large',
+            to: '/studentHome'
+        },
+        { label: translations.trainingPlan, icon: 'pi pi-fw pi-calendar-clock', to: '/teaching' },
+        {
+            label: translations.notifications,
+            icon: 'pi pi-bell',
+            to: '/notifications'
+        }
+    ]);
 
     const showError = useErrorMessage();
 
@@ -225,7 +247,7 @@ const AppMenu = () => {
                 : []
             : []
         : user?.is_student
-        ? [
+        ? ([
               {
                   // key: 'prev',
                   label: '',
@@ -235,17 +257,14 @@ const AppMenu = () => {
                       router.back();
                   }
               },
-              {
-                  label: translations.mainPage,
-                  icon: 'pi pi-home',
-                  to: '/'
-              },
-              {
-                  label: translations.controlPanel,
-                  icon: 'pi pi-th-large',
-                  to: '/studentHome'
-              },
-              { label: translations.trainingPlan, icon: 'pi pi-fw pi-calendar-clock', to: '/teaching' },
+                ...(!media
+                        ? studentMobileMenu.map((item) => ({
+                            label: item?.label,
+                            to: item.to,
+                            icon: item.icon
+                        }))
+                        : [] // Если условие неверно, возвращаем пустой массив, который "распакуется" в ничто
+                ),
               {
                   label: translations.openOnlineCourses,
                   icon: 'pi pi-fw pi-globe',
@@ -255,14 +274,9 @@ const AppMenu = () => {
                   label: translations.myActiveCourses,
                   icon: 'pi pi-play-circle',
                   to: '/openCourse/activeCourse'
-              },
-              {
-                  label: translations.notifications,
-                  icon: 'pi pi-bell',
-                  to: '/notifications'
               }
               //   pathname.startsWith('/teaching/lesson/') ? { label: 'Темы', icon: 'pi pi-fw pi-book', items: themesStudentList?.length > 0 ? themesStudentList : [] } : { label: '' },
-          ]
+          ].filter(Boolean) as AppMenuItem[])
         : [];
 
     const forDepartament = forDepartamentLength
@@ -755,7 +769,7 @@ const AppMenu = () => {
                     <div className="flex justify-center gap-1 items-center">
                         <b>{translations.totalPointsForCourse}</b>
                         <span className="text-[var(--mainColor)]">{contextThemes?.max_sum_score}</span>
-                    </div>  
+                    </div>
                 </div>
             )}
             {/* </div> */}

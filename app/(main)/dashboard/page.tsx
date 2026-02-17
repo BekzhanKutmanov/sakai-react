@@ -13,6 +13,7 @@ import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Chart } from 'primereact/chart';
 import MyDateTime from '@/app/components/MyDateTime';
+import { useLocalization } from '@/layout/context/localizationcontext';
 
 export default function Dashboard() {
     interface CourseTotalLastMonth {
@@ -52,6 +53,7 @@ export default function Dashboard() {
     type OptionsType = Intl.DateTimeFormatOptions;
 
     const { user, departament } = useContext(LayoutContext);
+    const { translations } = useLocalization();
 
     const ref = useRef<HTMLDivElement>(null);
     const media = useMediaQuery('(max-width: 640px)');
@@ -142,10 +144,10 @@ export default function Dashboard() {
 
     useEffect(() => {
         const data = {
-            labels: ['Курсы(связь) ' + performance?.course_sync_score + "%", "Уведом-я(связь) " + performance?.notification_score + '%', 'Общий рейтинг ' + performance?.total_rate + '%'],
+            labels: [translations.coursesConnection + performance?.course_sync_score + "%", translations.notificationsConnection + performance?.notification_score + '%', translations.totalRating + performance?.total_rate + '%'],
             datasets: [
                 {
-                    label: 'Статистика',
+                    label: translations.statistics,
                     data: [performance?.course_sync_score, performance?.notification_score, performance?.total_rate],
                     backgroundColor: [
                         'rgba(255, 159, 64, 0.2)',
@@ -174,7 +176,7 @@ export default function Dashboard() {
 
         setChartData(data);
         setChartOptions(options);
-    }, [performance]);
+    }, [performance, translations]);
 
     useEffect(() => {
         hanldeTeacherDashboard();
@@ -198,7 +200,7 @@ export default function Dashboard() {
                         {user ? (
                             <div className="flex flex-col gap-1">
                                 {user?.last_name} {user?.name && user.name[0] + '.'} {user?.father_name && user.father_name[0] + '.'}
-                                <small className="text-sm">Преподаватель {user?.is_working && departament?.name && '• Зав. кафедрой'}</small>
+                                <small className="text-sm">{translations.teacher} {user?.is_working && departament?.name && `• ${translations.headOfDepartment}`}</small>
                             </div>
                         ) : (
                             '---'
@@ -219,13 +221,13 @@ export default function Dashboard() {
                         <div className="flex items-start gap-2 justify-around lg:justify-between flex-wrap mb-2">
                             <Link href={'/course/1'} className="main-bg flex flex-col gap-1 w-full md:!w-[250px] px-4 min-h-[132px] hover:underline">
                                 <div className="flex justify-between gap-1 items-start">
-                                    <b className="underline text-[var(--bodyColor)]">Все курсы</b>
+                                    <b className="underline text-[var(--bodyColor)]">{translations.allCourses}</b>
                                     <i className="pi pi-fw pi-book text-xl p-1 px-3 flex justify-center rounded bg-[var(--productQuantityBg)] text-[var(--productQuantityText)]"></i>
                                 </div>
                                 <div className="text-lg mb-1 text-[black]">{courses?.all?.total}</div>
                                 {courses?.all.last_month && courses?.all.last_month > 0 ? (
                                     <small>
-                                        <b className="text-[var(--greenColor)]">{courses?.all.last_month}</b> созданы за последние 30 дней
+                                        <b className="text-[var(--greenColor)]">{courses?.all.last_month}</b> {translations.createdLast30Days}
                                     </small>
                                 ) : (
                                     ''
@@ -233,13 +235,13 @@ export default function Dashboard() {
                             </Link>
                             <Link href={'/course/1'} className="main-bg flex flex-col gap-1 w-full md:!w-[250px] px-4 min-h-[132px] hover:underline">
                                 <div className="flex justify-between gap-1 items-start">
-                                    <b className="underline text-[var(--bodyColor)]">Закрытые курсы</b>
+                                    <b className="underline text-[var(--bodyColor)]">{translations.closedCourses}</b>
                                     <i className="pi pi-fw pi-lock text-xl p-1 px-3 flex justify-center rounded bg-[var(--productQuantityBg)] text-[var(--productQuantityText)]"></i>
                                 </div>
                                 <div className="text-lg mb-1 text-[black]">{courses?.lock?.total}</div>
                                 {courses?.lock.last_month && courses?.lock.last_month > 0 ? (
                                     <small>
-                                        <b className="text-[var(--greenColor)]">{courses?.lock.last_month}</b> созданы за последние 30 дней
+                                        <b className="text-[var(--greenColor)]">{courses?.lock.last_month}</b> {translations.createdLast30Days}
                                     </small>
                                 ) : (
                                     ''
@@ -247,13 +249,13 @@ export default function Dashboard() {
                             </Link>
                             <Link href={'/course/1'} className="main-bg flex flex-col gap-1 w-full md:!w-[250px] px-4 min-h-[132px] hover:underline">
                                 <div className="flex justify-between gap-1 items-start">
-                                    <b className="underline text-[var(--bodyColor)]">Открытые курсы</b>
+                                    <b className="underline text-[var(--bodyColor)]">{translations.openCoursesTitle}</b>
                                     <i className="pi pi-fw pi-lock-open text-xl p-1 px-3 flex justify-center rounded bg-[var(--productQuantityBg)] text-[var(--productQuantityText)]"></i>
                                 </div>
                                 <div className="text-lg mb-1 text-[black]">{courses?.open?.total}</div>
                                 {courses?.open.last_month && courses?.open.last_month > 0 ? (
                                     <small>
-                                        <b className="text-[var(--greenColor)]">{courses?.open.last_month}</b> созданы за последние 30 дней
+                                        <b className="text-[var(--greenColor)]">{courses?.open.last_month}</b> {translations.createdLast30Days}
                                     </small>
                                 ) : (
                                     ''
@@ -261,13 +263,13 @@ export default function Dashboard() {
                             </Link>
                             <Link href={'/course/1'} className="main-bg flex flex-col gap-1 w-full md:!w-[250px] px-4 min-h-[132px] hover:underline">
                                 <div className="flex justify-between gap-1 items-start">
-                                    <b className="underline text-[var(--bodyColor)]">Платные курсы</b>
+                                    <b className="underline text-[var(--bodyColor)]">{translations.paidCourses}</b>
                                     <i className="pi pi-fw pi-wallet text-xl p-1 px-3 flex justify-center rounded bg-[var(--productQuantityBg)] text-[var(--productQuantityText)]"></i>
                                 </div>
                                 <div className="text-lg mb-1 text-[black]">{courses?.wallet?.total}</div>
                                 {courses?.wallet.last_month && courses?.wallet.last_month > 0 ? (
                                     <small>
-                                        <b className="text-[var(--greenColor)]">{courses?.wallet.last_month}</b> созданы за последние 30 дней
+                                        <b className="text-[var(--greenColor)]">{courses?.wallet.last_month}</b> {translations.createdLast30Days}
                                     </small>
                                 ) : (
                                     ''
@@ -280,7 +282,7 @@ export default function Dashboard() {
                 {/* activity */}
                 <div ref={ref} className="w-full main-bg p-2">
                     <h2 style={{ marginBottom: 20 }} className="text-md sm:text-lg flex items-center justify-center gap-2">
-                        <span>Активность преподавателя</span>
+                        <span>{translations.teacherActivity}</span>
                     </h2>
                     <ActivityPage value={contribution} />
                 </div>
@@ -289,20 +291,20 @@ export default function Dashboard() {
                 <div className='main-bg p-3 sm:p-4'>
                     <h3 className='text-xl text-center shadow-[var(--bottom-shadow)] pb-2 mb-2'>{info?.title}</h3>
                     <b className='flex flex-wrap gap-1 items-center mb-3 text-sm sm:text-base'>
-                        Отчёт за:
+                        {translations.reportFor}
                         <span className='text-sm'>{<MyDateTime createdAt={performance?.study_from || ''} options={options} />}</span> -
                         <span className='text-sm'>{<MyDateTime createdAt={performance?.study_to || ''} options={options} />}</span>
                     </b>
                     <div className='flex flex-col gap-3'>
                         <div className='flex flex-col items-center gap-1 text-sm text-center'>
-                            <b className='text-md'>Формула: <span className='text-sm'>{info?.formula}</span></b>
+                            <b className='text-md'>{translations.formula} <span className='text-sm'>{info?.formula}</span></b>
                             <b className='text-[var(--productQuantityText)]'>{info?.sections[0]?.description}</b>
                             <b className='text-[var(--orangeColor)]'>{info?.sections[1]?.description}</b>
                         </div>
                         <div className='flex justify-around flex-col sm:flex-row gap-3 items-center'>
                             <DataTable value={[
-                                { label: 'Количество курсов :', value: performance?.details?.courses },
-                                { label: 'Количество уведомлений :', value: performance?.details?.notifs }
+                                { label: translations.coursesCount, value: performance?.details?.courses },
+                                { label: translations.notificationsCount, value: performance?.details?.notifs }
                             ]} showHeaders={false} className='my-custom-table w-full max-w-[520px] p-3 border-1 border-[#dfe7ef] rounded-md bg-white/40'>
                                 <Column field="label" />
                                 <Column field="value" />

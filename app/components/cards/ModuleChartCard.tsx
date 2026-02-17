@@ -27,7 +27,7 @@ export default function ModuleChartCard({ title = 'Название карточ
     };
 
     return (
-        <div className="group w-full bg-white border border-slate-100 shadow-sm hover:shadow-md rounded px-2 py-2 hover:bg-slate-50/50 transition-all duration-200 cursor-pointer">
+        <div className="group w-full bg-white border border-slate-100 shadow-sm hover:shadow-md rounded px-2 py-1 hover:bg-slate-50/50 transition-all duration-200 cursor-pointer">
             <div className='flex justify-end text-[11px] font-bold'>ID: <span> {connectId}</span></div>
             <div className='flex gap-1 flex-col w-full'>
                 <div className='flex items-center gap-2 '>
@@ -37,7 +37,7 @@ export default function ModuleChartCard({ title = 'Название карточ
                             <input
                                 type="checkbox"
                                 className={`customCheckbox p-2`}
-                                checked={allIds ? allIds.some((s) => s === connectId) : false} 
+                                checked={allIds ? allIds.some((s) => s === connectId) : false}
                                 onChange={(e) => {
                                     handleEdit(connectId, e.target);
                                 }}
@@ -45,13 +45,13 @@ export default function ModuleChartCard({ title = 'Название карточ
                             <span className="checkbox-mark"></span>
                         </label>
                     </div>
-        
+
                                 {/* Заголовок */}
                     <div className="flex-1 min-w-0 sm:m-0">
-                        <span className="text-[15px] font-medium text-slate-700 tracking-tight max-w-[80%] break-words">{title}</span>
+                        <span className="text-[14px] font-medium text-slate-700 tracking-tight max-w-[80%] break-words">{title}</span>
                     </div>
                 </div>
-                {/* Секция с датой */}  
+                {/* Секция с датой */}
                 <div className="w-full flex items-center justify-end sm:ml-auto">
                     <div className="flex items-center gap-2 text-[10px]">
                         <span className=''>{date ? <MyDateTime createdAt={date?.from} options={options} /> : '---'}</span>

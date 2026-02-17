@@ -20,15 +20,21 @@ import { Paginator } from 'primereact/paginator';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import { Sidebar } from 'primereact/sidebar';
 import { useContext, useEffect, useState } from 'react';
+import { useLocalization } from '@/layout/context/localizationcontext';
 
 // types
 interface CategoryId {
     title: string;
     id: number | null;
     description: string;
+    name_ru?: string;
+    name_kg?: string;
 }
 
-interface SelectLangType extends Pick<MainLangType, 'title' | 'description' | 'id'> {}
+interface SelectLangType extends Pick<MainLangType, 'title' | 'description' | 'id'> {
+    name_ru?: string;
+    name_kg?: string;
+}
 
 export default function OpenCourse() {
     const { page } = useParams();
@@ -36,6 +42,7 @@ export default function OpenCourse() {
     const { setMessage } = useContext(LayoutContext);
     const showError = useErrorMessage();
     const media = useMediaQuery('(max-width: 640px)');
+    const { translations, language } = useLocalization();
 
     const params = new URLSearchParams();
     const [mainCourse, setMainCourse] = useState([]);
@@ -59,12 +66,19 @@ export default function OpenCourse() {
     const [signUpList, setSignupList] = useState<number[]>([]);
     const [signupDisabled, setSignupDisebled] = useState(false);
 
-    const [langSelectedId, setLangSelectedId] = useState<SelectLangType | null>({ title: 'Все', id: null, description: '' });
-    const [depSelectLang, setSelectLang] = useState<SelectLangType[]>([{ title: 'Выберите категорию', id: null, description: '' }]);
+    const [langSelectedId, setLangSelectedId] = useState<SelectLangType | null>({ title: translations.all, id: null, description: '' });
+    const [depSelectLang, setSelectLang] = useState<SelectLangType[]>([{ title: translations.selectCategoryPlaceholder, id: null, description: '' }]);
     const [language_id, setLanguage_id] = useState<number | null>(null);
 
-    const [categorySelectedId, setCategorySelectedId] = useState<CategoryId | null>({ title: 'Все', id: null, description: '' });
-    const [depCategoryes, setCategoryes] = useState<CategoryId[]>([{ title: 'Выберите категорию', id: null, description: '' }]);
+    const [categorySelectedId, setCategorySelectedId] = useState<CategoryId | null>({ title: translations.all, id: null, description: '' });
+    const [depCategoryes, setCategoryes] = useState<CategoryId[]>([{ title: translations.selectCategoryPlaceholder, id: null, description: '' }]);
+
+    const getLocalizedName = (item: any) => {
+        if (!item) return '';
+        if (language === 'ky' && item.name_kg) return item.name_kg;
+        if (language === 'ru' && item.name_ru) return item.name_ru;
+        return item.name || item.title || '';
+    };
 
     const handleFetchOpenCourse = async (page: number, audence_type_id: number | string, search: string, categoryId: number | null, lang_id: number | null) => {
         setSkeleton(true);
@@ -98,13 +112,13 @@ export default function OpenCourse() {
             setHasCourses(true);
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
+                value: { severity: 'error', summary: translations.error, detail: translations.tryAgainLater }
             });
             if (data?.response?.status) {
                 if (data?.response?.status == '400') {
                     setMessage({
                         state: true,
-                        value: { severity: 'error', summary: 'Ошибка!', detail: data?.response?.data?.message }
+                        value: { severity: 'error', summary: translations.error, detail: data?.response?.data?.message }
                     });
                 } else {
                     showError(data.response.status);
@@ -118,11 +132,11 @@ export default function OpenCourse() {
     const handleDepCategoryFetch = async () => {
         const res = await depCategoryFetch();
         if (res && res?.length) {
-            const forCategoryes = res.map((item: { title: string; id: number; description: string }) => {
-                return { name: item?.title, id: item?.id, description: item?.description };
+            const forCategoryes = res.map((item: { title: string; id: number; description: string; name_ru?: string; name_kg?: string }) => {
+                return { name: item?.title, id: item?.id, description: item?.description, name_ru: item?.name_ru, name_kg: item?.name_kg };
             });
             if (forCategoryes) {
-                forCategoryes.unshift({ name: 'Все', id: null, description: 'Отобразить все курсы' });
+                forCategoryes.unshift({ name: translations.all, id: null, description: translations.showAllCourses });
                 setCategoryes(forCategoryes);
             }
         }
@@ -134,7 +148,7 @@ export default function OpenCourse() {
         if (res && res?.success) {
             const selectLangList = res?.data;
             if (selectLangList) {
-                selectLangList?.unshift({ title: 'Все', id: null, description: 'Отобразить все курсы' });
+                selectLangList?.unshift({ title: translations.all, id: null, description: translations.showAllCourses });
                 setSelectLang(res?.data);
             }
         }
@@ -150,13 +164,13 @@ export default function OpenCourse() {
         } else {
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
+                value: { severity: 'error', summary: translations.error, detail: translations.tryAgainLater }
             });
             if (data?.response?.status) {
                 if (data?.response?.status == '400') {
                     setMessage({
                         state: true,
-                        value: { severity: 'error', summary: 'Ошибка!', detail: data?.response?.data?.message }
+                        value: { severity: 'error', summary: translations.error, detail: data?.response?.data?.message }
                     });
                 } else {
                     showError(data.response.status);
@@ -193,7 +207,7 @@ export default function OpenCourse() {
                 );
                 setMessage({
                     state: true,
-                    value: { severity: 'success', summary: list?.message || 'Успешное добавление!', detail: '' }
+                    value: { severity: 'success', summary: list?.message || translations.successAdd, detail: '' }
                 });
                 setValueCourses((prev) =>
                     prev.map((item) => ({
@@ -205,13 +219,13 @@ export default function OpenCourse() {
         } else {
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
+                value: { severity: 'error', summary: translations.error, detail: translations.tryAgainLater }
             });
             if (data?.response?.status) {
                 if (data?.response?.status == '400') {
                     setMessage({
                         state: true,
-                        value: { severity: 'error', summary: 'Ошибка!', detail: data?.response?.data?.message }
+                        value: { severity: 'error', summary: translations.error, detail: data?.response?.data?.message }
                     });
                 } else {
                     showError(data.response.status);
@@ -242,7 +256,7 @@ export default function OpenCourse() {
     const categoryItemTemplate = (option: any) => {
         return (
             <div className="w-full flex flex-col">
-                <span className="font-medium text-[13px] sm:text-md">{option.name}</span>
+                <span className="font-medium text-[13px] sm:text-md">{getLocalizedName(option)}</span>
                 {option.description && <span className="text-xs text-gray-500 text-[12px] sm:text-sm max-w-[300px] text-wrap word-break sm:text-nowrap sm:max-w-full">{option.description}</span>}
             </div>
         );
@@ -255,7 +269,7 @@ export default function OpenCourse() {
 
         return (
             <div className="flex flex-col">
-                <span>{option.name}</span>
+                <span>{getLocalizedName(option)}</span>
                 {option.description && <span className="text-xs text-gray-500">{option.description}</span>}
             </div>
         );
@@ -267,7 +281,7 @@ export default function OpenCourse() {
             <div className="w-full flex flex-col">
                 <div className="flex gap-1 items-center">
                     {option?.logo && <img src={`/layout/images/flags/${option?.logo}`} alt="flag" className="w-[20px] h-[20px]" />}
-                    <span className="font-medium text-[13px] sm:text-md">{option.title}</span>
+                    <span className="font-medium text-[13px] sm:text-md">{getLocalizedName(option)}</span>
                 </div>
                 {option.description && <span className="text-xs text-gray-500 text-[12px] sm:text-sm max-w-[300px] text-wrap word-break sm:text-nowrap sm:max-w-full">{option.description}</span>}
             </div>
@@ -282,7 +296,7 @@ export default function OpenCourse() {
         return (
             <div className="flex gap-1 items-center">
                 {option?.logo && <img src={`/layout/images/flags/${option?.logo}`} alt="flag" className="w-[20px] h-[20px]" />}
-                <span className="font-medium text-[13px] sm:text-md">{option.title}</span>
+                <span className="font-medium text-[13px] sm:text-md">{getLocalizedName(option)}</span>
             </div>
         );
     };
@@ -338,14 +352,14 @@ export default function OpenCourse() {
             </div>
         );
 
-    if (hasCourses) return <NotFound titleMessage="Данные не доступны" />;
+    if (hasCourses) return <NotFound titleMessage={translations.noData} />;
 
     return (
         <div className="flex flex-col gap-2">
             <div className="main-bg p-2 sm:p-4">
                 {/* header section */}
-                <div className='shadow-[var(--bottom-shadow)] pb-3'> 
-                    <SubTitle mobileTitleSize='xl' titleSize='2xl' title='Курсы'/>
+                <div className='shadow-[var(--bottom-shadow)] pb-3'>
+                    <SubTitle mobileTitleSize='xl' titleSize='2xl' title={translations.courses}/>
                 </div>
 
                 {/* filter section */}
@@ -366,7 +380,7 @@ export default function OpenCourse() {
                                         />
                                         <span className="checkbox-mark"></span>
                                     </label>
-                                    <p>Бесплатные</p>
+                                    <p>{translations.free}</p>
                                 </div>
                                 <div className="flex items-center">
                                     <label className="custom-radio p-0">
@@ -381,14 +395,14 @@ export default function OpenCourse() {
                                         />
                                         <span className="checkbox-mark"></span>
                                     </label>
-                                    <p>Платные</p>
+                                    <p>{translations.paid}</p>
                                 </div>
                             </div>
-                            <Button label="Сбросить фильтр" size="small" className="hidden sm:block text-sm p-1" onClick={clearFilter} />
+                            <Button label={translations.resetFilter} size="small" className="hidden sm:block text-sm p-1" onClick={clearFilter} />
                         </div>
                         <div className="flex items-start flex-col sm:flex-row gap-2">
                             <div className="flex flex-col gap-2 max-w-[80%] overflow-x-hidden">
-                                <b className="px-1">Выберите категорию для курса</b>
+                                <b className="px-1">{translations.selectCategory}</b>
                                 <div>
                                     <Dropdown
                                         value={categorySelectedId}
@@ -406,7 +420,7 @@ export default function OpenCourse() {
                                 </div>
                             </div>
                             <div className="flex flex-col gap-2">
-                                <b className="px-1">Выберите язык для курса</b>
+                                <b className="px-1">{translations.selectLanguage}</b>
                                 <div className="max-w-[95%] flex juctify-center items-start">
                                     <Dropdown
                                         value={langSelectedId}
@@ -425,10 +439,10 @@ export default function OpenCourse() {
                             </div>
                         </div>
                     </div>
-                    <Button label="Сбросить фильтр" size="small" className="block sm:hidden text-sm p-1" onClick={clearFilter} />
+                    <Button label={translations.resetFilter} size="small" className="block sm:hidden text-sm p-1" onClick={clearFilter} />
 
                     <div className="flex items-center relative">
-                        <InputText placeholder="Поиск..." value={search} onChange={(e) => setSearch(e.target.value)} className="w-full p-inputtext-sm p-inputtext-rounded" />
+                        <InputText placeholder={`${translations.search}...`} value={search} onChange={(e) => setSearch(e.target.value)} className="w-full p-inputtext-sm p-inputtext-rounded" />
                         <div className="absolute right-1">{progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}</div>
                     </div>
                 </div>
@@ -442,7 +456,7 @@ export default function OpenCourse() {
                 </>
             ) : emptyCourse ? (
                 <div className="main-bg">
-                    <b className="flex justify-center">Курсы отсутствуют</b>
+                    <b className="flex justify-center">{translations.noCourses}</b>
                 </div>
             ) : (
                 <>
@@ -475,7 +489,7 @@ export default function OpenCourse() {
                 ) : courseDetail ? (
                     <OpenCourseShowCard course={courseDetail} courseSignup={сourseSignup} signUpList={signUpList} btnDisabled={signupDisabled} />
                 ) : (
-                    <b className="flex justify-center">Данные не доступны</b>
+                    <b className="flex justify-center">{translations.noData}</b>
                 )}
             </Sidebar>
         </div>

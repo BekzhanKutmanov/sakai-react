@@ -10,9 +10,13 @@ import { LayoutContext } from './context/layoutcontext';
 import { ChildContainerProps, LayoutState, AppTopbarRef } from '@/types';
 import { usePathname, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import { BottomNav } from '@/app/components/menu/MobileMenu';
+import useMediaQuery from '@/hooks/useMediaQuery';
 
 const StudentLayout = ({ children }: ChildContainerProps) => {
     const { layoutConfig, layoutState, setLayoutState, user } = useContext(LayoutContext);
+    const media = useMediaQuery('(max-width: 640px)');
+
     const topbarRef = useRef<AppTopbarRef>(null);
     const sidebarRef = useRef<HTMLDivElement>(null);
     const [bindMenuOutsideClickListener, unbindMenuOutsideClickListener] = useEventListener({
@@ -130,24 +134,25 @@ const StudentLayout = ({ children }: ChildContainerProps) => {
                     {/* <AppFooter /> */}
 
                     {/* bottom menu */}
-                    {/* {!pathname.startsWith('/teaching/lessonView/') && (
-                        <div className="sticky bottom-0 bg-[white] my-border-top p-3 rounded">
-                            <div className="flex justify-around items-center gap-2">
-                                <Link href="/">
-                                    <i className={`${pathname === '/' ? 'bg-[var(--mainColor)] text-[white]' : ''} cursor-pointer pi pi-home text-md p-2 rounded-full border text-[var(--mainColor)]`}></i>
-                                </Link>
-                                <Link href="/teaching">
-                                    <i className={`${pathname.startsWith('/teaching') ? 'bg-[var(--mainColor)] text-[white]' : ''} cursor-pointer pi pi-calendar-clock text-md p-2 rounded-full border text-[var(--mainColor)]`}></i>
-                                </Link>
-                                <Link href="/studentHome">
-                                    <i className={`${pathname === '/studentHome' ? 'bg-[var(--mainColor)] text-[white]' : ''} cursor-pointer pi pi-th-large text-md p-2 rounded-full border text-[var(--mainColor)]`}></i>
-                                </Link>
-                                <Link href="/teaching">
-                                    <i className={`${pathname === '/notifications' ? 'bg-[var(--mainColor)] text-[white]' : ''} cursor-pointer pi pi-bell text-md p-2 rounded-full border text-[var(--mainColor)]`}></i>
-                                </Link>
-                            </div>
-                        </div>
-                    )} */}
+                    {media && !pathname.startsWith('/teaching/lessonView/') && (
+                        <BottomNav/>
+                        // <div className="sticky bottom-0 bg-[white] my-border-top p-3 rounded">
+                        //     <div className="flex justify-around items-center gap-2">
+                        //         <Link href="/">
+                        //             <i className={`${pathname === '/' ? 'bg-[var(--mainColor)] text-[white]' : ''} cursor-pointer pi pi-home text-md p-2 rounded-full border text-[var(--mainColor)]`}></i>
+                        //         </Link>
+                        //         <Link href="/teaching">
+                        //             <i className={`${pathname.startsWith('/teaching') ? 'bg-[var(--mainColor)] text-[white]' : ''} cursor-pointer pi pi-calendar-clock text-md p-2 rounded-full border text-[var(--mainColor)]`}></i>
+                        //         </Link>
+                        //         <Link href="/studentHome">
+                        //             <i className={`${pathname === '/studentHome' ? 'bg-[var(--mainColor)] text-[white]' : ''} cursor-pointer pi pi-th-large text-md p-2 rounded-full border text-[var(--mainColor)]`}></i>
+                        //         </Link>
+                        //         <Link href="/teaching">
+                        //             <i className={`${pathname === '/notifications' ? 'bg-[var(--mainColor)] text-[white]' : ''} cursor-pointer pi pi-bell text-md p-2 rounded-full border text-[var(--mainColor)]`}></i>
+                        //         </Link>
+                        //     </div>
+                        // </div>
+                    )}
                 </div>
                 {/* <AppConfig /> */}
                 <div className="layout-mask"></div>

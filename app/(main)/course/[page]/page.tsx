@@ -741,7 +741,7 @@ export default function Course() {
         } else {
             setIsTall(false);
         }
-    }, [courseValue, filters]);
+    }, [filters]);
 
     useEffect(() => {
         const title = editMode ? editingLesson.title.trim() : courseValue.title.trim();

@@ -18,12 +18,17 @@ import { InputText } from 'primereact/inputtext';
 import { Paginator } from 'primereact/paginator';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import { useContext, useEffect, useState } from 'react';
+import { useLocalization } from '@/layout/context/localizationcontext';
+import { useLocalizedData } from '@/hooks/useLocalizedData';
+
 // types
 interface Role {
     id: number;
     title: string;
     created_at: string;
     updated_at: string;
+    name_ru?: string;
+    name_kg?: string;
 }
 
 interface Role_idType {
@@ -45,6 +50,8 @@ export default function Roles() {
     const showError = useErrorMessage();
     const { setMessage } = useContext(LayoutContext);
     const media = useMediaQuery('(max-width: 640px)');
+    const { translations } = useLocalization();
+    const { getLocalized } = useLocalizedData();
 
     const [userFetchGlag, setUserFetchGlag] = useState(false);
     const [roles, setRoles] = useState<Role[] | null>(null);
@@ -66,8 +73,8 @@ export default function Roles() {
         perPage: 0
     });
     // const [Number(page), setNumber(page)] = useState<number>(1);
-    const [selectedRole_idType, setSelectedRole_idType] = useState<Role_idType | null>({ name: 'Все', role_id: null });
-    const [cities, setCities] = useState<Role_idType[]>([{ name: 'Все', role_id: null }]);
+    const [selectedRole_idType, setSelectedRole_idType] = useState<Role_idType | null>({ name: translations.all, role_id: null });
+    const [cities, setCities] = useState<Role_idType[]>([{ name: translations.all, role_id: null }]);
     const [forDisabled, setForDisabled] = useState(false);
     const [categoryVisible, setCategoryVisible] = useState<boolean>(false);
     const [roleState, setRoleState] = useState<RoleState>({
@@ -87,9 +94,9 @@ export default function Roles() {
             if (data.length > 0) {
                 setContentNull(false);
                 setRoles(data);
-                setCities([{ name: 'Все', role_id: null }]);
+                setCities([{ name: translations.all, role_id: null }]);
                 const forSelectedRole_id: any = data?.map((item) => {
-                    return { name: item?.title, role_id: item?.id };
+                    return { name: getLocalized(item, 'name') || item?.title, role_id: item?.id };
                 });
 
                 if (forSelectedRole_id) setCities((prev) => [...prev, ...forSelectedRole_id]);
@@ -220,7 +227,7 @@ export default function Roles() {
                             const isActive = Boolean(userRole?.pivot?.active);
                             return (
                                 <div key={role?.id} className="text-center flex justify-between items-start">
-                                    <span className="text-sm">{idx % 2 === 0 ? 'Администратор' : 'Департамент'}</span>
+                                    <span className="text-sm">{idx % 2 === 0 ? translations.administrator : translations.department}</span>
 
                                     {/* <span className='text-sm'>{userRole?.id === 1 ? 'Администратор:' : userRole?.id === 2 ? 'Департамент:' : ''}</span> */}
                                     <div className="flex justify-center items-center">
@@ -360,10 +367,25 @@ export default function Roles() {
         setUserFetchGlag(true);
     }, []);
 
+    // Update default values when language changes
+    useEffect(() => {
+        setCities(prev => {
+            const newCities = [...prev];
+            if (newCities.length > 0 && newCities[0].role_id === null) {
+                newCities[0].name = translations.all;
+            }
+            return newCities;
+        });
+
+        if (selectedRole_idType?.role_id === null) {
+            setSelectedRole_idType(prev => prev ? ({ ...prev, name: translations.all }) : null);
+        }
+    }, [translations]);
+
     const categoryFooterContent = (
         <div>
             <Button
-                label={'Назад'}
+                label={translations.back}
                 className="reject-button"
                 size="small"
                 icon="pi pi-times"
@@ -374,7 +396,7 @@ export default function Roles() {
             />
 
             <Button
-                label={'Отправить'}
+                label={translations.send}
                 size="small"
                 icon="pi pi-check"
                 onClick={() => {
@@ -393,7 +415,7 @@ export default function Roles() {
             </div>
         );
 
-    if (contentNull) return <NotFound titleMessage="Данные отсутствуют" />;
+    if (contentNull) return <NotFound titleMessage={translations.noData} />;
 
     return (
         <div className="flex flex-col gap-4">
@@ -402,7 +424,7 @@ export default function Roles() {
             ) : (
                 <div className="overflow-x-auto scrollbar-thin">
                     <div className="main-bg mb-2">
-                        <h3 className="text-xl sm:text-2xl pb-1 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">Админ</h3>
+                        <h3 className="text-xl sm:text-2xl pb-1 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">{translations.adminTitle}</h3>
 
                         <div className="flex flex-col sm:flex-row gap-2 mb-2">
                             <div className="flex gap-3 items-center">
@@ -419,20 +441,20 @@ export default function Roles() {
                                         />
                                         <span className="checkbox-mark"></span>
                                     </label>
-                                    <p>Активные</p>
+                                    <p>{translations.active}</p>
                                 </div>
                                 <div>
                                     <Dropdown value={selectedRole_idType} onChange={(e: DropdownChangeEvent) => setSelectedRole_idType(e.value)} options={cities} optionLabel="name" placeholder="..." className="w-[160px] sm:w-full text-sm" />
                                 </div>
                             </div>
                             <div className="w-full flex justify-center sm:justify-start items-center gap-1">
-                                <InputText type="number" placeholder="myedu id" className="w-full sm:max-w-[120px] h-[48px]" onChange={(e) => setMyedu_id(e.target.value)} />
+                                <InputText type="number" placeholder={translations.myeduIdPlaceholder} className="w-full sm:max-w-[120px] h-[48px]" onChange={(e) => setMyedu_id(e.target.value)} />
                                 <div>{myeduProgressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}</div>
                             </div>
                         </div>
 
                         <div className="flex items-center relative mb-2">
-                            <InputText placeholder="Поиск..." value={search} onChange={(e) => setSearch(e.target.value)} className="w-full p-inputtext-sm p-inputtext-rounded" />
+                            <InputText placeholder={translations.search} value={search} onChange={(e) => setSearch(e.target.value)} className="w-full p-inputtext-sm p-inputtext-rounded" />
                             <div className="absolute right-1">{miniProgressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}</div>
                         </div>
                     </div>
@@ -453,7 +475,7 @@ export default function Roles() {
                                 <Column header={() => <div className="text-[14px]">#</div>} body={(_, { rowIndex }) => rowIndex + 1} />
 
                                 <Column
-                                    header={() => <div className="text-[14px]">ФИО</div>}
+                                    header={() => <div className="text-[14px]">{translations.fullName}</div>}
                                     body={(rowData: any) => (
                                         <div className="text-[14px]">
                                             {rowData.last_name} {rowData.name} {rowData.father_name}
@@ -464,7 +486,7 @@ export default function Roles() {
                                     return (
                                         <Column
                                             key={role?.id}
-                                            header={() => <div className="text-[14px]">{role.title}</div>}
+                                            header={() => <div className="text-[14px]">{getLocalized(role, 'name') || role.title}</div>}
                                             body={(user) => {
                                                 const userRole = user?.roles?.find((r: { id: number }) => r.id === role.id);
 
@@ -556,7 +578,7 @@ export default function Roles() {
                         </div>
                     )}
                     <Dialog
-                        header={'Отправить'}
+                        header={translations.send}
                         visible={categoryVisible}
                         className="my-custom-dialog"
                         onHide={() => {
@@ -584,7 +606,7 @@ export default function Roles() {
                                             }}
                                         />
                                         <span className="checkbox-mark ml-3" style={{ fontSize: '16px' }}>
-                                            Создать
+                                            {translations.create}
                                         </span>
                                     </label>
                                 </div>
@@ -604,7 +626,7 @@ export default function Roles() {
                                             }}
                                         />
                                         <span className="checkbox-mark ml-3" style={{ fontSize: '16px' }}>
-                                            Изменить
+                                            {translations.change}
                                         </span>
                                     </label>
                                 </div>
@@ -624,7 +646,7 @@ export default function Roles() {
                                             }}
                                         />
                                         <span className="checkbox-mark ml-3" style={{ fontSize: '16px' }}>
-                                            Удалить
+                                            {translations.delete}
                                         </span>
                                     </label>
                                 </div>
@@ -644,7 +666,7 @@ export default function Roles() {
                                             }}
                                         />
                                         <span className="checkbox-mark ml-3" style={{ fontSize: '16px' }}>
-                                            Смотреть
+                                            {translations.view}
                                         </span>
                                     </label>
                                 </div>

@@ -13,12 +13,14 @@ import Link from 'next/link';
 import { confirmDialog } from 'primereact/confirmdialog';
 import { InputText } from 'primereact/inputtext';
 import { ProgressSpinner } from 'primereact/progressspinner';
-import { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
+import { BottomNav } from '@/app/components/menu/MobileMenu';
+import useMediaQuery from '@/hooks/useMediaQuery';
 
 export default function MainNotificatoin() {
     const { user, setMessage, contextNotifications, setContextNotifications, handleNotifications } = useContext(LayoutContext);
     const { translations } = useLocalization();
-
+    const media = useMediaQuery('(max-width: 640px)');
     const [notification, setNotification] = useState<mainNotification[]>([]);
 
     const [searchSpinner, setSearchSpinner] = useState(false);
@@ -166,17 +168,18 @@ export default function MainNotificatoin() {
     }, [user]);
 
     return (
-        <div className="main-bg">
-            <div className="w-full flex items-center justify-between">
-                <h3 className="text-xl sm:text-2xl font-semibold tracking-tight text-[var(--text-color)] shadow-[var(--bottom-shadow)]">{translations.notifications}</h3>
-            </div>
+        <div className={'flex flex-col justify-between h-[100vh]'}>
+            <div className="main-bg">
+                <div className="w-full flex items-center justify-between">
+                    <h3 className="text-xl sm:text-2xl font-semibold tracking-tight text-[var(--text-color)] shadow-[var(--bottom-shadow)]">{translations.notifications}</h3>
+                </div>
 
-            {/* <div className="relative w-full flex justify-center sm:justify-start items-center gap-1 my-2">
+                {/* <div className="relative w-full flex justify-center sm:justify-start items-center gap-1 my-2">
                 <InputText type="text" placeholder="РџРѕРёСЃРє..." value={search} className="w-full h-[48px]" onChange={(e) => setSearch(e.target.value)} />
                 <div className="absolute right-2">{!searchSpinner && <i className="pi pi-search"></i>}</div>
                 <div className="absolute right-2">{searchSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}</div>
             </div> */}
-            {/* 
+                {/*
             <div className="flex items-center gap-2 my-2 px-2">
                 <div className="flex items-center gap-1">
                     <span>РР·Р±СЂР°РЅРЅС‹Рµ</span>
@@ -188,22 +191,24 @@ export default function MainNotificatoin() {
                 </div>
             </div> */}
 
-            {/* main */}
-            <div className="flex flex-col gap-2 sm:gap-3 mt-2">
-                {empty ? (
-                    <div className="flex justify-center">
-                        <NotFound titleMessage={translations.noData} />
-                    </div>
-                ) : (
-                    notification?.map((item) => {
-                        return (
-                            <div key={item?.id}>
-                                <NotificationItem notificate={item} />
-                            </div>
-                        );
-                    })
-                )}
+                {/* main */}
+                <div className="flex flex-col gap-2 sm:gap-3 mt-2">
+                    {empty ? (
+                        <div className="flex justify-center">
+                            <NotFound titleMessage={translations.noData} />
+                        </div>
+                    ) : (
+                        notification?.map((item) => {
+                            return (
+                                <div key={item?.id}>
+                                    <NotificationItem notificate={item} />
+                                </div>
+                            );
+                        })
+                    )}
+                </div>
             </div>
+            {media && user?.is_student && <BottomNav />}
         </div>
     );
 }

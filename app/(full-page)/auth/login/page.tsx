@@ -17,6 +17,8 @@ import { getToken } from '@/utils/auth';
 import { ProgressSpinner } from 'primereact/progressspinner';
 
 import { useLocalization } from '../../../../layout/context/localizationcontext';
+import MobileMenu from '@/app/components/menu/MobileMenu';
+import BottomNav from '@/app/components/menu/MobileMenu';
 
 const LoginPage = () => {
     const { translations } = useLocalization();
@@ -180,9 +182,10 @@ const LoginPage = () => {
                     </form>
                     <Link href={'/'} className="mt-2 w-full">
                         <FancyLinkBtn btnWidth={'100%'} backround={'--mainColor'} effectBg={'--titleColor'} title={translations.mainPage} btnType={false}/>
-                    </Link> 
+                    </Link>
                 </div>
             </div>
+            {/*<BottomNav/>*/}
         </div>
     );
 };

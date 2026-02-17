@@ -45,7 +45,7 @@ export default function Module() {
 
     const [progressSpinner, setProgressSpinner] = useState(false);
     const [miniSpinner, setMiniSpinner] = useState(false);
-    
+
     const [connectIds, setConnectIds] = useState<number[] | null>(null);
     const [connects, setConnects] = useState<any>([]);
 
@@ -119,6 +119,8 @@ export default function Module() {
         const data = await sheduleSave(from, to, period?.id ? period?.id : null, semestr?.id ? semestr?.id : null, allSelectFl, connectIds);
         console.log(data);
         if (data && data?.success) {
+            // setAllSelectFl([]);
+            // setConnectIds([]);
             setMessage({
                 state: true,
                 value: { severity: 'success', summary: data?.message, detail: '' }
@@ -131,7 +133,7 @@ export default function Module() {
                 state: true,
                 value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
             });
-            setProgressSpinner(false);  
+            setProgressSpinner(false);
         }
     };
 
@@ -150,13 +152,13 @@ export default function Module() {
                 state: true,
                 value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
             });
-            setProgressSpinner(false);  
+            setProgressSpinner(false);
         }
     };
 
     const handleEdit = (id: number, e: { checked: boolean }, specialityId: number, active: boolean) => {
         console.log(active);
-        
+
         if (e.checked) {
             if (connectIds) {
                 !connectIds?.includes(id) && setConnectIds([...connectIds, id]);
@@ -197,7 +199,7 @@ export default function Module() {
             const activeSpecialityIds = speciality
                 .filter((s: any) => s?.checking)
                 .map((s: any) => s?.id);
-            
+
             console.log(activeSpecialityIds); // [1, 3, 4]
             if (activeSpecialityIds) {
                 setAllSelectFl(activeSpecialityIds);
@@ -342,7 +344,7 @@ export default function Module() {
                                 value={semestr}
                                 optionLabel="name_ru"
                                 options={semestrOptions}
-                                onChange={(e) => setSemestr(e.value)}          
+                                onChange={(e) => setSemestr(e.value)}
                                 placeholder="Выберите семестр"
                                 className={`${specialityOptions?.length < 1 || miniSpinner ? 'pointer-events-none opacity-50' : ''} w-full text-sm`}
                             />
@@ -362,23 +364,23 @@ export default function Module() {
                 </div>
             </div>
 
-            {startDisplay ? 
+            {startDisplay ?
                 <div className='main-bg flex justify-center p-4'>
                     <i className='pi pi-calendar text-4xl'></i>
                 </div>
-                : 
+                :
                 <div>
                     {progressSpinner ? (
                         <div className="main-bg my-2 flex justify-center p-6 rounded-lg">
                             <ProgressSpinner style={{ width: '45px', height: '45px' }} />
                         </div>
-                    ) : 
+                    ) :
                         emptySpeciality ? (
                             <div className="main-bg my-2 flex justify-center p-6 rounded-lg">
                                 <b>Данных нет</b>
                             </div>
                     ) : (
-                        <div className="main-bg flex flex-col gap-4 p-3 sm:p-4 rounded-lg">
+                        <div className="main-bg flex flex-col gap-2 p-3 rounded-lg">
                             {connects.map((course: any, idx: number) => {
                                 const isOpen = openIndex === idx;
                                 return (
@@ -390,7 +392,7 @@ export default function Module() {
                                             setOpenIndex(isOpen ? null : idx);
                                             // setConnectIds([]);
                                         }}
-                                        className="w-full p-2"
+                                        className="w-full"
                                         header={
                                             <div className="flex items-center justify-between w-full gap-1 sm:gap-3">
                                                 <div className="flex items-center gap-1 sm:gap-3 min-w-0">
