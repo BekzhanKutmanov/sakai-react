@@ -46,6 +46,9 @@ export const localizationData = {
         dataLabel: 'Данные',
         idLabel: 'Id',
         saveToMyedu: 'Сохранить в myedu',
+        periodExportShedule: 'Период экспорта',
+        accessExportStatus: 'Экспорт доступен',
+        accessExportStatusFalse: 'Экспорт не доступен',
 
         // Home
         convenientOnlineLearningSpace: 'Удобное онлайн-пространство для обучения',
@@ -297,6 +300,9 @@ export const localizationData = {
         dataLabel: 'Маалыматтар',
         idLabel: 'Id',
         saveToMyedu: "myedu'га сактоо",
+        periodExportShedule: 'Экспорттоо мөөнөтү',
+        accessExportStatus: 'Экспорттоо жеткиликтүү',
+        accessExportStatusFalse: 'Экспорттоо жеткиликтүү эмес',
 
         // Home
         convenientOnlineLearningSpace: 'Окуу үчүн ыңгайлуу онлайн мейкиндик',

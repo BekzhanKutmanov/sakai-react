@@ -26,6 +26,7 @@ export default function StudentList() {
         teacher: { last_name: string; name: string };
         id_stream: number;
         score: number | null;
+        schedule: { active: boolean; from: string; to: string };
     }
 
     const { cource_id, connect_id, stream_id } = useParams();
@@ -41,7 +42,7 @@ export default function StudentList() {
     const [scoreValues, setScoreValues] = useState<ScoreValueType[]>([]);
     const [studentId, setStudentId] = useState<number | null>(null);
     const [studentScore, setStudentScore] = useState<number | null>(null);
-
+    const [exportBtnDisabled, setExportBtnDisabled] = useState(false);
     const { setMessage } = useContext(LayoutContext);
     const { translations } = useLocalization();
     const showError = useErrorMessage();
@@ -187,6 +188,7 @@ export default function StudentList() {
                 label={translations.send}
                 icon="pi pi-check"
                 size="small"
+                disabled={exportBtnDisabled}
                 onClick={() => {
                     setMyEduInfoVisible(false);
                     handleSendMyeduScore(Number(stream_id), studentId, studentScore);
@@ -212,9 +214,14 @@ export default function StudentList() {
         }
     }, [streams]);
 
-    // useEffect(()=> {
-    //     console.log(studentId, studentScore);
-    // },[studentId, studentScore]);
+    useEffect(() => {
+        console.log(scoreValues);
+        if (scoreValues[0]?.schedule?.active) {
+            setExportBtnDisabled(false);
+        } else {
+            setExportBtnDisabled(true);
+        }
+    }, [scoreValues]);
 
     return (
         <div className="main-bg">
@@ -282,28 +289,31 @@ export default function StudentList() {
                                 <Column
                                     header={translations.score}
                                     className="flex items-center border-b-0"
-                                    body={(rowData) => (
-                                        <div className="flex items-center gap-2" key={rowData?.id}>
-                                            {rowData?.score && rowData.score > 0 ? (
-                                                <div className="flex justify-between items-center gap-2">
-                                                    <b className={`${rowData.score > 30 ? 'text-[var(--greenColor)] p-1 w-[25px] text-center' : 'text-amber-400 p-1 w-[25px] text-center '}`}>{rowData.score}</b>
-                                                    {!rowData?.export ? (
-                                                        <i
-                                                            onClick={() => handleFetchScoreValues(Number(stream_id), rowData?.id || null, rowData?.score)}
-                                                            className="cursor-pointer pi pi-upload bg-[var(--mainColor)] text-white p-2 px-3 rounded"
-                                                            title={translations.saveToMyedu}
-                                                        ></i>
-                                                    ) : (
-                                                        ''
-                                                    )}
-                                                    {/* <i onClick={()=> console.log(rowData)} className="cursor-pointer pi pi-upload bg-[var(--mainColor)] text-white p-2 px-3 rounded" title={translations.saveToMyedu}></i> */}
-                                                    {/* <Button icon={'pi pi-arrow-right'} size='small' style={{ fontSize: '13px', padding: '4px 4px'}} label="myedu" /> */}
-                                                </div>
-                                            ) : (
-                                                <b className={'text-[var(--redColor)] p-1 w-[25px]text-center'}>{rowData?.score}</b>
-                                            )}
-                                        </div>
-                                    )}
+                                    body={(rowData) => {
+                                        console.log(rowData);
+                                        return (
+                                            <div className="flex items-center gap-2" key={rowData?.id}>
+                                                {rowData?.score && rowData.score > 0 ? (
+                                                    <div className="flex justify-between items-center gap-2">
+                                                        <b className={`${rowData.score > 30 ? 'text-[var(--greenColor)] p-1 w-[25px] text-center' : 'text-amber-400 p-1 w-[25px] text-center '}`}>{rowData.score}</b>
+                                                        {!rowData?.export ? (
+                                                            <i
+                                                                onClick={() => handleFetchScoreValues(Number(stream_id), rowData?.id || null, rowData?.score)}
+                                                                className="cursor-pointer pi pi-upload bg-[var(--mainColor)] text-white p-2 px-3 rounded"
+                                                                title={translations.saveToMyedu}
+                                                            ></i>
+                                                        ) : (
+                                                            ''
+                                                        )}
+                                                        {/* <i onClick={()=> console.log(rowData)} className="cursor-pointer pi pi-upload bg-[var(--mainColor)] text-white p-2 px-3 rounded" title={translations.saveToMyedu}></i> */}
+                                                        {/* <Button icon={'pi pi-arrow-right'} size='small' style={{ fontSize: '13px', padding: '4px 4px'}} label="myedu" /> */}
+                                                    </div>
+                                                ) : (
+                                                    <b className={'text-[var(--redColor)] p-1 w-[25px]text-center'}>{rowData?.score}</b>
+                                                )}
+                                            </div>
+                                        );
+                                    }}
                                 />
 
                                 <Column
@@ -361,7 +371,7 @@ export default function StudentList() {
                         <div className="flex flex-col gap-2">
                             {scoreValues?.map((item: ScoreValueType) => {
                                 return (
-                                    <div key={item?.course?.id} className={`flex flex-col gap-2 ${scoreValues.length > 1 && 'p-2 lesson-card-border shadow'}`}>
+                                    <div key={item?.course?.id} className={`main-bg flex flex-col gap-4 text-[14px] sm:text-md ${scoreValues.length > 1 && 'p-2 lesson-card-border shadow'}`}>
                                         <div className="flex items-center gap-1 justify-between">
                                             <b className="sm:text-md">{item?.course?.title}</b>
                                             <div className="text-sm">
@@ -376,6 +386,31 @@ export default function StudentList() {
                                                 <span>{translations.score}:</span> <span className="text-[var(--mainColor)]"> {item?.score || 0}</span>
                                             </div>
                                         </div>
+                                        {item?.schedule && (
+                                            <div className="flex items-center gap-1 justify-between">
+                                                <p className="m-0">{translations.periodExportShedule}</p>
+                                                <div className="text-[12px] flex flex-wrap justify-end items-center gap-1">
+                                                    <MyDateTime createdAt={item.schedule.from} options={options} />
+                                                    <i>-</i>
+                                                    <MyDateTime createdAt={item.schedule.to} options={options} />
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        <div className="flex items-center gap-1 justify-between">
+                                            <p className="m-0">Статус</p>
+                                            {item?.schedule?.active ? (
+                                                <div className="text-[12px] text-white bg-[var(--mainBorder)] p-1 rounded flex flex-wrap justify-end items-center gap-1">
+                                                    <i className="pi pi-check-circle"></i>
+                                                    <span>{translations.accessExportStatus}</span>
+                                                </div>
+                                            ) : (
+                                                <div className="text-[12px] text-white bg-[var(--mainBorder)] p-1 rounded flex flex-wrap justify-end items-center gap-1">
+                                                    <i className="pi pi-times-circle"></i>
+                                                    <span>{translations.accessExportStatusFalse}</span>
+                                                </div>
+                                            )}
+                                        </div>
                                     </div>
                                 );
                             })}
@@ -386,7 +421,3 @@ export default function StudentList() {
         </div>
     );
 }
-
-
-
-

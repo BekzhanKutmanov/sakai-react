@@ -17,6 +17,8 @@ import { Nullable } from 'primereact/ts-helpers';
 import { LayoutContext } from '@/layout/context/layoutcontext';
 import useErrorMessage from '@/hooks/useErrorMessage';
 import { useLocalization } from '@/layout/context/localizationcontext';
+import { types } from 'sass';
+import Null = types.Null;
 
 export default function Module() {
     const { setMessage } = useContext(LayoutContext);
@@ -154,7 +156,6 @@ export default function Module() {
     };
 
     const handleEdit = (id: number, e: { checked: boolean }, specialityId: number, active: boolean) => {
-
         if (e.checked) {
             if (connectIds) {
                 !connectIds?.includes(id) && setConnectIds([...connectIds, id]);
@@ -162,14 +163,13 @@ export default function Module() {
                 setConnectIds([id]);
             }
         } else {
-            if(active){
+            if (active) {
                 setDiactivateCt(id);
                 confirm1(null, id);
             } else {
                 setAllSelectFl((prev) => prev && prev?.filter((id) => id !== specialityId));
                 setConnectIds((prev) => prev && prev?.filter((item) => item !== id));
             }
-
         }
     };
 
@@ -191,9 +191,7 @@ export default function Module() {
 
     const startSpecialityCheck = (speciality: number[]) => {
         if (speciality) {
-            const activeSpecialityIds = speciality
-                .filter((s: any) => s?.checking)
-                .map((s: any) => s?.id);
+            const activeSpecialityIds = speciality.filter((s: any) => s?.checking).map((s: any) => s?.id);
 
             if (activeSpecialityIds) {
                 setAllSelectFl(activeSpecialityIds);
@@ -201,7 +199,7 @@ export default function Module() {
         }
     };
 
-    const confirm1 = (spId: number | null, ctId: number | null ) => {
+    const confirm1 = (spId: number | null, ctId: number | null) => {
         confirmDialog({
             message: 'Вы точно хотите изменить?',
             header: 'Подтверждение',
@@ -212,6 +210,14 @@ export default function Module() {
             rejectClassName: 'p-button-secondary reject-button',
             accept: () => handleDiactivate(spId, ctId)
         });
+    };
+
+    const normalizeDate = (date: any): any => {
+        if (!date) return null;
+
+        const d = new Date(date);
+        d.setHours(12, 0, 0, 0); // фикс timezone
+        return d;
     };
 
     useEffect(() => {
@@ -268,7 +274,7 @@ export default function Module() {
                 label="Назад"
                 className="reject-button"
                 icon="pi pi-times"
-                size='small'
+                size="small"
                 onClick={() => {
                     setVisible(false);
                 }}
@@ -277,7 +283,7 @@ export default function Module() {
             <Button
                 label="Сохранить"
                 icon="pi pi-check"
-                size='small'
+                size="small"
                 onClick={() => {
                     setVisible(false);
                     handleSave();
@@ -313,7 +319,11 @@ export default function Module() {
                                 placeholder="Выберите специальность"
                                 className={`${specialityOptions?.length < 1 ? 'pointer-events-none opacity-50' : ''} w-full text-sm `}
                             />
-                            {miniSpinner && <div><ProgressSpinner style={{width: '17px', height: '17px'}}/></div>}
+                            {miniSpinner && (
+                                <div>
+                                    <ProgressSpinner style={{ width: '17px', height: '17px' }} />
+                                </div>
+                            )}
                         </div>
                     </div>
 
@@ -358,21 +368,20 @@ export default function Module() {
                 </div>
             </div>
 
-            {startDisplay ?
-                <div className='main-bg flex justify-center p-4'>
-                    <i className='pi pi-calendar text-4xl'></i>
+            {startDisplay ? (
+                <div className="main-bg flex justify-center p-4">
+                    <i className="pi pi-calendar text-4xl"></i>
                 </div>
-                :
+            ) : (
                 <div>
                     {progressSpinner ? (
                         <div className="main-bg my-2 flex justify-center p-6 rounded-lg">
                             <ProgressSpinner style={{ width: '45px', height: '45px' }} />
                         </div>
-                    ) :
-                        emptySpeciality ? (
-                            <div className="main-bg my-2 flex justify-center p-6 rounded-lg">
-                                <b>Данных нет</b>
-                            </div>
+                    ) : emptySpeciality ? (
+                        <div className="main-bg my-2 flex justify-center p-6 rounded-lg">
+                            <b>Данных нет</b>
+                        </div>
                     ) : (
                         <div className="main-bg flex flex-col gap-2 p-3 rounded-lg">
                             {connects.map((course: any, idx: number) => {
@@ -400,7 +409,7 @@ export default function Module() {
                                                                     const exists = allSelectFl?.includes(course?.id);
                                                                     if (exists) {
                                                                         // console.log(course);
-                                                                        if(course?.checking){
+                                                                        if (course?.checking) {
                                                                             setDiactivateSp(course.id);
                                                                             confirm1(course?.id, null);
                                                                         } else {
@@ -408,7 +417,7 @@ export default function Module() {
                                                                                 const streamArr = course?.streams?.map((stream: any) => stream.id_stream);
                                                                                 setConnectIds((prev) => prev && prev.filter((id) => !streamArr?.includes(id)));
                                                                                 return prev.filter((id) => id !== course.id);
-                                                                            })
+                                                                            });
                                                                         }
                                                                     } else {
                                                                         setAllSelectFl((prev) => {
@@ -419,16 +428,16 @@ export default function Module() {
                                                                             //     setConnectIds((prev) => prev && prev.filter((id) => !streamArr?.includes(id)));
                                                                             //     return prev.filter((id) => id !== course.id);
                                                                             // } else {
-                                                                                const forConnects = course?.streams?.map((stream: any) => {
-                                                                                    return stream?.id_stream;
-                                                                                });
-                                                                                if (connectIds) {
-                                                                                    const f = [...connectIds];
-                                                                                    setConnectIds([...f, ...forConnects]);
-                                                                                } else {
-                                                                                    setConnectIds(forConnects);
-                                                                                }
-                                                                                return [...prev, course.id];
+                                                                            const forConnects = course?.streams?.map((stream: any) => {
+                                                                                return stream?.id_stream;
+                                                                            });
+                                                                            if (connectIds) {
+                                                                                const f = [...connectIds];
+                                                                                setConnectIds([...f, ...forConnects]);
+                                                                            } else {
+                                                                                setConnectIds(forConnects);
+                                                                            }
+                                                                            return [...prev, course.id];
                                                                             // }
                                                                         });
                                                                     }
@@ -453,7 +462,7 @@ export default function Module() {
                                                         connectId={item?.id_stream}
                                                         handleEdit={(id, checked) => handleEdit(id, checked, course?.id, item?.schedule?.active)}
                                                         allIds={connectIds}
-                                                        date={{from: item?.schedule?.from, to: item?.schedule?.to}}
+                                                        date={{ from: item?.schedule?.from, to: item?.schedule?.to }}
                                                     />
                                                 ))
                                             ) : (
@@ -471,7 +480,7 @@ export default function Module() {
                         </div>
                     )}
                 </div>
-            }
+            )}
 
             <Dialog
                 header={'Изменить график модулей'}
@@ -492,7 +501,14 @@ export default function Module() {
                                     locale="ru" // Указываем русскую локаль
                                     dateFormat="dd.mm.yy"
                                     className="p-inputtext-sm"
-                                    onChange={(e) => setFrom(e.value)}
+                                    onChange={(e) => {
+                                        const date: any = normalizeDate(e.value);
+                                        if (date) {
+                                            setFrom(date);
+                                        } else {
+                                            setFrom(e.value);
+                                        }
+                                    }}
                                 />
                             </div>
                             <div className="flex flex-col items-center sm:items-start">
@@ -502,7 +518,14 @@ export default function Module() {
                                     locale="ru" // Указываем русскую локаль
                                     dateFormat="dd.mm.yy"
                                     className="p-inputtext-sm"
-                                    onChange={(e) => setTo(e.value)}
+                                    onChange={(e) => {
+                                        const date: any = normalizeDate(e.value);
+                                        if (date) {
+                                            setTo(date);
+                                        } else {
+                                            setTo(e.value);
+                                        }
+                                    }}
                                 />
                             </div>
                         </div>
