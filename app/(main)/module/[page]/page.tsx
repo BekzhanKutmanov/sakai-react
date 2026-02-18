@@ -91,7 +91,6 @@ export default function Module() {
     const handleFetchModuleShedule = async (specialityIds: any, periodId: number | null, semesterId: number | null) => {
         setProgressSpinner(true);
         const data = await fetchModuleShedule(Array.isArray(specialityIds) ? specialityIds : [specialityIds], periodId, semesterId);
-        console.log(data);
 
         if (data && data?.length > 0) {
             setConnects(data);
@@ -117,7 +116,6 @@ export default function Module() {
     const handleSave = async () => {
         setProgressSpinner(true);
         const data = await sheduleSave(from, to, period?.id ? period?.id : null, semestr?.id ? semestr?.id : null, allSelectFl, connectIds);
-        console.log(data);
         if (data && data?.success) {
             // setAllSelectFl([]);
             // setConnectIds([]);
@@ -140,7 +138,6 @@ export default function Module() {
     const handleDiactivate = async (spId: number | null, ctId: number | null) => {
         setProgressSpinner(true);
         const data = await sheduleDiactivate(period?.id ? period?.id : null, semestr?.id ? semestr?.id : null, spId, ctId);
-        console.log(data);
         if (data && data?.success) {
             setMessage({
                 state: true,
@@ -157,7 +154,6 @@ export default function Module() {
     };
 
     const handleEdit = (id: number, e: { checked: boolean }, specialityId: number, active: boolean) => {
-        console.log(active);
 
         if (e.checked) {
             if (connectIds) {
@@ -186,7 +182,7 @@ export default function Module() {
                 .filter((s: any) => s.schedule?.active)
                 .map((s: any) => s?.id_stream);
 
-            console.log(activeStreamIds); // [1, 3, 4]
+            // console.log(activeStreamIds); // [1, 3, 4]
             if (activeStreamIds) {
                 setConnectIds(activeStreamIds);
             }
@@ -195,12 +191,10 @@ export default function Module() {
 
     const startSpecialityCheck = (speciality: number[]) => {
         if (speciality) {
-            console.log(speciality);
             const activeSpecialityIds = speciality
                 .filter((s: any) => s?.checking)
                 .map((s: any) => s?.id);
 
-            console.log(activeSpecialityIds); // [1, 3, 4]
             if (activeSpecialityIds) {
                 setAllSelectFl(activeSpecialityIds);
             }
@@ -247,13 +241,13 @@ export default function Module() {
         }
     }, [speciality]);
 
-    useEffect(() => {
-        console.log('specialitys', allSelectFl);
-    }, [allSelectFl]);
+    // useEffect(() => {
+    //     // console.log('specialitys', allSelectFl);
+    // }, [allSelectFl]);
 
-    useEffect(() => {
-        console.log('connects', connectIds);
-    }, [connectIds]);
+    // useEffect(() => {
+    //     // console.log('connects', connectIds);
+    // }, [connectIds]);
 
     useEffect(() => {
         if (connects?.length > 0) {
@@ -405,7 +399,7 @@ export default function Module() {
                                                                 onChange={(e) => {
                                                                     const exists = allSelectFl?.includes(course?.id);
                                                                     if (exists) {
-                                                                        console.log(course);
+                                                                        // console.log(course);
                                                                         if(course?.checking){
                                                                             setDiactivateSp(course.id);
                                                                             confirm1(course?.id, null);

@@ -134,25 +134,9 @@ const StudentLayout = ({ children }: ChildContainerProps) => {
                     {/* <AppFooter /> */}
 
                     {/* bottom menu */}
-                    {media && !pathname.startsWith('/teaching/lessonView/') && (
-                        <BottomNav/>
-                        // <div className="sticky bottom-0 bg-[white] my-border-top p-3 rounded">
-                        //     <div className="flex justify-around items-center gap-2">
-                        //         <Link href="/">
-                        //             <i className={`${pathname === '/' ? 'bg-[var(--mainColor)] text-[white]' : ''} cursor-pointer pi pi-home text-md p-2 rounded-full border text-[var(--mainColor)]`}></i>
-                        //         </Link>
-                        //         <Link href="/teaching">
-                        //             <i className={`${pathname.startsWith('/teaching') ? 'bg-[var(--mainColor)] text-[white]' : ''} cursor-pointer pi pi-calendar-clock text-md p-2 rounded-full border text-[var(--mainColor)]`}></i>
-                        //         </Link>
-                        //         <Link href="/studentHome">
-                        //             <i className={`${pathname === '/studentHome' ? 'bg-[var(--mainColor)] text-[white]' : ''} cursor-pointer pi pi-th-large text-md p-2 rounded-full border text-[var(--mainColor)]`}></i>
-                        //         </Link>
-                        //         <Link href="/teaching">
-                        //             <i className={`${pathname === '/notifications' ? 'bg-[var(--mainColor)] text-[white]' : ''} cursor-pointer pi pi-bell text-md p-2 rounded-full border text-[var(--mainColor)]`}></i>
-                        //         </Link>
-                        //     </div>
-                        // </div>
-                    )}
+                    {/*{media && !pathname.startsWith('/teaching/lessonView/') && (*/}
+                    {/*    <BottomNav/>*/}
+                    {/*)}*/}
                 </div>
                 {/* <AppConfig /> */}
                 <div className="layout-mask"></div>

@@ -4,20 +4,16 @@ import LessonInfoCard from '@/app/components/lessons/LessonInfoCard';
 import { NotFound } from '@/app/components/NotFound';
 import useErrorMessage from '@/hooks/useErrorMessage';
 import { LayoutContext } from '@/layout/context/layoutcontext';
-import { fetchCourseInfo } from '@/services/courses';
-import { depCourseInfo } from '@/services/faculty';
 import { depExamination, depExaminationSteps } from '@/services/roles/roles';
 import { mainStepsType } from '@/types/mainStepType';
-import { useSearchParams } from 'next/navigation'
+import { useParams, useSearchParams } from 'next/navigation'
 import { Accordion, AccordionTab } from 'primereact/accordion';
 import { Dialog } from 'primereact/dialog';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import { useContext, useEffect, useState } from 'react';
 
 export default function DepartamentChecking() {
-    const searchParams = useSearchParams();
-    const course_id = searchParams.get('course_id');
-
+    const { course_id } = useParams();
     const { setMessage } = useContext(LayoutContext);
     const showError = useErrorMessage();
 
@@ -34,7 +30,6 @@ export default function DepartamentChecking() {
 
     const handleFetchLessons = async () => {
         const data = await depExamination(Number(course_id));
-
         if (data && data?.lessons) {
             setThemeShow(false);
             if (data.lessons?.length < 1) {
@@ -152,9 +147,11 @@ export default function DepartamentChecking() {
             {themeShow ? (
                 <NotFound titleMessage="Темы отсуствуют или временно не доступны" />
             ) : (
-                <div className=''>
+                <div className="">
                     <div>
-                        <h3 className="text-lg pb-1 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]"><span className='text-[var(--mainColor)]'>Название курса:</span> {courseInfo?.title}</h3>
+                        <h3 className="text-lg pb-1 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">
+                            <span className="text-[var(--mainColor)]">Название курса:</span> {courseInfo?.title}
+                        </h3>
                         <Accordion activeIndex={activeIndex} onTabChange={(e) => setActiveIndex(e.index)}>
                             {themes.map((item) => {
                                 const content = steps.filter((j) => {
@@ -164,34 +161,35 @@ export default function DepartamentChecking() {
                                 return (
                                     <AccordionTab header={'Тема: ' + item.title} key={item.id} className="w-full p-accordion" style={{ width: '100%' }}>
                                         <div className="flex flex-col gap-2">
-                                            {stepsSkeleton ? <ProgressSpinner style={{ width: '30px', height: '30px' }} animationDuration=".5s" />
-                                                : hasSteps ? (
-                                                    <p className="text-center text-sm">Данных нет</p>
-                                                ) : content?.length > 0 ? (
-                                                    content.map((i, idx) => {
-                                                        if (i.content) {
-                                                            return (
-                                                                <div className={`${idx !== 0 && idx !== content?.length ? 'border-t-1 border-[gray]' : ''}`} key={i.id}>
-                                                                    {
-                                                                        <LessonInfoCard
-                                                                            type={i.type.name}
-                                                                            icon={i.type.logo}
-                                                                            title={i.content?.title}
-                                                                            description={i.content?.description || ''}
-                                                                            documentUrl={{ document: i.content?.document, document_path: i.content?.document_path }}
-                                                                            video_link={i.content?.link}
-                                                                            link={i.content?.url}
-                                                                            test={{ content: i.content.content, answers: i.content.answers, score: i.content.score }}
-                                                                            videoStart={handleVideoCall}
-                                                                        />
-                                                                    }
-                                                                </div>
-                                                            );
-                                                        }
-                                                    })
-                                                ) : (
-                                                    <p className="text-center text-sm">Данных нет</p>
-                                                )}
+                                            {stepsSkeleton ? (
+                                                <ProgressSpinner style={{ width: '30px', height: '30px' }} animationDuration=".5s" />
+                                            ) : hasSteps ? (
+                                                <p className="text-center text-sm">Данных нет</p>
+                                            ) : content?.length > 0 ? (
+                                                content.map((i, idx) => {
+                                                    if (i.content) {
+                                                        return (
+                                                            <div className={`${idx !== 0 && idx !== content?.length ? 'border-t-1 border-[gray]' : ''}`} key={i.id}>
+                                                                {
+                                                                    <LessonInfoCard
+                                                                        type={i.type.name}
+                                                                        icon={i.type.logo}
+                                                                        title={i.content?.title}
+                                                                        description={i.content?.description || ''}
+                                                                        documentUrl={{ document: i.content?.document, document_path: i.content?.document_path }}
+                                                                        video_link={i.content?.link}
+                                                                        link={i.content?.url}
+                                                                        test={{ content: i.content.content, answers: i.content.answers, score: i.content.score }}
+                                                                        videoStart={handleVideoCall}
+                                                                    />
+                                                                }
+                                                            </div>
+                                                        );
+                                                    }
+                                                })
+                                            ) : (
+                                                <p className="text-center text-sm">Данных нет</p>
+                                            )}
                                         </div>
                                     </AccordionTab>
                                 );

@@ -20,12 +20,11 @@ import { confirmDialog } from 'primereact/confirmdialog';
 import { DataTable } from 'primereact/datatable';
 import { Dialog } from 'primereact/dialog';
 import { Dropdown, DropdownChangeEvent } from 'primereact/dropdown';
-import { InputSwitch } from 'primereact/inputswitch';
 import { InputText } from 'primereact/inputtext';
 import { Paginator } from 'primereact/paginator';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import { TabPanel, TabView } from 'primereact/tabview';
-import { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 
 // types
 interface Role {
@@ -91,7 +90,6 @@ export default function RolesDepartment() {
         total: 0,
         per_page: 0
     });
-    const [checkPageState, setCheckPageState] = useState<number>(1);
     const [selectedTypeId, setSelectedTypeId] = useState<Role_idType | null>({ name: 'Все', role_id: null });
     const [cities, setCities] = useState<Role_idType[]>([{ name: 'Все', role_id: null }]);
 
@@ -170,7 +168,12 @@ export default function RolesDepartment() {
         const res = await fetchRolesDepartment(page, search, myedu_id, selectedTypeId?.role_id || null, active);
         if (res?.success) {
             setRoles(res?.data?.data);
-            setPagination(res?.data);
+            // setPagination(res?.data);
+            setPagination({
+                current_page: res?.data?.current_page,
+                total: res?.data?.total,
+                per_page: res?.data?.per_page
+            });
             setContentNull(false);
         } else {
             setContentNull(true);
@@ -187,7 +190,6 @@ export default function RolesDepartment() {
         // setForDisabled(true);
         setMainProgressSpinner(true);
         const res = await controlDepartamentUsers(worker_id, course_audience_type_id || null, activeParam);
-        console.log(res);
         if (res?.success) {
             setTimeout(() => {
                 handleFetchDepartment(Number(page), search, myedu_id, selectedTypeId, active);
@@ -235,7 +237,7 @@ export default function RolesDepartment() {
         clearValues();
         const res = await teacherCoursePublic(Number(publicCourseId) || null, publicStatus, comment, course_category_id, language_id, is_featured);
         if (res?.success) {
-            handleFetchTeacherCheck(checkPageState, search, myedu_id, selectedTypeId);
+            handleFetchTeacherCheck(Number(page), search, myedu_id, selectedTypeId);
             setMessage({ state: true, value: { severity: 'success', summary: 'Курс успешно изменен!', detail: '' } });
         } else {
             if (res?.response?.status === 400) {
@@ -264,7 +266,7 @@ export default function RolesDepartment() {
         const res = await depCategoryFetch();
         if (res && res?.length) {
             if (activeIndex === 1) {
-                handleFetchTeacherCheck(checkPageState, search, myedu_id, selectedTypeId);
+                handleFetchTeacherCheck(Number(page), search, myedu_id, selectedTypeId);
                 const forCategoryes = res.map((item: { title: string; id: number; description: string }) => {
                     return { name: item?.title, id: item?.id, description: item?.description };
                 });
@@ -291,7 +293,7 @@ export default function RolesDepartment() {
     const handleCategoryAdd = async () => {
         const res = await depCategoryAdd(categoryValue?.title || '', categoryValue?.description || '');
         if (res && res?.id) {
-            // handleFetchTeacherCheck(checkPageState, search, myedu_id, selectedTypeId);
+            // handleFetchTeacherCheck(Number(checkPageState), search, myedu_id, selectedTypeId);
             // const forCategoryes = res.map((item: { title: string, id: number, description: string }) => {
             //     return { name: item?.title, id: item?.id, description: item?.description };
             // });
@@ -355,7 +357,7 @@ export default function RolesDepartment() {
         const res = await depLangFetch();
         if (res && res?.success) {
             if (activeIndex === 1) {
-                // handleFetchTeacherCheck(checkPageState, search, myedu_id, selectedTypeId);
+                // handleFetchTeacherCheck(Number(checkPageState), search, myedu_id, selectedTypeId);
                 setSelectLang(res?.data);
             }
         } else {
@@ -372,14 +374,15 @@ export default function RolesDepartment() {
 
     // Ручное управление пагинацией
     const handlePageChange = (page: number) => {
-        router.push(`/roles/departament/${page}`)
+        router.push(`/roles/departament/${page}`);
     };
 
     // Ручное управление пагинацией
     const handleCheckPageChange = (page: number) => {
         // handleFetchDepartment(page, search, myedu_id, selectedTypeId, active);
-        handleFetchTeacherCheck(page, search, myedu_id, selectedTypeId);
-        setCheckPageState(page);
+        // handleFetchTeacherCheck(page, search, myedu_id, selectedTypeId);
+        // setCheckPageState(page);
+        router.push(`/roles/departament/check/${page}`);
     };
 
     // for tabview
@@ -560,7 +563,6 @@ export default function RolesDepartment() {
                                                             className={`theme-toggle ${forDisabled && 'opacity-50'}`}
                                                             disabled={forDisabled}
                                                             onClick={() => handleControlDepartament(rowData?.id, item?.id, true)}
-                                                            // onClick={() => console.log(rowData?.id, element?.id, item.id, true)}
                                                             aria-pressed="false"
                                                         >
                                                             <span className="right">
@@ -575,7 +577,6 @@ export default function RolesDepartment() {
                                                             disabled={forDisabled}
                                                             onClick={() => handleControlDepartament(rowData?.id, item?.id, false)}
                                                             aria-pressed="false"
-                                                            // onClick={() => console.log(user, roles[idx])} aria-pressed="false"
                                                         >
                                                             <span className="track">
                                                                 <span className="option option-left" aria-hidden></span>
@@ -611,12 +612,18 @@ export default function RolesDepartment() {
                 </div>
             )}
             <div className={`shadow-[0px_-11px_5px_-6px_rgba(0,_0,_0,_0.1)]`}>
+                {/*<Paginator*/}
+                {/*    first={(pagination.current_page - 1) * pagination.per_page}*/}
+                {/*    rows={pagination.per_page}*/}
+                {/*    totalRecords={pagination.total}*/}
+                {/*    onPageChange={(e) => handlePageChange(e.page + 1)}*/}
+                {/*    template={media ? 'FirstPageLink PrevPageLink NextPageLink LastPageLink' : 'FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink'}*/}
+                {/*/>*/}
                 <Paginator
                     first={(pagination.current_page - 1) * pagination.per_page}
                     rows={pagination.per_page}
                     totalRecords={pagination.total}
                     onPageChange={(e) => handlePageChange(e.page + 1)}
-                    // template="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
                     template={media ? 'FirstPageLink PrevPageLink NextPageLink LastPageLink' : 'FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink'}
                 />
             </div>
@@ -634,7 +641,7 @@ export default function RolesDepartment() {
                                 {item?.user.last_name} {item?.user.name} {item?.user.father_name}
                             </b>
                             <div className="w-full flex flex-col gap-2">
-                                <Link href={`/roles/departament/check?course_id=${item?.id}`} key={item?.id} className="text-[14px] font-bold underline">
+                                <Link href={`/roles/departament/check/${item?.id}`} key={item?.id} className="text-[14px] font-bold underline">
                                     {item.title}
                                 </Link>
                                 <div className="w-full flex justify-end">
@@ -701,7 +708,7 @@ export default function RolesDepartment() {
                                 field="title"
                                 header="Курсы"
                                 body={(rowData) => (
-                                    <Link href={`/roles/departament/check?course_id=${rowData?.id}`} key={rowData?.id} className="text-[14px] font-bold text-[var(--mainColor)] underline">
+                                    <Link href={`/roles/departament/check/${rowData?.id}`} key={rowData?.id} className="text-[14px] font-bold text-[var(--mainColor)] underline">
                                         {rowData.title}
                                     </Link>
                                 )}
@@ -768,16 +775,16 @@ export default function RolesDepartment() {
                 </div>
             )}
 
-            <div className={`shadow-[0px_-11px_5px_-6px_rgba(0,_0,_0,_0.1)]`}>
-                <Paginator
-                    first={(checkPagination.current_page - 1) * checkPagination.per_page}
-                    rows={checkPagination.per_page}
-                    totalRecords={checkPagination.total}
-                    onPageChange={(e) => handleCheckPageChange(e.page + 1)}
-                    // template="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
-                    template={media ? 'FirstPageLink PrevPageLink NextPageLink LastPageLink' : 'FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink'}
-                />
-            </div>
+            {/*<div className={`shadow-[0px_-11px_5px_-6px_rgba(0,_0,_0,_0.1)]`}>*/}
+            {/*    <Paginator*/}
+            {/*        first={(checkPagination.current_page - 1) * checkPagination.per_page}*/}
+            {/*        rows={checkPagination.per_page}*/}
+            {/*        totalRecords={checkPagination.total}*/}
+            {/*        onPageChange={(e) => handleCheckPageChange(e.page + 1)}*/}
+            {/*        // template="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"*/}
+            {/*        template={media ? 'FirstPageLink PrevPageLink NextPageLink LastPageLink' : 'FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink'}*/}
+            {/*    />*/}
+            {/*</div>*/}
         </div>
     );
 
@@ -907,7 +914,7 @@ export default function RolesDepartment() {
     // USEEFFECTS
     useEffect(() => {
         if (roleStatus) {
-            handleFetchTeacherCheck(checkPageState, search, myedu_id, selectedTypeId);
+            handleFetchTeacherCheck(Number(page), search, myedu_id, selectedTypeId);
         }
     }, [roleStatus]);
 
@@ -937,7 +944,7 @@ export default function RolesDepartment() {
         setMiniProgressSpinner(true);
         if (search?.length === 0 && searchController) {
             if (roleStatus) {
-                handleFetchTeacherCheck(checkPageState, search, myedu_id, selectedTypeId);
+                handleFetchTeacherCheck(Number(page), search, myedu_id, selectedTypeId);
             } else {
                 handleFetchDepartment(Number(page), search, myedu_id, selectedTypeId, active);
             }
@@ -953,7 +960,7 @@ export default function RolesDepartment() {
         setSearchController(true);
         const delay = setTimeout(() => {
             if (roleStatus) {
-                handleFetchTeacherCheck(checkPageState, search, myedu_id, selectedTypeId);
+                handleFetchTeacherCheck(Number(page), search, myedu_id, selectedTypeId);
             } else {
                 handleFetchDepartment(Number(page), search, myedu_id, selectedTypeId, active);
             }
@@ -968,7 +975,7 @@ export default function RolesDepartment() {
     useEffect(() => {
         if (selectedTypeId) {
             if (roleStatus) {
-                handleFetchTeacherCheck(checkPageState, search, myedu_id, selectedTypeId);
+                handleFetchTeacherCheck(Number(page), search, myedu_id, selectedTypeId);
             } else {
                 handleFetchDepartment(Number(page), search, myedu_id, selectedTypeId, active);
             }
@@ -979,7 +986,7 @@ export default function RolesDepartment() {
         setMyeduProgressSpinner(true);
         if (myedu_id?.length === 0 && myeduController) {
             if (roleStatus) {
-                handleFetchTeacherCheck(checkPageState, search, myedu_id, selectedTypeId);
+                handleFetchTeacherCheck(Number(page), search, myedu_id, selectedTypeId);
             } else {
                 handleFetchDepartment(Number(page), search, myedu_id, selectedTypeId, active);
             }
@@ -996,7 +1003,7 @@ export default function RolesDepartment() {
         setMyeduController(true);
         const delay = setTimeout(() => {
             if (roleStatus) {
-                handleFetchTeacherCheck(checkPageState, search, myedu_id, selectedTypeId);
+                handleFetchTeacherCheck(Number(page), search, myedu_id, selectedTypeId);
             } else {
                 handleFetchDepartment(Number(page), search, myedu_id, selectedTypeId, active);
             }

@@ -16,6 +16,7 @@ import { ProgressSpinner } from 'primereact/progressspinner';
 import React, { useContext, useEffect, useState } from 'react';
 import { BottomNav } from '@/app/components/menu/MobileMenu';
 import useMediaQuery from '@/hooks/useMediaQuery';
+import SubTitle from '@/app/components/SubTitle';
 
 export default function MainNotificatoin() {
     const { user, setMessage, contextNotifications, setContextNotifications, handleNotifications } = useContext(LayoutContext);
@@ -170,8 +171,8 @@ export default function MainNotificatoin() {
     return (
         <div className={'flex flex-col justify-between h-[100vh]'}>
             <div className="main-bg">
-                <div className="w-full flex items-center justify-between">
-                    <h3 className="text-xl sm:text-2xl font-semibold tracking-tight text-[var(--text-color)] shadow-[var(--bottom-shadow)]">{translations.notifications}</h3>
+                <div className="w-full flex items-center shadow-[var(--bottom-shadow)] p-2">
+                    <SubTitle title={translations.notifications} titleSize={'2xl'} mobileTitleSize={'xl'}/>
                 </div>
 
                 {/* <div className="relative w-full flex justify-center sm:justify-start items-center gap-1 my-2">
@@ -208,7 +209,7 @@ export default function MainNotificatoin() {
                     )}
                 </div>
             </div>
-            {media && user?.is_student && <BottomNav />}
+            {/*{media && user?.is_student && <BottomNav />}*/}
         </div>
     );
 }

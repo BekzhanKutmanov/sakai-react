@@ -257,14 +257,30 @@ const AppMenu = () => {
                       router.back();
                   }
               },
-                ...(!media
-                        ? studentMobileMenu.map((item) => ({
-                            label: item?.label,
-                            to: item.to,
-                            icon: item.icon
-                        }))
-                        : [] // Если условие неверно, возвращаем пустой массив, который "распакуется" в ничто
-                ),
+              {
+                  label: translations.mainPage,
+                  icon: 'pi pi-home',
+                  to: '/'
+              },
+              {
+                  label: translations.controlPanel,
+                  icon: 'pi pi-th-large',
+                  to: '/studentHome'
+              },
+              { label: translations.trainingPlan, icon: 'pi pi-fw pi-calendar-clock', to: '/teaching' },
+              {
+                  label: translations.notifications,
+                  icon: 'pi pi-bell',
+                  to: '/notifications'
+              },
+              // ...(!media
+              //         ? studentMobileMenu.map((item) => ({
+              //             label: item?.label,
+              //             to: item.to,
+              //             icon: item.icon
+              //         }))
+              //         : [] // Если условие неверно, возвращаем пустой массив, который "распакуется" в ничто
+              // ),
               {
                   label: translations.openOnlineCourses,
                   icon: 'pi pi-fw pi-globe',
