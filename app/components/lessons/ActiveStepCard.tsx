@@ -10,6 +10,7 @@ import Link from 'next/link';
 import { Button } from 'primereact/button';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import { useContext, useState } from 'react';
+import { useLocalization } from '@/layout/context/localizationcontext';
 
 export default function ActiveStepCard({
     type,
@@ -48,12 +49,13 @@ export default function ActiveStepCard({
     const showError = useErrorMessage();
     const { setMessage } = useContext(LayoutContext);
     const [progressSpinner, setProgressSpinner] = useState(false);
+    const { translations } = useLocalization();
 
     const handleChills = async () => {
         const newChills = !stepItem?.chills;
         setProgressSpinner(true);
         const data = await openChillsUpdate(course_id, stepId, newChills);
-        
+
         if (data?.success) {
             setProgressSpinner(false);
             setMessage({
@@ -67,7 +69,7 @@ export default function ActiveStepCard({
                 if (data?.response?.status == '400') {
                     setMessage({
                         state: true,
-                        value: { severity: 'error', summary: 'Ошибка!', detail: data?.response?.data?.message }
+                        value: { severity: 'error', summary: translations.error, detail: data?.response?.data?.message }
                     });
                 } else {
                     showError(data.response.status);
@@ -85,7 +87,7 @@ export default function ActiveStepCard({
                         <Link href={`/openCourse/activeCourse/${course_id}/${lessonItem?.id}/${stepId}`}>
                             <Button
                                 disabled={progressSpinner}
-                                label="Выполнено"
+                                label={translations.completed}
                                 icon="pi pi-check"
                                 size="small"
                                 className={`w-full success-button px-2 py-1 flex items-center justify-center gap-1 ${progressSpinner && 'opacity-50'} ${media ? 'mini-button' : ''}`}
@@ -94,7 +96,7 @@ export default function ActiveStepCard({
                     ) : (
                         <Button
                             disabled={progressSpinner}
-                            label="Выполнено"
+                            label={translations.completed}
                             icon="pi pi-check"
                             onClick={handleChills}
                             size="small"
@@ -107,10 +109,10 @@ export default function ActiveStepCard({
                     {progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}
                     {type === 'test' || type === 'practical' ? (
                         <Link href={`/openCourse/activeCourse/${course_id}/${lessonItem?.id}/${stepId}`}>
-                            <Button disabled={progressSpinner} label="Отметить как выполненный" size="small" className={`w-full px-2 py-1 ${progressSpinner && 'opacity-50'} ${media ? 'mini-button' : ''}`} />
+                            <Button disabled={progressSpinner} label={translations.markAsCompleted} size="small" className={`w-full px-2 py-1 ${progressSpinner && 'opacity-50'} ${media ? 'mini-button' : ''}`} />
                         </Link>
                     ) : (
-                        <Button disabled={progressSpinner} label="Отметить как выполненный" onClick={handleChills} size="small" className={`w-full px-2 py-1 ${progressSpinner && 'opacity-50'} ${media ? 'mini-button' : ''}`} />
+                        <Button disabled={progressSpinner} label={translations.markAsCompleted} onClick={handleChills} size="small" className={`w-full px-2 py-1 ${progressSpinner && 'opacity-50'} ${media ? 'mini-button' : ''}`} />
                     )}
                 </div>
             )}
@@ -185,13 +187,13 @@ export default function ActiveStepCard({
                 </div>
                 <div className="w-full flex justify-between gap-1 max-w-[800px] text-wrap break-all">
                     <Link href={`/openCourse/activeCourse/${course_id}/${lessonItem?.id}/${stepId}`} className="cursor-pointer max-w-[800px] text-[16px] text-wrap break-all hover:underline">
-                        Тест
+                        {translations.test}
                     </Link>
                 </div>
             </div>
             <div className="w-full flex items-center sm:justify-end flex-col sm:flex-row gap-2 sm:max-w-[350px]">
                 <div className="w-1/2 text-sm">
-                    <span>Балл:</span>
+                    <span>{translations.score}:</span>
                     <span className="text-[var(--mainColor)]">
                         {' '}
                         {stepItem?.answer_score || 0} / {stepItem?.score || 0}
@@ -209,12 +211,12 @@ export default function ActiveStepCard({
                     <i className={`${icon} text-white`}></i>
                 </div>
                 <Link href={`/openCourse/activeCourse/${course_id}/${lessonItem?.id}/${stepId}`} className="cursor-pointer max-w-[800px] text-[16px] text-wrap break-all hover:underline">
-                    Практическое задание
+                    {translations.practicalTask}
                 </Link>
             </div>
             <div className="w-full flex flex-col sm:flex-row items-center justify-center sm:justify-end gap-2 sm:max-w-[350px]">
                 <div className="w-1/2 text-sm">
-                    <span>Балл:</span>{' '}
+                    <span>{translations.score}:</span>{' '}
                     <span className="text-[var(--mainColor)]">
                         {' '}
                         <span className="text-[var(--mainColor)]">

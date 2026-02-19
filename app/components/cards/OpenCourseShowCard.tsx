@@ -6,8 +6,10 @@ import { Button } from 'primereact/button';
 import useMediaQuery from '@/hooks/useMediaQuery';
 import { useEffect, useState } from 'react';
 import { CourseCategoryOption } from '@/types/openCourse/CourseCategoryOption';
+import { useLocalization } from '@/layout/context/localizationcontext';
 
 export default function OpenCourseShowCard({ course, courseSignup, signUpList, btnDisabled }: { course: CourseCategoryOption; courseSignup: (id: number) => void, signUpList: number[], btnDisabled: boolean }) {
+    const { translations } = useLocalization();
     const options: OptionsType = {
         year: '2-digit',
         month: 'short', // 'long', 'short', 'numeric'
@@ -40,7 +42,7 @@ export default function OpenCourseShowCard({ course, courseSignup, signUpList, b
                 <div className='flex flex-col'>
                     <div className={`flex gap-1 items-center text-white rounded p-1 mb-1 ${course?.audience_type?.name === 'open' ? 'bg-[var(--greenColor)]' : course?.audience_type?.name === 'wallet' ? 'bg-[var(--amberColor)]' : ''}`}>
                         <i className={course?.audience_type?.icon} style={{ fontSize: '14px' }}></i>
-                        <i className="text-[13px]">{course?.audience_type?.name === 'open' ? 'Бесплатный' : course?.audience_type?.name === 'wallet' ? 'Платный' : ''}</i>
+                        <i className="text-[13px]">{course?.audience_type?.name === 'open' ? translations.free : course?.audience_type?.name === 'wallet' ? translations.paid : ''}</i>
                     </div>
                     {
                         course?.category?.title ?
@@ -55,7 +57,7 @@ export default function OpenCourseShowCard({ course, courseSignup, signUpList, b
             <div className='flex flex-wrap justify-between gap-2 items-center'>
                 <div className='flex flex-col gap-1'>
                     <div className="flex items-center text-sm">
-                        <span className="text-[var(--mainColor)] p-1">Автор:</span>
+                        <span className="text-[var(--mainColor)] p-1">{translations.author}</span>
                         <div className=" flex p-1 gap-1 items-center">
                             {!media ? (
                                 <>
@@ -75,7 +77,7 @@ export default function OpenCourseShowCard({ course, courseSignup, signUpList, b
 
                     {/* lang */}
                     <div className='flex gap-1 items-center'>
-                        <span className="text-[var(--mainColor)] text-sm p-1">Язык обучения:</span>
+                        <span className="text-[var(--mainColor)] text-sm p-1">{translations.languageOfInstruction}</span>
                         <div className='flex gap-1 items-center'>
                             <img src={`/layout/images/flags/${course?.language?.logo}`} alt="flag" className='w-[20px] h-[20px]' />
                             <span className="font-medium text-[13px] sm:text-md">{course?.language?.title}</span>
@@ -86,13 +88,13 @@ export default function OpenCourseShowCard({ course, courseSignup, signUpList, b
                 {/* рекомендация */}
                 {
                     course?.is_featured ?
-                        <i className='pi pi-verified text-[green] shadow ml-2 p-1 rounded-full' title='Рекомендован департаментом'></i>
+                        <i className='pi pi-verified text-[green] shadow ml-2 p-1 rounded-full' title={translations.recommendedByDepartment}></i>
                         : ''
                 }
             </div>
 
             <div className='main-bg'>
-                <b>Содержание курса</b>
+                <b>{translations.courseContent}</b>
                 <ul className='flex flex-col gap-2'>
                     {
                         course?.lessons?.map((item) => {
@@ -105,9 +107,9 @@ export default function OpenCourseShowCard({ course, courseSignup, signUpList, b
             <div className="flex items-end gap-1 justify-between">
                 <div className="w-full">
                     {typeof isSigned === 'number' ? (
-                        <Button label="Вы записаны" disabled size="small" className="bg-[var(--amberColor)] px-1 py-1.5" style={{ fontSize: '12px' }} onClick={() => courseSignup(course?.id)} />
+                        <Button label={translations.youAreEnrolled} disabled size="small" className="bg-[var(--amberColor)] px-1 py-1.5" style={{ fontSize: '12px' }} onClick={() => courseSignup(course?.id)} />
                     ) : !course?.is_signed ? (
-                        <Button label="Записаться на курс" disabled={btnDisabled} size="small" className="hover:opacity-90 text-white font-medium transition-all shadow-sm px-1 py-1.5" style={{fontSize: '12px'}} onClick={() => courseSignup(course?.id)} />
+                        <Button label={translations.enrollInCourse} disabled={btnDisabled} size="small" className="hover:opacity-90 text-white font-medium transition-all shadow-sm px-1 py-1.5" style={{fontSize: '12px'}} onClick={() => courseSignup(course?.id)} />
                     ) : (
                         ''
                     )}
