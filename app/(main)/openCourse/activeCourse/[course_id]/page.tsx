@@ -13,12 +13,14 @@ import { myMainCourseType } from '@/types/myMainCourseType';
 import { useParams } from 'next/navigation';
 import { Accordion, AccordionTab } from 'primereact/accordion';
 import { useContext, useEffect, useState } from 'react';
+import { useLocalization } from '@/layout/context/localizationcontext';
 
 export default function ActiveCourseDetail() {
     const { course_id } = useParams();
 
     const { setMessage } = useContext(LayoutContext);
     const showError = useErrorMessage();
+    const { translations } = useLocalization();
     const [mainCourse, setMainCourses] = useState<myMainCourseType | null>(null);
     const [lessons, setLessonsValue] = useState<lessonStateType[]>([]);
     const [emptyCourse, setEmptyCourse] = useState(false);
@@ -46,13 +48,13 @@ export default function ActiveCourseDetail() {
             setHasCourses(true);
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
+                value: { severity: 'error', summary: translations.error, detail: translations.tryAgainLater }
             });
             if (data?.response?.status) {
                 if (data?.response?.status == '400') {
                     setMessage({
                         state: true,
-                        value: { severity: 'error', summary: 'Ошибка!', detail: data?.response?.data?.message }
+                        value: { severity: 'error', summary: translations.error, detail: data?.response?.data?.message }
                     });
                 } else {
                     showError(data.response.status);
@@ -78,13 +80,13 @@ export default function ActiveCourseDetail() {
             setHasSteps(true);
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
+                value: { severity: 'error', summary: translations.error, detail: translations.tryAgainLater }
             });
             if (data?.response?.status) {
                 if (data?.response?.status == '400') {
                     setMessage({
                         state: true,
-                        value: { severity: 'error', summary: 'Ошибка!', detail: data?.response?.data?.message }
+                        value: { severity: 'error', summary: translations.error, detail: data?.response?.data?.message }
                     });
                 } else {
                     showError(data.response.status);
@@ -110,11 +112,11 @@ export default function ActiveCourseDetail() {
     return (
         <div className="main-bg">
             {themeShow ? (
-                <NotFound titleMessage="Темы отсуствуют или временно не доступны" />
+                <NotFound titleMessage={translations.noThemes} />
             ) : (
                 <div>
                     <h3 className="text-lg pb-1 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">
-                        <span className="text-[var(--mainColor)]">Название курса:</span> {mainCourse?.title}
+                        <span className="text-[var(--mainColor)]">{translations.courseName}:</span> {mainCourse?.title}
                     </h3>
                     <Accordion activeIndex={activeIndex} onTabChange={(e) => setActiveIndex(e.index)}>
                         {lessons?.map((item) => {
@@ -123,10 +125,10 @@ export default function ActiveCourseDetail() {
                             });
 
                             return (
-                                <AccordionTab header={'Тема: ' + item.title} key={item?.id} className="w-full p-accordion" style={{ width: '100%' }}>
+                                <AccordionTab header={`Тема : ${item.title}`} key={item?.id} className="w-full p-accordion" style={{ width: '100%' }}>
                                     <div className="flex flex-col gap-2">
                                         {hasSteps ? (
-                                            <p className="text-center text-sm">Данных нет</p>
+                                            <p className="text-center text-sm">{translations.noData}</p>
                                         ) : content?.length > 0 ? (
                                             content.map((i, idx) => {
                                                 if (i.content) {
@@ -139,7 +141,7 @@ export default function ActiveCourseDetail() {
                                                                     title={i.content?.title}
                                                                     course_id={Number(course_id)}
                                                                     stepId={i.id}
-                                                                    
+
                                                                     // chills={i?.chills}
                                                                     // fetchProp={() => handleTabChange(courses, course.id, accordionIndex)}
                                                                     fetchProp={() => handleSteps(item?.id)}
@@ -161,7 +163,7 @@ export default function ActiveCourseDetail() {
                                                 }
                                             })
                                         ) : (
-                                            <p className="text-center text-sm">Данных нет</p>
+                                            <p className="text-center text-sm">{translations.noData}</p>
                                         )}
                                     </div>
                                 </AccordionTab>

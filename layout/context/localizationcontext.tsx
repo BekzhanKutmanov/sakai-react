@@ -253,6 +253,28 @@ export const localizationData = {
         myeduIdPlaceholder: 'myedu id',
         administrator: 'Администратор',
         successChanged: 'Успешно изменено!',
+
+        // OpenCourseCard & OpenCourseShowCard
+        youAreEnrolled: 'Вы записаны',
+        enrollInCourse: 'Записаться на курс',
+        moreDetails: 'Подробнее...',
+        confirmEnrollment: 'Вы точно хотите записаться на курс?',
+        enroll: 'Записаться',
+        author: 'Автор:',
+        languageOfInstruction: 'Язык обучения:',
+        recommendedByDepartment: 'Рекомендован департаментом',
+        courseContent: 'Содержание курса',
+
+        // ActiveCourseList
+        completionStatus: 'Статус завершения',
+        empty: 'Пусто',
+
+        // ActiveStepCard
+        completed: 'Выполнено',
+        markAsCompleted: 'Отметить как выполненный',
+        test: 'Тест',
+        practicalTask: 'Практическое задание',
+        theme: 'Тема',
     },
     ky: {
         oshSU: 'ОшМУ',
@@ -502,6 +524,28 @@ export const localizationData = {
         myeduIdPlaceholder: 'myedu id',
         administrator: 'Администратор',
         successChanged: 'Ийгиликтүү өзгөртүлдү!',
+
+        // OpenCourseCard & OpenCourseShowCard
+        youAreEnrolled: 'Сиз жазылгансыз',
+        enrollInCourse: 'Курска жазылуу',
+        moreDetails: 'Кененирээк...',
+        confirmEnrollment: 'Сиз чын эле курска жазылгыңыз келеби?',
+        enroll: 'Жазылуу',
+        author: 'Автор:',
+        languageOfInstruction: 'Окутуу тили:',
+        recommendedByDepartment: 'Департамент тарабынан сунушталган',
+        courseContent: 'Курстун мазмуну',
+
+        // ActiveCourseList
+        completionStatus: 'Аяктоо статусу',
+        empty: 'Бош',
+
+        // ActiveStepCard
+        completed: 'Аткарылды',
+        markAsCompleted: 'Аткарылды деп белгилөө',
+        test: 'Тест',
+        practicalTask: 'Практикалык тапшырма',
+        theme: 'Тема',
     }
 };
 

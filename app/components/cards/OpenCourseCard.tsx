@@ -8,6 +8,7 @@ import { Button } from 'primereact/button';
 import { useEffect, useState } from 'react';
 import { CourseCategoryOption } from '@/types/openCourse/CourseCategoryOption';
 import { confirmDialog } from 'primereact/confirmdialog';
+import { useLocalization } from '@/layout/context/localizationcontext';
 
 // компонент представляет с собой карточку одного курса
 // отобр. название, фото, тип (платный, бесплатный), дата, (срок), фио препода
@@ -31,6 +32,7 @@ export default function OpenCourseCard({
     signUpList: number[];
     btnDisabled: boolean;
 }) {
+    const { translations } = useLocalization();
     const options: OptionsType = {
         year: '2-digit',
         month: 'short', // 'long', 'short', 'numeric'
@@ -71,12 +73,12 @@ export default function OpenCourseCard({
 
     const confirm1 = (id: number) => {
         confirmDialog({
-            message: 'Вы точно хотите записаться на курс?',
-            header: 'Подтверждение',
+            message: translations.confirmEnrollment,
+            header: translations.confirmation,
             icon: 'pi pi-exclamation-triangle',
             defaultFocus: 'accept',
-            acceptLabel: 'Записаться',
-            rejectLabel: 'Назад',
+            acceptLabel: translations.enroll,
+            rejectLabel: translations.back,
             rejectClassName: 'p-button-secondary reject-button',
             accept: () => courseSignup(id)
         });
@@ -95,7 +97,7 @@ export default function OpenCourseCard({
                             }`}
                     >
                         <i className={course?.audience_type?.icon} style={{ fontSize: '14px' }}></i>
-                        <i className="text-[13px]">{course?.audience_type?.name === 'open' ? 'Бесплатный' : course?.audience_type?.name === 'wallet' ? 'Платный' : ''}</i>
+                        <i className="text-[13px]">{course?.audience_type?.name === 'open' ? translations.free : course?.audience_type?.name === 'wallet' ? translations.paid : ''}</i>
                     </div>
                 </div>
                 <div className="w-full flex flex-col items-end">
@@ -104,7 +106,7 @@ export default function OpenCourseCard({
                             }`}
                     >
                         <i className={course?.audience_type?.icon} style={{ fontSize: '14px' }}></i>
-                        <i className="text-[13px]">{course?.audience_type?.name === 'open' ? 'Бесплатный' : course?.audience_type?.name === 'wallet' ? 'Платный' : ''}</i>
+                        <i className="text-[13px]">{course?.audience_type?.name === 'open' ? translations.free : course?.audience_type?.name === 'wallet' ? translations.paid : ''}</i>
                     </div>
                     {
                         course?.category?.title ?
@@ -132,9 +134,9 @@ export default function OpenCourseCard({
                     {pathname !== '/openCourse/activeCourse' ?
                         <div className="w-full">
                             {typeof isSigned === 'number' ? (
-                                <Button label="Вы записаны" disabled size="small" className="bg-[var(--amberColor)] px-1 py-1.5" style={{fontSize: '12px'}}/>
+                                <Button label={translations.youAreEnrolled} disabled size="small" className="bg-[var(--amberColor)] px-1 py-1.5" style={{fontSize: '12px'}}/>
                             ) : !course?.is_signed ? (
-                                <Button label="Записаться на курс" disabled={btnDisabled} size="small" className="hover:opacity-90 text-white font-medium transition-all shadow-sm px-1 py-1.5" style={{fontSize: '12px'}} onClick={() => {
+                                <Button label={translations.enrollInCourse} disabled={btnDisabled} size="small" className="hover:opacity-90 text-white font-medium transition-all shadow-sm px-1 py-1.5" style={{fontSize: '12px'}} onClick={() => {
                                     setSelectedCourseId(course?.id);
                                     confirm1(course?.id);
                                 }} />
@@ -146,7 +148,7 @@ export default function OpenCourseCard({
                     }
 
                     {pathname !== '/openCourse/activeCourse' ? <div className="cursor-pointer flex justify-end text-sm w-full text-[var(--mainColor)]" onClick={() => courseShowProp(course?.id)}>
-                        Подробнее...
+                        {translations.moreDetails}
                     </div> : ''}
                 </div>
                 {/* data */}
