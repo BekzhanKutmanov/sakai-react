@@ -298,7 +298,7 @@ export default function Module() {
             {/* filter */}
             <div className="main-bg flex flex-col gap-4 my-2 p-4 rounded-lg">
                 <div className="shadow-[var(--bottom-shadow)] pb-3">
-                    <SubTitle mobileTitleSize="xl" title="Экспорт модулей" titleSize="2xl" />
+                    <SubTitle mobileTitleSize="xl" title="Модульный график" titleSize="2xl" />
                 </div>
                 <div className="flex items-center  gap-3 flex-col sm:flex-row">
                     <div className="w-full min-w-0 flex flex-col gap-2">

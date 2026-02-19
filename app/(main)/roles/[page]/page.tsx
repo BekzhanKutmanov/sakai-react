@@ -17,9 +17,10 @@ import { Dropdown, DropdownChangeEvent } from 'primereact/dropdown';
 import { InputText } from 'primereact/inputtext';
 import { Paginator } from 'primereact/paginator';
 import { ProgressSpinner } from 'primereact/progressspinner';
-import { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useLocalization } from '@/layout/context/localizationcontext';
 import { useLocalizedData } from '@/hooks/useLocalizedData';
+import SubTitle from '@/app/components/SubTitle';
 
 // types
 interface Role {
@@ -424,8 +425,7 @@ export default function Roles() {
             ) : (
                 <div className="overflow-x-auto scrollbar-thin">
                     <div className="main-bg mb-2">
-                        <h3 className="text-xl sm:text-2xl pb-1 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">{translations.adminTitle}</h3>
-
+                        <div className={'shadow-[var(--bottom-shadow)] mb-3 py-3'}><SubTitle title={translations.adminTitle} titleSize={'2xl'} mobileTitleSize={'xl'}/></div>
                         <div className="flex flex-col sm:flex-row gap-2 mb-2">
                             <div className="flex gap-3 items-center">
                                 <div className={`flex items-center ${!selectedRole_idType?.role_id ? 'opacity-45 pointer-events-none' : ''}`}>

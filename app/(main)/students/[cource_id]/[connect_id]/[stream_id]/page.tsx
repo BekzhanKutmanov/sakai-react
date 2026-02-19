@@ -26,7 +26,7 @@ export default function StudentList() {
         teacher: { last_name: string; name: string };
         id_stream: number;
         score: number | null;
-        schedule: { active: boolean; from: string; to: string };
+        schedule: { active: boolean; expired: boolean; from: string; to: string };
     }
 
     const { cource_id, connect_id, stream_id } = useParams();
@@ -42,7 +42,7 @@ export default function StudentList() {
     const [scoreValues, setScoreValues] = useState<ScoreValueType[]>([]);
     const [studentId, setStudentId] = useState<number | null>(null);
     const [studentScore, setStudentScore] = useState<number | null>(null);
-    const [exportBtnDisabled, setExportBtnDisabled] = useState(false);
+    const [exportBtnSkeleton, setExportBtnSkeleton] = useState(false);
     const { setMessage } = useContext(LayoutContext);
     const { translations } = useLocalization();
     const showError = useErrorMessage();
@@ -53,7 +53,6 @@ export default function StudentList() {
         day: '2-digit',
         hour: '2-digit',
         minute: '2-digit',
-        second: '2-digit',
         hour12: false // 24-С‡Р°СЃРѕРІРѕР№ С„РѕСЂРјР°С‚
     };
 
@@ -98,11 +97,10 @@ export default function StudentList() {
         setStudentId(student_id);
         setStudentScore(score);
         setMyEduInfoVisible(true);
-        setSkeleton(true);
+        setExportBtnSkeleton(true);
         const data = await fetchScoreValues(stream_id, student_id);
         if (data) {
             const scoresArr: ScoreValueType[] = Object.values(data);
-            console.log(scoresArr);
             if (scoresArr && scoresArr?.length > 0) {
                 setScoreValues(scoresArr);
                 setHasScoreValue(false);
@@ -130,11 +128,15 @@ export default function StudentList() {
                 };
                 setMessage({
                     state: true,
-                    value: { severity: 'error', summary: data?.response?.data?.message, detail: <div style={{ whiteSpace: 'pre-line' }}>{teachers()}</div> }
+                    value: {
+                        severity: 'error',
+                        summary: data?.response?.data?.message,
+                        detail: <div style={{ whiteSpace: 'pre-line' }}>{teachers()}</div>
+                    }
                 });
             }
         }
-        setSkeleton(false);
+        setExportBtnSkeleton(false);
     };
 
     const handleSendMyeduScore = async (stream_id: number, student_id: number | null, score: number | null) => {
@@ -159,7 +161,11 @@ export default function StudentList() {
             if (data?.response?.status == '400') {
                 setMessage({
                     state: true,
-                    value: { severity: 'error', summary: translations.errorTitle, detail: data?.response?.data?.message }
+                    value: {
+                        severity: 'error',
+                        summary: translations.errorTitle,
+                        detail: data?.response?.data?.message
+                    }
                 });
             } else {
                 showError(data.response.status);
@@ -169,6 +175,9 @@ export default function StudentList() {
         setStudentScore(null);
         setSkeleton(false);
     };
+
+    const item = scoreValues?.[0]; // берем первый элемент безопасно
+    const isExportDisabled = !item || !item.schedule?.active || !!item.schedule?.expired;
 
     const footerContent = (
         <div>
@@ -188,7 +197,7 @@ export default function StudentList() {
                 label={translations.send}
                 icon="pi pi-check"
                 size="small"
-                disabled={exportBtnDisabled}
+                disabled={isExportDisabled}
                 onClick={() => {
                     setMyEduInfoVisible(false);
                     handleSendMyeduScore(Number(stream_id), studentId, studentScore);
@@ -214,15 +223,6 @@ export default function StudentList() {
         }
     }, [streams]);
 
-    useEffect(() => {
-        console.log(scoreValues);
-        if (scoreValues[0]?.schedule?.active) {
-            setExportBtnDisabled(false);
-        } else {
-            setExportBtnDisabled(true);
-        }
-    }, [scoreValues]);
-
     return (
         <div className="main-bg">
             {skeleton ? (
@@ -230,12 +230,15 @@ export default function StudentList() {
             ) : (
                 <>
                     {/* info section */}
-                    <div className="bg-[var(--titleColor)] relative flex flex-col justify-center items-center w-full text-white p-[30px] md:p-[40px] pb-4">
-                        <h1 className="text-wrap break-words" style={{ color: 'white', fontSize: media ? '22px' : '26px', textAlign: 'center' }}>
+                    <div
+                        className="bg-[var(--titleColor)] relative flex flex-col justify-center items-center w-full text-white p-[30px] md:p-[40px] pb-4">
+                        <h1 className="text-wrap break-words"
+                            style={{ color: 'white', fontSize: media ? '22px' : '26px', textAlign: 'center' }}>
                             {stream?.subject_name.name_ru}
                         </h1>
 
-                        <div className="w-full flex flex-wrap flex-col sm:flex-row gap-3 justify-center text-[12px] sm:text-[14px]">
+                        <div
+                            className="w-full flex flex-wrap flex-col sm:flex-row gap-3 justify-center text-[12px] sm:text-[14px]">
                             <span className="text-sm font-semibold">{stream?.semester?.name_ru}</span>
 
                             <div className="flex gap-1 items-center">
@@ -255,7 +258,8 @@ export default function StudentList() {
                                 <span className="font-semibold">{stream?.period.name_ru}</span>
                             </div>
                             <div>
-                                <span className="bg-[var(--greenColor)] text-[12px] text-center text-white p-1 rounded">{stream?.edu_form?.name_ru}</span>
+                                <span
+                                    className="bg-[var(--greenColor)] text-[12px] text-center text-white p-1 rounded">{stream?.edu_form?.name_ru}</span>
                             </div>
                         </div>
                     </div>
@@ -271,8 +275,10 @@ export default function StudentList() {
                         <GroupSkeleton count={studentList.length} size={{ width: '100%', height: '4rem' }} />
                     ) : (
                         <>
-                            <DataTable value={studentList} dataKey="id" emptyMessage={translations.loading} loading={skeleton} breakpoint="960px" rows={5} className="mini-table">
-                                <Column body={(_, { rowIndex }) => rowIndex + 1} header={translations.numberSign} style={{ width: '20px' }}></Column>
+                            <DataTable value={studentList} dataKey="id" emptyMessage={translations.loading}
+                                       loading={skeleton} breakpoint="960px" rows={5} className="mini-table">
+                                <Column body={(_, { rowIndex }) => rowIndex + 1} header={translations.numberSign}
+                                        style={{ width: '20px' }}></Column>
                                 <Column
                                     field="title"
                                     header={translations.fullName}
@@ -290,7 +296,6 @@ export default function StudentList() {
                                     header={translations.score}
                                     className="flex items-center border-b-0"
                                     body={(rowData) => {
-                                        console.log(rowData);
                                         return (
                                             <div className="flex items-center gap-2" key={rowData?.id}>
                                                 {rowData?.score && rowData.score > 0 ? (
@@ -305,8 +310,6 @@ export default function StudentList() {
                                                         ) : (
                                                             ''
                                                         )}
-                                                        {/* <i onClick={()=> console.log(rowData)} className="cursor-pointer pi pi-upload bg-[var(--mainColor)] text-white p-2 px-3 rounded" title={translations.saveToMyedu}></i> */}
-                                                        {/* <Button icon={'pi pi-arrow-right'} size='small' style={{ fontSize: '13px', padding: '4px 4px'}} label="myedu" /> */}
                                                     </div>
                                                 ) : (
                                                     <b className={'text-[var(--redColor)] p-1 w-[25px]text-center'}>{rowData?.score}</b>
@@ -318,11 +321,12 @@ export default function StudentList() {
 
                                 <Column
                                     header={translations.lastVisit}
-                                    // style={{ width: '20%' }}
                                     body={(rowData) => (
                                         <div className="flex items-center gap-2" key={rowData?.id}>
                                             {/* {rowData?.last_movement ? new Date(rowData.last_movement).toISOString().slice(0, 19).replace('T', ' ') : <i className="pi pi-minus"></i>} */}
-                                            {rowData?.last_movement ? <MyDateTime createdAt={rowData?.last_movement} options={options} /> : <i className="pi pi-minus"></i>}
+                                            {rowData?.last_movement ?
+                                                <MyDateTime createdAt={rowData?.last_movement} options={options} /> :
+                                                <i className="pi pi-minus"></i>}
                                         </div>
                                     )}
                                 />
@@ -363,7 +367,9 @@ export default function StudentList() {
                 footer={footerContent}
             >
                 <>
-                    {hasScoreValue ? (
+                    {exportBtnSkeleton ?
+                        <div><GroupSkeleton count={1} size={{ width: '100%', height: '10rem' }} /></div>
+                        : hasScoreValue ? (
                         <div>
                             <b className="flex justify-center">{translations.dataNotAvailable}</b>
                         </div>
@@ -371,11 +377,13 @@ export default function StudentList() {
                         <div className="flex flex-col gap-2">
                             {scoreValues?.map((item: ScoreValueType) => {
                                 return (
-                                    <div key={item?.course?.id} className={`main-bg flex flex-col gap-4 text-[14px] sm:text-md ${scoreValues.length > 1 && 'p-2 lesson-card-border shadow'}`}>
+                                    <div key={item?.course?.id}
+                                         className={`main-bg flex flex-col gap-4 text-[14px] sm:text-md ${scoreValues.length > 1 && 'p-2 lesson-card-border shadow'}`}>
                                         <div className="flex items-center gap-1 justify-between">
                                             <b className="sm:text-md">{item?.course?.title}</b>
                                             <div className="text-sm">
-                                                <span>{translations.idLabel}:</span> <span className="text-[var(--mainColor)]"> {item?.id_stream}</span>
+                                                <span>{translations.idLabel}:</span> <span
+                                                className="text-[var(--mainColor)]"> {item?.id_stream}</span>
                                             </div>
                                         </div>
                                         <div className="flex items-center gap-1 justify-between">
@@ -383,13 +391,15 @@ export default function StudentList() {
                                                 {item?.teacher?.last_name} {item?.teacher?.name}
                                             </p>
                                             <div className="text-sm">
-                                                <span>{translations.score}:</span> <span className="text-[var(--mainColor)]"> {item?.score || 0}</span>
+                                                <span>{translations.score}:</span> <span
+                                                className="text-[var(--mainColor)]"> {item?.score || 0}</span>
                                             </div>
                                         </div>
                                         {item?.schedule && (
                                             <div className="flex items-center gap-1 justify-between">
                                                 <p className="m-0">{translations.periodExportShedule}</p>
-                                                <div className="text-[12px] flex flex-wrap justify-end items-center gap-1">
+                                                <div
+                                                    className="text-[12px] flex flex-wrap justify-end items-center gap-1">
                                                     <MyDateTime createdAt={item.schedule.from} options={options} />
                                                     <i>-</i>
                                                     <MyDateTime createdAt={item.schedule.to} options={options} />
@@ -400,14 +410,16 @@ export default function StudentList() {
                                         <div className="flex items-center gap-1 justify-between">
                                             <p className="m-0">Статус</p>
                                             {item?.schedule?.active ? (
-                                                <div className="text-[12px] text-white bg-[var(--mainBorder)] p-1 rounded flex flex-wrap justify-end items-center gap-1">
+                                                <div
+                                                    className="text-[12px] text-[var(--greenColor)] p-1 rounded flex flex-wrap justify-end items-center gap-1">
                                                     <i className="pi pi-check-circle"></i>
-                                                    <span>{translations.accessExportStatus}</span>
+                                                    {/*<span>{translations.accessExportStatus}</span>*/}
                                                 </div>
                                             ) : (
-                                                <div className="text-[12px] text-white bg-[var(--mainBorder)] p-1 rounded flex flex-wrap justify-end items-center gap-1">
+                                                <div
+                                                    className="text-[12px] text-[var(--redColor)] p-1 rounded flex flex-wrap justify-end items-center gap-1">
                                                     <i className="pi pi-times-circle"></i>
-                                                    <span>{translations.accessExportStatusFalse}</span>
+                                                    {/*<span>{translations.accessExportStatusFalse}</span>*/}
                                                 </div>
                                             )}
                                         </div>

@@ -324,11 +324,13 @@ export default function StudentsPage() {
         <div className="bg-white p-4 rounded-2xl shadow-md">
             <div className="min-h-screen font-sans text-[#1e293b]">
                 {/* Заголовок */}
-                <div className="flex items-center gap-3 mb-4">
-                    <i className="pi pi-users text-white bg-[#2563eb] p-2 text-4xl rounded-lg"></i>
+                <div className="flex items-center gap-4 p-5 bg-white border border-slate-200 rounded-xl shadow-sm mb-2">
+                    <div className="flex items-center justify-center w-14 h-14 bg-blue-50 text-blue-600 rounded-xl shadow-sm">
+                        <i className="pi pi-users text-2xl"></i>
+                    </div>
                     <div>
-                        <h1 className="m-0 mb-1 text-3xl font-bold tracking-tight">Панель редуктора</h1>
-                        <p className="text-slate-500">Управление работами студентов</p>
+                        <h1 className="m-0 text-2xl font-bold text-slate-800 tracking-tight">Панель редуктора</h1>
+                        <p className="text-slate-500 text-sm mt-1 font-medium">Управление работами студентов</p>
                     </div>
                 </div>
 

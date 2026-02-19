@@ -772,7 +772,7 @@ const AppMenu = () => {
             </FormModal>
 
             {/* <div className="flex flex-col h-screen"> */}
-            <ul className={`layout-menu max-h-[90%] overflow-y-auto scrollbar-thin-y`}>
+            <ul className={`layout-menu ${pathname.startsWith('/course/detail/') ? 'max-h-[90%]' : 'max-h-[100%]'} overflow-y-auto scrollbar-thin-y`}>
                 {model.map((item, i) => {
                     return !item?.seperator ? <AppMenuitem item={item} root={true} index={i} key={item.label} /> : <li className="menu-separator"></li>;
                 })}

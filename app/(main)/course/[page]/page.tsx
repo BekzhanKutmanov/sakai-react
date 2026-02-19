@@ -39,7 +39,7 @@ import { useLocalization } from '@/layout/context/localizationcontext';
 import { useParams, useRouter } from 'next/navigation';
 
 export default function Course() {
-    const {page} = useParams();
+    const { page } = useParams();
 
     const { translations } = useLocalization();
     const { setMessage, setGlobalLoading, course, contextFetchCourse, setMainCourseId } = useContext(LayoutContext);
@@ -504,15 +504,14 @@ export default function Course() {
 
     const itemTemplate = (shablonData: any) => {
         return (
-            <div className="col-12">
-                <div className={`w-full flex flex-col align-items-center p-3 gap-3 `}>
-                    {/* Номер (rowIndex) можно добавить через внешний счетчик или props, но для DataView это сложнее */}
-                    {/* Заголовок */}
-                    <div className={`w-full flex-1 ${tableMedia && 'flex items-center gap-1 justify-between'}`}>
-                        <div className="font-bold text-md mb-2">
+            <div className="col-12 py-2">
+                <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-4 flex flex-col gap-3 hover:shadow-md transition-all duration-300">
+                    {/* Header: Title & Actions */}
+                    <div className="flex justify-between items-start gap-2">
+                        <div className="font-bold text-lg leading-tight text-slate-800">
                             <Link
                                 href={`/course/detail/${shablonData.id}/${'null'}`}
-                                className="max-w-sm break-words"
+                                className="hover:text-blue-600 transition-colors"
                                 onClick={() => {
                                     setMainCourseId(shablonData.id);
                                     setGlobalLoading(true);
@@ -521,35 +520,56 @@ export default function Course() {
                                     }, 900);
                                 }}
                             >
-                                {shablonData.title} {/* Используем subject_name из вашего шаблона */}
+                                {shablonData.title}
                             </Link>
                         </div>
                         {tableMedia && (
-                            <div className="flex flex-column sm:flex-row gap-2 sm:mt-0">
+                            <div className="shrink-0">
                                 <Redacting redactor={getRedactor(shablonData, { onEdit: edit, getConfirmOptions, onDelete: handleDeleteCourse }, inboxConfirm)} textSize={'14px'} />
                             </div>
                         )}
                     </div>
-                    <div>{imageBodyTemplate(shablonData)}</div>
-                    <div className="w-full flex flex-col justify-start">
-                        <div className="flex gap-1 items-center">
-                            <span className="text-[var(--mainColor)] text-sm mr-1">{translations.status} </span>
-                            <Button
-                                size="small"
-                                className="p-2"
-                                onClick={() => {
-                                    setSelectedCourse(shablonData?.id);
-                                    handleFetchCourseOpenStatus();
-                                }}
-                            >
-                                <i className={`${shablonData?.audience_type?.icon}`}></i>
-                            </Button>
+
+                    {/* Image & Main Info */}
+                    <div className="flex gap-4 items-center">
+                        <div className="w-20 h-20 shrink-0 rounded-lg overflow-hidden bg-slate-100 border border-slate-100">
+                            {typeof shablonData.image === 'string' ? (
+                                <img src={shablonData.image} alt="Course" className="w-full h-full object-cover" />
+                            ) : (
+                                <img src={'/layout/images/no-image.png'} alt="No image" className="w-full h-full object-cover opacity-50" />
+                            )}
                         </div>
-                        <div>
-                            <span className="text-[var(--mainColor)] text-sm">{translations.score} </span>
-                            <span className="text-sm">{`${shablonData?.max_score}`}</span>
+
+                        <div className="flex flex-col gap-1.5 w-full">
+                            <div className="flex items-center justify-between text-sm">
+                                <span className="text-slate-500">{translations.status}:</span>
+                                <Button
+                                    size="small"
+                                    className="p-1 w-8 h-8 flex items-center justify-center rounded-full bg-blue-50 text-blue-600 hover:bg-blue-100 border-none"
+                                    onClick={() => {
+                                        setSelectedCourse(shablonData?.id);
+                                        handleFetchCourseOpenStatus();
+                                    }}
+                                >
+                                    <i className={`${shablonData?.audience_type?.icon}`}></i>
+                                </Button>
+                            </div>
+
+                            <div className="flex items-center justify-between text-sm">
+                                <span className="text-slate-500">{translations.score}:</span>
+                                <span className="font-semibold text-slate-700">{shablonData?.max_score}</span>
+                            </div>
+
+                            <div className="flex items-center justify-between text-sm">
+                                <span className="text-slate-500">{translations.publication}:</span>
+                                {shablonData.is_published ? <i className="pi pi-check-circle text-green-500 text-lg"></i> : <i className="pi pi-times-circle text-red-500 text-lg"></i>}
+                            </div>
                         </div>
-                        <div className="flex gap-1 items-center">
+                    </div>
+
+                    {/* Controls Section */}
+                    <div className="pt-3 border-t border-slate-100 flex flex-col gap-3">
+                        <div className="flex items-center justify-between">
                             <span className="text-[var(--mainColor)] text-sm">{translations.onReview} </span>
                             <label className="custom-radio">
                                 <input
@@ -563,12 +583,7 @@ export default function Course() {
                                 <span className="checkbox-mark"></span>
                             </label>
                         </div>
-                        <div className="flex gap-1 items-center">
-                            <span className="text-[var(--mainColor)] text-sm">{translations.publication} </span>
-                            {shablonData.is_published ? <i className="pi pi-check-circle text-md text-[var(--greenColor)]"></i> : <i className="pi pi-times-circle text-md text-[var(--redColor)]"></i>}
-                        </div>
-                    </div>
-                    <>
+
                         <label className="custom-course-radio">
                             <input
                                 type="radio"
@@ -596,12 +611,10 @@ export default function Course() {
                                 {translations.connected} ({shablonData.connects_count})
                             </span>
                         </label>
-                    </>
-                    {/* Кнопки действий */}
+                    </div>
+
                     {!tableMedia && (
-                        <div className="flex flex-column sm:flex-row gap-2 sm:mt-0">
-                            {/* <Button icon="pi pi-pencil" className="p-button-rounded" onClick={() => edit(shablonData)} /> */}
-                            {/* <Button icon="pi pi-trash" className="p-button-rounded p-button-danger" onClick={() => handleDeleteCourse(shablonData.id)} /> */}
+                        <div className="flex justify-end pt-2">
                             <Redacting redactor={getRedactor(shablonData, { onEdit: edit, getConfirmOptions, onDelete: handleDeleteCourse }, inboxConfirm)} textSize={'14px'} />
                         </div>
                     )}
@@ -898,18 +911,18 @@ export default function Course() {
                                 {/* {skeleton ? (
                                     <GroupSkeleton count={1} size={{ width: '100%', height: '5rem' }} />
                                 ) : ( */}
-                                    <div className="flex flex-col md:flex-row justify-between md:items-center mb-2 py-2 gap-1 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">
-                                        <h3 className="text-[32px] m-0">{translations.courses}</h3>
-                                        <Button
-                                            label={translations.addCourse}
-                                            icon="pi pi-plus"
-                                            onClick={() => {
-                                                setEditMode(false);
-                                                clearValues();
-                                                setFormVisible(true);
-                                            }}
-                                        />
-                                    </div>
+                                <div className="flex flex-col md:flex-row justify-between md:items-center mb-2 py-2 gap-1 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">
+                                    <h3 className="text-[32px] m-0">{translations.courses}</h3>
+                                    <Button
+                                        label={translations.addCourse}
+                                        icon="pi pi-plus"
+                                        onClick={() => {
+                                            setEditMode(false);
+                                            clearValues();
+                                            setFormVisible(true);
+                                        }}
+                                    />
+                                </div>
                                 {/* // )} */}
 
                                 {skeleton ? (

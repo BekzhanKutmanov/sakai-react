@@ -25,6 +25,7 @@ import { Paginator } from 'primereact/paginator';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import { TabPanel, TabView } from 'primereact/tabview';
 import React, { useContext, useEffect, useState } from 'react';
+import SubTitle from '@/app/components/SubTitle';
 
 // types
 interface Role {
@@ -1036,7 +1037,7 @@ export default function RolesDepartment() {
             ) : (
                 <div className="overflow-x-auto scrollbar-thin">
                     <div className={`main-bg mb-2`}>
-                        <h3 className="text-xl sm:text-2xl pb-1 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">Департамент</h3>
+                        <div className={'shadow-[var(--bottom-shadow)] mb-3 py-3'}><SubTitle title={"Департамент"} titleSize={'2xl'} mobileTitleSize={'xl'}/></div>
                         <div className={`flex flex-col sm:flex-row gap-2 mb-2 ${activeIndex === 2 ? 'opacity-50 pointer-events-none' : ''}`}>
                             <div className="flex gap-3 items-center">
                                 {!roleStatus && (

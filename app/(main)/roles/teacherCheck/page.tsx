@@ -12,6 +12,7 @@ import { fetchFaculty } from '@/services/faculty';
 import { Dropdown } from 'primereact/dropdown';
 import { InputText } from 'primereact/inputtext';
 import { ProgressSpinner } from 'primereact/progressspinner';
+import SubTitle from '@/app/components/SubTitle';
 
 interface Report extends myMainCourseType {
     name: string;
@@ -193,10 +194,9 @@ const TeacherCheckPage = () => {
     return (
         <div className="bg-gray-50 min-h-screen">
             <div>
-                <h1 className="main-bg text-xl md:text-2xl font-bold mb-4">Отчет по преподавателям</h1>
-
                 {/* filter */}
                 <div className="main-bg flex flex-col gap-1 my-1">
+                    <div className={'shadow-[var(--bottom-shadow)] mb-3 py-3'}><SubTitle title={'Отчет по преподавателям'} titleSize={'2xl'} mobileTitleSize={'xl'}/></div>
                     <div className=" flex sm:items-center gap-2 flex-col sm:flex-row mb-2">
                         <div className="sm:max-w-[60%] overflow-hidden flex flex-col items-start gap-2">
                             <b className="px-1 inline">Выберите факультет</b>
@@ -225,7 +225,7 @@ const TeacherCheckPage = () => {
                     </div>
                 </div>
 
-                {hasReport ? ( 
+                {hasReport ? (
                     <div className="flex justify-center items-center flex-col gap-2 h-[50vh]">
                         <i className="pi pi-folder-open text-3xl"></i>
                         <h3 className="text-xl font-semibold text-gray-700 mb-2">Ошибка загрузки</h3>
