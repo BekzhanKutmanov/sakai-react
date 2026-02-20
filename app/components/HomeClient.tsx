@@ -23,7 +23,7 @@ import { CourseCategoryOption } from '@/types/openCourse/CourseCategoryOption';
 import { useLocalization } from '@/layout/context/localizationcontext';
 
 export default function HomeClient() {
-    // types 
+    // types
 
     const params = new URLSearchParams();
     const { translations } = useLocalization();
@@ -74,7 +74,7 @@ export default function HomeClient() {
         for (const key in data) {
             const coureseTypeItems = data[key];
             forMainCourses.push(...coureseTypeItems);
-        }        
+        }
         if(forMainCourses?.length){
             setValueCourses(forMainCourses);
         }
@@ -101,7 +101,7 @@ export default function HomeClient() {
     };
 
     const OpenCourse = ({ course, index }: { course: CourseCategoryOption; index: number }) => {
-        return (    
+        return (
             <div key={course?.id} className="group max-h-[420px] min-h-[360px] bg-white w-full sm:min-w-[280px] sm:max-w-[280px] border border-slate-100 shadow-sm rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 flex flex-col gap-3">
                 <div className="relative p-3 pb-0">
                     <div className="flex justify-center items-center rounded-xl overflow-hidden bg-slate-50">{imageBodyTemplate(course, index)}</div>
@@ -180,7 +180,7 @@ export default function HomeClient() {
         );
     };
 
-    const handleCourseShow = async (course_id: number) => {        
+    const handleCourseShow = async (course_id: number) => {
         setShowVisible(true);
         setSkeleton(true);
         const data = await openCourseShow(course_id);
@@ -234,7 +234,7 @@ export default function HomeClient() {
     };
 
     // signup courses list
-    const handleSignupList = async (course: any) => {        
+    const handleSignupList = async (course: any) => {
         course?.forEach((i: { id: number }) => params.append('course_Ids[]', String(i?.id)));
         const data = await signupList(params);
         if (data && data?.signed_courses) {
@@ -245,7 +245,7 @@ export default function HomeClient() {
     };
 
     const handleSendSingup = async () => {
-        // current course 
+        // current course
         const list: any | null = await handleSignupList(coursesValue);
         if (list) {
             setSignupList(list);
@@ -336,7 +336,7 @@ export default function HomeClient() {
                         ) : (
                             <div className="m-auto">
                                 <h3 className="text-lg sm:text-xl text-center mb-4 font-bold">{translations.newCourses}</h3>
-                                <div className="w-full flex flex-wrap justify-center gap-4 mt-5 sm:m-0">
+                                <div className="w-full flex flex-wrap gap-4 mt-5 sm:m-0">
                                     {newCourses?.map((item, idx) => {
                                         return <OpenCourse key={item?.id} course={item} index={idx} />;
                                     })}
@@ -393,10 +393,14 @@ export default function HomeClient() {
                         ''
                     )}
 
-                    {newCourses?.length || bestCourses?.length || popularCourses?.length ? <Link href={'/openCourse'} className='font-sans cursor-pointer flex gap-1 items-center justify-end text-sm text-[var(--mainColor)]'>
-                        <span className='underline'>{translations.allOpenCourses}</span>
-                        <i className='pi pi-arrow-right font-sans' style={{fontSize: '12px'}}></i>
-                    </Link> : ''}
+                    {newCourses?.length || bestCourses?.length || popularCourses?.length ? (
+                        <Link href={'/openCourse'} className="font-sans cursor-pointer flex gap-1 items-center justify-end text-sm text-[var(--mainColor)]">
+                            <span className="underline">{translations.allOpenCourses}</span>
+                            <i className="pi pi-arrow-right font-sans" style={{ fontSize: '12px' }}></i>
+                        </Link>
+                    ) : (
+                        ''
+                    )}
                 </div>
 
                 <Sidebar visible={showVisisble} position="bottom" style={{ height: '90vh' }} onHide={() => setShowVisible(false)}>

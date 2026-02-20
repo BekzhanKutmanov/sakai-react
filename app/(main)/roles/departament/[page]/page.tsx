@@ -680,7 +680,7 @@ export default function RolesDepartment() {
                                                 setVisible(true);
                                             }}
                                         >
-                                            Аннулировать
+                                            Отменать
                                         </button>
                                     </div>
                                 </div>
@@ -866,9 +866,9 @@ export default function RolesDepartment() {
             />
 
             <Button
-                label={publicState ? 'Опубликовать' : 'Аннулировать'}
+                label={publicState ? 'Опубликовать' : 'Отменить'}
                 size="small"
-                className={`${publicState ? (categorySelectedId?.id && language_id ? '' : 'opacity-50 pointer-events-none') : ''}`}
+                className={`trash-button ${publicState ? (categorySelectedId?.id && language_id ? '' : 'opacity-50 pointer-events-none') : ''}`}
                 icon="pi pi-check"
                 onClick={() => {
                     setVisible(false);
@@ -1130,7 +1130,7 @@ export default function RolesDepartment() {
 
             {/* publising */}
             <Dialog
-                header={publicState ? 'Опубликовать курс' : 'Аннулировать курс'}
+                header={publicState ? 'Опубликовать курс' : 'Отменить курс'}
                 visible={visible}
                 className="my-custom-dialog"
                 onHide={() => {
