@@ -20,7 +20,7 @@ import { ProgressSpinner } from 'primereact/progressspinner';
 import React, { useContext, useEffect, useState } from 'react';
 import { useLocalization } from '@/layout/context/localizationcontext';
 import { useLocalizedData } from '@/hooks/useLocalizedData';
-import SubTitle from '@/app/components/SubTitle';
+import SubTitle from '@/app/components/titles/SubTitle';
 
 // types
 interface Role {

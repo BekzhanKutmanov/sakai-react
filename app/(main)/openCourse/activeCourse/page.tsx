@@ -12,10 +12,11 @@ import { CourseCategoryOption } from '@/types/openCourse/CourseCategoryOption';
 import { OptionsType } from '@/types/OptionsType';
 import Link from 'next/link';
 import { ProgressSpinner } from 'primereact/progressspinner';
-import { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
+import MainTitle from '@/app/components/titles/MainTitle';
 
 export default function ActiveCourseList() {
-    // types 
+    // types
 
     const { setMessage } = useContext(LayoutContext);
     const showError = useErrorMessage();
@@ -192,7 +193,7 @@ export default function ActiveCourseList() {
 
     return (
         <div className="main-bg">
-            <h1 className="m-0 mb-4 pb-1 shadow-[var(--bottom-shadow)] text-xl sm:text-2xl">Мои активные курсы</h1>
+            <MainTitle>Мои активные курсы</MainTitle>
             {skeleton ? (
                 <>
                     <GroupSkeleton count={2} size={{ width: '100%', height: '12rem' }} />

@@ -16,7 +16,7 @@ import { ProgressSpinner } from 'primereact/progressspinner';
 import React, { useContext, useEffect, useState } from 'react';
 import { BottomNav } from '@/app/components/menu/MobileMenu';
 import useMediaQuery from '@/hooks/useMediaQuery';
-import SubTitle from '@/app/components/SubTitle';
+import SubTitle from '@/app/components/titles/SubTitle';
 
 export default function MainNotificatoin() {
     const { user, setMessage, contextNotifications, setContextNotifications, handleNotifications } = useContext(LayoutContext);

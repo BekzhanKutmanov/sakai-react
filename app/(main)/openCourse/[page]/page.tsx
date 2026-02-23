@@ -4,7 +4,7 @@ import OpenCourseCard from '@/app/components/cards/OpenCourseCard';
 import OpenCourseShowCard from '@/app/components/cards/OpenCourseShowCard';
 import { NotFound } from '@/app/components/NotFound';
 import GroupSkeleton from '@/app/components/skeleton/GroupSkeleton';
-import SubTitle from '@/app/components/SubTitle';
+import SubTitle from '@/app/components/titles/SubTitle';
 import useErrorMessage from '@/hooks/useErrorMessage';
 import useMediaQuery from '@/hooks/useMediaQuery';
 import { LayoutContext } from '@/layout/context/layoutcontext';
@@ -21,6 +21,7 @@ import { ProgressSpinner } from 'primereact/progressspinner';
 import { Sidebar } from 'primereact/sidebar';
 import { useContext, useEffect, useState } from 'react';
 import { useLocalization } from '@/layout/context/localizationcontext';
+import MainTitle from '@/app/components/titles/MainTitle';
 
 // types
 interface CategoryId {
@@ -356,11 +357,9 @@ export default function OpenCourse() {
 
     return (
         <div className="flex flex-col gap-2">
-            <div className="main-bg p-2 sm:p-4">
+            <div className="main-bg px-2 sm:px-4">
                 {/* header section */}
-                <div className='shadow-[var(--bottom-shadow)] pb-3'>
-                    <SubTitle mobileTitleSize='xl' titleSize='2xl' title={translations.courses}/>
-                </div>
+                <MainTitle>{translations.courses}</MainTitle>
 
                 {/* filter section */}
                 <div className="flex flex-col gap-2 mt-2">

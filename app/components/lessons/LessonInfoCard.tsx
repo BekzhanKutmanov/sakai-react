@@ -4,8 +4,9 @@ import { LayoutContext } from '@/layout/context/layoutcontext';
 import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
-import { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import GroupSkeleton from '../skeleton/GroupSkeleton';
+import Link from 'next/link';
 
 export default function LessonInfoCard({
     contentType,
@@ -126,6 +127,7 @@ export default function LessonInfoCard({
                     <Button
                         label={'Проверить'}
                         size="small"
+                        className={'hover:opacity-90 font-medium transition-all active:scale-[0.98]'}
                         onClick={() => {
                             getValues && getValues();
                             setDocCall(true);
@@ -199,6 +201,7 @@ export default function LessonInfoCard({
                     <Button
                         label={'Проверить'}
                         size="small"
+                        className={'hover:opacity-90 font-medium transition-all active:scale-[0.98]'}
                         onClick={() => {
                             getValues && getValues();
                             setLinkCall(true);
@@ -256,6 +259,7 @@ export default function LessonInfoCard({
                     <Button
                         label={'Проверить'}
                         size="small"
+                        className={'hover:opacity-90 font-medium transition-all active:scale-[0.98]'}
                         onClick={() => {
                             getValues && getValues();
                             setVideoCall(true);
@@ -328,6 +332,7 @@ export default function LessonInfoCard({
                         <Button
                             label={'Проверить'}
                             size="small"
+                            className={'hover:opacity-90 font-medium transition-all active:scale-[0.98]'}
                             onClick={() => {
                                 getValues && getValues();
                                 setTestCall(true);
@@ -454,6 +459,7 @@ export default function LessonInfoCard({
                         <Button
                             label={'Проверить'}
                             size="small"
+                            className={'hover:opacity-90 font-medium transition-all active:scale-[0.98]'}
                             onClick={() => {
                                 getValues && getValues();
                                 setPracticaCall(true);
