@@ -25,7 +25,7 @@ import { Paginator } from 'primereact/paginator';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import { TabPanel, TabView } from 'primereact/tabview';
 import React, { useContext, useEffect, useState } from 'react';
-import SubTitle from '@/app/components/SubTitle';
+import SubTitle from '@/app/components/titles/SubTitle';
 
 // types
 interface Role {

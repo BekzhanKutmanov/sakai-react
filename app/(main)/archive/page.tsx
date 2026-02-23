@@ -8,7 +8,7 @@ import { ProgressSpinner } from 'primereact/progressspinner';
 import { Tag } from 'primereact/tag';
 import { DataView } from 'primereact/dataview';
 import useMediaQuery from '@/hooks/useMediaQuery';
-import SubTitle from '@/app/components/SubTitle';
+import SubTitle from '@/app/components/titles/SubTitle';
 import { fetchArchivedCourses } from '@/services/courses';
 import { myMainCourseType } from '@/types/myMainCourseType';
 import { useLocalization } from '@/layout/context/localizationcontext';
@@ -116,14 +116,14 @@ const ArchivePage = () => {
                                     {publishedBodyTemplate(course)}
                                 </div>
                             </div> */}
-                            {/* <Button 
-                                label="Показать историю" 
-                                icon="pi pi-chevron-down" 
-                                className="p-button-text mt-3" 
+                            {/* <Button
+                                label="Показать историю"
+                                icon="pi pi-chevron-down"
+                                className="p-button-text mt-3"
                                 onClick={() => {
                                     const newExpandedRows = expandedRows && expandedRows[course.id] ? null : { [course.id]: true };
                                     setExpandedRows(newExpandedRows);
-                                }} 
+                                }}
                             /> */}
                         </div>
                     </div>

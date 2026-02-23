@@ -12,7 +12,7 @@ import { fetchFaculty } from '@/services/faculty';
 import { Dropdown } from 'primereact/dropdown';
 import { InputText } from 'primereact/inputtext';
 import { ProgressSpinner } from 'primereact/progressspinner';
-import SubTitle from '@/app/components/SubTitle';
+import SubTitle from '@/app/components/titles/SubTitle';
 
 interface Report extends myMainCourseType {
     name: string;

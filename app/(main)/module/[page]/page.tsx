@@ -6,7 +6,7 @@ import { Dropdown } from 'primereact/dropdown';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import { useContext, useEffect, useState } from 'react';
 import ModuleChartCard from '@/app/components/cards/ModuleChartCard';
-import SubTitle from '@/app/components/SubTitle';
+import SubTitle from '@/app/components/titles/SubTitle';
 import { fetchModuleShedule, fetchSemestr, sheduleDiactivate, sheduleSave } from '@/services/module/module';
 import { Button } from 'primereact/button';
 import { confirmDialog } from 'primereact/confirmdialog';

@@ -322,7 +322,7 @@ export default function StudentList() {
                                 <Column
                                     header={translations.lastVisit}
                                     body={(rowData) => (
-                                        <div className="flex items-center gap-2" key={rowData?.id}>
+                                        <div className="flex items-center gap-2 text-[13px]" key={rowData?.id}>
                                             {/* {rowData?.last_movement ? new Date(rowData.last_movement).toISOString().slice(0, 19).replace('T', ' ') : <i className="pi pi-minus"></i>} */}
                                             {rowData?.last_movement ?
                                                 <MyDateTime createdAt={rowData?.last_movement} options={options} /> :

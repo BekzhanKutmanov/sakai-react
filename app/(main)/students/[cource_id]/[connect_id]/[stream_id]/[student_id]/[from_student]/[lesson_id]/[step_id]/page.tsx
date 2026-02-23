@@ -47,7 +47,7 @@ export default function StudentCheck() {
 
     const handleFetchStreams = async () => {
         mainSetSkeleton(true);
-        const data = await fetchStudentDetail(lesson_id ? Number(lesson_id) : null, connect_id ? Number(connect_id) : null, stream_id ? Number(stream_id) : null, student_id ? Number(student_id) : null, step_id ? Number(step_id) : null);        
+        const data = await fetchStudentDetail(lesson_id ? Number(lesson_id) : null, connect_id ? Number(connect_id) : null, stream_id ? Number(stream_id) : null, student_id ? Number(student_id) : null, step_id ? Number(step_id) : null);
         if (data?.success) {
             // handleStatusView();
             setHasSteps(false);
@@ -188,7 +188,7 @@ export default function StudentCheck() {
                     return null;
                 }
             });
-                                                                                           
+
             // Вычисляем сумму баллов студента
             let total = 0;
             for (let i = 0; i < lessons.length; i++) {
@@ -249,26 +249,26 @@ export default function StudentCheck() {
                                                                     totalScore={i?.score}
                                                                     type={i.type.name}
                                                                     icon={i.type.logo}
-                                                                   
+
                                                                     title={element?.content?.title}
                                                                     checkTitle={i?.type?.title}
                                                                     description={element?.content?.description || ''}
-                                                                    
+
                                                                     documentUrl={{ document: element?.content?.document, document_path: element?.content?.document_path }}
                                                                     video_link={element?.content?.link}
                                                                     link={element?.content?.url}
                                                                     test={{ content: element?.content.content, answers: element?.content.answers, score: element?.content.score }}
                                                                     answerList={i?.ListAnswer}
                                                                     videoStart={() => {}}
-                                                                    
+
                                                                     skeleton={skeleton}
-                                                                    
+
                                                                     getValues={() => handleFetchElement(i?.lesson_id, i?.id)}
                                                                     addPracticaScore={(score) => handlePracticaScoreAdd(i?.id, score)}
                                                                     addPracticaDisannul={(id_curricula: number, course_id: number, id_stream: number, id: number, steps_id: number, message: string) =>
                                                                         handlePracticaDisannul(id_curricula, course_id, id_stream, id, steps_id, message)
                                                                     }
-                                                                    
+
                                                                     isOpened={i?.is_opened || false}
                                                                     // item={i}
                                                                 />
