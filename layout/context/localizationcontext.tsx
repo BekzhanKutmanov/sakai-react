@@ -265,7 +265,6 @@ export const localizationData = {
         enroll: 'Записаться',
         author: 'Автор:',
         languageOfInstruction: 'Язык обучения:',
-        recommendedByDepartment: 'Рекомендован департаментом',
         courseContent: 'Содержание курса',
 
         // ActiveCourseList
@@ -539,7 +538,6 @@ export const localizationData = {
         enroll: 'Жазылуу',
         author: 'Автор:',
         languageOfInstruction: 'Окутуу тили:',
-        recommendedByDepartment: 'Департамент тарабынан сунушталган',
         courseContent: 'Курстун мазмуну',
 
         // ActiveCourseList

@@ -14,6 +14,7 @@ import { ColumnGroup } from 'primereact/columngroup';
 import { Row } from 'primereact/row';
 import { fetchOpenStudents, fetchWeeks } from '@/services/openCourse';
 import { User } from '@/types/user';
+import { useLocalizedData } from '@/hooks/useLocalizedData';
 
 export default function OpenStudentList({ course_id, course_title, close }: { course_id: number | null; course_title: string | null; close: () => void }) {
     interface OpenCourseStudent extends User {
@@ -32,6 +33,7 @@ export default function OpenStudentList({ course_id, course_title, close }: { co
 
     const { setMessage } = useContext(LayoutContext);
     const showError = useErrorMessage();
+    const { getLocalized } = useLocalizedData();
 
     const options: OptionsType = {
         year: '2-digit',
@@ -279,10 +281,10 @@ export default function OpenStudentList({ course_id, course_title, close }: { co
 
                         {!emptyStudents ? (
                             <div className="w-full flex flex-wrap flex-col sm:flex-row gap-3 justify-center text-[12px] sm:text-[14px]">
-                                <span className="text-sm font-semibold">{stream?.semester?.name_ru}</span>
+                                <span className="text-sm font-semibold">{getLocalized(stream?.semester, 'name') || stream?.semester?.name_ru}</span>
 
                                 <div className="flex gap-1 items-center">
-                                    <span className="font-semibold">{stream?.subject_type_name?.name_ru}</span>
+                                    <span className="font-semibold">{getLocalized(stream?.subject_type_name, 'name') || stream?.subject_type_name?.name_ru}</span>
                                 </div>
                                 <div className="flex gap-1 items-center">
                                     <span>Количество записанных студентов: </span>

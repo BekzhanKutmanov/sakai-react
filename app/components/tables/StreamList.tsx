@@ -14,6 +14,7 @@ import { Column } from 'primereact/column';
 import { mainStreamsType } from '@/types/mainStreamsType';
 import Link from 'next/link';
 import { useLocalization } from '@/layout/context/localizationcontext';
+import { useLocalizedData } from '@/hooks/useLocalizedData';
 
 const StreamList = React.memo(function StreamList({
     callIndex,
@@ -32,9 +33,10 @@ const StreamList = React.memo(function StreamList({
 }) {
     const { setMessage } = useContext(LayoutContext);
     const showError = useErrorMessage();
-    
+
     const { language, translations } = useLocalization();
-    
+    const { getLocalized } = useLocalizedData();
+
     const [streams, setStreams] = useState<mainStreamsType[]>([]);
     const [hasStreams, setHasStreams] = useState(false);
     const [skeleton, setSkeleton] = useState(false);
@@ -209,6 +211,7 @@ const StreamList = React.memo(function StreamList({
     };
 
     useEffect(()=> {
+        console.log(language);
         if(language === 'ru'){
             setNameLang('name_ru');
         }else if(language === 'ky'){
@@ -244,13 +247,13 @@ const StreamList = React.memo(function StreamList({
             <div className={`w-full ${bgClass}`} key={item?.stream_id}>
                 <div className={`flex flex-column p-2 gap-2`}>
                     <div className="w-full flex justify-between gap-1 items-center">
-                        <h3 className="m-0 text-lg">{item?.subject_name[nameLang]}</h3>
+                        <h3 className="m-0 text-lg">{getLocalized(item?.subject_name, 'name') || item?.subject_name[nameLang]}</h3>
                         <small className="underline text-[var(--mainColor)]">Id: {item?.stream_id}</small>
                     </div>
                     <div className="flex flex-column xl:flex-row justify-content-between align-items-center xl:align-items-start flex-1 gap-2">
                         <div className="w-full sm:w-[70%] flex flex-col order-2 xl:order-1 gap-1 items-start text-[12px] sm:text-[14px]">
                             <div className="flex gap-1 items-center text-[var(--mainColor)]">
-                                <span>{item?.subject_type_name?.name_ru}</span>
+                                <span>{getLocalized(item?.subject_type_name, 'name') || item?.subject_type_name?.name_ru}</span>
                             </div>
                             <div className="flex gap-1 items-center">
                                 <span className="text-[var(--mainColor)]">{translations.languageOfStudy}: </span>
@@ -262,16 +265,16 @@ const StreamList = React.memo(function StreamList({
                             </div>
                             <div className="flex gap-1 items-center">
                                 <span className="text-[var(--mainColor)]">{translations.period}: </span>
-                                <span>{item?.period[nameLang]}</span>
+                                <span>{getLocalized(item?.period, 'name') || item?.period[nameLang]}</span>
                             </div>
                             <div className="flex gap-1 items-center" title={item?.speciality.name_ru}>
                                 <span className="text-[var(--mainColor)] ">{translations.speciality}: </span>
-                                <span className="max-w-[170px] sm:max-w-[800px] text-nowrap text-ellipsis overflow-hidden">{item?.speciality[nameLang]}</span>
+                                <span className="max-w-[170px] sm:max-w-[800px] text-nowrap text-ellipsis overflow-hidden">{getLocalized(item?.speciality, 'name') || item?.speciality[nameLang]}</span>
                             </div>
                         </div>
                         <div className="flex flex-col order-1 xl:order-2 align-items-center gap-2">
-                            <span className="font-semibold">{item?.semester?.name_ru}</span>
-                            <span className="bg-[var(--greenColor)] text-[12px] text-white p-1 rounded">{item?.edu_form[nameLang]}</span>
+                            <span className="font-semibold">{getLocalized(item?.semester, 'name') || item?.semester?.name_ru}</span>
+                            <span className="bg-[var(--greenColor)] text-[12px] text-white p-1 rounded">{getLocalized(item?.edu_form, 'name') || item?.edu_form[nameLang]}</span>
                             {item.connect_id && (
                                 <Link href={`/students/${courseValue?.id}/${item.connect_id}/${item.stream_id}`} className="underline text-sm">
                                     {translations.students}
@@ -329,7 +332,7 @@ const StreamList = React.memo(function StreamList({
                             header={() => <div className="text-[13px]">{translations.streamName}</div>}
                             body={(rowData) => (
                                 // <p key={rowData.id}></p>
-                                <p key={rowData.id}>{rowData.subject_name.name_ru}</p>
+                                <p key={rowData.id}>{getLocalized(rowData.subject_name, 'name') || rowData.subject_name.name_ru}</p>
                             )}
                         ></Column>
 
@@ -340,7 +343,7 @@ const StreamList = React.memo(function StreamList({
                             body={(rowData) => (
                                 // <p key={rowData.id}></p>
                                 <div className="max-w-[100px] scrollbar-thin overflow-x-scroll">
-                                    <p key={rowData.id}>{rowData.speciality.name_ru}</p>
+                                    <p key={rowData.id}>{getLocalized(rowData.speciality, 'name') || rowData.speciality.name_ru}</p>
                                 </div>
                             )}
                         ></Column>
@@ -348,13 +351,13 @@ const StreamList = React.memo(function StreamList({
                         <Column header={() => <div>{translations.languageOfStudy}</div>} body={(rowData) => <p key={rowData.id}>{rowData.language.name}</p>}></Column>
 
                         <Column field="title" header={() => <div className="text-[13px]">{translations.studyYear}</div>} body={(rowData) => <p key={rowData.id}>20{rowData.id_edu_year}</p>}></Column>
-                        <Column field="title" header={() => <div className="text-[13px]">{translations.period}</div>} body={(rowData) => <p key={rowData.id}>{rowData.period.name_ru}</p>}></Column>
+                        <Column field="title" header={() => <div className="text-[13px]">{translations.period}</div>} body={(rowData) => <p key={rowData.id}>{getLocalized(rowData.period, 'name') || rowData.period.name_ru}</p>}></Column>
 
-                        <Column field="title" header={() => <div className="text-[13px]">{translations.semester}</div>} body={(rowData) => <p key={rowData.id}>{rowData.semester.name_ru}</p>}></Column>
+                        <Column field="title" header={() => <div className="text-[13px]">{translations.semester}</div>} body={(rowData) => <p key={rowData.id}>{getLocalized(rowData.semester, 'name') || rowData.semester.name_ru}</p>}></Column>
 
-                        <Column field="title" header={() => <div className="text-[13px]">{translations.studyForm}</div>} body={(rowData) => <p key={rowData.id}>{rowData.edu_form.name_ru}</p>}></Column>
+                        <Column field="title" header={() => <div className="text-[13px]">{translations.studyForm}</div>} body={(rowData) => <p key={rowData.id}>{getLocalized(rowData.edu_form, 'name') || rowData.edu_form.name_ru}</p>}></Column>
 
-                        <Column field="title" header={() => <div className="text-[13px]">{translations.studyType}</div>} body={(rowData) => <p key={rowData.id}>{rowData.subject_type_name.short_name_ru}</p>}></Column>
+                        <Column field="title" header={() => <div className="text-[13px]">{translations.studyType}</div>} body={(rowData) => <p key={rowData.id}>{getLocalized(rowData.subject_type_name, 'short_name') || rowData.subject_type_name.short_name_ru}</p>}></Column>
 
                         <Column
                             header={() => <div className="text-[13px]">{translations.streamConnection}</div>}
