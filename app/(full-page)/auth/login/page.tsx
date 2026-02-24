@@ -17,8 +17,12 @@ import { getToken } from '@/utils/auth';
 import { ProgressSpinner } from 'primereact/progressspinner';
 
 import { useLocalization } from '../../../../layout/context/localizationcontext';
+import { useSearchParams } from 'next/navigation';
 
 const LoginPage = () => {
+    const params = useSearchParams();
+    const backRedirect = params.get('redirect');
+    console.log(backRedirect);
     const { translations } = useLocalization();
     const { setUser, setMessage, setDepartament, departament } = useContext(LayoutContext);
     // const containerClassName = classNames('surface-ground flex align-items-center justify-content-center min-h-screen min-w-screen overflow-hidden', { 'p-input-filled': layoutConfig.inputStyle === 'filled' });
@@ -70,13 +74,27 @@ const LoginPage = () => {
                                         if (roleCheck) {
                                             setDepartament({ info: roleCheck.roles_name.info_ru, last_name: res.user?.last_name, name: res?.user.name, father_name: res.user?.father_name });
                                         }
-                                        window.location.href = '/dashboard';
+                                        let safeRedirect = '/dashboard';
+                                        if (backRedirect && backRedirect.startsWith('/')) {
+                                            safeRedirect = backRedirect;
+                                        }
+
+                                        window.location.href = safeRedirect;
                                     } else {
-                                        window.location.href = '/dashboard';
+                                        let safeRedirect = '/dashboard';
+                                        if (backRedirect && backRedirect.startsWith('/')) {
+                                            safeRedirect = backRedirect;
+                                        }
+
+                                        window.location.href = safeRedirect;
                                     }
                                 }
                                 if (res?.user.is_student) {
-                                    window.location.href = '/studentHome';
+                                    let safeRedirect = '/studentHome';
+                                    if (backRedirect && backRedirect.startsWith('/')) {
+                                        safeRedirect = backRedirect;
+                                    }
+                                    window.location.href = safeRedirect;
                                 }
                             }
                         } else {
@@ -175,11 +193,11 @@ const LoginPage = () => {
                         </div>
 
                         <div className={`${disabledState ? 'opacity-50 pointer-events-none' : ''} `}>
-                            <FancyLinkBtn btnWidth={'100%'} backround={'--mainColor'} effectBg={'--titleColor'} title={translations.login} btnType={true}/>
+                            <FancyLinkBtn btnWidth={'100%'} backround={'--mainColor'} effectBg={'--titleColor'} title={translations.login} btnType={true} />
                         </div>
                     </form>
                     <Link href={'/'} className="mt-2 w-full">
-                        <FancyLinkBtn btnWidth={'100%'} backround={'--mainColor'} effectBg={'--titleColor'} title={translations.mainPage} btnType={false}/>
+                        <FancyLinkBtn btnWidth={'100%'} backround={'--mainColor'} effectBg={'--titleColor'} title={translations.mainPage} btnType={false} />
                     </Link>
                 </div>
             </div>
