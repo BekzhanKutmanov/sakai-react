@@ -90,6 +90,7 @@ const AppMenu = () => {
     const [adminRole, setAdminRole] = useState<MyApMenuType>({ profilact: '' });
     const [depRole, setDepRole] = useState<MyApMenuType>({ profilact: '' });
     const [testRole, setTestRole] = useState<MyApMenuType>({ profilact: '' });
+    const [graphicRole, setGraphicRole] = useState<MyApMenuType>({ profilact: '' });
 
     const [themesStudentList, setThemesStudentList] = useState<{ key?: string; label: string; id: number; to: string; items?: AppMenuItem[] }[]>([]);
     const [startDeadline, setStartDeadline] = useState<Nullable<Date>>(null);
@@ -238,11 +239,12 @@ const AppMenu = () => {
                           icon: 'pi pi-inbox',
                           to: '/archive'
                       },
-                      {
-                          label: translations.module,
-                          icon: 'pi pi-calendar',
-                          to: '/module/1'
-                      }
+                        graphicRole?.label ? graphicRole : null,
+                      // {
+                      //     label: translations.module,
+                      //     icon: 'pi pi-calendar',
+                      //     to: '/module/1'
+                      // }
                   ].filter(Boolean) as AppMenuItem[])
                 : []
             : []
@@ -379,11 +381,12 @@ const AppMenu = () => {
                       icon: 'pi pi-inbox',
                       to: '/archive'
                   },
-                  {
-                      label: translations.module,
-                      icon: 'pi pi-calendar',
-                      to: '/module/1'
-                  }
+                    graphicRole?.label ? graphicRole : null,
+                  // {
+                  //     label: translations.module,
+                  //     icon: 'pi pi-calendar',
+                  //     to: '/module/1'
+                  // }
               ].filter(Boolean) as AppMenuItem[])
             : []
         : [];
@@ -570,6 +573,11 @@ const AppMenu = () => {
                 const forReduct = forRole.find((item) => item.id === 3);
                 if (forReduct && forReduct?.read) {
                     setTestRole({ label: translations.cancellationOfWorks, icon: 'pi pi-users', to: '/roles/students/1', profilact: '' });
+                }
+
+                const forGraphic = forRole.find((item) => item.id === 4);
+                if (forGraphic && forGraphic?.read) {
+                    setGraphicRole({ label: 'Модульный график', icon: 'pi pi-calendar', to: '/module/1', profilact: '' });
                 }
             }
         }
