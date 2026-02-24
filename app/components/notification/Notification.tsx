@@ -19,6 +19,8 @@ interface NotificationGroupUi {
 export default function Notification({ notification }: { notification: mainNotification[] }) {
     const { user, setContextNotificationId } = useContext(LayoutContext);
 
+    console.log(notification);
+
     const [mainNotification, setMainNotification] = useState<mainNotification[]>([]);
     const [groupNotificationVisible, setGroupNotificationVisible] = useState(false);
     const [groupNotifications, setGroupNotifications] = useState<NotificationGroupUi[]>([]);

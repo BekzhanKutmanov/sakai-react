@@ -79,9 +79,6 @@ const SessionManager = () => {
             window.location.href = '/auth/login';
             return;
         }
-        // setTimeout(() => {
-        //     setGlobalLoading(false);
-        // }, 900);
     }, [pathname]);
 
     return null;

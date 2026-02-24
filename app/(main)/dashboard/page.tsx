@@ -5,7 +5,7 @@ import { ContributionDay } from '@/types/ContributionDay';
 import ActivityPage from '@/app/components/Contribution';
 import Link from 'next/link';
 import { useContext, useEffect, useRef, useState } from 'react';
-import { fetchDashboardPerformance, fetchTeacherDashboard } from '@/services/dashboard/workingDashboard';
+import { fetchDashboardPerformance, fetchTeacherDashboard, fetchTelegramQr } from '@/services/dashboard/workingDashboard';
 import GroupSkeleton from '@/app/components/skeleton/GroupSkeleton';
 import useMediaQuery from '@/hooks/useMediaQuery';
 import { useRouter } from 'next/navigation';
@@ -14,6 +14,8 @@ import { Column } from 'primereact/column';
 import { Chart } from 'primereact/chart';
 import MyDateTime from '@/app/components/MyDateTime';
 import { useLocalization } from '@/layout/context/localizationcontext';
+import { Dialog } from 'primereact/dialog';
+import { Button } from 'primereact/button';
 
 export default function Dashboard() {
     interface CourseTotalLastMonth {
@@ -31,23 +33,23 @@ export default function Dashboard() {
     }
 
     interface InfoType {
-        formula: string,
-        sections: { name: string, weight: string, description: string }[],
-        title: string
+        formula: string;
+        sections: { name: string; weight: string; description: string }[];
+        title: string;
     }
 
     interface PerformanceType {
-        course_sync_score: string,
-        created_at: string,
-        details: { courses_count: number, notifs_count: number, courses:number, notifs:number },
-        id: number,
-        id_edu_year: number,
-        notification_score: string,
-        study_from: string,
-        study_to: string,
-        total_rate: string,
-        updated_at: string,
-        user_id: number
+        course_sync_score: string;
+        created_at: string;
+        details: { courses_count: number; notifs_count: number; courses: number; notifs: number };
+        id: number;
+        id_edu_year: number;
+        notification_score: string;
+        study_from: string;
+        study_to: string;
+        total_rate: string;
+        updated_at: string;
+        user_id: number;
     }
 
     type OptionsType = Intl.DateTimeFormatOptions;
@@ -71,6 +73,9 @@ export default function Dashboard() {
 
     const [chartPieData, setChartPieData] = useState({});
     const [chartPieOptions, setChartPieOptions] = useState({});
+
+    const [telegramData, setTelegramData] = useState<{ direct_link: string; qr_code_base64: string } | null>(null);
+    const [showTelegramDialog, setShowTelegramDialog] = useState(false);
 
     const options: OptionsType = {
         year: '2-digit',
@@ -107,6 +112,13 @@ export default function Dashboard() {
         }
     };
 
+    const handleFetchTelegramQr = async () => {
+        const data = await fetchTelegramQr();
+        if (data && data.direct_link) {
+            setTelegramData(data);
+        }
+    };
+
     useEffect(() => {
         const documentStyle = getComputedStyle(document.documentElement);
         const data = {
@@ -114,19 +126,11 @@ export default function Dashboard() {
             datasets: [
                 {
                     data: [50, 50],
-                    backgroundColor: [
-                        documentStyle.getPropertyValue('--blue-500'),
-                        documentStyle.getPropertyValue('--yellow-500'),
-                        documentStyle.getPropertyValue('--green-500')
-                    ],
-                    hoverBackgroundColor: [
-                        documentStyle.getPropertyValue('--blue-400'),
-                        documentStyle.getPropertyValue('--yellow-400'),
-                        documentStyle.getPropertyValue('--green-400')
-                    ]
+                    backgroundColor: [documentStyle.getPropertyValue('--blue-500'), documentStyle.getPropertyValue('--yellow-500'), documentStyle.getPropertyValue('--green-500')],
+                    hoverBackgroundColor: [documentStyle.getPropertyValue('--blue-400'), documentStyle.getPropertyValue('--yellow-400'), documentStyle.getPropertyValue('--green-400')]
                 }
             ]
-        }
+        };
         const options = {
             plugins: {
                 legend: {
@@ -144,23 +148,13 @@ export default function Dashboard() {
 
     useEffect(() => {
         const data = {
-            labels: [translations.coursesConnection + performance?.course_sync_score + "%", translations.notificationsConnection + performance?.notification_score + '%', translations.totalRating + performance?.total_rate + '%'],
+            labels: [translations.coursesConnection + performance?.course_sync_score + '%', translations.notificationsConnection + performance?.notification_score + '%', translations.totalRating + performance?.total_rate + '%'],
             datasets: [
                 {
                     label: translations.statistics,
                     data: [performance?.course_sync_score, performance?.notification_score, performance?.total_rate],
-                    backgroundColor: [
-                        'rgba(255, 159, 64, 0.2)',
-                        'rgba(75, 192, 192, 0.2)',
-                        'rgba(54, 162, 235, 0.2)',
-                        'rgba(153, 102, 255, 0.2)'
-                    ],
-                    borderColor: [
-                        'rgb(255, 159, 64)',
-                        'rgb(75, 192, 192)',
-                        'rgb(54, 162, 235)',
-                        'rgb(153, 102, 255)'
-                    ],
+                    backgroundColor: ['rgba(255, 159, 64, 0.2)', 'rgba(75, 192, 192, 0.2)', 'rgba(54, 162, 235, 0.2)', 'rgba(153, 102, 255, 0.2)'],
+                    borderColor: ['rgb(255, 159, 64)', 'rgb(75, 192, 192)', 'rgb(54, 162, 235)', 'rgb(153, 102, 255)'],
                     borderWidth: 1
                 }
             ]
@@ -181,6 +175,7 @@ export default function Dashboard() {
     useEffect(() => {
         hanldeTeacherDashboard();
         hanldeFetchPerformance();
+        handleFetchTelegramQr();
     }, []);
 
     useEffect(() => {
@@ -195,17 +190,20 @@ export default function Dashboard() {
         return (
             <div className="flex flex-col gap-2">
                 {/* user info */}
-                <div className="main-bg">
+                <div className="main-bg flex justify-between items-center">
                     <h1 className="text-lg sm:text-xl m-0">
                         {user ? (
                             <div className="flex flex-col gap-1">
                                 {user?.last_name} {user?.name && user.name[0] + '.'} {user?.father_name && user.father_name[0] + '.'}
-                                <small className="text-sm">{translations.teacher} {user?.is_working && departament?.name && `• ${translations.headOfDepartment}`}</small>
+                                <small className="text-sm">
+                                    {translations.teacher} {user?.is_working && departament?.name && `• ${translations.headOfDepartment}`}
+                                </small>
                             </div>
                         ) : (
                             '---'
                         )}
                     </h1>
+                    {telegramData && <div className={'flex items-center gap-2 font-sans'}><p className={'m-0 text-sm hidden sm:block'}>Связь с телеграмм </p> <div className="cursor-pointer pi pi-telegram p-button-rounded text-white p-button-text p-3 bg-[var(--mainColor)] rounded-full min-w-[20px] min-h-[20px] hover:opacity-50" onClick={() => setShowTelegramDialog(true)}></div></div>}
                 </div>
 
                 {/* statistic */}
@@ -288,24 +286,29 @@ export default function Dashboard() {
                 </div>
 
                 {/* kpd */}
-                <div className='main-bg p-3 sm:p-4'>
-                    <h3 className='text-xl text-center shadow-[var(--bottom-shadow)] pb-2 mb-2'>{info?.title}</h3>
-                    <b className='flex flex-wrap gap-1 items-center mb-3 text-sm sm:text-base'>
+                <div className="main-bg p-3 sm:p-4">
+                    <h3 className="text-xl text-center shadow-[var(--bottom-shadow)] pb-2 mb-2">{info?.title}</h3>
+                    <b className="flex flex-wrap gap-1 items-center mb-3 text-sm sm:text-base">
                         {translations.reportFor}
-                        <span className='text-sm'>{<MyDateTime createdAt={performance?.study_from || ''} options={options} />}</span> -
-                        <span className='text-sm'>{<MyDateTime createdAt={performance?.study_to || ''} options={options} />}</span>
+                        <span className="text-sm">{<MyDateTime createdAt={performance?.study_from || ''} options={options} />}</span> -<span className="text-sm">{<MyDateTime createdAt={performance?.study_to || ''} options={options} />}</span>
                     </b>
-                    <div className='flex flex-col gap-3'>
-                        <div className='flex flex-col items-center gap-1 text-sm text-center'>
-                            <b className='text-md'>{translations.formula} <span className='text-sm'>{info?.formula}</span></b>
-                            <b className='text-[var(--productQuantityText)]'>{info?.sections[0]?.description}</b>
-                            <b className='text-[var(--orangeColor)]'>{info?.sections[1]?.description}</b>
+                    <div className="flex flex-col gap-3">
+                        <div className="flex flex-col items-center gap-1 text-sm text-center">
+                            <b className="text-md">
+                                {translations.formula} <span className="text-sm">{info?.formula}</span>
+                            </b>
+                            <b className="text-[var(--productQuantityText)]">{info?.sections[0]?.description}</b>
+                            <b className="text-[var(--orangeColor)]">{info?.sections[1]?.description}</b>
                         </div>
-                        <div className='flex justify-around flex-col sm:flex-row gap-3 items-center'>
-                            <DataTable value={[
-                                { label: translations.coursesCount, value: performance?.details?.courses },
-                                { label: translations.notificationsCount, value: performance?.details?.notifs }
-                            ]} showHeaders={false} className='my-custom-table w-full max-w-[520px] p-3 border-1 border-[#dfe7ef] rounded-md bg-white/40'>
+                        <div className="flex justify-around flex-col sm:flex-row gap-3 items-center">
+                            <DataTable
+                                value={[
+                                    { label: translations.coursesCount, value: performance?.details?.courses },
+                                    { label: translations.notificationsCount, value: performance?.details?.notifs }
+                                ]}
+                                showHeaders={false}
+                                className="my-custom-table w-full max-w-[520px] p-3 border-1 border-[#dfe7ef] rounded-md bg-white/40"
+                            >
                                 <Column field="label" />
                                 <Column field="value" />
                             </DataTable>
@@ -323,6 +326,20 @@ export default function Dashboard() {
                         </div>
                     </div>
                 </div>
+
+                <Dialog header="Чтобы получать уведомления в Telegram, свяжитесь здесь" visible={showTelegramDialog} style={{ width: '350px' }} onHide={() => setShowTelegramDialog(false)} className="text-center">
+                    {telegramData && (
+                        <div className="flex flex-col items-center gap-4">
+                            <div className={'main-bg'}>
+                                <img src={telegramData.qr_code_base64} alt="Telegram QR Code" className="sm:w-60 w-64 sm:h-60 h-64 shadow-lg rounded " />
+                            </div>
+                            <a href={telegramData.direct_link} target="_blank" rel="noopener noreferrer" className="p-button p-component no-underline bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded-md flex items-center gap-2">
+                                <i className="pi pi-telegram"></i>
+                                <span>Открыть в Telegram</span>
+                            </a>
+                        </div>
+                    )}
+                </Dialog>
             </div>
         );
     } else {

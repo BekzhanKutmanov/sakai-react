@@ -53,7 +53,6 @@ export default function StudentLesson() {
 
     const handleMainLesson = async (lesson_id: number, stream_id: number) => {
         const data = await fetchMainLesson(lesson_id, stream_id);
-
         // Возвращаем данные или null/пустой массив
         if (data && data.length > 0) {
             return data;
@@ -61,7 +60,6 @@ export default function StudentLesson() {
             if (data?.response?.data && data?.response?.status === '400') {
                 setMessage({ state: true, value: { severity: 'error', summary: 'Ошибка!', detail: data?.response?.data?.message } });
             }
-            setMessage({ state: true, value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' } });
         }
         return [];
     };
@@ -158,7 +156,7 @@ export default function StudentLesson() {
         subject?.streams.forEach((i) => params.append('streams[]', String(i)));
         subject?.course_ids.forEach((i) => params.append('course_ids[]', String(i)));
         const data = await fetchSubjects(params);
-        setSkeleton(true);  
+        setSkeleton(true);
         if (data && Array.isArray(data)) {
             setCourses(data);
             if (data && data?.length > 0) {

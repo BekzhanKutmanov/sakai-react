@@ -17,8 +17,6 @@ import { getToken } from '@/utils/auth';
 import { ProgressSpinner } from 'primereact/progressspinner';
 
 import { useLocalization } from '../../../../layout/context/localizationcontext';
-import MobileMenu from '@/app/components/menu/MobileMenu';
-import BottomNav from '@/app/components/menu/MobileMenu';
 
 const LoginPage = () => {
     const { translations } = useLocalization();

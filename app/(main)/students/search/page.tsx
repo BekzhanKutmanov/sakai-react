@@ -73,7 +73,7 @@ const StudentSearchPage = () => {
 
     const searchSection = (
         <div className="main-bg flex flex-col gap-1">
-            <SubTitle title={translations.students} titleSize="2xl" mobileTitleSize="xl" />
+            <div className={'py-3 mb-3 shadow-[var(--bottom-shadow)]'}><SubTitle title={translations.students} titleSize="2xl" mobileTitleSize="xl" /></div>
             <span className="p-input-icon-left">
                 <div className="flex items-center relative">
                     <InputText placeholder={translations.search} value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="w-full p-inputtext-sm p-inputtext-rounded" />
