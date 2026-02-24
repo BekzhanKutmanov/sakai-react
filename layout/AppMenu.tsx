@@ -672,9 +672,9 @@ const AppMenu = () => {
                                         {/* {editingLesson.from} */}
                                         <span className="text-sm">{translations.start}</span>
                                         <Calendar
-                                            value={editingLesson ? editingLesson.from : null}
+                                            value={editingLesson ? editingLesson?.from : null}
                                             locale="ru" // Указываем русскую локаль
-                                            dateFormat="yy.mm.yy"
+                                            dateFormat="dd.mm.yy"
                                             className="p-inputtext-sm"
                                             onChange={(e) => {
                                                 setEditingLesson((prev) => prev && { ...prev, from: e.value });
@@ -685,7 +685,7 @@ const AppMenu = () => {
                                         {/* {editingLesson.to} */}
                                         <span className="text-sm">{translations.end}</span>
                                         <Calendar
-                                            value={editingLesson ? editingLesson.to : null}
+                                            value={editingLesson ? editingLesson?.to : null}
                                             locale="ru" // Указываем русскую локаль
                                             dateFormat="dd.mm.yy"
                                             className="p-inputtext-sm"
@@ -751,7 +751,9 @@ const AppMenu = () => {
                                             locale="ru" // Указываем русскую локаль
                                             dateFormat="dd.mm.yy"
                                             className="p-inputtext-sm"
-                                            onChange={(e) => setStartDeadline(e.value)}
+                                            onChange={(e) => {
+                                                setStartDeadline(e.value)
+                                            }}
                                         />
                                     </div>
                                     <div className="flex flex-col items-center">
