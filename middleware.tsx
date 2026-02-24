@@ -11,15 +11,15 @@ export function middleware(request: NextRequest) {
     const accessToken = request.cookies.get("access_token")?.value;
 
     // если нет токена → редирект на логин
-    // if (!accessToken) {
-    //     const loginUrl = new URL("/auth/login", request.url);
-    //
-    //     loginUrl.searchParams.set("redirect", redirectTo);
-    //
-    //     console.log("🔒 No token → redirect:", redirectTo);
-    //
-    //     return NextResponse.redirect(loginUrl);
-    // }
+    if (!accessToken) {
+        const loginUrl = new URL("/auth/login", request.url);
+
+        loginUrl.searchParams.set("redirect", redirectTo);
+
+        console.log("🔒 No token → redirect:", redirectTo);
+
+        return NextResponse.redirect(loginUrl);
+    }
 
     return NextResponse.next();
 }
