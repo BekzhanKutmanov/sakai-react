@@ -247,14 +247,6 @@ export default function Module() {
         }
     }, [speciality]);
 
-    // useEffect(() => {
-    //     // console.log('specialitys', allSelectFl);
-    // }, [allSelectFl]);
-
-    // useEffect(() => {
-    //     // console.log('connects', connectIds);
-    // }, [connectIds]);
-
     useEffect(() => {
         if (connects?.length > 0) {
             setSaveBtnDisabled(false);
