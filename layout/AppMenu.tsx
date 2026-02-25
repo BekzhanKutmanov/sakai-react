@@ -583,10 +583,6 @@ const AppMenu = () => {
         }
     }, [user, studentThemeCourse]);
 
-    useEffect(()=> {
-        console.log(editingLesson);
-    },[editingLesson])
-
     useEffect(() => {
         if (contextThemes && contextThemes?.lessons) {
             const newThemes = contextThemes.lessons?.data?.map((item: any, idx: number) => ({

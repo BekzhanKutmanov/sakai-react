@@ -26,6 +26,8 @@ import { ProgressSpinner } from 'primereact/progressspinner';
 import { TabPanel, TabView } from 'primereact/tabview';
 import React, { useContext, useEffect, useState } from 'react';
 import SubTitle from '@/app/components/titles/SubTitle';
+import { useLocalization } from '@/layout/context/localizationcontext';
+import { useLocalizedData } from '@/hooks/useLocalizedData';
 
 // types
 interface Role {
@@ -63,6 +65,8 @@ export default function RolesDepartment() {
 
     const showError = useErrorMessage();
     const { setMessage } = useContext(LayoutContext);
+    const { translations } = useLocalization();
+    const { getLocalized } = useLocalizedData();
 
     const media = useMediaQuery('(max-width: 640px)');
 
@@ -91,11 +95,11 @@ export default function RolesDepartment() {
         total: 0,
         per_page: 0
     });
-    const [selectedTypeId, setSelectedTypeId] = useState<Role_idType | null>({ name: 'Все', role_id: null });
-    const [cities, setCities] = useState<Role_idType[]>([{ name: 'Все', role_id: null }]);
+    const [selectedTypeId, setSelectedTypeId] = useState<Role_idType | null>({ name: translations.all, role_id: null });
+    const [cities, setCities] = useState<Role_idType[]>([{ name: translations.all, role_id: null }]);
 
-    const [categorySelectedId, setCategorySelectedId] = useState<CategoryId | null>({ title: 'Все', id: null, description: '' });
-    const [depCategoryes, setCategoryes] = useState<CategoryId[]>([{ title: 'Выберите категорию', id: null, description: '' }]);
+    const [categorySelectedId, setCategorySelectedId] = useState<CategoryId | null>({ title: translations.all, id: null, description: '' });
+    const [depCategoryes, setCategoryes] = useState<CategoryId[]>([{ title: translations.selectCategoryPlaceholder, id: null, description: '' }]);
 
     const [forDisabled, setForDisabled] = useState(false);
     const [openTypes, setOpenTypes] = useState<AudenceType[]>([]);
@@ -115,8 +119,8 @@ export default function RolesDepartment() {
     const [editingLesson, setEditingLesson] = useState<MainCategoryType | null>(null);
     const [checkOpenCourseEmpty, setCheckOpenCourseEmpty] = useState<boolean>(false);
 
-    const [langSelectedId, setLangSelectedId] = useState<SelectLangType | null>({ title: 'Все', id: null, description: '' });
-    const [depSelectLang, setSelectLang] = useState<SelectLangType[]>([{ title: 'Выберите категорию', id: null, description: '' }]);
+    const [langSelectedId, setLangSelectedId] = useState<SelectLangType | null>({ title: translations.all, id: null, description: '' });
+    const [depSelectLang, setSelectLang] = useState<SelectLangType[]>([{ title: translations.selectCategoryPlaceholder, id: null, description: '' }]);
     const [language_id, setLanguage_id] = useState<number | null>(null);
 
     const [is_featured, setFeaturedChecked] = useState<boolean>(false);
@@ -125,12 +129,12 @@ export default function RolesDepartment() {
         setPublicCourseId(null);
         setPublicState(null);
         setPublicStatus(null);
-        setCategoryes([{ title: 'Выберите категорию', id: null, description: '' }]);
-        setCategorySelectedId({ title: 'Все', id: null, description: '' });
+        setCategoryes([{ title: translations.selectCategoryPlaceholder, id: null, description: '' }]);
+        setCategorySelectedId({ title: translations.all, id: null, description: '' });
         setPublicCategoryId(null);
         setLanguage_id(null);
-        setSelectLang([{ title: 'Выберите категорию', id: null, description: '' }]);
-        setLangSelectedId({ title: 'Все', id: null, description: '' });
+        setSelectLang([{ title: translations.selectCategoryPlaceholder, id: null, description: '' }]);
+        setLangSelectedId({ title: translations.all, id: null, description: '' });
     };
 
     // fetch types
@@ -138,7 +142,7 @@ export default function RolesDepartment() {
         const data = await fetchCourseOpenStatus();
         if (data && Array.isArray(data)) {
             setOpenTypes(data);
-            setCities([{ name: 'Все', role_id: null }]);
+            setCities([{ name: translations.all, role_id: null }]);
             const forSelectedRole_id: any = data?.map((item) => {
                 return { name: item?.title, role_id: item?.id };
             });
@@ -148,13 +152,13 @@ export default function RolesDepartment() {
             setContentNull(true);
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка повторите позже', detail: '' }
+                value: { severity: 'error', summary: translations.error, detail: '' }
             }); // messege - Ошибка при изменении курса
             if (data?.response?.status) {
                 if (data?.response?.status == '400') {
                     setMessage({
                         state: true,
-                        value: { severity: 'error', summary: 'Ошибка!', detail: data?.response?.data?.message }
+                        value: { severity: 'error', summary: translations.error, detail: data?.response?.data?.message }
                     });
                 } else {
                     showError(data.response.status);
@@ -178,7 +182,7 @@ export default function RolesDepartment() {
             setContentNull(false);
         } else {
             setContentNull(true);
-            setMessage({ state: true, value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' } });
+            setMessage({ state: true, value: { severity: 'error', summary: translations.error, detail: translations.tryAgainLater } });
             if (res?.response?.status) {
                 showError(res.response.status);
             }
@@ -195,13 +199,13 @@ export default function RolesDepartment() {
             setTimeout(() => {
                 handleFetchDepartment(Number(page), search, myedu_id, selectedTypeId, active);
             }, 1000);
-            setMessage({ state: true, value: { severity: 'success', summary: 'Успешно изменено!', detail: '' } });
+            setMessage({ state: true, value: { severity: 'success', summary: translations.successChanged, detail: '' } });
         } else {
             setMainProgressSpinner(false);
             if (res?.response?.status === 400) {
                 setMessage({ state: true, value: { severity: 'error', summary: res.response.data?.message, detail: '' } });
             } else {
-                setMessage({ state: true, value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' } });
+                setMessage({ state: true, value: { severity: 'error', summary: translations.error, detail: translations.tryAgainLater } });
                 if (res?.response?.status) {
                     showError(res.response.status);
                 }
@@ -225,7 +229,7 @@ export default function RolesDepartment() {
             setContentNull(false);
         } else {
             setContentNull(true);
-            setMessage({ state: true, value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' } });
+            setMessage({ state: true, value: { severity: 'error', summary: translations.error, detail: translations.tryAgainLater } });
             if (res?.response?.status) {
                 showError(res.response.status);
             }
@@ -239,12 +243,12 @@ export default function RolesDepartment() {
         const res = await teacherCoursePublic(Number(publicCourseId) || null, publicStatus, comment, course_category_id, language_id, is_featured);
         if (res?.success) {
             handleFetchTeacherCheck(Number(page), search, myedu_id, selectedTypeId);
-            setMessage({ state: true, value: { severity: 'success', summary: 'Курс успешно изменен!', detail: '' } });
+            setMessage({ state: true, value: { severity: 'success', summary: translations.successChanged, detail: '' } });
         } else {
             if (res?.response?.status === 400) {
                 setMessage({ state: true, value: { severity: 'error', summary: res.response.data.message, detail: '' } });
             } else {
-                setMessage({ state: true, value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' } });
+                setMessage({ state: true, value: { severity: 'error', summary: translations.error, detail: translations.tryAgainLater } });
                 if (res?.response?.status) {
                     showError(res.response.status);
                 }
@@ -281,7 +285,7 @@ export default function RolesDepartment() {
             if (res?.response?.status === 400) {
                 setMessage({ state: true, value: { severity: 'error', summary: res.response.data.message, detail: '' } });
             } else {
-                setMessage({ state: true, value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' } });
+                setMessage({ state: true, value: { severity: 'error', summary: translations.error, detail: translations.tryAgainLater } });
                 if (res?.response?.status) {
                     showError(res.response.status);
                 }
@@ -302,12 +306,12 @@ export default function RolesDepartment() {
             //     setCategoryes(forCategoryes);
             // }
             handleDepCategoryFetch();
-            setMessage({ state: true, value: { severity: 'success', summary: 'Успешно добавлено!', detail: '' } });
+            setMessage({ state: true, value: { severity: 'success', summary: translations.successAdd, detail: '' } });
         } else {
             if (res?.response?.status === 400) {
                 setMessage({ state: true, value: { severity: 'error', summary: res.response.data.message, detail: '' } });
             } else {
-                setMessage({ state: true, value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' } });
+                setMessage({ state: true, value: { severity: 'error', summary: translations.error, detail: translations.tryAgainLater } });
                 if (res?.response?.status) {
                     showError(res.response.status);
                 }
@@ -320,13 +324,13 @@ export default function RolesDepartment() {
         const res = await depCategoryDelete(id);
 
         if (res && res?.success) {
-            setMessage({ state: true, value: { severity: 'success', summary: 'Успешно Удалено!', detail: '' } });
+            setMessage({ state: true, value: { severity: 'success', summary: translations.deleteSuccess, detail: '' } });
             handleDepCategoryFetch();
         } else {
             if (res?.response?.status === 400) {
                 setMessage({ state: true, value: { severity: 'error', summary: res.response.data.message, detail: '' } });
             } else {
-                setMessage({ state: true, value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' } });
+                setMessage({ state: true, value: { severity: 'error', summary: translations.error, detail: translations.tryAgainLater } });
                 if (res?.response?.status) {
                     showError(res.response.status);
                 }
@@ -340,12 +344,12 @@ export default function RolesDepartment() {
 
         if (res && res?.success) {
             handleDepCategoryFetch();
-            setMessage({ state: true, value: { severity: 'success', summary: 'Успешно изменено!', detail: '' } });
+            setMessage({ state: true, value: { severity: 'success', summary: translations.successChanged, detail: '' } });
         } else {
             if (res?.response?.status === 400) {
                 setMessage({ state: true, value: { severity: 'error', summary: res.response.data.message, detail: '' } });
             } else {
-                setMessage({ state: true, value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' } });
+                setMessage({ state: true, value: { severity: 'error', summary: translations.error, detail: translations.tryAgainLater } });
                 if (res?.response?.status) {
                     showError(res.response.status);
                 }
@@ -365,7 +369,7 @@ export default function RolesDepartment() {
             if (res?.response?.status === 400) {
                 setMessage({ state: true, value: { severity: 'error', summary: res.response.data.message, detail: '' } });
             } else {
-                setMessage({ state: true, value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' } });
+                setMessage({ state: true, value: { severity: 'error', summary: translations.error, detail: translations.tryAgainLater } });
                 if (res?.response?.status) {
                     showError(res.response.status);
                 }
@@ -392,8 +396,8 @@ export default function RolesDepartment() {
         if (e.index === 0 || e.index === 1) {
             setSearch('');
             setMyedu_id(null);
-            setSelectedTypeId({ name: 'Все', role_id: null });
-            setCities([{ name: 'Все', role_id: null }]);
+            setSelectedTypeId({ name: translations.all, role_id: null });
+            setCities([{ name: translations.all, role_id: null }]);
             setRoleStatus(e.index);
         }
 
@@ -539,7 +543,7 @@ export default function RolesDepartment() {
                         <Column header={() => <div className="text-[14px]">#</div>} body={(_, { rowIndex }) => rowIndex + 1} />
 
                         <Column
-                            header={() => <div className="text-[14px]">ФИО</div>}
+                            header={() => <div className="text-[14px]">{translations.fullName}</div>}
                             body={(rowData: any) => (
                                 <div>
                                     {rowData.last_name} {rowData.name} {rowData.father_name}
@@ -651,7 +655,7 @@ export default function RolesDepartment() {
                                     ${item?.course_audience_type_id === 2 ? 'bg-[var(--greenColor)]' : item?.course_audience_type_id === 3 ? 'bg-[var(--amberColor)]' : ''}
                                     `}
                                     >
-                                        {item?.course_audience_type_id === 2 ? 'Открытый' : item?.course_audience_type_id === 3 ? 'Платный' : ''}
+                                        {item?.course_audience_type_id === 2 ? translations.openCourse : item?.course_audience_type_id === 3 ? translations.paid : ''}
                                     </i>
                                 </div>
                                 <div className="w-full flex justify-end items-center gap-2">
@@ -667,7 +671,7 @@ export default function RolesDepartment() {
                                                 handleDepLangFetch();
                                             }}
                                         >
-                                            Опубликовать
+                                            {translations.publish}
                                         </button>
                                     </div>
                                     <div className="flex items-center gap-1 cursor-pointer text-[white] shadow rounded bg-[var(--redColor)] p-1" style={{ fontSize: '12px' }}>
@@ -680,7 +684,7 @@ export default function RolesDepartment() {
                                                 setVisible(true);
                                             }}
                                         >
-                                            Отменать
+                                            {translations.cancel}
                                         </button>
                                     </div>
                                 </div>
@@ -700,14 +704,14 @@ export default function RolesDepartment() {
                 <div className="main-bg overflow-x-auto scrollbar-thin">
                     {/* <DataTable value={roles || []} emptyMessage="Загрузка" dataKey="id_kafedra" responsiveLayout="stack" breakpoint="960px" rows={5} className='min-w-[640px] overflow-x-auto'> */}
                     {checkOpenCourseEmpty ? (
-                        <p className="text-center text-md">Данных нет</p>
+                        <p className="text-center text-md">{translations.noData}</p>
                     ) : (
                         <DataTable value={teachersCheck || []} dataKey="id" emptyMessage="..." loading={forDisabled} breakpoint="960px" rows={5} className="min-w-[640px] overflow-x-auto">
                             <Column body={(_, { rowIndex }) => rowIndex + 1} header="#"></Column>
 
                             <Column
                                 field="title"
-                                header="Курсы"
+                                header={translations.courses}
                                 body={(rowData) => (
                                     <Link href={`/roles/departament/check/${rowData?.id}`} key={rowData?.id} className="text-[14px] font-bold text-[var(--mainColor)] underline">
                                         {rowData.title}
@@ -717,7 +721,7 @@ export default function RolesDepartment() {
 
                             <Column
                                 field="title"
-                                header="Преподаватели"
+                                header={translations.teachers}
                                 body={(rowData) => (
                                     <span key={rowData.id} className="text-[14px]">
                                         {rowData?.user.last_name} {rowData?.user.name} {rowData?.user.father_name}
@@ -727,7 +731,7 @@ export default function RolesDepartment() {
 
                             <Column
                                 field="title"
-                                header="Статус"
+                                header={translations.status}
                                 body={(rowData) => (
                                     <div className="w-full flex justify-center">
                                         <i
@@ -735,7 +739,7 @@ export default function RolesDepartment() {
                                         ${rowData?.course_audience_type_id === 2 ? 'bg-[var(--greenColor)]' : rowData?.course_audience_type_id === 3 ? 'bg-[var(--amberColor)]' : ''}
                                         `}
                                         >
-                                            {rowData?.course_audience_type_id === 2 ? 'Открытый' : rowData?.course_audience_type_id === 3 ? 'Платный' : ''}
+                                            {rowData?.course_audience_type_id === 2 ? translations.openCourse : rowData?.course_audience_type_id === 3 ? translations.paid : ''}
                                         </i>
                                     </div>
                                 )}
@@ -743,7 +747,7 @@ export default function RolesDepartment() {
 
                             <Column
                                 field="title"
-                                header="Действия"
+                                header={translations.actions}
                                 body={(rowData) => (
                                     <div className="w-full flex justify-center items-center gap-4">
                                         <i
@@ -796,11 +800,11 @@ export default function RolesDepartment() {
                 itemCheckingTemplate(teachersCheck)
             ) : ( */}
             <div className="my-2 flex flex-col gap-1">
-                <h3 className="text-[16px] sm:text-lg pb-1 shadow-[var(--bottom-shadow)]">Здесь вы можете создавать собственные категории для курсов и добавлять их в общие категории</h3>
+                <h3 className="text-[16px] sm:text-lg pb-1 shadow-[var(--bottom-shadow)]">{translations.courseCategoryInfo}</h3>
                 <div className="flex justify-end">
                     <Button
                         size="small"
-                        label="Создать"
+                        label={translations.create}
                         onClick={() => {
                             setCategoryVisible(true);
                         }}
@@ -817,7 +821,7 @@ export default function RolesDepartment() {
 
                     <Column
                         field="title"
-                        header="Категории"
+                        header={translations.courseCategories}
                         body={(rowData) => (
                             <span key={rowData.id} className="text-[14px] ">
                                 {rowData.title}
@@ -827,7 +831,7 @@ export default function RolesDepartment() {
 
                     <Column
                         field="title"
-                        header="Действия"
+                        header={translations.actions}
                         body={(rowData) => (
                             <div className="w-full flex justify-center items-center gap-4">
                                 <i
@@ -855,7 +859,7 @@ export default function RolesDepartment() {
     const footerContent = (
         <div>
             <Button
-                label={'Назад'}
+                label={translations.back}
                 className="reject-button"
                 size="small"
                 icon="pi pi-times"
@@ -866,7 +870,7 @@ export default function RolesDepartment() {
             />
 
             <Button
-                label={publicState ? 'Опубликовать' : 'Отменить'}
+                label={publicState ? translations.publish : translations.cancel}
                 size="small"
                 className={`trash-button ${publicState ? (categorySelectedId?.id && language_id ? '' : 'opacity-50 pointer-events-none') : ''}`}
                 icon="pi pi-check"
@@ -882,7 +886,7 @@ export default function RolesDepartment() {
     const categoryFooterContent = (
         <div>
             <Button
-                label={'Назад'}
+                label={translations.back}
                 className="reject-button"
                 size="small"
                 icon="pi pi-times"
@@ -894,7 +898,7 @@ export default function RolesDepartment() {
             />
 
             <Button
-                label={!categoryState ? 'Создать' : 'Изменить'}
+                label={!categoryState ? translations.create : translations.change}
                 size="small"
                 icon="pi pi-check"
                 onClick={() => {
@@ -931,9 +935,9 @@ export default function RolesDepartment() {
             }
             const idsArray = Array.from(uniqAudenceIds);
             if (idsArray?.length) {
-                const forCities: Role_idType[] = [{ name: 'Все', role_id: null }];
+                const forCities: Role_idType[] = [{ name: translations.all, role_id: null }];
                 for (const element of idsArray) {
-                    const typeName: string = element === 2 ? 'Открытый' : element === 3 ? 'Платный' : '';
+                    const typeName: string = element === 2 ? translations.openCourse : element === 3 ? translations.paid : '';
                     forCities.push({ name: typeName, role_id: element });
                 }
                 setCities(forCities);
@@ -1028,7 +1032,47 @@ export default function RolesDepartment() {
         handleFetchDepartment(1, '', null, null, null);
     }, []);
 
-    if (contentNull) return <NotFound titleMessage="Данные отсутствуют" />;
+    // Update default values when language changes
+    useEffect(() => {
+        setCities(prev => {
+            const newCities = [...prev];
+            if (newCities.length > 0 && newCities[0].role_id === null) {
+                newCities[0].name = translations.all;
+            }
+            return newCities;
+        });
+
+        if (selectedTypeId?.role_id === null) {
+            setSelectedTypeId(prev => prev ? ({ ...prev, name: translations.all }) : null);
+        }
+
+        setCategoryes(prev => {
+            const newCats = [...prev];
+            if (newCats.length > 0 && newCats[0].id === null) {
+                newCats[0].title = translations.selectCategoryPlaceholder;
+            }
+            return newCats;
+        });
+
+        if (categorySelectedId?.id === null) {
+            setCategorySelectedId(prev => prev ? ({ ...prev, title: translations.all }) : null);
+        }
+
+        setSelectLang(prev => {
+            const newLangs = [...prev];
+            if (newLangs.length > 0 && newLangs[0].id === null) {
+                newLangs[0].title = translations.selectCategoryPlaceholder;
+            }
+            return newLangs;
+        });
+
+        if (langSelectedId?.id === null) {
+            setLangSelectedId(prev => prev ? ({ ...prev, title: translations.all }) : null);
+        }
+
+    }, [translations]);
+
+    if (contentNull) return <NotFound titleMessage={translations.noData} />;
 
     return (
         <div className="flex flex-col gap-4">
@@ -1037,7 +1081,7 @@ export default function RolesDepartment() {
             ) : (
                 <div className="overflow-x-auto scrollbar-thin">
                     <div className={`main-bg mb-2`}>
-                        <div className={'shadow-[var(--bottom-shadow)] mb-3 py-3'}><SubTitle title={"Департамент"} titleSize={'2xl'} mobileTitleSize={'xl'}/></div>
+                        <div className={'shadow-[var(--bottom-shadow)] mb-3 py-3'}><SubTitle title={translations.department} titleSize={'2xl'} mobileTitleSize={'xl'}/></div>
                         <div className={`flex flex-col sm:flex-row gap-2 mb-2 ${activeIndex === 2 ? 'opacity-50 pointer-events-none' : ''}`}>
                             <div className="flex gap-3 items-center">
                                 {!roleStatus && (
@@ -1054,7 +1098,7 @@ export default function RolesDepartment() {
                                             />
                                             <span className="checkbox-mark"></span>
                                         </label>
-                                        <p>Активные</p>
+                                        <p>{translations.active}</p>
                                     </div>
                                 )}
                                 <div>
@@ -1062,13 +1106,13 @@ export default function RolesDepartment() {
                                 </div>
                             </div>
                             <div className="w-full flex justify-center sm:justify-start items-center gap-1">
-                                <InputText type="number" placeholder="myedu id" value={myedu_id || ''} className="w-full sm:max-w-[120px] h-[48px]" onChange={(e) => setMyedu_id(e.target.value)} />
+                                <InputText type="number" placeholder={translations.myeduIdPlaceholder} value={myedu_id || ''} className="w-full sm:max-w-[120px] h-[48px]" onChange={(e) => setMyedu_id(e.target.value)} />
                                 <div>{myeduProgressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}</div>
                             </div>
                         </div>
 
                         <div className={`flex items-center relative mb-2 ${activeIndex === 2 ? 'opacity-50 pointer-events-none' : ''}`}>
-                            <InputText placeholder="Поиск..." value={search} onChange={(e) => setSearch(e.target.value)} className="w-full p-inputtext-sm p-inputtext-rounded" />
+                            <InputText placeholder={translations.search} value={search} onChange={(e) => setSearch(e.target.value)} className="w-full p-inputtext-sm p-inputtext-rounded" />
                             <div className="absolute right-1">{miniProgressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}</div>
                         </div>
                     </div>
@@ -1093,7 +1137,7 @@ export default function RolesDepartment() {
                                 pt={{
                                     headerAction: { className: 'font-italic' }
                                 }}
-                                header="Доступ"
+                                header={translations.access}
                                 className="text-[13px] sm:text-[18px]"
                                 // className="p-tabview p-tabview-nav p-tabview-selected p-tabview-panels p-tabview-panel"
                             >
@@ -1105,7 +1149,7 @@ export default function RolesDepartment() {
                                 pt={{
                                     headerAction: { className: 'font-italic' }
                                 }}
-                                header="Проверка"
+                                header={translations.check}
                                 className="text-[13px] sm:text-[18px]"
                                 // className="p-tabview p-tabview-nav p-tabview-selected p-tabview-panels p-tabview-panel"
                             >
@@ -1117,7 +1161,7 @@ export default function RolesDepartment() {
                                 pt={{
                                     headerAction: { className: 'font-italic' }
                                 }}
-                                header="Категории курсов"
+                                header={translations.courseCategories}
                                 className="text-[13px] sm:text-[18px]"
                                 // className="p-tabview p-tabview-nav p-tabview-selected p-tabview-panels p-tabview-panel"
                             >
@@ -1130,7 +1174,7 @@ export default function RolesDepartment() {
 
             {/* publising */}
             <Dialog
-                header={publicState ? 'Опубликовать курс' : 'Отменить курс'}
+                header={publicState ? translations.publishCourse : translations.cancelCourse}
                 visible={visible}
                 className="my-custom-dialog"
                 onHide={() => {
@@ -1146,7 +1190,7 @@ export default function RolesDepartment() {
                         {publicState ? (
                             <div className="flex flex-col gap-2">
                                 <div className="flex flex-col gap-2">
-                                    <b className="px-1">Выберите категорию для курса</b>
+                                    <b className="px-1">{translations.selectCourseCategory}</b>
                                     <div className="max-w-[95%]">
                                         <Dropdown
                                             value={categorySelectedId}
@@ -1165,7 +1209,7 @@ export default function RolesDepartment() {
                                     </div>
                                 </div>
                                 <div className="flex flex-col gap-2">
-                                    <b className="px-1">Выберите язык для курса</b>
+                                    <b className="px-1">{translations.selectCourseLanguage}</b>
                                     <div className="max-w-[95%] flex juctify-center items-start">
                                         <Dropdown
                                             value={langSelectedId}
@@ -1183,7 +1227,7 @@ export default function RolesDepartment() {
                                     </div>
                                 </div>
                                 <div className="flex items-center">
-                                    <span>Рекомендую</span>
+                                    <span>{translations.recommend}</span>
                                     <label className="custom-radio">
                                         <input
                                             type="checkbox"
@@ -1198,8 +1242,8 @@ export default function RolesDepartment() {
                             </div>
                         ) : (
                             <div className="flex flex-col gap-2">
-                                <b className="px-1">Вы уверены что хотите отказать курс?</b>
-                                <InputText value={comment || ''} onChange={(e) => setPublicComment(e.target.value)} type="text" placeholder="Укажите причину вашего отказа" />
+                                <b className="px-1">{translations.confirmRejectCourse}</b>
+                                <InputText value={comment || ''} onChange={(e) => setPublicComment(e.target.value)} type="text" placeholder={translations.rejectReason} />
                             </div>
                         )}
                     </div>
@@ -1208,7 +1252,7 @@ export default function RolesDepartment() {
 
             {/* catetory */}
             <Dialog
-                header={!categoryState ? 'Создать категорию' : 'Изменить категорию'}
+                header={!categoryState ? translations.createCategoryTitle : translations.editCategoryTitle}
                 visible={categoryVisible}
                 className="my-custom-dialog"
                 onHide={() => {
@@ -1230,7 +1274,7 @@ export default function RolesDepartment() {
                                     onChange={(e) => {
                                         setCategoryValue((prev) => ({ ...prev, title: e.target.value }));
                                     }}
-                                    placeholder="Название категории"
+                                    placeholder={translations.categoryName}
                                 />
                                 <InputText
                                     type="text"
@@ -1238,7 +1282,7 @@ export default function RolesDepartment() {
                                     onChange={(e) => {
                                         setCategoryValue((prev) => ({ ...prev, description: e.target.value }));
                                     }}
-                                    placeholder="Описание"
+                                    placeholder={translations.categoryDescription}
                                 />
                             </div>
                         ) : (
@@ -1249,7 +1293,7 @@ export default function RolesDepartment() {
                                     onChange={(e) => {
                                         setEditingLesson((prev) => prev && { ...prev, title: e.target.value });
                                     }}
-                                    placeholder="Название категории"
+                                    placeholder={translations.categoryName}
                                 />
                                 <InputText
                                     type="text"

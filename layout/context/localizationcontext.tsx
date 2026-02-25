@@ -82,6 +82,7 @@ export const localizationData = {
         department: 'Департамент',
         themes: 'Темы',
         module: 'График модулей',
+        courseCategoryInfo: 'Здесь вы можете создавать собственные категории для курсов и добавлять их в общие категории',
 
         // Calendar
         firstDayOfWeek: 'Понедельник',
@@ -203,7 +204,6 @@ export const localizationData = {
         // counterbanner
         coursesAndVideoLessons: 'Курсы и видеоуроки',
         registeredStudents: 'Зарегистрированные студенты',
-        teachers: 'Преподаватели',
         satisfactionLevel: 'Уровень удовлетворённости',
 
         // openCourses
@@ -241,6 +241,7 @@ export const localizationData = {
         coursesConnection: 'Курсы(связь) ',
         notificationsConnection: 'Уведом-я(связь) ',
         totalRating: 'Общий рейтинг ',
+        telegramNotifications: 'Telegram уведомления',
 
         // OpenCourse Page
         selectCategory: 'Выберите категорию для курса',
@@ -277,6 +278,42 @@ export const localizationData = {
         test: 'Тест',
         practicalTask: 'Практическое задание',
         theme: 'Тема',
+
+        // VideoInstruct
+        videoInstructionsTitle: 'Видеоуроки по использованию платформы Mooc',
+
+        // Module
+        moduleSchedule: 'Модульный график',
+        selectFaculty: 'Выберите факультет',
+        selectSpeciality: 'Выберите специальность',
+        selectPeriod: 'Выберите период',
+        selectSemester: 'Выберите семестр',
+        allSpecialities: 'По всем специальностям',
+        confirmChange: 'Вы точно хотите изменить?',
+        changeModuleSchedule: 'Изменить график модулей',
+        moduleStart: 'Начало модуля',
+        moduleEnd: 'Конец модуля',
+
+        // RolesDepartment
+        access: 'Доступ',
+        check: 'Проверка',
+        courseCategories: 'Категории курсов',
+        publishCourse: 'Опубликовать курс',
+        cancelCourse: 'Отменить курс',
+        selectCourseCategory: 'Выберите категорию для курса',
+        selectCourseLanguage: 'Выберите язык для курса',
+        recommend: 'Рекомендую',
+        confirmRejectCourse: 'Вы уверены что хотите отказать курс?',
+        rejectReason: 'Укажите причину вашего отказа',
+        createCategory: 'Создать категорию',
+        editCategory: 'Изменить категорию',
+        categoryName: 'Название категории',
+        categoryDescription: 'Описание',
+        createCategoryTitle: 'Создать категорию',
+        editCategoryTitle: 'Изменить категорию',
+        publish: 'Опубликовать',
+        actions: 'Действия',
+        teachers: 'Преподаватели',
     },
     ky: {
         oshSU: 'ОшМУ',
@@ -356,6 +393,7 @@ export const localizationData = {
         department: 'Департамент',
         themes: 'Темалар',
         module: 'Модулдук график',
+        courseCategoryInfo: 'Бул жерде сиз курстар үчүн өз категорияларыңызды түзүп, аларды жалпы категорияларга кошо аласыз.',
 
         // Calendar
         firstDayOfWeek: 'Дүйшөмбү',
@@ -476,7 +514,6 @@ export const localizationData = {
         // counterbanner
         coursesAndVideoLessons: 'Курстар жана видео сабактар',
         registeredStudents: 'Катталган студенттер',
-        teachers: 'Окутуучулар',
         satisfactionLevel: 'Канааттануу деңгээли',
 
         // open courses
@@ -514,6 +551,7 @@ export const localizationData = {
         coursesConnection: 'Курстар(байланыш) ',
         notificationsConnection: 'Билдирүүлөр(байланыш) ',
         totalRating: 'Жалпы рейтинг ',
+        telegramNotifications: 'Telegram билдирүүлөрү',
 
         // OpenCourse Page
         selectCategory: 'Курс үчүн категорияны тандаңыз',
@@ -550,6 +588,42 @@ export const localizationData = {
         test: 'Тест',
         practicalTask: 'Практикалык тапшырма',
         theme: 'Тема',
+
+        // VideoInstruct
+        videoInstructionsTitle: 'Mooc платформасын колдонуу боюнча видео сабактар',
+
+        // Module
+        moduleSchedule: 'Модулдук график',
+        selectFaculty: 'Факультетти тандаңыз',
+        selectSpeciality: 'Адистикти тандаңыз',
+        selectPeriod: 'Мезгилди тандаңыз',
+        selectSemester: 'Семестрди тандаңыз',
+        allSpecialities: 'Бардык адистиктер боюнча',
+        confirmChange: 'Сиз чын эле өзгөрткүңүз келеби?',
+        changeModuleSchedule: 'Модулдардын графигин өзгөртүү',
+        moduleStart: 'Модулдун башталышы',
+        moduleEnd: 'Модулдун аягы',
+
+        // RolesDepartment
+        access: 'Кирүү',
+        check: 'Текшерүү',
+        courseCategories: 'Курс категориялары',
+        publishCourse: 'Курсту жарыялоо',
+        cancelCourse: 'Курсту жокко чыгаруу',
+        selectCourseCategory: 'Курс үчүн категорияны тандаңыз',
+        selectCourseLanguage: 'Курс үчүн тилди тандаңыз',
+        recommend: 'Сунуштайм',
+        confirmRejectCourse: 'Сиз чын эле курстан баш тарткыңыз келеби?',
+        rejectReason: 'Баш тартууңуздун себебин көрсөтүңүз',
+        createCategory: 'Категория түзүү',
+        editCategory: 'Категорияны өзгөртүү',
+        categoryName: 'Категориянын аталышы',
+        categoryDescription: 'Сүрөттөмө',
+        createCategoryTitle: 'Категория түзүү',
+        editCategoryTitle: 'Категорияны өзгөртүү',
+        publish: 'Жарыялоо',
+        actions: 'Аракеттер',
+        teachers: 'Окутуучулар',
     }
 };
 

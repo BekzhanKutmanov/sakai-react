@@ -7,10 +7,12 @@ import 'primeicons/primeicons.css';
 import useErrorMessage from '@/hooks/useErrorMessage';
 import { LayoutContext } from '@/layout/context/layoutcontext';
 import { useRouter } from 'next/navigation';
+import { useLocalization } from '@/layout/context/localizationcontext';
 
 export default function VideoInstruct() {
     const showError = useErrorMessage();
     const { setMessage } = useContext(LayoutContext);
+    const { translations } = useLocalization();
 
     const [videoValues, setVideoValues] = useState([
         { title: 'Видеоинструкция по использованию образовательного портала Mooc', src: 'https://youtu.be/bw7XkQJJR7c?si=oHMueDAL32hA60K5' },
@@ -25,7 +27,7 @@ export default function VideoInstruct() {
         if (!value) {
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка при обработке видео', detail: '' }
+                value: { severity: 'error', summary: translations.error, detail: '' }
             });
         }
 
@@ -43,7 +45,7 @@ export default function VideoInstruct() {
         if (!videoId) {
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка при обработке видео', detail: '' }
+                value: { severity: 'error', summary: translations.error, detail: '' }
             });
             return ''; // не удалось получить ID
         }
@@ -59,9 +61,9 @@ export default function VideoInstruct() {
             <div className="flex items-start flex-col sm:flex-row gap-1">
                 <button onClick={() => router.back()} className="text-[var(--mainColor)] underline px-2 flex items-center gap-1">
                     <i className="pi pi-arrow-left text-[13px] cursor-pointer hover:shadow-2xl" style={{ fontSize: '13px' }}></i>
-                    <span className="text-[13px] cursor-pointer">Назад</span>
+                    <span className="text-[13px] cursor-pointer">{translations.back}</span>
                 </button>
-                <h2 className="text-center text-xl sm:text-2xl w-full m-0 mb-4 flex justify-center">Видеоуроки по использованию платформы Mooc</h2>
+                <h2 className="text-center text-xl sm:text-2xl w-full m-0 mb-4 flex justify-center">{translations.videoInstructionsTitle}</h2>
             </div>
             <div className="grid_grid">
                 {videoValues?.map((item, idx) => {

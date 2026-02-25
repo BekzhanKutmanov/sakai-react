@@ -13,12 +13,16 @@ import { OptionsType } from '@/types/OptionsType';
 import Link from 'next/link';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import { useContext, useEffect, useState } from 'react';
+import { useLocalization } from '@/layout/context/localizationcontext';
+import { useLocalizedData } from '@/hooks/useLocalizedData';
 
 export default function ActiveCourseList() {
     // types
 
     const { setMessage } = useContext(LayoutContext);
     const showError = useErrorMessage();
+    const { translations } = useLocalization();
+    const { getLocalized } = useLocalizedData();
     const [coursesValue, setValueCourses] = useState<CourseCategoryOption[]>([]);
     const [emptyCourse, setEmptyCourse] = useState(false);
     const [hasCourses, setHasCourses] = useState(false);
@@ -86,13 +90,13 @@ export default function ActiveCourseList() {
             setHasCourses(true);
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
+                value: { severity: 'error', summary: translations.error, detail: translations.tryAgainLater }
             });
             if (data?.response?.status) {
                 if (data?.response?.status == '400') {
                     setMessage({
                         state: true,
-                        value: { severity: 'error', summary: 'Ошибка!', detail: data?.response?.data?.message }
+                        value: { severity: 'error', summary: translations.error, detail: data?.response?.data?.message }
                     });
                 } else {
                     showError(data.response.status);
@@ -114,12 +118,12 @@ export default function ActiveCourseList() {
                     {link.status ? (
                         <Link href={link.url || '#'}>
                             <b className="hidden sm:block cursor-pointer w-full sm:max-w-[350px] break-words text-[var(--mainColor)] underline">
-                                {item?.title}
+                                {getLocalized(item, 'title') || item?.title}
                             </b>
                         </Link>
                     ) : (
                         <b className="hidden sm:block cursor-pointer w-full sm:max-w-[350px] break-words text-[var(--mainColor)] underline">
-                            {item?.title}
+                            {getLocalized(item, 'title') || item?.title}
                         </b>
                     )}
                 </div>
@@ -129,7 +133,7 @@ export default function ActiveCourseList() {
                             }`}
                     >
                         <i className={item?.audience_type?.icon} style={{ fontSize: '14px' }}></i>
-                        <i className="text-[13px]">{item?.audience_type?.name === 'open' ? 'Бесплатный' : item?.audience_type?.name === 'wallet' ? 'Платный' : ''}</i>
+                        <i className="text-[13px]">{item?.audience_type?.name === 'open' ? translations.free : item?.audience_type?.name === 'wallet' ? translations.paid : ''}</i>
                     </div>
                 </div>
             </div>
@@ -137,25 +141,25 @@ export default function ActiveCourseList() {
             {link.status ? (
                 <Link href={link.url || '#'}>
                     <b className="block sm:hidden cursor-pointer w-full sm:max-w-[350px] break-words text-[var(--mainColor)] underline">
-                        {item?.title}
+                        {getLocalized(item, 'title') || item?.title}
                     </b>
                 </Link>
             ) : (
                 <b className="block sm:hidden cursor-pointer w-full sm:max-w-[350px] break-words text-[var(--mainColor)] underline">
-                    {item?.title}
+                    {getLocalized(item, 'title') || item?.title}
                 </b>
             )}
 
             {/* score, progress */}
             <div className='flex justify-end sm:items-end gap-4 flex-col sm:flex-row'>
                 <div className='order-2 sm:order-1 flex items-center justiy-center sm:justify-end gap-1 text-sm sm:font-bold mb-[1px]'>
-                    <span>Балл: </span>
+                    <span>{translations.score}: </span>
                     <div className='flex items-center gap-1 text-[var(--mainColor)]'>{item?.total_score || 0} / {item?.max_score?.total_score || 0}</div>
                 </div>
 
                 <div className="flex flex-col items-center justify-between order-0 sm:order-2 shadow px-1">
                     <div>
-                        <span className="text-[var(--titleColor)] text-sm">Статус завершения</span>
+                        <span className="text-[var(--titleColor)] text-sm">{translations.completionStatus}</span>
                     </div>
                     <div className="w-full flex items-center gap-1 justify-between order-0 sm:order-2 ">
                         <div className="flex items-center text-[var(--titleColor)]">
@@ -188,18 +192,18 @@ export default function ActiveCourseList() {
 
     if (mainProgressSpinner) return <div className='main-bg flex justify-center items-center h-[100vh]'><ProgressSpinner style={{ width: '60px', height: '60px' }} /></div>
 
-    if (hasCourses) return <NotFound titleMessage="Данные не доступны" />;
+    if (hasCourses) return <NotFound titleMessage={translations.noData} />;
 
     return (
         <div className="main-bg">
-            <h1 className="m-0 mb-4 pb-1 shadow-[var(--bottom-shadow)] text-xl sm:text-2xl">Мои активные курсы</h1>
+            <h1 className="m-0 mb-4 pb-1 shadow-[var(--bottom-shadow)] text-xl sm:text-2xl">{translations.myActiveCourses}</h1>
             {skeleton ? (
                 <>
                     <GroupSkeleton count={2} size={{ width: '100%', height: '12rem' }} />
                     <GroupSkeleton count={2} size={{ width: '100%', height: '12rem' }} />
                 </>
             ) : emptyCourse ? (
-                <b className="flex justify-center">Пусто</b>
+                <b className="flex justify-center">{translations.empty}</b>
             ) : (
                 <div className="flex flex-col gap-2">
                     {coursesValue?.map((item) => {

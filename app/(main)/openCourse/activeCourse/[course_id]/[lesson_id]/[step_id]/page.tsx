@@ -14,6 +14,8 @@ import { Button } from 'primereact/button';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import { useContext, useEffect, useState } from 'react';
 import { courseOpen, fetchActiveStepsDetail, openCoursePracticAdd, openCourseTestAdd } from '@/services/openCourse';
+import { useLocalization } from '@/layout/context/localizationcontext';
+import { useLocalizedData } from '@/hooks/useLocalizedData';
 
 export default function ActiveLessonDetail() {
     // types
@@ -29,6 +31,8 @@ export default function ActiveLessonDetail() {
     const media = useMediaQuery('(max-width: 640px)');
     const showError = useErrorMessage();
     const { setMessage, setContextNewStudentThemes, contextNotificationId, setContextNotificationId } = useContext(LayoutContext);
+    const { translations } = useLocalization();
+    const { getLocalized } = useLocalizedData();
 
     const [steps, setSteps] = useState<mainStepsType | null>(null);
     const [hasSteps, setHasSteps] = useState(false);
@@ -66,7 +70,7 @@ export default function ActiveLessonDetail() {
     const [preview, setPreview] = useState(false);
     const [videoLink, setVideoLink] = useState('');
 
-    // Пуолчаем общие курсы 
+    // Пуолчаем общие курсы
     const handleCourseOpen = async () => {
         const data = await courseOpen(course_id ? Number(course_id) : null);
         if (data?.success) {
@@ -89,13 +93,13 @@ export default function ActiveLessonDetail() {
             setHasSteps(true);
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
+                value: { severity: 'error', summary: translations.error, detail: translations.tryAgainLater }
             });
             if (data?.response?.status) {
                 if (data?.response?.status == '400') {
                     setMessage({
                         state: true,
-                        value: { severity: 'error', summary: 'Ошибка!', detail: data?.response?.data?.message }
+                        value: { severity: 'error', summary: translations.error, detail: data?.response?.data?.message }
                     });
                 } else {
                     showError(data.response.status);
@@ -104,15 +108,6 @@ export default function ActiveLessonDetail() {
         }
         setSkeleton(false);
     };
-
-    // const handleStatusView = async (notification_id: number | null) => {
-    //     console.log(notification_id);
-    //     if (notification_id) {
-    //         const data = await statusView(Number(notification_id));
-
-    //         setContextNotificationId(null);
-    //     }
-    // };
 
     const handleVideoCall = (value: string | null) => {
         setPreview(true);
@@ -173,7 +168,7 @@ export default function ActiveLessonDetail() {
                 if (data?.response?.status == '400') {
                     setMessage({
                         state: true,
-                        value: { severity: 'error', summary: 'Ошибка!', detail: data?.response?.data?.message }
+                        value: { severity: 'error', summary: translations.error, detail: data?.response?.data?.message }
                     });
                 } else {
                     showError(data.response.status);
@@ -202,7 +197,7 @@ export default function ActiveLessonDetail() {
                 if (data?.response?.status == '400') {
                     setMessage({
                         state: true,
-                        value: { severity: 'error', summary: 'Ошибка!', detail: data?.response?.data?.message }
+                        value: { severity: 'error', summary: translations.error, detail: data?.response?.data?.message }
                     });
                 } else {
                     showError(data.response.status);
@@ -311,7 +306,7 @@ export default function ActiveLessonDetail() {
                     {link?.content?.description && <div className="flex flex-col gap-2">{link?.content?.description && <div className="lesson-card-border shadow rounded p-2 sm:w-full md:w-[70%]">{link?.content?.description}</div>}</div>}
                 </div>
                 <div className="flex gap-1 items-start flex-col sm:flex-row">
-                    <span className="text-[var(--mainColor)]">Ссылка: </span>
+                    <span className="text-[var(--mainColor)]">{translations.linkLabel}: </span>
                     <a href={link ? String(link?.content?.url) : '#'} className="max-w-[800px] text-[16px] break-words hover:underline" target="_blank">
                         {link?.content?.url}
                     </a>
@@ -352,7 +347,7 @@ export default function ActiveLessonDetail() {
                         <div>
                             {practica?.content?.url && (
                                 <div className="flex gap-2 flex-col sm:flex-row">
-                                    <span className="text-[var(--mainColor)]">Ссылка: </span>
+                                    <span className="text-[var(--mainColor)]">{translations.linkLabel}: </span>
                                     {practica?.content.url && (
                                         <a href={practica?.content.url} className="max-w-[800px] overflow-x-auto text-[12px] sm:text-sm text-wrap break-all" target="_blank">
                                             {practica?.content.url}
@@ -407,7 +402,7 @@ export default function ActiveLessonDetail() {
                     <div className="w-full">
                         {progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}
                         <Button
-                            label="Отправить"
+                            label={translations.send}
                             size="small"
                             disabled={progressSpinner}
                             className={`${progressSpinner ? 'opacity-50' : ''}`}
@@ -491,7 +486,7 @@ export default function ActiveLessonDetail() {
             ) : (
                 <div className="w-full">
                     <Button
-                        label="Отправить"
+                        label={translations.send}
                         size="small"
                         disabled={progressSpinner || !answer || !answerCheck}
                         onClick={() => {
@@ -549,13 +544,13 @@ export default function ActiveLessonDetail() {
                     <div className={`w-full flex items-center gap-2 ${courseInfo?.image && courseInfo?.image.length > 0 ? 'justify-around flex-col sm:flex-row' : 'justify-center'}`}>
                         <div className="sm:w-1/2 flex flex-col gap-2 items-center">
                             <h1 className="m-0" style={{ color: 'white', fontSize: media ? '24px' : '28px', margin: '0' }}>
-                                {courseInfo?.title}
+                                {getLocalized(courseInfo, 'title') || courseInfo?.title}
                             </h1>
                             <div className="flex justify-end gap-1 flex-col sm:flex-row mt-2">
-                                <h3 className="text-white m-0 sm:text-lg">Тема: </h3>
+                                <h3 className="text-white m-0 sm:text-lg">{translations.theme}: </h3>
                                 <h3 className="text-white text-[16px] m-0 sm:text-[18px]">{lessonName ? lessonName : '------'}</h3>
                             </div>
-                            <span className="w-[99%] break-wordsz">{courseInfo?.description} </span>
+                            <span className="w-[99%] break-wordsz">{getLocalized(courseInfo, 'description') || courseInfo?.description} </span>
                         </div>
                         {courseInfo?.image && courseInfo?.image.length > 0 && (
                             <div className="sm:w-1/3">
@@ -566,7 +561,7 @@ export default function ActiveLessonDetail() {
                 </div>
             </div>
 
-            {hasSteps && <NotFound titleMessage="Данные не доступны" />}
+            {hasSteps && <NotFound titleMessage={translations.noData} />}
             {type === 'document' && docSection}
             {type === 'link' && linkSection}
             {type === 'practical' && practicaSection}

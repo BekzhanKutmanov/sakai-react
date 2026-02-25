@@ -11,11 +11,15 @@ import { Accordion, AccordionTab } from 'primereact/accordion';
 import { Dialog } from 'primereact/dialog';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import { useContext, useEffect, useState } from 'react';
+import { useLocalization } from '@/layout/context/localizationcontext';
+import { useLocalizedData } from '@/hooks/useLocalizedData';
 
 export default function DepartamentChecking() {
     const { course_id } = useParams();
     const { setMessage } = useContext(LayoutContext);
     const showError = useErrorMessage();
+    const { translations } = useLocalization();
+    const { getLocalized } = useLocalizedData();
 
     const [courseInfo, setCourseInfo] = useState<{ title: string } | null>(null);
     const [themes, setThemes] = useState<themeType[]>([]);
@@ -44,7 +48,7 @@ export default function DepartamentChecking() {
             setThemeShow(true);
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторит позже' }
+                value: { severity: 'error', summary: translations.error, detail: translations.tryAgainLater }
             });
             if (data?.response?.status) {
                 showError(data.response.status);
@@ -66,7 +70,7 @@ export default function DepartamentChecking() {
             setHasSteps(false);
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
+                value: { severity: 'error', summary: translations.error, detail: translations.tryAgainLater }
             });
             if (data?.response?.status) {
                 showError(data.response.status);
@@ -79,7 +83,7 @@ export default function DepartamentChecking() {
         if (!value) {
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка при обработке видео', detail: '' }
+                value: { severity: 'error', summary: translations.error, detail: '' }
             });
         }
 
@@ -97,7 +101,7 @@ export default function DepartamentChecking() {
         if (!videoId) {
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка при обработке видео', detail: '' }
+                value: { severity: 'error', summary: translations.error, detail: '' }
             });
             return null; // не удалось получить ID
         }
@@ -145,12 +149,12 @@ export default function DepartamentChecking() {
                 </div>
             </Dialog>
             {themeShow ? (
-                <NotFound titleMessage="Темы отсуствуют или временно не доступны" />
+                <NotFound titleMessage={translations.noThemes} />
             ) : (
                 <div className="">
                     <div>
                         <h3 className="text-lg pb-1 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">
-                            <span className="text-[var(--mainColor)]">Название курса:</span> {courseInfo?.title}
+                            <span className="text-[var(--mainColor)]">{translations.courseName}:</span> {getLocalized(courseInfo, 'title') || courseInfo?.title}
                         </h3>
                         <Accordion activeIndex={activeIndex} onTabChange={(e) => setActiveIndex(e.index)}>
                             {themes.map((item) => {
@@ -159,12 +163,12 @@ export default function DepartamentChecking() {
                                 });
 
                                 return (
-                                    <AccordionTab header={'Тема: ' + item.title} key={item.id} className="w-full p-accordion" style={{ width: '100%' }}>
+                                    <AccordionTab header={`${translations.theme}: ${item.title}`} key={item.id} className="w-full p-accordion" style={{ width: '100%' }}>
                                         <div className="flex flex-col gap-2">
                                             {stepsSkeleton ? (
                                                 <ProgressSpinner style={{ width: '30px', height: '30px' }} animationDuration=".5s" />
                                             ) : hasSteps ? (
-                                                <p className="text-center text-sm">Данных нет</p>
+                                                <p className="text-center text-sm">{translations.noData}</p>
                                             ) : content?.length > 0 ? (
                                                 content.map((i, idx) => {
                                                     if (i.content) {
@@ -188,7 +192,7 @@ export default function DepartamentChecking() {
                                                     }
                                                 })
                                             ) : (
-                                                <p className="text-center text-sm">Данных нет</p>
+                                                <p className="text-center text-sm">{translations.noData}</p>
                                             )}
                                         </div>
                                     </AccordionTab>
@@ -197,7 +201,7 @@ export default function DepartamentChecking() {
                         </Accordion>
                     </div>
                     <div className="flex justify-end gap-1 p-1">
-                        <b>Общий балл: </b>
+                        <b>{translations.totalPointsForCourse}: </b>
                         <b className="text-[var(--mainColor)]"> {totalScore}</b>
                     </div>
                 </div>
