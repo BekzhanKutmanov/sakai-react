@@ -62,8 +62,6 @@ export default function Module() {
     const [from, setFrom] = useState<Nullable<Date>>(null);
     const [to, setTo] = useState<Nullable<Date>>(null);
 
-    const [saveBtnDisabled, setSaveBtnDisabled] = useState(false);
-
     const handleFetchFaculty = async () => {
         const data = await fetchFaculty();
         if (data && data?.length > 0) {
@@ -220,6 +218,262 @@ export default function Module() {
         return d;
     };
 
+    // filters block
+    const renderFilters = () => (
+        <div className="main-bg flex flex-col gap-4 my-2 p-4 rounded-lg">
+            <div className="shadow-[var(--bottom-shadow)] pb-3">
+                <SubTitle mobileTitleSize="xl" title="Модульный график" titleSize="2xl" />
+            </div>
+            <div className="flex items-center gap-3 flex-col sm:flex-row">
+                <div className="w-full min-w-0 flex flex-col gap-2">
+                    <b className="px-1 inline">Выберите факультет</b>
+                    <div className="w-full flex items-center">
+                        <Dropdown value={timeMode} optionLabel="name_ru" options={timeModeOptions} onChange={(e) => setTimeMode(e.value)} placeholder="Выберите факультет" className="w-full text-sm" />
+                    </div>
+                </div>
+
+                <div className="w-full min-w-0 flex flex-col gap-2 mr-1">
+                    <b className="px-1">Специальность</b>
+                    <div className="w-full flex items-center">
+                        <Dropdown
+                            value={speciality}
+                            optionLabel="name_ru"
+                            options={specialityWithAll}
+                            onChange={(e) => setSpecialyty(e.value)}
+                            placeholder="Выберите специальность"
+                            className={`${specialityOptions?.length < 1 ? 'pointer-events-none opacity-50' : ''} w-full text-sm `}
+                        />
+                        {miniSpinner && (
+                            <div>
+                                <ProgressSpinner style={{ width: '17px', height: '17px' }} />
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+                <div className="w-full min-w-0 flex flex-col gap-2">
+                    <b className="px-1">Период</b>
+                    <div className="w-full flex items-center">
+                        <Dropdown
+                            value={period}
+                            optionLabel="name_ru"
+                            options={periodOptions}
+                            onChange={(e) => setPeriod(e.value)}
+                            placeholder="Выберите период"
+                            className={`${specialityOptions?.length < 1 ? 'pointer-events-none opacity-50' : ''} w-full text-sm`}
+                        />
+                    </div>
+                </div>
+
+                <div className="w-full min-w-0 flex flex-col gap-2">
+                    <b className="px-1">Семестр</b>
+                    <div className="w-full flex items-center">
+                        <Dropdown
+                            value={semestr}
+                            optionLabel="name_ru"
+                            options={semestrOptions}
+                            onChange={(e) => setSemestr(e.value)}
+                            placeholder="Выберите семестр"
+                            className={`${specialityOptions?.length < 1 || miniSpinner ? 'pointer-events-none opacity-50' : ''} w-full text-sm`}
+                        />
+                    </div>
+                </div>
+            </div>
+
+            <div className="flex justify-end">
+                <Button
+                    className="px-4"
+                    label="Поиск"
+                    disabled={speciality?.name_ru ? false : true}
+                    onClick={() => {
+                        handleFetchModuleShedule(currentSpecialityId, period?.id ? period?.id : null, semestr?.id ? semestr?.id : null);
+                    }}
+                />
+            </div>
+        </div>
+    );
+
+    const saveBtnDisabled = connects?.length === 0;
+
+    // main block
+    const renderMainContent = () => {
+        if (startDisplay) {
+            return (
+                <div className="main-bg flex justify-center p-4">
+                    <i className="pi pi-calendar text-4xl"></i>
+                </div>
+            );
+        }
+
+        if (progressSpinner) {
+            return (
+                <div className="main-bg my-2 flex justify-center p-6 rounded-lg">
+                    <ProgressSpinner style={{ width: '45px', height: '45px' }} />
+                </div>
+            );
+        }
+
+        if (emptySpeciality) {
+            return (
+                <div className="main-bg my-2 flex justify-center p-6 rounded-lg">
+                    <b>Данных нет</b>
+                </div>
+            );
+        }
+
+        return (
+            <div className="main-bg flex flex-col gap-2 p-3 rounded-lg">
+                {connects.map((course: any, idx: number) => {
+                    const isOpen = openIndex === idx;
+                    return (
+                        <Panel
+                            key={course.id}
+                            toggleable
+                            collapsed={!isOpen}
+                            onToggle={() => {
+                                setOpenIndex(isOpen ? null : idx);
+                                // setConnectIds([]);
+                            }}
+                            className="w-full"
+                            header={
+                                <div className="flex items-center justify-between w-full gap-1 sm:gap-3">
+                                    <div className="flex items-center gap-1 sm:gap-3 min-w-0">
+                                        <div className="flex items-center shrink-0">
+                                            <label className="custom-radio text-xl leading-none">
+                                                <input
+                                                    type="checkbox"
+                                                    className={`customCheckbox p-2`}
+                                                    checked={allSelectFl.some((s) => s === course?.id) ? true : false}
+                                                    onChange={(e) => {
+                                                        const exists = allSelectFl?.includes(course?.id);
+                                                        if (exists) {
+                                                            // console.log(course);
+                                                            if (course?.checking) {
+                                                                setDiactivateSp(course.id);
+                                                                confirm1(course?.id, null);
+                                                            } else {
+                                                                setAllSelectFl((prev) => {
+                                                                    const streamArr = course?.streams?.map((stream: any) => stream.id_stream);
+                                                                    setConnectIds((prev) => prev && prev.filter((id) => !streamArr?.includes(id)));
+                                                                    return prev.filter((id) => id !== course.id);
+                                                                });
+                                                            }
+                                                        } else {
+                                                            setAllSelectFl((prev) => {
+                                                                // const exists = prev.includes(course?.id);
+                                                                // if (exists) {
+                                                                //     setDiactivateSp(course.id);
+                                                                //     const streamArr = course?.streams?.map((stream: any) => stream.id_stream);
+                                                                //     setConnectIds((prev) => prev && prev.filter((id) => !streamArr?.includes(id)));
+                                                                //     return prev.filter((id) => id !== course.id);
+                                                                // } else {
+                                                                const forConnects = course?.streams?.map((stream: any) => {
+                                                                    return stream?.id_stream;
+                                                                });
+                                                                if (connectIds) {
+                                                                    const f = [...connectIds];
+                                                                    setConnectIds([...f, ...forConnects]);
+                                                                } else {
+                                                                    setConnectIds(forConnects);
+                                                                }
+                                                                return [...prev, course.id];
+                                                                // }
+                                                            });
+                                                        }
+                                                    }}
+                                                />
+                                                <span className="checkbox-mark"></span>
+                                            </label>
+                                        </div>
+                                        <span className="font-semibold max-w-[90%] sm:w-full text-[15px] sm:text-[16px] break-words">
+                                            {idx + 1}. {course.name_ru}
+                                        </span>
+                                    </div>
+                                </div>
+                            }
+                        >
+                            <div className="flex flex-col gap-3 mt-3 w-full">
+                                {course?.streams?.length > 0 ? (
+                                    course.streams.map((item: any) => (
+                                        <ModuleChartCard
+                                            key={item?.id}
+                                            title={item?.subject_data?.name_ru}
+                                            connectId={item?.id_stream}
+                                            handleEdit={(id, checked) => handleEdit(id, checked, course?.id, item?.schedule?.active)}
+                                            allIds={connectIds}
+                                            date={{ from: item?.schedule?.from, to: item?.schedule?.to }}
+                                        />
+                                    ))
+                                ) : (
+                                    <div className="main-bg flex justify-center p-4 rounded-md">
+                                        <b>Данных нет</b>
+                                    </div>
+                                )}
+                            </div>
+                        </Panel>
+                    );
+                })}
+                <div className="flex justify-end pt-2">
+                    <Button label="Сохранить" disabled={saveBtnDisabled} onClick={() => setVisible(true)} className="px-4" />
+                </div>
+            </div>
+        );
+    };
+
+    // dialog
+    const renderDialog = () => (
+        <Dialog
+            header={'Изменить график модулей'}
+            visible={visible}
+            onHide={() => {
+                if (!visible) return;
+                setVisible(false);
+            }}
+            footer={footerContent}
+        >
+            <div>
+                <div className="w-full flex flex-col">
+                    <div className="w-full flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+                        <div className="flex flex-col items-center sm:items-start">
+                            <span className="text-sm">Начало модуля</span>
+                            <Calendar
+                                value={from}
+                                locale="ru" // Указываем русскую локаль
+                                dateFormat="dd.mm.yy"
+                                className="p-inputtext-sm"
+                                onChange={(e) => {
+                                    const date: any = normalizeDate(e.value);
+                                    if (date) {
+                                        setFrom(date);
+                                    } else {
+                                        setFrom(e.value);
+                                    }
+                                }}
+                            />
+                        </div>
+                        <div className="flex flex-col items-center sm:items-start">
+                            <span className="text-sm">Конец модуля</span>
+                            <Calendar
+                                value={to}
+                                locale="ru" // Указываем русскую локаль
+                                dateFormat="dd.mm.yy"
+                                className="p-inputtext-sm"
+                                onChange={(e) => {
+                                    const date: any = normalizeDate(e.value);
+                                    if (date) {
+                                        setTo(date);
+                                    } else {
+                                        setTo(e.value);
+                                    }
+                                }}
+                            />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </Dialog>
+    );
+
     useEffect(() => {
         if (timeMode?.id) {
             setCurrentFacultyId(timeMode?.id);
@@ -246,14 +500,6 @@ export default function Module() {
             }
         }
     }, [speciality]);
-
-    useEffect(() => {
-        if (connects?.length > 0) {
-            setSaveBtnDisabled(false);
-        } else {
-            setSaveBtnDisabled(true);
-        }
-    }, [connects]);
 
     useEffect(() => {
         handleFetchFaculty();
@@ -288,242 +534,13 @@ export default function Module() {
     return (
         <div className="flex flex-col gap-3">
             {/* filter */}
-            <div className="main-bg flex flex-col gap-4 my-2 p-4 rounded-lg">
-                <div className="shadow-[var(--bottom-shadow)] pb-3">
-                    <SubTitle mobileTitleSize="xl" title="Модульный график" titleSize="2xl" />
-                </div>
-                <div className="flex items-center  gap-3 flex-col sm:flex-row">
-                    <div className="w-full min-w-0 flex flex-col gap-2">
-                        <b className="px-1 inline">Выберите факультет</b>
-                        <div className="w-full flex items-center">
-                            <Dropdown value={timeMode} optionLabel="name_ru" options={timeModeOptions} onChange={(e) => setTimeMode(e.value)} placeholder="Выберите факультет" className="w-full text-sm" />
-                        </div>
-                    </div>
+            {renderFilters()}
 
-                    <div className="w-full min-w-0 flex flex-col gap-2 mr-1">
-                        <b className="px-1">Специальность</b>
-                        <div className="w-full flex items-center">
-                            <Dropdown
-                                value={speciality}
-                                optionLabel="name_ru"
-                                options={specialityWithAll}
-                                onChange={(e) => setSpecialyty(e.value)}
-                                placeholder="Выберите специальность"
-                                className={`${specialityOptions?.length < 1 ? 'pointer-events-none opacity-50' : ''} w-full text-sm `}
-                            />
-                            {miniSpinner && (
-                                <div>
-                                    <ProgressSpinner style={{ width: '17px', height: '17px' }} />
-                                </div>
-                            )}
-                        </div>
-                    </div>
+            {/* main content */}
+            {renderMainContent()}
 
-                    <div className="w-full min-w-0 flex flex-col gap-2">
-                        <b className="px-1">Период</b>
-                        <div className="w-full flex items-center">
-                            <Dropdown
-                                value={period}
-                                optionLabel="name_ru"
-                                options={periodOptions}
-                                onChange={(e) => setPeriod(e.value)}
-                                placeholder="Выберите период"
-                                className={`${specialityOptions?.length < 1 ? 'pointer-events-none opacity-50' : ''} w-full text-sm`}
-                            />
-                        </div>
-                    </div>
-
-                    <div className="w-full min-w-0 flex flex-col gap-2">
-                        <b className="px-1">Семестр</b>
-                        <div className="w-full flex items-center">
-                            <Dropdown
-                                value={semestr}
-                                optionLabel="name_ru"
-                                options={semestrOptions}
-                                onChange={(e) => setSemestr(e.value)}
-                                placeholder="Выберите семестр"
-                                className={`${specialityOptions?.length < 1 || miniSpinner ? 'pointer-events-none opacity-50' : ''} w-full text-sm`}
-                            />
-                        </div>
-                    </div>
-                </div>
-
-                <div className="flex justify-end">
-                    <Button
-                        className="px-4"
-                        label="Поиск"
-                        disabled={speciality?.name_ru ? false : true}
-                        onClick={() => {
-                            handleFetchModuleShedule(currentSpecialityId, period?.id ? period?.id : null, semestr?.id ? semestr?.id : null);
-                        }}
-                    />
-                </div>
-            </div>
-
-            {startDisplay ? (
-                <div className="main-bg flex justify-center p-4">
-                    <i className="pi pi-calendar text-4xl"></i>
-                </div>
-            ) : (
-                <div>
-                    {progressSpinner ? (
-                        <div className="main-bg my-2 flex justify-center p-6 rounded-lg">
-                            <ProgressSpinner style={{ width: '45px', height: '45px' }} />
-                        </div>
-                    ) : emptySpeciality ? (
-                        <div className="main-bg my-2 flex justify-center p-6 rounded-lg">
-                            <b>Данных нет</b>
-                        </div>
-                    ) : (
-                        <div className="main-bg flex flex-col gap-2 p-3 rounded-lg">
-                            {connects.map((course: any, idx: number) => {
-                                const isOpen = openIndex === idx;
-                                return (
-                                    <Panel
-                                        key={course.id}
-                                        toggleable
-                                        collapsed={!isOpen}
-                                        onToggle={() => {
-                                            setOpenIndex(isOpen ? null : idx);
-                                            // setConnectIds([]);
-                                        }}
-                                        className="w-full"
-                                        header={
-                                            <div className="flex items-center justify-between w-full gap-1 sm:gap-3">
-                                                <div className="flex items-center gap-1 sm:gap-3 min-w-0">
-                                                    <div className="flex items-center shrink-0">
-                                                        <label className="custom-radio text-xl leading-none">
-                                                            <input
-                                                                type="checkbox"
-                                                                className={`customCheckbox p-2`}
-                                                                checked={allSelectFl.some((s) => s === course?.id) ? true : false}
-                                                                onChange={(e) => {
-                                                                    const exists = allSelectFl?.includes(course?.id);
-                                                                    if (exists) {
-                                                                        // console.log(course);
-                                                                        if (course?.checking) {
-                                                                            setDiactivateSp(course.id);
-                                                                            confirm1(course?.id, null);
-                                                                        } else {
-                                                                            setAllSelectFl((prev) => {
-                                                                                const streamArr = course?.streams?.map((stream: any) => stream.id_stream);
-                                                                                setConnectIds((prev) => prev && prev.filter((id) => !streamArr?.includes(id)));
-                                                                                return prev.filter((id) => id !== course.id);
-                                                                            });
-                                                                        }
-                                                                    } else {
-                                                                        setAllSelectFl((prev) => {
-                                                                            // const exists = prev.includes(course?.id);
-                                                                            // if (exists) {
-                                                                            //     setDiactivateSp(course.id);
-                                                                            //     const streamArr = course?.streams?.map((stream: any) => stream.id_stream);
-                                                                            //     setConnectIds((prev) => prev && prev.filter((id) => !streamArr?.includes(id)));
-                                                                            //     return prev.filter((id) => id !== course.id);
-                                                                            // } else {
-                                                                            const forConnects = course?.streams?.map((stream: any) => {
-                                                                                return stream?.id_stream;
-                                                                            });
-                                                                            if (connectIds) {
-                                                                                const f = [...connectIds];
-                                                                                setConnectIds([...f, ...forConnects]);
-                                                                            } else {
-                                                                                setConnectIds(forConnects);
-                                                                            }
-                                                                            return [...prev, course.id];
-                                                                            // }
-                                                                        });
-                                                                    }
-                                                                }}
-                                                            />
-                                                            <span className="checkbox-mark"></span>
-                                                        </label>
-                                                    </div>
-                                                    <span className="font-semibold max-w-[90%] sm:w-full text-[15px] sm:text-[16px] break-words">
-                                                        {idx + 1}. {course.name_ru}
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        }
-                                    >
-                                        <div className="flex flex-col gap-3 mt-3 w-full">
-                                            {course?.streams?.length > 0 ? (
-                                                course.streams.map((item: any) => (
-                                                    <ModuleChartCard
-                                                        key={item?.id}
-                                                        title={item?.subject_data?.name_ru}
-                                                        connectId={item?.id_stream}
-                                                        handleEdit={(id, checked) => handleEdit(id, checked, course?.id, item?.schedule?.active)}
-                                                        allIds={connectIds}
-                                                        date={{ from: item?.schedule?.from, to: item?.schedule?.to }}
-                                                    />
-                                                ))
-                                            ) : (
-                                                <div className="main-bg flex justify-center p-4 rounded-md">
-                                                    <b>Данных нет</b>
-                                                </div>
-                                            )}
-                                        </div>
-                                    </Panel>
-                                );
-                            })}
-                            <div className="flex justify-end pt-2">
-                                <Button label="Сохранить" disabled={saveBtnDisabled} onClick={() => setVisible(true)} className="px-4" />
-                            </div>
-                        </div>
-                    )}
-                </div>
-            )}
-
-            <Dialog
-                header={'Изменить график модулей'}
-                visible={visible}
-                onHide={() => {
-                    if (!visible) return;
-                    setVisible(false);
-                }}
-                footer={footerContent}
-            >
-                <div>
-                    <div className="w-full flex flex-col">
-                        <div className="w-full flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
-                            <div className="flex flex-col items-center sm:items-start">
-                                <span className="text-sm">Начало модуля</span>
-                                <Calendar
-                                    value={from}
-                                    locale="ru" // Указываем русскую локаль
-                                    dateFormat="dd.mm.yy"
-                                    className="p-inputtext-sm"
-                                    onChange={(e) => {
-                                        const date: any = normalizeDate(e.value);
-                                        if (date) {
-                                            setFrom(date);
-                                        } else {
-                                            setFrom(e.value);
-                                        }
-                                    }}
-                                />
-                            </div>
-                            <div className="flex flex-col items-center sm:items-start">
-                                <span className="text-sm">Конец модуля</span>
-                                <Calendar
-                                    value={to}
-                                    locale="ru" // Указываем русскую локаль
-                                    dateFormat="dd.mm.yy"
-                                    className="p-inputtext-sm"
-                                    onChange={(e) => {
-                                        const date: any = normalizeDate(e.value);
-                                        if (date) {
-                                            setTo(date);
-                                        } else {
-                                            setTo(e.value);
-                                        }
-                                    }}
-                                />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </Dialog>
+            {/* dialog */}
+            {renderDialog()}
         </div>
     );
 }
