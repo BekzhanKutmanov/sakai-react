@@ -293,6 +293,8 @@ export const localizationData = {
         changeModuleSchedule: 'Изменить график модулей',
         moduleStart: 'Начало модуля',
         moduleEnd: 'Конец модуля',
+        summer: 'Летний',
+        winter: 'Зимний',
 
         // RolesDepartment
         access: 'Доступ',
@@ -314,6 +316,12 @@ export const localizationData = {
         publish: 'Опубликовать',
         actions: 'Действия',
         teachers: 'Преподаватели',
+
+        // TeacherCheckPage
+        teacherReport: 'Отчет по преподавателям',
+        uncheckedAssignments: 'Непроверенные задания',
+        loadingError: 'Ошибка загрузки',
+        nothingFound: 'Ничего не найдено',
     },
     ky: {
         oshSU: 'ОшМУ',
@@ -603,6 +611,8 @@ export const localizationData = {
         changeModuleSchedule: 'Модулдардын графигин өзгөртүү',
         moduleStart: 'Модулдун башталышы',
         moduleEnd: 'Модулдун аягы',
+        summer: 'Жайкы',
+        winter: 'Кышкы',
 
         // RolesDepartment
         access: 'Кирүү',
@@ -622,8 +632,15 @@ export const localizationData = {
         createCategoryTitle: 'Категория түзүү',
         editCategoryTitle: 'Категорияны өзгөртүү',
         publish: 'Жарыялоо',
+        cancel: 'Жокко чыгаруу',
         actions: 'Аракеттер',
         teachers: 'Окутуучулар',
+
+        // TeacherCheckPage
+        teacherReport: 'Окутуучулар боюнча отчет',
+        uncheckedAssignments: 'Текшерилбеген тапшырмалар',
+        loadingError: 'Жүктөө катасы',
+        nothingFound: 'Эч нерсе табылган жок',
     }
 };
 

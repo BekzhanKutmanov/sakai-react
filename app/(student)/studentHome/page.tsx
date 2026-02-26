@@ -143,7 +143,7 @@ export default function StudentHome() {
                 <div className="main-bg flex flex-col gap-2 px-2 pb-2 sm:px-6 sm:pb-6 sm:pt-2 min-h-[200px]">
                     {telegramData && (
                         <div className={'flex items-center justify-end gap-2 font-sans'}>
-                            <p className={'m-0 text-sm'}>Связь с телеграмм </p>{' '}
+                            <p className={'m-0 text-sm'}>Подключить уведомления в Telegram </p>{' '}
                             <div className="cursor-pointer pi pi-telegram p-button-rounded text-white p-button-text p-3 bg-[var(--mainColor)] rounded-full min-w-[20px] min-h-[20px] hover:opacity-50" onClick={() => setShowTelegramDialog(true)}></div>
                         </div>
                     )}

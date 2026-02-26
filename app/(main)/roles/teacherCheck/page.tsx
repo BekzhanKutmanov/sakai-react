@@ -13,6 +13,8 @@ import { Dropdown } from 'primereact/dropdown';
 import { InputText } from 'primereact/inputtext';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import SubTitle from '@/app/components/titles/SubTitle';
+import { useLocalization } from '@/layout/context/localizationcontext';
+import { useLocalizedData } from '@/hooks/useLocalizedData';
 
 interface Report extends myMainCourseType {
     name: string;
@@ -23,6 +25,8 @@ interface Report extends myMainCourseType {
 
 const TeacherCheckPage = () => {
     const media = useMediaQuery('(max-width: 768px)');
+    const { translations } = useLocalization();
+    const { getLocalized } = useLocalizedData();
     const [report, setReport] = useState<Report[] | null>(null);
     const [empty, setEmpty] = useState<boolean>(false);
     const [hasReport, setHasReport] = useState<boolean>(false);
@@ -54,7 +58,7 @@ const TeacherCheckPage = () => {
     const handleFetchFaculty = async () => {
         const data = await fetchFaculty();
         if (data && data?.length) {
-            const alls = { name_ru: 'Все', code: null, id: null };
+            const alls = { name_ru: translations.all, code: null, id: null };
             data.unshift(alls);
             setTimeModeOptions(data);
         }
@@ -63,7 +67,7 @@ const TeacherCheckPage = () => {
     const handleStudentSpeciality = async (id_faculty: number) => {
         const data = await fetchSpeciality(id_faculty);
         if (data && data?.length) {
-            const alls = { name_ru: 'Все', code: null, id: null };
+            const alls = { name_ru: translations.all, code: null, id: null };
             data.unshift(alls);
             setSpecialityOptions(data);
             // setStudents(data?.data);
@@ -144,6 +148,26 @@ const TeacherCheckPage = () => {
         handleAnswersReport(pageState, currentSpecialityId, search);
     }, []);
 
+    // Update default values when language changes
+    useEffect(() => {
+        if (timeModeOptions && timeModeOptions.length > 0 && timeModeOptions[0].id === null) {
+            const updatedOptions = [...timeModeOptions];
+            updatedOptions[0].name_ru = translations.all;
+            setTimeModeOptions(updatedOptions);
+        }
+        if (specialityOptions && specialityOptions.length > 0 && specialityOptions[0].id === null) {
+            const updatedOptions = [...specialityOptions];
+            updatedOptions[0].name_ru = translations.all;
+            setSpecialityOptions(updatedOptions);
+        }
+        if (timeMode?.id === null) {
+            setTimeMode(prev => prev ? ({ ...prev, name_ru: translations.all }) : null);
+        }
+        if (speciality?.id === null) {
+            setSpecialyty(prev => prev ? ({ ...prev, name_ru: translations.all }) : null);
+        }
+    }, [translations]);
+
     const teacherNameBodyTemplate = (rowData: Report) => {
         return (
             <div className="flex items-center gap-2 ">
@@ -158,12 +182,34 @@ const TeacherCheckPage = () => {
         return <span>{rowData?.pending_count}</span>;
     };
 
+    const facultyItemTemplate = (option: any) => {
+        return <span>{getLocalized(option, 'name') || option.name_ru}</span>;
+    };
+
+    const facultyValueTemplate = (option: any) => {
+        if (!option) {
+            return <span>{translations.selectFaculty}</span>;
+        }
+        return <span>{getLocalized(option, 'name') || option.name_ru}</span>;
+    };
+
+    const specialityItemTemplate = (option: any) => {
+        return <span>{getLocalized(option, 'name') || option.name_ru}</span>;
+    };
+
+    const specialityValueTemplate = (option: any) => {
+        if (!option) {
+            return <span>{translations.selectSpeciality}</span>;
+        }
+        return <span>{getLocalized(option, 'name') || option.name_ru}</span>;
+    };
+
     const DesktopTable = () => (
         <div className="card">
             <DataTable value={report || []} rows={5} tableStyle={{ minWidth: '50rem' }} className="text-sm" emptyMessage="...">
                 <Column body={(_, { rowIndex }) => rowIndex + 1} header="#" style={{ width: '20px' }}></Column>
-                <Column header="Преподаватели" body={teacherNameBodyTemplate} style={{ width: '50%' }} />
-                <Column header="Непроверенные задания" className='w-full flex justify-center' body={uncheckedAssignmentsBodyTemplate} style={{ width: '50%' }} />
+                <Column header={translations.teachers} body={teacherNameBodyTemplate} style={{ width: '50%' }} />
+                <Column header={translations.unverifiedTasks} className='w-full flex justify-center' body={uncheckedAssignmentsBodyTemplate} style={{ width: '50%' }} />
             </DataTable>
         </div>
     );
@@ -182,7 +228,7 @@ const TeacherCheckPage = () => {
                                 }
                             </div>
                             <div className="flex items-center gap-1">
-                                <span>Непроверенные задания: </span>
+                                <span>{translations.unverifiedTasks}: </span>
                                 <b className="text-[var(--mainColor)]">{uncheckedAssignmentsBodyTemplate(teacher)}</b>
                             </div>
                         </div>
@@ -196,31 +242,40 @@ const TeacherCheckPage = () => {
             <div>
                 {/* filter */}
                 <div className="main-bg flex flex-col gap-1 my-1">
-                    <div className={'shadow-[var(--bottom-shadow)] mb-3 py-3'}><SubTitle title={'Отчет по преподавателям'} titleSize={'2xl'} mobileTitleSize={'xl'}/></div>
+                    <div className={'shadow-[var(--bottom-shadow)] mb-3 py-3'}><SubTitle title={translations.teacherReport} titleSize={'2xl'} mobileTitleSize={'xl'}/></div>
                     <div className=" flex sm:items-center gap-2 flex-col sm:flex-row mb-2">
                         <div className="sm:max-w-[60%] overflow-hidden flex flex-col items-start gap-2">
-                            <b className="px-1 inline">Выберите факультет</b>
+                            <b className="px-1 inline">{translations.selectFaculty}</b>
                             <div className="sm:max-w-[60%] overflow-hidden flex juctify-center items-start">
-                                <Dropdown value={timeMode} optionLabel="name_ru" options={timeModeOptions} onChange={(e) => setTimeMode(e.value)} placeholder="Выберите факультет" className="text-wrap word-break sm:text-nowrap sm:max-w-full" />
+                                <Dropdown
+                                    value={timeMode}
+                                    options={timeModeOptions}
+                                    onChange={(e) => setTimeMode(e.value)}
+                                    placeholder={translations.selectFaculty}
+                                    className="text-wrap word-break sm:text-nowrap sm:max-w-full"
+                                    itemTemplate={facultyItemTemplate}
+                                    valueTemplate={facultyValueTemplate}
+                                />
                             </div>
                         </div>
 
                         <div className="sm:max-w-[60%] overflow-hidden flex flex-col gap-2">
-                            <b className="px-1">Выберите специальность</b>
+                            <b className="px-1">{translations.selectSpeciality}</b>
                             <div className="sm:max-w-[60%] overflow-hidden flex juctify-center items-start">
                                 <Dropdown
                                     value={speciality}
-                                    optionLabel="name_ru"
                                     options={specialityOptions}
                                     onChange={(e) => setSpecialyty(e.value)}
-                                    placeholder="Выберите специальность"
+                                    placeholder={translations.selectSpeciality}
                                     className={`${!specialityOptions ? 'pointer-events-none opacity-50' : ''} w-full text-sm`}
+                                    itemTemplate={specialityItemTemplate}
+                                    valueTemplate={specialityValueTemplate}
                                 />
                             </div>
                         </div>
                     </div>
                     <div className="flex items-center relative">
-                        <InputText placeholder="Поиск..." value={search} onChange={(e) => setSearch(e.target.value)} className="w-full p-inputtext-sm p-inputtext-rounded" />
+                        <InputText placeholder={translations.search} value={search} onChange={(e) => setSearch(e.target.value)} className="w-full p-inputtext-sm p-inputtext-rounded" />
                         <div className="absolute right-1">{progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}</div>
                     </div>
                 </div>
@@ -228,12 +283,12 @@ const TeacherCheckPage = () => {
                 {hasReport ? (
                     <div className="flex justify-center items-center flex-col gap-2 h-[50vh]">
                         <i className="pi pi-folder-open text-3xl"></i>
-                        <h3 className="text-xl font-semibold text-gray-700 mb-2">Ошибка загрузки</h3>
+                        <h3 className="text-xl font-semibold text-gray-700 mb-2">{translations.loadingError}</h3>
                     </div>
                 ) : empty ? (
                     <div className="flex justify-center items-center flex-col gap-2 h-[50vh]">
                         <i className="pi pi-folder-open text-3xl"></i>
-                        <h3 className="text-lg sm:text-xl font-semibold text-gray-700 mb-2">Ничего не найдено</h3>
+                        <h3 className="text-lg sm:text-xl font-semibold text-gray-700 mb-2">{translations.nothingFound}</h3>
                     </div>
                 ) : skeleton ? (
                     <div className="main-bg flex justify-center items-center my-3">

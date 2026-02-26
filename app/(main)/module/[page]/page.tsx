@@ -17,6 +17,7 @@ import { Nullable } from 'primereact/ts-helpers';
 import { LayoutContext } from '@/layout/context/layoutcontext';
 import useErrorMessage from '@/hooks/useErrorMessage';
 import { useLocalization } from '@/layout/context/localizationcontext';
+import { useLocalizedData } from '@/hooks/useLocalizedData';
 import { types } from 'sass';
 import Null = types.Null;
 
@@ -24,6 +25,7 @@ export default function Module() {
     const { setMessage } = useContext(LayoutContext);
     const showError = useErrorMessage();
     const { translations } = useLocalization();
+    const { getLocalized } = useLocalizedData();
 
     const [timeMode, setTimeMode] = useState<{ name_ru: string; code: number | null; id: number | null } | null>({ name_ru: '', code: null, id: null });
     const [timeModeOptions, setTimeModeOptions] = useState<any>(null);
@@ -61,6 +63,8 @@ export default function Module() {
 
     const [from, setFrom] = useState<Nullable<Date>>(null);
     const [to, setTo] = useState<Nullable<Date>>(null);
+
+    const [saveBtnDisabled, setSaveBtnDisabled] = useState(false);
 
     const handleFetchFaculty = async () => {
         const data = await fetchFaculty();
@@ -129,7 +133,7 @@ export default function Module() {
         } else {
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
+                value: { severity: 'error', summary: translations.errorTitle, detail: translations.tryAgainLater }
             });
             setProgressSpinner(false);
         }
@@ -147,7 +151,7 @@ export default function Module() {
         } else {
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
+                value: { severity: 'error', summary: translations.errorTitle, detail: translations.tryAgainLater }
             });
             setProgressSpinner(false);
         }
@@ -171,7 +175,7 @@ export default function Module() {
         }
     };
 
-    const specialityWithAll = [{ id: null, code: 1, name_ru: 'По всем специальностям' }, ...specialityOptions];
+    const specialityWithAll = [{ id: null, code: 1, name_ru: translations.allSpecialities }, ...specialityOptions];
 
     const startSheduleCheck = (connects: number[]) => {
         if (connects) {
@@ -199,12 +203,12 @@ export default function Module() {
 
     const confirm1 = (spId: number | null, ctId: number | null) => {
         confirmDialog({
-            message: 'Вы точно хотите изменить?',
-            header: 'Подтверждение',
+            message: translations.confirmChange,
+            header: translations.confirmation,
             icon: 'pi pi-exclamation-triangle',
             defaultFocus: 'accept',
-            acceptLabel: 'Изменить',
-            rejectLabel: 'Назад',
+            acceptLabel: translations.change,
+            rejectLabel: translations.back,
             rejectClassName: 'p-button-secondary reject-button',
             accept: () => handleDiactivate(spId, ctId)
         });
@@ -222,26 +226,41 @@ export default function Module() {
     const renderFilters = () => (
         <div className="main-bg flex flex-col gap-4 my-2 p-4 rounded-lg">
             <div className="shadow-[var(--bottom-shadow)] pb-3">
-                <SubTitle mobileTitleSize="xl" title="Модульный график" titleSize="2xl" />
+                <SubTitle mobileTitleSize="xl" title={translations.moduleSchedule} titleSize="2xl" />
             </div>
             <div className="flex items-center gap-3 flex-col sm:flex-row">
                 <div className="w-full min-w-0 flex flex-col gap-2">
-                    <b className="px-1 inline">Выберите факультет</b>
+                    <b className="px-1 inline">{translations.selectFaculty}</b>
                     <div className="w-full flex items-center">
-                        <Dropdown value={timeMode} optionLabel="name_ru" options={timeModeOptions} onChange={(e) => setTimeMode(e.value)} placeholder="Выберите факультет" className="w-full text-sm" />
+                        <Dropdown
+                            value={timeMode}
+                            options={timeModeOptions}
+                            onChange={(e) => setTimeMode(e.value)}
+                            placeholder={translations.selectFaculty}
+                            className="w-full text-sm"
+                            itemTemplate={(option) => <span>{getLocalized(option, 'name') || option.name_ru}</span>}
+                            valueTemplate={(option) => {
+                                if (!option) return <span>{translations.selectFaculty}</span>;
+                                return <span>{getLocalized(option, 'name') || option.name_ru}</span>;
+                            }}
+                        />
                     </div>
                 </div>
 
                 <div className="w-full min-w-0 flex flex-col gap-2 mr-1">
-                    <b className="px-1">Специальность</b>
+                    <b className="px-1">{translations.speciality}</b>
                     <div className="w-full flex items-center">
                         <Dropdown
                             value={speciality}
-                            optionLabel="name_ru"
                             options={specialityWithAll}
                             onChange={(e) => setSpecialyty(e.value)}
-                            placeholder="Выберите специальность"
+                            placeholder={translations.selectSpeciality}
                             className={`${specialityOptions?.length < 1 ? 'pointer-events-none opacity-50' : ''} w-full text-sm `}
+                            itemTemplate={(option) => <span>{getLocalized(option, 'name') || option.name_ru}</span>}
+                            valueTemplate={(option) => {
+                                if (!option) return <span>{translations.selectSpeciality}</span>;
+                                return <span>{getLocalized(option, 'name') || option.name_ru}</span>;
+                            }}
                         />
                         {miniSpinner && (
                             <div>
@@ -252,29 +271,37 @@ export default function Module() {
                 </div>
 
                 <div className="w-full min-w-0 flex flex-col gap-2">
-                    <b className="px-1">Период</b>
+                    <b className="px-1">{translations.period}</b>
                     <div className="w-full flex items-center">
                         <Dropdown
                             value={period}
-                            optionLabel="name_ru"
                             options={periodOptions}
                             onChange={(e) => setPeriod(e.value)}
-                            placeholder="Выберите период"
+                            placeholder={translations.selectPeriod}
                             className={`${specialityOptions?.length < 1 ? 'pointer-events-none opacity-50' : ''} w-full text-sm`}
+                            itemTemplate={(option) => <span>{option.name_ru}</span>}
+                            valueTemplate={(option) => {
+                                if (!option) return <span>{translations.selectPeriod}</span>;
+                                return <span>{option.name_ru}</span>;
+                            }}
                         />
                     </div>
                 </div>
 
                 <div className="w-full min-w-0 flex flex-col gap-2">
-                    <b className="px-1">Семестр</b>
+                    <b className="px-1">{translations.semester}</b>
                     <div className="w-full flex items-center">
                         <Dropdown
                             value={semestr}
-                            optionLabel="name_ru"
                             options={semestrOptions}
                             onChange={(e) => setSemestr(e.value)}
-                            placeholder="Выберите семестр"
+                            placeholder={translations.selectSemester}
                             className={`${specialityOptions?.length < 1 || miniSpinner ? 'pointer-events-none opacity-50' : ''} w-full text-sm`}
+                            itemTemplate={(option) => <span>{getLocalized(option, 'name') || option.name_ru}</span>}
+                            valueTemplate={(option) => {
+                                if (!option) return <span>{translations.selectSemester}</span>;
+                                return <span>{getLocalized(option, 'name') || option.name_ru}</span>;
+                            }}
                         />
                     </div>
                 </div>
@@ -283,7 +310,7 @@ export default function Module() {
             <div className="flex justify-end">
                 <Button
                     className="px-4"
-                    label="Поиск"
+                    label={translations.search}
                     disabled={speciality?.name_ru ? false : true}
                     onClick={() => {
                         handleFetchModuleShedule(currentSpecialityId, period?.id ? period?.id : null, semestr?.id ? semestr?.id : null);
@@ -316,7 +343,7 @@ export default function Module() {
         if (emptySpeciality) {
             return (
                 <div className="main-bg my-2 flex justify-center p-6 rounded-lg">
-                    <b>Данных нет</b>
+                    <b>{translations.noData}</b>
                 </div>
             );
         }
@@ -386,7 +413,7 @@ export default function Module() {
                                             </label>
                                         </div>
                                         <span className="font-semibold max-w-[90%] sm:w-full text-[15px] sm:text-[16px] break-words">
-                                            {idx + 1}. {course.name_ru}
+                                            {idx + 1}. {getLocalized(course, 'name') || course.name_ru}
                                         </span>
                                     </div>
                                 </div>
@@ -397,7 +424,7 @@ export default function Module() {
                                     course.streams.map((item: any) => (
                                         <ModuleChartCard
                                             key={item?.id}
-                                            title={item?.subject_data?.name_ru}
+                                            title={getLocalized(item?.subject_data, 'name') || item?.subject_data?.name_ru}
                                             connectId={item?.id_stream}
                                             handleEdit={(id, checked) => handleEdit(id, checked, course?.id, item?.schedule?.active)}
                                             allIds={connectIds}
@@ -406,7 +433,7 @@ export default function Module() {
                                     ))
                                 ) : (
                                     <div className="main-bg flex justify-center p-4 rounded-md">
-                                        <b>Данных нет</b>
+                                        <b>{translations.noData}</b>
                                     </div>
                                 )}
                             </div>
@@ -414,7 +441,7 @@ export default function Module() {
                     );
                 })}
                 <div className="flex justify-end pt-2">
-                    <Button label="Сохранить" disabled={saveBtnDisabled} onClick={() => setVisible(true)} className="px-4" />
+                    <Button label={translations.save} disabled={saveBtnDisabled} onClick={() => setVisible(true)} className="px-4" />
                 </div>
             </div>
         );
@@ -423,7 +450,7 @@ export default function Module() {
     // dialog
     const renderDialog = () => (
         <Dialog
-            header={'Изменить график модулей'}
+            header={translations.changeModuleSchedule}
             visible={visible}
             onHide={() => {
                 if (!visible) return;
@@ -435,7 +462,7 @@ export default function Module() {
                 <div className="w-full flex flex-col">
                     <div className="w-full flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
                         <div className="flex flex-col items-center sm:items-start">
-                            <span className="text-sm">Начало модуля</span>
+                            <span className="text-sm">{translations.moduleStart}</span>
                             <Calendar
                                 value={from}
                                 locale="ru" // Указываем русскую локаль
@@ -452,7 +479,7 @@ export default function Module() {
                             />
                         </div>
                         <div className="flex flex-col items-center sm:items-start">
-                            <span className="text-sm">Конец модуля</span>
+                            <span className="text-sm">{translations.moduleEnd}</span>
                             <Calendar
                                 value={to}
                                 locale="ru" // Указываем русскую локаль
@@ -506,10 +533,26 @@ export default function Module() {
         handleFetchSemestr();
     }, []);
 
+    // Update period options when language changes
+    useEffect(() => {
+        setPeriodOptions([
+            { name_ru: translations.summer, id: 1 },
+            { name_ru: translations.winter, id: 2 }
+        ]);
+
+        // Update selected period if it exists
+        if (period) {
+            const updatedPeriod = period.id === 1
+                ? { ...period, name_ru: translations.summer }
+                : { ...period, name_ru: translations.winter };
+            setPeriod(updatedPeriod);
+        }
+    }, [translations]);
+
     const footerContent = (
         <div>
             <Button
-                label="Назад"
+                label={translations.back}
                 className="reject-button"
                 icon="pi pi-times"
                 size="small"
@@ -519,7 +562,7 @@ export default function Module() {
             />
 
             <Button
-                label="Сохранить"
+                label={translations.save}
                 icon="pi pi-check"
                 size="small"
                 onClick={() => {

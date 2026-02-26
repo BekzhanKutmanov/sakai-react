@@ -203,7 +203,7 @@ export default function Dashboard() {
                             '---'
                         )}
                     </h1>
-                    {telegramData && <div className={'flex items-center gap-2 font-sans'}><p className={'m-0 text-sm hidden sm:block'}>Связь с телеграмм </p> <div className="cursor-pointer pi pi-telegram p-button-rounded text-white p-button-text p-3 bg-[var(--mainColor)] rounded-full min-w-[20px] min-h-[20px] hover:opacity-50" onClick={() => setShowTelegramDialog(true)}></div></div>}
+                    {telegramData && <div className={'flex items-center gap-2 font-sans'}><p className={'m-0 text-sm hidden sm:block'}>Подключить уведомления в Telegram </p> <div className="cursor-pointer pi pi-telegram p-button-rounded text-white p-button-text p-3 bg-[var(--mainColor)] rounded-full min-w-[20px] min-h-[20px] hover:opacity-50" onClick={() => setShowTelegramDialog(true)}></div></div>}
                 </div>
 
                 {/* statistic */}
