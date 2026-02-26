@@ -632,7 +632,6 @@ export const localizationData = {
         createCategoryTitle: 'Категория түзүү',
         editCategoryTitle: 'Категорияны өзгөртүү',
         publish: 'Жарыялоо',
-        cancel: 'Жокко чыгаруу',
         actions: 'Аракеттер',
         teachers: 'Окутуучулар',
 

@@ -64,8 +64,6 @@ export default function Module() {
     const [from, setFrom] = useState<Nullable<Date>>(null);
     const [to, setTo] = useState<Nullable<Date>>(null);
 
-    const [saveBtnDisabled, setSaveBtnDisabled] = useState(false);
-
     const handleFetchFaculty = async () => {
         const data = await fetchFaculty();
         if (data && data?.length > 0) {

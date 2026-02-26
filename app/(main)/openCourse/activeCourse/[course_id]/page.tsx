@@ -12,13 +12,16 @@ import { mainStepsType } from '@/types/mainStepType';
 import { myMainCourseType } from '@/types/myMainCourseType';
 import { useParams } from 'next/navigation';
 import { Accordion, AccordionTab } from 'primereact/accordion';
-import { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useLocalization } from '@/layout/context/localizationcontext';
+import { BottomNav } from '@/app/components/menu/MobileMenu';
+import useMediaQuery from '@/hooks/useMediaQuery';
 
 export default function ActiveCourseDetail() {
     const { course_id } = useParams();
 
-    const { setMessage } = useContext(LayoutContext);
+    const { user, setMessage } = useContext(LayoutContext);
+    const media = useMediaQuery('(max-width: 640px)');
     const showError = useErrorMessage();
     const { translations } = useLocalization();
     const [mainCourse, setMainCourses] = useState<myMainCourseType | null>(null);
@@ -110,7 +113,7 @@ export default function ActiveCourseDetail() {
     }, [lessons, activeIndex]);
 
     return (
-        <div className="main-bg">
+        <div className={`main-bg ${!themeShow ? 'h-[100vh]' : ''} flex flex-col justify-between gap-2`}>
             {themeShow ? (
                 <NotFound titleMessage={translations.noThemes} />
             ) : (
@@ -172,6 +175,7 @@ export default function ActiveCourseDetail() {
                     </Accordion>
                 </div>
             )}
+            {media && user?.is_student && <BottomNav />}
         </div>
     );
 }

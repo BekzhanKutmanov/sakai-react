@@ -12,15 +12,18 @@ import { CourseCategoryOption } from '@/types/openCourse/CourseCategoryOption';
 import { OptionsType } from '@/types/OptionsType';
 import Link from 'next/link';
 import { ProgressSpinner } from 'primereact/progressspinner';
-import { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useLocalization } from '@/layout/context/localizationcontext';
 import { useLocalizedData } from '@/hooks/useLocalizedData';
+import { BottomNav } from '@/app/components/menu/MobileMenu';
+import useMediaQuery from '@/hooks/useMediaQuery';
 
 export default function ActiveCourseList() {
     // types
 
-    const { setMessage } = useContext(LayoutContext);
+    const { user, setMessage } = useContext(LayoutContext);
     const showError = useErrorMessage();
+    const media = useMediaQuery('(max-width: 640px)');
     const { translations } = useLocalization();
     const { getLocalized } = useLocalizedData();
     const [coursesValue, setValueCourses] = useState<CourseCategoryOption[]>([]);
@@ -110,111 +113,109 @@ export default function ActiveCourseList() {
     const MyActiveCourse = ({ item }: { item: CourseCategoryOption }) => {
         const link = { url: `/openCourse/activeCourse/${item?.id}`, status: true };
 
-        return <div className="flex flex-col shadow rounded p-2 sm:p-4 sm:pb-2 gap-2 w-full hover:shadow-lg">
-            {/* header section */}
-            <div className="flex items-start justify-between gap-2">
-                <div className={`w-full flex gap-3 sm:items-center`}>
-                    <Link href={link.url || '#'}>{imageBodyTemplate(item)}</Link>
-                    {link.status ? (
-                        <Link href={link.url || '#'}>
-                            <b className="hidden sm:block cursor-pointer w-full sm:max-w-[350px] break-words text-[var(--mainColor)] underline">
-                                {getLocalized(item, 'title') || item?.title}
-                            </b>
-                        </Link>
-                    ) : (
-                        <b className="hidden sm:block cursor-pointer w-full sm:max-w-[350px] break-words text-[var(--mainColor)] underline">
-                            {getLocalized(item, 'title') || item?.title}
-                        </b>
-                    )}
-                </div>
-                <div className="flex-col items-end">
-                    <div
-                        className={`flex gap-1 items-center text-sm text-white rounded p-1 mb-1 ${item?.audience_type?.name === 'open' ? 'bg-[var(--greenColor)]' : item?.audience_type?.name === 'wallet' ? 'bg-[var(--amberColor)]' : ''
-                            }`}
-                    >
-                        <i className={item?.audience_type?.icon} style={{ fontSize: '14px' }}></i>
-                        <i className="text-[13px]">{item?.audience_type?.name === 'open' ? translations.free : item?.audience_type?.name === 'wallet' ? translations.paid : ''}</i>
+        return (
+            <div className="flex flex-col shadow rounded p-2 sm:p-4 sm:pb-2 gap-2 w-full hover:shadow-lg">
+                {/* header section */}
+                <div className="flex items-start justify-between gap-2">
+                    <div className={`w-full flex gap-3 sm:items-center`}>
+                        <Link href={link.url || '#'}>{imageBodyTemplate(item)}</Link>
+                        {link.status ? (
+                            <Link href={link.url || '#'}>
+                                <b className="hidden sm:block cursor-pointer w-full sm:max-w-[350px] break-words text-[var(--mainColor)] underline">{getLocalized(item, 'title') || item?.title}</b>
+                            </Link>
+                        ) : (
+                            <b className="hidden sm:block cursor-pointer w-full sm:max-w-[350px] break-words text-[var(--mainColor)] underline">{getLocalized(item, 'title') || item?.title}</b>
+                        )}
                     </div>
-                </div>
-            </div>
-
-            {link.status ? (
-                <Link href={link.url || '#'}>
-                    <b className="block sm:hidden cursor-pointer w-full sm:max-w-[350px] break-words text-[var(--mainColor)] underline">
-                        {getLocalized(item, 'title') || item?.title}
-                    </b>
-                </Link>
-            ) : (
-                <b className="block sm:hidden cursor-pointer w-full sm:max-w-[350px] break-words text-[var(--mainColor)] underline">
-                    {getLocalized(item, 'title') || item?.title}
-                </b>
-            )}
-
-            {/* score, progress */}
-            <div className='flex justify-end sm:items-end gap-4 flex-col sm:flex-row'>
-                <div className='order-2 sm:order-1 flex items-center justiy-center sm:justify-end gap-1 text-sm sm:font-bold mb-[1px]'>
-                    <span>{translations.score}: </span>
-                    <div className='flex items-center gap-1 text-[var(--mainColor)]'>{item?.total_score || 0} / {item?.max_score?.total_score || 0}</div>
-                </div>
-
-                <div className="flex flex-col items-center justify-between order-0 sm:order-2 shadow px-1">
-                    <div>
-                        <span className="text-[var(--titleColor)] text-sm">{translations.completionStatus}</span>
-                    </div>
-                    <div className="w-full flex items-center gap-1 justify-between order-0 sm:order-2 ">
-                        <div className="flex items-center text-[var(--titleColor)]">
-                            <span className="text-[14px] sm:text-md block sm:w-full">{Math.floor(typeof item?.progress_percent === 'number' ? item?.progress_percent : 0)}</span>
-                            <span>%</span>
-                        </div>
-                        <div className="w-full border-1 rounded border-[green]">
-                            <ProgressBar value={item?.progress_percent ? Number(item?.progress_percent) : 0} max={100} height="7px" className="h-3 sm:min-w-[150px] max-w-[80%]" />
+                    <div className="flex-col items-end">
+                        <div className={`flex gap-1 items-center text-sm text-white rounded p-1 mb-1 ${item?.audience_type?.name === 'open' ? 'bg-[var(--greenColor)]' : item?.audience_type?.name === 'wallet' ? 'bg-[var(--amberColor)]' : ''}`}>
+                            <i className={item?.audience_type?.icon} style={{ fontSize: '14px' }}></i>
+                            <i className="text-[13px]">{item?.audience_type?.name === 'open' ? translations.free : item?.audience_type?.name === 'wallet' ? translations.paid : ''}</i>
                         </div>
                     </div>
                 </div>
 
-            </div>
+                {link.status ? (
+                    <Link href={link.url || '#'}>
+                        <b className="block sm:hidden cursor-pointer w-full sm:max-w-[350px] break-words text-[var(--mainColor)] underline">{getLocalized(item, 'title') || item?.title}</b>
+                    </Link>
+                ) : (
+                    <b className="block sm:hidden cursor-pointer w-full sm:max-w-[350px] break-words text-[var(--mainColor)] underline">{getLocalized(item, 'title') || item?.title}</b>
+                )}
 
-            <div className='flex flex-col gap-1'>
-                <div className="flex items-center gap-1 justify-between">
+                {/* score, progress */}
+                <div className="flex justify-end sm:items-end gap-4 flex-col sm:flex-row">
+                    <div className="order-2 sm:order-1 flex items-center justiy-center sm:justify-end gap-1 text-sm sm:font-bold mb-[1px]">
+                        <span>{translations.score}: </span>
+                        <div className="flex items-center gap-1 text-[var(--mainColor)]">
+                            {item?.total_score || 0} / {item?.max_score?.total_score || 0}
+                        </div>
+                    </div>
 
+                    <div className="flex flex-col items-center justify-between order-0 sm:order-2 shadow px-1">
+                        <div>
+                            <span className="text-[var(--titleColor)] text-sm">{translations.completionStatus}</span>
+                        </div>
+                        <div className="w-full flex items-center gap-1 justify-between order-0 sm:order-2 ">
+                            <div className="flex items-center text-[var(--titleColor)]">
+                                <span className="text-[14px] sm:text-md block sm:w-full">{Math.floor(typeof item?.progress_percent === 'number' ? item?.progress_percent : 0)}</span>
+                                <span>%</span>
+                            </div>
+                            <div className="w-full border-1 rounded border-[green]">
+                                <ProgressBar value={item?.progress_percent ? Number(item?.progress_percent) : 0} max={100} height="7px" className="h-3 sm:min-w-[150px] max-w-[80%]" />
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                {/* data */}
-                <div className="w-full flex justify-end text-[11px] order-1 sm:order-2">
-                    <MyDateTime createdAt={item?.created_at} options={options} />
+
+                <div className="flex flex-col gap-1">
+                    <div className="flex items-center gap-1 justify-between"></div>
+                    {/* data */}
+                    <div className="w-full flex justify-end text-[11px] order-1 sm:order-2">
+                        <MyDateTime createdAt={item?.created_at} options={options} />
+                    </div>
                 </div>
             </div>
-        </div>
-    }
+        );
+    };
 
     useEffect(() => {
         handleFetchActiveCourse();
     }, []);
 
-    if (mainProgressSpinner) return <div className='main-bg flex justify-center items-center h-[100vh]'><ProgressSpinner style={{ width: '60px', height: '60px' }} /></div>
+    if (mainProgressSpinner)
+        return (
+            <div className="main-bg flex justify-center items-center h-[100vh]">
+                <ProgressSpinner style={{ width: '60px', height: '60px' }} />
+            </div>
+        );
 
     if (hasCourses) return <NotFound titleMessage={translations.noData} />;
 
     return (
-        <div className="main-bg">
-            <h1 className="m-0 mb-4 pb-1 shadow-[var(--bottom-shadow)] text-xl sm:text-2xl">{translations.myActiveCourses}</h1>
-            {skeleton ? (
-                <>
-                    <GroupSkeleton count={2} size={{ width: '100%', height: '12rem' }} />
-                    <GroupSkeleton count={2} size={{ width: '100%', height: '12rem' }} />
-                </>
-            ) : emptyCourse ? (
-                <b className="flex justify-center">{translations.empty}</b>
-            ) : (
-                <div className="flex flex-col gap-2">
-                    {coursesValue?.map((item) => {
-                        return (
-                            <div key={item?.id}>
-                                <MyActiveCourse item={item} />
-                            </div>
-                        );
-                    })}
-                </div>
-            )}
+        <div className="main-bg h-[100vh] flex flex-col justify-between gap-2">
+            <div>
+                <h1 className="m-0 mb-4 pb-1 shadow-[var(--bottom-shadow)] text-xl sm:text-2xl">{translations.myActiveCourses}</h1>
+                {skeleton ? (
+                    <>
+                        <GroupSkeleton count={2} size={{ width: '100%', height: '12rem' }} />
+                        <GroupSkeleton count={2} size={{ width: '100%', height: '12rem' }} />
+                    </>
+                ) : emptyCourse ? (
+                    <b className="main-bg my-2 flex justify-center">{translations.empty}</b>
+                ) : (
+                    <div className="flex flex-col gap-2">
+                        {coursesValue?.map((item) => {
+                            return (
+                                <div key={item?.id}>
+                                    <MyActiveCourse item={item} />
+                                </div>
+                            );
+                        })}
+                    </div>
+                )}
+            </div>
+            {media && user?.is_student && <BottomNav />}
         </div>
     );
 }

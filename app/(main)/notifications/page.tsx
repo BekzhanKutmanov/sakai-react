@@ -169,8 +169,8 @@ export default function MainNotificatoin() {
     }, [user]);
 
     return (
-        <div className={'flex flex-col justify-between h-[100vh]'}>
-            <div className="main-bg">
+        <div className={'flex flex-col justify-between h-[100vh] flex flex-col justify-between'}>
+            <div className="main-bg ">
                 <div className="w-full flex items-center shadow-[var(--bottom-shadow)] p-2">
                     <SubTitle title={translations.notifications} titleSize={'2xl'} mobileTitleSize={'xl'}/>
                 </div>
@@ -209,7 +209,7 @@ export default function MainNotificatoin() {
                     )}
                 </div>
             </div>
-            {/*{media && user?.is_student && <BottomNav />}*/}
+            {media && user?.is_student && <BottomNav />}
         </div>
     );
 }

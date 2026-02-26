@@ -131,83 +131,73 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
         }
     ];
 
-    const mobileStudentMenu = [
-        user
-            ? {
-                  label: translations.profile,
-                  icon: 'pi pi-user',
-                  items: [
-                      {
-                          label: '',
-                          template: (
-                              <div className="flex items-center gap-2 text-sm ml-4 mr-1 flex-wrap">
-                                  <div className="flex gap-1">
-                                      <span className="text-[var(--titleColor)] text-[13px]">{user?.last_name}</span>
-                                      <span className="text-[var(--titleColor)] text-[13px]">{user?.name}</span>
-                                  </div>
-                                  {user?.myedu_id && (
-                                      <small onClick={() => handleCopyClick(String(user.myedu_id))} className={`cursor-pointer p-1 rounded ${copyClickState ? copyBtnClassName : 'bg-[var(--mainBgColor)]'}`}>
-                                          {!copyClickState ? <span>ID: {user.myedu_id}</span> : <span className="min-w-[60px]">ID: Copy</span>}
-                                      </small>
-                                  )}
-                              </div>
-                          )
-                      },
-                      {
-                          label: translations.logout,
-                          icon: 'pi pi-sign-out',
-                          items: [],
-                          command: () => {
-                              window.location.href = '/auth/login';
-                              logout({ setUser, setGlobalLoading });
-                          }
-                      }
-                  ]
-              }
-            : {
-                  label: translations.login,
-                  icon: 'pi pi-sign-in',
-                  items: [],
-                  command: () => {
-                      window.location.href = '/auth/login';
-                  }
-              },
-
-        {
-            label: translations.notification,
-            icon: (
-                <div className="p-overlay-badge">
-                    <i className="pi pi-bell p-menuitem-icon" style={{ fontSize: '1.5rem' }}></i>
-                    {/* Условное отображение красного кружка (бэйджа) */}
-                    {notification?.length > 0 && <span className="absolute w-[10px] h-[10px] right-[10px] top-[5px] bg-[var(--amberColor)] rounded-full "></span>}
-                </div>
-            ),
-            items: [
+    const mobileStudentMenu = user ? [
                 {
                     label: '',
                     template: (
-                        <div className="max-h-[200px] overflow-y-auto">
-                            <Notification notification={notification} />
+                        <div className="flex items-center gap-2 text-sm ml-4 mr-1 flex-wrap">
+                            <div className="flex gap-1">
+                                <span className="text-[var(--titleColor)] text-[13px]">{user?.last_name}</span>
+                                <span className="text-[var(--titleColor)] text-[13px]">{user?.name}</span>
+                            </div>
+                            {user?.myedu_id && (
+                                <small onClick={() => handleCopyClick(String(user.myedu_id))} className={`cursor-pointer p-1 rounded ${copyClickState ? copyBtnClassName : 'bg-[var(--mainBgColor)]'}`}>
+                                    {!copyClickState ? <span>ID: {user.myedu_id}</span> : <span className="min-w-[60px]">ID: Copy</span>}
+                                </small>
+                            )}
                         </div>
                     )
+                },
+                {
+                    label: translations.logout,
+                    icon: 'pi pi-sign-out',
+                    items: [],
+                    command: () => {
+                        window.location.href = '/auth/login';
+                        logout({ setUser, setGlobalLoading });
+                    }
                 }
-            ]
-        },
+            ] :
+        [
+            {
+                label: translations.login,
+                icon: 'pi pi-sign-in',
+                items: [],
+                command: () => {
+                    window.location.href = '/auth/login';
+                }
+            }
+        ]
+            // ? {
+            //       label: translations.profile,
+            //       icon: 'pi pi-user',
+            //       items: [
 
-        {
-            // label: 'Старый Mooc',
-            icon: '',
-            items: [],
-            template: (
-                <div>
-                    <Link href={'https://oldmooc.oshsu.kg/'} target="_blank" className="flex text-[12px] text-[var(--bodyColor)]! py-1 hover:text-white! justify-center">
-                        {translations.oldMooc}
-                    </Link>
-                </div>
-            ),
-            url: 'https://oldmooc.oshsu.kg/'
-        }
-    ];
+              //     ]
+              // }
+            // :
+
+        // {
+        //     label: translations.notification,
+        //     icon: (
+        //         <div className="p-overlay-badge">
+        //             <i className="pi pi-bell p-menuitem-icon" style={{ fontSize: '1.5rem' }}></i>
+        //             {/* Условное отображение красного кружка (бэйджа) */}
+        //             {notification?.length > 0 && <span className="absolute w-[10px] h-[10px] right-[10px] top-[5px] bg-[var(--amberColor)] rounded-full "></span>}
+        //         </div>
+        //     ),
+        //     items: [
+        //         {
+        //             label: '',
+        //             template: (
+        //                 <div className="max-h-[200px] overflow-y-auto">
+        //                     <Notification notification={notification} />
+        //                 </div>
+        //             )
+        //         }
+        //     ]
+        // },
+    // ];
 
     // profile
     const profileItems = [
@@ -340,9 +330,9 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                         </div>
                     ) : (
                         <div className={`flex items-center gap-3 ${!media ? 'order-2' : 'order-3'} `}>
-                            <button type="button" onClick={() => setLanguage(language === 'ru' ? 'ky' : 'ru')} className="p-link">
-                                {language.toUpperCase()}
-                            </button>
+                            {/*<button type="button" onClick={() => setLanguage(language === 'ru' ? 'ky' : 'ru')} className="p-link">*/}
+                            {/*    {language.toUpperCase()}*/}
+                            {/*</button>*/}
                             <Link className="text-[var(--titleColor)] text-sm hover:text-[var(--mainColor)]" href={'https://oldmooc.oshsu.kg/'} target="_blank">
                                 {translations.oldMooc}
                             </Link>

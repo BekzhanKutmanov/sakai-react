@@ -19,9 +19,10 @@ import { InputText } from 'primereact/inputtext';
 import { Paginator } from 'primereact/paginator';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import { Sidebar } from 'primereact/sidebar';
-import { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useLocalization } from '@/layout/context/localizationcontext';
 import MainTitle from '@/app/components/titles/MainTitle';
+import { BottomNav } from '@/app/components/menu/MobileMenu';
 
 // types
 interface CategoryId {
@@ -39,6 +40,7 @@ interface SelectLangType extends Pick<MainLangType, 'title' | 'description' | 'i
 
 export default function OpenCourse() {
     const { page } = useParams();
+    const { user } = useContext(LayoutContext);
     const router = useRouter();
     const { setMessage } = useContext(LayoutContext);
     const showError = useErrorMessage();
@@ -454,7 +456,7 @@ export default function OpenCourse() {
                     <GroupSkeleton count={2} size={{ width: '100%', height: '12rem' }} />
                 </>
             ) : emptyCourse ? (
-                <div className="main-bg">
+                <div className="main-bg my-2">
                     <b className="flex justify-center">{translations.noCourses}</b>
                 </div>
             ) : (
@@ -481,6 +483,8 @@ export default function OpenCourse() {
                     </div>
                 </>
             )}
+
+            {media && user?.is_student && <BottomNav />}
 
             <Sidebar visible={showVisisble} position="bottom" style={{ height: '90vh' }} onHide={() => setShowVisible(false)}>
                 {skeleton ? (
