@@ -9,6 +9,7 @@ import Link from 'next/link';
 import { Button } from 'primereact/button';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import { useContext, useState } from 'react';
+import { useLocalization } from '@/layout/context/localizationcontext';
 
 export default function StudentInfoCard({
     type,
@@ -76,6 +77,7 @@ export default function StudentInfoCard({
     const showError = useErrorMessage();
     const { setMessage, setContextLastSubjectPageVisit } = useContext(LayoutContext);
     const [progressSpinner, setProgressSpinner] = useState(false);
+    const { translations } = useLocalization();
 
     const handleChills = async () => {
         const newChills = !chills;
@@ -112,7 +114,7 @@ export default function StudentInfoCard({
                         <Link onClick={()=> setContextLastSubjectPageVisit(subjectId)} href={`/teaching/lessonView/${lesson}/${subjectId}/${streams && streams.connections[0].id_stream}/${stepId}`}>
                             <Button
                                 disabled={progressSpinner}
-                                label="Выполнено"
+                                label={translations.completed}
                                 icon="pi pi-check"
                                 size="small"
                                 className={`w-full success-button px-2 py-1 flex items-center justify-center gap-1 ${progressSpinner && 'opacity-50'} ${media ? 'mini-button' : ''}`}
@@ -121,7 +123,7 @@ export default function StudentInfoCard({
                     ) : (
                         <Button
                             disabled={progressSpinner}
-                            label="Выполнено"
+                            label={translations.completed}
                             icon="pi pi-check"
                             onClick={handleChills}
                             size="small"
@@ -134,10 +136,10 @@ export default function StudentInfoCard({
                     {progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}
                     {type === 'test' || type === 'practical' ? (
                         <Link onClick={()=> setContextLastSubjectPageVisit(subjectId)} href={`/teaching/lessonView/${lesson}/${subjectId}/${streams && streams.connections[0].id_stream}/${stepId}`}>
-                            <Button disabled={progressSpinner} label="Отметить как выполненный" size="small" className={`w-full px-2 py-1 ${progressSpinner && 'opacity-50'} ${media ? 'mini-button' : ''}`} />
+                            <Button disabled={progressSpinner} label={translations.markAsCompleted} size="small" className={`w-full px-2 py-1 ${progressSpinner && 'opacity-50'} ${media ? 'mini-button' : ''}`} />
                         </Link>
                     ) : (
-                        <Button disabled={progressSpinner} label="Отметить как выполненный" onClick={handleChills} size="small" className={`w-full px-2 py-1 ${progressSpinner && 'opacity-50'} ${media ? 'mini-button' : ''}`} />
+                        <Button disabled={progressSpinner} label={translations.markAsCompleted} onClick={handleChills} size="small" className={`w-full px-2 py-1 ${progressSpinner && 'opacity-50'} ${media ? 'mini-button' : ''}`} />
                     )}
                 </div>
             )}
@@ -219,13 +221,13 @@ export default function StudentInfoCard({
                         href={`/teaching/lessonView/${lesson}/${subjectId}/${streams && streams.connections[0].id_stream}/${stepId}`}
                         className="cursor-pointer max-w-[800px] text-[16px] text-wrap break-all hover:underline"
                     >
-                        Тест
+                        {translations.test}
                     </Link>
                 </div>
             </div>
             <div className="w-full flex items-center justify-center flex-col sm:flex-row sm:justify-end gap-2">
                 <div className="w-full text-sm flex items-center gap-1 justify-end">
-                    <span>Балл:</span>{' '}
+                    <span>{translations.score}:</span>{' '}
                     <span className="text-[var(--mainColor)]">
                         {' '}
                         {lessonItem?.my_score || 0} / {lessonItem?.score || 0}
@@ -247,12 +249,12 @@ export default function StudentInfoCard({
                     href={`/teaching/lessonView/${lesson}/${subjectId}/${streams && streams.connections[0].id_stream}/${stepId}`}
                     className="cursor-pointer max-w-[800px] text-[16px] text-wrap break-all hover:underline"
                 >
-                    Практическое задание
+                    {translations.practicalTask}
                 </Link>
             </div>
             <div className="w-full flex items-center justify-center flex-col sm:flex-row sm:justify-end gap-2">
                 <div className="w-full text-sm flex items-center gap-1 justify-end">
-                    <span>Балл:</span>{' '}
+                    <span>{translations.score}:</span>{' '}
                     <span className="text-[var(--mainColor)]">
                         {' '}
                         {lessonItem?.my_score || 0} / {lessonItem?.score || 0}
@@ -274,7 +276,7 @@ export default function StudentInfoCard({
                         forumValueAdd && forumValueAdd();
                         setContextLastSubjectPageVisit(subjectId);
                     }} href={stepId && id_parent && contentId ? `/students/forum/${stepId}/${id_parent}/${contentId}` : '#'} className="cursor-pointer max-w-[1000px] text-[14px] sm:text-[16px] hover:underline">
-                        Оставьте отзыв или задайте вопрос по материалам урока
+                        {translations.leaveFeedbackOrQuestion}
                     </Link>
                 </div>
             </div>

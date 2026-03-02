@@ -21,6 +21,8 @@ import { StepApi } from '@/types/Step/StepApi/StepApi';
 import Link from 'next/link';
 import AnswersTable from '@/app/components/tables/AnswersTable';
 import useMediaQuery from '@/hooks/useMediaQuery';
+import { useLocalization } from '@/layout/context/localizationcontext';
+import { useLocalizedData } from '@/hooks/useLocalizedData';
 
 export default function LessonTest() {
     // types
@@ -55,6 +57,8 @@ export default function LessonTest() {
     const showError = useErrorMessage();
     const { user, setMessage, setContextNewStudentThemes, contextNotificationId, setContextNotificationId, contextNotifications, setContextNotifications, handleNotifications, contextLastSubjectPageVisit, setContextLastSubjectPageVisit } =
         useContext(LayoutContext);
+    const { translations } = useLocalization();
+    const { getLocalized } = useLocalizedData();
 
     const [steps, setMainSteps] = useState<ReportStep | null>(null);
     const [hasSteps, setHasSteps] = useState(false);
@@ -125,7 +129,7 @@ export default function LessonTest() {
         } else {
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
+                value: { severity: 'error', summary: translations.error, detail: translations.tryAgainLater }
             });
             if (data?.data?.response?.status) {
                 showError(data?.data.response.status);
@@ -173,7 +177,7 @@ export default function LessonTest() {
             // setHasThemes(true);
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
+                value: { severity: 'error', summary: translations.error, detail: translations.tryAgainLater }
             });
             if (data?.response?.status) {
                 showError(data.response.status);
@@ -188,7 +192,7 @@ export default function LessonTest() {
             setPreview(true);
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка при воспроизведении видео', detail: '' }
+                value: { severity: 'error', summary: translations.error, detail: '' }
             });
         }
 
@@ -207,7 +211,7 @@ export default function LessonTest() {
             setPreview(true);
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка при воспроизведении видео', detail: '' }
+                value: { severity: 'error', summary: translations.error, detail: '' }
             });
             return null; // не удалось получить ID
         }
@@ -233,14 +237,14 @@ export default function LessonTest() {
             setProgressSpinner(false);
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка при отправке ответа!', detail: '' }
+                value: { severity: 'error', summary: translations.error, detail: '' }
             });
             handleStep();
             if (data?.response?.status) {
                 if (data?.response?.status == '400') {
                     setMessage({
                         state: true,
-                        value: { severity: 'error', summary: 'Ошибка!', detail: data?.response?.data?.message }
+                        value: { severity: 'error', summary: translations.error, detail: data?.response?.data?.message }
                     });
                 } else {
                     showError(data.response.status);
@@ -263,13 +267,13 @@ export default function LessonTest() {
             setProgressSpinner(false);
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка при отправке документа!', detail: '' }
+                value: { severity: 'error', summary: translations.error, detail: '' }
             });
             if (data?.response?.status) {
                 if (data?.response?.status == '400') {
                     setMessage({
                         state: true,
-                        value: { severity: 'error', summary: 'Ошибка!', detail: data?.response?.data?.message }
+                        value: { severity: 'error', summary: translations.error, detail: data?.response?.data?.message }
                     });
                 } else {
                     showError(data.response.status);
@@ -285,7 +289,7 @@ export default function LessonTest() {
         if (data && data.length > 0) {
             return data;
         } else {
-            setMessage({ state: true, value: { severity: 'error', summary: 'Ошибка!', detail: 'Тема не доступна' } });
+            setMessage({ state: true, value: { severity: 'error', summary: translations.error, detail: translations.dataTemporarilyUnavailable } });
             return [];
         }
     };
@@ -299,7 +303,7 @@ export default function LessonTest() {
             setNavigationStepId(validSteps[0]?.id);
             if (validSteps[0]?.id) router.push(`/teaching/lessonView/${lesson_id}/${subject_id}/${stream_id}/${validSteps[0].id}`);
         } else {
-            setMessage({ state: true, value: { severity: 'error', summary: 'В этой теме нет материалов', detail: 'Проверьте общий список тем' } });
+            setMessage({ state: true, value: { severity: 'error', summary: translations.error, detail: translations.noData } });
         }
     };
 
@@ -481,7 +485,7 @@ export default function LessonTest() {
                     {/* <Link href={`/pdf/${document?.content?.document}`}>
                         <Button icon="pi pi-eye" label="Открыть документ" className="px-2 mini-button" />
                     </Link> */}
-                    <span>Открыть отдельно</span>
+                    <span>{translations.openSeparately}</span>
                     {document?.content?.document_path && (
                         <a href={document?.content?.document_path} download target="_blank" rel="noopener noreferrer">
                             {' '}
@@ -507,7 +511,7 @@ export default function LessonTest() {
                     {link?.content?.description && <div className="flex flex-col gap-2">{link?.content?.description && <div className="lesson-card-border shadow rounded p-2 sm:w-full md:w-[70%]">{link?.content?.description}</div>}</div>}
                 </div>
                 <div className="flex gap-1 items-start flex-col sm:flex-row">
-                    <span className="text-[var(--mainColor)]">Ссылка: </span>
+                    <span className="text-[var(--mainColor)]">{translations.linkLabel}: </span>
                     <a href={link ? String(link?.content?.url) : '#'} className="max-w-[800px] text-[16px] break-words hover:underline" target="_blank">
                         {link?.content?.url}
                     </a>
@@ -524,7 +528,7 @@ export default function LessonTest() {
                     <i className={`${steps?.type?.logo} text-2xl`}></i>
                 </div>
                 <div className="flex items-center gap-1 my-2">
-                    <span className="text-[var(--mainColor)]">Балл за задание: </span>
+                    <span className="text-[var(--mainColor)]">{translations.score}: </span>
                     <b className="text-[16px] sm:text-[18px] ">{`${steps?.score}`}</b>
                 </div>
             </div>
@@ -548,7 +552,7 @@ export default function LessonTest() {
                         <div>
                             {practica?.content?.url && (
                                 <div className="flex gap-2 flex-col sm:flex-row">
-                                    <span className="text-[var(--mainColor)]">Ссылка: </span>
+                                    <span className="text-[var(--mainColor)]">{translations.linkLabel}: </span>
                                     {practica?.content.url && (
                                         <a href={practica?.content.url} className="max-w-[800px] overflow-x-auto text-[12px] sm:text-sm text-wrap break-all" target="_blank">
                                             {practica?.content.url}
@@ -563,11 +567,11 @@ export default function LessonTest() {
 
             {steps?.chills ? (
                 <>
-                    <span className="pi pi-check-circle text-xl text-[var(--greenColor)] mb-4"> Задание выполнено</span>
+                    <span className="pi pi-check-circle text-xl text-[var(--greenColor)] mb-4"> {translations.taskCompleted}</span>
                 </>
             ) : (
                 <div className="flex flex-col gap-2 items-start w-full mt-2">
-                    <span className="pi pi-check-circle text-lg mb-1 text-[var(--mainColor)] shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)] pb-1"> Задание после изучения материала, загрузи свой файл с решением.</span>
+                    <span className="pi pi-check-circle text-lg mb-1 text-[var(--mainColor)] shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)] pb-1"> {translations.taskInstruction}</span>
                     <div className="w-full mt-2">
                         <input
                             type="file"
@@ -581,7 +585,7 @@ export default function LessonTest() {
                                     if (file.size > maxSize) {
                                         setMessage({
                                             state: true,
-                                            value: { severity: 'error', summary: 'Файл слишком большой!', detail: 'Разрешено максимум 10 MB.' }
+                                            value: { severity: 'error', summary: translations.fileTooLarge, detail: translations.maxFileSize10mb }
                                         });
                                     } else {
                                         setDocValue((prev) => ({
@@ -596,7 +600,7 @@ export default function LessonTest() {
                     <div className="w-full">
                         {progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}
                         <Button
-                            label="Отправить"
+                            label={translations.send}
                             size="small"
                             disabled={progressSpinner}
                             className={`${progressSpinner ? 'opacity-50' : ''}`}
@@ -626,7 +630,7 @@ export default function LessonTest() {
                     </div>
                     <div className="flex items-center gap-4 my-2">
                         <div className="flex items-center gap-1">
-                            <span className="text-[var(--mainColor)]">Балл за задание: </span>
+                            <span className="text-[var(--mainColor)]">{translations.score}: </span>
                             <b className="text-[16px] sm:text-[18px] ">{`${steps?.score}`}</b>
                         </div>
                     </div>
@@ -679,11 +683,11 @@ export default function LessonTest() {
             </div>
 
             {steps?.count_attempt && steps?.count_attempt >= 3 ? (
-                <span className="pi pi-check-circle text-xl mb-1 text-[var(--greenColor)]"> Задание выполнено</span>
+                <span className="pi pi-check-circle text-xl mb-1 text-[var(--greenColor)]"> {translations.taskCompleted}</span>
             ) : (
                 <div className="w-full mt-2">
                     <Button
-                        label="Отправить"
+                        label={translations.send}
                         disabled={progressSpinner || !answer || !answerCheck}
                         onClick={() => {
                             handleAddTest();
@@ -695,21 +699,21 @@ export default function LessonTest() {
             {/* История ответов */}
             {steps?.details && steps.details.length > 0 && (
                 <div className="mt-4">
-                    <h3 className="text-xl m-0 pb-2">История ответов</h3>
+                    <h3 className="text-xl m-0 pb-2">{translations.answerHistory}</h3>
                     <div className="flex flex-col gap-3 mt-2">
                         {(steps.details as any[]).map((attempt, index) => (
                             <div key={index} className={`p-2 rounded-sm shadow border-l-4`}>
                                 <div className="flex justify-between items-center">
-                                    <span className="text-gray-700">Попытка #{index + 1}</span>
-                                    {attempt.is_correct ? ( 
+                                    <span className="text-gray-700">{translations.attempt} #{index + 1}</span>
+                                    {attempt.is_correct ? (
                                         <span className="flex items-center gap-2 text-[green] font-semibold">
                                             <i className="pi pi-check-circle"></i>
-                                            <span>Верно</span>
+                                            <span>{translations.correct}</span>
                                         </span>
                                     ) : (
                                         <span className="flex items-center gap-2 text-[red] font-semibold">
                                             <i className="pi pi-times-circle"></i>
-                                            <span>Неверно</span>
+                                            <span>{translations.incorrect}</span>
                                         </span>
                                     )}
                                 </div>
@@ -720,7 +724,7 @@ export default function LessonTest() {
             )}
             {steps?.my_score != null && (
                 <div className="flex items-center justify-end gap-1 mt-1">
-                    <span className="text-[var(--mainColor)]">Ваш итоговый балл: </span>
+                    <span className="text-[var(--mainColor)]">{translations.yourTotalScore}: </span>
                     <b className="text-[16px] sm:text-[18px]">{`${steps.my_score}`}</b>
                 </div>
             )}
@@ -730,7 +734,7 @@ export default function LessonTest() {
     const videoSection = (
         <div className="lesson-card-border shadow rounded p-2 mt-2">
             <div className="flex flex-col gap-2">
-                <div className="w-full flex gap-1 items-center mb-2 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">
+                <div className="w-full flex gap-1 items-center mb-  2 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">
                     <span className="sm:text-[18px]">{steps?.type?.title}</span>
                     <i className={`${steps?.type?.logo} text-2xl`}></i>
                 </div>
@@ -788,11 +792,11 @@ export default function LessonTest() {
                             ></i>
                         )}
                         <div className="flex gap-1 items-center">
-                            <span>Шаг</span>
+                            <span>{translations.step}</span>
                             <b>{stepNavigation?.currentStepPos}</b>
                         </div>
                         <div className="flex gap-1 items-center">
-                            <span>Из</span>
+                            <span>{translations.from}</span>
                             {stepNavigation?.stepsLength}
                         </div>
                         {stepNavigation?.nextStep && (
@@ -821,13 +825,13 @@ export default function LessonTest() {
                         <div className={`w-full flex items-center gap-2 ${courseInfo?.image && courseInfo?.image.length > 0 ? 'justify-around flex-col sm:flex-row' : 'justify-center'} items-center`}>
                             <div className="sm:w-1/2 flex flex-col gap-2 items-center">
                                 <h1 className="m-0" style={{ color: 'white', fontSize: media ? '24px' : '28px', textAlign: 'center', margin: '0' }}>
-                                    {courseInfo?.title}
+                                    {getLocalized(courseInfo, 'title') || courseInfo?.title}
                                 </h1>
                                 <div className="flex items-center justify-end gap-1 flex-col sm:flex-row mt-2">
-                                    <h3 className="text-white m-0 sm:text-lg">Тема: </h3>
+                                    <h3 className="text-white m-0 sm:text-lg">{translations.theme}: </h3>
                                     <h3 className="text-white text-[16px] m-0 sm:text-[18px]">{lessonName ? lessonName : '------'}</h3>
                                 </div>
-                                <span className="w-[90%] break-words text-center">{courseInfo?.description} </span>
+                                <span className="w-[90%] break-words text-center">{getLocalized(courseInfo, 'description') || courseInfo?.description} </span>
                             </div>
                             {courseInfo?.image && courseInfo?.image.length > 0 && (
                                 <div className="sm:w-1/3 flex justify-center items-center">
@@ -839,7 +843,7 @@ export default function LessonTest() {
                 </div>
 
                 {/* main */}
-                {hasSteps && <NotFound titleMessage="Данные не доступны" />}
+                {hasSteps && <NotFound titleMessage={translations.noData} />}
                 {type === 'document' && docSection}
                 {type === 'link' && linkSection}
                 {type === 'practical' && practicaSection}
@@ -861,7 +865,7 @@ export default function LessonTest() {
                     )}
                     {nextLesson?.title && (
                         <>
-                            <span className="text-[14px] sm:text-lg sm:text-bold">Тема</span>
+                            <span className="text-[14px] sm:text-lg sm:text-bold">{translations.theme}</span>
                             <button
                                 onClick={() => handleLessonRouterPush(nextLesson?.id, Number(stream_id))}
                                 className={`cursor-pointer flex items-center gap-1 border-1 p-1 rounded shadow ${!nextLesson?.active ? 'opacity-50 pointer-events-none' : ''} hover:bg-[var(--mainColor)] hover:text-white transition`}

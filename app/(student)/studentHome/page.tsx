@@ -13,6 +13,7 @@ import { ContributionDay } from '@/types/ContributionDay';
 import Link from 'next/link';
 import { Dialog } from 'primereact/dialog';
 import { fetchTelegramQr } from '@/services/dashboard/workingDashboard';
+import { useLocalization } from '@/layout/context/localizationcontext';
 
 interface StudentStatistic {
     all_active_dates: number;
@@ -24,6 +25,7 @@ export default function StudentHome() {
     const { user, setMessage, contextNotifications } = useContext(LayoutContext);
     const ref = useRef<HTMLDivElement>(null);
     const media = useMediaQuery('(max-width: 640px)');
+    const { translations } = useLocalization();
 
     const [loading, setLoading] = useState(false);
     const [studentImg, setStudentImg] = useState<{ image_url: string; id: string } | null>(null);
@@ -112,24 +114,24 @@ export default function StudentHome() {
                             <div className="w-44 h-45 rounded-2xl overflow-hidden border-2 border-white shadow-md ring-2 ring-gray-100 flex items-center justify-center bg-gray-50">
                                 <img
                                     src={studentImg?.image_url?.length ? studentImg.image_url : '/layout/images/no-image.png'}
-                                    alt="Фото студента"
+                                    alt={translations.photo}
                                     className="w-full h-full object-cover object-center transition-transform duration-300 group-hover:scale-110"
                                 />
                             </div>
                         </div>
                         <div>
-                            <h1 className="text-2xl sm:text-3xl text-center font-bold text-[var(--titleColor)] mb-2">Здравствуйте, {user?.name || 'Студент'}</h1>
+                            <h1 className="text-2xl sm:text-3xl text-center font-bold text-[var(--titleColor)] mb-2">{translations.welcome}, {user?.name || translations.studentBtn}</h1>
                             <div className="flex flex-col items-center gap-1">
                                 <p className="text-lg text-gray-600 m-0 text-center">
                                     {user?.last_name} {user?.name} {user?.father_name}
                                 </p>
                                 <div className="flex items-center justify-center gap-1">
                                     <span className="font-bold px-2 py-1 bg-[var(--greenColor)] text-white text-[13px]">{contextNotifications?.length}</span>
-                                    <span className="text-[13px]">Уведомлений</span>
+                                    <span className="text-[13px]">{translations.notifications}</span>
                                 </div>
                             </div>
                             <Link className="text-center my-2 block sm:hidden" href={'/teaching'}>
-                                В план обучения
+                                {translations.trainingPlan}
                             </Link>
                         </div>
                     </div>
@@ -143,14 +145,14 @@ export default function StudentHome() {
                 <div className="main-bg flex flex-col gap-2 px-2 pb-2 sm:px-6 sm:pb-6 sm:pt-2 min-h-[200px]">
                     {telegramData && (
                         <div className={'flex items-center justify-end gap-2 font-sans'}>
-                            <p className={'m-0 text-sm'}>Подключить уведомления в Telegram </p>{' '}
+                            <p className={'m-0 text-sm'}>{translations.connectTelegramNotifications}</p>{' '}
                             <div className="cursor-pointer pi pi-telegram p-button-rounded text-white p-button-text p-3 bg-[var(--mainColor)] rounded-full min-w-[20px] min-h-[20px] hover:opacity-50" onClick={() => setShowTelegramDialog(true)}></div>
                         </div>
                     )}
                     <div className="flex flex-col justify-center mt-4">
-                        <h3 className="font-bold">Предстоящие события</h3>
+                        <h3 className="font-bold">{translations.upcomingEvents}</h3>
                         <div>
-                            <p>В ближайщее время событий нет</p>
+                            <p>{translations.noUpcomingEvents}</p>
                         </div>
                     </div>
                 </div>
@@ -161,29 +163,29 @@ export default function StudentHome() {
                 {/* activity */}
                 <div ref={ref} className="w-full main-bg p-2">
                     <h2 style={{ marginBottom: 20 }} className="text-md sm:text-lg flex items-center justify-center gap-2">
-                        <span>Активность</span>
+                        <span>{translations.activity}</span>
                     </h2>
                     <ActivityPage value={contribution} />
 
                     <div className="flex flex-col sm:flex-row sm:items-end gap-3 m-2">
                         <div className="flex items-start flex-col gap-1 font-bold">
                             <span className="text-[var(--mainColor)]">{<MyDateTime options={options} createdAt={studentStatistic?.last_visit || ''} />}</span>
-                            <span className="text-sm">Последнее посещение</span>
+                            <span className="text-sm">{translations.lastVisit}</span>
                         </div>
                         <div className="flex items-start flex-col gap-1 font-bold">
                             <span className="text-[var(--mainColor)] text-lg">{studentStatistic?.streak}</span>
-                            <span className="text-sm">Дней посещено без перерыва</span>
+                            <span className="text-sm">{translations.daysVisitedStreak}</span>
                         </div>
                         <div className="flex items-start flex-col gap-1 font-bold">
                             <span className="text-[var(--mainColor)] text-lg">{studentStatistic?.all_active_dates}</span>
-                            <span className="text-sm">Дней посещено в общем</span>
+                            <span className="text-sm">{translations.daysVisitedTotal}</span>
                         </div>
                     </div>
                 </div>
             </div>
 
             <div>
-                <Dialog header="Чтобы получать уведомления в Telegram, свяжитесь здесь" visible={showTelegramDialog} style={{ width: '350px' }} onHide={() => setShowTelegramDialog(false)} className="text-center">
+                <Dialog header={translations.telegramConnectHeader} visible={showTelegramDialog} style={{ width: '350px' }} onHide={() => setShowTelegramDialog(false)} className="text-center">
                     {telegramData && (
                         <div className="flex flex-col items-center gap-4">
                             <div className={'main-bg'}>
@@ -191,7 +193,7 @@ export default function StudentHome() {
                             </div>
                             <a href={telegramData.direct_link} target="_blank" rel="noopener noreferrer" className="p-button p-component no-underline bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded-md flex items-center gap-2">
                                 <i className="pi pi-telegram"></i>
-                                <span>Открыть в Telegram</span>
+                                <span>{translations.openInTelegram}</span>
                             </a>
                         </div>
                     )}

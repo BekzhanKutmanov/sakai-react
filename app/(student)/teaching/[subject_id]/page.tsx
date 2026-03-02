@@ -11,6 +11,8 @@ import { useParams } from 'next/navigation';
 import { Accordion, AccordionTab } from 'primereact/accordion';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import React, { useContext, useEffect, useState } from 'react';
+import { useLocalization } from '@/layout/context/localizationcontext';
+import { useLocalizedData } from '@/hooks/useLocalizedData';
 
 export default function StudentLesson() {
     // types
@@ -37,6 +39,8 @@ export default function StudentLesson() {
 
     const { setMessage, setForumValues, contextLastStepVisit, setContextLastStepVisit, contextLastSubjectPageVisit, setContextLastSubjectPageVisit } = useContext(LayoutContext);
     const showError = useErrorMessage();
+    const { translations } = useLocalization();
+    const { getLocalized } = useLocalizedData();
 
     const [main_id, setMain_id] = useState<predmetType | null>(null);
 
@@ -58,7 +62,7 @@ export default function StudentLesson() {
             return data;
         } else {
             if (data?.response?.data && data?.response?.status === '400') {
-                setMessage({ state: true, value: { severity: 'error', summary: 'Ошибка!', detail: data?.response?.data?.message } });
+                setMessage({ state: true, value: { severity: 'error', summary: translations.error, detail: data?.response?.data?.message } });
             }
         }
         return [];
@@ -140,7 +144,7 @@ export default function StudentLesson() {
             setHasLessons(true);
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
+                value: { severity: 'error', summary: translations.error, detail: translations.tryAgainLater }
             });
             if (data?.data?.response?.status) {
                 showError(data?.data.response.status);
@@ -176,7 +180,7 @@ export default function StudentLesson() {
             setHasThemes(true);
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
+                value: { severity: 'error', summary: translations.error, detail: translations.tryAgainLater }
             });
             if (data?.response?.status) {
                 showError(data.response.status);
@@ -228,17 +232,17 @@ export default function StudentLesson() {
     return (
         <div className="main-bg">
             {hasLessons ? (
-                <NotFound titleMessage="Данные не доступны" />
+                <NotFound titleMessage={translations.dataTemporarilyUnavailable} />
             ) : (
                 <>
-                    <h1 className="text-xl sm:text-2xl shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)] pb-1">Список курсов</h1>
+                    <h1 className="text-xl sm:text-2xl shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)] pb-1">{translations.courses}</h1>
 
                     {skeleton ? (
                         <div className="w-full">
                             <GroupSkeleton count={1} size={{ width: '100%', height: '10rem' }} />
                         </div>
                     ) : hasThemes ? (
-                        <NotFound titleMessage="Данные не доступны" />
+                        <NotFound titleMessage={translations.dataTemporarilyUnavailable} />
                     ) : (
                         Array.isArray(courses) &&
                         courses?.map((course) => {
@@ -246,14 +250,14 @@ export default function StudentLesson() {
                                 <div key={course.id} className="flex flex-col gap-4 shadow-sm rounded my-4 py-2 px-1">
                                     <div className="flex flex-col gap-2">
                                         <h3 className="m-0  text-md break-words">
-                                            <span className="text-[var(--mainColor)]">Название курса:</span> {course?.title}
+                                            <span className="text-[var(--mainColor)]">{translations.courseName}:</span> {getLocalized(course, 'title') || course?.title}
                                         </h3>
                                         <h3 className="m-0 text-md ">
-                                            <span className="text-[var(--mainColor)]">Преподаватель:</span> {course?.user.last_name} {course?.user.name} {course?.user.father_name ? course?.user.father_name[0] && course?.user.father_name : ''}
+                                            <span className="text-[var(--mainColor)]">{translations.teacher}:</span> {course?.user.last_name} {course?.user.name} {course?.user.father_name ? course?.user.father_name[0] && course?.user.father_name : ''}
                                         </h3>
                                         {course?.connections[0]?.subject_type && (
                                             <h3 className="m-0 text-md ">
-                                                <span className="text-[var(--mainColor)]">Тип обучения:</span> {course?.connections[0]?.subject_type === 'Лк' ? 'Лекция' : course?.connections[0]?.subject_type === 'Лб' ? 'Лабораторные занятия' : ''}
+                                                <span className="text-[var(--mainColor)]">{translations.studyType}:</span> {course?.connections[0]?.subject_type === 'Лк' ? 'Лекция' : course?.connections[0]?.subject_type === 'Лб' ? 'Лабораторные занятия' : ''}
                                             </h3>
                                         )}
                                     </div>
@@ -288,11 +292,11 @@ export default function StudentLesson() {
                                                         header={
                                                             <>
                                                                 <span>
-                                                                    {idx + 1}. Тема: {lesson.title}
+                                                                    {idx + 1}. {translations.theme}: {lesson.title}
                                                                 </span>
                                                                 {!lesson?.active && (
                                                                     <div className="w-full flex justify-end items-center gap-1 mt-1 sm:m-o">
-                                                                        <small>Доступен с:</small>
+                                                                        <small>{translations.availableFrom}</small>
                                                                         <small>
                                                                             {lesson?.from} - {lesson?.to}
                                                                         </small>
@@ -359,7 +363,7 @@ export default function StudentLesson() {
                                                                     }
                                                                 )
                                                             ) : (
-                                                                <p className="text-center text-sm">Данных нет</p>
+                                                                <p className="text-center text-sm">{translations.noData}</p>
                                                             )}
                                                         </div>
                                                     </AccordionTab>

@@ -209,7 +209,7 @@ const TeacherCheckPage = () => {
             <DataTable value={report || []} rows={5} tableStyle={{ minWidth: '50rem' }} className="text-sm" emptyMessage="...">
                 <Column body={(_, { rowIndex }) => rowIndex + 1} header="#" style={{ width: '20px' }}></Column>
                 <Column header={translations.teachers} body={teacherNameBodyTemplate} style={{ width: '50%' }} />
-                <Column header={translations.unverifiedTasks} className='w-full flex justify-center' body={uncheckedAssignmentsBodyTemplate} style={{ width: '50%' }} />
+                <Column header={translations.uncheckedAssignments} className='w-full flex justify-center' body={uncheckedAssignmentsBodyTemplate} style={{ width: '50%' }} />
             </DataTable>
         </div>
     );
@@ -228,7 +228,7 @@ const TeacherCheckPage = () => {
                                 }
                             </div>
                             <div className="flex items-center gap-1">
-                                <span>{translations.unverifiedTasks}: </span>
+                                <span>{translations.uncheckedAssignments}: </span>
                                 <b className="text-[var(--mainColor)]">{uncheckedAssignmentsBodyTemplate(teacher)}</b>
                             </div>
                         </div>

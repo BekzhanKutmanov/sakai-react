@@ -10,6 +10,8 @@ import Link from 'next/link';
 import { Dropdown } from 'primereact/dropdown';
 import { ReactElement, useContext, useEffect, useState } from 'react';
 import { ProgressSpinner } from 'primereact/progressspinner';
+import { useLocalization } from '@/layout/context/localizationcontext';
+import { useLocalizedData } from '@/hooks/useLocalizedData';
 
 export default function Teaching() {
     interface sortOptType {
@@ -21,9 +23,12 @@ export default function Teaching() {
         1: { semester: { name_kg: '' } }
     });
 
+    const { translations } = useLocalization();
+    const { getLocalized } = useLocalizedData();
+
     const [lessonsDisplay, setLessonsDisplay] = useState<ReactElement[]>([]);
     const [hasLessons, setHasLessons] = useState(false);
-    const [selectedSort, setSelectedSort] = useState({ name: 'Все', code: 0 });
+    const [selectedSort, setSelectedSort] = useState({ name: translations.all, code: 0 });
     const [sortOpt, setSortOpt] = useState<sortOptType[]>();
     const [connection, setConnection] = useState<[]>([]);
     const [skeleton, setSkeleton] = useState(false);
@@ -57,7 +62,7 @@ export default function Teaching() {
             setHasLessons(true);
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
+                value: { severity: 'error', summary: translations.error, detail: translations.tryAgainLater }
             });
             if (data?.data?.response?.status) {
                 showError(data?.data.response.status);
@@ -76,7 +81,7 @@ export default function Teaching() {
             setHasLessons(true);
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка!', detail: '' }
+                value: { severity: 'error', summary: translations.error, detail: '' }
             });
             if (data?.response?.status) {
                 showError(data.response.status);
@@ -88,12 +93,12 @@ export default function Teaching() {
         if (!lessons) return;
 
         // готовим опции для dropdown
-        let forSortSelect = [{ name: 'Все', code: 0 }];
+        let forSortSelect = [{ name: translations.all, code: 0 }];
 
         Object.entries(lessons).forEach(([key, value]) => {
             if (value.semester) {
                 forSortSelect.push({
-                    name: value.semester.name_kg,
+                    name: getLocalized(value.semester, 'name') || value.semester.name_kg,
                     code: Number(key)
                 });
             }
@@ -113,7 +118,7 @@ export default function Teaching() {
         // превращаем в jsx
         const x = displayData.map((semester: any, sIdx: number) => (
             <div className="flex flex-col gap-2" key={sIdx}>
-                <h3 className="text-center text-[22px] sm:text-[26px] mb-1">{semester.semester.name_kg}</h3>
+                <h3 className="text-center text-[22px] sm:text-[26px] mb-1">{getLocalized(semester.semester, 'name') || semester.semester.name_kg}</h3>
                 <div key={sIdx} className="flex flex-col gap-2">
                     {Object.values(semester)
                         .filter((val: any) => val.subject)
@@ -133,12 +138,19 @@ export default function Teaching() {
         ));
 
         setLessonsDisplay(x);
-    }, [lessons, selectedSort]);
+    }, [lessons, selectedSort, translations]);
 
     useEffect(() => {
         handleFetchLessons();
         handleFetchConnectId();
     }, []);
+
+    // Update default values when language changes
+    useEffect(() => {
+        if (selectedSort.code === 0) {
+            setSelectedSort(prev => ({ ...prev, name: translations.all }));
+        }
+    }, [translations]);
 
     if (mainProgressSpinner)
         return (
@@ -156,7 +168,7 @@ export default function Teaching() {
                         <GroupSkeleton count={1} size={{ width: '100%', height: '4rem' }} />
                     ) : (
                         <div className="flex flex-col sm:flex-row justify-between items-center gap-2 mb-4 py-2 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">
-                            <h3 className="text-[24px] sm:text-[28px] m-0">План обучения</h3>
+                            <h3 className="text-[24px] sm:text-[28px] m-0">{translations.trainingPlan}</h3>
 
                             <Dropdown
                                 value={selectedSort}
@@ -171,7 +183,7 @@ export default function Teaching() {
                     )}
 
                     {/* lesson section */}
-                    {hasLessons ? <NotFound titleMessage={'Данные временно не доступны'} /> : skeleton ? <GroupSkeleton count={10} size={{ width: '100%', height: '4rem' }} /> : <div className="flex gap-4 sm:gap-6 flex-col">{lessonsDisplay}</div>}
+                    {hasLessons ? <NotFound titleMessage={translations.dataTemporarilyUnavailable} /> : skeleton ? <GroupSkeleton count={10} size={{ width: '100%', height: '4rem' }} /> : <div className="flex gap-4 sm:gap-6 flex-col">{lessonsDisplay}</div>}
                 </div>
             </div>
         </>

@@ -206,7 +206,7 @@ export const localizationData = {
         registeredStudents: 'Зарегистрированные студенты',
         satisfactionLevel: 'Уровень удовлетворённости',
 
-        // openCourses
+        // open courses
         newCourses: 'Новые курсы',
         popularCourses: 'Популярные курсы',
         recommendedByDepartment: 'Рекомендованные департаментом',
@@ -322,6 +322,34 @@ export const localizationData = {
         uncheckedAssignments: 'Непроверенные задания',
         loadingError: 'Ошибка загрузки',
         nothingFound: 'Ничего не найдено',
+
+        // StudentHome
+        connectTelegramNotifications: 'Подключить уведомления в Telegram',
+        upcomingEvents: 'Предстоящие события',
+        noUpcomingEvents: 'В ближайщее время событий нет',
+        daysVisitedStreak: 'Дней посещено без перерыва',
+        daysVisitedTotal: 'Дней посещено в общем',
+        telegramConnectHeader: 'Чтобы получать уведомления в Telegram, свяжитесь здесь',
+        openInTelegram: 'Открыть в Telegram',
+
+        // ItemCard
+        yourScore: 'Ваш балл',
+        totalPoints: 'Всего баллов',
+        moduleSet: 'Модуль поставлен',
+        moduleResult: 'Итог за модуль',
+        points: 'Баллов',
+
+        // LessonTest
+        step: 'Шаг',
+        from: 'Из',
+        yourTotalScore: 'Ваш итоговый балл',
+        attempt: 'Попытка',
+        correct: 'Верно',
+        incorrect: 'Неверно',
+        answerHistory: 'История ответов',
+        openSeparately: 'Открыть отдельно',
+        taskInstruction: 'Задание после изучения материала, загрузи свой файл с решением.',
+        taskCompleted: 'Задание выполнено',
     },
     ky: {
         oshSU: 'ОшМУ',
@@ -640,6 +668,34 @@ export const localizationData = {
         uncheckedAssignments: 'Текшерилбеген тапшырмалар',
         loadingError: 'Жүктөө катасы',
         nothingFound: 'Эч нерсе табылган жок',
+
+        // StudentHome
+        connectTelegramNotifications: 'Telegram билдирүүлөрүн туташтыруу',
+        upcomingEvents: 'Алдыдагы иш-чаралар',
+        noUpcomingEvents: 'Жакынкы арада иш-чаралар жок',
+        daysVisitedStreak: 'Үзгүлтүксүз кирген күндөр',
+        daysVisitedTotal: 'Жалпы кирген күндөр',
+        telegramConnectHeader: 'Telegram аркылуу билдирүүлөрдү алуу үчүн бул жерге байланышыңыз',
+        openInTelegram: 'Telegram аркылуу ачуу',
+
+        // ItemCard
+        yourScore: 'Сиздин балл',
+        totalPoints: 'Жалпы балл',
+        moduleSet: 'Модуль коюлду',
+        moduleResult: 'Модуль жыйынтыгы',
+        points: 'Балл',
+
+        // LessonTest
+        step: 'Кадам',
+        from: '-',
+        yourTotalScore: 'Сиздин жыйынтык баллыңыз',
+        attempt: 'Аракет',
+        correct: 'Туура',
+        incorrect: 'Туура эмес',
+        answerHistory: 'Жооптордун тарыхы',
+        openSeparately: 'Өзүнчө ачуу',
+        taskInstruction: 'Материалды окуп чыккандан кийин, чечимиңиз менен файлды жүктөңүз.',
+        taskCompleted: 'Тапшырма аткарылды',
     }
 };
 
