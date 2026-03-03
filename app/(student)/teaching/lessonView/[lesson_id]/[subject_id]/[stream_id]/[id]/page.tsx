@@ -543,7 +543,7 @@ export default function LessonTest() {
                         <div className="flex items-center gap-1">
                             {practica?.content?.document_path && practica?.content.document_path.toLowerCase().includes('pdf') && (
                                 <>
-                                    <span className="text-[var(--mainColor)]">Документ: </span>
+                                    <span className="text-[var(--mainColor)]">{translations.document}: </span>
                                     <a className={`flex gap-2 pi pi-file-arrow-up text-xl text-white bg-[var(--mainColor)] p-1 rounded`} href={practica?.content.document_path} download target="_blank" rel="noopener noreferrer"></a>
                                 </>
                             )}
@@ -734,7 +734,7 @@ export default function LessonTest() {
     const videoSection = (
         <div className="lesson-card-border shadow rounded p-2 mt-2">
             <div className="flex flex-col gap-2">
-                <div className="w-full flex gap-1 items-center mb-  2 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">
+                <div className="w-full flex gap-1 items-center mb-2 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">
                     <span className="sm:text-[18px]">{steps?.type?.title}</span>
                     <i className={`${steps?.type?.logo} text-2xl`}></i>
                 </div>

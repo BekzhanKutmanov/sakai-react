@@ -578,11 +578,11 @@ const AppMenu = () => {
 
                 const forGraphic = forRole.find((item) => item.id === 4);
                 if (forGraphic && forGraphic?.read) {
-                    setGraphicRole({ label: 'Модульный график', icon: 'pi pi-calendar', to: '/module/1', profilact: '' });
+                    setGraphicRole({ label: translations.moduleSchedule, icon: 'pi pi-calendar', to: '/module/1', profilact: '' });
                 }
             }
         }
-    }, [user, studentThemeCourse]);
+    }, [user, studentThemeCourse, translations]);
 
     useEffect(() => {
         if (contextThemes && contextThemes?.lessons) {
