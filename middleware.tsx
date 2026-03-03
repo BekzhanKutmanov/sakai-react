@@ -18,7 +18,7 @@ export function middleware(request: NextRequest) {
 
         console.log("🔒 No token → redirect:", redirectTo);
 
-        return NextResponse.redirect(loginUrl);
+        // return NextResponse.redirect(loginUrl);
     }
 
     return NextResponse.next();

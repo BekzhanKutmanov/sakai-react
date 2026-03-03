@@ -268,7 +268,7 @@ export default function Dashboard() {
                 {/* activity */}
                 <div ref={ref} className="w-full main-bg p-2">
                     <h2 style={{ marginBottom: 20 }} className="text-md sm:text-lg flex items-center justify-center gap-2">
-                        <span>{translations.teacherActivity}</span>
+                        <span>{translations.activity}</span>
                     </h2>
                     <ActivityPage value={contribution} />
                 </div>

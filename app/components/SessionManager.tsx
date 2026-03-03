@@ -65,21 +65,21 @@ const SessionManager = () => {
         init();
     }, []);
 
-    // useEffect(() => {
-    //     if (!pathname.startsWith('/teaching/lesson/') && !pathname.startsWith('/course/')) {
-    //         // setGlobalLoading(true);
-    //     }
-    //
-    //     const token = getToken('access_token');
-    //
-    //     if (!token && pathname !== '/' && pathname !== '/auth/login') {
-    //         console.log('Перенеправляю в login');
-    //
-    //         logout({ setUser, setGlobalLoading });
-    //         window.location.href = '/auth/login';
-    //         return;
-    //     }
-    // }, [pathname]);
+    useEffect(() => {
+        if (!pathname.startsWith('/teaching/lesson/') && !pathname.startsWith('/course/')) {
+            // setGlobalLoading(true);
+        }
+
+        const token = getToken('access_token');
+
+        if (!token && pathname !== '/' && pathname !== '/auth/login') {
+            console.log('Перенеправляю в login');
+
+            logout({ setUser, setGlobalLoading });
+            window.location.href = '/auth/login';
+            return;
+        }
+    }, [pathname]);
 
     return null;
 };

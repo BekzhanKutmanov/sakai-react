@@ -25,29 +25,29 @@ axiosInstance.interceptors.response.use(
 
             if (typeof window !== 'undefined') {
                 console.log(window?.location.pathname);
-                // if(window.location.pathname != '/auth/login') {
-                //     const currentPath = window.location.pathname + window.location.search;
-                //     window.location.href = `/auth/login?redirect=${encodeURIComponent(currentPath)}`
-                // }
-                // localStorage.removeItem('userVisit');
+                if(window.location.pathname != '/auth/login') {
+                    const currentPath = window.location.pathname + window.location.search;
+                    window.location.href = `/auth/login?redirect=${encodeURIComponent(currentPath)}`
+                }
+                localStorage.removeItem('userVisit');
             }
-            // document.cookie = 'access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;';
+            document.cookie = 'access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;';
         }
 
         if (status === 403) {
             console.warn('Не имеет доступ. Перенаправляю...');
-            // if (typeof window !== 'undefined') {
-            //     window.location.href = '/';
-            // }
+            if (typeof window !== 'undefined') {
+                window.location.href = '/';
+            }
         }
 
         if (status === 404) {
             console.warn('404 - Перенаправляю...');
-            // if (typeof window !== 'undefined') {
-            //     window.location.href = '/pages/notfound';
-            //     localStorage.removeItem('userVisit');
-            // }
-            // document.cookie = 'access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;';
+            if (typeof window !== 'undefined') {
+                window.location.href = '/pages/notfound';
+                localStorage.removeItem('userVisit');
+            }
+            document.cookie = 'access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;';
         }
 
         return Promise.reject(error);

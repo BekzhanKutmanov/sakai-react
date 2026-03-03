@@ -8,7 +8,7 @@ import { useForm } from 'react-hook-form';
 import { schema } from '@/schemas/authSchema';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Controller } from 'react-hook-form';
-import { getUser, login } from '@/services/auth';
+import { getState, getUser, login, send, verifyTelegram } from '@/services/auth';
 import FancyLinkBtn from '@/app/components/buttons/FancyLinkBtn';
 import { LoginType } from '@/types/login';
 import Link from 'next/link';
@@ -18,11 +18,16 @@ import { ProgressSpinner } from 'primereact/progressspinner';
 
 import { useLocalization } from '../../../../layout/context/localizationcontext';
 import { useSearchParams } from 'next/navigation';
+import { Dialog } from 'primereact/dialog';
+
+interface State {
+    status: number;
+    message: string;
+}
 
 const LoginPage = () => {
     const params = useSearchParams();
     const backRedirect = params.get('redirect');
-    console.log(backRedirect);
     const { translations } = useLocalization();
     const { setUser, setMessage, setDepartament, departament } = useContext(LayoutContext);
     // const containerClassName = classNames('surface-ground flex align-items-center justify-content-center min-h-screen min-w-screen overflow-hidden', { 'p-input-filled': layoutConfig.inputStyle === 'filled' });
@@ -30,6 +35,12 @@ const LoginPage = () => {
     // const [progressSpinner, setProgressSpinner] = useState(true);
     const [progressSpinner, setProgressSpinner] = useState(false);
     const [disabledState, setDisabledState] = useState(false);
+    const [visible, setVisible] = useState(false);
+    const [code, setCode] = useState('');
+    const [expiresAt, setExpiresAt] = useState<string | null>('');
+    const [timeLeft, setTimeLeft] = useState({ minutes: 0, seconds: 0 });
+    const [token, setToken] = useState<string | null>('');
+    const [verifyBtnDisabled, setVerifyBtnDisabled] = useState<boolean>(true);
 
     const {
         register,
@@ -41,6 +52,131 @@ const LoginPage = () => {
         mode: 'onChange'
     });
 
+    const handleGetState = async () => {
+        const data: State = await getState();
+        return data;
+    };
+
+    const handleSend = async () => {
+        const data: State = await send();
+        return data;
+    };
+
+    const handleConfirm = () => {
+        setVisible(true);
+    };
+
+    const handleVerifyClick = () => {
+        handleVerify(code);
+    };
+
+    const handleVerify = async (enteredCode: string) => {
+        const data = await verifyTelegram(enteredCode);
+        setCode('');
+        if (data?.status) {
+            setCode('');
+            setMessage({state: true, value: {severity: 'error', summary: 'Ошибка при подтверждение кода', detail: 'Проверьте правильность ввода и срок действия кода'} });
+        } else{
+            setVisible(false);
+            userGetSection();
+        }
+    };
+
+    const userGetSection = async () => {
+        if (token) {
+            const res = await getUser();
+            try {
+                if (res?.success) {
+                    if (!res?.user.is_working && !res?.user.is_student) {
+                        setMessage({
+                            state: true,
+                            value: {
+                                severity: 'error',
+                                summary: 'Не удалось определить ваш статус пользователя.',
+                                detail: (
+                                    <div>
+                                        <span>Обратитесь в службу поддержки, указав необходимые данные</span> <small className="text-[var(--mainColor)] underline">{res?.user?.myedu_id}</small>
+                                    </div>
+                                )
+                            }
+                        });
+                        document.cookie = 'access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;';
+                    } else {
+                        if (res?.user.is_working) {
+                            if (res.roles && res.roles.length > 0) {
+                                const roleCheck = res.roles.find((i: { id_role: number }) => i.id_role);
+                                if (roleCheck) {
+                                    setDepartament({ info: roleCheck.roles_name.info_ru, last_name: res.user?.last_name, name: res?.user.name, father_name: res.user?.father_name });
+                                }
+                                let safeRedirect = '/dashboard';
+                                if (backRedirect && backRedirect.startsWith('/')) {
+                                    safeRedirect = backRedirect;
+                                }
+
+                                window.location.href = safeRedirect;
+                            } else {
+                                let safeRedirect = '/dashboard';
+                                if (backRedirect && backRedirect.startsWith('/')) {
+                                    safeRedirect = backRedirect;
+                                }
+
+                                window.location.href = safeRedirect;
+                            }
+                        }
+                        if (res?.user.is_student) {
+                            let safeRedirect = '/studentHome';
+                            if (backRedirect && backRedirect.startsWith('/')) {
+                                safeRedirect = backRedirect;
+                            }
+                            window.location.href = safeRedirect;
+                        }
+                    }
+                }
+                else {
+                    setMessage({
+                        state: true,
+                        value: { severity: 'error', summary: 'Ошибка при авторизации', detail: 'Повторите позже' }
+                    }); // messege - Ошибка при авторизации, повторите позже
+                    setUser(null);
+                    localStorage.removeItem('userVisit');
+                    document.cookie = 'access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;';
+                    console.log('Ошибка при получении пользователя');
+                }
+
+            } catch (error) {
+                setMessage({
+                    state: true,
+                    value: { severity: 'error', summary: 'Ошибка при авторизации', detail: 'Повторите позже' }
+                }); // messege - Ошибка при авторизации, повторите позже
+
+                setUser(null);
+                localStorage.removeItem('userVisit');
+                document.cookie = 'access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;';
+                console.log('Ошибка при получении пользователя');
+            }
+        }
+    }
+
+    const getRemainingTime = (expiresAt: string) => {
+        const now = Date.now();
+        const expire = new Date(expiresAt).getTime();
+
+        const diff = expire - now;
+
+        if (diff <= 0) {
+            return { minutes: 0, seconds: 0 };
+        }
+
+        const minutes = Math.floor(diff / 1000 / 60);
+        const seconds = Math.floor((diff / 1000) % 60);
+
+        return { minutes, seconds };
+    };
+
+    const formatTime = (value: number) => {
+        return value < 10 ? `0${value}` : value;
+    };
+
     const onSubmit = async (value: LoginType) => {
         try {
             setDisabledState(true);
@@ -48,86 +184,27 @@ const LoginPage = () => {
             if (user && user?.success) {
                 document.cookie = `access_token=${user.token.access_token}; path=/; Secure; SameSite=Strict; expires=${user.token.expires_at}`;
                 const token = user.token.access_token;
-
-                if (token) {
-                    const res = await getUser();
-                    console.log(res);
-                    try {
-
-                        if (res?.success) {
-
-                            if (!res?.user.is_working && !res?.user.is_student) {
-                                setMessage({
-                                    state: true,
-                                    value: {
-                                        severity: 'error',
-                                        summary: 'Не удалось определить ваш статус пользователя.',
-                                        detail: (
-                                            <div>
-                                                <span>Обратитесь в службу поддержки, указав необходимые данные</span> <small className="text-[var(--mainColor)] underline">{res?.user?.myedu_id}</small>
-                                            </div>
-                                        )
-                                    }
-                                });
-                                document.cookie = 'access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;';
-                            } else {
-                                if (res?.user.is_working) {
-                                    if (res.roles && res.roles.length > 0) {
-                                        const roleCheck = res.roles.find((i: { id_role: number }) => i.id_role);
-                                        if (roleCheck) {
-                                            setDepartament({ info: roleCheck.roles_name.info_ru, last_name: res.user?.last_name, name: res?.user.name, father_name: res.user?.father_name });
-                                        }
-                                        let safeRedirect = '/dashboard';
-                                        if (backRedirect && backRedirect.startsWith('/')) {
-                                            safeRedirect = backRedirect;
-                                        }
-
-                                        window.location.href = safeRedirect;
-                                    } else {
-                                        let safeRedirect = '/dashboard';
-                                        if (backRedirect && backRedirect.startsWith('/')) {
-                                            safeRedirect = backRedirect;
-                                        }
-
-                                        window.location.href = safeRedirect;
-                                    }
-                                }
-                                if (res?.user.is_student) {
-                                    let safeRedirect = '/studentHome';
-                                    if (backRedirect && backRedirect.startsWith('/')) {
-                                        safeRedirect = backRedirect;
-                                    }
-                                    window.location.href = safeRedirect;
-                                }
-                            }
-                        }
-                        else {
-                            setMessage({
-                                state: true,
-                                value: { severity: 'error', summary: 'Ошибка при авторизации', detail: 'Повторите позже' }
-                            }); // messege - Ошибка при авторизации, повторите позже
-                            setUser(null);
-                            localStorage.removeItem('userVisit');
-                            document.cookie = 'access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;';
-                            console.log('Ошибка при получении пользователя');
-                        }
-
-                    } catch (error) {
+                setToken(token);
+                const state: any = await handleGetState();
+                if (state && state?.sendCode) {
+                    const send: any = await handleSend();
+                    if (send && send?.token) {
+                        setExpiresAt(send?.expired);
+                        handleConfirm();
+                    } else {
                         setMessage({
                             state: true,
                             value: { severity: 'error', summary: 'Ошибка при авторизации', detail: 'Повторите позже' }
-                        }); // messege - Ошибка при авторизации, повторите позже
-
-                        setUser(null);
-                        localStorage.removeItem('userVisit');
-                        document.cookie = 'access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;';
-                        console.log('Ошибка при получении пользователя');
+                        });
                     }
+                } else {
+                    setMessage({
+                        state: true,
+                        value: { severity: 'error', summary: 'Ошибка при авторизации', detail: 'Повторите позже' }
+                    });
                 }
-            }
-            else {
-                console.log(user);
-                if(user?.status === 401 && user?.response?.data?.redirect_url){
+            } else {
+                if (user?.status === 401 && user?.response?.data?.redirect_url) {
                     window.location.href = user?.response?.data?.redirect_url;
                 }
                 setMessage({
@@ -155,12 +232,35 @@ const LoginPage = () => {
     useEffect(() => {
         const token = getToken('access_token');
         if (token) {
-            window.location.href = '/';
+            // window.location.href = '/';
             setProgressSpinner(false);
         } else {
             setProgressSpinner(false);
         }
     }, []);
+
+    useEffect(() => {
+        if (!visible || !expiresAt) return;
+
+        const interval = setInterval(() => {
+            const remaining = getRemainingTime(expiresAt);
+            setTimeLeft(remaining);
+
+            if (remaining.minutes === 0 && remaining.seconds === 0) {
+                clearInterval(interval);
+                setVisible(false); // 👈 закрываем окно
+                setExpiresAt(null); // очищаем
+                setCode(''); // очищаем код
+            }
+        }, 1000);
+
+        return () => clearInterval(interval);
+    }, [visible, expiresAt]);
+
+    useEffect(()=> {
+        if(code?.length > 5) setVerifyBtnDisabled(false);
+        else setVerifyBtnDisabled(true);
+    },[code]);
 
     if (progressSpinner)
         return (
@@ -174,6 +274,17 @@ const LoginPage = () => {
             {/* <div className={`flex flex-col gap-4 pt-4 h-[100vh] ${!media && 'login-bg'}`}> */}
             {/* <InfoBanner title="Кирүү" titleSize={{ default: '30px', sm: '40px' }} /> */}
             <div className="flex gap-4 flex-column lg:flex-row items-center justify-evenly px-4 mb-8">
+                <Dialog header="Подтверждение" visible={visible} style={{ width: '350px' }} onHide={() => setVisible(false)}>
+                    <div className="flex flex-column gap-3">
+                        <span>Введите код подтверждения:</span>
+                        <div className="text-center mb-3 font-medium text-red-500">
+                            Время действия кода: {formatTime(timeLeft.minutes)}:{formatTime(timeLeft.seconds)}
+                        </div>
+                        <InputText type="number" value={code} onChange={(e) => setCode(e.target.value)} placeholder="Код" />
+
+                        <Button label="Подтвердить" className={`${verifyBtnDisabled ? 'opacity-50 pointer-events-none' : ''}`} onClick={handleVerifyClick} disabled={!code} />
+                    </div>
+                </Dialog>
                 <div className={`w-[90%] sm:w-[500px] shadow-2xl bg-white py-6 px-3 md:py-8 sm:px-4 md:px-8 rounded`}>
                     <h1 className="text-3xl sm:text-4xl font-bold inline-block border-b-2 pb-1 border-[var(--mainColor)]">{translations.login}</h1>
                     <form onSubmit={handleSubmit(onSubmit, onError)} noValidate className="w-full flex flex-col gap-4">
@@ -191,7 +302,7 @@ const LoginPage = () => {
                             <Controller
                                 name="password"
                                 control={control}
-                                defaultValue=""
+                                defaultValue="ThEpAsSwOrD9283"
                                 render={({ field }) => (
                                     <div className="p-inputgroup flex-1">
                                         <InputText {...field} type={showPassword ? 'text' : 'password'} placeholder="Пароль" className="w-full p-2 sm:p-3" />
