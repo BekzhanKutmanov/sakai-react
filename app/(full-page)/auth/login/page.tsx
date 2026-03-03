@@ -186,7 +186,13 @@ const LoginPage = () => {
                 const token = user.token.access_token;
                 setToken(token);
                 const state: any = await handleGetState();
-                if (state && state?.sendCode) {
+                const fa = '2fa';
+                console.log(state);
+                console.log(fa);
+                console.log(state[fa]);
+                if (state[fa]){
+                    userGetSection();
+                } else if (state && state?.sendCode) {
                     const send: any = await handleSend();
                     if (send && send?.token) {
                         setExpiresAt(send?.expired);
@@ -274,15 +280,21 @@ const LoginPage = () => {
             {/* <div className={`flex flex-col gap-4 pt-4 h-[100vh] ${!media && 'login-bg'}`}> */}
             {/* <InfoBanner title="Кирүү" titleSize={{ default: '30px', sm: '40px' }} /> */}
             <div className="flex gap-4 flex-column lg:flex-row items-center justify-evenly px-4 mb-8">
-                <Dialog header="Подтверждение" visible={visible} style={{ width: '350px' }} onHide={() => setVisible(false)}>
-                    <div className="flex flex-column gap-3">
-                        <span>Введите код подтверждения:</span>
-                        <div className="text-center mb-3 font-medium text-red-500">
-                            Время действия кода: {formatTime(timeLeft.minutes)}:{formatTime(timeLeft.seconds)}
+                <Dialog header={translations.confirmation} visible={visible} style={{ width: '350px' }} onHide={() => setVisible(false)}>
+                    <div className="flex flex-col items-center gap-4 p-4">
+                        <div className="flex items-center justify-center w-16 h-16 bg-blue-500 rounded-full text-white shadow-lg">
+                            <i className="pi pi-telegram text-[var(--mainColor)] text-3xl"></i>
                         </div>
-                        <InputText type="number" value={code} onChange={(e) => setCode(e.target.value)} placeholder="Код" />
+                        <p className="text-md text-gray-700 text-center font-medium">{"Введите код с телеграмм"}</p>
+                        <div className="text-center text-sm font-medium text-gray-500">
+                            <span className="text-[red] font-bold">{"Код действителен до"}:</span>{' '}
+                            <span className="font-bold text-red-500">
+                                {formatTime(timeLeft.minutes)}:{formatTime(timeLeft.seconds)}
+                            </span>
+                        </div>
+                        <InputText type="number" value={code} onChange={(e) => setCode(e.target.value)} placeholder={"Введите код"} className="w-full p-inputtext-md text-center" />
 
-                        <Button label="Подтвердить" className={`${verifyBtnDisabled ? 'opacity-50 pointer-events-none' : ''}`} onClick={handleVerifyClick} disabled={!code} />
+                        <Button label={"Подтвердить"} size={'small'} className={`w-full ${verifyBtnDisabled ? 'opacity-50 pointer-events-none' : ''}`} onClick={handleVerifyClick} disabled={!code} />
                     </div>
                 </Dialog>
                 <div className={`w-[90%] sm:w-[500px] shadow-2xl bg-white py-6 px-3 md:py-8 sm:px-4 md:px-8 rounded`}>
@@ -302,10 +314,10 @@ const LoginPage = () => {
                             <Controller
                                 name="password"
                                 control={control}
-                                defaultValue="ThEpAsSwOrD9283"
+                                defaultValue=""
                                 render={({ field }) => (
                                     <div className="p-inputgroup flex-1">
-                                        <InputText {...field} type={showPassword ? 'text' : 'password'} placeholder="Пароль" className="w-full p-2 sm:p-3" />
+                                        <InputText {...field} type={showPassword ? 'text' : 'password'} placeholder={'Пароль'} className="w-full p-2 sm:p-3" />
                                         <Button type="button" icon={showPassword ? 'pi pi-eye-slash text-white' : 'pi pi-eye text-white'} onClick={() => setShowPassword((prev) => !prev)} className="p-button-text" />
                                     </div>
                                 )}
