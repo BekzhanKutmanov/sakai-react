@@ -11,9 +11,12 @@ import { PrimeReactContext } from 'primereact/api';
 import { ChildContainerProps, LayoutState, AppTopbarRef } from '@/types';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { LocalizationProvider } from '@/layout/context/localizationcontext';
+import { BottomNav } from '@/app/components/menu/MobileMenu';
+import useMediaQuery from '@/hooks/useMediaQuery';
 
 const Layout = ({ children }: ChildContainerProps) => {
     const { layoutConfig, layoutState, setLayoutState, user } = useContext(LayoutContext);
+    const media = useMediaQuery('(max-width: 640px)');
     const { setRipple } = useContext(PrimeReactContext);
     const topbarRef = useRef<AppTopbarRef>(null);
     const sidebarRef = useRef<HTMLDivElement>(null);
@@ -152,6 +155,7 @@ const Layout = ({ children }: ChildContainerProps) => {
                     </div>
                     {/* <AppConfig /> */}
                     <div className="layout-mask"></div>
+                    {user?.is_student && media && !pathname.startsWith('/teaching/lessonView/') && <BottomNav />}
                 </div>
             </React.Fragment>
         </LocalizationProvider>

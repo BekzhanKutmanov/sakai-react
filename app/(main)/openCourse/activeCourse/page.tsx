@@ -193,29 +193,28 @@ export default function ActiveCourseList() {
     if (hasCourses) return <NotFound titleMessage={translations.noData} />;
 
     return (
-        <div className="main-bg h-[100vh] flex flex-col justify-between gap-2">
-            <div>
-                <h1 className="m-0 mb-4 pb-1 shadow-[var(--bottom-shadow)] text-xl sm:text-2xl">{translations.myActiveCourses}</h1>
-                {skeleton ? (
-                    <>
-                        <GroupSkeleton count={2} size={{ width: '100%', height: '12rem' }} />
-                        <GroupSkeleton count={2} size={{ width: '100%', height: '12rem' }} />
-                    </>
-                ) : emptyCourse ? (
-                    <b className="main-bg my-2 flex justify-center">{translations.empty}</b>
-                ) : (
-                    <div className="flex flex-col gap-2">
-                        {coursesValue?.map((item) => {
-                            return (
-                                <div key={item?.id}>
-                                    <MyActiveCourse item={item} />
-                                </div>
-                            );
-                        })}
-                    </div>
-                )}
-            </div>
-            {media && user?.is_student && <BottomNav />}
+        <div className="main-bg">
+            <h1 className="m-0 mb-4 pb-1 shadow-[var(--bottom-shadow)] text-xl sm:text-2xl">{translations.myActiveCourses}</h1>
+            {skeleton ? (
+                <>
+                    <GroupSkeleton count={2} size={{ width: '100%', height: '12rem' }} />
+                    <GroupSkeleton count={2} size={{ width: '100%', height: '12rem' }} />
+                </>
+            ) : emptyCourse ? (
+                <b className="main-bg my-2 flex justify-center">{translations.empty}</b>
+            ) : (
+                <div className="flex flex-col gap-2">
+                    {coursesValue?.map((item) => {
+                        return (
+                            <div key={item?.id}>
+                                <MyActiveCourse item={item} />
+                            </div>
+                        );
+                    })}
+                </div>
+            )}
+
+            {/*{media && user?.is_student && <BottomNav />}*/}
         </div>
     );
 }

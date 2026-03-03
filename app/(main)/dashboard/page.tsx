@@ -74,9 +74,6 @@ export default function Dashboard() {
     const [chartPieData, setChartPieData] = useState({});
     const [chartPieOptions, setChartPieOptions] = useState({});
 
-    const [telegramData, setTelegramData] = useState<{ direct_link: string; qr_code_base64: string } | null>(null);
-    const [showTelegramDialog, setShowTelegramDialog] = useState(false);
-
     const options: OptionsType = {
         year: '2-digit',
         month: 'short', // 'long', 'short', 'numeric'
@@ -109,13 +106,6 @@ export default function Dashboard() {
             setInfo(data?.info);
         } else {
             // setHasCourses(true);
-        }
-    };
-
-    const handleFetchTelegramQr = async () => {
-        const data = await fetchTelegramQr();
-        if (data && data.direct_link) {
-            setTelegramData(data);
         }
     };
 
@@ -175,7 +165,6 @@ export default function Dashboard() {
     useEffect(() => {
         hanldeTeacherDashboard();
         hanldeFetchPerformance();
-        handleFetchTelegramQr();
     }, []);
 
     useEffect(() => {
@@ -203,7 +192,6 @@ export default function Dashboard() {
                             '---'
                         )}
                     </h1>
-                    {telegramData && <div className={'flex items-center gap-2 font-sans'}><p className={'m-0 text-sm hidden sm:block'}>Подключить уведомления в Telegram </p> <div className="cursor-pointer pi pi-telegram p-button-rounded text-white p-button-text p-3 bg-[var(--mainColor)] rounded-full min-w-[20px] min-h-[20px] hover:opacity-50" onClick={() => setShowTelegramDialog(true)}></div></div>}
                 </div>
 
                 {/* statistic */}
@@ -326,20 +314,6 @@ export default function Dashboard() {
                         </div>
                     </div>
                 </div>
-
-                <Dialog header="Чтобы получать уведомления в Telegram, свяжитесь здесь" visible={showTelegramDialog} style={{ width: '350px' }} onHide={() => setShowTelegramDialog(false)} className="text-center">
-                    {telegramData && (
-                        <div className="flex flex-col items-center gap-4">
-                            <div className={'main-bg'}>
-                                <img src={telegramData.qr_code_base64} alt="Telegram QR Code" className="sm:w-60 w-64 sm:h-60 h-64 shadow-lg rounded " />
-                            </div>
-                            <a href={telegramData.direct_link} target="_blank" rel="noopener noreferrer" className="p-button p-component no-underline bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded-md flex items-center gap-2">
-                                <i className="pi pi-telegram"></i>
-                                <span>Открыть в Telegram</span>
-                            </a>
-                        </div>
-                    )}
-                </Dialog>
             </div>
         );
     } else {

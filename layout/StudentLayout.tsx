@@ -132,14 +132,11 @@ const StudentLayout = ({ children }: ChildContainerProps) => {
                 <div className="layout-main-container">
                     <div className="layout-main">{children}</div>
                     {/* <AppFooter /> */}
-
-                     {/*bottom menu */}
-                    {media && !pathname.startsWith('/teaching/lessonView/') && (
-                        <BottomNav/>
-                    )}
                 </div>
                 {/* <AppConfig /> */}
                 <div className="layout-mask"></div>
+                {/*bottom menu */}
+                {media && !pathname.startsWith('/teaching/lessonView/') && <BottomNav />}
             </div>
         </React.Fragment>
     );

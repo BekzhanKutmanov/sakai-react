@@ -45,14 +45,17 @@ const LoginPage = () => {
         try {
             setDisabledState(true);
             const user = await login(value);
-            if (user && user.success) {
+            if (user && user?.success) {
                 document.cookie = `access_token=${user.token.access_token}; path=/; Secure; SameSite=Strict; expires=${user.token.expires_at}`;
                 const token = user.token.access_token;
 
                 if (token) {
                     const res = await getUser();
+                    console.log(res);
                     try {
+
                         if (res?.success) {
+
                             if (!res?.user.is_working && !res?.user.is_student) {
                                 setMessage({
                                     state: true,
@@ -97,7 +100,8 @@ const LoginPage = () => {
                                     window.location.href = safeRedirect;
                                 }
                             }
-                        } else {
+                        }
+                        else {
                             setMessage({
                                 state: true,
                                 value: { severity: 'error', summary: 'Ошибка при авторизации', detail: 'Повторите позже' }
@@ -107,6 +111,7 @@ const LoginPage = () => {
                             document.cookie = 'access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;';
                             console.log('Ошибка при получении пользователя');
                         }
+
                     } catch (error) {
                         setMessage({
                             state: true,
@@ -119,7 +124,12 @@ const LoginPage = () => {
                         console.log('Ошибка при получении пользователя');
                     }
                 }
-            } else {
+            }
+            else {
+                console.log(user);
+                if(user?.status === 401 && user?.response?.data?.redirect_url){
+                    window.location.href = user?.response?.data?.redirect_url;
+                }
                 setMessage({
                     state: true,
                     value: { severity: 'error', summary: 'Ошибка при авторизации', detail: 'Повторите позже' }

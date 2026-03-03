@@ -484,7 +484,7 @@ export default function OpenCourse() {
                 </>
             )}
 
-            {media && user?.is_student && <BottomNav />}
+            {/*{media && user?.is_student && <BottomNav />}*/}
 
             <Sidebar visible={showVisisble} position="bottom" style={{ height: '90vh' }} onHide={() => setShowVisible(false)}>
                 {skeleton ? (

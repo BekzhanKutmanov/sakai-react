@@ -209,7 +209,7 @@ export default function MainNotificatoin() {
                     )}
                 </div>
             </div>
-            {media && user?.is_student && <BottomNav />}
+            {/*{media && user?.is_student && <BottomNav />}*/}
         </div>
     );
 }

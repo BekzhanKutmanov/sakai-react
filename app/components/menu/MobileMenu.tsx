@@ -38,8 +38,8 @@ export const BottomNav = () => {
     ];
 
     return (
-        <div className="w-full sticky bottom-2 left-0 right-0 z-50 flex justify-center px-1">
-            <nav className="flex items-center justify-between w-[90%] py-1 bg-white/90 backdrop-blur-md border border-gray-200/50 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)]">
+        <div className="w-full sticky bottom-0 left-0 right-0 z-50 flex justify-center">
+            <nav className="flex items-center justify-between w-full py-1 bg-white/50 backdrop-blur-md border border-gray-200/50 shadow-[0_8px_30px_rgb(0,0,0,0.12)]">
                 {navItems.map((item) => {
                     const isActive = pathname === item.href;
                     const isNotificate = item?.icon === 'pi-bell';

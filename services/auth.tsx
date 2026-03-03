@@ -11,21 +11,21 @@ let url = '';
 
 export const login = async (value:LoginType) => {
     url = process.env.NEXT_PUBLIC_BASE_URL + '/login?';
-    
+
     try {
         const res = await axiosInstance.post('/login?', value);
-        
+
         const data = res.data;
         return data;
     } catch (err) {
         console.log('Ошибка при авторизации', err);
-        return [];
+        return err;
     }
 };
 
 export const getUser = async () => {
     url = process.env.NEXT_PUBLIC_BASE_URL + '/v1/user';
-    
+
     try {
         const res = await axiosInstance.get(url);
 

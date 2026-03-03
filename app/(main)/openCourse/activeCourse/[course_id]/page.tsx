@@ -113,7 +113,7 @@ export default function ActiveCourseDetail() {
     }, [lessons, activeIndex]);
 
     return (
-        <div className={`main-bg ${!themeShow ? 'h-[100vh]' : ''} flex flex-col justify-between gap-2`}>
+        <div className={`main-bg`}>
             {themeShow ? (
                 <NotFound titleMessage={translations.noThemes} />
             ) : (
@@ -175,7 +175,7 @@ export default function ActiveCourseDetail() {
                     </Accordion>
                 </div>
             )}
-            {media && user?.is_student && <BottomNav />}
+            {/*{media && user?.is_student && <BottomNav />}*/}
         </div>
     );
 }
