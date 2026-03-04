@@ -350,6 +350,9 @@ export const localizationData = {
         openSeparately: 'Открыть отдельно',
         taskInstruction: 'Задание после изучения материала, загрузи свой файл с решением.',
         taskCompleted: 'Задание выполнено',
+
+        // lessons, cards
+        leaveFeedbackOrQuestion: 'Оставьте отзыв или задайте вопрос по материалам урока',
     },
     ky: {
         oshSU: 'ОшМУ',
@@ -696,6 +699,9 @@ export const localizationData = {
         openSeparately: 'Өзүнчө ачуу',
         taskInstruction: 'Материалды окуп чыккандан кийин, чечимиңиз менен файлды жүктөңүз.',
         taskCompleted: 'Тапшырма аткарылды',
+
+        // lessons, cards
+        leaveFeedbackOrQuestion: 'Сабактын материалдары боюнча пикир калтырыңыз же суроо бериңиз',
     }
 };
 

@@ -543,7 +543,7 @@ export default function LessonTest() {
                         <div className="flex items-center gap-1">
                             {practica?.content?.document_path && practica?.content.document_path.toLowerCase().includes('pdf') && (
                                 <>
-                                    <span className="text-[var(--mainColor)]">{translations.document}: </span>
+                                    <span className="text-[var(--mainColor)]">Документ: </span>
                                     <a className={`flex gap-2 pi pi-file-arrow-up text-xl text-white bg-[var(--mainColor)] p-1 rounded`} href={practica?.content.document_path} download target="_blank" rel="noopener noreferrer"></a>
                                 </>
                             )}

@@ -5,7 +5,7 @@ import { ContributionDay } from '@/types/ContributionDay';
 import ActivityPage from '@/app/components/Contribution';
 import Link from 'next/link';
 import { useContext, useEffect, useRef, useState } from 'react';
-import { fetchDashboardPerformance, fetchTeacherDashboard, fetchTelegramQr } from '@/services/dashboard/workingDashboard';
+import { fetchDashboardPerformance, fetchTeacherDashboard } from '@/services/dashboard/workingDashboard';
 import GroupSkeleton from '@/app/components/skeleton/GroupSkeleton';
 import useMediaQuery from '@/hooks/useMediaQuery';
 import { useRouter } from 'next/navigation';

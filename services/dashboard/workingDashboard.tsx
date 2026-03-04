@@ -26,11 +26,3 @@ export const fetchDashboardPerformance = async () => {
     }
 };
 
-export const fetchTelegramQr = async () => {
-    try {
-        const response = await axiosInstance.get('/v1/telegram/showQr');
-        return response.data;
-    } catch (error: any) {
-        return error;
-    }
-};

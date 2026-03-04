@@ -11,8 +11,6 @@ import MyDateTime from '@/app/components/MyDateTime';
 import { OptionsType } from '@/types/OptionsType';
 import { ContributionDay } from '@/types/ContributionDay';
 import Link from 'next/link';
-import { Dialog } from 'primereact/dialog';
-import { fetchTelegramQr } from '@/services/dashboard/workingDashboard';
 import { useLocalization } from '@/layout/context/localizationcontext';
 
 interface StudentStatistic {
@@ -66,13 +64,6 @@ export default function StudentHome() {
         }
     };
 
-    const handleFetchTelegramQr = async () => {
-        const data = await fetchTelegramQr();
-        if (data && data.direct_link) {
-            setTelegramData(data);
-        }
-    };
-
     useEffect(() => {
         if (media) {
             if (ref.current) {
@@ -89,10 +80,6 @@ export default function StudentHome() {
             handleFetchStudentActivity();
         }
     }, [user]);
-
-    useEffect(()=> {
-        handleFetchTelegramQr();
-    },[]);
 
     if (loading) {
         return (
@@ -143,12 +130,6 @@ export default function StudentHome() {
 
                 {/* 2. Stats Section */}
                 <div className="main-bg flex flex-col gap-2 px-2 pb-2 sm:px-6 sm:pb-6 sm:pt-2 min-h-[200px]">
-                    {telegramData && (
-                        <div className={'flex items-center justify-end gap-2 font-sans'}>
-                            <p className={'m-0 text-sm'}>{translations.connectTelegramNotifications}</p>{' '}
-                            <div className="cursor-pointer pi pi-telegram p-button-rounded text-white p-button-text p-3 bg-[var(--mainColor)] rounded-full min-w-[20px] min-h-[20px] hover:opacity-50" onClick={() => setShowTelegramDialog(true)}></div>
-                        </div>
-                    )}
                     <div className="flex flex-col justify-center mt-4">
                         <h3 className="font-bold">{translations.upcomingEvents}</h3>
                         <div>
@@ -182,22 +163,6 @@ export default function StudentHome() {
                         </div>
                     </div>
                 </div>
-            </div>
-
-            <div>
-                <Dialog header={translations.telegramConnectHeader} visible={showTelegramDialog} style={{ width: '350px' }} onHide={() => setShowTelegramDialog(false)} className="text-center">
-                    {telegramData && (
-                        <div className="flex flex-col items-center gap-4">
-                            <div className={'main-bg'}>
-                                <img src={telegramData.qr_code_base64} alt="Telegram QR Code" className="sm:w-60 w-64 sm:h-60 h-64 shadow-lg rounded " />
-                            </div>
-                            <a href={telegramData.direct_link} target="_blank" rel="noopener noreferrer" className="p-button p-component no-underline bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded-md flex items-center gap-2">
-                                <i className="pi pi-telegram"></i>
-                                <span>{translations.openInTelegram}</span>
-                            </a>
-                        </div>
-                    )}
-                </Dialog>
             </div>
         </div>
     );

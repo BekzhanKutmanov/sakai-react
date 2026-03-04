@@ -29,10 +29,8 @@ const LoginPage = () => {
     const params = useSearchParams();
     const backRedirect = params.get('redirect');
     const { translations } = useLocalization();
-    const { setUser, setMessage, setDepartament, departament } = useContext(LayoutContext);
-    // const containerClassName = classNames('surface-ground flex align-items-center justify-content-center min-h-screen min-w-screen overflow-hidden', { 'p-input-filled': layoutConfig.inputStyle === 'filled' });
+    const { setUser, setMessage, setDepartament } = useContext(LayoutContext);
     const [showPassword, setShowPassword] = useState(false);
-    // const [progressSpinner, setProgressSpinner] = useState(true);
     const [progressSpinner, setProgressSpinner] = useState(false);
     const [disabledState, setDisabledState] = useState(false);
     const [visible, setVisible] = useState(false);
@@ -75,15 +73,17 @@ const LoginPage = () => {
         setCode('');
         if (data?.status) {
             setCode('');
-            setMessage({state: true, value: {severity: 'error', summary: 'Ошибка при подтверждение кода', detail: 'Проверьте правильность ввода и срок действия кода'} });
-        } else{
+            setMessage({ state: true, value: { severity: 'error', summary: 'Ошибка при подтверждение кода', detail: 'Проверьте правильность ввода и срок действия кода' } });
+        } else {
             setVisible(false);
-            userGetSection();
+            userGetSection(null);
         }
     };
 
-    const userGetSection = async () => {
-        if (token) {
+    const userGetSection = async (tokenParam: string | null) => {
+        const localToken = tokenParam ? tokenParam : token;
+        if (localToken) {
+            console.log('ready');
             const res = await getUser();
             try {
                 if (res?.success) {
@@ -131,8 +131,7 @@ const LoginPage = () => {
                             window.location.href = safeRedirect;
                         }
                     }
-                }
-                else {
+                } else {
                     setMessage({
                         state: true,
                         value: { severity: 'error', summary: 'Ошибка при авторизации', detail: 'Повторите позже' }
@@ -142,7 +141,6 @@ const LoginPage = () => {
                     document.cookie = 'access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;';
                     console.log('Ошибка при получении пользователя');
                 }
-
             } catch (error) {
                 setMessage({
                     state: true,
@@ -154,8 +152,10 @@ const LoginPage = () => {
                 document.cookie = 'access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;';
                 console.log('Ошибка при получении пользователя');
             }
+        } else {
+            console.log('stop');
         }
-    }
+    };
 
     const getRemainingTime = (expiresAt: string) => {
         const now = Date.now();
@@ -187,11 +187,11 @@ const LoginPage = () => {
                 setToken(token);
                 const state: any = await handleGetState();
                 const fa = '2fa';
-                console.log(state);
-                console.log(fa);
-                console.log(state[fa]);
-                if (state[fa]){
-                    userGetSection();
+                // console.log(state);
+                // console.log(fa);
+                // console.log(state[fa]);
+                if (state[fa]) {
+                    userGetSection(token);
                 } else if (state && state?.sendCode) {
                     const send: any = await handleSend();
                     if (send && send?.token) {
@@ -263,10 +263,10 @@ const LoginPage = () => {
         return () => clearInterval(interval);
     }, [visible, expiresAt]);
 
-    useEffect(()=> {
-        if(code?.length > 5) setVerifyBtnDisabled(false);
+    useEffect(() => {
+        if (code?.length > 5) setVerifyBtnDisabled(false);
         else setVerifyBtnDisabled(true);
-    },[code]);
+    }, [code]);
 
     if (progressSpinner)
         return (
@@ -285,16 +285,16 @@ const LoginPage = () => {
                         <div className="flex items-center justify-center w-16 h-16 bg-blue-500 rounded-full text-white shadow-lg">
                             <i className="pi pi-telegram text-[var(--mainColor)] text-3xl"></i>
                         </div>
-                        <p className="text-md text-gray-700 text-center font-medium">{"Введите код с телеграмм"}</p>
+                        <p className="text-md text-gray-700 text-center font-medium">{'Введите код с телеграмм'}</p>
                         <div className="text-center text-sm font-medium text-gray-500">
-                            <span className="text-[red] font-bold">{"Код действителен до"}:</span>{' '}
+                            <span className="text-[red] font-bold">{'Код действителен до'}:</span>{' '}
                             <span className="font-bold text-red-500">
                                 {formatTime(timeLeft.minutes)}:{formatTime(timeLeft.seconds)}
                             </span>
                         </div>
-                        <InputText type="number" value={code} onChange={(e) => setCode(e.target.value)} placeholder={"Введите код"} className="w-full p-inputtext-md text-center" />
+                        <InputText type="number" value={code} onChange={(e) => setCode(e.target.value)} placeholder={'Введите код'} className="w-full p-inputtext-md text-center" />
 
-                        <Button label={"Подтвердить"} size={'small'} className={`w-full ${verifyBtnDisabled ? 'opacity-50 pointer-events-none' : ''}`} onClick={handleVerifyClick} disabled={!code} />
+                        <Button label={'Подтвердить'} size={'small'} className={`w-full ${verifyBtnDisabled ? 'opacity-50 pointer-events-none' : ''}`} onClick={handleVerifyClick} disabled={!code} />
                     </div>
                 </Dialog>
                 <div className={`w-[90%] sm:w-[500px] shadow-2xl bg-white py-6 px-3 md:py-8 sm:px-4 md:px-8 rounded`}>
