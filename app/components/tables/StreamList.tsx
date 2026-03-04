@@ -86,6 +86,7 @@ const StreamList = React.memo(function StreamList({
     };
 
     const handleFetchStreams = async () => {
+        console.log('send');
         const data = await fetchStreams(courseValue ? courseValue?.id : null);
         // setStreamValues({ stream: [] });
         setPendingChanges([]);
@@ -177,41 +178,9 @@ const StreamList = React.memo(function StreamList({
             setActive(false);
             handleConnect(stream_id, false);
         }
-
-        // const forSentStreams = {
-        //     course_id: courseValue!.id,
-        //     stream_id: stream_id,
-        //     id_curricula: item.id_curricula,
-        //     id_subject: item.subject_name.id,
-        //     subject_type: item.subject_type_name.short_name_ru,
-        //     id_subject_type: item.subject_type_name.id,
-        //     id_edu_year: item.id_edu_year,
-        //     id_period: item.id_period,
-        //     id_speciality: item.speciality.id,
-        //     id_faculty: item.speciality.id_faculty,
-        //     info: '',
-        //     stream_title: subject_name.name_ru
-        // };
-
-        // setPendingChanges((prev) => {
-        //     const isCurrentlyPending = prev.some((s) => s.stream_id === stream_id);
-
-        //     if (isChecked) {
-        //         // Если чекбокс отмечается
-        //         if (!isCurrentlyPending) {
-        //             return [...prev, forSentStreams];
-        //         }
-        //     } else {
-        //         // Если чекбокс снимается, удаляем объект из временного состояния
-        //         return prev.filter((s) => s.stream_id !== stream_id);
-        //     }
-
-        //     return prev;
-        // });
     };
 
     useEffect(()=> {
-        console.log(language);
         if(language === 'ru'){
             setNameLang('name_ru');
         }else if(language === 'ky'){
@@ -222,6 +191,7 @@ const StreamList = React.memo(function StreamList({
     useEffect(() => {
         toggleSkeleton();
         if (courseValue?.id) {
+            console.log('i love you baby');
             handleFetchStreams();
         }
     }, [courseValue]);

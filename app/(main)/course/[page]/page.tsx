@@ -588,19 +588,12 @@ export default function Course() {
                             <input
                                 type="radio"
                                 name="radio"
-                                onChange={() => {
-                                    const newValue = forStreamId?.id === shablonData.id ? null : { id: shablonData.id, title: shablonData.title };
-                                    // Устанавливаем состояние
-                                    setForStreamId(newValue);
-                                    setSendStream({ status: false, name: shablonData?.audience_type?.name });
-                                    setOpenCourseId(shablonData.id);
-                                }}
                                 checked={forStreamId?.id === shablonData.id}
                             />
                             <span
                                 className="radio-course-mark rounded"
                                 onClick={() => {
-                                    const newValue = forStreamId?.id === shablonData.id ? null : { id: shablonData.id, title: shablonData.title };
+                                    const newValue = { id: shablonData.id, title: shablonData.title };
                                     // Устанавливаем состояние
                                     setForStreamId(newValue);
                                     setSendStream({ status: false, name: shablonData?.audience_type?.name });
@@ -623,32 +616,13 @@ export default function Course() {
         );
     };
 
+    useEffect(() => {
+        console.log(forStreamId);
+        console.log(sendStream);
+    }, [forStreamId]);
+
     const courseFiltered = () => (
         <div className="mt-4 sm:mt-3 sm:py-3 border-round-lg">
-            {/* <h5 className="m-0 mb-4 text-xl" onClick={()=> setCourseFilteredState((prev)=> prev = !prev)}>Фильтры</h5> */}
-            {/* <div className="grid formgrid p-fluid gap-3 sm:gap-1">
-                <div className="field col-12 md:col-6 lg:col-3">
-                    <span className="p-float-label">
-                        <Dropdown id="course_audience_type_id" name="course_audience_type_id" value={filters.course_audience_type_id} options={audienceTypeOptions} onChange={handleFilterChange} className="w-full small-dropdown" />
-                        <label htmlFor="course_audience_type_id text-sm">{translations.courseStatus}</label>
-                    </span>
-                </div>
-                <div className="field col-12 md:col-6 lg:col-3">
-                    <span className="p-float-label">
-                        <Dropdown id="status" name="status" value={filters.status} options={statusOptions} onChange={handleFilterChange} className="w-full small-dropdown" style={{ width: '150px', fontSize: '12px' }} />
-                        <label htmlFor="status">{translations.onReview}</label>
-                    </span>
-                </div>
-                <div className="field col-12 md:col-6 lg:col-3">
-                    <span className="p-float-label">
-                        <Dropdown id="is_published" name="is_published" value={filters.is_published} options={publishedOptions} onChange={handleFilterChange} className="w-full small-dropdown" />
-                        <label htmlFor="is_published">{translations.published}</label>
-                    </span>
-                </div>
-                <div className="field col-12 md:col-6 lg:col-3 flex align-items-center">
-                    <Button label={translations.reset} icon="pi pi-replay" className="p-button-outlined w-full text-white" onClick={resetFilters} size="small" />
-                </div>
-            </div> */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 p-4 bg-gray-50/50 rounded-2xl text-sm">
                 {/* Селект: Тип аудитории */}
                 <div className="flex flex-col gap-2">
@@ -1044,6 +1018,7 @@ export default function Course() {
                                                                                 name="radio"
                                                                                 onChange={() => {
                                                                                     const newValue = { id: rowData.id, title: rowData.title };
+                                                                                    console.log(newValue);
                                                                                     // setGlobalCourseId(newValue);
                                                                                     setForStreamId(newValue);
                                                                                     // setSendStream({ status: false, name: rowData?.audience_type?.name });
