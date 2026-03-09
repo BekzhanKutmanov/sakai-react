@@ -168,36 +168,6 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                 }
             }
         ]
-            // ? {
-            //       label: translations.profile,
-            //       icon: 'pi pi-user',
-            //       items: [
-
-              //     ]
-              // }
-            // :
-
-        // {
-        //     label: translations.notification,
-        //     icon: (
-        //         <div className="p-overlay-badge">
-        //             <i className="pi pi-bell p-menuitem-icon" style={{ fontSize: '1.5rem' }}></i>
-        //             {/* Условное отображение красного кружка (бэйджа) */}
-        //             {notification?.length > 0 && <span className="absolute w-[10px] h-[10px] right-[10px] top-[5px] bg-[var(--amberColor)] rounded-full "></span>}
-        //         </div>
-        //     ),
-        //     items: [
-        //         {
-        //             label: '',
-        //             template: (
-        //                 <div className="max-h-[200px] overflow-y-auto">
-        //                     <Notification notification={notification} />
-        //                 </div>
-        //             )
-        //         }
-        //     ]
-        // },
-    // ];
 
     // profile
     const profileItems = [

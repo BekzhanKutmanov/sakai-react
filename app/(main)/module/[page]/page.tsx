@@ -21,24 +21,28 @@ import { useLocalizedData } from '@/hooks/useLocalizedData';
 import { types } from 'sass';
 import Null = types.Null;
 
+interface CurrentSpecialityType { name_ru: string; code: number | null; id: number | null }
+
+interface SpecialityOptType extends CurrentSpecialityType{}
+
 export default function Module() {
     const { setMessage } = useContext(LayoutContext);
     const showError = useErrorMessage();
     const { translations } = useLocalization();
     const { getLocalized } = useLocalizedData();
 
-    const [timeMode, setTimeMode] = useState<{ name_ru: string; code: number | null; id: number | null } | null>({ name_ru: '', code: null, id: null });
+    const [timeMode, setTimeMode] = useState<CurrentSpecialityType | null>({ name_ru: '', code: null, id: null });
     const [timeModeOptions, setTimeModeOptions] = useState<any>(null);
 
-    const [speciality, setSpecialyty] = useState<{ name_ru: string; code: number | null; id: number | null } | null>(null);
-    const [specialityOptions, setSpecialityOptions] = useState<any>([]);
+    const [speciality, setSpecialyty] = useState<CurrentSpecialityType | null>(null);
+    const [specialityOptions, setSpecialityOptions] = useState<SpecialityOptType[]>([]);
 
     const [currentFacultyId, setCurrentFacultyId] = useState<number | null>(null);
     const [currentSpecialityId, setCurrentSpecialityId] = useState<number | number[] | null>(null);
     const [diactivateSp, setDiactivateSp] = useState<number | null>(null);
     const [diactivateCt, setDiactivateCt] = useState<number | null>(null);
 
-    const [period, setPeriod] = useState<{ name_ru: string; code: number | null; id: number | null } | null>(null);
+    const [period, setPeriod] = useState<CurrentSpecialityType | null>(null);
     const [periodOptions, setPeriodOptions] = useState<any>([
         { name_ru: 'Летний', id: 1 },
         { name_ru: 'Зимний', id: 2 }
@@ -55,7 +59,6 @@ export default function Module() {
 
     const [openIndex, setOpenIndex] = useState<number | null>(null);
     const [visible, setVisible] = useState(false);
-    // const [allSelectFl, setAllSelectFl] = useState([{ state: false, id: null }]);
     const [allSelectFl, setAllSelectFl] = useState<number[]>([]);
 
     const [emptySpeciality, setEmptySpeciality] = useState(false);
@@ -83,9 +86,11 @@ export default function Module() {
         setMiniSpinner(true);
         setStartDisplay(false);
         const data = await fetchSpeciality(id_faculty);
+        // console.log(data);
         if (data && data?.length) {
-            setSpecialityOptions(data);
-            // setStudents(data?.data);
+            const newOpts = data;
+            newOpts.unshift({ id: null, code: 1, name_ru: translations.allSpecialities });
+            setSpecialityOptions(newOpts);
         }
         setMiniSpinner(false);
     };
@@ -173,7 +178,7 @@ export default function Module() {
         }
     };
 
-    const specialityWithAll = [{ id: null, code: 1, name_ru: translations.allSpecialities }, ...specialityOptions];
+    // const specialityWithAll = [{ id: null, code: 1, name_ru: translations.allSpecialities }, ...specialityOptions];
 
     const startSheduleCheck = (connects: number[]) => {
         if (connects) {
@@ -250,8 +255,11 @@ export default function Module() {
                     <div className="w-full flex items-center">
                         <Dropdown
                             value={speciality}
-                            options={specialityWithAll}
-                            onChange={(e) => setSpecialyty(e.value)}
+                            options={specialityOptions}
+                            onChange={(e) => {
+                                setSpecialyty(e.value);
+                                specialityProcessing(e.value);
+                            }}
                             placeholder={translations.selectSpeciality}
                             className={`${specialityOptions?.length < 1 ? 'pointer-events-none opacity-50' : ''} w-full text-sm `}
                             itemTemplate={(option) => <span>{getLocalized(option, 'name') || option.name_ru}</span>}
@@ -309,7 +317,7 @@ export default function Module() {
                 <Button
                     className="px-4"
                     label={translations.search}
-                    disabled={speciality?.name_ru ? false : true}
+                    // disabled={speciality?.name_ru ? false : true}
                     onClick={() => {
                         handleFetchModuleShedule(currentSpecialityId, period?.id ? period?.id : null, semestr?.id ? semestr?.id : null);
                     }}
@@ -385,13 +393,6 @@ export default function Module() {
                                                             }
                                                         } else {
                                                             setAllSelectFl((prev) => {
-                                                                // const exists = prev.includes(course?.id);
-                                                                // if (exists) {
-                                                                //     setDiactivateSp(course.id);
-                                                                //     const streamArr = course?.streams?.map((stream: any) => stream.id_stream);
-                                                                //     setConnectIds((prev) => prev && prev.filter((id) => !streamArr?.includes(id)));
-                                                                //     return prev.filter((id) => id !== course.id);
-                                                                // } else {
                                                                 const forConnects = course?.streams?.map((stream: any) => {
                                                                     return stream?.id_stream;
                                                                 });
@@ -402,7 +403,6 @@ export default function Module() {
                                                                     setConnectIds(forConnects);
                                                                 }
                                                                 return [...prev, course.id];
-                                                                // }
                                                             });
                                                         }
                                                     }}
@@ -499,37 +499,30 @@ export default function Module() {
         </Dialog>
     );
 
-    useEffect(() => {
-        if (timeMode?.id) {
-            setCurrentFacultyId(timeMode?.id);
-        }
-    }, [timeMode]);
-
-    useEffect(() => {
-        if (currentFacultyId) {
-            handleStudentSpeciality(currentFacultyId);
-        }
-    }, [currentFacultyId]);
-
-    useEffect(() => {
-        if (speciality) {
-            if (speciality?.code === 1) {
-                const forAllSpecialityIds = specialityWithAll?.map((item) => item?.id)?.filter((item) => item);
-                // handleFetchModuleShedule(forAllSpecialityIds, period?.id ? period?.id : null, semestr?.id ? semestr?.id : null);
+    const specialityProcessing = (specialityParam: CurrentSpecialityType)=> {
+        if (specialityParam) {
+            if (specialityParam?.code === 1) {
+                const forAllSpecialityIds: any = specialityOptions?.map((item:SpecialityOptType) => item?.id)?.filter((item) => item);
                 setCurrentSpecialityId(forAllSpecialityIds);
             } else {
-                if (speciality?.id) {
-                    setCurrentSpecialityId(speciality?.id);
-                    // handleFetchModuleShedule([speciality?.id], period?.id ? period?.id : null, semestr?.id ? semestr?.id : null);
+                if (specialityParam?.id) {
+                    setCurrentSpecialityId(specialityParam?.id);
                 }
             }
         }
-    }, [speciality]);
+    }
 
     useEffect(() => {
-        handleFetchFaculty();
-        handleFetchSemestr();
-    }, []);
+        if (timeMode?.id) setCurrentFacultyId(timeMode?.id);
+    }, [timeMode]);
+
+    useEffect(() => {
+        if (currentFacultyId) handleStudentSpeciality(currentFacultyId);
+    }, [currentFacultyId]);
+
+    useEffect(()=> {
+        if(specialityOptions?.length > 0) specialityProcessing(specialityOptions[0]);
+    },[specialityOptions]);
 
     // Update period options when language changes
     useEffect(() => {
@@ -546,6 +539,11 @@ export default function Module() {
             setPeriod(updatedPeriod);
         }
     }, [translations]);
+
+    useEffect(() => {
+        handleFetchFaculty();
+        handleFetchSemestr();
+    }, []);
 
     const footerContent = (
         <div>

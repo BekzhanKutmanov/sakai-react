@@ -5,6 +5,7 @@ import { cutStudentConnect, fetchStudentCut } from '@/services/student/studentSe
 import { confirmDialog } from 'primereact/confirmdialog';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import React, { useContext, useEffect, useState } from 'react';
+import { useLocalization } from '@/layout/context/localizationcontext';
 
 interface ConnectType {
     active: boolean;
@@ -23,12 +24,12 @@ interface CurricullaType {
     total_earned: number;
     total_potential: number;
     subject_name: string;
-}    
+}
 
 export default function CoursesCut({ id_student }: { id_student: number | null }) {
     const { setMessage } = useContext(LayoutContext);
     const showError = useErrorMessage();
-
+    const { translations } = useLocalization();
     const [student, setStudent] = useState<CurricullaType[] | null>(null);
     const [skeleton, setSkeleton] = useState(true);
 
@@ -65,15 +66,15 @@ export default function CoursesCut({ id_student }: { id_student: number | null }
         confirmDialog({
             message: (
                 <div className="flex flex-col gap-2">
-                    <b>Вы точно хотите удалить?</b> <span>Все данные потока и курса будут без возможности восстановления разорваны</span>
+                    <b>{translations.confirmDelete}</b> <span>{translations.confirmDeleteResult}</span>
                 </div>
             ),
-            header: 'Подтверждение',
+            header: translations.confirmation,
             icon: 'pi pi-exclamation-triangle',
             defaultFocus: 'accept',
 
-            acceptLabel: 'Удалить',
-            rejectLabel: 'Назад',
+            acceptLabel: translations.delete,
+            rejectLabel: translations.cancel,
             rejectClassName: 'p-button-secondary reject-button',
             acceptClassName: 'p-button-danger accept-button',
             accept: () => handleCut(Number(id_student), item?.course_id, item?.id_stream)
@@ -90,7 +91,7 @@ export default function CoursesCut({ id_student }: { id_student: number | null }
 
     const renderConnects = (connects: ConnectType[], item: CurricullaType) => {
         if (!connects || connects?.length < 1) {
-            return <span className="text-[13px] text-[#7a7a7a]">Нет связанных потоков</span>;
+            return <span className="text-[13px] text-[#7a7a7a]">{translations.noLinkedStreams}</span>;
         }
 
         return (
@@ -103,12 +104,12 @@ export default function CoursesCut({ id_student }: { id_student: number | null }
                                 <span className="font-semibold text-[14px]">{item?.course_name}</span>
                                 <span className={`inline-flex items-center gap-1 rounded-full px-2 py-[2px] text-[11px] font-semibold ${item?.active ? 'bg-[#e8fff1] text-[#0f7b36]' : 'bg-[#f4f4f4] text-[#7a7a7a]'}`}>
                                     <span className={`pi ${item?.active ? 'pi-check-circle' : 'pi-pause-circle'} text-[11px]`}></span>
-                                    {item?.active ? 'Активен' : 'Неактивен'}
+                                    {item?.active ? translations.isActive : translations.noActive}
                                 </span>
                                 <span className="text-[12px] text-[var(--mainColor)]">ID {item?.id_stream}</span>
                             </div>
                             <div className="flex flex-wrap items-center gap-2 ">
-                                <span className="text-[13px] text-[#7a7a7a]">Собрал:</span>
+                                <span className="text-[13px] text-[#7a7a7a]">{translations.Collected}:</span>
                                 <span className="text-[14px] font-semibold">{item?.earned_score}</span>
                                 <span className="text-[13px] text-[#7a7a7a]">Потенциал:</span>
                                 <span className="text-[14px]">{item?.potential_score}</span>
@@ -120,12 +121,12 @@ export default function CoursesCut({ id_student }: { id_student: number | null }
                             <button
                                 type="button"
                                 className="cursor-pointer inline-flex items-center gap-2 rounded-full border border-[#f5bcbc] bg-[#fff7f7] px-2 py-[4px] sm:py-[6px] text-[12px] font-semibold text-[#b00020] transition-colors duration-200 hover:bg-[#ffe9e9]"
-                                title="Удалить поток"
-                                aria-label="Удалить поток"
+                                title={translations.deleteStream}
+                                aria-label={translations.deleteStream}
                                 onClick={() => confirm1(item)}
                             >
                                 <span className="pi pi-trash text-[12px]"></span>
-                                Удалить
+                                {translations.delete}
                             </button>
                         </div>
                     </div>
@@ -144,7 +145,7 @@ export default function CoursesCut({ id_student }: { id_student: number | null }
         }
 
         if (!student || student.length < 1) {
-            return <div className="py-6 text-center text-[14px] text-[#7a7a7a]">Данные отсутствуют</div>;
+            return <div className="py-6 text-center text-[14px] text-[#7a7a7a]">{translations.noData}</div>;
         }
 
         return (
@@ -159,11 +160,11 @@ export default function CoursesCut({ id_student }: { id_student: number | null }
                             </div>
                             <div className="flex flex-col gap-1 mb-3">
                                 <div className="flex items-center gap-2">
-                                    <span className="text-[13px] text-[#7a7a7a]">Собрал баллов</span>
+                                    <span className="text-[13px] text-[#7a7a7a]">{translations.collectedScore}</span>
                                     <span className="text-[15px] font-semibold">{item?.total_earned}</span>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                    <span className="text-[13px] text-[#7a7a7a]">Макс. возможный балл</span>
+                                    <span className="text-[13px] text-[#7a7a7a]">{translations.maxScore}</span>
                                     <span className="text-[15px] font-semibold">{item?.total_potential}</span>
                                 </div>
                             </div>
@@ -177,7 +178,7 @@ export default function CoursesCut({ id_student }: { id_student: number | null }
                             </div>
 
                             <div className="flex flex-col gap-2 mt-1">
-                                <span className="text-[13px] text-[#7a7a7a]">Связанные потоки</span>
+                                <span className="text-[13px] text-[#7a7a7a]">{translations.connectStreams}</span>
                                 {renderConnects(item?.connects || [], item)}
                             </div>
                         </div>
@@ -204,7 +205,7 @@ export default function CoursesCut({ id_student }: { id_student: number | null }
             return (
                 <tr>
                     <td colSpan={4} className="py-6 text-center text-[14px] text-[#7a7a7a]">
-                        Данные отсутствуют
+                        {translations.noData}
                     </td>
                 </tr>
             );
@@ -223,11 +224,11 @@ export default function CoursesCut({ id_student }: { id_student: number | null }
                     <td className="p-3 align-top text-[14px]">
                         <div className="flex flex-col gap-1">
                             <div className="flex items-center gap-2">
-                                <span className="text-[13px] text-[#7a7a7a]">Собрал баллов</span>
+                                <span className="text-[13px] text-[#7a7a7a]">{translations.collectedScore}</span>
                                 <span className="font-semibold text-[15px]">{item?.total_earned}</span>
                             </div>
                             <div className="flex items-center gap-2">
-                                <span className="text-[13px] text-[#7a7a7a]">Макс. возможный балл</span>
+                                <span className="text-[13px] text-[#7a7a7a]">{translations.maxScore}</span>
                                 <span className="font-semibold text-[15px]">{item?.total_potential}</span>
                             </div>
                         </div>
@@ -254,10 +255,10 @@ export default function CoursesCut({ id_student }: { id_student: number | null }
                         <thead className="text-[#4B4563]">
                             <tr>
                                 <th className="text-left font-semibold p-3 w-[60px]">#</th>
-                                <th className="text-left font-semibold p-3">Предметы</th>
-                                <th className="text-left font-semibold p-3 w-[180px]">Итоги</th>
-                                <th className="text-left font-semibold p-3 w-[180px]">Лимит баллов</th>
-                                <th className="text-left font-semibold p-3">Связанные потоки</th>
+                                <th className="text-left font-semibold p-3">{translations.items}</th>
+                                <th className="text-left font-semibold p-3 w-[180px]">{translations.output}</th>
+                                <th className="text-left font-semibold p-3 w-[180px]">{translations.scoreLimit}</th>
+                                <th className="text-left font-semibold p-3">{translations.connectStreams}</th>
                             </tr>
                         </thead>
                         <tbody>{renderTableBody()}</tbody>
@@ -265,7 +266,7 @@ export default function CoursesCut({ id_student }: { id_student: number | null }
                 </div>
                 <div className="hidden sm:flex items-center gap-2 mt-2 text-[13px] text-[#7a7a7a]">
                     <span className="w-[10px] h-[10px] rounded-sm bg-[#fff7f7] border border-[#f5bcbc]"></span>
-                    <span>Строки с отметкой выделены, если есть проблемы по лимиту</span>
+                    <span>{translations.warningWorks}</span>
                 </div>
             </div>
         </div>

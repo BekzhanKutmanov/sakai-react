@@ -16,6 +16,7 @@ import { fetchSpeciality } from '@/services/student/studentSearch';
 import { Dropdown } from 'primereact/dropdown';
 import { useParams, useRouter } from 'next/navigation';
 import { LayoutContext } from '@/layout/context/layoutcontext';
+import { useLocalization } from '@/layout/context/localizationcontext';
 
 interface Student extends RoleUserType {
     speciality: {
@@ -25,7 +26,7 @@ interface Student extends RoleUserType {
 
 export default function StudentsPage() {
     const { contextFilterState, setContextFilterState } = useContext(LayoutContext);
-
+    const { translations } = useLocalization();
     const media = useMediaQuery('(max-width: 640px)');
     const { page } = useParams();
 
@@ -144,7 +145,7 @@ export default function StudentsPage() {
                 </div>
 
                 {empty ? (
-                    <b className="main-bg flex justify-center">Студенты не найдены</b>
+                    <b className="main-bg flex justify-center">{translations.studentsNotFound}</b>
                 ) : loading ? (
                     <div className="flex items-center gap-3 mb-4 justify-center">
                         <ProgressSpinner style={{ width: '50px', height: '50px' }} />
@@ -155,10 +156,10 @@ export default function StudentsPage() {
                             <table className="w-full text-left border-collapse">
                                 <thead>
                                     <tr className="border-b border-slate-100 text-slate-500 text-sm font-medium">
-                                        <th className="py-4 pl-3 font-semibold">ФИО студента</th>
-                                        <th className="py-4 px-6 font-semibold">Л/н</th>
-                                        <th className="py-4 px-6 font-semibold">Специальность</th>
-                                        <th className="py-4 px-6 font-semibold">Действия</th>
+                                        <th className="py-4 pl-3 font-semibold">{translations.fullNameStudent}</th>
+                                        <th className="py-4 px-6 font-semibold">{translations.personalShortNumber}</th>
+                                        <th className="py-4 px-6 font-semibold">{translations.speciality}</th>
+                                        <th className="py-4 px-6 font-semibold">{translations.actions}</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-slate-50">
@@ -179,7 +180,7 @@ export default function StudentsPage() {
                                                 <Link href={`/roles/students/1/${student?.id}`}>
                                                     <button className="cursor-pointer bg-[var(--mainColor)] hover:opacity-90 text-white px-4 py-2 rounded-lg flex items-center gap-2 text-sm font-medium transition-all shadow-sm">
                                                         <i className="pi pi-book text-white text-sm"></i>
-                                                        Просмотреть работы
+                                                        {translations.checkingWork}
                                                     </button>
                                                 </Link>
                                             </td>
@@ -190,7 +191,7 @@ export default function StudentsPage() {
                         </div>
                         {/* Футер таблицы */}
                         <p className="mt-4 text-sm text-slate-500">
-                            Показано студентов: {students.length} из {students.length}
+                            {translations.viewStudents}: {students.length} {translations.from} {students.length}
                         </p>
 
                         <Paginator
@@ -211,8 +212,8 @@ export default function StudentsPage() {
         <div className="bg-[#eff6ff] border border-[#dbeafe] rounded-xl p-4 mb-4 flex gap-3">
             <i className="pi pi-info text-[#2563eb] shrink-0 mt-0.5 pi pi-info-circle text-xl"></i>
             <div className="text-sm text-[#1e40af] leading-relaxed">
-                <p className="font-semibold mb-1">Инструкция для редуктора</p>
-                <p>Выберите студента из списка ниже, чтобы просмотреть все его работы. На странице студента вы сможете аннулировать работы, если были выявлены нарушения академической честности или другие причины для аннулирования.</p>
+                <p className="font-semibold mb-1">{translations.reductorInstruction}</p>
+                <p>{translations.reductorWorkingInstruction}</p>
             </div>
             <i
                 onClick={() => {
@@ -287,14 +288,6 @@ export default function StudentsPage() {
         }
     }, [currentFacultyId]);
 
-    // useEffect(() => {
-    //     if (speciality) {
-    //         setCurrentSpecialityId(speciality?.id);
-    //         const specialityId = speciality?.id;
-    //         handleFetchReductor(pageState, search, specialityId);
-    //     }
-    // }, [speciality]);
-
     useEffect(() => {
         if (speciality && speciality.id !== currentSpecialityId) {
             setCurrentSpecialityId(speciality.id);
@@ -329,8 +322,8 @@ export default function StudentsPage() {
                         <i className="pi pi-users text-2xl"></i>
                     </div>
                     <div>
-                        <h1 className="m-0 text-2xl font-bold text-slate-800 tracking-tight">Панель редуктора</h1>
-                        <p className="text-slate-500 text-sm mt-1 font-medium">Управление работами студентов</p>
+                        <h1 className="m-0 text-2xl font-bold text-slate-800 tracking-tight">{translations.reductorPanel}</h1>
+                        <p className="text-slate-500 text-sm mt-1 font-medium">{translations.studentControl}</p>
                     </div>
                 </div>
 
@@ -341,7 +334,7 @@ export default function StudentsPage() {
                 <div className="main-bg flex flex-col gap-1 my-1">
                     <div className=" flex sm:items-center gap-2 flex-col sm:flex-row mb-2">
                         <div className="sm:max-w-[60%] overflow-hidden flex flex-col items-start gap-2">
-                            <b className="px-1 inline">Выберите факультет</b>
+                            <b className="px-1 inline">{translations.selectFaculty}</b>
                             <div className="sm:max-w-[60%] overflow-hidden flex juctify-center items-start">
                                 <Dropdown
                                     value={timeMode}
@@ -349,14 +342,14 @@ export default function StudentsPage() {
                                     itemTemplate={facultiItemeTemplate}
                                     options={timeModeOptions}
                                     onChange={(e) => setTimeMode(e.value)}
-                                    placeholder="Выберите факультет"
+                                    placeholder={translations.selectFaculty}
                                     className="text-wrap word-break sm:text-nowrap sm:max-w-full"
                                 />
                             </div>
                         </div>
 
                         <div className="sm:max-w-[60%] overflow-hidden flex flex-col gap-2">
-                            <b className="px-1">Выберите специальность</b>
+                            <b className="px-1">{translations.selectSpeciality}</b>
                             <div className="sm:max-w-[60%] overflow-hidden flex juctify-center items-start">
                                 <Dropdown
                                     value={speciality}
@@ -370,7 +363,7 @@ export default function StudentsPage() {
                                             speciality_id: e.value?.id ?? null
                                         }));
                                     }}
-                                    placeholder="Выберите специальность"
+                                    placeholder={translations.selectSpeciality}
                                     className={`${!specialityOptions ? 'pointer-events-none opacity-50' : ''} w-full text-sm`}
                                 />
                             </div>
@@ -381,13 +374,13 @@ export default function StudentsPage() {
                 {/* Поиск */}
                 <div className="relative flex border border-slate-200 rounded-xl py-2 sm:py-3 pl-3 items-center gap-3 w-full bg-white mb-4 shadow-sm focus:border-blue-500 focus:ring-blue-500/20 transition-all">
                     <i className="pi pi-search text-sm"></i>
-                    <input value={search} onChange={(e) => setSearch(e.target.value)} type="text" placeholder="Поиск по ФИО" className="w-full pr-4 outline-none" />
+                    <input value={search} onChange={(e) => setSearch(e.target.value)} type="text" placeholder={translations.searchByFullName} className="w-full pr-4 outline-none" />
                     <div className="absolute right-1">{progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}</div>
                 </div>
 
                 {error ? (
                     <div className="mb-4 flex justify-center">
-                        <NotFound titleMessage="Данные не доступны" />
+                        <NotFound titleMessage={translations.dataNotAvailable} />
                     </div>
                 ) : (
                     <EditorPanel />

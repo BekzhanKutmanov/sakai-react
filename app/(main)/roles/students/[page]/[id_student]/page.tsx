@@ -16,6 +16,7 @@ import GroupSkeleton from '@/app/components/skeleton/GroupSkeleton';
 import { TabPanel, TabView } from 'primereact/tabview';
 import { TabViewChange } from '@/types/tabViewChange';
 import CoursesCut from '@/app/components/tables/coursesCut';
+import { useLocalization } from '@/layout/context/localizationcontext';
 
 // Типизация данных (можно вынести в отдельные файлы в /types)
 interface Student {
@@ -45,6 +46,7 @@ interface Course {
 const StudentDetailPage = ({ params }: { params: { student_id: string } }) => {
     const { id_student } = useParams();
     const { setMessage } = useContext(LayoutContext);
+    const { translations } = useLocalization();
     const showError = useErrorMessage();
 
     const [student, setStudent] = useState<Student | null>(null);
@@ -176,11 +178,11 @@ const StudentDetailPage = ({ params }: { params: { student_id: string } }) => {
                         pt={{
                             headerAction: { className: 'font-italic' }
                         }}
-                        header={'Аннулирование'}
+                        header={translations.cancellation}
                         className="p-tabview p-tabview-nav p-tabview-selected p-tabview-panels p-tabview-panel"
                     >
                         {courses.length === 0 ? (
-                            <b className="main-bg w-full flex justify-center">У студента пока нет назначенных курсов</b>
+                            <b className="main-bg w-full flex justify-center">{translations.studentNotCourse}</b>
                         ) : (
                             <div className="w-full block sm:w-1/2">
                                 <Accordion
@@ -237,7 +239,7 @@ const StudentDetailPage = ({ params }: { params: { student_id: string } }) => {
                                                                     <span className="checkbox-mark"></span>
                                                                 </label>
                                                                 <label htmlFor={`select-all-${course.id}`} className="ml-2 font-bold">
-                                                                    Выбрать все
+                                                                    {translations.selectAll}
                                                                 </label>
                                                             </div>
                                                         </div>
@@ -310,32 +312,6 @@ const StudentDetailPage = ({ params }: { params: { student_id: string } }) => {
                                                                     {step?.practical && (
                                                                         <div className="flex justify-between flex-col sm:flex-row sm:items-center gap-2 rounded-sm h-full w-full shadow p-2 hover:bg-slate-50/50 transition-colors">
                                                                             <div className="flex items-center w-full gap-2">
-                                                                                {/* <label className="custom-radio">
-                                                                                    <input
-                                                                                        type="checkbox"
-                                                                                        className={`customCheckbox`}
-                                                                                        value={step.id}
-                                                                                        // checked={answer_ids.includes(step.id)}
-                                                                                        onChange={(e) => {
-                                                                                            if (currentCourseId !== course.id) {
-                                                                                                setAnswerIds([step.id]);
-                                                                                                setCurrentCourseId(course.id);
-                                                                                            } else {
-                                                                                                const selectedIds = [...answer_ids];
-                                                                                                if (e.target.checked) {
-                                                                                                    selectedIds.push(step.id);
-                                                                                                } else {
-                                                                                                    const index = selectedIds.indexOf(step.id);
-                                                                                                    if (index > -1) {
-                                                                                                        selectedIds.splice(index, 1);
-                                                                                                    }
-                                                                                                }
-                                                                                                setAnswerIds(selectedIds);
-                                                                                            }
-                                                                                        }}
-                                                                                    />
-                                                                                    <span className="checkbox-mark"></span>
-                                                                                </label> */}
                                                                                 {fakeCheck ? (
                                                                                     <>
                                                                                         <label className="custom-radio">
@@ -400,7 +376,7 @@ const StudentDetailPage = ({ params }: { params: { student_id: string } }) => {
                                                     </>
                                                 ) : (
                                                     <div className="col-12">
-                                                        <Message severity="info" text="В этом курсе пока нет шагов." />
+                                                        <Message severity="info" text={translations.inCourseNoStep} />
                                                     </div>
                                                 )}
                                             </div>
@@ -408,7 +384,7 @@ const StudentDetailPage = ({ params }: { params: { student_id: string } }) => {
                                     ))}
                                 </Accordion>
                                 <div className="w-full flex justify-end mt-4">
-                                    <Button label="Аннулировать" icon="pi pi-times-circle" iconPos="right" size="small" className="p-button-danger" disabled={answer_ids.length === 0} onClick={() => setDialogVisible(true)} />
+                                    <Button label={translations.cancellation} icon="pi pi-times-circle" iconPos="right" size="small" className="p-button-danger" disabled={answer_ids.length === 0} onClick={() => setDialogVisible(true)} />
                                 </div>
                             </div>
                         )}
@@ -418,11 +394,11 @@ const StudentDetailPage = ({ params }: { params: { student_id: string } }) => {
                         pt={{
                             headerAction: { className: 'font-italic' }
                         }}
-                        header={'Управление'}
+                        header={translations.controll}
                         className="p-tabview p-tabview-nav p-tabview-selected p-tabview-panels p-tabview-panel"
                     >
                         <div className="w-full block sm:w-1/2 font-sans text-sm">
-                            <div onClick={()=> setInstructVisible(true)} className="cursor-pointer flex items-center gap-1 justify-end text-[var(--mainColor)] ">
+                            <div onClick={() => setInstructVisible(true)} className="cursor-pointer flex items-center gap-1 justify-end text-[var(--mainColor)] ">
                                 <i className="pi pi-info-circle p-1 rounded-full"></i>
                                 <span className="underline">Инструкция</span>
                             </div>
@@ -432,23 +408,20 @@ const StudentDetailPage = ({ params }: { params: { student_id: string } }) => {
                 </TabView>
 
                 <Dialog
-                    header="Причина аннулирования"
+                    header={translations.reasonCancellation}
                     visible={dialogVisible}
-                    className='w-[90%] sm:w-[60%]'
+                    className="w-[90%] sm:w-[60%]"
                     onHide={() => setDialogVisible(false)}
                     footer={
                         <div>
-                            <Button label="Отмена" icon="pi pi-times" onClick={() => setDialogVisible(false)} className="p-button-secondary reject-button" />
+                            <Button label={translations.cancel} icon="pi pi-times" onClick={() => setDialogVisible(false)} className="p-button-secondary reject-button" />
                             <Button
-                                label="Аннулировать"
+                                label={translations.cancellation}
                                 icon="pi pi-check"
                                 className="p-button-danger accept-button"
                                 onClick={() => {
                                     setDialogVisible(false);
                                     handlestudentCancel();
-                                    // setAnnulmentReason('');
-                                    // setAnswerIds([]);
-                                    // setCurrentCourseId(null);
                                 }}
                                 autoFocus
                             />
@@ -457,19 +430,17 @@ const StudentDetailPage = ({ params }: { params: { student_id: string } }) => {
                 >
                     <div className="p-fluid">
                         <div className="field">
-                            <label htmlFor="reason">Пожалуйста, опишите причину аннулирования.</label>
+                            <label htmlFor="reason">{translations.reasonFullCancellation}</label>
                             <InputText type="text" value={annulmentReason} placeholder="Тема" className="my-2" onChange={(e) => setAnnulmentReason(e.target.value)} />
-                            <InputTextarea id="reason" value={description} placeholder="Описание" onChange={(e) => setDescription(e.target.value)} rows={5} />
+                            <InputTextarea id="reason" value={description} placeholder={translations.description} onChange={(e) => setDescription(e.target.value)} rows={5} />
                         </div>
                     </div>
                 </Dialog>
 
-                <Dialog header="Инструкция" visible={instructVisible} className='w-[90%] sm:w-[60%]' onHide={() => setInstructVisible(false)}>
+                <Dialog header="Инструкция" visible={instructVisible} className="w-[90%] sm:w-[60%]" onHide={() => setInstructVisible(false)}>
                     <div className="main-bg">
                         <p>
-                            В данном разделе отображается список предметов, потоков и курсов, связанных со студентами. При изменении потока студента (например, при переводе в другой поток) в системе могут остаться лишние или некорректные связи — так
-                            называемые «мусорные» данные. Эти данные могут мешать корректной работе системы, в том числе при <b>назначении модулей студенту</b>. В этом разделе вы можете просмотреть все связанные предметы, потоки и курсы, проверить их
-                            актуальность и удалить лишние или ошибочные связи, чтобы избежать проблем в дальнейшем
+                            {translations.studentWorkCencalled}
                         </p>
                     </div>
                 </Dialog>
