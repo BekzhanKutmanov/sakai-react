@@ -13,7 +13,6 @@ import { usePathname, useSearchParams } from 'next/navigation';
 import { LocalizationProvider, useLocalization } from '@/layout/context/localizationcontext';
 import { BottomNav } from '@/app/components/menu/MobileMenu';
 import useMediaQuery from '@/hooks/useMediaQuery';
-import AppConfig from '@/layout/AppConfig';
 
 const Layout = ({ children }: ChildContainerProps) => {
     const { layoutConfig, layoutState, setLayoutState, user } = useContext(LayoutContext);

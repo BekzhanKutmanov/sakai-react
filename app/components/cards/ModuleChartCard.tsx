@@ -1,6 +1,5 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import MyDateTime from '../MyDateTime';
 
 interface DateType {

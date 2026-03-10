@@ -14,7 +14,6 @@ import React, { useContext, useEffect, useState } from 'react';
 import { useLocalization } from '@/layout/context/localizationcontext';
 import { useLocalizedData } from '@/hooks/useLocalizedData';
 import MainTitle from '@/app/components/titles/MainTitle';
-import { Main } from 'next/document';
 
 export default function StudentLesson() {
     // types
@@ -197,7 +196,7 @@ export default function StudentLesson() {
     // Просим предметы для получения конкретного из них
     useEffect(() => {
         handleFetchLessons();
-    }, []);
+    }, [handleFetchLessons]);
 
     // Из предметов получаю выбранный курс в main_id
     useEffect(() => {
@@ -218,7 +217,7 @@ export default function StudentLesson() {
                 setMain_id(search_id);
             }
         }
-    }, [lessons]);
+    }, [lessons, subject_id]);
 
     // НАХОДИМ ПО ИД КРУКЛА НУЖНЫЙ ЭЛЕМЕНТ МАССИВА И ПРИСВАИВАЕМ В main_id ОБЪЕКТ
 
@@ -227,7 +226,7 @@ export default function StudentLesson() {
             const forSubject: subjectType = { id_curricula: main_id?.id_curricula, course_ids: main_id?.course_ids, streams: main_id?.streams.map((i: { id: number }) => i.id) };
             handleFetchSubject(forSubject);
         }
-    }, [main_id]);
+    }, [main_id, handleFetchSubject]);
 
     if(mainProgressSpinner) return <div className='main-bg flex justify-center items-center h-[100vh]'><ProgressSpinner style={{ width: '60px', height: '60px' }} /></div>
 

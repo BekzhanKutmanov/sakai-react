@@ -1,3 +1,4 @@
+'uce client';
 import React, { useState } from 'react';
 import { Skeleton } from 'primereact/skeleton';
 

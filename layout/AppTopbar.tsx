@@ -17,7 +17,6 @@ import type { TieredMenu as TieredMenuRef } from 'primereact/tieredmenu';
 import Notification from '@/app/components/notification/Notification';
 
 import { useLocalization } from './context/localizationcontext';
-import LocalizationSwift from '@/app/components/LocalizationSwift';
 
 const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
     const { layoutState, onMenuToggle, user, setUser, setGlobalLoading, setContextNotificationId, contextNotifications, handleNotifications } = useContext(LayoutContext);

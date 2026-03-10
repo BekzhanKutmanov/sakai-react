@@ -18,8 +18,6 @@ import { LayoutContext } from '@/layout/context/layoutcontext';
 import useErrorMessage from '@/hooks/useErrorMessage';
 import { useLocalization } from '@/layout/context/localizationcontext';
 import { useLocalizedData } from '@/hooks/useLocalizedData';
-import { types } from 'sass';
-import Null = types.Null;
 
 interface CurrentSpecialityType { name_ru: string; code: number | null; id: number | null }
 

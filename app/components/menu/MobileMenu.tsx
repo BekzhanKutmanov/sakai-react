@@ -3,7 +3,6 @@
 import React, { useContext, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import useMediaQuery from '@/hooks/useMediaQuery';
 import { LayoutContext } from '@/layout/context/layoutcontext';
 import Notification from '@/app/components/notification/Notification';
 import { TieredMenu } from 'primereact/tieredmenu';
