@@ -138,7 +138,7 @@ export default function StudentHome() {
                     </div>
                 </div>
             </div>
-`
+
             {/* {lessonsData && Object.keys(lessonsData).length > 0 ? ( */}
             <div>
                 {/* activity */}

@@ -61,7 +61,7 @@ export interface LayoutContextProps {
     course: { current_page: number;
         total: number;
         per_page: number;
-        data: myMainCourseType[] 
+        data: myMainCourseType[]
     };
     setCourses;
     contextFetchThemes: (id: number, id_kafedra:number | null)=> void;
@@ -81,33 +81,30 @@ export interface LayoutContextProps {
     departament: {last_name:string, name:string, father_name:string, info: string},
     setDepartament,
 
-    contextNewStudentThemes: lessonType[],
-    setContextNewStudentThemes,
-
-    contextNotificationId: number | null, 
+    contextNotificationId: number | null,
     setContextNotificationId,
 
-    forumValuse: {description: string, userInfo: {userName: string, userLastName: string}} | null, 
+    forumValuse: {description: string, userInfo: {userName: string, userLastName: string}} | null,
     setForumValues,
 
-    contextLastStepVisit: LastStepVisit | null, 
+    contextLastStepVisit: LastStepVisit | null,
     setContextLastStepVisit,
 
     contextLastSubjectPageVisit: LastSubjectPageVisit | null,
     setContextLastSubjectPageVisit,
 
-    contextVerifedValue, 
+    contextVerifedValue,
     setContextVerifedValue,
     contextFetchVerifed: ()=> void;
 
-    contextNotifications: mainNotificatio[], 
+    contextNotifications: mainNotificatio[],
     setContextNotifications,
     handleNotifications: ()=> void,
 
-    contextUserRole: UserRoles | null, 
+    contextUserRole: UserRoles | null,
     setContextUserRole,
 
-    contextFilterState, 
+    contextFilterState,
     setContextFilterState
     // message: { state: boolean; value: MessageType };
     // setMessage: React.Dispatch<React.SetStateAction<{ state: boolean; value: MessageType }>>;
@@ -162,7 +159,7 @@ export interface AppMenuItem extends MenuModel{
     replaceUrl?: boolean;
     command?: ({ originalEvent, item }: CommandProps) => void;
 
-    // 
+    //
     score?: string
     onEdit?: () => void;
     onDelete?: () => void;

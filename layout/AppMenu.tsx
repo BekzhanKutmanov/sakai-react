@@ -56,7 +56,7 @@ interface MyApMenuType {
 
 const AppMenu = () => {
     const { translations } = useLocalization();
-    const { user, setMessage, setDeleteQuery, setUpdateeQuery, contextFetchThemes, contextThemes, departament, contextNewStudentThemes, contextVerifedValue, setContextVerifedValue, contextFetchVerifed } = useContext(LayoutContext);
+    const { user, setMessage, setDeleteQuery, setUpdateeQuery, contextFetchThemes, contextThemes, departament, contextVerifedValue, setContextVerifedValue, contextFetchVerifed } = useContext(LayoutContext);
 
     const media = useMediaQuery('(max-width: 640px)');
 
@@ -92,11 +92,24 @@ const AppMenu = () => {
     const [testRole, setTestRole] = useState<MyApMenuType>({ profilact: '' });
     const [graphicRole, setGraphicRole] = useState<MyApMenuType>({ profilact: '' });
 
-    const [themesStudentList, setThemesStudentList] = useState<{ key?: string; label: string; id: number; to: string; items?: AppMenuItem[] }[]>([]);
     const [startDeadline, setStartDeadline] = useState<Nullable<Date>>(null);
     const [endDeadline, setEndDeadline] = useState<Nullable<Date>>(null);
 
-    const [studentMobileMenu, setStudentMobileMenu] = useState<AppMenuItem[]>([
+    // const [studentMobileMenu, setStudentMobileMenu] = useState<AppMenuItem[]>([
+    //     {
+    //         label: translations.mainPage,
+    //         icon: 'pi pi-home',
+    //         to: '/'
+    //     },
+    //     {
+    //         label: translations.controlPanel,
+    //         icon: 'pi pi-th-large',
+    //         to: '/studentHome'
+    //     },
+    //     { label: translations.trainingPlan, icon: 'pi pi-fw pi-calendar-clock', to: '/teaching' },
+    // ]);
+
+    const studentMobileMenu = [
         {
             label: translations.mainPage,
             icon: 'pi pi-home',
@@ -108,12 +121,7 @@ const AppMenu = () => {
             to: '/studentHome'
         },
         { label: translations.trainingPlan, icon: 'pi pi-fw pi-calendar-clock', to: '/teaching' },
-        // {
-        //     label: translations.notifications,
-        //     icon: 'pi pi-bell',
-        //     to: '/notifications'
-        // }
-    ]);
+    ];
 
     const showError = useErrorMessage();
 
@@ -259,18 +267,6 @@ const AppMenu = () => {
                       router.back();
                   }
               },
-              // {
-              //     label: translations.mainPage,
-              //     icon: 'pi pi-home',
-              //     to: '/'
-              // },
-              // {
-              //     label: translations.controlPanel,
-              //     icon: 'pi pi-th-large',
-              //     to: '/studentHome'
-              // },
-              // { label: translations.trainingPlan, icon: 'pi pi-fw pi-calendar-clock', to: '/teaching' },
-
               ...(!media
                       ? studentMobileMenu.map((item) => ({
                           label: item?.label,
@@ -602,32 +598,18 @@ const AppMenu = () => {
     }, [contextThemes]);
 
     useEffect(() => {
-        if (course_Id) {
-            handleCourseInfo();
-        }
-
-        if (contextNewStudentThemes) {
-            const forThemes: any = [];
-            contextNewStudentThemes?.map((item: any, idx) =>
-                forThemes.push({
-                    label: `${idx + 1}. ${item.title}` || '',
-                    id: item.id,
-                    to: `/teaching/lessonView/another/${subject_id}/${item.id}`
-                })
-            );
-            if (forThemes.length > 0) {
-                setThemesStudentList(forThemes || []);
-            }
-        }
-    }, [contextNewStudentThemes, pathname]);
-
-    useEffect(() => {
         if (departament.info.length < 1) {
             setForDepartamentLength(false);
         } else {
             setForDepartamentLength(true);
         }
     }, [departament, pathname]);
+
+    useEffect(() => {
+        if (course_Id) {
+            handleCourseInfo();
+        }
+    }, [pathname]);
 
     return (
         <MenuProvider>

@@ -318,6 +318,7 @@ export default function Module() {
                     className="px-4"
                     label={translations.search}
                     // disabled={speciality?.name_ru ? false : true}
+                    disabled={currentSpecialityId ? false : true}
                     onClick={() => {
                         handleFetchModuleShedule(currentSpecialityId, period?.id ? period?.id : null, semestr?.id ? semestr?.id : null);
                     }}

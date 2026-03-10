@@ -30,7 +30,7 @@ export default function ActiveLessonDetail() {
 
     const media = useMediaQuery('(max-width: 640px)');
     const showError = useErrorMessage();
-    const { setMessage, setContextNewStudentThemes, contextNotificationId, setContextNotificationId } = useContext(LayoutContext);
+    const { setMessage } = useContext(LayoutContext);
     const { translations } = useLocalization();
     const { getLocalized } = useLocalizedData();
 

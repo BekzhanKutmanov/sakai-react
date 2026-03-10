@@ -17,6 +17,7 @@ import { useLocalization } from '@/layout/context/localizationcontext';
 import { useLocalizedData } from '@/hooks/useLocalizedData';
 import { BottomNav } from '@/app/components/menu/MobileMenu';
 import useMediaQuery from '@/hooks/useMediaQuery';
+import MainTitle from '@/app/components/titles/MainTitle';
 
 export default function ActiveCourseList() {
     // types
@@ -194,7 +195,8 @@ export default function ActiveCourseList() {
 
     return (
         <div className="main-bg">
-            <h1 className="m-0 mb-4 pb-1 shadow-[var(--bottom-shadow)] text-xl sm:text-2xl">{translations.myActiveCourses}</h1>
+            <MainTitle>{translations.myActiveCourses}</MainTitle>
+
             {skeleton ? (
                 <>
                     <GroupSkeleton count={2} size={{ width: '100%', height: '12rem' }} />

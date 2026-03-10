@@ -7,7 +7,7 @@ export default function ItemCard({
     lessonName,
     subject
 }: {
-    lessonName: string;
+    lessonName: { name_ru: string };
     streams: { id: number; teacher?: { name: string; last_name?: string }; subject_type_name?: { name_kg: string; short_name_kg: string } }[];
     connection: { id: number; course_id: number; id_myedu_stream: number }[];
     subject: { connect: boolean; progress: { chills_percent: number; max_score: number; score: number; export: boolean; export_score: number } };
@@ -35,8 +35,12 @@ export default function ItemCard({
         return (
             <div className="flex gap-2 sm:gap-3 flex-col sm:flex-row items-start">
                 <div className="bg-[var(--greenColor)] flex flex-col text-[13px] rounded sm:min-w-[200px] w-full order-2 sm:order-1 shadow">
-                    <span className="text-white pl-2">{translations.yourScore}: ({subject?.progress?.score})</span>
-                    <span className="bg-white text-[var(--titleColor)] w-full p-1 pl-2 border-t-1 border-l-1 border-t-white border-l-white rounded-[7%_86%_0%_100%_/_100%_0%_100%_0%]">{translations.totalPoints}: ({subject?.progress?.max_score})</span>
+                    <span className="text-white pl-2">
+                        {translations.yourScore}: ({subject?.progress?.score})
+                    </span>
+                    <span className="bg-white text-[var(--titleColor)] w-full p-1 pl-2 border-t-1 border-l-1 border-t-white border-l-white rounded-[7%_86%_0%_100%_/_100%_0%_100%_0%]">
+                        {translations.totalPoints}: ({subject?.progress?.max_score})
+                    </span>
                 </div>
                 <div className="w-full flex flex-col items-center justify-between order-0 sm:order-2 shadow px-1">
                     <div>
@@ -60,7 +64,7 @@ export default function ItemCard({
         <div className={`w-full shadow-md rounded p-3 ${subject.connect && ''}`}>
             <div className="flex flex-col gap-1">
                 <div className={`w-full flex flex-col sm:flex-row justify-between`}>
-                    <b className={`text-md ${subject.connect && 'font-bold underline text-[var(--mainColor)]'}`}>{getLocalized(subject, 'lessonName') || lessonName}</b>
+                    <b className={`text-md ${subject.connect && 'font-bold underline text-[var(--mainColor)]'}`}>{getLocalized(lessonName, 'name') || lessonName?.name_ru}</b>
                     {subject?.connect && <div>{myProgress()}</div>}
                 </div>
                 {subject?.connect && subject?.progress?.export && (

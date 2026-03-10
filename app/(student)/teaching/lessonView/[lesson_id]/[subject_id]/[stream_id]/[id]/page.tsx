@@ -55,7 +55,7 @@ export default function LessonTest() {
     const router = useRouter();
     const media = useMediaQuery('(max-width: 640px)');
     const showError = useErrorMessage();
-    const { user, setMessage, setContextNewStudentThemes, contextNotificationId, setContextNotificationId, contextNotifications, setContextNotifications, handleNotifications, contextLastSubjectPageVisit, setContextLastSubjectPageVisit } =
+    const { user, setMessage, contextNotificationId, setContextNotificationId, handleNotifications, contextLastSubjectPageVisit, setContextLastSubjectPageVisit } =
         useContext(LayoutContext);
     const { translations } = useLocalization();
     const { getLocalized } = useLocalizedData();
@@ -381,9 +381,9 @@ export default function LessonTest() {
                     return j?.id === Number(lesson_id);
                 });
             });
-            if (forLesson && forLesson?.lessons) {
-                setContextNewStudentThemes(forLesson?.lessons);
-            }
+            // if (forLesson && forLesson?.lessons) {
+            //     setContextNewStudentThemes(forLesson?.lessons);
+            // }
 
             setCoursesInfo(forLesson || null);
         }

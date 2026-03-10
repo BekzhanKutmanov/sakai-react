@@ -109,9 +109,6 @@ export const LayoutProvider = ({ children }: ChildContainerProps) => {
             setContextThemes(data);
         }
     };
-    
-    // fetch themes for student
-    const [contextNewStudentThemes, setContextNewStudentThemes] = useState([]);
 
     // departament
     const [departament, setDepartament] = useState<{ last_name: string; name: string; father_name: string; info: string }>({ last_name: '', name: '', father_name: '', info: '' });
@@ -209,8 +206,6 @@ export const LayoutProvider = ({ children }: ChildContainerProps) => {
 
         departament,
         setDepartament,
-        contextNewStudentThemes,
-        setContextNewStudentThemes,
 
         contextNotificationId,
         setContextNotificationId,
@@ -228,14 +223,14 @@ export const LayoutProvider = ({ children }: ChildContainerProps) => {
         setContextVerifedValue,
         contextFetchVerifed,
 
-        contextNotifications, 
+        contextNotifications,
         setContextNotifications,
         handleNotifications,
 
-        contextUserRole, 
+        contextUserRole,
         setContextUserRole,
 
-        contextFilterState, 
+        contextFilterState,
         setContextFilterState
     };
 

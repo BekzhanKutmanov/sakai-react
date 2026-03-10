@@ -17,6 +17,7 @@ import type { TieredMenu as TieredMenuRef } from 'primereact/tieredmenu';
 import Notification from '@/app/components/notification/Notification';
 
 import { useLocalization } from './context/localizationcontext';
+import LocalizationSwift from '@/app/components/LocalizationSwift';
 
 const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
     const { layoutState, onMenuToggle, user, setUser, setGlobalLoading, setContextNotificationId, contextNotifications, handleNotifications } = useContext(LayoutContext);
@@ -306,6 +307,10 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                             <Link className="text-[var(--titleColor)] text-sm hover:text-[var(--mainColor)]" href={'https://oldmooc.oshsu.kg/'} target="_blank">
                                 {translations.oldMooc}
                             </Link>
+
+                            {/*<div className={'border-l-1 border-[var(--borderBottomColor)] pl-3'}>*/}
+                            {/*    <LocalizationSwift />*/}
+                            {/*</div>*/}
                         </div>
                     )}
 

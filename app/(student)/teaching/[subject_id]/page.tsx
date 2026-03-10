@@ -13,6 +13,8 @@ import { ProgressSpinner } from 'primereact/progressspinner';
 import React, { useContext, useEffect, useState } from 'react';
 import { useLocalization } from '@/layout/context/localizationcontext';
 import { useLocalizedData } from '@/hooks/useLocalizedData';
+import MainTitle from '@/app/components/titles/MainTitle';
+import { Main } from 'next/document';
 
 export default function StudentLesson() {
     // types
@@ -235,7 +237,8 @@ export default function StudentLesson() {
                 <NotFound titleMessage={translations.dataTemporarilyUnavailable} />
             ) : (
                 <>
-                    <h1 className="text-xl sm:text-2xl shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)] pb-1">{translations.courses}</h1>
+                    {/*<h1 className="text-xl sm:text-2xl shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)] pb-1">{translations.courses}</h1>*/}
+                    <MainTitle>{translations.courses}</MainTitle>
 
                     {skeleton ? (
                         <div className="w-full">
@@ -253,11 +256,13 @@ export default function StudentLesson() {
                                             <span className="text-[var(--mainColor)]">{translations.courseName}:</span> {getLocalized(course, 'title') || course?.title}
                                         </h3>
                                         <h3 className="m-0 text-md ">
-                                            <span className="text-[var(--mainColor)]">{translations.teacher}:</span> {course?.user.last_name} {course?.user.name} {course?.user.father_name ? course?.user.father_name[0] && course?.user.father_name : ''}
+                                            <span className="text-[var(--mainColor)]">{translations.teacher}:</span> {course?.user.last_name} {course?.user.name}{' '}
+                                            {course?.user.father_name ? course?.user.father_name[0] && course?.user.father_name : ''}
                                         </h3>
                                         {course?.connections[0]?.subject_type && (
                                             <h3 className="m-0 text-md ">
-                                                <span className="text-[var(--mainColor)]">{translations.studyType}:</span> {course?.connections[0]?.subject_type === 'Лк' ? 'Лекция' : course?.connections[0]?.subject_type === 'Лб' ? 'Лабораторные занятия' : ''}
+                                                <span className="text-[var(--mainColor)]">{translations.studyType}:</span>{' '}
+                                                {course?.connections[0]?.subject_type === 'Лк' ? 'Лекция' : course?.connections[0]?.subject_type === 'Лб' ? 'Лабораторные занятия' : ''}
                                             </h3>
                                         )}
                                     </div>

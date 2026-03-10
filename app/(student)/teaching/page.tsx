@@ -12,6 +12,7 @@ import { ReactElement, useContext, useEffect, useState } from 'react';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import { useLocalization } from '@/layout/context/localizationcontext';
 import { useLocalizedData } from '@/hooks/useLocalizedData';
+import MainTitle from '@/app/components/titles/MainTitle';
 
 export default function Teaching() {
     interface sortOptType {
@@ -125,11 +126,11 @@ export default function Teaching() {
                         .map((subj: any, subjIdx: number) => {
                             return subj.connect ? (
                                 <Link key={subjIdx} href={`/teaching/${subj.id_curricula}`}>
-                                    <ItemCard key={subjIdx} subject={subj} lessonName={subj.subject} streams={subj.streams} connection={connection} />
+                                    <ItemCard key={subjIdx} subject={subj} lessonName={subj.streams[0].curricula.name_subject} streams={subj.streams} connection={connection} />
                                 </Link>
                             ) : (
                                 <span key={subjIdx}>
-                                    <ItemCard key={subjIdx} subject={subj} lessonName={subj.subject} streams={subj.streams} connection={connection} />
+                                    <ItemCard key={subjIdx} subject={subj} lessonName={subj.streams[0].curricula.name_subject} streams={subj.streams} connection={connection} />
                                 </span>
                             );
                         })}

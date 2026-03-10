@@ -8,10 +8,12 @@ import { LayoutContext } from '@/layout/context/layoutcontext';
 import Notification from '@/app/components/notification/Notification';
 import { TieredMenu } from 'primereact/tieredmenu';
 import type { TieredMenu as TieredMenuRef } from 'primereact/tieredmenu';
+import { useLocalization } from '@/layout/context/localizationcontext';
 
 export const BottomNav = () => {
     const pathname = usePathname();
     const { contextNotifications } = useContext(LayoutContext);
+    const { translations } = useLocalization();
     const menu = useRef<TieredMenuRef>(null);
     const student_notification = [
         {
@@ -31,10 +33,10 @@ export const BottomNav = () => {
     };
 
     const navItems = [
-        { label: 'Главная', icon: 'pi-home', href: '/' },
-        { label: 'Панель', icon: 'pi-th-large', href: '/studentHome' },
-        { label: 'Обучение', icon: 'pi-graduation-cap', href: '/teaching' },
-        { label: 'Уведомления', icon: 'pi-bell', href: '/notifications' }
+        { label: translations.mainPageLink, icon: 'pi-home', href: '/' },
+        { label: translations.panelPage, icon: 'pi-th-large', href: '/studentHome' },
+        { label: translations.learnPage, icon: 'pi-graduation-cap', href: '/teaching' },
+        { label: translations.notifications, icon: 'pi-bell', href: '/notifications' }
     ];
 
     return (

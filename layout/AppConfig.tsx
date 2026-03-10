@@ -9,6 +9,7 @@ import { classNames } from 'primereact/utils';
 import React, { useContext, useEffect, useState } from 'react';
 import { AppConfigProps, LayoutConfig, LayoutState } from '@/types';
 import { LayoutContext } from './context/layoutcontext';
+import LocalizationSwift from '@/app/components/LocalizationSwift';
 
 const AppConfig = (props: AppConfigProps) => {
     const [scales] = useState([12, 13, 14, 15, 16]);
@@ -79,34 +80,37 @@ const AppConfig = (props: AppConfigProps) => {
                             <Button icon="pi pi-plus" type="button" onClick={incrementScale} rounded text className="w-2rem h-2rem ml-2" disabled={layoutConfig.scale === scales[scales.length - 1]}></Button>
                         </div>
 
-                        <h5>Menu Type</h5>
-                        <div className="flex">
-                            <div className="field-radiobutton flex-1">
-                                <RadioButton name="menuMode" value={'static'} checked={layoutConfig.menuMode === 'static'} onChange={(e) => changeMenuMode(e)} inputId="mode1"></RadioButton>
-                                <label htmlFor="mode1">Static</label>
-                            </div>
-                            <div className="field-radiobutton flex-1">
-                                <RadioButton name="menuMode" value={'overlay'} checked={layoutConfig.menuMode === 'overlay'} onChange={(e) => changeMenuMode(e)} inputId="mode2"></RadioButton>
-                                <label htmlFor="mode2">Overlay</label>
-                            </div>
-                        </div>
+                        <div className={'max-w-[70px]'}><LocalizationSwift /></div>
 
-                        <h5>Input Style</h5>
-                        <div className="flex">
-                            <div className="field-radiobutton flex-1">
-                                <RadioButton name="inputStyle" value={'outlined'} checked={layoutConfig.inputStyle === 'outlined'} onChange={(e) => changeInputStyle(e)} inputId="outlined_input"></RadioButton>
-                                <label htmlFor="outlined_input">Outlined</label>
-                            </div>
-                            <div className="field-radiobutton flex-1">
-                                <RadioButton name="inputStyle" value={'filled'} checked={layoutConfig.inputStyle === 'filled'} onChange={(e) => changeInputStyle(e)} inputId="filled_input"></RadioButton>
-                                <label htmlFor="filled_input">Filled</label>
-                            </div>
-                        </div>
+                        {/*<h5>Menu Type</h5>*/}
+                        {/*<div className="flex">*/}
+                        {/*    <div className="field-radiobutton flex-1">*/}
+                        {/*        <RadioButton name="menuMode" value={'static'} checked={layoutConfig.menuMode === 'static'} onChange={(e) => changeMenuMode(e)} inputId="mode1"></RadioButton>*/}
+                        {/*        <label htmlFor="mode1">Static</label>*/}
+                        {/*    </div>*/}
+                        {/*    <div className="field-radiobutton flex-1">*/}
+                        {/*        <RadioButton name="menuMode" value={'overlay'} checked={layoutConfig.menuMode === 'overlay'} onChange={(e) => changeMenuMode(e)} inputId="mode2"></RadioButton>*/}
+                        {/*        <label htmlFor="mode2">Overlay</label>*/}
+                        {/*    </div>*/}
+                        {/*</div>*/}
 
-                        <h5>Ripple Effect</h5>
-                        <InputSwitch checked={layoutConfig.ripple as boolean} onChange={(e) => changeRipple(e)}></InputSwitch>
+                        {/*<h5>Input Style</h5>*/}
+                        {/*<div className="flex">*/}
+                        {/*    <div className="field-radiobutton flex-1">*/}
+                        {/*        <RadioButton name="inputStyle" value={'outlined'} checked={layoutConfig.inputStyle === 'outlined'} onChange={(e) => changeInputStyle(e)} inputId="outlined_input"></RadioButton>*/}
+                        {/*        <label htmlFor="outlined_input">Outlined</label>*/}
+                        {/*    </div>*/}
+                        {/*    <div className="field-radiobutton flex-1">*/}
+                        {/*        <RadioButton name="inputStyle" value={'filled'} checked={layoutConfig.inputStyle === 'filled'} onChange={(e) => changeInputStyle(e)} inputId="filled_input"></RadioButton>*/}
+                        {/*        <label htmlFor="filled_input">Filled</label>*/}
+                        {/*    </div>*/}
+                        {/*</div>*/}
+
+                        {/*<h5>Ripple Effect</h5>*/}
+                        {/*<InputSwitch checked={layoutConfig.ripple as boolean} onChange={(e) => changeRipple(e)}></InputSwitch>*/}
                     </>
                 )}
+
                 <h5>PrimeOne Design</h5>
                 <div className="grid">
                     <div className="col-3">
@@ -242,6 +246,7 @@ const AppConfig = (props: AppConfigProps) => {
                         </button>
                     </div>
                 </div>
+
             </Sidebar>
         </>
     );

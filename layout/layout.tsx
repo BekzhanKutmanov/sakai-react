@@ -10,9 +10,10 @@ import { LayoutContext } from './context/layoutcontext';
 import { PrimeReactContext } from 'primereact/api';
 import { ChildContainerProps, LayoutState, AppTopbarRef } from '@/types';
 import { usePathname, useSearchParams } from 'next/navigation';
-import { LocalizationProvider } from '@/layout/context/localizationcontext';
+import { LocalizationProvider, useLocalization } from '@/layout/context/localizationcontext';
 import { BottomNav } from '@/app/components/menu/MobileMenu';
 import useMediaQuery from '@/hooks/useMediaQuery';
+import AppConfig from '@/layout/AppConfig';
 
 const Layout = ({ children }: ChildContainerProps) => {
     const { layoutConfig, layoutState, setLayoutState, user } = useContext(LayoutContext);
@@ -20,8 +21,6 @@ const Layout = ({ children }: ChildContainerProps) => {
     const { setRipple } = useContext(PrimeReactContext);
     const topbarRef = useRef<AppTopbarRef>(null);
     const sidebarRef = useRef<HTMLDivElement>(null);
-    const [permission, setPermission] = useState<boolean>(true);
-    const [loaderState, setLoaderState] = useState<boolean>(true);
     const [bindMenuOutsideClickListener, unbindMenuOutsideClickListener] = useEventListener({
         type: 'click',
         listener: (event) => {
@@ -125,21 +124,6 @@ const Layout = ({ children }: ChildContainerProps) => {
         'p-ripple-disabled': !layoutConfig.ripple
     });
 
-    const requireRole = () => {
-        if (user) {
-            if (!user?.is_working) {
-                // window.location.href = '/auth/login';
-                // setPermission(true);
-                // console.log('Не имеете доступ! working');
-            }
-            setPermission(false);
-        }
-    };
-
-    useEffect(() => {
-        requireRole();
-    }, [user, pathname]);
-
     return (
         <LocalizationProvider>
             <React.Fragment>
@@ -153,7 +137,7 @@ const Layout = ({ children }: ChildContainerProps) => {
                         <div className="layout-main">{children}</div>
                         {/* <AppFooter /> */}
                     </div>
-                    {/* <AppConfig /> */}
+                     {/*<AppConfig />*/}
                     <div className="layout-mask"></div>
                     {user?.is_student && media && !pathname.startsWith('/teaching/lessonView/') && <BottomNav />}
                 </div>

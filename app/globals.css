@@ -24,7 +24,7 @@
   --whiteHoverColor: #fdfdff;
   --amberColor: #f7634d;
   --productQuantityBg: #d0e1fd;
-  --productQuantityText: #3b82f6; 
+  --productQuantityText: #3b82f6;
   --fontSize: 16px;
   --transition: 0.5s;
 
@@ -110,7 +110,7 @@ input[type="password"]::-ms-clear {
 @media screen and (max-width: 440px) {
  .scrollbar-thin::-webkit-scrollbar {
     height: 4px;              /* толщина */
-  } 
+  }
 }
 
 .mainColor-hover:hover{
@@ -147,7 +147,7 @@ input[type="password"]::-ms-clear {
 
 /* font */
 
-.author_font { 
+.author_font {
   font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 }
 
@@ -164,7 +164,7 @@ input[type="password"]::-ms-clear {
   }
   50%{
     transform: translateX(-4px);
-  } 
+  }
   80%{
     transform: translateY(-2px);
   }
@@ -183,7 +183,7 @@ input[type="password"]::-ms-clear {
   }
   50%{
     transform: translateX(4px);
-  } 
+  }
   80%{
     transform: translateY(2px);
   }
@@ -483,7 +483,7 @@ html.loaded #preloader {
 @keyframes arrow-right-1 {
   0% {
     opacity: 0;
-  } 
+  }
   50% {
     opacity: 1;
   }
@@ -495,7 +495,7 @@ html.loaded #preloader {
 @keyframes arrow-right-2 {
   0% {
     opacity: 0;
-  } 
+  }
   50%{
     opacity: 1;
   }
@@ -511,7 +511,7 @@ html.loaded #preloader {
 @keyframes shadowSkale {
   0% {
       box-shadow: 1px 1px 6px 1px ;
-  } 
+  }
   50% {
       box-shadow: 1px 1px 6px 2px ;
   }
@@ -578,7 +578,7 @@ html.loaded #preloader {
 }
 
 .p-tabview-panels{
-  padding: 10px !important; 
+  padding: 10px !important;
 }
 
 @media screen and (max-width: 640px) {
@@ -616,20 +616,20 @@ html.loaded #preloader {
 }
 
 .tab-custom-text{
-  color: rgb(245, 206, 77) !important; 
+  color: rgb(245, 206, 77) !important;
 }
 
 .tab-custom-text-2{
-  color: blueviolet !important; 
+  color: blueviolet !important;
   /* color: rgb(221, 196, 245) !important;  */
 }
 
 .tab-custom-text-3{
-  color: green !important; 
+  color: green !important;
 }
 
 .tab-custom-text-4{
-  color: var(--redColor) !important; 
+  color: var(--redColor) !important;
 }
 @media screen and (max-width: 640px) {
   .p-tabview-nav-link{
@@ -685,10 +685,10 @@ html.loaded #preloader {
 @media screen and (max-width: 640px) {
   .p-toast-message{
     font-size: 14px !important;
-    width: 290px !important; 
+    width: 290px !important;
     margin: 0 auto;
   }
-  
+
   .p-toast-message-content{
     padding: 10px !important;
   }
@@ -794,7 +794,7 @@ html.loaded #preloader {
 }
 
 @media screen and (max-width: 640px) {
-  .p-button-label .p-clickable{ 
+  .p-button-label .p-clickable{
     font-size: 14px !important;
   }
   .p-fileupload-choose{
@@ -958,7 +958,7 @@ html.loaded #preloader {
 }
 .theme-toggle .option-right{
   right: 8px;
-  color: #fff; 
+  color: #fff;
 }
 
 /* Подстройка цвета и прозрачности в зависимости от состояния */
