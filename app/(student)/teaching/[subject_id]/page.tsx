@@ -196,7 +196,7 @@ export default function StudentLesson() {
     // Просим предметы для получения конкретного из них
     useEffect(() => {
         handleFetchLessons();
-    }, [handleFetchLessons]);
+    }, []);
 
     // Из предметов получаю выбранный курс в main_id
     useEffect(() => {
@@ -226,7 +226,7 @@ export default function StudentLesson() {
             const forSubject: subjectType = { id_curricula: main_id?.id_curricula, course_ids: main_id?.course_ids, streams: main_id?.streams.map((i: { id: number }) => i.id) };
             handleFetchSubject(forSubject);
         }
-    }, [main_id, handleFetchSubject]);
+    }, [main_id]);
 
     if(mainProgressSpinner) return <div className='main-bg flex justify-center items-center h-[100vh]'><ProgressSpinner style={{ width: '60px', height: '60px' }} /></div>
 
