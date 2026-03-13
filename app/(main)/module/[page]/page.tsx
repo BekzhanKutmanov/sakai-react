@@ -18,6 +18,7 @@ import { LayoutContext } from '@/layout/context/layoutcontext';
 import useErrorMessage from '@/hooks/useErrorMessage';
 import { useLocalization } from '@/layout/context/localizationcontext';
 import { useLocalizedData } from '@/hooks/useLocalizedData';
+import MainTitle from '@/app/components/titles/MainTitle';
 
 interface CurrentSpecialityType { name_ru: string; code: number | null; id: number | null }
 
@@ -225,10 +226,8 @@ export default function Module() {
 
     // filters block
     const renderFilters = () => (
-        <div className="main-bg flex flex-col gap-4 my-2 p-4 rounded-lg">
-            <div className="shadow-[var(--bottom-shadow)] pb-3">
-                <SubTitle mobileTitleSize="xl" title={translations.moduleSchedule} titleSize="2xl" />
-            </div>
+        <div className="main-bg flex flex-col gap-3  mb-2 p-4 rounded-lg">
+            <MainTitle>{translations.moduleSchedule}</MainTitle>
             <div className="flex items-center gap-3 flex-col sm:flex-row">
                 <div className="w-full min-w-0 flex flex-col gap-2">
                     <b className="px-1 inline">{translations.selectFaculty}</b>

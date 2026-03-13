@@ -15,6 +15,7 @@ import { ProgressSpinner } from 'primereact/progressspinner';
 import SubTitle from '@/app/components/titles/SubTitle';
 import { useLocalization } from '@/layout/context/localizationcontext';
 import { useLocalizedData } from '@/hooks/useLocalizedData';
+import MainTitle from '@/app/components/titles/MainTitle';
 
 interface Report extends myMainCourseType {
     name: string;
@@ -242,7 +243,7 @@ const TeacherCheckPage = () => {
             <div>
                 {/* filter */}
                 <div className="main-bg flex flex-col gap-1 my-1">
-                    <div className={'shadow-[var(--bottom-shadow)] mb-3 py-3'}><SubTitle title={translations.teacherReport} titleSize={'2xl'} mobileTitleSize={'xl'}/></div>
+                    <MainTitle>{translations.teacherReport}</MainTitle>
                     <div className=" flex sm:items-center gap-2 flex-col sm:flex-row mb-2">
                         <div className="sm:max-w-[60%] overflow-hidden flex flex-col items-start gap-2">
                             <b className="px-1 inline">{translations.selectFaculty}</b>

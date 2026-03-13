@@ -5,7 +5,7 @@ import { addCourse, addOpenTypes, archiveCourse, deleteCourse, fetchCourseInfo, 
 import { Button } from 'primereact/button';
 import { FileUpload, FileUploadSelectEvent } from 'primereact/fileupload';
 import { InputText } from 'primereact/inputtext';
-import React, { use, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { LayoutContext } from '@/layout/context/layoutcontext';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { DataTable } from 'primereact/datatable';
@@ -42,7 +42,7 @@ export default function Course() {
     const { page } = useParams();
 
     const { translations } = useLocalization();
-    const { setMessage, setGlobalLoading, course, contextFetchCourse, setMainCourseId } = useContext(LayoutContext);
+    const { setMessage, setGlobalLoading, course, setMainCourseId } = useContext(LayoutContext);
 
     const router = useRouter();
     const topRef = useRef<HTMLDivElement>(null);
@@ -880,11 +880,12 @@ export default function Course() {
                                 {/* {skeleton ? (
                                     <GroupSkeleton count={1} size={{ width: '100%', height: '5rem' }} />
                                 ) : ( */}
-                                <div className="flex flex-col md:flex-row justify-between md:items-center mb-2 py-2 gap-1 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">
-                                    <h3 className="text-[32px] m-0">{translations.courses}</h3>
+                                <div className="flex flex-col md:flex-row justify-between md:items-center mb-2 pb-2 gap-1 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">
+                                    <h3 className="text-[32px] font-bold m-0">{translations.courses}</h3>
                                     <Button
                                         label={translations.addCourse}
-                                        icon="pi pi-plus"
+                                        icon="pi pi-plus text-sm"
+                                        className={'hover:opacity-90 transition'}
                                         onClick={() => {
                                             setEditMode(false);
                                             clearValues();

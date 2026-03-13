@@ -169,7 +169,7 @@ export default function Teaching() {
                         <GroupSkeleton count={1} size={{ width: '100%', height: '4rem' }} />
                     ) : (
                         <div className="flex flex-col sm:flex-row justify-between items-center gap-2 mb-4 py-2 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">
-                            <h3 className="text-[24px] sm:text-[28px] m-0">{translations.trainingPlan}</h3>
+                            <h3 className="text-[24px] sm:text-[28px] font-bold m-0">{translations.trainingPlan}</h3>
 
                             <Dropdown
                                 value={selectedSort}

@@ -21,6 +21,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { useLocalization } from '@/layout/context/localizationcontext';
 import { useLocalizedData } from '@/hooks/useLocalizedData';
 import SubTitle from '@/app/components/titles/SubTitle';
+import MainTitle from '@/app/components/titles/MainTitle';
 
 // types
 interface Role {
@@ -425,7 +426,7 @@ export default function Roles() {
             ) : (
                 <div className="overflow-x-auto scrollbar-thin">
                     <div className="main-bg mb-2">
-                        <div className={'shadow-[var(--bottom-shadow)] mb-3 py-3'}><SubTitle title={translations.adminTitle} titleSize={'2xl'} mobileTitleSize={'xl'}/></div>
+                        <MainTitle>{translations.adminTitle}</MainTitle>
                         <div className="flex flex-col sm:flex-row gap-2 mb-2">
                             <div className="flex gap-3 items-center">
                                 <div className={`flex items-center ${!selectedRole_idType?.role_id ? 'opacity-45 pointer-events-none' : ''}`}>

@@ -482,7 +482,7 @@ export default function OpenCourse() {
 
     return (
         <div className="flex flex-col gap-2">
-            <div className="main-bg px-2 sm:px-4">
+            <div className="main-bg">
                 {/* header section */}
                 <MainTitle>{translations.courses}</MainTitle>
 

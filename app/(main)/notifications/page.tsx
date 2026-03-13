@@ -17,6 +17,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { BottomNav } from '@/app/components/menu/MobileMenu';
 import useMediaQuery from '@/hooks/useMediaQuery';
 import SubTitle from '@/app/components/titles/SubTitle';
+import MainTitle from '@/app/components/titles/MainTitle';
 
 export default function MainNotificatoin() {
     const { user, setMessage, contextNotifications, setContextNotifications, handleNotifications } = useContext(LayoutContext);
@@ -171,9 +172,7 @@ export default function MainNotificatoin() {
     return (
         <div className={'flex flex-col justify-between h-[100vh] flex flex-col justify-between'}>
             <div className="main-bg ">
-                <div className="w-full flex items-center shadow-[var(--bottom-shadow)] p-2">
-                    <SubTitle title={translations.notifications} titleSize={'2xl'} mobileTitleSize={'xl'}/>
-                </div>
+                <MainTitle>{translations.notifications}</MainTitle>
 
                 {/* <div className="relative w-full flex justify-center sm:justify-start items-center gap-1 my-2">
                 <InputText type="text" placeholder="РџРѕРёСЃРє..." value={search} className="w-full h-[48px]" onChange={(e) => setSearch(e.target.value)} />

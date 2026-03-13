@@ -28,6 +28,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import SubTitle from '@/app/components/titles/SubTitle';
 import { useLocalization } from '@/layout/context/localizationcontext';
 import { useLocalizedData } from '@/hooks/useLocalizedData';
+import MainTitle from '@/app/components/titles/MainTitle';
 
 // types
 interface Role {
@@ -1081,7 +1082,7 @@ export default function RolesDepartment() {
             ) : (
                 <div className="overflow-x-auto scrollbar-thin">
                     <div className={`main-bg mb-2`}>
-                        <div className={'shadow-[var(--bottom-shadow)] mb-3 py-3'}><SubTitle title={translations.department} titleSize={'2xl'} mobileTitleSize={'xl'}/></div>
+                        <MainTitle>{translations.department}</MainTitle>
                         <div className={`flex flex-col sm:flex-row gap-2 mb-2 ${activeIndex === 2 ? 'opacity-50 pointer-events-none' : ''}`}>
                             <div className="flex gap-3 items-center">
                                 {!roleStatus && (
