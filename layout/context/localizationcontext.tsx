@@ -16,6 +16,7 @@ export const localizationData = {
         save: 'Сохранить',
         add: 'Добавить',
         edit: 'Редактировать',
+        update:'Обновить',
         delete: 'Удалить',
         cancel: 'Отмена',
         back: 'Назад',
@@ -295,6 +296,8 @@ export const localizationData = {
         moduleEnd: 'Конец модуля',
         summer: 'Летний',
         winter: 'Зимний',
+        dateUpdate: 'Обновить дату',
+        dateChangeWarn: 'Внимание! Если вы измените дату для специальностей в целом, это изменение будет применено ко всем выбранным специальностям.',
 
         // RolesDepartment
         access: 'Доступ',
@@ -407,6 +410,7 @@ export const localizationData = {
         save: 'Сактоо',
         add: 'Кошуу',
         edit: 'Оңдоо',
+        update:'Өзгөртүү',
         delete: 'Өчүрүү',
         cancel: 'Жокко чыгаруу',
         back: 'Артка',
@@ -684,6 +688,8 @@ export const localizationData = {
         moduleEnd: 'Модулдун аягы',
         summer: 'Жайкы',
         winter: 'Кышкы',
+        dateUpdate: 'Датаны өзгөртүү',
+        dateChangeWarn: 'Көңүл буруңуз! Эгер адистиктердин датасын жалпы өзгөртсөңүз, анда бул өзгөртүү тандалган бардык адистиктерге колдонулат.',
 
         // RolesDepartment
         access: 'Кирүү',

@@ -4,10 +4,9 @@ import { fetchFaculty } from '@/services/faculty';
 import { fetchSpeciality } from '@/services/student/studentSearch';
 import { Dropdown } from 'primereact/dropdown';
 import { ProgressSpinner } from 'primereact/progressspinner';
-import { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import ModuleChartCard from '@/app/components/cards/ModuleChartCard';
-import SubTitle from '@/app/components/titles/SubTitle';
-import { fetchModuleShedule, fetchSemestr, sheduleDiactivate, sheduleSave } from '@/services/module/module';
+import { dateUpdate, fetchModuleShedule, fetchSemestr, sheduleDiactivate, sheduleSave } from '@/services/module/module';
 import { Button } from 'primereact/button';
 import { confirmDialog } from 'primereact/confirmdialog';
 import { Panel } from 'primereact/panel';
@@ -20,9 +19,13 @@ import { useLocalization } from '@/layout/context/localizationcontext';
 import { useLocalizedData } from '@/hooks/useLocalizedData';
 import MainTitle from '@/app/components/titles/MainTitle';
 
-interface CurrentSpecialityType { name_ru: string; code: number | null; id: number | null }
+interface CurrentSpecialityType {
+    name_ru: string;
+    code: number | null;
+    id: number | null;
+}
 
-interface SpecialityOptType extends CurrentSpecialityType{}
+interface SpecialityOptType extends CurrentSpecialityType {}
 
 export default function Module() {
     const { setMessage } = useContext(LayoutContext);
@@ -35,6 +38,7 @@ export default function Module() {
 
     const [speciality, setSpecialyty] = useState<CurrentSpecialityType | null>(null);
     const [specialityOptions, setSpecialityOptions] = useState<SpecialityOptType[]>([]);
+    const [id_speciality, setId_speciality] = useState<number | null>(null);
 
     const [currentFacultyId, setCurrentFacultyId] = useState<number | null>(null);
     const [currentSpecialityId, setCurrentSpecialityId] = useState<number | number[] | null>(null);
@@ -58,6 +62,7 @@ export default function Module() {
 
     const [openIndex, setOpenIndex] = useState<number | null>(null);
     const [visible, setVisible] = useState(false);
+    const [dateUpdateVisible, setDateUpdateVisible] = useState(false);
     const [allSelectFl, setAllSelectFl] = useState<number[]>([]);
 
     const [emptySpeciality, setEmptySpeciality] = useState(false);
@@ -65,6 +70,10 @@ export default function Module() {
 
     const [from, setFrom] = useState<Nullable<Date>>(null);
     const [to, setTo] = useState<Nullable<Date>>(null);
+    const [editingFrom, setEditingFrom] = useState<Nullable<Date>>(null);
+    const [editingTo, setEditingTo] = useState<Nullable<Date>>(null);
+    const [updateDateId, setUpdateDateId] = useState<number | null>(null);
+    const [id_stream, setId_stream] = useState<number | null>(null);
 
     const handleFetchFaculty = async () => {
         const data = await fetchFaculty();
@@ -201,6 +210,28 @@ export default function Module() {
                 setAllSelectFl(activeSpecialityIds);
             }
         }
+    };
+
+    const onDateUpdate = (id_speciality:number | null, item: any) => {
+        setDateUpdateVisible(true);
+        setId_speciality(id_speciality);
+        if(item){
+            setUpdateDateId(item?.id);
+            setId_stream(item?.id_stream);
+            setEditingFrom(item?.schedule?.from);
+            setEditingTo(item?.schedule?.to);
+        }
+    };
+
+    const handleDateUpdate = async (idStream: number | null) => {
+        setDateUpdateVisible(false);
+        const data = await dateUpdate(editingFrom, editingTo, period?.id ? period?.id : null, semestr?.id ? semestr?.id : null, idStream, id_speciality);
+        console.log(data);
+        if(data?.success){
+            handleFetchModuleShedule(currentSpecialityId, period?.id ? period?.id : null, semestr?.id ? semestr?.id : null);
+        }
+        setId_speciality(null);
+        setId_stream(null);
     };
 
     const confirm1 = (spId: number | null, ctId: number | null) => {
@@ -367,51 +398,56 @@ export default function Module() {
                             }}
                             className="w-full"
                             header={
-                                <div className="flex items-center justify-between w-full gap-1 sm:gap-3">
-                                    <div className="flex items-center gap-1 sm:gap-3 min-w-0">
-                                        <div className="flex items-center shrink-0">
-                                            <label className="custom-radio text-xl leading-none">
-                                                <input
-                                                    type="checkbox"
-                                                    className={`customCheckbox p-2`}
-                                                    checked={allSelectFl.some((s) => s === course?.id) ? true : false}
-                                                    onChange={(e) => {
-                                                        const exists = allSelectFl?.includes(course?.id);
-                                                        if (exists) {
-                                                            // console.log(course);
-                                                            if (course?.checking) {
-                                                                setDiactivateSp(course.id);
-                                                                confirm1(course?.id, null);
+                                <div className={'w-full flex items-center justify-between gap-4'}>
+                                    <div className="flex items-center justify-between w-full gap-1 sm:gap-3">
+                                        <div className="flex items-center gap-1 sm:gap-3 min-w-0">
+                                            <div className="flex items-center shrink-0">
+                                                <label className="custom-radio text-xl leading-none">
+                                                    <input
+                                                        type="checkbox"
+                                                        className={`customCheckbox p-2`}
+                                                        checked={allSelectFl.some((s) => s === course?.id) ? true : false}
+                                                        onChange={(e) => {
+                                                            const exists = allSelectFl?.includes(course?.id);
+                                                            if (exists) {
+                                                                // console.log(course);
+                                                                if (course?.checking) {
+                                                                    setDiactivateSp(course.id);
+                                                                    confirm1(course?.id, null);
+                                                                } else {
+                                                                    setAllSelectFl((prev) => {
+                                                                        const streamArr = course?.streams?.map((stream: any) => stream.id_stream);
+                                                                        setConnectIds((prev) => prev && prev.filter((id) => !streamArr?.includes(id)));
+                                                                        return prev.filter((id) => id !== course.id);
+                                                                    });
+                                                                }
                                                             } else {
                                                                 setAllSelectFl((prev) => {
-                                                                    const streamArr = course?.streams?.map((stream: any) => stream.id_stream);
-                                                                    setConnectIds((prev) => prev && prev.filter((id) => !streamArr?.includes(id)));
-                                                                    return prev.filter((id) => id !== course.id);
+                                                                    const forConnects = course?.streams?.map((stream: any) => {
+                                                                        return stream?.id_stream;
+                                                                    });
+                                                                    if (connectIds) {
+                                                                        const f = [...connectIds];
+                                                                        setConnectIds([...f, ...forConnects]);
+                                                                    } else {
+                                                                        setConnectIds(forConnects);
+                                                                    }
+                                                                    return [...prev, course.id];
                                                                 });
                                                             }
-                                                        } else {
-                                                            setAllSelectFl((prev) => {
-                                                                const forConnects = course?.streams?.map((stream: any) => {
-                                                                    return stream?.id_stream;
-                                                                });
-                                                                if (connectIds) {
-                                                                    const f = [...connectIds];
-                                                                    setConnectIds([...f, ...forConnects]);
-                                                                } else {
-                                                                    setConnectIds(forConnects);
-                                                                }
-                                                                return [...prev, course.id];
-                                                            });
-                                                        }
-                                                    }}
-                                                />
-                                                <span className="checkbox-mark"></span>
-                                            </label>
+                                                        }}
+                                                    />
+                                                    <span className="checkbox-mark"></span>
+                                                </label>
+                                            </div>
+                                            <span className="font-semibold max-w-[90%] sm:w-full text-[15px] sm:text-[16px] break-words">
+                                                {idx + 1}. {getLocalized(course, 'name') || course.name_ru}
+                                            </span>
                                         </div>
-                                        <span className="font-semibold max-w-[90%] sm:w-full text-[15px] sm:text-[16px] break-words">
-                                            {idx + 1}. {getLocalized(course, 'name') || course.name_ru}
-                                        </span>
                                     </div>
+                                    <div><i onClick={()=> {
+                                        onDateUpdate(course?.id, null);
+                                    }} className={'cursor-pointer pi  pi-calendar-plus text-[var(--mainColor)]'}></i></div>
                                 </div>
                             }
                         >
@@ -425,6 +461,7 @@ export default function Module() {
                                             handleEdit={(id, checked) => handleEdit(id, checked, course?.id, item?.schedule?.active)}
                                             allIds={connectIds}
                                             date={{ from: item?.schedule?.from, to: item?.schedule?.to }}
+                                            dateUpdate={(id: number) => onDateUpdate(null, item)}
                                         />
                                     ))
                                 ) : (
@@ -443,7 +480,17 @@ export default function Module() {
         );
     };
 
-    // dialog
+    const instructionSection = (
+        <div className="max-w-lg bg-[#eff6ff] border border-[#dbeafe] rounded-xl p-2 sm:p-3 mb-2 flex gap-2 sm:gap-3">
+            <i className="pi pi-info text-[#2563eb] shrink-0 mt-0.5 pi pi-info-circle text-xl"></i>
+            <div className="text-sm text-[#1e40af] leading-relaxed">
+                {/*<p className="font-semibold mb-1">{translations.reductorInstruction}</p>*/}
+                <p>{translations.dateChangeWarn}</p>
+            </div>
+        </div>
+    );
+
+    // save dialog
     const renderDialog = () => (
         <Dialog
             header={translations.changeModuleSchedule}
@@ -455,7 +502,8 @@ export default function Module() {
             footer={footerContent}
         >
             <div>
-                <div className="w-full flex flex-col">
+                <div className="flex flex-col gap-2">
+                    {instructionSection}
                     <div className="w-full flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
                         <div className="flex flex-col items-center sm:items-start">
                             <span className="text-sm">{translations.moduleStart}</span>
@@ -497,10 +545,82 @@ export default function Module() {
         </Dialog>
     );
 
-    const specialityProcessing = (specialityParam: CurrentSpecialityType)=> {
+    // date update dialog
+    const renderDateUpdateDialog = () => (
+        <Dialog
+            header={translations.dateUpdate}
+            visible={dateUpdateVisible}
+            onHide={() => {
+                if (!dateUpdateVisible) return;
+                setDateUpdateVisible(false);
+                setUpdateDateId(null);
+                setEditingFrom(null);
+                setEditingTo(null);
+                setId_speciality(null);
+            }}
+            footer={footerDateUpdate}
+        >
+            <div>
+                <div className="w-full flex flex-col">
+                    <div className="w-full flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+                        <div className="flex flex-col items-center sm:items-start">
+                            <div className={'flex items-center gap-1'}>
+                                <span className="text-sm">{translations.moduleStart}</span>
+                                {miniSpinner && (
+                                    <div>
+                                        <ProgressSpinner style={{ width: '17px', height: '17px' }} />
+                                    </div>
+                                )}
+                            </div>
+                            <Calendar
+                                value={editingFrom ? new Date(editingFrom) : null}
+                                locale="ru" // Указываем русскую локаль
+                                dateFormat="dd.mm.yy"
+                                className={`p-inputtext-sm ${miniSpinner ? 'opacity-50 pointer-events-none' : ''}`}
+                                onChange={(e) => {
+                                    const date: any = normalizeDate(e.value);
+                                    if (date) {
+                                        setEditingFrom(date);
+                                    } else {
+                                        setEditingFrom(e.value);
+                                    }
+                                }}
+                            />
+                        </div>
+                        <div className="flex flex-col items-center sm:items-start">
+                            <div className={'flex items-center gap-1'}>
+                                <span className="text-sm">{translations.moduleEnd}</span>
+                                {miniSpinner && (
+                                    <div>
+                                        <ProgressSpinner style={{ width: '17px', height: '17px' }} />
+                                    </div>
+                                )}
+                            </div>
+                            <Calendar
+                                value={editingTo ? new Date(editingTo) : null}
+                                locale="ru" // Указываем русскую локаль
+                                dateFormat="dd.mm.yy"
+                                className={`p-inputtext-sm ${miniSpinner ? 'opacity-50 pointer-events-none' : ''}`}
+                                onChange={(e) => {
+                                    const date: any = normalizeDate(e.value);
+                                    if (date) {
+                                        setEditingTo(date);
+                                    } else {
+                                        setEditingTo(e.value);
+                                    }
+                                }}
+                            />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </Dialog>
+    );
+
+    const specialityProcessing = (specialityParam: CurrentSpecialityType) => {
         if (specialityParam) {
             if (specialityParam?.code === 1) {
-                const forAllSpecialityIds: any = specialityOptions?.map((item:SpecialityOptType) => item?.id)?.filter((item) => item);
+                const forAllSpecialityIds: any = specialityOptions?.map((item: SpecialityOptType) => item?.id)?.filter((item) => item);
                 setCurrentSpecialityId(forAllSpecialityIds);
             } else {
                 if (specialityParam?.id) {
@@ -508,7 +628,7 @@ export default function Module() {
                 }
             }
         }
-    }
+    };
 
     useEffect(() => {
         if (timeMode?.id) setCurrentFacultyId(timeMode?.id);
@@ -518,9 +638,9 @@ export default function Module() {
         if (currentFacultyId) handleStudentSpeciality(currentFacultyId);
     }, [currentFacultyId]);
 
-    useEffect(()=> {
-        if(specialityOptions?.length > 0) specialityProcessing(specialityOptions[0]);
-    },[specialityOptions]);
+    useEffect(() => {
+        if (specialityOptions?.length > 0) specialityProcessing(specialityOptions[0]);
+    }, [specialityOptions]);
 
     // Update period options when language changes
     useEffect(() => {
@@ -531,9 +651,7 @@ export default function Module() {
 
         // Update selected period if it exists
         if (period) {
-            const updatedPeriod = period.id === 1
-                ? { ...period, name_ru: translations.summer }
-                : { ...period, name_ru: translations.winter };
+            const updatedPeriod = period.id === 1 ? { ...period, name_ru: translations.summer } : { ...period, name_ru: translations.winter };
             setPeriod(updatedPeriod);
         }
     }, [translations]);
@@ -568,6 +686,36 @@ export default function Module() {
         </div>
     );
 
+    // date update
+    const footerDateUpdate = (
+        <div>
+            <Button
+                label={translations.back}
+                className="reject-button"
+                icon="pi pi-times"
+                size="small"
+                onClick={() => {
+                    setUpdateDateId(null);
+                    setDateUpdateVisible(false);
+                    setEditingFrom(null);
+                    setEditingTo(null);
+                    setId_speciality(null);
+                }}
+            />
+
+            <Button
+                label={translations.update}
+                icon="pi pi-check"
+                size="small"
+                onClick={() => {
+                    setDateUpdateVisible(false);
+                    handleDateUpdate(id_stream);
+                }}
+                autoFocus
+            />
+        </div>
+    );
+
     return (
         <div className="flex flex-col gap-3">
             {/* filter */}
@@ -578,6 +726,9 @@ export default function Module() {
 
             {/* dialog */}
             {renderDialog()}
+
+            {/* date update dialog */}
+            {renderDateUpdateDialog()}
         </div>
     );
 }
