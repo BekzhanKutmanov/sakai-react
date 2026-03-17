@@ -23,6 +23,16 @@ export default function VideoInstruct() {
 
     const router = useRouter();
 
+    const a = {
+        name: {name_ru: 'ru'}
+    }
+
+    for (const aElement in a) {
+        console.log(aElement);
+    }
+
+    console.log(a);
+
     const handleVideoCall = (value: string | null) => {
         if (!value) {
             setMessage({

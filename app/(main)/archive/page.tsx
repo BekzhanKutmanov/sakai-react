@@ -50,41 +50,13 @@ const ArchivePage = () => {
     // Шаблоны для колонок DataTable
     const imageBodyTemplate = (rowData: ArchivedCourse) => <img src={rowData.image || '/layout/images/no-image.png'} alt={rowData.title} className="w-16 h-16 object-cover shadow-lg rounded-md" />;
 
-    // const statusBodyTemplate = (rowData: ArchivedCourse) => {
-    //     const statusMap = {
-    //         open: { label: 'Открытый', severity: 'success' },
-    //         closed: { label: 'Закрытый', severity: 'warning' },
-    //         paid: { label: 'Платный', severity: 'info' }
-    //     };
-    //     // const statusInfo = statusMap[rowData.status] as { label: string; severity: any };
-    //     // return <Tag value={statusInfo.label} severity={statusInfo.severity} />;
-    // };
-
-    // const reviewBodyTemplate = (rowData: ArchivedCourse) => (
-    //     <label className="custom-radio opacity-60">
-    //         <input type="checkbox" className="customCheckbox" checked={rowData.status} disabled />
-    //         <span className="checkbox-mark"></span>
-    //     </label>
-    // );
-
-    // const rowExpansionTemplate = (data: ArchivedCourse) => (
-    //     <div className="p-3 bg-gray-100 dark:bg-gray-800">
-    //         <h5 className="font-bold">История изменений для: {data.title}</h5>
-    //         <DataTable value={data.history} dataKey="id" size="small" emptyMessage="...">
-    //             <Column field="action" header="Действие" />
-    //             <Column field="user" header="Пользователь" />
-    //             <Column field="changedAt" header="Дата" body={(h) => new Date(h.changedAt).toLocaleDateString()} />
-    //         </DataTable>
-    //     </div>
-    // );
-
     const publishedBodyTemplate = (rowData: ArchivedCourse) => (rowData.archive_course.copy_have ? <i className="pi pi-check-circle text-[var(--greenColor)] text-md"></i> : <i className="pi pi-times-circle text-[var(--redColor)] text-md"></i>);
 
     // Шаблон для мобильного вида DataView
     const itemTemplate = (course: ArchivedCourse) => {
         return (
             <div className="col-12 p-2">
-                <div className="p-4 shadow  border-round filter">
+                <div className="p-4 shadow border-round filter">
                     <div className="flex flex-column align-items-center gap-3 py-5 sm:flex-row">
                         <div className="md:w-1/4 relative">
                             <img className="block xl:block mx-auto border-round rounded w-full" src={course.image || '/layout/images/no-image.png'} alt={course.title} />
