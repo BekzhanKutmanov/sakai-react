@@ -445,9 +445,17 @@ export default function Module() {
                                             </span>
                                         </div>
                                     </div>
-                                    <div><i onClick={()=> {
-                                        onDateUpdate(course?.id, null);
-                                    }} className={'cursor-pointer pi  pi-calendar-plus text-[var(--mainColor)]'}></i></div>
+                                    {
+                                        allSelectFl.some((s) => s === course?.id) ?
+                                        <div>
+                                            <i
+                                                onClick={() => {
+                                                    onDateUpdate(course?.id, null);
+                                                }}
+                                                className={'cursor-pointer pi  pi-calendar-plus text-[var(--mainColor)]'}
+                                            ></i>
+                                        </div> : ''
+                                    }
                                 </div>
                             }
                         >

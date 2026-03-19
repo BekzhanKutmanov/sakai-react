@@ -9,7 +9,7 @@ import LessonVideo from '@/app/components/lessons/LessonVideo';
 import { NotFound } from '@/app/components/NotFound';
 import GroupSkeleton from '@/app/components/skeleton/GroupSkeleton';
 import useErrorMessage from '@/hooks/useErrorMessage';
-import useMediaQuery  from '@/hooks/useMediaQuery';
+import useMediaQuery from '@/hooks/useMediaQuery';
 import { LayoutContext } from '@/layout/context/layoutcontext';
 import { fetchLessonShow } from '@/services/courses';
 import { addLesson, deleteStep, fetchElement, fetchSteps, fetchTypes, stepSequenceUpdate } from '@/services/steps';
@@ -30,7 +30,7 @@ export default function LessonStep() {
     const page = param.page;
     const scrollRef = useRef<HTMLDivElement>(null);
     const router = useRouter();
-    const prevLessonsRef = useRef<Array<{ id: number; title: string }> | null>(null);
+    const prevLessonsRef = useRef<Array<{ id: number; title: string }> | null>( null);
     const prevStepsRef = useRef<mainStepsType[]>([]);
 
     const media = useMediaQuery('(max-width: 640px)');
@@ -48,6 +48,7 @@ export default function LessonStep() {
     const [lesson_id, setLesson_id] = useState<number | null>(null);
     const [sequence_number, setSequence_number] = useState<number | null>(null);
     const [skeleton, setSkeleton] = useState(false);
+    const [stepSkeleton, setStepSkeleton] = useState(false);
     const [wasCreated, setWasCreated] = useState(false);
     const [lastStep, setLastStep] = useState<number | null>(null);
     const [draggedId, setDraggedId] = useState<number | string>('');
@@ -103,7 +104,6 @@ export default function LessonStep() {
         const data = await fetchSteps(Number(lesson_id));
 
         if (data.success) {
-            setSkeleton(false);
             if (data.steps.length < 1) {
                 setHasSteps(true);
             } else {
@@ -111,7 +111,6 @@ export default function LessonStep() {
                 setSteps(data.steps);
             }
         } else {
-            setSkeleton(false);
             setHasSteps(false);
             setMessage({
                 state: true,
@@ -121,6 +120,7 @@ export default function LessonStep() {
                 showError(data.response.status);
             }
         }
+        setSkeleton(false);
     };
 
     const handleAddLesson = async (lessonId: number, typeId: number) => {
@@ -148,7 +148,7 @@ export default function LessonStep() {
                                             <span>
                                                 {item?.last_name} {item?.name && item?.name[0] + '.'} {item?.father_name && item?.father_name.length > 1 && item?.father_name[0] + '.'}
                                             </span>
-                                            <small className='text-[var(--mainColor)] underline'>{item?.streams?.map((item: number) => item + ' ')}</small>
+                                            <small className="text-[var(--mainColor)] underline">{item?.streams?.map((item: number) => item + ' ')}</small>
                                         </div>
                                     );
                                 })}
@@ -183,14 +183,12 @@ export default function LessonStep() {
 
     const handleFetchElement = async (stepId: number) => {
         if (lesson_id) {
-            setSkeleton(true);
+            setStepSkeleton(true);
             const data = await fetchElement(Number(lesson_id), stepId);
 
             if (data.success) {
-                setSkeleton(false);
                 setElement({ content: data.content, step: data.step });
             } else {
-                setSkeleton(false);
                 setMessage({
                     state: true,
                     value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
@@ -199,6 +197,7 @@ export default function LessonStep() {
                     showError(data.response.status);
                 }
             }
+            setStepSkeleton(false);
         }
     };
 
@@ -432,11 +431,8 @@ export default function LessonStep() {
     const lessonInfo = (
         <div className="w-full">
             <div className="bg-[var(--titleColor)] relative flex flex-col justify-center items-center w-full text-white p-4 md:p-3 pb-4">
-                {/* <h1 style={{ color: 'white', fontSize: media ? '24px' : '28px', textAlign: 'center' }} className="m-0 w-full break-words">
-                    {courseInfo?.title}
-                </h1> */}
                 <h2 style={{ color: 'white', fontSize: media ? '22px' : '26px', textAlign: 'center' }} className="w-full break-words">
-                    {lessonInfoState?.title}
+                    {lessonInfoState?.title ? lessonInfoState?.title : '---'}
                 </h2>
                 {lessonInfoState?.from && lessonInfoState?.to && (
                     <div className="w-full flex justify-center sm:justify-start gap-1 items-center text-[12px]" title={translations.lessonAvailability}>
@@ -581,87 +577,96 @@ export default function LessonStep() {
             {lessonInfo}
 
             {/* steps section */}
-            <div className="flex gap-2 mt-4 items-end">
-                {hasSteps ? (
-                    <div className="flex items-center gap-4">
-                        <div onClick={handleFetchTypes} className="cursor-pointer w-[40px] h-[40px] sm:w-[54px] sm:h-[54px] rounded animate-step"></div>
-                    </div>
-                ) : (
-                    <div className="flex items-center relative max-w-[550px] sm:max-w-[800px] overflow-x-auto scrollbar-thin">
-                        {toggleDocGenerate ? (
-                            <div className="flex flex-col gap-2">
-                                <div className="flex flex-col sm:flex-row gap-2 items-start">
-                                    <b
-                                        className="pi pi-times cursor-pointer sm:text-xl text-[var(--mainColor)]"
-                                        onClick={() => {
-                                            setToggleDocGenerate(false);
-                                        }}
-                                                                         ></b>
-                                                                         <div className="flex items-center gap-1">
-                                                                             <b>{translations.wordTestGeneration}</b>
-                                                                         </div>
-                                                                     </div>
-                                                                 </div>
-                                                             ) : toggleDragSteps ? (
-                                                                 <div className="flex flex-col gap-2 items-start">
-                                                                     <div className="flex flex-col gap-2">
-                                                                         <div className="flex flex-col sm:flex-row gap-2 items-start sm:items-center ">
-                                                                             <b className="pi pi-times cursor-pointer sm:text-xl text-[var(--mainColor)]" onClick={() => setToggleDragSteps(false)}></b>
-                                                                             <div className="flex items-center gap-1">
-                                                                                 <b className="">{translations.aiTestGeneration}</b>
-                                                                                 <i className="pi pi-microchip-ai text-xl"></i>
-                                                                             </div>
-                                                                         </div>
-                                                                         <div className="flex items-center gap-2">
-                                                                             <span className="text-sm text-black">
-                                                                                 {translations.testVariantsHint} <span className="opacity-60 text-[13px]">{translations.optional}</span>
-                                                                             </span>
-                                                                             {/* <span className="text-[13px]">Кол-о документов: {documentSteps?.length || 0}</span> */}
-                                                                         </div>
-                                                                     </div>                                {documentSteps?.length > 0 && (
-                                    <div ref={scrollRef} className={`flex gap-2 max-w-[550px] sm:max-w-[800px] overflow-x-auto scrollbar-thin ${media ? (steps.length >= 6 ? 'right-shadow' : '') : steps.length >= 12 ? 'right-shadow' : ''}`}>
-                                        {documentSteps?.map((item, idx) => {
-                                            return (
-                                                <div key={item.id}>
-                                                    <div className="flex flex-col items-center" draggable onDragStart={() => handleDragStart(item.id)}>
-                                                        {step(item, item.type.logo, item.id, idx)}
-                                                    </div>
-                                                </div>
-                                            );
-                                        })}
-                                    </div>
-                                )}
-                            </div>
-                        ) : (
-                            <div ref={scrollRef} className={`flex gap-2 max-w-[550px] sm:max-w-[800px] overflow-x-auto scrollbar-thin ${media ? (steps.length >= 6 ? 'right-shadow' : '') : steps.length >= 12 ? 'right-shadow' : ''}`}>
-                                {steps.map((item, idx) => {
-                                    return (
-                                        <div key={item.id} className="flex flex-col items-center">
-                                            {step(item, item.type.logo, item.id, idx)}
+            {skeleton ? (
+                <div className={'my-4 flex items-center gap-2'}>
+                    <GroupSkeleton count={1} size={{ width: '55px', height: '3rem' }} />
+                    <GroupSkeleton count={1} size={{ width: '55px', height: '3rem' }} />
+                    <GroupSkeleton count={1} size={{ width: '55px', height: '3rem' }} />
+                </div>
+            ) : (
+                <div className="flex gap-2 mt-4 items-end">
+                    {hasSteps ? (
+                        <div className="flex items-center gap-4">
+                            <div onClick={handleFetchTypes} className="cursor-pointer w-[40px] h-[40px] sm:w-[54px] sm:h-[54px] rounded animate-step"></div>
+                        </div>
+                    ) : (
+                        <div className="flex items-center relative max-w-[550px] sm:max-w-[800px] overflow-x-auto scrollbar-thin">
+                            {toggleDocGenerate ? (
+                                <div className="flex flex-col gap-2">
+                                    <div className="flex flex-col sm:flex-row gap-2 items-start">
+                                        <b
+                                            className="pi pi-times cursor-pointer sm:text-xl text-[var(--mainColor)]"
+                                            onClick={() => {
+                                                setToggleDocGenerate(false);
+                                            }}
+                                        ></b>
+                                        <div className="flex items-center gap-1">
+                                            <b>{translations.wordTestGeneration}</b>
                                         </div>
-                                    );
-                                })}
-                            </div>
+                                    </div>
+                                </div>
+                            ) : toggleDragSteps ? (
+                                <div className="flex flex-col gap-2 items-start">
+                                    <div className="flex flex-col gap-2">
+                                        <div className="flex flex-col sm:flex-row gap-2 items-start sm:items-center">
+                                            <b className="pi pi-times cursor-pointer sm:text-xl text-[var(--mainColor)]" onClick={() => setToggleDragSteps(false)}></b>
+                                            <div className="flex items-center gap-1">
+                                                <b className="">{translations.aiTestGeneration}</b>
+                                                <i className="pi pi-microchip-ai text-xl"></i>
+                                            </div>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-sm text-black">
+                                                {translations.testVariantsHint} <span className="opacity-60 text-[13px]">{translations.optional}</span>
+                                            </span>
+                                            {/* <span className="text-[13px]">Кол-о документов: {documentSteps?.length || 0}</span> */}
+                                        </div>
+                                    </div>{' '}
+                                    {documentSteps?.length > 0 && (
+                                        <div ref={scrollRef} className={`flex gap-2 max-w-[550px] sm:max-w-[800px] overflow-x-auto scrollbar-thin ${media ? (steps.length >= 6 ? 'right-shadow' : '') : steps.length >= 12 ? 'right-shadow' : ''}`}>
+                                            {documentSteps?.map((item, idx) => {
+                                                return (
+                                                    <div key={item.id}>
+                                                        <div className="flex flex-col items-center" draggable onDragStart={() => handleDragStart(item.id)}>
+                                                            {step(item, item.type.logo, item.id, idx)}
+                                                        </div>
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                    )}
+                                </div>
+                            ) : (
+                                <div ref={scrollRef} className={`flex gap-2 max-w-[550px] sm:max-w-[800px] overflow-x-auto scrollbar-thin ${media ? (steps.length >= 6 ? 'right-shadow' : '') : steps.length >= 12 ? 'right-shadow' : ''}`}>
+                                    {steps.map((item, idx) => {
+                                        return (
+                                            <div key={item.id} className="flex flex-col items-center">
+                                                {step(item, item.type.logo, item.id, idx)}
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            )}
+                        </div>
+                    )}
+
+                    <div className="flex items-center gap-1">
+                        {skeleton ? (
+                            <GroupSkeleton count={1} size={{ width: '47px', height: '3rem' }} />
+                        ) : (
+                            !toggleDragSteps &&
+                            !toggleDocGenerate && (
+                                <button
+                                    onClick={handleFetchTypes}
+                                    className={`stepElement pi pi-plus text-xl ${
+                                        media ? steps?.length >= 6 && 'mb-1' : steps?.length >= 12 && 'mb-1'
+                                    } sm:text-2xl text-white cursor-pointer border rounded flex justify-center items-center bg-[var(--mainColor)] hover:bg-[var(--mainBorder)] transition`}
+                                ></button>
+                            )
                         )}
                     </div>
-                )}
-
-                <div className="flex items-center gap-1">
-                    {skeleton ? (
-                        <GroupSkeleton count={1} size={{ width: '47px', height: '3rem' }} />
-                    ) : (
-                        !toggleDragSteps &&
-                        !toggleDocGenerate && (
-                            <button
-                                onClick={handleFetchTypes}
-                                className={`stepElement pi pi-plus text-xl ${
-                                    media ? steps?.length >= 6 && 'mb-1' : steps?.length >= 12 && 'mb-1'
-                                } sm:text-2xl text-white cursor-pointer border rounded flex justify-center items-center bg-[var(--mainColor)] hover:bg-[var(--mainBorder)] transition`}
-                            ></button>
-                        )
-                    )}
                 </div>
-            </div>
+            )}
 
             {hasSteps && (
                 <div>
@@ -677,8 +682,8 @@ export default function LessonStep() {
                 </div>
             )}
 
-            {skeleton ? (
-                <GroupSkeleton count={1} size={{ width: '100%', height: '10rem' }} />
+            {stepSkeleton ? (
+                <GroupSkeleton count={1} size={{ width: '100%', height: '12rem' }} />
             ) : (
                 <>
                     {element?.step.type.name === 'document' && (
@@ -780,5 +785,3 @@ export default function LessonStep() {
         </div>
     );
 }
-
-
