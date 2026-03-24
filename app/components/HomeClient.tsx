@@ -106,11 +106,11 @@ export default function HomeClient() {
                 <div className="relative p-3 pb-0">
                     <div className="flex justify-center items-center rounded-xl overflow-hidden bg-slate-50">{imageBodyTemplate(course, index)}</div>
                     <div
-                        className={`absolute top-3 right-3 sm:flex gap-1 items-center text-[12px] text-white rounded-full px-2 py-1 shadow ${course?.audience_type?.name === 'open' ? 'bg-[var(--greenColor)]' : course?.audience_type?.name === 'wallet' ? 'bg-[var(--amberColor)]' : ''
+                        className={`absolute top-3 right-3 sm:flex gap-1 items-center text-[0.75rem] text-white rounded-full px-2 py-1 shadow ${course?.audience_type?.name === 'open' ? 'bg-[var(--greenColor)]' : course?.audience_type?.name === 'wallet' ? 'bg-[var(--amberColor)]' : ''
                             }`}
                     >
                         <i className={course?.audience_type?.icon} style={{ fontSize: '13px' }}></i>
-                        <i className="text-[12px]">{course?.audience_type?.name === 'open' ? 'Бесплатный' : course?.audience_type?.name === 'wallet' ? 'Платный' : ''}</i>
+                        <i className="text-[0.75rem]">{course?.audience_type?.name === 'open' ? 'Бесплатный' : course?.audience_type?.name === 'wallet' ? 'Платный' : ''}</i>
                     </div>
                 </div>
 
@@ -139,7 +139,7 @@ export default function HomeClient() {
                     {
                         course?.category?.title ?
                             <div className='px-2 py-1 bg-[var(--redWeakColor)]/60 rounded-full border border-[var(--redWeakColor)]'>
-                                <p className='text-[12px] max-w-[260px] break-words text-[var(--titleColor)]'>{course?.category.title}</p>
+                                <p className='text-[0.75rem] max-w-[260px] break-words text-[var(--titleColor)]'>{course?.category.title}</p>
                             </div>
                             : ''
                     }
@@ -152,7 +152,7 @@ export default function HomeClient() {
                 </div>
 
                 <div className="mt-auto px-3 pb-3">
-                    <div className="flex items-center justify-center text-[14px] text-[var(--titleColor)] author_font">
+                    <div className="flex items-center justify-center text-[0.9rem] text-[var(--titleColor)] author_font">
                         {/* <span className="">Автор: </span> */}
                         <div className="flex gap-1 items-start max-w-[230px] break-words text-wrap flex-wrap">
                             {!media ? (
@@ -172,7 +172,7 @@ export default function HomeClient() {
                     </div>
 
                     {/* data */}
-                    <div className="w-full flex justify-end text-[11px] text-slate-500 order-1 sm:order-2 mt-2">
+                    <div className="w-full flex justify-end text-[0.688rem] text-slate-500 order-1 sm:order-2 mt-2">
                         <MyDateTime createdAt={course?.created_at} options={options} />
                     </div>
                 </div>
@@ -277,7 +277,7 @@ export default function HomeClient() {
                 <div className="w-full">
                     <div className="flex flex-column md:flex-row items-center justify-center overflow-hidden">
                         <div className="w-full">
-                            <div className="w-full m-auto overflow-hidden text-[16px] text-[var(--mainColor)] block mb-[15px]">
+                            <div className="w-full m-auto overflow-hidden text-[1rem] text-[var(--mainColor)] block mb-[15px]">
                                 <div className="relative flex">
                                     <img
                                         src={'/layout/images/shape1.png'}
@@ -292,7 +292,7 @@ export default function HomeClient() {
                                         {translations.convenientOnlineLearningSpace}
                                     </span>
                                 </div>
-                                <h2 data-aos="fade-down" data-aos-delay="900" data-aos-duration="1000" data-aos-once="true" className="text-center text-[30px] sm:text-[50px]">
+                                <h2 data-aos="fade-down" data-aos-delay="900" data-aos-duration="1000" data-aos-once="true" className="text-center text-[1.875rem] sm:text-[3rem]">
                                     {translations.welcomeToDistanceLearningPortal}
                                 </h2>
                                 <div data-aos="fade-up" data-aos-delay="900" data-aos-duration="1000" data-aos-once="true" className="text-center text-[var(--titleColor)]">
@@ -415,7 +415,7 @@ export default function HomeClient() {
 
                 {/* Oshgu Video */}
                 <div>
-                    <h2 className="text-[22px] p-4 text-center">
+                    <h2 className="text-[1.7rem] p-4 text-center">
                         {translations.videoTourMainBuilding} <span className="text-[var(--mainColor)]">{translations.oshSU}</span>
                     </h2>
                 </div>

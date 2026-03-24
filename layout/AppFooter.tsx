@@ -11,7 +11,11 @@ const AppFooter = () => {
 
     const fetchInfo = async () => {
         try {
-            const res = await axiosInstance.get('https://api.myedu.oshsu.kg/public/api/open/universities');
+            const res = await axiosInstance.get('/open/universities', {
+                baseURL: process.env.NEXT_PUBLIC_FACULTY_API
+            });
+
+            console.log(res);
             const data = res.data;
             return data;
         } catch (err) {

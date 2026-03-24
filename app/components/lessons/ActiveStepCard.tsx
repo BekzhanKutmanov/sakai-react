@@ -129,7 +129,7 @@ export default function ActiveStepCard({
                     <Link
                         href={`/openCourse/activeCourse/${course_id}/${lessonItem?.id}/${stepId}`}
                         // onClick={() => videoStart && videoStart(video_link || '')}
-                        className="cursor-pointer max-w-[800px] text-[16px] break-words hover:underline"
+                        className="cursor-pointer max-w-[800px] text-[1rem] break-words hover:underline"
                     >
                         {title}
                     </Link>
@@ -149,7 +149,7 @@ export default function ActiveStepCard({
                     <Link
                         href={`/openCourse/activeCourse/${course_id}/${lessonItem?.id}/${stepId}`}
                         // onClick={() => videoStart && videoStart(video_link || '')}
-                        className="cursor-pointer max-w-[800px] text-[16px] text-wrap break-all hover:underline"
+                        className="cursor-pointer max-w-[800px] text-[1rem] text-wrap break-all hover:underline"
                     >
                         {title}
                     </Link>
@@ -169,7 +169,7 @@ export default function ActiveStepCard({
                     <Link
                         href={`/openCourse/activeCourse/${course_id}/${lessonItem?.id}/${stepId}`}
                         // onClick={() => videoStart && videoStart(video_link || '')}
-                        className="cursor-pointer max-w-[800px] text-[16px] text-wrap break-all hover:underline"
+                        className="cursor-pointer max-w-[800px] text-[1rem] text-wrap break-all hover:underline"
                     >
                         {title}
                     </Link>
@@ -186,7 +186,7 @@ export default function ActiveStepCard({
                     <i className={`${icon} text-white`}></i>
                 </div>
                 <div className="w-full flex justify-between gap-1 max-w-[800px] text-wrap break-all">
-                    <Link href={`/openCourse/activeCourse/${course_id}/${lessonItem?.id}/${stepId}`} className="cursor-pointer max-w-[800px] text-[16px] text-wrap break-all hover:underline">
+                    <Link href={`/openCourse/activeCourse/${course_id}/${lessonItem?.id}/${stepId}`} className="cursor-pointer max-w-[800px] text-[1rem] text-wrap break-all hover:underline">
                         {translations.test}
                     </Link>
                 </div>
@@ -210,7 +210,7 @@ export default function ActiveStepCard({
                 <div className="p-2 bg-[var(--yellowColor)] shadow-xl min-w-[40px] min-h-[40px] w-[40px] h-[40px] flex justify-center items-center rounded">
                     <i className={`${icon} text-white`}></i>
                 </div>
-                <Link href={`/openCourse/activeCourse/${course_id}/${lessonItem?.id}/${stepId}`} className="cursor-pointer max-w-[800px] text-[16px] text-wrap break-all hover:underline">
+                <Link href={`/openCourse/activeCourse/${course_id}/${lessonItem?.id}/${stepId}`} className="cursor-pointer max-w-[800px] text-[1rem] text-wrap break-all hover:underline">
                     {translations.practicalTask}
                 </Link>
             </div>
@@ -237,7 +237,7 @@ export default function ActiveStepCard({
                     <i className={`${icon} text-white`}></i>
                 </div>
                 <div className="flex flex-col justify-center gap-1 max-w-[1000px]">
-                    {/* <Link onClick={forumValueAdd} href={stepId && id_parent && contentId ? `/students/forum/${stepId}/${id_parent}/${contentId}` : '#'} className="cursor-pointer max-w-[1000px] text-[14px] sm:text-[16px] hover:underline">
+                    {/* <Link onClick={forumValueAdd} href={stepId && id_parent && contentId ? `/students/forum/${stepId}/${id_parent}/${contentId}` : '#'} className="cursor-pointer max-w-[1000px] text-[14px] sm:text-[1rem] hover:underline">
                         Оставьте отзыв или задайте вопрос по материалам урока
                     </Link> */}
                 </div>

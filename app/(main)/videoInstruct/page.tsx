@@ -23,16 +23,6 @@ export default function VideoInstruct() {
 
     const router = useRouter();
 
-    const a = {
-        name: {name_ru: 'ru'}
-    }
-
-    for (const aElement in a) {
-        console.log(aElement);
-    }
-
-    console.log(a);
-
     const handleVideoCall = (value: string | null) => {
         if (!value) {
             setMessage({
@@ -62,16 +52,12 @@ export default function VideoInstruct() {
         return `https://www.youtube.com/embed/${videoId}`;
     };
 
-    useEffect(() => {
-        // handleVideoCall('https://youtu.be/9j9vUpNrgDM?si=nqk6tX5JPCyr7znv');
-    }, []);
-
     return (
         <div className='main-bg'>
             <div className="flex items-start flex-col sm:flex-row gap-1">
                 <button onClick={() => router.back()} className="text-[var(--mainColor)] underline px-2 flex items-center gap-1">
-                    <i className="pi pi-arrow-left text-[13px] cursor-pointer hover:shadow-2xl" style={{ fontSize: '13px' }}></i>
-                    <span className="text-[13px] cursor-pointer">{translations.back}</span>
+                    <i className="pi pi-arrow-left text-[0.813rem] cursor-pointer hover:shadow-2xl" style={{ fontSize: '0.813rem' }}></i>
+                    <span className="text-[0.813rem] cursor-pointer">{translations.back}</span>
                 </button>
                 <h2 className="text-center text-xl sm:text-2xl w-full m-0 mb-4 flex justify-center">{translations.videoInstructionsTitle}</h2>
             </div>

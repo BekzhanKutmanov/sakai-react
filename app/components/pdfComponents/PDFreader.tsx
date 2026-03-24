@@ -17,8 +17,7 @@ export default function PDFreader({ url }: { url: string }) {
         // let newUrl = `https://api.mooc.oshsu.kg/public/temprory-file/${url}`;
         const inApiString = process.env.NEXT_PUBLIC_BASE_URL;
         let newUrl = `${inApiString?.substring(0, inApiString?.length - 4)}/temprory-file/${url}`;
-        console.log(newUrl);
-        
+
         if (newUrl) {
             setForUrl(newUrl);
         } else {

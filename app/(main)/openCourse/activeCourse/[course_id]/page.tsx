@@ -20,8 +20,7 @@ import useMediaQuery from '@/hooks/useMediaQuery';
 export default function ActiveCourseDetail() {
     const { course_id } = useParams();
 
-    const { user, setMessage } = useContext(LayoutContext);
-    const media = useMediaQuery('(max-width: 640px)');
+    const { setMessage } = useContext(LayoutContext);
     const showError = useErrorMessage();
     const { translations } = useLocalization();
     const [mainCourse, setMainCourses] = useState<myMainCourseType | null>(null);
@@ -73,11 +72,6 @@ export default function ActiveCourseDetail() {
 
         if (data?.success) {
             setHasSteps(false);
-            // if (data?.courses?.length < 1) {
-            //     setEmptyCourse(true);
-            // } else {
-            //     setEmptyCourse(false);
-            // }
             setSteps(data?.steps);
         } else {
             setHasSteps(true);
@@ -175,7 +169,6 @@ export default function ActiveCourseDetail() {
                     </Accordion>
                 </div>
             )}
-            {/*{media && user?.is_student && <BottomNav />}*/}
         </div>
     );
 }

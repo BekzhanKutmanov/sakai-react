@@ -19,8 +19,6 @@ interface NotificationGroupUi {
 export default function Notification({ notification }: { notification: mainNotification[] }) {
     const { user, setContextNotificationId } = useContext(LayoutContext);
 
-    console.log(notification);
-
     const [mainNotification, setMainNotification] = useState<mainNotification[]>([]);
     const [groupNotificationVisible, setGroupNotificationVisible] = useState(false);
     const [groupNotifications, setGroupNotifications] = useState<NotificationGroupUi[]>([]);
@@ -110,11 +108,11 @@ export default function Notification({ notification }: { notification: mainNotif
         <div className={`flex flex-col justify-center p-2 gap-1`}>
             {groupNotificationVisible ? (
                 <div className="flex items-center gap-1 justify-between p-2">
-                    <h3 className="m-0 p-0 font-bold text-[13px] sm:text-[17px]">Список сообщений </h3>
-                    <div className="cursor-pointer flex items-center gap-1 justify-between text-[12px] sm:text-[14px]">
+                    <h3 className="m-0 p-0 font-bold text-[0.813rem] sm:text-[1.063]">Список сообщений </h3>
+                    <div className="cursor-pointer flex items-center gap-1 justify-between text-[0.75rem] sm:text-[0.875rem]">
                         <i
                             className="pi pi-times flex justify-end"
-                            style={{ fontSize: '12px' }}
+                            style={{ fontSize: '0.75rem' }}
                             onClick={(e) => {
                                 stop(e);
                                 setGroupNotificationVisible(false);
@@ -129,14 +127,14 @@ export default function Notification({ notification }: { notification: mainNotif
 
             {groupingFl && (
                 <div
-                    className="cursor-pointer flex items-center justify-end gap-1 text-[12px] sm:text-[14px]"
+                    className="cursor-pointer flex items-center justify-end gap-1 text-[0.75rem] sm:text-[0.875rem]"
                     onClick={(e) => {
                         stop(e);
                         setMainNotification(notification);
                         setGroupingFl(false);
                     }}
                 >
-                    <i className="pi pi-times flex justify-end" style={{ fontSize: '12px' }}></i>
+                    <i className="pi pi-times flex justify-end" style={{ fontSize: '0.75rem' }}></i>
                     <span>Все</span>
                 </div>
             )}
@@ -150,18 +148,18 @@ export default function Notification({ notification }: { notification: mainNotif
                         <div key={item?.id} className={`w-full flex flex-col justify-center shadow p-2 gap-1 sm:gap-2`}>
                             <div className="w-full flex justify-between">
                                 <Link onClick={() => setContextNotificationId(item?.id)} className="cursor-pointer underline" href={path}>
-                                    <b className="text-[var(--mainColor)] text-[12px] sm:text-[14px]">{item?.type?.title}</b>
+                                    <b className="text-[var(--mainColor)] text-[0.75rem] sm:text-[0.875rem]">{item?.type?.title}</b>
                                 </Link>
                                 <span className="text-sm w-[11px] h-[11px] sm:w-[13px] sm:h-[13px] rounded-full bg-[var(--amberColor)]"></span>
                             </div>
 
                             {/* student message */}
                             {user?.is_student && item?.type?.type === 'practical' && (
-                                <b className="text-[13px] max-w-[350px] text-nowrap overflow-hidden text-ellipsis" title={item?.title}>
+                                <b className="text-[0.813rem] max-w-[350px] text-nowrap overflow-hidden text-ellipsis" title={item?.title}>
                                     {item?.title}
                                 </b>
                             )}
-                            <p className="m-0 text-[11px] sm:text-[12px]">
+                            <p className="m-0 text-[0.688rem] sm:text-[0.75rem]">
                                 {item?.from_user?.last_name} {item?.from_user?.name}
                             </p>
                             <div className="w-full relative flex">
@@ -173,7 +171,7 @@ export default function Notification({ notification }: { notification: mainNotif
                     );
                 })
             ) : (
-                <p className="text-center text-[13px]">Сообщений нет</p>
+                <p className="text-center text-[0.813rem]">Сообщений нет</p>
             )}
         </div>
     );

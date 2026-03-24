@@ -92,18 +92,18 @@ export default function MainNotificatoin() {
                                 <b className="text-[var(--mainColor)] ">{notificate?.title}</b>
                             </Link>
                         </div> */}
-                        <Link href={''} className="hidden sm:flex items-center gap-1 hover:underline text-[13px] sm:text-[15px] text-[var(--text-color)]">
+                        <Link href={''} className="hidden sm:flex items-center gap-1 hover:underline text-[0.813rem] sm:text-[0.938rem] text-[var(--text-color)]">
                             <b className="m-0">{notificate?.from_user?.last_name}</b>
                             <b className="m-0">{notificate?.from_user?.name}</b>
                             <b className="m-0">{notificate?.from_user?.father_name}</b>
                         </Link>
-                        <Link href={''} className="flex sm:hidden items-center gap-1 hover:underline text-[14px] text-[var(--text-color)]">
+                        <Link href={''} className="flex sm:hidden items-center gap-1 hover:underline text-[0.9rem] text-[var(--text-color)]">
                             <b className="m-0">{notificate?.from_user?.last_name}</b>
                             <b className="m-0">{notificate?.from_user?.name[0]}.</b>
                             <b className="m-0">{notificate?.from_user?.father_name && notificate?.from_user?.father_name[0] != ' ' ? notificate?.from_user?.father_name[0] + '.' : ''}</b>
                         </Link>
                         <div className="w-full relative flex flex-col items-end">
-                            {/* <span className="absolute -top-4 text-sm w-[11px] h-[11px] sm:w-[13px] sm:h-[13px] rounded-full bg-[var(--amberColor)]"></span> */}
+                            {/* <span className="absolute -top-4 text-sm w-[0.688rem] h-[0.688rem] sm:w-[0.813rem] sm:h-[0.813rem] rounded-full bg-[var(--amberColor)]"></span> */}
                             <i className="cursor-pointer pi pi-trash text-white bg-[var(--redColor)] rounded-md text-xs sm:text-sm px-2 py-1 hover:opacity-90" onClick={() => handleDeleteVisible(notificate?.id)}></i>
                         </div>
                     </div>
@@ -125,26 +125,26 @@ export default function MainNotificatoin() {
                         <i className="pi pi-star text-lg p-1"></i> */}
                         <div className="w-full flex gap-2 justify-between flex-col sm:flex-row items-start sm:items-center">
                             <div className="flex flex-col gap-2">
-                                <span className="text-[14px] sm:text-[15px] font-medium max-w-[420px] text-nowrap overflow-hidden text-ellipsis">{notificate?.title}</span>
+                                <span className="text-[0.9rem] sm:text-[0.938rem] font-medium max-w-[420px] text-nowrap overflow-hidden text-ellipsis">{notificate?.title}</span>
                                 <div className="flex flex-col gap-2">
                                     {notificate?.meta?.title && (
                                         <>
                                             <span>{translations.reason}:</span>
                                             <ul className={`list-disc p-2 rounded-sm `}>
-                                                <li className="ml-2 text-[13px] sm:text-[14px] text-[var(--mainColor)]">{notificate?.meta?.title}</li>
+                                                <li className="ml-2 text-[0.813rem] sm:text-[0.9rem] text-[var(--mainColor)]">{notificate?.meta?.title}</li>
                                             </ul>
 
                                             <ul className={`list-disc p-2 rounded-sm`}>
-                                                <li className="ml-2 text-[13px] sm:text-[14px] text-[var(--mainColor)]">{notificate?.meta?.description}</li>
+                                                <li className="ml-2 text-[0.813rem] sm:text-[0.9rem] text-[var(--mainColor)]">{notificate?.meta?.description}</li>
                                             </ul>
                                         </>
                                     )}
                                 </div>
                             </div>
-                            <small className="px-2 py-1 bg-[var(--redWeakColor)] rounded-md text-[11px] sm:text-[12px] whitespace-nowrap">{notificate?.type?.title}</small>
+                            <small className="px-2 py-1 bg-[var(--redWeakColor)] rounded-md text-[0.688rem] sm:text-[0.75rem] whitespace-nowrap">{notificate?.type?.title}</small>
                         </div>
                     </div>
-                    <p className="w-full text-[10px] sm:text-[11px] m-0 flex justify-end text-[var(--text-color-secondary)]">
+                    <p className="w-full text-[0.625ren] sm:text-[0.688rem] m-0 flex justify-end text-[var(--text-color-secondary)]">
                         <MyDateTime createdAt={notificate?.created_at} options={options} />
                     </p>
                 </div>
@@ -177,7 +177,7 @@ export default function MainNotificatoin() {
                 {/* <div className="relative w-full flex justify-center sm:justify-start items-center gap-1 my-2">
                 <InputText type="text" placeholder="РџРѕРёСЃРє..." value={search} className="w-full h-[48px]" onChange={(e) => setSearch(e.target.value)} />
                 <div className="absolute right-2">{!searchSpinner && <i className="pi pi-search"></i>}</div>
-                <div className="absolute right-2">{searchSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}</div>
+                <div className="absolute right-2">{searchSpinner && <ProgressSpinner style={{ width: '0.938rem', height: '0.938rem' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}</div>
             </div> */}
                 {/*
             <div className="flex items-center gap-2 my-2 px-2">

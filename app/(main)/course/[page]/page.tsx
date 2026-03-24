@@ -881,7 +881,7 @@ export default function Course() {
                                     <GroupSkeleton count={1} size={{ width: '100%', height: '5rem' }} />
                                 ) : ( */}
                                 <div className="flex flex-col md:flex-row justify-between md:items-center mb-2 pb-2 gap-1 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">
-                                    <h3 className="text-[32px] font-bold m-0">{translations.courses}</h3>
+                                    <h3 className="text-[2rem] font-bold m-0">{translations.courses}</h3>
                                     <Button
                                         label={translations.addCourse}
                                         icon="pi pi-plus text-sm"
@@ -905,9 +905,9 @@ export default function Course() {
 
                                 {/* table section */}
                                 {emptyCourses ? (
-                                    <p className="text-[16px] text-center font-bold">{translations.noData}</p>
+                                    <p className="text-[1rem] text-center font-bold">{translations.noData}</p>
                                 ) : hasCourses ? (
-                                    <p className="text-[16px] text-center font-bold">{translations.noCourses}</p>
+                                    <p className="text-[1rem] text-center font-bold">{translations.noCourses}</p>
                                 ) : (
                                     <>
                                         {skeleton ? (
@@ -933,7 +933,7 @@ export default function Course() {
 
                                                         <Column
                                                             field="title"
-                                                            header={() => <div className="text-[13px]">{translations.courseName}</div>}
+                                                            header={() => <div className="text-[0.813rem]">{translations.courseName}</div>}
                                                             body={(rowData) => (
                                                                 <Link
                                                                     href={`/course/detail/${rowData.id}/${'null'}`}
@@ -954,7 +954,7 @@ export default function Course() {
                                                         ></Column>
                                                         <Column
                                                             style={{ width: '70px' }}
-                                                            header={() => <div className="text-[13px]">{translations.courseStatus}</div>}
+                                                            header={() => <div className="text-[0.813rem]">{translations.courseStatus}</div>}
                                                             body={(rowData) => (
                                                                 <Button
                                                                     size="small"
@@ -972,11 +972,11 @@ export default function Course() {
                                                         <Column
                                                             field="title"
                                                             className="hover:bg-slate-50/50 transition-colors"
-                                                            header={() => <div className="text-[13px]">{translations.score}</div>}
+                                                            header={() => <div className="[0.813rem]">{translations.score}</div>}
                                                             body={(rowData) => <span key={rowData.id}>{rowData.max_score}</span>}
                                                         ></Column>
                                                         <Column
-                                                            header={() => <div className="text-[13px]">{translations.onReview}</div>}
+                                                            header={() => <div className="[0.813rem]">{translations.onReview}</div>}
                                                             style={{ margin: '0 3px', textAlign: 'center' }}
                                                             body={(rowData) => (
                                                                 <>
@@ -996,13 +996,13 @@ export default function Course() {
                                                             className="hover:bg-slate-50/50 transition-colors"
                                                         ></Column>
                                                         <Column
-                                                            header={() => <div className="text-[13px]">{translations.published}</div>}
+                                                            header={() => <div className="[0.813rem]">{translations.published}</div>}
                                                             style={{ margin: '0 3px', textAlign: 'center' }}
                                                             className="hover:bg-slate-50/50 transition-colors"
                                                             body={(rowData) => (rowData.is_published ? <i className="pi pi-check-circle text-md text-[var(--greenColor)]"></i> : <i className="pi pi-times-circle text-md text-[var(--redColor)]"></i>)}
                                                         ></Column>
                                                         <Column
-                                                            header={() => <div className="text-[13px]">{translations.streams}</div>}
+                                                            header={() => <div className="[0.813rem]">{translations.streams}</div>}
                                                             style={{ margin: '0 3px', textAlign: 'center' }}
                                                             body={(rowData) => {
                                                                 const isChecked = forStreamId?.id === rowData.id;
@@ -1111,7 +1111,7 @@ export default function Course() {
                     </div>
 
                     <div className="flex flex-col gap-1 items-center justify-center">
-                        <label className="block text-900 font-medium text-[16px] md:text-lg mb-1 md:mb-2">{translations.courseDescription}</label>
+                        <label className="block text-900 font-medium text-[1rem] md:text-lg mb-1 md:mb-2">{translations.courseDescription}</label>
                         <div className="w-full flex gap-2 justify-center items-center">
                             <InputTextarea
                                 // autoResize
@@ -1147,7 +1147,7 @@ export default function Course() {
                             )}
                         </div>
                         <div className={`flex flex-col pag-1 order-1 sm:order-2 items-center justify-center ${imageState && 'w-1/2'}`}>
-                            <label className="block text-900 font-medium text-[16px] md:text-lg mb-1 md:mb-2">{translations.addPhoto}</label>
+                            <label className="block text-900 font-medium text-[1rem] md:text-lg mb-1 md:mb-2">{translations.addPhoto}</label>
                             <FileUpload
                                 ref={fileUploadRef}
                                 mode="basic"
@@ -1164,12 +1164,12 @@ export default function Course() {
                                 <div className="mt-2 text-sm text-gray-700">
                                     {typeof editingLesson.image === 'string' && (
                                         <>
-                                            <b className="text-[12px] text-center w-[300px]">{imageTitle}</b>
+                                            <b className="text-[0.75rem] text-center w-[300px]">{imageTitle}</b>
                                         </>
                                     )}
                                 </div>
                             ) : (
-                                <b className="text-[12px] text-red-500">jpeg, png, jpg</b>
+                                <b className="text-[0.75rem] text-red-500">jpeg, png, jpg</b>
                             )}
                             <div className="flex items-center gap-1">{(editingLesson.image || imageState) && <Button icon={'pi pi-trash'} className="trash-button" onClick={clearFile} />}</div>
                         </div>

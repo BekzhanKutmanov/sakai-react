@@ -34,7 +34,7 @@ export default function ItemCard({
     const myProgress = () => {
         return (
             <div className="flex gap-2 sm:gap-3 flex-col sm:flex-row items-start">
-                <div className="bg-[var(--greenColor)] flex flex-col text-[13px] rounded sm:min-w-[200px] w-full order-2 sm:order-1 shadow">
+                <div className="bg-[var(--greenColor)] flex flex-col text-[0.813rem] rounded sm:min-w-[200px] w-full order-2 sm:order-1 shadow">
                     <span className="text-white pl-2">
                         {translations.yourScore}: ({subject?.progress?.score})
                     </span>
@@ -74,19 +74,19 @@ export default function ItemCard({
                                 <div className="rounded-full shadow p-[3px] bg-[var(--mainGreenColor)] flex justify-center items-center">
                                     <i className="pi pi-check bg-white rounded-full p-[3px]" style={{ fontSize: '11px' }}></i>
                                 </div>
-                                <span className="text-[var(--titleColor)] text-[12px]">{translations.moduleSet}</span>
+                                <span className="text-[var(--titleColor)] text-[0.75rem]">{translations.moduleSet}</span>
                             </div>
 
                             <div className="flex gap-2">
                                 <div className="flex items-center gap-1">
                                     <div className="rounded-full p-[6px] bg-[orange] shadow flex justify-center items-center">
-                                        <i className="pi pi-star-fill text-white" style={{ fontSize: '12px' }}></i>
+                                        <i className="pi pi-star-fill text-white" style={{ fontSize: '0.75rem' }}></i>
                                     </div>
-                                    <span className="text-[var(--titleColor)] text-[12px]">{translations.moduleResult}:</span>
+                                    <span className="text-[var(--titleColor)] text-[0.75rem]">{translations.moduleResult}:</span>
                                 </div>
                                 <div className="flex items-center gap-1 justify-center">
-                                    <b className="text-[13px] text-[var(--mainColor)]">{subject.progress?.export_score}</b>
-                                    <span className="text-[var(--titleColor)] text-[12px]">{translations.points}</span>
+                                    <b className="text-[0.813rem] text-[var(--mainColor)]">{subject.progress?.export_score}</b>
+                                    <span className="text-[var(--titleColor)] text-[0.75rem]">{translations.points}</span>
                                 </div>
                             </div>
                         </div>

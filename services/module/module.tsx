@@ -19,7 +19,9 @@ export const fetchModuleShedule = async (id_specialities: number[], period: numb
 
 export const fetchSemestr = async () => {
     try {
-        const res = await axiosInstance.get('https://api.myedu.oshsu.kg/public/api/open/semester');
+        const res = await axiosInstance.get('/open/semester', {
+            baseURL: process.env.NEXT_PUBLIC_FACULTY_API
+        });
         return res.data;
     } catch (err) {
         console.log('Ошибка при получении', err);

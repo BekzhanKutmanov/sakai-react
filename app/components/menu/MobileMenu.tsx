@@ -73,7 +73,7 @@ export const BottomNav = () => {
                             </div>
 
                             {/* Текст */}
-                            <span className={`text-[10px] font-medium transition-all duration-300 ${isActive ? 'text-[var(--mainColor)] font-bold translate-y-[-2px]' : 'text-gray-500 group-hover:text-gray-700'}`}>
+                            <span className={`text-[0.625rem] font-medium transition-all duration-300 ${isActive ? 'text-[var(--mainColor)] font-bold translate-y-[-2px]' : 'text-gray-500 group-hover:text-gray-700'}`}>
                                 {item.label}
                             </span>
 
@@ -92,7 +92,7 @@ export const BottomNav = () => {
                                     pt={{
                                         root: { className: 'bg-white border border-gray-300 rounded-xl shadow-xl translate-y-[-100%]' },
                                         menu: { className: 'p-1' },
-                                        menuitem: { className: 'text-[var(--titleColor)] text-[14px] py-1 hover:bg-gray-50 rounded-lg transition-colors' },
+                                        menuitem: { className: 'text-[var(--titleColor)] text-[0.875rem] py-1 hover:bg-gray-50 rounded-lg transition-colors' },
                                         action: { className: `flex justify-center items-center gap-2 px-3 py-2` },
                                         icon: { className: 'text-[var(--titleColor)] mx-1' }
                                     }}

@@ -12,7 +12,7 @@
   align-items: center;
   cursor: pointer;
   font-family: sans-serif;
-  font-size: 14px;
+  font-size: 0.9rem;
   gap: 2px;
   position: relative;
   padding: 4px 7px;
@@ -73,7 +73,7 @@
   align-items: center;
   cursor: pointer;
   font-family: sans-serif;
-  font-size: 14px;
+  font-size: 0.9rem;
   gap: 8px;
   position: relative;
   padding: 4px 7px;
@@ -108,9 +108,9 @@
   background-color: var(--mainColor);
   /* box-shadow: inset 4px 4px 7px 9px var(--mainColor) ; */
 
-  border-radius: 50%; 
+  border-radius: 50%;
   transform: translate(-50%, -50%) scale(0);
-  transition: transform 0.2s ease; 
+  transition: transform 0.2s ease;
   z-index: -2;
 }
 
@@ -123,7 +123,7 @@
 
 /* Фокус */
 .custom-course-radio input[type="radio"]:focus + .radio-course-mark {
-    border: solid 2px rgba(48, 169, 193, 0.3); 
+    border: solid 2px rgba(48, 169, 193, 0.3);
     box-shadow: inset 4px 4px 7px 9px var(--mainColor) ;
 }
 

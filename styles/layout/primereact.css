@@ -1,7 +1,7 @@
 .p-accordion .p-accordion-header .p-accordion-header-link {
     width: 100% !important;
     padding: 9px !important;
-    font-size: 16px !important;
+    font-size: 1rem !important;
     color: var(--bodyColor);
     background-color: white;
     box-shadow: 1px 1px 2px 1px rgb(218, 218, 218);
@@ -10,7 +10,7 @@
 }
 
 .p-progressbar .p-progressbar-value {
-  background-color: var(--greenColor) !important; 
+  background-color: var(--greenColor) !important;
 }
 
 .p-menuitem-active > .p-submenu-list {
@@ -19,11 +19,7 @@
 
 /* В вашем глобальном или локальном CSS-файле */
 .p-accordion .p-accordion-header .p-accordion-toggle-icon {
-    font-size: 6px;
-}
-/* Возможно, также потребуется скорректировать отступ, если он остается */
-.p-accordion .p-accordion-header-link {
-    /* padding-left: 1rem;  */
+    font-size: 0.375rem;
 }
 
 .attendance-table .p-datatable-thead > tr > th {
@@ -54,7 +50,7 @@
 
 /* calendar */
 .p-datepicker {
-    font-size: 12px !important;
+    font-size: 0.75rem !important;
     padding: 4px !important;
 }
 
@@ -67,13 +63,11 @@
 }
 
 .small-dropdown.p-dropdown {
-  /* height: 28px; */
-  font-size: 14px;
+  font-size: 0.9rem;
 }
 
 .small-dropdown .p-dropdown-label {
-  font-size: 14px;
-  /* padding: 4px 8px; */
+  font-size: 0.9rem;
   line-height: 1.2;
 }
 

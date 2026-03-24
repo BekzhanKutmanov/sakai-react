@@ -143,7 +143,7 @@ export const LayoutProvider = ({ children }: ChildContainerProps) => {
     };
 
     // filter state roles/students/page
-    const [contextFilterState, setContextFilterState] = useState<{faculty_id: number | null, specialyti_id: number | null} | null>(null);
+    const [contextFilterState, setContextFilterState] = useState<{ faculty_id: number | null; specialyti_id: number | null } | null>(null);
 
     useEffect(() => {
         // if (pathname === '/course' && !departament.name) {
@@ -239,7 +239,7 @@ export const LayoutProvider = ({ children }: ChildContainerProps) => {
             <LocalizationProvider>
                 <SessionManager />
                 {/* <GlobalLoading /> */}
-                <MyGlobalLoader/>
+                <MyGlobalLoader />
                 <ConfirmDialog />
 
                 {message.state && <Message />}

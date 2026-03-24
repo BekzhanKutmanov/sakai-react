@@ -440,7 +440,7 @@ export default function Module() {
                                                     <span className="checkbox-mark"></span>
                                                 </label>
                                             </div>
-                                            <span className="font-semibold max-w-[90%] sm:w-full text-[15px] sm:text-[16px] break-words">
+                                            <span className="font-semibold max-w-[90%] sm:w-full text-[0.938rem] sm:text-[1rem] break-words">
                                                 {idx + 1}. {getLocalized(course, 'name') || course.name_ru}
                                             </span>
                                         </div>

@@ -1,13 +1,11 @@
 'use client';
 
-import OpenCourseCard from '@/app/components/cards/OpenCourseCard';
 import MyDateTime from '@/app/components/MyDateTime';
 import { NotFound } from '@/app/components/NotFound';
 import GroupSkeleton from '@/app/components/skeleton/GroupSkeleton';
 import useErrorMessage from '@/hooks/useErrorMessage';
 import { LayoutContext } from '@/layout/context/layoutcontext';
 import { fetchActiveCourses } from '@/services/openCourse';
-import { myMainCourseType } from '@/types/myMainCourseType';
 import { CourseCategoryOption } from '@/types/openCourse/CourseCategoryOption';
 import { OptionsType } from '@/types/OptionsType';
 import Link from 'next/link';
@@ -15,13 +13,10 @@ import { ProgressSpinner } from 'primereact/progressspinner';
 import React, { useContext, useEffect, useState } from 'react';
 import { useLocalization } from '@/layout/context/localizationcontext';
 import { useLocalizedData } from '@/hooks/useLocalizedData';
-import { BottomNav } from '@/app/components/menu/MobileMenu';
 import useMediaQuery from '@/hooks/useMediaQuery';
 import MainTitle from '@/app/components/titles/MainTitle';
 
 export default function ActiveCourseList() {
-    // types
-
     const { user, setMessage } = useContext(LayoutContext);
     const showError = useErrorMessage();
     const media = useMediaQuery('(max-width: 640px)');

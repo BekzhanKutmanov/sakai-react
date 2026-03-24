@@ -411,8 +411,8 @@ export default function RolesDepartment() {
     const categoryItemTemplate = (option: any) => {
         return (
             <div className="w-full flex flex-col">
-                <span className="font-medium text-[13px] sm:text-md">{option.name}</span>
-                {option.description && <span className="text-xs text-gray-500 text-[12px] sm:text-sm max-w-[300px] text-wrap word-break sm:text-nowrap sm:max-w-full">{option.description}</span>}
+                <span className="font-medium text-[0.813rem] sm:text-md">{option.name}</span>
+                {option.description && <span className="text-xs text-gray-500 text-[0.75rem] sm:text-sm max-w-[300px] text-wrap word-break sm:text-nowrap sm:max-w-full">{option.description}</span>}
             </div>
         );
     };
@@ -436,9 +436,9 @@ export default function RolesDepartment() {
             <div className="w-full flex flex-col">
                 <div className="flex gap-1 items-center">
                     <img src={`/layout/images/flags/${option?.logo}`} alt="flag" className="w-[20px] h-[20px]" />
-                    <span className="font-medium text-[13px] sm:text-md">{option.title}</span>
+                    <span className="font-medium text-[0.75rem] sm:text-md">{option.title}</span>
                 </div>
-                {option.description && <span className="text-xs text-gray-500 text-[12px] sm:text-sm max-w-[300px] text-wrap word-break sm:text-nowrap sm:max-w-full">{option.description}</span>}
+                {option.description && <span className="text-xs text-gray-500 text-[0.75rem] sm:text-sm max-w-[300px] text-wrap word-break sm:text-nowrap sm:max-w-full">{option.description}</span>}
             </div>
         );
     };
@@ -451,7 +451,7 @@ export default function RolesDepartment() {
         return (
             <div className="flex gap-1 items-center">
                 <img src={`/layout/images/flags/${option?.logo}`} alt="flag" className="w-[20px] h-[20px]" />
-                <span className="font-medium text-[13px] sm:text-md">{option.title}</span>
+                <span className="font-medium text-[0.813rem] sm:text-md">{option.title}</span>
             </div>
         );
     };
@@ -463,7 +463,7 @@ export default function RolesDepartment() {
                 return (
                     <div key={item?.id} className="main-bg w-full flex flex-col gap-1 justify-start">
                         <div className="flex gap-1 items-center">
-                            <b className="text-[14px] text-[var(--mainColor)]">
+                            <b className="text-[0.9rem] text-[var(--mainColor)]">
                                 {item.last_name} {item.name} {item.father_name}
                             </b>
                         </div>
@@ -541,10 +541,10 @@ export default function RolesDepartment() {
             ) : (
                 <div className="main-bg overflow-x-auto scrollbar-thin">
                     <DataTable value={roles || []} dataKey="id" emptyMessage="..." loading={forDisabled} breakpoint="960px" key={JSON.stringify(forDisabled)} rows={5} className="min-w-[640px] overflow-x-auto">
-                        <Column header={() => <div className="text-[14px]">#</div>} body={(_, { rowIndex }) => rowIndex + 1} />
+                        <Column header={() => <div className="text-[0.9rem]">#</div>} body={(_, { rowIndex }) => rowIndex + 1} />
 
                         <Column
-                            header={() => <div className="text-[14px]">{translations.fullName}</div>}
+                            header={() => <div className="text-[0.9rem]">{translations.fullName}</div>}
                             body={(rowData: any) => (
                                 <div>
                                     {rowData.last_name} {rowData.name} {rowData.father_name}
@@ -643,16 +643,16 @@ export default function RolesDepartment() {
                 return (
                     <div key={item?.id} className="main-bg w-full flex flex-col gap-1 justify-start">
                         <div className="flex gap-1 flex-col">
-                            <b className="text-[14px] text-[var(--mainColor)]">
+                            <b className="text-[0.9rem] text-[var(--mainColor)]">
                                 {item?.user.last_name} {item?.user.name} {item?.user.father_name}
                             </b>
                             <div className="w-full flex flex-col gap-2">
-                                <Link href={`/roles/departament/check/${item?.id}`} key={item?.id} className="text-[14px] font-bold underline">
+                                <Link href={`/roles/departament/check/${item?.id}`} key={item?.id} className="text-[0.9rem] font-bold underline">
                                     {item.title}
                                 </Link>
                                 <div className="w-full flex justify-end">
                                     <i
-                                        className={`text-[13px] text-white rounded p-1
+                                        className={`text-[0.813rem] text-white rounded p-1
                                     ${item?.course_audience_type_id === 2 ? 'bg-[var(--greenColor)]' : item?.course_audience_type_id === 3 ? 'bg-[var(--amberColor)]' : ''}
                                     `}
                                     >
@@ -660,8 +660,8 @@ export default function RolesDepartment() {
                                     </i>
                                 </div>
                                 <div className="w-full flex justify-end items-center gap-2">
-                                    <div className="flex items-center gap-1 cursor-pointer text-[white] shadow rounded bg-[var(--mainColor)] p-1" style={{ fontSize: '12px' }}>
-                                        <i className="pi pi-check" style={{ fontSize: '12px' }}></i>
+                                    <div className="flex items-center gap-1 cursor-pointer text-[white] shadow rounded bg-[var(--mainColor)] p-1" style={{ fontSize: '0.75rem' }}>
+                                        <i className="pi pi-check" style={{ fontSize: '0.75rem' }}></i>
                                         <button
                                             onClick={() => {
                                                 setPublicStatus(1);
@@ -675,8 +675,8 @@ export default function RolesDepartment() {
                                             {translations.publish}
                                         </button>
                                     </div>
-                                    <div className="flex items-center gap-1 cursor-pointer text-[white] shadow rounded bg-[var(--redColor)] p-1" style={{ fontSize: '12px' }}>
-                                        <i className="pi pi-times" style={{ fontSize: '12px' }}></i>
+                                    <div className="flex items-center gap-1 cursor-pointer text-[white] shadow rounded bg-[var(--redColor)] p-1" style={{ fontSize: '0.75rem' }}>
+                                        <i className="pi pi-times" style={{ fontSize: '0.75rem' }}></i>
                                         <button
                                             onClick={() => {
                                                 setPublicStatus(0);
@@ -714,7 +714,7 @@ export default function RolesDepartment() {
                                 field="title"
                                 header={translations.courses}
                                 body={(rowData) => (
-                                    <Link href={`/roles/departament/check/${rowData?.id}`} key={rowData?.id} className="text-[14px] font-bold text-[var(--mainColor)] underline">
+                                    <Link href={`/roles/departament/check/${rowData?.id}`} key={rowData?.id} className="text-[0.9rem] font-bold text-[var(--mainColor)] underline">
                                         {rowData.title}
                                     </Link>
                                 )}
@@ -724,7 +724,7 @@ export default function RolesDepartment() {
                                 field="title"
                                 header={translations.teachers}
                                 body={(rowData) => (
-                                    <span key={rowData.id} className="text-[14px]">
+                                    <span key={rowData.id} className="text-[0.9rem]">
                                         {rowData?.user.last_name} {rowData?.user.name} {rowData?.user.father_name}
                                     </span>
                                 )}
@@ -736,7 +736,7 @@ export default function RolesDepartment() {
                                 body={(rowData) => (
                                     <div className="w-full flex justify-center">
                                         <i
-                                            className={`text-[13px] text-white rounded p-1
+                                            className={`text-[0.813rem] text-white rounded p-1
                                         ${rowData?.course_audience_type_id === 2 ? 'bg-[var(--greenColor)]' : rowData?.course_audience_type_id === 3 ? 'bg-[var(--amberColor)]' : ''}
                                         `}
                                         >
@@ -761,7 +761,7 @@ export default function RolesDepartment() {
                                                 handleDepLangFetch();
                                             }}
                                             className="cursor-pointer pi pi-check text-[white] shadow rounded-full bg-[var(--mainColor)] p-[5px]"
-                                            style={{ fontSize: '13px' }}
+                                            style={{ fontSize: '0.813rem' }}
                                         ></i>
                                         <i
                                             onClick={() => {
@@ -771,7 +771,7 @@ export default function RolesDepartment() {
                                                 setVisible(true);
                                             }}
                                             className="cursor-pointer pi pi-times text-[white] shadow rounded-full bg-[red] p-[5px]"
-                                            style={{ fontSize: '13px' }}
+                                            style={{ fontSize: '0.813rem' }}
                                         ></i>
                                     </div>
                                 )}
@@ -801,7 +801,7 @@ export default function RolesDepartment() {
                 itemCheckingTemplate(teachersCheck)
             ) : ( */}
             <div className="my-2 flex flex-col gap-1">
-                <h3 className="text-[16px] sm:text-lg pb-1 shadow-[var(--bottom-shadow)]">{translations.courseCategoryInfo}</h3>
+                <h3 className="text-[1rem] sm:text-lg pb-1 shadow-[var(--bottom-shadow)]">{translations.courseCategoryInfo}</h3>
                 <div className="flex justify-end">
                     <Button
                         size="small"
@@ -824,7 +824,7 @@ export default function RolesDepartment() {
                         field="title"
                         header={translations.courseCategories}
                         body={(rowData) => (
-                            <span key={rowData.id} className="text-[14px] ">
+                            <span key={rowData.id} className="text-[0.9rem] ">
                                 {rowData.title}
                             </span>
                         )}
@@ -1139,7 +1139,7 @@ export default function RolesDepartment() {
                                     headerAction: { className: 'font-italic' }
                                 }}
                                 header={translations.access}
-                                className="text-[13px] sm:text-[18px]"
+                                className="text-[0.813rem] sm:text-[1.125rem]"
                                 // className="p-tabview p-tabview-nav p-tabview-selected p-tabview-panels p-tabview-panel"
                             >
                                 {mainDepartamentSection}
@@ -1151,7 +1151,7 @@ export default function RolesDepartment() {
                                     headerAction: { className: 'font-italic' }
                                 }}
                                 header={translations.check}
-                                className="text-[13px] sm:text-[18px]"
+                                className="text-[0.813rem] sm:text-[1.125rem]"
                                 // className="p-tabview p-tabview-nav p-tabview-selected p-tabview-panels p-tabview-panel"
                             >
                                 {checkDepartamentSection}
@@ -1163,7 +1163,7 @@ export default function RolesDepartment() {
                                     headerAction: { className: 'font-italic' }
                                 }}
                                 header={translations.courseCategories}
-                                className="text-[13px] sm:text-[18px]"
+                                className="text-[0.813rem] sm:text-[1.125rem]"
                                 // className="p-tabview p-tabview-nav p-tabview-selected p-tabview-panels p-tabview-panel"
                             >
                                 {categorySection}

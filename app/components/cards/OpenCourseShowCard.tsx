@@ -42,7 +42,7 @@ export default function OpenCourseShowCard({ course, courseSignup, signUpList, b
                 <div className='flex flex-col'>
                     <div className={`flex gap-1 items-center text-white rounded p-1 mb-1 ${course?.audience_type?.name === 'open' ? 'bg-[var(--greenColor)]' : course?.audience_type?.name === 'wallet' ? 'bg-[var(--amberColor)]' : ''}`}>
                         <i className={course?.audience_type?.icon} style={{ fontSize: '14px' }}></i>
-                        <i className="text-[13px]">{course?.audience_type?.name === 'open' ? translations.free : course?.audience_type?.name === 'wallet' ? translations.paid : ''}</i>
+                        <i className="text-[0.813rem]">{course?.audience_type?.name === 'open' ? translations.free : course?.audience_type?.name === 'wallet' ? translations.paid : ''}</i>
                     </div>
                     {
                         course?.category?.title ?
@@ -80,7 +80,7 @@ export default function OpenCourseShowCard({ course, courseSignup, signUpList, b
                         <span className="text-[var(--mainColor)] text-sm p-1">{translations.languageOfInstruction}</span>
                         <div className='flex gap-1 items-center'>
                             <img src={`/layout/images/flags/${course?.language?.logo}`} alt="flag" className='w-[20px] h-[20px]' />
-                            <span className="font-medium text-[13px] sm:text-md">{course?.language?.title}</span>
+                            <span className="font-medium text-[0.813rem] sm:text-md">{course?.language?.title}</span>
                         </div>
                     </div>
                 </div>
@@ -107,16 +107,16 @@ export default function OpenCourseShowCard({ course, courseSignup, signUpList, b
             <div className="flex items-end gap-1 justify-between">
                 <div className="w-full">
                     {typeof isSigned === 'number' ? (
-                        <Button label={translations.youAreEnrolled} disabled size="small" className="bg-[var(--amberColor)] px-1 py-1.5" style={{ fontSize: '12px' }} onClick={() => courseSignup(course?.id)} />
+                        <Button label={translations.youAreEnrolled} disabled size="small" className="bg-[var(--amberColor)] px-1 py-1.5" style={{ fontSize: '0.75rem' }} onClick={() => courseSignup(course?.id)} />
                     ) : !course?.is_signed ? (
-                        <Button label={translations.enrollInCourse} disabled={btnDisabled} size="small" className="hover:opacity-90 text-white font-medium transition-all shadow-sm px-1 py-1.5" style={{fontSize: '12px'}} onClick={() => courseSignup(course?.id)} />
+                        <Button label={translations.enrollInCourse} disabled={btnDisabled} size="small" className="hover:opacity-90 text-white font-medium transition-all shadow-sm px-1 py-1.5" style={{fontSize: '0.75rem'}} onClick={() => courseSignup(course?.id)} />
                     ) : (
                         ''
                     )}
                 </div>
 
                 {/* data */}
-                <div className="w-full flex justify-end text-[13px] order-1 sm:order-2">
+                <div className="w-full flex justify-end text-[0.813rem] order-1 sm:order-2">
                     <MyDateTime createdAt={course?.created_at} options={options} />
                 </div>
             </div>

@@ -14,8 +14,6 @@ import { Column } from 'primereact/column';
 import { Chart } from 'primereact/chart';
 import MyDateTime from '@/app/components/MyDateTime';
 import { useLocalization } from '@/layout/context/localizationcontext';
-import { Dialog } from 'primereact/dialog';
-import { Button } from 'primereact/button';
 
 export default function Dashboard() {
     interface CourseTotalLastMonth {

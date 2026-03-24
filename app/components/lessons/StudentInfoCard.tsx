@@ -157,7 +157,7 @@ export default function StudentInfoCard({
                         onClick={() => setContextLastSubjectPageVisit(subjectId)}
                         href={`/teaching/lessonView/${lesson}/${subjectId}/${streams && streams.connections[0].id_stream}/${stepId}`}
                         // onClick={() => videoStart && videoStart(video_link || '')}
-                        className="cursor-pointer max-w-[800px] text-[16px] break-words hover:underline"
+                        className="cursor-pointer max-w-[800px] text-[1rem] break-words hover:underline"
                     >
                         {title}
                     </Link>
@@ -178,7 +178,7 @@ export default function StudentInfoCard({
                         onClick={() => setContextLastSubjectPageVisit(subjectId)}
                         href={`/teaching/lessonView/${lesson}/${subjectId}/${streams && streams.connections[0].id_stream}/${stepId}`}
                         // onClick={() => videoStart && videoStart(video_link || '')}
-                        className="cursor-pointer max-w-[800px] text-[16px] text-wrap break-all hover:underline"
+                        className="cursor-pointer max-w-[800px] text-[1rem] text-wrap break-all hover:underline"
                     >
                         {title}
                     </Link>
@@ -199,7 +199,7 @@ export default function StudentInfoCard({
                         onClick={() => setContextLastSubjectPageVisit(subjectId)}
                         href={`/teaching/lessonView/${lesson}/${subjectId}/${streams && streams.connections[0].id_stream}/${stepId}`}
                         // onClick={() => videoStart && videoStart(video_link || '')}
-                        className="cursor-pointer max-w-[800px] text-[16px] text-wrap break-all hover:underline"
+                        className="cursor-pointer max-w-[800px] text-[1rem] text-wrap break-all hover:underline"
                     >
                         {title}
                     </Link>
@@ -219,7 +219,7 @@ export default function StudentInfoCard({
                     <Link
                         onClick={() => setContextLastSubjectPageVisit(subjectId)}
                         href={`/teaching/lessonView/${lesson}/${subjectId}/${streams && streams.connections[0].id_stream}/${stepId}`}
-                        className="cursor-pointer max-w-[800px] text-[16px] text-wrap break-all hover:underline"
+                        className="cursor-pointer max-w-[800px] text-[1rem] text-wrap break-all hover:underline"
                     >
                         {translations.test}
                     </Link>
@@ -247,7 +247,7 @@ export default function StudentInfoCard({
                 <Link
                     onClick={() => setContextLastSubjectPageVisit(subjectId)}
                     href={`/teaching/lessonView/${lesson}/${subjectId}/${streams && streams.connections[0].id_stream}/${stepId}`}
-                    className="cursor-pointer max-w-[800px] text-[16px] text-wrap break-all hover:underline"
+                    className="cursor-pointer max-w-[800px] text-[1rem] text-wrap break-all hover:underline"
                 >
                     {translations.practicalTask}
                 </Link>
@@ -275,7 +275,7 @@ export default function StudentInfoCard({
                     <Link onClick={()=> {
                         forumValueAdd && forumValueAdd();
                         setContextLastSubjectPageVisit(subjectId);
-                    }} href={stepId && id_parent && contentId ? `/students/forum/${stepId}/${id_parent}/${contentId}` : '#'} className="cursor-pointer max-w-[1000px] text-[14px] sm:text-[16px] hover:underline">
+                    }} href={stepId && id_parent && contentId ? `/students/forum/${stepId}/${id_parent}/${contentId}` : '#'} className="cursor-pointer max-w-[1000px] text-[14px] sm:text-[1rem] hover:underline">
                         {translations.leaveFeedbackOrQuestion}
                     </Link>
                 </div>

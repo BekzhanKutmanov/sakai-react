@@ -97,7 +97,7 @@ export default function OpenCourseCard({
                             }`}
                     >
                         <i className={course?.audience_type?.icon} style={{ fontSize: '14px' }}></i>
-                        <i className="text-[13px]">{course?.audience_type?.name === 'open' ? translations.free : course?.audience_type?.name === 'wallet' ? translations.paid : ''}</i>
+                        <i className="text-[0.813rem]">{course?.audience_type?.name === 'open' ? translations.free : course?.audience_type?.name === 'wallet' ? translations.paid : ''}</i>
                     </div>
                 </div>
                 <div className="w-full flex flex-col items-end">
@@ -105,13 +105,13 @@ export default function OpenCourseCard({
                         className={`hidden sm:flex gap-1 items-center text-sm text-white rounded p-1 mb-1 ${course?.audience_type?.name === 'open' ? 'bg-[var(--greenColor)]' : course?.audience_type?.name === 'wallet' ? 'bg-[var(--amberColor)]' : ''
                             }`}
                     >
-                        <i className={course?.audience_type?.icon} style={{ fontSize: '14px' }}></i>
-                        <i className="text-[13px]">{course?.audience_type?.name === 'open' ? translations.free : course?.audience_type?.name === 'wallet' ? translations.paid : ''}</i>
+                        <i className={course?.audience_type?.icon} style={{ fontSize: '0.9rem' }}></i>
+                        <i className="text-[0.813rem]">{course?.audience_type?.name === 'open' ? translations.free : course?.audience_type?.name === 'wallet' ? translations.paid : ''}</i>
                     </div>
                     {
                         course?.category?.title ?
                             <div className='flex justify-start'>
-                                <p className='p-1 bg-[var(--redWeakColor)] text-[13px] max-w-[300px] break-words'>{course?.category.title}</p>
+                                <p className='p-1 bg-[var(--redWeakColor)] text-[0.813rem] max-w-[300px] break-words'>{course?.category.title}</p>
                             </div>
                             : ''
                     }
@@ -134,9 +134,9 @@ export default function OpenCourseCard({
                     {pathname !== '/openCourse/activeCourse' ?
                         <div className="w-full">
                             {typeof isSigned === 'number' ? (
-                                <Button label={translations.youAreEnrolled} disabled size="small" className="bg-[var(--amberColor)] px-1 py-1.5" style={{fontSize: '12px'}}/>
+                                <Button label={translations.youAreEnrolled} disabled size="small" className="bg-[var(--amberColor)] px-1 py-1.5" style={{fontSize: '0.75rem'}}/>
                             ) : !course?.is_signed ? (
-                                <Button label={translations.enrollInCourse} disabled={btnDisabled} size="small" className="hover:opacity-90 text-white font-medium transition-all shadow-sm px-1 py-1.5" style={{fontSize: '12px'}} onClick={() => {
+                                <Button label={translations.enrollInCourse} disabled={btnDisabled} size="small" className="hover:opacity-90 text-white font-medium transition-all shadow-sm px-1 py-1.5" style={{fontSize: '0.75rem'}} onClick={() => {
                                     setSelectedCourseId(course?.id);
                                     confirm1(course?.id);
                                 }} />
@@ -152,7 +152,7 @@ export default function OpenCourseCard({
                     </div> : ''}
                 </div>
                 {/* data */}
-                <div className="w-full flex justify-end text-[11px] order-1 sm:order-2">
+                <div className="w-full flex justify-end text-[0.688rem] order-1 sm:order-2">
                     <MyDateTime createdAt={course?.created_at} options={options} />
                 </div>
             </div>

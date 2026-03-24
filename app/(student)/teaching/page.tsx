@@ -119,7 +119,7 @@ export default function Teaching() {
         // превращаем в jsx
         const x = displayData.map((semester: any, sIdx: number) => (
             <div className="flex flex-col gap-2" key={sIdx}>
-                <h3 className="text-center text-[22px] sm:text-[26px] mb-1">{getLocalized(semester.semester, 'name') || semester.semester.name_kg}</h3>
+                <h3 className="text-center text-[1.375rem] sm:text-[1.625rem] mb-1">{getLocalized(semester.semester, 'name') || semester.semester.name_kg}</h3>
                 <div key={sIdx} className="flex flex-col gap-2">
                     {Object.values(semester)
                         .filter((val: any) => val.subject)
@@ -169,7 +169,7 @@ export default function Teaching() {
                         <GroupSkeleton count={1} size={{ width: '100%', height: '4rem' }} />
                     ) : (
                         <div className="flex flex-col sm:flex-row justify-between items-center gap-2 mb-4 py-2 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">
-                            <h3 className="text-[24px] sm:text-[28px] font-bold m-0">{translations.trainingPlan}</h3>
+                            <h3 className="text-[1.5rem] sm:text-[1.75rem] font-bold m-0">{translations.trainingPlan}</h3>
 
                             <Dropdown
                                 value={selectedSort}

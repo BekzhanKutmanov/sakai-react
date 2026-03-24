@@ -38,6 +38,11 @@
   --bottom-shadow: 0 2px 1px 0 rgba(0, 0, 0, 0.1);
 }
 
+html {
+    /*font-size: 16px;*/
+    font-size: 20px;
+}
+
 * {box-sizing: border-box}
 
 p {
@@ -707,11 +712,11 @@ html.loaded #preloader {
 
 @media (max-width: 480px) {
   .p-button-label {
-    font-size: 14px !important;
+    font-size: 0.9rem !important;
   }
   .p-button-icon{
     width: 14px !important;
-    font-size: 14px !important;
+    font-size: 0.9rem !important;
   }
   .p-button{
     padding: 4px 5px !important;
@@ -794,7 +799,7 @@ html.loaded #preloader {
 
 @media screen and (max-width: 640px) {
   .p-button-label .p-clickable{
-    font-size: 14px !important;
+    font-size: 0.9rem !important;
   }
   .p-fileupload-choose{
     padding: 4px 5px;
@@ -803,12 +808,12 @@ html.loaded #preloader {
 
 /* menu item , sidebar */
 .p-menuitem-link, .p-menuitem-icon{
-  font-size: 13px !important;
+  font-size: 0.8rem !important;
 }
 
 @media screen and (max-width: 640px) {
   .layout-menuitem-text{
-    font-size: 13px !important;
+    font-size:  0.8rem !important;
   }
 }
 
@@ -842,7 +847,7 @@ html.loaded #preloader {
 
 @media screen and (max-width: 640px) {
   .p-inputtext{
-    font-size: 14px !important;
+    font-size: 0.9rem !important;
     padding: 8px;
   }
 }

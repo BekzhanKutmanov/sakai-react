@@ -117,11 +117,11 @@ export default function StudentsPage() {
                                 <span>{student?.father_name}</span>
                             </Link>
                         </div>
-                        <span className="bg-slate-100 text-slate-600 text-[10px] font-bold px-2 py-1 rounded-full border border-slate-200 shrink-0 ml-2">{student.myedu_id}</span>
+                        <span className="bg-slate-100 text-slate-600 text-[0.625rem] font-bold px-2 py-1 rounded-full border border-slate-200 shrink-0 ml-2">{student.myedu_id}</span>
                     </div>
 
                     <div className="text-xs text-slate-500 mb-4">
-                        <span className="block uppercase font-semibold text-[10px] text-slate-400 mb-1">Специальность:</span>
+                        <span className="block uppercase font-semibold text-[0.625rem] text-slate-400 mb-1">Специальность:</span>
                         {student.speciality ? student.speciality?.name_ru : ''}
                     </div>
                     <Link
@@ -152,7 +152,7 @@ export default function StudentsPage() {
                     </div>
                 ) : (
                     <>
-                        <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden hidden md:block">
+                        <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-x-scroll scrollbar-thin hidden md:block">
                             <table className="w-full text-left border-collapse">
                                 <thead>
                                     <tr className="border-b border-slate-100 text-slate-500 text-sm font-medium">
@@ -173,7 +173,7 @@ export default function StudentsPage() {
                                                 </Link>
                                             </td>
                                             <td className="py-4 px-6">
-                                                <span className="bg-slate-100 text-slate-600 text-[10px] font-bold px-2 py-1 rounded-full border border-slate-200">{student.myedu_id}</span>
+                                                <span className="bg-slate-100 text-slate-600 text-[0.625rem] font-bold px-2 py-1 rounded-full border border-slate-200">{student.myedu_id}</span>
                                             </td>
                                             <td className="py-4 px-6 text-slate-600 text-sm">{student.speciality ? student.speciality?.name_ru : ''}</td>
                                             <td className="py-4 px-6 text-right">

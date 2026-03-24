@@ -26,7 +26,6 @@ export default function ActiveLessonDetail() {
     }
 
     const { course_id, lesson_id, step_id } = useParams();
-    const params = new URLSearchParams();
 
     const media = useMediaQuery('(max-width: 640px)');
     const showError = useErrorMessage();
@@ -270,11 +269,11 @@ export default function ActiveLessonDetail() {
         <div className="flex flex-col gap-2">
             <div className="p-2 mt-2 mb-4 w-full flex flex-col gap-3 items-center">
                 <div className="w-full flex gap-1 items-center mb-2 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">
-                    <span className="sm:text-[18px]">{steps?.type?.title}</span>
+                    <span className="sm:text-[1.125rem]">{steps?.type?.title}</span>
                     <i className={`${steps?.type?.logo} text-2xl`}></i>
                 </div>
                 <div className="w-full flex flex-col gap-1">
-                    <b className="text-[16px] sm:text-[18px] break-words">{document?.content?.title}</b>
+                    <b className="text-[1rem] sm:text-[1.125rem] break-words">{document?.content?.title}</b>
                     {document?.content?.description && <div className="flex flex-col gap-2 ">{document?.content?.description && <div className="lesson-card-border shadow rounded p-2 sm:w-full md:w-[70%]">{document?.content?.description}</div>}</div>}
                 </div>
                 <div className="w-full flex gap-2 items-center">
@@ -298,16 +297,16 @@ export default function ActiveLessonDetail() {
         <div className="p-2 mt-2 mb-4">
             <div className="flex flex-col w-full gap-3">
                 <div className="w-full flex gap-1 items-center mb-2 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">
-                    <span className="sm:text-[18px]">{steps?.type?.title}</span>
+                    <span className="sm:text-[1.125rem]">{steps?.type?.title}</span>
                     <i className={`${steps?.type?.logo} text-2xl`}></i>
                 </div>
                 <div className="w-full flex flex-col gap-1">
-                    <b className="text-[16px] sm:text-[18px] break-words">{link?.content?.title}</b>
+                    <b className="text-[1rem] sm:text-[1.125rem] break-words">{link?.content?.title}</b>
                     {link?.content?.description && <div className="flex flex-col gap-2">{link?.content?.description && <div className="lesson-card-border shadow rounded p-2 sm:w-full md:w-[70%]">{link?.content?.description}</div>}</div>}
                 </div>
                 <div className="flex gap-1 items-start flex-col sm:flex-row">
                     <span className="text-[var(--mainColor)]">{translations.linkLabel}: </span>
-                    <a href={link ? String(link?.content?.url) : '#'} className="max-w-[800px] text-[16px] break-words hover:underline" target="_blank">
+                    <a href={link ? String(link?.content?.url) : '#'} className="max-w-[800px] text-[1rem] break-words hover:underline" target="_blank">
                         {link?.content?.url}
                     </a>
                 </div>
@@ -319,17 +318,17 @@ export default function ActiveLessonDetail() {
         <div className="p-2 mt-2 mb-4 flex flex-col gap-3">
             <div className="flex justify-between gap-1 items-center flex-col sm:flex-row shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">
                 <div className="flex gap-1 items-center">
-                    <span className="sm:text-[18px]">{steps?.type?.title}</span>
+                    <span className="sm:text-[1.125rem]">{steps?.type?.title}</span>
                     <i className={`${steps?.type?.logo} text-2xl`}></i>
                 </div>
                 <div className="flex items-center gap-1 my-2">
                     <span className="text-[var(--mainColor)]">Балл за задание: </span>
-                    <b className="text-[16px] sm:text-[18px] ">{`${steps?.score}`}</b>
+                    <b className="text-[1rem] sm:text-[1.125rem] ">{`${steps?.score}`}</b>
                 </div>
             </div>
 
             <div className="flex flex-col gap-2">
-                <b className="text-[16px] sm:text-[18px] break-words">{practica?.content?.title}</b>
+                <b className="text-[1rem] sm:text-[1.125rem] break-words">{practica?.content?.title}</b>
 
                 <div className="lesson-card-border shadow rounded p-2">
                     {practica?.content?.description && <div className="p-2 sm:w-full md:w-[70%]" dangerouslySetInnerHTML={{ __html: practica?.content?.description }} />}
@@ -426,16 +425,16 @@ export default function ActiveLessonDetail() {
             <div className="lesson-card-border shadow rounded p-2">
                 <div className="flex justify-between gap-1 items-center flex-col sm:flex-row shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">
                     <div className="flex gap-1 items-center">
-                        <span className="sm:text-[18px]">{steps?.type?.title}</span>
+                        <span className="sm:text-[1.125rem]">{steps?.type?.title}</span>
                         <i className={`${steps?.type?.logo} text-2xl`}></i>
                     </div>
                     <div className="flex items-center gap-1 my-2">
                         <span className="text-[var(--mainColor)]">Балл за задание: </span>
-                        <b className="text-[16px] sm:text-[18px] ">{`${steps?.score}`}</b>
+                        <b className="text-[1rem] sm:text-[1.125rem] ">{`${steps?.score}`}</b>
                     </div>
                 </div>
                 <div className="flex flex-col gap-2 p-1 sm:p-2">
-                    <b className="sm:text-[18px]">{test?.content?.content}</b>
+                    <b className="sm:text-[1.125rem]">{test?.content?.content}</b>
                     <div className="w-full flex flex-col justify-start items-start gap-2">
                         {test?.content?.answers.map((item, index) => {
                             return (
@@ -453,7 +452,7 @@ export default function ActiveLessonDetail() {
                                                         setAnswer((prev) => prev && prev.map((ans, i) => (i === index ? { ...ans, is_correct: true } : { ...ans, is_correct: false })));
                                                     }}
                                                 />
-                                                <span className={`radio-mark  min-w-[18px] ${steps?.count_attempt && steps?.count_attempt >= 3 ? 'opacity-50' : ''}`}></span>
+                                                <span className={`radio-mark  min-w-[1.125rem] ${steps?.count_attempt && steps?.count_attempt >= 3 ? 'opacity-50' : ''}`}></span>
                                             </label>
                                             <div className="bg-gray border border-[var(--borderBottomColor)] py-[5px] pl-1 w-full">{item.text}</div>
                                         </>
@@ -469,7 +468,7 @@ export default function ActiveLessonDetail() {
                                                         setAnswer((prev) => prev && prev.map((ans, i) => (i === index ? { ...ans, is_correct: true } : { ...ans, is_correct: false })));
                                                     }}
                                                 />
-                                                <span className={`radio-mark min-w-[18px] ${steps?.count_attempt && steps?.count_attempt >= 3 ? 'opacity-50' : ''}`}></span>
+                                                <span className={`radio-mark min-w-[1.125rem] ${steps?.count_attempt && steps?.count_attempt >= 3 ? 'opacity-50' : ''}`}></span>
                                             </label>
                                             <div className="bg-gray border border-[var(--borderBottomColor)] py-[5px] pl-1 w-full">{item.text}</div>
                                         </>
@@ -502,13 +501,13 @@ export default function ActiveLessonDetail() {
         <div className="lesson-card-border shadow rounded p-2 mt-2">
             <div className="flex flex-col gap-2">
                 <div className="w-full flex gap-1 items-center mb-  2 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">
-                    <span className="sm:text-[18px]">{steps?.type?.title}</span>
+                    <span className="sm:text-[1.125rem]">{steps?.type?.title}</span>
                     <i className={`${steps?.type?.logo} text-2xl`}></i>
                 </div>
                 <div className="flex flex-col gap-2">
                     {video?.content?.description && (
                         <div className="w-full flex flex-col gap-1">
-                            <b className="text-[16px] sm:text-[18px] text-wrap break-words">{video?.content?.title}</b>
+                            <b className="text-[1rem] sm:text-[1.125rem] text-wrap break-words">{video?.content?.title}</b>
                             {video?.content?.description && <div className="flex flex-col gap-2">{video?.content?.description && <div className="lesson-card-border shadow rounded p-2 sm:w-full md:w-[70%]">{video?.content?.description}</div>}</div>}
                         </div>
                     )}
@@ -548,7 +547,7 @@ export default function ActiveLessonDetail() {
                             </h1>
                             <div className="flex justify-end gap-1 flex-col sm:flex-row mt-2">
                                 <h3 className="text-white m-0 sm:text-lg">{translations.theme}: </h3>
-                                <h3 className="text-white text-[16px] m-0 sm:text-[18px]">{lessonName ? lessonName : '------'}</h3>
+                                <h3 className="text-white text-[1rem] m-0 sm:text-[1.125rem]">{lessonName ? lessonName : '------'}</h3>
                             </div>
                             <span className="w-[99%] break-wordsz">{getLocalized(courseInfo, 'description') || courseInfo?.description} </span>
                         </div>
