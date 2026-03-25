@@ -11,7 +11,7 @@ import { useLocalization } from '@/layout/context/localizationcontext';
 const AppConfig = (props: AppConfigProps) => {
     const [scales] = useState<number[]>([16, 18, 20, 22]);
     const { layoutConfig, setLayoutConfig, layoutState, setLayoutState } = useContext(LayoutContext);
-    const { language } = useLocalization();
+    const { translations, language } = useLocalization();
 
     const [isA11y, setIsA11y] = useState(()=> {
         if(typeof window !== 'undefined') {
@@ -39,16 +39,16 @@ const AppConfig = (props: AppConfigProps) => {
         let word = ''
         switch (item) {
             case 16 :
-                word = 'Обычный'
+                word = translations.scaleDefault
                 break;
             case 18 :
-                word = 'Средний'
+                word = translations.scaleMd
                 break;
             case 20 :
-                word = 'Большой'
+                word = translations.scaleLg
                 break;
             case 22 :
-                word = 'Очень большой'
+                word = translations.scaleXl
                 break;
             default :
                 word = ''
@@ -81,16 +81,16 @@ const AppConfig = (props: AppConfigProps) => {
                 <i className="pi pi-cog"></i>
             </button>
 
-            <Dialog header="Настройки интерфейса" visible={layoutState.configSidebarVisible} position="right" onHide={onConfigSidebarHide} draggable={false} resizable={false} className="w-full sm:w-25rem">
+            <Dialog header={translations.panelTitle} visible={layoutState.configSidebarVisible} position="right" onHide={onConfigSidebarHide} draggable={false} resizable={false} className="w-full sm:w-25rem">
                 {!props.simple && (
                     <div className="flex flex-col gap-3">
                         <div className={'flex flex-col gap-2'}>
-                            <span className="text-[var(bodyColor)]">Зрение</span>
+                            <span className="text-[var(bodyColor)]">{translations.visionBlock}</span>
                             <section>
                                 <div className={'flex items-center gap-2 shadow p-2'}>
                                     <div className={'flex items-center text-[var(--mainColor)] font-bold'}><span>A</span> <span className={'h-[30px]'}>+</span></div>
                                     <div className={'flex items-center gap-2'}>
-                                        <span>Увеличенный текст</span>
+                                        <span>{translations.toggleLargeText}</span>
                                        <label className="custom-radio text-xl leading-none">
                                         <input
                                             type="checkbox"
@@ -109,7 +109,7 @@ const AppConfig = (props: AppConfigProps) => {
                                 <div className={'flex items-center gap-2 shadow p-2'}>
                                     <div className={'bg-[black] rounded-lg relative w-[20px] h-[20px]'}><span className={'absolute right-0 top-[10%] rounded-full z-10 bg-[white] w-[12px] h-[12px]'}></span></div>
                                     <div className={'flex items-center gap-2'}>
-                                        <span>Высокий контраст</span>
+                                        <span>{translations.toggleHighContrast}</span>
                                         <label className="custom-radio text-xl leading-none">
                                             <input
                                                 type="checkbox"
@@ -128,7 +128,7 @@ const AppConfig = (props: AppConfigProps) => {
                         </div>
 
                         <section>
-                            <span className="text-[var(bodyColor)]">Размер шрифта</span>
+                            <span className="text-[var(bodyColor)]">{translations.fontScaleLabel}</span>
                             <div className="flex align-items-center justify-content-between py-2 surface-ground border-round-xl">
                                 {/*<Button icon="pi pi-minus" type="button" onClick={decrementScale} rounded text className="w-2rem h-2rem text-600" disabled={layoutConfig.scale === scales[0]} />*/}
                                 <div className="flex gap-1 flex-col">
@@ -161,7 +161,7 @@ const AppConfig = (props: AppConfigProps) => {
                         </section>
 
                         <section className={'flex flex-col gap-2'}>
-                            <span className="text-[var(bodyColor)]">Язык</span>
+                            <span className="text-[var(bodyColor)]">{translations.langSwitcher}</span>
                             <div className="max-w-[200px] flex items-center gap-1">
                                 <LocalizationSwift />
                                 <span className={'text-sm'}>{language === 'ru' ? 'Русский' : language === 'ky' ? 'Кыргызча' : '' }</span>

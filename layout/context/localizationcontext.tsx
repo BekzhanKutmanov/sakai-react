@@ -16,7 +16,7 @@ export const localizationData = {
         save: 'Сохранить',
         add: 'Добавить',
         edit: 'Редактировать',
-        update:'Обновить',
+        update: 'Обновить',
         delete: 'Удалить',
         cancel: 'Отмена',
         back: 'Назад',
@@ -396,6 +396,18 @@ export const localizationData = {
         mainPageLink: 'Главная',
         panelPage: 'Панель',
         learnPage: 'Обучение',
+
+        // App config
+        panelTitle: 'Настройки интерфейса',
+        visionBlock: 'Зрение',
+        toggleLargeText: 'Увеличенный текст',
+        toggleHighContrast: 'Высокий контраст',
+        fontScaleLabel: 'Размер шрифта',
+        scaleDefault: 'Обычный',
+        scaleMd: 'Средний',
+        scaleLg: 'Большой',
+        scaleXl: 'Очень большой',
+        langSwitcher: 'Язык'
     },
     ky: {
         oshSU: 'ОшМУ',
@@ -410,7 +422,7 @@ export const localizationData = {
         save: 'Сактоо',
         add: 'Кошуу',
         edit: 'Оңдоо',
-        update:'Өзгөртүү',
+        update: 'Өзгөртүү',
         delete: 'Өчүрүү',
         cancel: 'Жокко чыгаруу',
         back: 'Артка',
@@ -788,6 +800,18 @@ export const localizationData = {
         mainPageLink: 'Башкы бет',
         panelPage: 'Панель',
         learnPage: 'Окуу планы',
+
+        // App config
+        panelTitle: 'Интерфейс жөндөөлөрү',
+        visionBlock: 'Көрүү',
+        toggleLargeText: 'Чоңойтулган текст',
+        toggleHighContrast: 'Жогорку контраст',
+        fontScaleLabel: 'Шрифттин өлчөмү',
+        scaleDefault: 'Кадимки',
+        scaleMd: 'Орточо',
+        scaleLg: 'Чоң',
+        scaleXl: 'Өтө чоң',
+        langSwitcher: 'Тил'
     }
 };
 
