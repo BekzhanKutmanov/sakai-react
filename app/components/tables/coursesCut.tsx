@@ -247,7 +247,6 @@ export default function CoursesCut({ id_student }: { id_student: number | null }
 
     return (
         <div>
-            <div></div>
             <div className="w-full mt-4">
                 <div className="block sm:hidden">{renderMobileCards()}</div>
                 <div className="w-full overflow-x-auto bg-white rounded-2xl shadow-lg hidden sm:block">

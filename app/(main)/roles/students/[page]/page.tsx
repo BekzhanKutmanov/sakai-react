@@ -178,8 +178,8 @@ export default function StudentsPage() {
                                             <td className="py-4 px-6 text-slate-600 text-sm">{student.speciality ? student.speciality?.name_ru : ''}</td>
                                             <td className="py-4 px-6 text-right">
                                                 <Link href={`/roles/students/1/${student?.id}`}>
-                                                    <button className="cursor-pointer bg-[var(--mainColor)] hover:opacity-90 text-white px-4 py-2 rounded-lg flex items-center gap-2 text-sm font-medium transition-all shadow-sm">
-                                                        <i className="pi pi-book text-white text-sm"></i>
+                                                    <button className="cursor-pointer bg-[var(--mainColor)] hover:opacity-90 text-[var(--whiteColor)] px-4 py-2 rounded-lg flex items-center gap-2 text-sm font-medium transition-all shadow-sm">
+                                                        <i className="pi pi-book text-[var(--whiteColor)] text-sm"></i>
                                                         {translations.checkingWork}
                                                     </button>
                                                 </Link>

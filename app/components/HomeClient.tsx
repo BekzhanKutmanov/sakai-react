@@ -21,6 +21,7 @@ import { Sidebar } from 'primereact/sidebar';
 import OpenCourseShowCard from './cards/OpenCourseShowCard';
 import { CourseCategoryOption } from '@/types/openCourse/CourseCategoryOption';
 import { useLocalization } from '@/layout/context/localizationcontext';
+import AppConfig from '@/layout/AppConfig';
 
 export default function HomeClient() {
     // types
@@ -320,6 +321,8 @@ export default function HomeClient() {
 
                 {/* Counter Statistics */}
                 <CounterBanner statisticValue={statistics} />
+
+                <AppConfig/>
 
                 {/* open courses */}
 

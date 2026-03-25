@@ -122,10 +122,6 @@ const StudentDetailPage = ({ params }: { params: { student_id: string } }) => {
         handleFetchStudentData();
     }, [params.student_id]);
 
-    // useEffect(()=> {
-    //     console.log(answer_ids);
-    // },[answer_ids])
-
     useEffect(() => {
         handleFetchStudentDetail();
     }, []);
@@ -298,7 +294,7 @@ const StudentDetailPage = ({ params }: { params: { student_id: string } }) => {
                                                                                 )}
                                                                                 <div className="flex items-center gap-2">
                                                                                     <div className="flex p-2 bg-[#c38598] shadow-xl min-w-[40px] min-h-[40px] w-[40px] h-[40px] justify-center items-center rounded">
-                                                                                        <i className={`pi pi-list-check text-white`}></i>
+                                                                                        <i className={`pi pi-list-check text-[var(--whiteColor)]`}></i>
                                                                                     </div>
                                                                                     <span className="font-bold max-w-[70%] sm:max-w-[90%] break-words">{step?.test?.content || 'Тест'}</span>
                                                                                 </div>
@@ -360,7 +356,7 @@ const StudentDetailPage = ({ params }: { params: { student_id: string } }) => {
                                                                                 )}
                                                                                 <div className="flex items-start sm:items-center gap-2">
                                                                                     <div className="flex p-2 bg-[var(--yellowColor)] shadow-xl min-w-[40px] min-h-[40px] w-[40px] h-[40px] justify-center items-center rounded">
-                                                                                        <i className={`pi pi-pen-to-square text-white`}></i>
+                                                                                        <i className={`pi pi-pen-to-square text-[var(--whiteColor)]`}></i>
                                                                                     </div>
                                                                                     <span className="font-bold max-w-[70%] sm:max-w-[90%] break-words">{step?.practical?.title || 'Практическая работа'}</span>
                                                                                 </div>

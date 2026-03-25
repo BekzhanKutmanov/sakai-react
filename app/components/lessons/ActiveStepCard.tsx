@@ -124,7 +124,7 @@ export default function ActiveStepCard({
             <div className="w-full flex flex-col sm:flex-row gap-1">
                 <div className="w-full flex items-center gap-2">
                     <div className="p-2 bg-[var(--mainColor)] shadow-xl min-w-[40px] min-h-[40px] w-[40px] h-[40px] flex justify-center items-center rounded">
-                        <i className={`${icon} text-white`}></i>
+                        <i className={`${icon} text-[var(--whiteColor)]`}></i>
                     </div>
                     <Link
                         href={`/openCourse/activeCourse/${course_id}/${lessonItem?.id}/${stepId}`}
@@ -143,7 +143,7 @@ export default function ActiveStepCard({
         <div className="w-full py-1 flex items-center flex-col gap-2 sm:flex-row">
             <div className="w-full flex sm:flex-row gap-2">
                 <div className="p-2 bg-[var(--greenColor)] shadow-xl min-w-[40px] min-h-[40px] w-[40px] h-[40px] flex justify-center items-center rounded">
-                    <i className={`${icon} text-white`}></i>
+                    <i className={`${icon} text-[var(--whiteColor)]`}></i>
                 </div>
                 <div className="flex flex-col justify-center gap-1 max-w-[800px] break-words">
                     <Link
@@ -163,7 +163,7 @@ export default function ActiveStepCard({
         <div className="w-full flex items-center flex-col gap-2 sm:flex-row py-1">
             <div className="w-full flex items-center gap-2">
                 <div className="p-2 bg-[var(--amberColor)] shadow-xl min-w-[40px] min-h-[40px] w-[40px] h-[40px] flex justify-center items-center rounded">
-                    <i className={`${icon} text-white`}></i>
+                    <i className={`${icon} text-[var(--whiteColor)]`}></i>
                 </div>
                 <div className="flex flex-col justify-center gap-1 max-w-[800px] text-wrap break-all">
                     <Link
@@ -183,7 +183,7 @@ export default function ActiveStepCard({
         <div className="w-full flex items-center flex-col gap-2 sm:flex-row py-1">
             <div className="w-full flex items-center gap-2">
                 <div className="p-2 bg-[#c38598] shadow-xl min-w-[40px] min-h-[40px] w-[40px] h-[40px] flex justify-center items-center rounded">
-                    <i className={`${icon} text-white`}></i>
+                    <i className={`${icon} text-[var(--whiteColor)]`}></i>
                 </div>
                 <div className="w-full flex justify-between gap-1 max-w-[800px] text-wrap break-all">
                     <Link href={`/openCourse/activeCourse/${course_id}/${lessonItem?.id}/${stepId}`} className="cursor-pointer max-w-[800px] text-[1rem] text-wrap break-all hover:underline">
@@ -208,7 +208,7 @@ export default function ActiveStepCard({
         <div className="w-full flex items-center flex-col gap-1 sm:flex-row py-1">
             <div className="w-full flex items-center gap-2">
                 <div className="p-2 bg-[var(--yellowColor)] shadow-xl min-w-[40px] min-h-[40px] w-[40px] h-[40px] flex justify-center items-center rounded">
-                    <i className={`${icon} text-white`}></i>
+                    <i className={`${icon} text-[var(--whiteColor)]`}></i>
                 </div>
                 <Link href={`/openCourse/activeCourse/${course_id}/${lessonItem?.id}/${stepId}`} className="cursor-pointer max-w-[800px] text-[1rem] text-wrap break-all hover:underline">
                     {translations.practicalTask}
@@ -234,7 +234,7 @@ export default function ActiveStepCard({
         <div className="w-full flex items-center flex-col sm:flex-row py-1">
             <div className="w-full flex items-center gap-2">
                 <div className="p-2 bg-[#6099a8] shadow-xl min-w-[40px] min-h-[40px] w-[40px] h-[40px] flex justify-center items-center rounded">
-                    <i className={`${icon} text-white`}></i>
+                    <i className={`${icon} text-[var(--whiteColor)]`}></i>
                 </div>
                 <div className="flex flex-col justify-center gap-1 max-w-[1000px]">
                     {/* <Link onClick={forumValueAdd} href={stepId && id_parent && contentId ? `/students/forum/${stepId}/${id_parent}/${contentId}` : '#'} className="cursor-pointer max-w-[1000px] text-[14px] sm:text-[1rem] hover:underline">

@@ -213,7 +213,7 @@ const AppMenu = () => {
                                   {/* Условное отображение красного кружка (бэйджа) */}
                                   {contextVerifedValue?.length ? (
                                       <div className="relative">
-                                          <div className={`absolute -right-3 -top-3 px-1 bg-[var(--amberColor)] rounded text-white text-[11px]`}>{contextVerifedValue?.length}</div>
+                                          <div className={`absolute -right-3 -top-3 px-1 bg-[var(--amberColor)] rounded text-[var(--whiteColor)] text-[11px]`}>{contextVerifedValue?.length}</div>
                                           <button className={`cursor-pointer flex gap-2 items-center px-0 bg-white text-blue-300 p-2 font-bold`} />
                                       </div>
                                   ) : (
@@ -344,7 +344,7 @@ const AppMenu = () => {
                               {/* Условное отображение красного кружка (бэйджа) */}
                               {contextVerifedValue?.length ? (
                                   <div className="relative">
-                                      <div className={`absolute -right-3 -top-3 px-1 bg-[var(--amberColor)] rounded text-white text-[11px]`}>{contextVerifedValue?.length}</div>
+                                      <div className={`absolute -right-3 -top-3 px-1 bg-[var(--amberColor)] rounded text-[var(--whiteColor)] text-[11px]`}>{contextVerifedValue?.length}</div>
                                       <button className={`cursor-pointer flex gap-2 items-center px-0 bg-white text-blue-300 p-2 font-bold`} />
                                   </div>
                               ) : (

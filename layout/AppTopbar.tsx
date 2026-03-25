@@ -323,7 +323,7 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                                 // <Tiered title={{ name: '', font: 'pi pi-bell' }} items={user?.is_working ? working_notification : user?.is_student ? student_notification : []} insideColor={'--titleColor'} />
                                 <div className="px-3 border-x-1 border-[var(--borderBottomColor)]">
                                     <div className="relative">
-                                        {notification?.length > 0 ? <div className={`absolute -right-1 -top-1 px-1 bg-[var(--amberColor)] rounded text-white text-[11px]`}>{notification.length}</div> : ''}
+                                        {notification?.length > 0 ? <div className={`absolute -right-1 -top-1 px-1 bg-[var(--amberColor)] rounded text-[var(--whiteColor)] text-[11px]`}>{notification.length}</div> : ''}
                                         <button
                                             // icon={title.font}
                                             onClick={(e) => toggleMenu(e)}
@@ -352,7 +352,7 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                             ) : user?.is_student ? (
                                 <div className="px-3 border-x-1 border-[var(--borderBottomColor)]">
                                     <div className="relative">
-                                        {notification?.length > 0 ? <div className={`absolute -right-1 -top-1 px-1 bg-[var(--amberColor)] rounded text-white text-[11px]`}>{notification.length}</div> : ''}
+                                        {notification?.length > 0 ? <div className={`absolute -right-1 -top-1 px-1 bg-[var(--amberColor)] rounded text-[var(--whiteColor)] text-[11px]`}>{notification.length}</div> : ''}
                                         <button
                                             // icon={title.font}
                                             onClick={(e) => toggleMenu(e)}

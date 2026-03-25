@@ -213,7 +213,7 @@ export default function StudentCheck() {
                 </div>
             ) : (
                 <div>
-                    {courseShow && courseShow?.title ? <h1 className="text-2xl bg-[var(--titleColor)] text-white text-center p-3">{courseShow?.title}</h1> : ''}
+                    {courseShow && courseShow?.title ? <h1 className="text-2xl bg-[var(--titleColor)] text-[var(--whiteColor)] text-center p-3">{courseShow?.title}</h1> : ''}
 
                     <h2 style={{ marginBottom: 20 }} className="text-md sm:text-lg flex items-center justify-center gap-2">
                         <span>Активность студента: </span>

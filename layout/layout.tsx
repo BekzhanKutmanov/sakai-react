@@ -13,6 +13,7 @@ import { usePathname, useSearchParams } from 'next/navigation';
 import { LocalizationProvider, useLocalization } from '@/layout/context/localizationcontext';
 import { BottomNav } from '@/app/components/menu/MobileMenu';
 import useMediaQuery from '@/hooks/useMediaQuery';
+import AppConfig from '@/layout/AppConfig';
 
 const Layout = ({ children }: ChildContainerProps) => {
     const { layoutConfig, layoutState, setLayoutState, user } = useContext(LayoutContext);
@@ -136,7 +137,7 @@ const Layout = ({ children }: ChildContainerProps) => {
                         <div className="layout-main">{children}</div>
                         {/* <AppFooter /> */}
                     </div>
-                     {/*<AppConfig />*/}
+                     <AppConfig />
                     <div className="layout-mask"></div>
                     {user?.is_student && media && !pathname.startsWith('/teaching/lessonView/') && <BottomNav />}
                 </div>

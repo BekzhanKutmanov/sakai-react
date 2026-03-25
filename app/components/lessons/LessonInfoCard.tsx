@@ -170,9 +170,9 @@ export default function LessonInfoCard({
                             <div className="flex items-center gap-1">
                                 <span className="text-[var(--mainColor)] text-[13px]">Документ: </span>
                                 {documentUrl && documentUrl.document_path && hasPdf ? (
-                                    <a className={`flex gap-2 pi pi-file-arrow-up text-xl text-white bg-[var(--mainColor)] p-1 rounded`} href={documentUrl && documentUrl.document_path} download target="_blank" rel="noopener noreferrer"></a>
+                                    <a className={`flex gap-2 pi pi-file-arrow-up text-xl text-[var(--whiteColor)] bg-[var(--mainColor)] p-1 rounded`} href={documentUrl && documentUrl.document_path} download target="_blank" rel="noopener noreferrer"></a>
                                 ) : (
-                                    <span className={`flex gap-2 pi pi-file-arrow-up text-xl text-white bg-[gray] p-1 rounded`} rel="noopener noreferrer"></span>
+                                    <span className={`flex gap-2 pi pi-file-arrow-up text-xl text-[var(--whiteColor)] bg-[gray] p-1 rounded`} rel="noopener noreferrer"></span>
                                 )}
                             </div>
                         </div>
@@ -186,7 +186,7 @@ export default function LessonInfoCard({
         <div className="w-full flex justify-between flex-col sm:flex-row">
             <div className="w-full flex items-start sm:items-center gap-2 py-1">
                 <div className="p-2 bg-[var(--greenColor)] shadow-xl min-w-[40px] min-h-[40px] w-[40px] h-[40px] flex justify-center items-center rounded">
-                    <i className={`${icon} text-white`}></i>
+                    <i className={`${icon} text-[var(--whiteColor)]`}></i>
                 </div>
                 <div className="flex flex-col justify-center gap-1 max-w-[800px] text-wrap break-all">
                     <a href={link ? String(link) : '#'} className="max-w-[800px] text-[16px] text-wrap break-all hover:underline" target="_blank">
@@ -244,7 +244,7 @@ export default function LessonInfoCard({
         <div className="w-full flex justify-between flex-col sm:flex-row">
             <div className="w-full flex items-start sm:items-center gap-2 py-1">
                 <div className="p-2 bg-[var(--amberColor)] shadow-xl min-w-[40px] min-h-[40px] w-[40px] h-[40px] flex justify-center items-center rounded">
-                    <i className={`${icon} text-white`}></i>
+                    <i className={`${icon} text-[var(--whiteColor)]`}></i>
                 </div>
                 <div className="flex flex-col justify-center gap-1 max-w-[800px] text-wrap break-all">
                     <span onClick={() => videoStart && videoStart(video_link || '')} className="cursor-pointer max-w-[800px] text-[16px] text-wrap break-all hover:underline">
@@ -305,7 +305,7 @@ export default function LessonInfoCard({
         <div className="w-full flex justify-between gap-1 flex-col sm:flex-row">
             <div className="w-full flex items-start sm:items-center gap-2 py-1">
                 <div className="p-2 bg-[#c38598] shadow-xl min-w-[40px] min-h-[40px] w-[40px] h-[40px] flex justify-center items-center rounded">
-                    <i className={`${icon} text-white`}></i>
+                    <i className={`${icon} text-[var(--whiteColor)]`}></i>
                 </div>
                 <div className="flex flex-col justify-center gap-1 max-w-[800px] text-wrap break-all">
                     <span
@@ -434,7 +434,7 @@ export default function LessonInfoCard({
         <div className={`w-full flex justify-between flex-col sm:flex-row ${isOpened ? 'bg-[var(--greenBgColor)] rounded' : ''}`}>
             <div className="w-full flex items-start sm:items-center gap-2 py-1">
                 <div className="p-2 bg-[var(--yellowColor)] shadow-xl min-w-[40px] min-h-[40px] w-[40px] h-[40px] flex justify-center items-center rounded">
-                    <i className={`${icon} text-white`}></i>
+                    <i className={`${icon} text-[var(--whiteColor)]`}></i>
                 </div>
                 <span
                     onClick={() => {
@@ -510,9 +510,9 @@ export default function LessonInfoCard({
                             <div className="flex items-center gap-2 rounded-lg border border-slate-100 bg-white p-2 shadow-sm">
                                 <span className="text-[var(--mainColor)] text-sm whitespace-nowrap">Документ:</span>
                                 {documentUrl && documentUrl.document_path && hasPdf ? (
-                                    <a className={`flex gap-2 pi pi-file-arrow-up text-lg text-white bg-[var(--mainColor)] p-1.5 rounded`} href={documentUrl && documentUrl.document_path} download target="_blank" rel="noopener noreferrer"></a>
+                                    <a className={`flex gap-2 pi pi-file-arrow-up text-lg text-[var(--whiteColor)] bg-[var(--mainColor)] p-1.5 rounded`} href={documentUrl && documentUrl.document_path} download target="_blank" rel="noopener noreferrer"></a>
                                 ) : (
-                                    <span className={`flex gap-2 pi pi-file-arrow-up text-lg text-white bg-[gray] p-1.5 rounded`} rel="noopener noreferrer"></span>
+                                    <span className={`flex gap-2 pi pi-file-arrow-up text-lg text-[var(--whiteColor)] bg-[gray] p-1.5 rounded`} rel="noopener noreferrer"></span>
                                 )}
                             </div>
 
@@ -549,7 +549,7 @@ export default function LessonInfoCard({
                                     <b>Ответ студента: </b>
                                     <span className="text-sm max-w-[400px] break-words">
                                         {answerList?.file && answerList?.file && hasAnswerPdf ? (
-                                            <a className={`flex gap-2 pi pi-file-arrow-up text-lg text-white bg-[var(--mainColor)] p-1.5 rounded`} href={answerList?.file && answerList?.file} download target="_blank" rel="noopener noreferrer"></a>
+                                            <a className={`flex gap-2 pi pi-file-arrow-up text-lg text-[var(--whiteColor)] bg-[var(--mainColor)] p-1.5 rounded`} href={answerList?.file && answerList?.file} download target="_blank" rel="noopener noreferrer"></a>
                                         ) : (
                                             <b>?</b>
                                         )}
