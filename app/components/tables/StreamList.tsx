@@ -291,7 +291,7 @@ const StreamList = React.memo(function StreamList({
             // footer={footerContent}
             >
                 {streams && streams.length > 0 ? (
-                    <DataTable value={streams} className="w-full my-custom-table" loading={skeleton} dataKey="stream_id" emptyMessage={translations.noData} key={JSON.stringify(pendingChanges)} responsiveLayout="stack" breakpoint="960px" rows={5}>
+                    <DataTable value={streams} className="w-full my-custom-table text-sm" loading={skeleton} dataKey="stream_id" emptyMessage={translations.noData} key={JSON.stringify(pendingChanges)} responsiveLayout="stack" breakpoint="960px" rows={5}>
                         <Column body={(_, { rowIndex }) => rowIndex + 1} header={() => <div className="text-[13px]">{translations.numberSign}</div>}></Column>
                         <Column body={(rowIndex) => <span>{rowIndex.stream_id}</span>} header={() => <div className="text-[13px]">ID</div>}></Column>
                         {/* <Column body={imageBodyTemplate}></Column> */}
@@ -311,8 +311,7 @@ const StreamList = React.memo(function StreamList({
                             field="title"
                             header={() => <div className="text-[13px]">{translations.speciality}</div>}
                             body={(rowData) => (
-                                // <p key={rowData.id}></p>
-                                <div className="max-w-[100px] scrollbar-thin overflow-x-scroll">
+                                <div className="max-w-[250px] scrollbar-thin overflow-x-scroll">
                                     <p key={rowData.id}>{getLocalized(rowData.speciality, 'name') || rowData.speciality.name_ru}</p>
                                 </div>
                             )}
@@ -338,16 +337,7 @@ const StreamList = React.memo(function StreamList({
                                         <input
                                             type="checkbox"
                                             className={`customCheckbox`}
-                                            // svoysky
-                                            // checked={Boolean(item.connect_id)}
-                                            // onChange={(e) => {
-                                            //     handleEdit(e.target, item.stream_id, item?.subject_name.name_kg);
-                                            //     setStreams((prev) => prev.map((el) => (el.stream_id === item.stream_id ? { ...el, connect_id: el.connect_id ? null : 1 } : el)));
-                                            // }}
-
                                             checked={pendingChanges.some((s) => s.stream_id === rowData.stream_id)}
-                                            // checked={sendStream_id === rowData.stream_id}
-
                                             onChange={(e) => {
                                                 handleEdit(e.target, rowData);
                                             }}
@@ -375,18 +365,37 @@ const StreamList = React.memo(function StreamList({
                                     <div className="flex flex-col md:flex-row justify-between md:items-center gap-1 mb-4 py-2 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">
                                         {/* <span className=" text-[var(--mainColor)] "> */}
 
-                                        <span className="lg:max-w-[300px] xl:max-w-[600px] text-[16px] sm:text-[16px] md:text-[18px] font-bold text-[#4B4563] max-w-sm break-words">{courseValue?.title}</span>
+                                        <span className="max-w-sm lg:max-w-[300px] xl:max-w-[600px] text-[16px] sm:text-[16px] md:text-[18px] font-bold text-[#4B4563] break-words">{courseValue?.title}</span>
                                         {/* </span> */}
-                                        <div className="min-w-[110px]">
-                                            <Button
-                                                label={emptyCourse ? translations.addStream : translations.streams}
-                                                icon="pi pi-link"
-                                                className="w-full"
-                                                onClick={() => {
-                                                    handleFetchStreams();
-                                                    setVisible(true);
-                                                }}
-                                            />
+                                        <div className={'flex items-center gap-2'}>
+                                            <div className="min-w-[110px]">
+                                                <Button
+                                                    label={emptyCourse ? translations.addStream : translations.streams}
+                                                    // аудиторные не аудиторные
+                                                    // label={translations.audit}
+                                                    icon="pi pi-link"
+                                                    className="w-full"
+                                                    style={{fontSize: '13px'}}
+                                                    size='small'
+                                                    onClick={() => {
+                                                        handleFetchStreams();
+                                                        setVisible(true);
+                                                    }}
+                                                />
+                                            </div>
+                                            {/*<div className="min-w-[110px]">*/}
+                                            {/*    <Button*/}
+                                            {/*        label={translations.notAudit}*/}
+                                            {/*        icon="pi pi-link"*/}
+                                            {/*        className="w-full"*/}
+                                            {/*        style={{fontSize: '13px'}}*/}
+                                            {/*        size='small'*/}
+                                            {/*        onClick={() => {*/}
+                                            {/*            handleFetchStreams();*/}
+                                            {/*            setVisible(true);*/}
+                                            {/*        }}*/}
+                                            {/*    />*/}
+                                            {/*</div>*/}
                                         </div>
                                     </div>
                                 </div>

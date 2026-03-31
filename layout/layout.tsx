@@ -137,7 +137,7 @@ const Layout = ({ children }: ChildContainerProps) => {
                         <div className="layout-main">{children}</div>
                         {/* <AppFooter /> */}
                     </div>
-                     <AppConfig />
+                     {/*<AppConfig />*/}
                     <div className="layout-mask"></div>
                     {user?.is_student && media && !pathname.startsWith('/teaching/lessonView/') && <BottomNav />}
                 </div>

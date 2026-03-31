@@ -119,6 +119,8 @@ export const localizationData = {
         reset: 'Сбросить',
         noCourses: 'Курсы отсутствуют',
         addStream: 'Добавить поток',
+        audit: 'Аудиторные потоки',
+        notAudit: 'Не аудиторные потоки',
 
         // Roles page
         active: 'Активные',
@@ -524,6 +526,8 @@ export const localizationData = {
         reset: 'Тазалоо',
         noCourses: 'Курстар жок',
         addStream: 'Агым кошуу',
+        audit: 'Аудитордук агымдар',
+        notAudit: 'Аудитордук эмес агымдар',
 
         // Roles page
         active: 'Активдүүлөр',
