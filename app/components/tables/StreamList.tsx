@@ -191,7 +191,6 @@ const StreamList = React.memo(function StreamList({
     useEffect(() => {
         toggleSkeleton();
         if (courseValue?.id) {
-            console.log('i love you baby');
             handleFetchStreams();
         }
     }, [courseValue]);
