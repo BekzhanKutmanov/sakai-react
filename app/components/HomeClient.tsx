@@ -322,7 +322,7 @@ export default function HomeClient() {
                 {/* Counter Statistics */}
                 <CounterBanner statisticValue={statistics} />
 
-                <AppConfig/>
+                {/*<AppConfig/>*/}
 
                 {/* open courses */}
 
