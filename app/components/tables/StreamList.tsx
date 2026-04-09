@@ -38,6 +38,7 @@ const StreamList = React.memo(function StreamList({
     const { getLocalized } = useLocalizedData();
 
     const [streams, setStreams] = useState<mainStreamsType[]>([]);
+    const [dialogStreams, setDialogStreams] = useState<mainStreamsType[]>([]);
     const [hasStreams, setHasStreams] = useState(false);
     const [skeleton, setSkeleton] = useState(false);
     const [visible, setVisible] = useState(false);
@@ -46,6 +47,9 @@ const StreamList = React.memo(function StreamList({
     const [sendStream_id, setSendStream_id] = useState<number | null>(null);
     const [active, setActive] = useState(false);
     const [nameLang, setNameLang] = useState<'name_ru' | 'name_kg'>('name_ru');
+    const [auditTitle, setAuditTitle] = useState<string | null>(null);
+    const [dialogSkeleton, setDialogSkeleton] = useState(false);
+    const [auditState, setAuditState] = useState<boolean | null>(null);
 
     // const shortTitle = useShortText(courseValue?.title ? courseValue?.title : '', 40, 'right');
 
@@ -85,8 +89,24 @@ const StreamList = React.memo(function StreamList({
         });
     };
 
-    const handleFetchStreams = async () => {
-        console.log('send');
+    const auditProcessing = (audit: boolean | null, data: mainStreamsType[]) => {
+        if(audit === null){
+            return [];
+        }
+
+        if(audit === true) {
+            const result = data?.filter((item: mainStreamsType)=> item?.id_extra_type === null);
+            return result;
+        }
+
+        if(audit === false){
+            const result = data?.filter((item: mainStreamsType)=> item?.id_extra_type != null);
+            return result;
+        }
+    }
+
+    const handleFetchStreams = async (audit: boolean | null) => {
+        setDialogSkeleton(true);
         const data = await fetchStreams(courseValue ? courseValue?.id : null);
         // setStreamValues({ stream: [] });
         setPendingChanges([]);
@@ -95,6 +115,11 @@ const StreamList = React.memo(function StreamList({
         if (data) {
             profilactor(data);
             setHasStreams(false);
+
+            const forDate = auditProcessing(audit, data);
+            console.log(forDate);
+
+            setDialogStreams(forDate ?? data);
             setStreams(data);
         } else {
             setHasStreams(true);
@@ -106,6 +131,7 @@ const StreamList = React.memo(function StreamList({
                 showError(data.response.status);
             }
         }
+        setDialogSkeleton(false);
     };
 
     const handleConnect = async (id_stream: number, active: boolean) => {
@@ -116,7 +142,7 @@ const StreamList = React.memo(function StreamList({
         if (data?.success) {
             fetchprop();
             toggleSkeleton();
-            handleFetchStreams();
+            handleFetchStreams(auditState);
             setMessage({
                 state: true,
                 value: { severity: 'success', summary: 'Успешно добавлен!', detail: '' }
@@ -167,7 +193,7 @@ const StreamList = React.memo(function StreamList({
     };
 
     const handleEdit = (e: { checked: boolean }, item: mainStreamsType) => {
-        const { stream_id, subject_name } = item;
+        const { stream_id } = item;
         const isChecked = e.checked;
 
         setSendStream_id(stream_id);
@@ -191,7 +217,7 @@ const StreamList = React.memo(function StreamList({
     useEffect(() => {
         toggleSkeleton();
         if (courseValue?.id) {
-            handleFetchStreams();
+            handleFetchStreams(null);
         }
     }, [courseValue]);
 
@@ -208,6 +234,8 @@ const StreamList = React.memo(function StreamList({
             }
             setHasStreams(false);
         }
+
+
     }, [streams]);
 
     const itemTemplate = (item: mainStreamsType, index: number) => {
@@ -224,6 +252,7 @@ const StreamList = React.memo(function StreamList({
                             <div className="flex gap-1 items-center text-[var(--mainColor)]">
                                 <span>{getLocalized(item?.subject_type_name, 'name') || item?.subject_type_name?.name_ru}</span>
                             </div>
+                            <div className="flex gap-1 items-center text-[var(--mainColor)]">{item?.id_extra_type === null ? translations.auditItem : item?.id_extra_type != null ? translations.notAuditItem : ''}</div>
                             <div className="flex gap-1 items-center">
                                 <span className="text-[var(--mainColor)]">{translations.languageOfStudy}: </span>
                                 <span>{item?.language?.name}</span>
@@ -279,20 +308,22 @@ const StreamList = React.memo(function StreamList({
     return (
         <>
             <Dialog
-                header={translations.streams}
+                header={auditTitle}
                 visible={visible}
                 className={`${streams.length < 1 ? '' : 'w-[95%]'}`}
                 onHide={() => {
                     if (!visible) return;
                     setVisible(false);
-                    // clearValues();
+                    setAuditState(null);
                 }}
-            // footer={footerContent}
             >
-                {streams && streams.length > 0 ? (
-                    <DataTable value={streams} className="w-full my-custom-table text-sm" loading={skeleton} dataKey="stream_id" emptyMessage={translations.noData} key={JSON.stringify(pendingChanges)} responsiveLayout="stack" breakpoint="960px" rows={5}>
+                {dialogSkeleton ? <GroupSkeleton count={1} size={{ width: '100%', height: '15rem' }}/>
+                    :
+                    hasStreams ? <p className="text-[16px] text-center font-bold">{translations.dataTemporarilyUnavailable}</p>
+                        : dialogStreams && dialogStreams.length > 0 ? (
+                    <DataTable value={dialogStreams} className="w-full my-custom-table text-sm" loading={skeleton} dataKey="stream_id" emptyMessage={translations.noData} key={JSON.stringify(pendingChanges)} responsiveLayout="stack" breakpoint="960px" rows={5}>
                         <Column body={(_, { rowIndex }) => rowIndex + 1} header={() => <div className="text-[13px]">{translations.numberSign}</div>}></Column>
-                        <Column body={(rowIndex) => <span>{rowIndex.stream_id}</span>} header={() => <div className="text-[13px]">ID</div>}></Column>
+                        <Column body={(rowIndex) => <span>{rowIndex?.stream_id}</span>} header={() => <div className="text-[13px]">ID</div>}></Column>
                         {/* <Column body={imageBodyTemplate}></Column> */}
 
                         <Column
@@ -301,7 +332,7 @@ const StreamList = React.memo(function StreamList({
                             header={() => <div className="text-[13px]">{translations.streamName}</div>}
                             body={(rowData) => (
                                 // <p key={rowData.id}></p>
-                                <p key={rowData.id}>{getLocalized(rowData.subject_name, 'name') || rowData.subject_name.name_ru}</p>
+                                <p key={rowData.id}>{getLocalized(rowData?.subject_name, 'name') || rowData?.subject_name?.name_ru}</p>
                             )}
                         ></Column>
 
@@ -311,21 +342,24 @@ const StreamList = React.memo(function StreamList({
                             header={() => <div className="text-[13px]">{translations.speciality}</div>}
                             body={(rowData) => (
                                 <div className="max-w-[250px] scrollbar-thin overflow-x-scroll">
-                                    <p key={rowData.id}>{getLocalized(rowData.speciality, 'name') || rowData.speciality.name_ru}</p>
+                                    <p key={rowData?.id}>{getLocalized(rowData?.speciality, 'name') || rowData?.speciality?.name_ru}</p>
                                 </div>
                             )}
                         ></Column>
 
-                        <Column header={() => <div>{translations.languageOfStudy}</div>} body={(rowData) => <p key={rowData.id}>{rowData.language.name}</p>}></Column>
+                        <Column header={() => <div>{translations.languageOfStudy}</div>} body={(rowData) => <p key={rowData?.id}>{rowData?.language?.name}</p>}></Column>
 
-                        <Column field="title" header={() => <div className="text-[13px]">{translations.studyYear}</div>} body={(rowData) => <p key={rowData.id}>20{rowData.id_edu_year}</p>}></Column>
-                        <Column field="title" header={() => <div className="text-[13px]">{translations.period}</div>} body={(rowData) => <p key={rowData.id}>{getLocalized(rowData.period, 'name') || rowData.period.name_ru}</p>}></Column>
+                        <Column field="title" header={() => <div className="text-[13px]">{translations.studyYear}</div>} body={(rowData) => <p key={rowData?.id}>20{rowData?.id_edu_year}</p>}></Column>
+                        <Column field="title" header={() => <div className="text-[13px]">{translations.period}</div>} body={(rowData) => <p key={rowData?.id}>{getLocalized(rowData?.period, 'name') || rowData?.period.name_ru}</p>}></Column>
 
-                        <Column field="title" header={() => <div className="text-[13px]">{translations.semester}</div>} body={(rowData) => <p key={rowData.id}>{getLocalized(rowData.semester, 'name') || rowData.semester.name_ru}</p>}></Column>
+                        <Column field="title" header={() => <div className="text-[13px]">{translations.semester}</div>} body={(rowData) => <p key={rowData?.id}>{getLocalized(rowData?.semester, 'name') || rowData?.semester.name_ru}</p>}></Column>
 
-                        <Column field="title" header={() => <div className="text-[13px]">{translations.studyForm}</div>} body={(rowData) => <p key={rowData.id}>{getLocalized(rowData.edu_form, 'name') || rowData.edu_form.name_ru}</p>}></Column>
+                        <Column field="title" header={() => <div className="text-[13px]">{translations.studyForm}</div>} body={(rowData) => <p key={rowData?.id}>{getLocalized(rowData?.edu_form, 'name') || rowData?.edu_form.name_ru}</p>}></Column>
 
-                        <Column field="title" header={() => <div className="text-[13px]">{translations.studyType}</div>} body={(rowData) => <p key={rowData.id}>{getLocalized(rowData.subject_type_name, 'short_name') || rowData.subject_type_name.short_name_ru}</p>}></Column>
+                        <Column field="title" header={() => <div className="text-[13px]">{translations.studyType}</div>} body={(rowData) => <p key={rowData?.id}>{
+                            rowData?.id_extra_type === null ? getLocalized(rowData?.subject_type_name, 'short_name') || rowData?.subject_type_name?.short_name_ru
+                                : rowData?.id_extra_type != null && rowData?.subject_type_name === null ? getLocalized(rowData?.extra_type, 'short_name') || rowData?.extra_type?.short_name_ru : ''
+                        }</p>}></Column>
 
                         <Column
                             header={() => <div className="text-[13px]">{translations.streamConnection}</div>}
@@ -336,7 +370,7 @@ const StreamList = React.memo(function StreamList({
                                         <input
                                             type="checkbox"
                                             className={`customCheckbox`}
-                                            checked={pendingChanges.some((s) => s.stream_id === rowData.stream_id)}
+                                            checked={pendingChanges.some((s) => s?.stream_id === rowData?.stream_id)}
                                             onChange={(e) => {
                                                 handleEdit(e.target, rowData);
                                             }}
@@ -348,7 +382,7 @@ const StreamList = React.memo(function StreamList({
                         ></Column>
                     </DataTable>
                 ) : (
-                    <p className="text-[16px] text-center font-bold">{translations.dataTemporarilyUnavailable}</p>
+                    <p className="text-[16px] text-center font-bold">{translations.noStreamsOrNotLinked}</p>
                 )}
             </Dialog>
             {callIndex === 1 && (
@@ -369,32 +403,38 @@ const StreamList = React.memo(function StreamList({
                                         <div className={'flex items-center gap-2'}>
                                             <div className="min-w-[110px]">
                                                 <Button
-                                                    label={emptyCourse ? translations.addStream : translations.streams}
+                                                    // label={emptyCourse ? translations.addStream : translations.streams}
                                                     // аудиторные не аудиторные
-                                                    // label={translations.audit}
-                                                    icon="pi pi-link"
+                                                    label={translations.audit}
+                                                    // icon="pi pi-link"
+                                                    icon="pi pi-building"
                                                     className="w-full"
                                                     style={{fontSize: '13px'}}
                                                     size='small'
                                                     onClick={() => {
-                                                        handleFetchStreams();
+                                                        handleFetchStreams(true);
                                                         setVisible(true);
+                                                        setAuditTitle(translations.audit);
+                                                        setAuditState(true);
                                                     }}
                                                 />
                                             </div>
-                                            {/*<div className="min-w-[110px]">*/}
-                                            {/*    <Button*/}
-                                            {/*        label={translations.notAudit}*/}
-                                            {/*        icon="pi pi-link"*/}
-                                            {/*        className="w-full"*/}
-                                            {/*        style={{fontSize: '13px'}}*/}
-                                            {/*        size='small'*/}
-                                            {/*        onClick={() => {*/}
-                                            {/*            handleFetchStreams();*/}
-                                            {/*            setVisible(true);*/}
-                                            {/*        }}*/}
-                                            {/*    />*/}
-                                            {/*</div>*/}
+                                            <div className="min-w-[110px]">
+                                                <Button
+                                                    label={translations.notAudit}
+                                                    // icon="pi pi-link"
+                                                    icon='pi pi-desktop'
+                                                    className="w-full"
+                                                    style={{fontSize: '13px'}}
+                                                    size='small'
+                                                    onClick={() => {
+                                                        handleFetchStreams(false);
+                                                        setVisible(true);
+                                                        setAuditTitle(translations.notAudit);
+                                                        setAuditState(false);
+                                                    }}
+                                                />
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -411,21 +451,28 @@ const StreamList = React.memo(function StreamList({
                             {isMobile && (
                                 <div className="w-full flex flex-col items-center gap-1">
                                     <Button
-                                        label={translations.add}
+                                        label={translations.audit}
                                         className="w-full"
-                                        icon="pi pi-link"
+                                        icon="pi pi-building"
+                                        size={'small'}
                                         onClick={() => {
-                                            handleFetchStreams();
+                                            handleFetchStreams(true);
                                             setVisible(true);
+                                            setAuditTitle(translations.audit);
+                                            setAuditState(true);
                                         }}
                                     />
-
                                     <Button
-                                        label={translations.courses}
+                                        label={translations.notAudit}
+                                        icon='pi pi-desktop'
                                         className="w-full"
-                                        icon="pi pi-arrow-left"
+                                        style={{fontSize: '13px'}}
+                                        size='small'
                                         onClick={() => {
-                                            toggleIndex && toggleIndex();
+                                            handleFetchStreams(false);
+                                            setVisible(true);
+                                            setAuditTitle(translations.notAudit);
+                                            setAuditState(false);
                                         }}
                                     />
                                 </div>

@@ -121,6 +121,8 @@ export const localizationData = {
         addStream: 'Добавить поток',
         audit: 'Аудиторные потоки',
         notAudit: 'Не аудиторные потоки',
+        auditItem: 'Аудиторный',
+        notAuditItem: 'Не аудиторный',
 
         // Roles page
         active: 'Активные',
@@ -528,6 +530,8 @@ export const localizationData = {
         addStream: 'Агым кошуу',
         audit: 'Аудитордук агымдар',
         notAudit: 'Аудитордук эмес агымдар',
+        auditItem: 'Аудитордук',
+        notAuditItem: 'Аудитордук эмес',
 
         // Roles page
         active: 'Активдүүлөр',

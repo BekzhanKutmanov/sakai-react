@@ -14,4 +14,5 @@ export interface mainStreamsType {
     courseValue?: number;
     speciality: { id: number; id_faculty: number, name_ru: string; name_kg: string; };
     course_id?: number | null;
+    id_extra_type: number | null;
 }

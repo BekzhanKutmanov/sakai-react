@@ -918,7 +918,7 @@ export default function Course() {
                                             <div>
                                                 {/* <OpenStudentList /> */}
                                                 <div ref={topRef}>
-                                                    <DataTable value={tableData} dataKey="id" emptyMessage={translations.loading} breakpoint="960px" rows={5} className="my-custom-table hover:bg-slate-50/50 transition-colors">
+                                                    <DataTable value={tableData} dataKey="id" emptyMessage={translations.loading} breakpoint="960px" rows={5} className="my-custom-table hover:bg-slate-50/50 transition-colors text-sm">
                                                         <Column body={(_, { rowIndex }) => rowIndex + 1} header="#" style={{ width: '20px' }}></Column>
                                                         <Column
                                                             style={{ width: '70px' }}
@@ -972,11 +972,11 @@ export default function Course() {
                                                         <Column
                                                             field="title"
                                                             className="hover:bg-slate-50/50 transition-colors"
-                                                            header={() => <div className="[0.813rem]">{translations.score}</div>}
+                                                            header={() => <div className="text-[0.813rem]">{translations.score}</div>}
                                                             body={(rowData) => <span key={rowData.id}>{rowData.max_score}</span>}
                                                         ></Column>
                                                         <Column
-                                                            header={() => <div className="[0.813rem]">{translations.onReview}</div>}
+                                                            header={() => <div className="text-[0.813rem]">{translations.onReview}</div>}
                                                             style={{ margin: '0 3px', textAlign: 'center' }}
                                                             body={(rowData) => (
                                                                 <>
@@ -996,13 +996,13 @@ export default function Course() {
                                                             className="hover:bg-slate-50/50 transition-colors"
                                                         ></Column>
                                                         <Column
-                                                            header={() => <div className="[0.813rem]">{translations.published}</div>}
+                                                            header={() => <div className="text-[0.813rem]">{translations.published}</div>}
                                                             style={{ margin: '0 3px', textAlign: 'center' }}
                                                             className="hover:bg-slate-50/50 transition-colors"
                                                             body={(rowData) => (rowData.is_published ? <i className="pi pi-check-circle text-md text-[var(--greenColor)]"></i> : <i className="pi pi-times-circle text-md text-[var(--redColor)]"></i>)}
                                                         ></Column>
                                                         <Column
-                                                            header={() => <div className="[0.813rem]">{translations.streams}</div>}
+                                                            header={() => <div className="text-[0.813rem]">{translations.streams}</div>}
                                                             style={{ margin: '0 3px', textAlign: 'center' }}
                                                             body={(rowData) => {
                                                                 const isChecked = forStreamId?.id === rowData.id;
@@ -1014,7 +1014,6 @@ export default function Course() {
                                                                                 name="radio"
                                                                                 onChange={() => {
                                                                                     const newValue = { id: rowData.id, title: rowData.title };
-                                                                                    console.log(newValue);
                                                                                     // setGlobalCourseId(newValue);
                                                                                     setForStreamId(newValue);
                                                                                     // setSendStream({ status: false, name: rowData?.audience_type?.name });
