@@ -53,6 +53,8 @@ const StreamList = React.memo(function StreamList({
 
     const [expandedRows, setExpandedRows] = useState<any | null>(null);
 
+    const [courseConnectInfo, setCourseConnectInfo] = useState(false);
+
     // const shortTitle = useShortText(courseValue?.title ? courseValue?.title : '', 40, 'right');
 
     const toggleSkeleton = () => {
@@ -379,7 +381,18 @@ const StreamList = React.memo(function StreamList({
     return (
         <>
             <Dialog
-                header={auditTitle}
+                header={() => (
+                    <div className={'items-center flex justify-between'}>
+                        {auditTitle}{' '}
+                        <i
+                            onClick={(e) => {
+                                e.stopPropagation(); // 🔥 ключевая строка
+                                setCourseConnectInfo(true);
+                            }}
+                            className={'pi pi-info-circle text-lg text-[var(--titleColor)]'}
+                        ></i>{' '}
+                    </div>
+                )}
                 visible={visible}
                 className={`${streams.length < 1 ? '' : 'w-[95%]'}`}
                 onHide={() => {
@@ -611,6 +624,23 @@ const StreamList = React.memo(function StreamList({
                     )}
                 </div>
             )}
+
+            <Dialog
+                header={'Связь'}
+                visible={courseConnectInfo}
+                className={'max-w-xl'}
+                onHide={() => {
+                    if (!courseConnectInfo) return;
+                    setCourseConnectInfo(false);
+                }}
+            >
+                <div>
+                    Колонка «Связи» показывает, связан ли поток с одним из ваших курсов.
+                    Если отображается <i className={'pi pi-check text-[green]'}></i> поток уже привязан к курсу.
+                    Если <i className={'pi pi-minus text-[red]'}></i> связь с курсом отсутствует.
+                    Нажатием на иконку либо на кнопку раскрытия можно увидеть связанный курс.
+                </div>
+            </Dialog>
         </>
     );
 });
