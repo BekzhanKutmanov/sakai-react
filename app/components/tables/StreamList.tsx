@@ -51,6 +51,8 @@ const StreamList = React.memo(function StreamList({
     const [dialogSkeleton, setDialogSkeleton] = useState(false);
     const [auditState, setAuditState] = useState<boolean | null>(null);
 
+    const [expandedRows, setExpandedRows] = useState<any | null>(null);
+
     // const shortTitle = useShortText(courseValue?.title ? courseValue?.title : '', 40, 'right');
 
     const toggleSkeleton = () => {
@@ -63,7 +65,7 @@ const StreamList = React.memo(function StreamList({
     const profilactor = (data: mainStreamsType[]) => {
         const newStreams: streamsType[] = [];
 
-        data.forEach((item) => {
+        data?.forEach((item) => {
             if (item?.connect_id) {
                 newStreams.push({
                     course_id: item?.course_id || null,
@@ -90,20 +92,20 @@ const StreamList = React.memo(function StreamList({
     };
 
     const auditProcessing = (audit: boolean | null, data: mainStreamsType[]) => {
-        if(audit === null){
+        if (audit === null) {
             return [];
         }
 
-        if(audit === true) {
-            const result = data?.filter((item: mainStreamsType)=> item?.id_extra_type === null);
+        if (audit === true) {
+            const result = data?.filter((item: mainStreamsType) => item?.id_extra_type === null);
             return result;
         }
 
-        if(audit === false){
-            const result = data?.filter((item: mainStreamsType)=> item?.id_extra_type != null);
+        if (audit === false) {
+            const result = data?.filter((item: mainStreamsType) => item?.id_extra_type != null);
             return result;
         }
-    }
+    };
 
     const handleFetchStreams = async (audit: boolean | null) => {
         setDialogSkeleton(true);
@@ -111,7 +113,6 @@ const StreamList = React.memo(function StreamList({
         // setStreamValues({ stream: [] });
         setPendingChanges([]);
         setSendStream_id(null);
-
         if (data) {
             profilactor(data);
             setHasStreams(false);
@@ -152,7 +153,7 @@ const StreamList = React.memo(function StreamList({
                 if (data?.teachers?.length) {
                     return (
                         <div className="flex flex-col gap-2">
-                            <span>{ data?.message }</span>
+                            <span>{data?.message}</span>
                             {data.teachers?.map((item: any, idx: number) => {
                                 return (
                                     <div key={idx} className={`flex gap-1 flex-col`}>
@@ -206,13 +207,13 @@ const StreamList = React.memo(function StreamList({
         }
     };
 
-    useEffect(()=> {
-        if(language === 'ru'){
+    useEffect(() => {
+        if (language === 'ru') {
             setNameLang('name_ru');
-        }else if(language === 'ky'){
+        } else if (language === 'ky') {
             setNameLang('name_kg');
         }
-    },[language]);
+    }, [language]);
 
     useEffect(() => {
         toggleSkeleton();
@@ -222,11 +223,11 @@ const StreamList = React.memo(function StreamList({
     }, [courseValue]);
 
     useEffect(() => {
-        if (streams.length < 1) {
+        if (streams?.length < 1) {
             setEmptyCourse(true);
             setHasStreams(true);
         } else {
-            const hasData = streams.some((item) => item.connect_id !== null);
+            const hasData = streams?.some((item) => item.connect_id !== null);
             if (hasData) {
                 setEmptyCourse(false);
             } else {
@@ -234,8 +235,6 @@ const StreamList = React.memo(function StreamList({
             }
             setHasStreams(false);
         }
-
-
     }, [streams]);
 
     const itemTemplate = (item: mainStreamsType, index: number) => {
@@ -305,6 +304,78 @@ const StreamList = React.memo(function StreamList({
         );
     };
 
+    const rowExpansionTemplate = (data: mainStreamsType) => {
+        const course = data?.course;
+
+        const truncate = (text: string, length: number) => {
+            if (!text) return '';
+            return text.length > length ? text.substring(0, length) + '...' : text;
+        };
+
+        const formatDate = (dateString: string) => {
+            if (!dateString) return '-';
+            const date = new Date(dateString);
+            return date.toLocaleDateString();
+        };
+
+        return (
+            <div className="p-3 bg-gray-50">
+                {data?.course != null ? (
+                    <>
+                        <div className="mb-2 text-[11px] font-bold text-gray-400 uppercase tracking-tight">{translations.courseStreamConnect}</div>
+                        <table className="w-full bg-white text-left border-collapse shadow-sm rounded ">
+                            <thead className="bg-gray-50 text-[10px] text-gray-500 uppercase">
+                                <tr>
+                                    <th className="px-3 py-2 border-b border-gray-200 font-bold">{translations.streamName || 'Course'}</th>
+                                    <th className="px-3 py-2 border-b border-gray-200 font-bold">{translations.courseName || 'Course'}</th>
+                                    <th className="px-3 py-2 border-b border-gray-200 font-bold">{translations.description || 'Description'}</th>
+                                    <th className="px-3 py-2 border-b border-gray-200 font-bold whitespace-nowrap">Дата</th>
+                                </tr>
+                            </thead>
+                            <tbody className="text-[12px] text-gray-600">
+                                {course ? (
+                                    <tr>
+                                        <td className="px-3 py-2 border-b border-gray-100 font-medium text-gray-800">{getLocalized(data?.subject_name, 'name') || data?.subject_name?.name_ru}</td>
+                                        <td className="px-3 py-2 border-b border-gray-100 font-medium text-gray-800">{course.title}</td>
+                                        <td className="px-3 py-2 border-b border-gray-100 leading-relaxed">{truncate(course.description, 120)}</td>
+                                        <td className="px-3 py-2 border-b border-gray-100 whitespace-nowrap">{formatDate(course.created_at)}</td>
+                                    </tr>
+                                ) : (
+                                    <tr>
+                                        <td colSpan={3} className="px-3 py-4 text-center text-gray-400 italic">
+                                            {translations.noData}
+                                        </td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
+                    </>
+                ) : (
+                    <>{translations.noData}</>
+                )}
+            </div>
+        );
+    };
+
+    const toggleRow = (rowData: any) => {
+        setExpandedRows((prev: any) => {
+            // если вдруг null/undefined
+            const current = prev ? { ...prev } : {};
+
+            const id = rowData.stream_id;
+
+            if (current[id]) {
+                // если уже открыт → закрываем
+                delete current[id];
+            } else {
+                // если закрыт → открываем
+                current[id] = true;
+            }
+
+            return current;
+        });
+    };
+
     return (
         <>
             <Dialog
@@ -317,17 +388,30 @@ const StreamList = React.memo(function StreamList({
                     setAuditState(null);
                 }}
             >
-                {dialogSkeleton ? <GroupSkeleton count={1} size={{ width: '100%', height: '15rem' }}/>
-                    :
-                    hasStreams ? <p className="text-[16px] text-center font-bold">{translations.dataTemporarilyUnavailable}</p>
-                        : dialogStreams && dialogStreams.length > 0 ? (
-                    <DataTable value={dialogStreams} className="w-full my-custom-table text-sm" loading={skeleton} dataKey="stream_id" emptyMessage={translations.noData} key={JSON.stringify(pendingChanges)} responsiveLayout="stack" breakpoint="960px" rows={5}>
+                {dialogSkeleton ? (
+                    <GroupSkeleton count={1} size={{ width: '100%', height: '15rem' }} />
+                ) : hasStreams ? (
+                    <p className="text-[16px] text-center font-bold">{translations.dataTemporarilyUnavailable}</p>
+                ) : dialogStreams && dialogStreams.length > 0 ? (
+                    <DataTable
+                        value={dialogStreams}
+                        className="w-full my-custom-table text-sm"
+                        loading={skeleton}
+                        dataKey="stream_id"
+                        emptyMessage={translations.noData}
+                        key={JSON.stringify(pendingChanges)}
+                        expandedRows={expandedRows}
+                        onRowToggle={(e: any) => setExpandedRows(e.data)}
+                        rowExpansionTemplate={rowExpansionTemplate}
+                        responsiveLayout="stack"
+                        breakpoint="960px"
+                        rows={5}
+                    >
+                        <Column expander style={{ width: '2rem' }} />
                         <Column body={(_, { rowIndex }) => rowIndex + 1} header={() => <div className="text-[13px]">{translations.numberSign}</div>}></Column>
                         <Column body={(rowIndex) => <span>{rowIndex?.stream_id}</span>} header={() => <div className="text-[13px]">ID</div>}></Column>
-                        {/* <Column body={imageBodyTemplate}></Column> */}
 
                         <Column
-                            className="hover:text-[red]!"
                             field="title"
                             header={() => <div className="text-[13px]">{translations.streamName}</div>}
                             body={(rowData) => (
@@ -337,7 +421,6 @@ const StreamList = React.memo(function StreamList({
                         ></Column>
 
                         <Column
-                            className="hover:text-[red]!"
                             field="title"
                             header={() => <div className="text-[13px]">{translations.speciality}</div>}
                             body={(rowData) => (
@@ -356,14 +439,30 @@ const StreamList = React.memo(function StreamList({
 
                         <Column field="title" header={() => <div className="text-[13px]">{translations.studyForm}</div>} body={(rowData) => <p key={rowData?.id}>{getLocalized(rowData?.edu_form, 'name') || rowData?.edu_form.name_ru}</p>}></Column>
 
-                        <Column field="title" header={() => <div className="text-[13px]">{translations.studyType}</div>} body={(rowData) => <p key={rowData?.id}>{
-                            rowData?.id_extra_type === null ? getLocalized(rowData?.subject_type_name, 'short_name') || rowData?.subject_type_name?.short_name_ru
-                                : rowData?.id_extra_type != null && rowData?.subject_type_name === null ? getLocalized(rowData?.extra_type, 'short_name') || rowData?.extra_type?.short_name_ru : ''
-                        }</p>}></Column>
+                        <Column
+                            field="title"
+                            header={() => <div className="text-[13px]">{translations.studyType}</div>}
+                            body={(rowData) => (
+                                <p key={rowData?.id}>
+                                    {rowData?.id_extra_type === null
+                                        ? getLocalized(rowData?.subject_type_name, 'short_name') || rowData?.subject_type_name?.short_name_ru
+                                        : rowData?.id_extra_type != null && rowData?.subject_type_name === null
+                                        ? getLocalized(rowData?.extra_type, 'short_name') || rowData?.extra_type?.short_name_ru
+                                        : ''}
+                                </p>
+                            )}
+                        ></Column>
+
+                        <Column
+                            field="title"
+                            style={{ width: '3rem', textAlign: 'center' }}
+                            header={() => <div className="text-[13px] flex justify-center">Связь</div>}
+                            body={(rowData) => <i onClick={() => toggleRow(rowData)} className={`text-sm ${rowData?.course != null ? 'pi pi-check text-[green]' : 'pi pi-minus text-[red]'}`}></i>}
+                        ></Column>
 
                         <Column
                             header={() => <div className="text-[13px]">{translations.streamConnection}</div>}
-                            style={{ margin: '0 3px', textAlign: 'center' }}
+                            style={{ margin: '0 3px', textAlign: 'center', width: '4rem' }}
                             body={(rowData) => (
                                 <>
                                     <label className="custom-radio">
@@ -409,8 +508,8 @@ const StreamList = React.memo(function StreamList({
                                                     // icon="pi pi-link"
                                                     icon="pi pi-building"
                                                     className="w-full"
-                                                    style={{fontSize: '13px'}}
-                                                    size='small'
+                                                    style={{ fontSize: '13px' }}
+                                                    size="small"
                                                     onClick={() => {
                                                         handleFetchStreams(true);
                                                         setVisible(true);
@@ -423,10 +522,10 @@ const StreamList = React.memo(function StreamList({
                                                 <Button
                                                     label={translations.notAudit}
                                                     // icon="pi pi-link"
-                                                    icon='pi pi-desktop'
+                                                    icon="pi pi-desktop"
                                                     className="w-full"
-                                                    style={{fontSize: '13px'}}
-                                                    size='small'
+                                                    style={{ fontSize: '13px' }}
+                                                    size="small"
                                                     onClick={() => {
                                                         handleFetchStreams(false);
                                                         setVisible(true);
@@ -464,10 +563,10 @@ const StreamList = React.memo(function StreamList({
                                     />
                                     <Button
                                         label={translations.notAudit}
-                                        icon='pi pi-desktop'
+                                        icon="pi pi-desktop"
                                         className="w-full"
-                                        style={{fontSize: '13px'}}
-                                        size='small'
+                                        style={{ fontSize: '13px' }}
+                                        size="small"
                                         onClick={() => {
                                             handleFetchStreams(false);
                                             setVisible(true);

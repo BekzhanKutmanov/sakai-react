@@ -2,19 +2,19 @@
 'use client';
 
 import { useEventListener, useUnmountEffect } from 'primereact/hooks';
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef } from 'react';
 import { classNames } from 'primereact/utils';
 import AppSidebar from './AppSidebar';
 import AppTopbar from './AppTopbar';
 import { LayoutContext } from './context/layoutcontext';
 import { ChildContainerProps, LayoutState, AppTopbarRef } from '@/types';
 import { usePathname, useSearchParams } from 'next/navigation';
-import Link from 'next/link';
 import { BottomNav } from '@/app/components/menu/MobileMenu';
 import useMediaQuery from '@/hooks/useMediaQuery';
+import AppConfig from '@/layout/AppConfig';
 
 const StudentLayout = ({ children }: ChildContainerProps) => {
-    const { layoutConfig, layoutState, setLayoutState, user } = useContext(LayoutContext);
+    const { layoutConfig, layoutState, setLayoutState } = useContext(LayoutContext);
     const media = useMediaQuery('(max-width: 640px)');
 
     const topbarRef = useRef<AppTopbarRef>(null);
@@ -133,7 +133,7 @@ const StudentLayout = ({ children }: ChildContainerProps) => {
                     <div className="layout-main">{children}</div>
                     {/* <AppFooter /> */}
                 </div>
-                {/* <AppConfig /> */}
+                 {/*<AppConfig />*/}
                 <div className="layout-mask"></div>
                 {/*bottom menu */}
                 {media && !pathname.startsWith('/teaching/lessonView/') && <BottomNav />}

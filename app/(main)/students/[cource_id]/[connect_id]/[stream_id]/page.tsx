@@ -238,6 +238,8 @@ export default function StudentList() {
                         <div className="w-full flex flex-wrap flex-col sm:flex-row gap-3 justify-center text-[12px] sm:text-[14px]">
                             <span className="text-sm font-semibold">{getLocalized(stream?.semester, 'name') || stream?.semester?.name_ru}</span>
 
+                            <span className="flex gap-1 items-center">{stream?.id_extra_type === null ? translations.auditItem : stream?.id_extra_type != null ? translations.notAuditItem : ''}</span>
+
                             <div className="flex gap-1 items-center">
                                 <span className="font-semibold">{getLocalized(stream?.subject_type_name, 'name') || stream?.subject_type_name?.name_ru}</span>
                                 {/* <span>{stream?.teacher?.name}</span> */}
@@ -295,7 +297,7 @@ export default function StudentList() {
                                                 {rowData?.score && rowData.score > 0 ? (
                                                     <div className="flex justify-between items-center gap-2">
                                                         <b className={`${rowData.score > 30 ? 'text-[var(--greenColor)] p-1 w-[25px] text-center' : 'text-amber-400 p-1 w-[25px] text-center '}`}>{rowData.score}</b>
-                                                        {stream?.id_extra_type === null && !rowData?.export ? (
+                                                        {!rowData?.export ? (
                                                             <i
                                                                 onClick={() => handleFetchScoreValues(Number(stream_id), rowData?.id || null, rowData?.score)}
                                                                 className="cursor-pointer pi pi-upload bg-[var(--mainColor)] text-white p-2 px-3 rounded"
