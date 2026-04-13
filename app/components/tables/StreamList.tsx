@@ -353,7 +353,7 @@ const StreamList = React.memo(function StreamList({
                         </table>
                     </>
                 ) : (
-                    <>{translations.noData}</>
+                    <>{translations.notCourseConnections}</>
                 )}
             </div>
         );
@@ -386,7 +386,7 @@ const StreamList = React.memo(function StreamList({
                         {auditTitle}{' '}
                         <i
                             onClick={(e) => {
-                                e.stopPropagation(); // 🔥 ключевая строка
+                                e.stopPropagation(); // ключевая строка
                                 setCourseConnectInfo(true);
                             }}
                             className={'pi pi-info-circle text-lg text-[var(--titleColor)]'}

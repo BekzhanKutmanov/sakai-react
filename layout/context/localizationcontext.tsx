@@ -164,6 +164,7 @@ export const localizationData = {
         dataTemporarilyUnavailable: 'Данные временно недоступны',
         noStreamsOrNotLinked: 'Потоков пока нет или курс не связан с потоками',
         courseStreamConnect: 'Данный поток связан с курсом',
+        notCourseConnections: 'Не связан с курсом',
 
         // buttons
         archive: 'Архивировать',
@@ -574,6 +575,7 @@ export const localizationData = {
         dataTemporarilyUnavailable: 'Маалымат убактылуу жеткиликсиз',
         noStreamsOrNotLinked: 'Азырынча агымдар жок же курс агымдарга байланышкан эмес',
         courseStreamConnect: 'Бул агым төмөндөгү курска байланган',
+        notCourseConnections: 'Курсака байланыш жок',
 
         // buttons
         archive: 'Архивдөө',
