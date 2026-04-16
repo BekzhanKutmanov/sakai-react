@@ -71,17 +71,17 @@ const StreamList = React.memo(function StreamList({
             if (item?.connect_id) {
                 newStreams.push({
                     course_id: item?.course_id || null,
-                    stream_id: item.stream_id,
+                    stream_id: item?.stream_id,
                     info: '',
-                    id_curricula: item.id_curricula,
-                    id_subject: item.subject_name.id,
-                    subject_type: item.subject_type_name.short_name_ru,
-                    id_subject_type: item.subject_type_name.id,
-                    id_edu_year: item.id_edu_year,
-                    id_period: item.id_period,
-                    id_speciality: item.speciality.id,
-                    id_faculty: item.speciality.id_faculty,
-                    stream_title: item?.subject_name.name_ru //
+                    id_curricula: item?.id_curricula,
+                    id_subject: item?.subject_name?.id,
+                    subject_type: item?.subject_type_name?.short_name_ru ? item?.subject_type_name?.short_name_ru : '',
+                    id_subject_type: item?.subject_type_name?.id,
+                    id_edu_year: item?.id_edu_year,
+                    id_period: item?.id_period,
+                    id_speciality: item?.speciality?.id,
+                    id_faculty: item?.speciality?.id_faculty,
+                    stream_title: item?.subject_name?.name_ru //
                 });
             }
         });
@@ -227,7 +227,7 @@ const StreamList = React.memo(function StreamList({
             setEmptyCourse(true);
             setHasStreams(true);
         } else {
-            const hasData = streams?.some((item) => item.connect_id !== null);
+            const hasData = streams?.some((item) => item?.connect_id !== null);
             if (hasData) {
                 setEmptyCourse(false);
             } else {

@@ -864,7 +864,7 @@ export default function Course() {
                             >
                                 <div className="w-full block sm:w-1/2">
                                     {sendStream.name === 'lock' || sendStream.name === 'extra' ? (
-                                        <StreamList callIndex={activeIndex} courseValue={memoForStreamId} isMobile={true} fetchprop={callbackFetchCourse} toggleIndex={callbackSetIndex} close={callbackClose} />
+                                        <StreamList callIndex={activeIndex} courseValue={memoForStreamId} isMobile={true} fetchprop={callbackFetchCourse} toggleIndex={callbackSetIndex} close={callbackClose} audit={sendStream?.name}/>
                                     ) : (
                                         <OpenStudentList course_id={openCourseId} course_title={forStreamId?.title || null} close={callbackSetIndex} />
                                     )}
@@ -1017,7 +1017,6 @@ export default function Course() {
                                                                                     const newValue = { id: rowData.id, title: rowData.title };
                                                                                     // setGlobalCourseId(newValue);
                                                                                     setForStreamId(newValue);
-                                                                                    // setSendStream({ status: false, name: rowData?.audience_type?.name });
                                                                                     setOpenCourseId(rowData.id);
                                                                                 }}
                                                                                 onClick={() => {
