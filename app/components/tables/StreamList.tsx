@@ -22,7 +22,8 @@ const StreamList = React.memo(function StreamList({
     isMobile,
     toggleIndex,
     fetchprop,
-    close
+    close,
+    audit
 }: {
     callIndex: number;
     courseValue: { id: number | null; title: string } | null;
@@ -30,6 +31,7 @@ const StreamList = React.memo(function StreamList({
     toggleIndex?: () => void;
     fetchprop: () => void;
     close?: () => void;
+    audit: string;
 }) {
     const { setMessage } = useContext(LayoutContext);
     const showError = useErrorMessage();
@@ -54,8 +56,6 @@ const StreamList = React.memo(function StreamList({
     const [expandedRows, setExpandedRows] = useState<any | null>(null);
 
     const [courseConnectInfo, setCourseConnectInfo] = useState(false);
-
-    // const shortTitle = useShortText(courseValue?.title ? courseValue?.title : '', 40, 'right');
 
     const toggleSkeleton = () => {
         setSkeleton(true);
@@ -118,9 +118,7 @@ const StreamList = React.memo(function StreamList({
         if (data) {
             profilactor(data);
             setHasStreams(false);
-
             const forDate = auditProcessing(audit, data);
-            console.log(forDate);
 
             setDialogStreams(forDate ?? data);
             setStreams(data);
@@ -378,6 +376,50 @@ const StreamList = React.memo(function StreamList({
         });
     };
 
+    const DialogOpenBtns = () => {
+        if (audit !== 'extra') {
+            return (
+                <div className="min-w-[110px]">
+                    <Button
+                        // label={emptyCourse ? translations.addStream : translations.streams}
+                        // аудиторные не аудиторные
+                        label={translations.audit}
+                        // icon="pi pi-link"
+                        icon="pi pi-building"
+                        className="w-full"
+                        style={{ fontSize: '13px' }}
+                        size="small"
+                        onClick={() => {
+                            handleFetchStreams(true);
+                            setVisible(true);
+                            setAuditTitle(translations.audit);
+                            setAuditState(true);
+                        }}
+                    />
+                </div>
+            );
+        }
+
+        if (audit === 'extra') {
+            return <div className="min-w-[110px]">
+                <Button
+                    label={translations.notAudit}
+                    // icon="pi pi-link"
+                    icon="pi pi-desktop"
+                    className="w-full"
+                    style={{ fontSize: '13px' }}
+                    size="small"
+                    onClick={() => {
+                        handleFetchStreams(false);
+                        setVisible(true);
+                        setAuditTitle(translations.notAudit);
+                        setAuditState(false);
+                    }}
+                />
+            </div>;
+        }
+    };
+
     return (
         <>
             <Dialog
@@ -512,42 +554,7 @@ const StreamList = React.memo(function StreamList({
 
                                         <span className="max-w-sm lg:max-w-[300px] xl:max-w-[600px] text-[16px] sm:text-[16px] md:text-[18px] font-bold text-[#4B4563] break-words">{courseValue?.title}</span>
                                         {/* </span> */}
-                                        <div className={'flex items-center gap-2'}>
-                                            <div className="min-w-[110px]">
-                                                <Button
-                                                    // label={emptyCourse ? translations.addStream : translations.streams}
-                                                    // аудиторные не аудиторные
-                                                    label={translations.audit}
-                                                    // icon="pi pi-link"
-                                                    icon="pi pi-building"
-                                                    className="w-full"
-                                                    style={{ fontSize: '13px' }}
-                                                    size="small"
-                                                    onClick={() => {
-                                                        handleFetchStreams(true);
-                                                        setVisible(true);
-                                                        setAuditTitle(translations.audit);
-                                                        setAuditState(true);
-                                                    }}
-                                                />
-                                            </div>
-                                            <div className="min-w-[110px]">
-                                                <Button
-                                                    label={translations.notAudit}
-                                                    // icon="pi pi-link"
-                                                    icon="pi pi-desktop"
-                                                    className="w-full"
-                                                    style={{ fontSize: '13px' }}
-                                                    size="small"
-                                                    onClick={() => {
-                                                        handleFetchStreams(false);
-                                                        setVisible(true);
-                                                        setAuditTitle(translations.notAudit);
-                                                        setAuditState(false);
-                                                    }}
-                                                />
-                                            </div>
-                                        </div>
+                                        {DialogOpenBtns()}
                                     </div>
                                 </div>
                             )}
@@ -561,33 +568,9 @@ const StreamList = React.memo(function StreamList({
                     ) : (
                         <div className="flex flex-col gap-2 sm:gap-2">
                             {isMobile && (
-                                <div className="w-full flex flex-col items-center gap-1">
-                                    <Button
-                                        label={translations.audit}
-                                        className="w-full"
-                                        icon="pi pi-building"
-                                        size={'small'}
-                                        onClick={() => {
-                                            handleFetchStreams(true);
-                                            setVisible(true);
-                                            setAuditTitle(translations.audit);
-                                            setAuditState(true);
-                                        }}
-                                    />
-                                    <Button
-                                        label={translations.notAudit}
-                                        icon="pi pi-desktop"
-                                        className="w-full"
-                                        style={{ fontSize: '13px' }}
-                                        size="small"
-                                        onClick={() => {
-                                            handleFetchStreams(false);
-                                            setVisible(true);
-                                            setAuditTitle(translations.notAudit);
-                                            setAuditState(false);
-                                        }}
-                                    />
-                                </div>
+                                <>
+                                    {DialogOpenBtns()}
+                                </>
                             )}
 
                             <div className="max-h-[685px] overflow-y-scroll">
@@ -635,10 +618,8 @@ const StreamList = React.memo(function StreamList({
                 }}
             >
                 <div>
-                    Колонка «Связи» показывает, связан ли поток с одним из ваших курсов.
-                    Если отображается <i className={'pi pi-check text-[green]'}></i> поток уже привязан к курсу.
-                    Если <i className={'pi pi-minus text-[red]'}></i> связь с курсом отсутствует.
-                    Нажатием на иконку либо на кнопку раскрытия можно увидеть связанный курс.
+                    Колонка «Связи» показывает, связан ли поток с одним из ваших курсов. Если отображается <i className={'pi pi-check text-[green]'}></i> поток уже привязан к курсу. Если <i className={'pi pi-minus text-[red]'}></i> связь с курсом
+                    отсутствует. Нажатием на иконку либо на кнопку раскрытия можно увидеть связанный курс.
                 </div>
             </Dialog>
         </>

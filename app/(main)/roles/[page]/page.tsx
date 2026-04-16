@@ -229,9 +229,9 @@ export default function Roles() {
                             const isActive = Boolean(userRole?.pivot?.active);
                             return (
                                 <div key={role?.id} className="text-center flex justify-between items-start">
-                                    <span className="text-sm">{idx % 2 === 0 ? translations.administrator : translations.department}</span>
+                                    {/*<span className="text-sm">{idx % 2 === 0 ? translations.administrator : translations.department}</span>*/}
+                                    <span className="text-sm">{role?.title}</span>
 
-                                    {/* <span className='text-sm'>{userRole?.id === 1 ? 'Администратор:' : userRole?.id === 2 ? 'Департамент:' : ''}</span> */}
                                     <div className="flex justify-center items-center">
                                         {!isActive ? (
                                             <button

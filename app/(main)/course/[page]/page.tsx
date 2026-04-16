@@ -76,7 +76,7 @@ export default function Course() {
     });
 
     const [forStreamId, setForStreamId] = useState<{ id: number | null; title: string } | null>(null);
-    const [sendStream, setSendStream] = useState<{ status: boolean; name: 'lock' | 'open' | 'wallet' | '' }>({ status: true, name: 'lock' });
+    const [sendStream, setSendStream] = useState<{ status: boolean; name: 'lock' | 'open' | 'wallet' | 'extra' | '' }>({ status: true, name: 'lock' });
     // const [globalCourseId, setGlobalCourseId] = useState<{ id: number | null; title: string | null } | null>(null);
     // const [pageState, setPageState] = useState<number>(Number(page));
     const [openTypes, setOpenTypes] = useState<AudenceType[]>([]);
@@ -99,7 +99,8 @@ export default function Course() {
         { label: translations.all, value: null },
         { label: translations.closed, value: 1 },
         { label: translations.openCourse, value: 2 },
-        { label: translations.paid, value: 3 }
+        { label: translations.paid, value: 3 },
+        { label: translations.notAuditItem, value: 4 }
     ];
 
     const publishedOptions = [
@@ -545,7 +546,7 @@ export default function Course() {
                                 <span className="text-slate-500">{translations.status}:</span>
                                 <Button
                                     size="small"
-                                    className="p-1 w-8 h-8 flex items-center justify-center rounded-full bg-blue-50 text-blue-600 hover:bg-blue-100 border-none"
+                                    className="p-1 w-4 h-8 flex items-center justify-center rounded-full text-[var(--mainColor)] hover:bg-blue-100 border-none"
                                     onClick={() => {
                                         setSelectedCourse(shablonData?.id);
                                         handleFetchCourseOpenStatus();
@@ -862,7 +863,7 @@ export default function Course() {
                                 className="p-tabview p-tabview-nav p-tabview-selected p-tabview-panels p-tabview-panel"
                             >
                                 <div className="w-full block sm:w-1/2">
-                                    {sendStream.name === 'lock' ? (
+                                    {sendStream.name === 'lock' || sendStream.name === 'extra' ? (
                                         <StreamList callIndex={activeIndex} courseValue={memoForStreamId} isMobile={true} fetchprop={callbackFetchCourse} toggleIndex={callbackSetIndex} close={callbackClose} />
                                     ) : (
                                         <OpenStudentList course_id={openCourseId} course_title={forStreamId?.title || null} close={callbackSetIndex} />
@@ -1059,8 +1060,8 @@ export default function Course() {
                             </div>
                         ) : (
                             <div className="w-full">
-                                {sendStream.name === 'lock' ? (
-                                    <StreamList isMobile={false} callIndex={1} courseValue={memoForStreamId} fetchprop={callbackFetchCourse} close={callbackClose} />
+                                {sendStream.name === 'lock' || sendStream.name === 'extra' ? (
+                                    <StreamList isMobile={false} callIndex={1} courseValue={memoForStreamId} fetchprop={callbackFetchCourse} close={callbackClose} audit={sendStream?.name} />
                                 ) : (
                                     <OpenStudentList course_id={openCourseId} course_title={forStreamId?.title || null} close={callbackClose} />
                                 )}
@@ -1186,7 +1187,6 @@ export default function Course() {
                     setAudenceTypeVisible(false);
                 }}
             >
-                {' '}
                 <div className="flex flex-col gap-1">
                     {skeleton ? (
                         <GroupSkeleton count={1} size={{ width: '100%', height: '5rem' }} />
@@ -1198,6 +1198,7 @@ export default function Course() {
                                         key={item?.id}
                                         className="cursor-pointer shadow flex flex-col hover:text-[var(--mainColor)] transition-all"
                                         onClick={() => {
+                                            console.log(item, selectedCourse);
                                             if (selectedCourse) {
                                                 handleAddOpenTypes(item?.id, selectedCourse);
                                             }

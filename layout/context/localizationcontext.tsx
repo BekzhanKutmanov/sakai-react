@@ -120,9 +120,9 @@ export const localizationData = {
         noCourses: 'Курсы отсутствуют',
         addStream: 'Добавить поток',
         audit: 'Аудиторные потоки',
-        notAudit: 'Не аудиторные потоки',
+        notAudit: 'Внеаудиторные потоки',
         auditItem: 'Аудиторный',
-        notAuditItem: 'Не аудиторный',
+        notAuditItem: 'Внеаудиторный',
 
         // Roles page
         active: 'Активные',
