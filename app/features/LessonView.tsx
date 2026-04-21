@@ -1,52 +1,59 @@
 'use client';
 
-import LessonDocument from '@/app/components/lessons/LessonDocument';
-import LessonForum from '@/app/components/lessons/LessonForum';
-import LessonLink from '@/app/components/lessons/LessonLink';
-import LessonPractica from '@/app/components/lessons/LessonPractica';
-import LessonTest from '@/app/components/lessons/LessonTest';
-import LessonVideo from '@/app/components/lessons/LessonVideo';
-import { NotFound } from '@/app/components/NotFound';
-import GroupSkeleton from '@/app/components/skeleton/GroupSkeleton';
+import React, { useContext, useEffect, useRef, useState } from 'react';
+import { useParams, useRouter } from 'next/navigation';
+import { AxiosError } from 'axios';
+import { LayoutContext } from '@/layout/context/layoutcontext';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { fetchLessonShow } from '@/services/courses';
 import useErrorMessage from '@/hooks/useErrorMessage';
 import useMediaQuery from '@/hooks/useMediaQuery';
-import { LayoutContext } from '@/layout/context/layoutcontext';
-import { fetchLessonShow } from '@/services/courses';
-import { addLesson, deleteStep, fetchElement, fetchSteps, fetchTypes, stepSequenceUpdate } from '@/services/steps';
+import { useLocalization } from '@/layout/context/localizationcontext';
 import { mainStepsType } from '@/types/mainStepType';
-import { getConfirmOptions } from '@/utils/getConfirmOptions';
-import { useParams, useRouter } from 'next/navigation';
-import { Button } from 'primereact/button';
-import { confirmDialog } from 'primereact/confirmdialog';
+import { addLesson, deleteStep, fetchElement, fetchSteps, fetchTypes, stepSequenceUpdate } from '@/services/steps';
+import GroupSkeleton from '@/app/components/skeleton/GroupSkeleton';
+import { NotFound } from '@/app/components/NotFound';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
-import React, { useContext, useEffect, useRef, useState } from 'react';
-import { useLocalization } from '@/layout/context/localizationcontext';
+import LessonDocument from '@/app/components/lessons/LessonDocument';
+import LessonVideo from '@/app/components/lessons/LessonVideo';
+import LessonTest from '@/app/components/lessons/LessonTest';
+import LessonPractica from '@/app/components/lessons/LessonPractica';
+import LessonLink from '@/app/components/lessons/LessonLink';
+import LessonForum from '@/app/components/lessons/LessonForum';
+import { Button } from 'primereact/button';
+import { getConfirmOptions } from '@/utils/getConfirmOptions';
+import { confirmDialog } from 'primereact/confirmdialog';
 
-export default function LessonStep() {
+interface LessonResponse {
+    lesson: {
+        title: string;
+        videos_count: string;
+        usefullinks_count: string;
+        documents_count: string;
+        from: string;
+        to: string;
+    };
+};
+
+export default function LessonView({defaultValue, defaultLessonId}: {defaultValue: boolean, defaultLessonId: string}) {
+    const { setMessage } = useContext(LayoutContext);
+    const showError = useErrorMessage();
+    const { lesson_id } = useParams<{course_id: string, lesson_id: string}>();
     const { translations } = useLocalization();
-    const param = useParams();
-    const course_id = param.course_Id;
-    const page = param.page;
+
+    const [lessonVarId, setLessonVarId] = useState<string>(defaultValue ? defaultLessonId : lesson_id);
+    const media = useMediaQuery('(max-width: 640px)');
+
     const scrollRef = useRef<HTMLDivElement>(null);
     const router = useRouter();
-    const prevLessonsRef = useRef<Array<{ id: number; title: string }> | null>( null);
+    const prevLessonsRef = useRef<Array<{ id: number; title: string }> | null>(null);
     const prevStepsRef = useRef<mainStepsType[]>([]);
 
-    const media = useMediaQuery('(max-width: 640px)');
-    const { setMessage, contextFetchThemes, contextThemes, deleteQuery } = useContext(LayoutContext);
-    const showError = useErrorMessage();
-
     const [lessonInfoState, setLessonInfoState] = useState<{ title: string; documents_count: string; usefullinks_count: string; videos_count: string; from: string; to: string } | null>(null);
+    const [steps, setSteps] = useState<mainStepsType[]>([]);
     const [formVisible, setFormVisible] = useState(false);
     const [types, setTypes] = useState<{ id: number; title: string; name: string; logo: string }[]>([]);
-    const [steps, setSteps] = useState<mainStepsType[]>([]);
-    const [element, setElement] = useState<{ content: any | null; step: mainStepsType } | null>(null);
-    const [selectedId, setSelectId] = useState<number | null>(null);
-    const [hasSteps, setHasSteps] = useState(false);
-    const [themeNull, setThemeNull] = useState(false);
-    const [lesson_id, setLesson_id] = useState<number | null>(null);
-    const [sequence_number, setSequence_number] = useState<number | null>(null);
     const [skeleton, setSkeleton] = useState(false);
     const [stepSkeleton, setStepSkeleton] = useState(false);
     const [wasCreated, setWasCreated] = useState(false);
@@ -55,52 +62,42 @@ export default function LessonStep() {
     const [toggleDragSteps, setToggleDragSteps] = useState<boolean>(false);
     const [toggleDocGenerate, setToggleDocGenerate] = useState<boolean>(false);
     const [documentSteps, setDocumentSteps] = useState<mainStepsType[]>([]);
+    const [element, setElement] = useState<{ content: any | null; step: mainStepsType } | null>(null);
+    const [selectedId, setSelectId] = useState<number | null>(null);
+    const [hasSteps, setHasSteps] = useState(false);
+    const [themeNull, setThemeNull] = useState(false);
+    const [sequence_number, setSequence_number] = useState<number | null>(null);
 
-    const changeUrl = (lessonId: number | null) => {
-        router.replace(`/course/detail/${course_id}/${lessonId ? lessonId : null}`);
-    };
+    const queryClient = useQueryClient();
+    const { data, isLoading, isError, error } = useQuery<LessonResponse, AxiosError>({
+        queryKey: ['lessonKey'],
+        queryFn: () => fetchLessonShow(Number(lessonVarId) || null),
+        enabled: !!lessonVarId // чтобы не стреляло с null
+    });
 
-    const handleShow = async (LessonId: number | null) => {
-        setSkeleton(true);
-        const data = await fetchLessonShow(LessonId);
-        if (data?.lesson) {
-            setSkeleton(false);
-            setLessonInfoState({ title: data.lesson.title, videos_count: data.lesson.videos_count, usefullinks_count: data.lesson.usefullinks_count, documents_count: data.lesson.documents_count, from: data.lesson.from, to: data.lesson.to });
-        } else {
-            setSkeleton(false);
-            setMessage({
-                state: true,
-                value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
-            });
-            if (data?.response?.status) {
-                showError(data.response.status);
+    const handleFetchElement = async (stepId: number) => {
+        if (lessonVarId) {
+            setStepSkeleton(true);
+            const data = await fetchElement(Number(lessonVarId), stepId);
+
+            if (data.success) {
+                setElement({ content: data.content, step: data.step });
+            } else {
+                setMessage({
+                    state: true,
+                    value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
+                });
+                if (data?.response?.status) {
+                    showError(data.response.status);
+                }
             }
-            // skeleton = false
+            setStepSkeleton(false);
         }
     };
 
-    const handleFetchTypes = async () => {
-        setFormVisible(true);
+    const handleFetchSteps = async (lessonVarId: number | null) => {
         setSkeleton(true);
-        const data = await fetchTypes();
-        if (data && Array.isArray(data)) {
-            setTypes(data);
-            setSkeleton(false);
-        } else {
-            setSkeleton(false);
-            setMessage({
-                state: true,
-                value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
-            });
-            if (data?.response?.status) {
-                showError(data.response.status);
-            }
-        }
-    };
-
-    const handleFetchSteps = async (lesson_id: number | null) => {
-        setSkeleton(true);
-        const data = await fetchSteps(Number(lesson_id));
+        const data = await fetchSteps(Number(lessonVarId));
 
         if (data.success) {
             if (data.steps.length < 1) {
@@ -122,7 +119,52 @@ export default function LessonStep() {
         setSkeleton(false);
     };
 
+    const handleFetchTypes = async () => {
+        setFormVisible(true);
+        setSkeleton(true);
+        const data = await fetchTypes();
+        if (data && Array.isArray(data)) {
+            setTypes(data);
+            setSkeleton(false);
+        } else {
+            setSkeleton(false);
+            setMessage({
+                state: true,
+                value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
+            });
+            if (data?.response?.status) {
+                showError(data.response.status);
+            }
+        }
+    };
+
+    const handleUpdateSequence = async (steps: { id: number; step: number }[]) => {
+        setSkeleton(true);
+        const secuence = await stepSequenceUpdate(lessonVarId ? Number(lessonVarId) : null, steps);
+
+        if (secuence?.success) {
+            if(lessonVarId) handleFetchSteps(Number(lessonVarId));
+            setMessage({
+                state: true,
+                value: { severity: 'success', summary: 'Успешно изменено!', detail: '' }
+            });
+        } else {
+            if (secuence?.response?.status) {
+                if (secuence?.response?.status == '400') {
+                    setMessage({
+                        state: true,
+                        value: { severity: 'error', summary: 'Ошибка!', detail: secuence?.response?.data?.message }
+                    });
+                } else {
+                    showError(secuence.response.status);
+                }
+            }
+        }
+        setSkeleton(false);
+    };
+
     const handleAddLesson = async (lessonId: number, typeId: number) => {
+        console.log(lessonId);
         setFormVisible(false);
         const forSequence_number = lastStep && lastStep > 0 ? (!sequence_number || sequence_number < 1 ? lastStep + 1 : sequence_number) : sequence_number;
 
@@ -130,7 +172,7 @@ export default function LessonStep() {
         if (data.success) {
             setSequence_number(null);
             setWasCreated(true);
-            handleFetchSteps(lessonId);
+            handleFetchSteps(Number(lessonId));
             setMessage({
                 state: true,
                 value: { severity: 'success', summary: 'Успешно добавлен!', detail: '' }
@@ -180,31 +222,12 @@ export default function LessonStep() {
         }
     };
 
-    const handleFetchElement = async (stepId: number) => {
-        if (lesson_id) {
-            setStepSkeleton(true);
-            const data = await fetchElement(Number(lesson_id), stepId);
-
-            if (data.success) {
-                setElement({ content: data.content, step: data.step });
-            } else {
-                setMessage({
-                    state: true,
-                    value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
-                });
-                if (data?.response?.status) {
-                    showError(data.response.status);
-                }
-            }
-            setStepSkeleton(false);
-        }
-    };
-
     const handleDeleteStep = async () => {
-        const data = await deleteStep(Number(lesson_id), Number(selectedId));
+        const data = await deleteStep(Number(lessonVarId), Number(selectedId));
         if (data.success) {
-            contextFetchThemes(Number(course_id), null);
-            handleFetchSteps(Number(lesson_id));
+            // contextFetchThemes(Number(course_id), null);
+            await queryClient.invalidateQueries({queryKey: ['themes']});
+            handleFetchSteps(Number(lessonVarId));
             setMessage({
                 state: true,
                 value: { severity: 'success', summary: 'Успешно удалено!', detail: '' }
@@ -249,184 +272,7 @@ export default function LessonStep() {
         }
     };
 
-    const handleUpdateSequence = async (steps: { id: number; step: number }[]) => {
-        setSkeleton(true);
-        const secuence = await stepSequenceUpdate(lesson_id ? Number(lesson_id) : null, steps);
-
-        if (secuence?.success) {
-            handleFetchSteps(lesson_id);
-            setMessage({
-                state: true,
-                value: { severity: 'success', summary: 'Успешно изменено!', detail: '' }
-            });
-        } else {
-            if (secuence?.response?.status) {
-                if (secuence?.response?.status == '400') {
-                    setMessage({
-                        state: true,
-                        value: { severity: 'error', summary: 'Ошибка!', detail: secuence?.response?.data?.message }
-                    });
-                } else {
-                    showError(secuence.response.status);
-                }
-            }
-        }
-        setSkeleton(false);
-    };
-
-    // РАБОЧИЙ ВАРИАНТ
-    // useEffect(() => {
-    //     if (Array.isArray(steps) && steps.length > 0) {
-    //         const stepId = wasCreated ? steps[steps.length - 1].id : steps[0].id;
-    //         setSelectId(stepId);
-    //         handleFetchElement(stepId);
-    //         setWasCreated(false);
-    //     }
-    // }, [steps]);
-    // РАБОЧИЙ ВАРИАНТ
-
-    useEffect(() => {
-        if (Array.isArray(steps) && steps.length > 0) {
-            let max = 0;
-            steps?.forEach((item) => {
-                if (item.step > max) {
-                    max = item.step;
-                }
-            });
-
-            if (max) {
-                setLastStep(max);
-            }
-
-            let stepId: number | null = null;
-
-            if (wasCreated) {
-                // находим шаг, которого не было в предыдущем массиве
-                const prevIds = prevStepsRef.current.map((s) => s.id);
-                const newStep = steps.find((s) => !prevIds.includes(s.id));
-
-                if (newStep) {
-                    stepId = newStep.id;
-                } else {
-                    stepId = steps[steps.length - 1].id; // fallback: берем последний
-                }
-            } else {
-                if (selectedId) {
-                    stepId = selectedId;
-                } else {
-                    stepId = steps[0].id; // если просто загрузка — берем первый
-                }
-            }
-
-            if (stepId !== null) {
-                setSelectId(stepId);
-                handleFetchElement(stepId);
-            }
-
-            // сохраняем текущие steps для следующего сравнения
-            prevStepsRef.current = steps;
-            setWasCreated(false);
-        }
-    }, [steps]);
-
-    useEffect(() => {
-        if (lesson_id) {
-            handleShow(lesson_id);
-            changeUrl(lesson_id);
-        }
-    }, [lesson_id]);
-
-    useEffect(() => {
-        contextFetchThemes(Number(course_id), null);
-    }, [course_id]);
-
-    // заменяем первый useEffect
-    useEffect(() => {
-        const lessons = contextThemes?.lessons?.data ?? [];
-        // console.log(lessons);
-
-        // делаем "снимок" важных полей (id + title)
-        const snapshot = lessons.map((l: any) => ({ id: l.id, title: l.title ?? '' }));
-        const prev = prevLessonsRef.current;
-
-        const isSameSnapshot = prev && prev.length === snapshot.length && prev.every((p, i) => p.id === snapshot[i].id && p.title === snapshot[i].title);
-
-        // обновляем ref для следующего раза
-        prevLessonsRef.current = snapshot;
-
-        // если ничего по-сути не поменялось — ничего не делаем
-        if (isSameSnapshot) return;
-
-        // дальше — твоя логика, но чуть упрощённая и аккуратная
-        if (!lessons || lessons?.length < 1) {
-            setLesson_id(null);
-            setThemeNull(true);
-            return;
-        } else {
-            setThemeNull(false);
-        }
-
-        let chosenId: number | null = null;
-        if (param.lesson_id && param.lesson_id !== 'null') {
-            const urlId = Number(param.lesson_id);
-            const exists = lessons.some((l: { id: number }) => l.id === urlId);
-            chosenId = exists ? urlId : lessons[0].id;
-        } else {
-            chosenId = lessons[0]?.id;
-        }
-
-        // если выбор изменился — setLesson_id вызовет второй useEffect и всё остальное произойдёт там
-        if (lesson_id !== chosenId) {
-            setLesson_id(chosenId);
-        } else {
-            // если lesson_id не поменялся, но изменился контент выбранной темы (например, title),
-            // можно аккуратно обновить отображение (handleShow) — только если у нас реально поменялся title
-            const prevSelected = prev?.find((p) => p.id === lesson_id);
-            const currSelected = snapshot.find((p: { id: number }) => p.id === lesson_id);
-            if (lesson_id && prevSelected && currSelected && prevSelected.title !== currSelected.title) {
-                // вызываем только обновление показа — не трогаем fetchSteps, если id тот же
-                handleShow(lesson_id);
-            }
-        }
-    }, [contextThemes, deleteQuery, param.lesson_id /* оставил твои зависимости */]);
-
-    useEffect(() => {
-        if (lesson_id && param.lesson_id !== String(lesson_id)) {
-            changeUrl(lesson_id);
-        }
-        if (lesson_id) {
-            handleFetchSteps(lesson_id);
-            handleShow(lesson_id);
-        }
-    }, [lesson_id]);
-
-    useEffect(() => {
-        const element = scrollRef.current;
-        if (element) {
-            const handleWheelScroll = (event: any) => {
-                // 1. Проверяем, что это вертикальный скролл (колесо мыши)
-                if (event.deltaY !== 0) {
-                    // 2. Отменяем стандартное вертикальное поведение прокрутки страницы
-                    event.preventDefault();
-
-                    // 3. Смещаем горизонтальную позицию (scrollLeft)
-                    // на величину вертикального сдвига (event.deltaY)
-                    element.scrollLeft += event.deltaY;
-                }
-            };
-
-            // Добавляем слушатель события 'wheel'
-            element.addEventListener('wheel', handleWheelScroll);
-
-            // Функция очистки: удаляем слушатель при демонтировании компонента
-            return () => {
-                element.removeEventListener('wheel', handleWheelScroll);
-            };
-        }
-    }, []);
-
-    // ... остальная часть вашего компонента и JSX, где используется ref={scrollRef}
-
+    // lesson info render
     const lessonInfo = (
         <div className="w-full">
             <div className="bg-[var(--titleColor)] relative flex flex-col justify-center items-center w-full text-white p-4 md:p-3 pb-4">
@@ -443,18 +289,19 @@ export default function LessonStep() {
                         </div>
                     </div>
                 )}
-                {media && contextThemes && contextThemes?.max_sum_score ? (
-                    <div className="flex justify-center gap-1 items-center">
-                        <span className="text-sm">{translations.courseScore}</span>
-                        <b className="font-semibold">{contextThemes?.max_sum_score}</b>
-                    </div>
-                ) : (
-                    ''
-                )}
+                {/*{media && contextThemes && data?.max_sum_score ? (*/}
+                {/*    <div className="flex justify-center gap-1 items-center">*/}
+                {/*        <span className="text-sm">{translations.courseScore}</span>*/}
+                {/*        <b className="font-semibold">{data?.max_sum_score}</b>*/}
+                {/*    </div>*/}
+                {/*) : (*/}
+                {/*    ''*/}
+                {/*)}*/}
             </div>
         </div>
     );
 
+    // step render
     const step = (item: mainStepsType, icon: string, step: number, idx: number) => {
         return (
             <div
@@ -510,6 +357,91 @@ export default function LessonStep() {
         }
     };
 
+    useEffect(()=> {
+        if(defaultValue){
+            setLessonVarId(defaultLessonId)
+        } else {
+            setLessonVarId(lesson_id);
+        }
+    },[lesson_id, defaultLessonId])
+
+    useEffect(() => {
+        if (data?.lesson) {
+            setLessonInfoState({
+                title: data?.lesson?.title,
+                videos_count: data?.lesson?.videos_count,
+                usefullinks_count: data?.lesson?.usefullinks_count,
+                documents_count: data?.lesson?.documents_count,
+                from: data?.lesson?.from,
+                to: data?.lesson?.to
+            });
+        }
+    }, [data]);
+
+    useEffect(() => {
+        if (isError) {
+            setMessage({
+                state: true,
+                value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
+            });
+
+            if (error?.response?.status) {
+                showError(error.response.status);
+            }
+        }
+    }, [isError]);
+
+    useEffect(() => {
+        if (Array.isArray(steps) && steps.length > 0) {
+            let max = 0;
+            steps?.forEach((item) => {
+                if (item.step > max) {
+                    max = item.step;
+                }
+            });
+
+            if (max) {
+                setLastStep(max);
+            }
+
+            let stepId: number | null = null;
+
+            if (wasCreated) {
+                // находим шаг, которого не было в предыдущем массиве
+                const prevIds = prevStepsRef.current.map((s) => s.id);
+                const newStep = steps.find((s) => !prevIds.includes(s.id));
+
+                if (newStep) {
+                    stepId = newStep.id;
+                } else {
+                    stepId = steps[steps.length - 1].id; // fallback: берем последний
+                }
+            } else {
+                if (selectedId) {
+                    stepId = selectedId;
+                } else {
+                    stepId = steps[0].id; // если просто загрузка — берем первый
+                }
+            }
+
+            if (stepId !== null) {
+                setSelectId(stepId);
+                handleFetchElement(stepId);
+            }
+
+            // сохраняем текущие steps для следующего сравнения
+            prevStepsRef.current = steps;
+            setWasCreated(false);
+        }
+    }, [steps]);
+
+    useEffect(() => {
+        console.log('lesson id' ,lessonVarId);
+        if (lessonVarId) {
+            handleFetchSteps(Number(lessonVarId));
+        }
+    }, [lessonVarId]);
+
     if (themeNull) {
         return (
             <div>
@@ -519,8 +451,7 @@ export default function LessonStep() {
     }
 
     return (
-        <div className="main-bg">
-            {/* modal sectoin */}
+        <div className={'main-bg'}>
             <Dialog
                 header={translations.selectStepType}
                 visible={formVisible}
@@ -558,7 +489,7 @@ export default function LessonStep() {
                                             <b
                                                 className="cursor-pointer"
                                                 onClick={() => {
-                                                    handleAddLesson(Number(lesson_id), item?.id);
+                                                    handleAddLesson(Number(lessonVarId), item?.id);
                                                 }}
                                             >
                                                 {item.title}
@@ -572,8 +503,8 @@ export default function LessonStep() {
                 </div>
             </Dialog>
 
-            {/* info section */}
-            {lessonInfo}
+            {/* lesson info section */}
+            {isLoading ? <GroupSkeleton count={1} size={{width: '100%', height: '5rem' }} />  : lessonInfo}
 
             {/* steps section */}
             {skeleton ? (
@@ -691,7 +622,7 @@ export default function LessonStep() {
                             content={element?.content}
                             fetchPropElement={(stepId) => {
                                 handleFetchElement(stepId);
-                                handleFetchSteps(lesson_id);
+                                handleFetchSteps(Number(lessonVarId));
                             }}
                             clearProp={hasSteps}
                         />
@@ -702,7 +633,7 @@ export default function LessonStep() {
                             content={element?.content}
                             fetchPropElement={(stepId) => {
                                 handleFetchElement(stepId);
-                                handleFetchSteps(lesson_id);
+                                handleFetchSteps(Number(lessonVarId));
                             }}
                             clearProp={hasSteps}
                         />
@@ -726,9 +657,10 @@ export default function LessonStep() {
                             content={element?.content}
                             fetchPropElement={(stepId) => {
                                 handleFetchElement(stepId);
-                                handleFetchSteps(lesson_id);
+                                handleFetchSteps(Number(lessonVarId));
                             }}
-                            fetchPropThemes={() => contextFetchThemes(Number(course_id), null)}
+                            // fetchPropThemes={() => contextFetchThemes(Number(course_id), null)}
+                            fetchPropThemes={async () => await queryClient.invalidateQueries({queryKey: ['themes']})}
                             clearProp={hasSteps}
                         />
                     )}
@@ -738,9 +670,9 @@ export default function LessonStep() {
                             content={element?.content}
                             fetchPropElement={(stepId) => {
                                 handleFetchElement(stepId);
-                                handleFetchSteps(lesson_id);
+                                handleFetchSteps(Number(lessonVarId));
                             }}
-                            fetchPropThemes={() => contextFetchThemes(Number(course_id), null)}
+                            fetchPropThemes={async () => await queryClient.invalidateQueries({queryKey: ['themes']})}
                             clearProp={hasSteps}
                         />
                     )}
@@ -750,7 +682,7 @@ export default function LessonStep() {
                             content={element?.content}
                             fetchPropElement={(stepId) => {
                                 handleFetchElement(stepId);
-                                handleFetchSteps(lesson_id);
+                                handleFetchSteps(Number(lessonVarId));
                             }}
                             clearProp={hasSteps}
                         />
@@ -761,7 +693,7 @@ export default function LessonStep() {
                             content={element?.content}
                             fetchPropElement={(stepId) => {
                                 handleFetchElement(stepId);
-                                handleFetchSteps(lesson_id);
+                                handleFetchSteps(Number(lessonVarId));
                             }}
                             clearProp={hasSteps}
                         />
@@ -784,4 +716,3 @@ export default function LessonStep() {
         </div>
     );
 }
-

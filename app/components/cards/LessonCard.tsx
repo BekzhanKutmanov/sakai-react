@@ -87,8 +87,8 @@ export default function LessonCard({
     return (
         <div className="w-full flex flex-col items-start gap-2">
             <div
-                className={`${type.typeValue === 'link' && 'relative'} ${type.typeValue !== 'link' && 'overflow-hidden'} 
-                ${type.typeValue === 'video' && status === 'working' ? 'min-h-[200px]' : type.typeValue !== 'video' && status === 'working' ? 'min-h-[160px]' : ''} 
+                className={`${type.typeValue === 'link' && 'relative'} ${type.typeValue !== 'link' && 'overflow-hidden'}
+                ${type.typeValue === 'video' && status === 'working' ? 'min-h-[200px]' : type.typeValue !== 'video' && status === 'working' ? 'min-h-[160px]' : ''}
                 ${status === 'student' && type.typeValue !== 'video' ? 'min-h-[160px]' : status === 'student' && type.typeValue === 'video' ? 'min-h-[200px]' : ''}
 
                 ${type.typeValue === 'video' ? 'w-full' : 'w-full'} flex flex-col justify-evenly lesson-card-border rounded p-2
@@ -117,7 +117,7 @@ export default function LessonCard({
                                 </div>
                              ) : (
                                 ''
-                            )} 
+                            )}
                             <div className="w-full flex justify-between sm:items-start flex-col gap-1 sm:flex-row">
                                 <b className={`flex items-center justify-start text-[16px] sm:text-[18px] mt-1 break-words ${type.typeValue === 'practica' && 'shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]'}`}>{cardValue?.title}</b>
                                 {!cardValue.score && status === 'working' && lessonDate && (
@@ -140,11 +140,11 @@ export default function LessonCard({
                             </div>
                         ) : (
                             type.typeValue === 'link' && (
-                                <>
-                                    <Link href={cardValue?.url ? cardValue?.url : '#'} target="_blanc" className="flex break-words">
-                                        {shortUrl}
+                                <div className={''}>
+                                    <Link href={cardValue?.url ? cardValue?.url : '#'} target="_blank" className="flex max-w-[300px] sm:max-w-[700px] break-all overflow-hidden text-ellipsis">
+                                        {cardValue?.url}
                                     </Link>
-                                </>
+                                </div>
                             )
                         )}
                         {answers && (

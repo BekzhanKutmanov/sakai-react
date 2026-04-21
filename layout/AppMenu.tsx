@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 import AppMenuitem from './AppMenuitem';
 import { LayoutContext } from './context/layoutcontext';
 import { MenuProvider } from './context/menucontext';
@@ -23,6 +23,8 @@ import { addLocale } from 'primereact/api';
 
 import { useLocalization } from './context/localizationcontext';
 import useMediaQuery from '@/hooks/useMediaQuery';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { fetchThemes } from '@/services/courses';
 
 // types
 interface LessonInfoUi {
@@ -55,7 +57,7 @@ interface MyApMenuType {
 }
 
 const AppMenu = () => {
-    const { translations } = useLocalization();
+    const { language, translations } = useLocalization();
     const { user, setMessage, setDeleteQuery, setUpdateeQuery, contextFetchThemes, contextThemes, departament, contextVerifedValue, setContextVerifedValue, contextFetchVerifed } = useContext(LayoutContext);
 
     const media = useMediaQuery('(max-width: 640px)');
@@ -74,10 +76,10 @@ const AppMenu = () => {
     const pathname = location;
     const { studentThemeCourse, subject_id } = useParams();
     const params = useParams();
-    const course_Id = params.course_Id;
+    const course_id = params.course_id;
     const id_kafedra = params?.id_kafedra ? params.id_kafedra : null;
 
-    const [courseList, setCourseList] = useState<test[]>([]);
+    // const [courseList, setCourseList] = useState<test[]>([]);
     const [selectId, setSelectId] = useState<number | null>(null);
     const [visible, setVisisble] = useState(false);
     const [themeAddvisible, setThemeAddVisisble] = useState(false);
@@ -120,7 +122,7 @@ const AppMenu = () => {
             icon: 'pi pi-th-large',
             to: '/studentHome'
         },
-        { label: translations.trainingPlan, icon: 'pi pi-fw pi-calendar-clock', to: '/teaching' },
+        { label: translations.trainingPlan, icon: 'pi pi-fw pi-calendar-clock', to: '/teaching' }
     ];
 
     const showError = useErrorMessage();
@@ -140,8 +142,30 @@ const AppMenu = () => {
 
     addLocale('ru', ruLocale);
 
+    const queryClient = useQueryClient();
+    const { data: themesData, isLoading, isError } = useQuery({
+        queryKey: ['themes'],
+        queryFn: () => fetchThemes(Number(course_id) || null, null),
+        enabled: !!course_id
+    });
+
+    const courseList:AppMenuItem[] = useMemo(() => {
+        if (!themesData?.lessons) return [];
+
+        return themesData.lessons.data.map((item: any, idx: number) => ({
+            label: `${idx + 1}. ${item.title}`,
+            id: item.id,
+            to: `/course/courseDetail/${course_id}/${item.id}`,
+            score: item.steps_sum_score ?? 0,
+            onEdit: () => {
+                selectedForEditing(item.id);
+            },
+            onDelete: () => sentDelete(item)
+        }));
+    }, [course_id, themesData]);
+
     const byStatus: AppMenuItem[] = user?.is_working
-        ? pathname.startsWith('/course/detail/')
+        ? pathname.startsWith('/course/detail/') || pathname.startsWith('/course/courseDetail/')
             ? [
                   {
                       // key: 'prev',
@@ -149,7 +173,12 @@ const AppMenu = () => {
                       icon: 'pi pi-fw pi-arrow-left',
                       //   to: '/course/'
                       command: () => {
-                          router.back();
+                          const path = pathname;
+                          if(path.includes('default')){
+                            router.push('/course/1');
+                          } else {
+                            router.back();
+                          }
                       }
                   },
                   {
@@ -247,7 +276,7 @@ const AppMenu = () => {
                           icon: 'pi pi-inbox',
                           to: '/archive'
                       },
-                        graphicRole?.label ? graphicRole : null,
+                      graphicRole?.label ? graphicRole : null
                       // {
                       //     label: translations.module,
                       //     icon: 'pi pi-calendar',
@@ -268,18 +297,17 @@ const AppMenu = () => {
                   }
               },
               ...(!media
-                      ? studentMobileMenu.map((item) => ({
-                          label: item?.label,
-                          to: item.to,
-                          icon: item.icon
-                      }))
-                      : [] // Если условие неверно, возвращаем пустой массив, который "распакуется" в ничто
-              ),
-                {
-                    label: translations.notifications,
-                    icon: 'pi pi-bell',
-                    to: '/notifications'
-                },
+                  ? studentMobileMenu.map((item) => ({
+                        label: item?.label,
+                        to: item.to,
+                        icon: item.icon
+                    }))
+                  : []), // Если условие неверно, возвращаем пустой массив, который "распакуется" в ничто
+              {
+                  label: translations.notifications,
+                  icon: 'pi pi-bell',
+                  to: '/notifications'
+              },
               {
                   label: translations.openOnlineCourses,
                   icon: 'pi pi-fw pi-globe',
@@ -378,7 +406,7 @@ const AppMenu = () => {
                       icon: 'pi pi-inbox',
                       to: '/archive'
                   },
-                    graphicRole?.label ? graphicRole : null,
+                  graphicRole?.label ? graphicRole : null
                   // {
                   //     label: translations.module,
                   //     icon: 'pi pi-calendar',
@@ -402,7 +430,7 @@ const AppMenu = () => {
     ];
 
     const handleCourseInfo = async () => {
-        const data = await fetchCourseInfo(Number(course_Id));
+        const data = await fetchCourseInfo(Number(course_id));
         if (data && data?.success) {
             setCourseInfo(data.course);
         }
@@ -443,9 +471,25 @@ const AppMenu = () => {
     const handleAddTheme = async () => {
         const deadline = { from: startDeadline, to: endDeadline };
 
-        const data = await addThemes(Number(course_Id), themeValue?.title ? themeValue?.title : '', themeValue.sequence_number, deadline);
+        const data = await addThemes(Number(course_id), themeValue?.title ? themeValue?.title : '', themeValue.sequence_number, deadline);
         if (data?.success) {
-            contextFetchThemes(Number(course_Id), id_kafedra ? Number(id_kafedra) : null);
+            // contextFetchThemes(Number(course_id), id_kafedra ? Number(id_kafedra) : null);
+
+            const oldThemes: {lessons: any} | undefined = queryClient.getQueryData(['themes']);
+
+            const newThemes = await queryClient.fetchQuery({
+                queryKey: ['themes'],
+                queryFn: () => fetchThemes(Number(course_id) || null, null),
+            });
+
+            const newItem = newThemes?.lessons?.data?.find((newItem: {id: number}) => {
+                return !oldThemes?.lessons?.data?.some((oldItem: {id: number}) => oldItem.id === newItem.id)
+            });
+
+            if(newItem && newItem?.id) {
+                router.push(`/course/courseDetail/${course_id}/${newItem.id}`);
+            }
+
             clearValues();
             setMessage({
                 state: true,
@@ -473,7 +517,14 @@ const AppMenu = () => {
     const handleDeleteTheme = async (id: number) => {
         const data = await deleteTheme(id);
         if (data.success) {
-            contextFetchThemes(Number(course_Id), id_kafedra ? Number(id_kafedra) : null);
+            // contextFetchThemes(Number(course_id), id_kafedra ? Number(id_kafedra) : null);
+            await queryClient.invalidateQueries({queryKey: ['themes']});
+            const path = window.location.pathname;
+            if(path.includes(String(id))){
+                router.push(`/course/courseDetail/${course_id}/default?lang=${language}`);
+            }
+            console.log(path.includes(String(id)));
+
             setDeleteQuery(true);
             setMessage({
                 state: true,
@@ -501,10 +552,13 @@ const AppMenu = () => {
     const handleUpdate = async () => {
         const deadline = { from: editingLesson?.from, to: editingLesson?.to };
 
-        const data = await updateTheme(Number(course_Id), selectId, editingLesson?.title ? editingLesson?.title : '', editingLesson?.sequence_number ? editingLesson?.sequence_number : null, deadline);
+        const data = await updateTheme(Number(course_id), selectId, editingLesson?.title ? editingLesson?.title : '', editingLesson?.sequence_number ? editingLesson?.sequence_number : null, deadline);
         if (data?.success) {
             setUpdateeQuery(true);
-            contextFetchThemes(Number(course_Id), id_kafedra ? Number(id_kafedra) : null);
+            // contextFetchThemes(Number(course_id), id_kafedra ? Number(id_kafedra) : null);
+            await queryClient.invalidateQueries({queryKey: ['themes']});
+            await queryClient.invalidateQueries({queryKey: ['lessonKey']});
+
             clearValues();
             setMessage({
                 state: true,
@@ -580,22 +634,23 @@ const AppMenu = () => {
         }
     }, [user, studentThemeCourse, translations]);
 
-    useEffect(() => {
-        if (contextThemes && contextThemes?.lessons) {
-            const newThemes = contextThemes.lessons?.data?.map((item: any, idx: number) => ({
-                label: `${idx + 1}. ${item.title}`,
-                id: item.id,
-                to: `/course/detail/${course_Id}/${item.id}`,
-                score: `${translations.score}: ${item.steps_sum_score == null ? 0 : item.steps_sum_score}`,
-                onEdit: () => {
-                    selectedForEditing(item.id);
-                },
-                onDelete: () => sentDelete(item)
-            }));
-
-            setCourseList(newThemes);
-        }
-    }, [contextThemes]);
+    // useEffect(() => {
+    //     console.log('contextTheme' ,contextThemes);
+    //     if (contextThemes && contextThemes?.lessons) {
+    //         const newThemes = contextThemes.lessons?.data?.map((item: any, idx: number) => ({
+    //             label: `${idx + 1}. ${item.title}`,
+    //             id: item.id,
+    //             to: `/course/detail/${course_id}/${item.id}`,
+    //             score: `${translations.score}: ${item.steps_sum_score == null ? 0 : item.steps_sum_score}`,
+    //             onEdit: () => {
+    //                 selectedForEditing(item.id);
+    //             },
+    //             onDelete: () => sentDelete(item)
+    //         }));
+    //
+    //         setCourseList(newThemes);
+    //     }
+    // }, [contextThemes]);
 
     useEffect(() => {
         if (departament.info.length < 1) {
@@ -606,10 +661,12 @@ const AppMenu = () => {
     }, [departament, pathname]);
 
     useEffect(() => {
-        if (course_Id) {
+        if (course_id) {
             handleCourseInfo();
         }
     }, [pathname]);
+
+    if(isLoading) <div>lorem</div>
 
     return (
         <MenuProvider>
@@ -743,7 +800,7 @@ const AppMenu = () => {
                                             dateFormat="dd.mm.yy"
                                             className="p-inputtext-sm"
                                             onChange={(e) => {
-                                                setStartDeadline(e.value)
+                                                setStartDeadline(e.value);
                                             }}
                                         />
                                     </div>
@@ -770,14 +827,14 @@ const AppMenu = () => {
                     return !item?.seperator ? <AppMenuitem item={item} root={true} index={i} key={item.label} /> : <li className="menu-separator"></li>;
                 })}
             </ul>
-            {pathname.startsWith('/course/detail/') && (
+            {pathname.startsWith('/course/courseDetail/') && (
                 <div>
                     <div className="p-3 pb-2 mt-auto">
                         <Button label={translations.add} icon={'pi pi-plus'} className="cursor-pointer w-full py-2 px-4 rounded-lg transition" onClick={() => setThemeAddVisisble(true)}></Button>
                     </div>
                     <div className="flex justify-center gap-1 items-center">
                         <b>{translations.totalPointsForCourse}</b>
-                        <span className="text-[var(--mainColor)]">{contextThemes?.max_sum_score}</span>
+                        <span className="text-[var(--mainColor)]">{themesData?.max_sum_score}</span>
                     </div>
                 </div>
             )}

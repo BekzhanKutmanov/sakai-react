@@ -1,4 +1,4 @@
-/* eslint-disable @next/next/no-img-element */
+'use client';
 
 import Link from 'next/link';
 import React, { forwardRef, useContext, useEffect, useImperativeHandle, useRef, useState } from 'react';

@@ -511,7 +511,7 @@ export default function Course() {
                     <div className="flex justify-between items-start gap-2">
                         <div className="font-bold text-lg leading-tight text-slate-800">
                             <Link
-                                href={`/course/detail/${shablonData.id}/${'null'}`}
+                                href={`/course/courseDetail/${shablonData.id}/process`}
                                 className="hover:text-blue-600 transition-colors"
                                 onClick={() => {
                                     setMainCourseId(shablonData.id);
@@ -937,7 +937,8 @@ export default function Course() {
                                                             header={() => <div className="text-[0.813rem]">{translations.courseName}</div>}
                                                             body={(rowData) => (
                                                                 <Link
-                                                                    href={`/course/detail/${rowData.id}/${'null'}`}
+                                                                    // href={`/course/detail/${rowData.id}/${'null'}`}
+                                                                    href={`/course/courseDetail/${rowData.id}/process`}
                                                                     onClick={() => {
                                                                         setGlobalLoading(true);
                                                                         setTimeout(() => {

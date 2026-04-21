@@ -12,10 +12,14 @@ import '../styles/demo/Demos.scss';
 import '../styles/layout/openCourse.css';
 import '../styles/layout/animations.css';
 import './globals.css';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { usePathname } from 'next/navigation';
 
 interface RootLayoutProps {
     children: React.ReactNode;
 }
+
+const queryClient = new QueryClient();
 
 export default function RootLayout({ children }: RootLayoutProps) {
     return (
@@ -24,9 +28,11 @@ export default function RootLayout({ children }: RootLayoutProps) {
                 <link id="theme-css" href={`/themes/lara-light-indigo/theme.css`} rel="stylesheet"></link>
             </head>
             <body>
+            <QueryClientProvider client={queryClient}>
                 <PrimeReactProvider>
                     <LayoutProvider>{children}</LayoutProvider>
                 </PrimeReactProvider>
+            </QueryClientProvider>
             </body>
         </html>
     );

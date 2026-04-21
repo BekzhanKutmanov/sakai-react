@@ -236,15 +236,15 @@ export const LayoutProvider = ({ children }: ChildContainerProps) => {
 
     return (
         <LayoutContext.Provider value={value}>
-            <LocalizationProvider>
-                <SessionManager />
-                {/* <GlobalLoading /> */}
-                <MyGlobalLoader />
-                <ConfirmDialog />
+                <LocalizationProvider>
+                    <SessionManager />
+                    {/* <GlobalLoading /> */}
+                    <MyGlobalLoader />
+                    <ConfirmDialog />
 
-                {message.state && <Message />}
-                {children}
-            </LocalizationProvider>
+                    {message.state && <Message />}
+                    {children}
+                </LocalizationProvider>
         </LayoutContext.Provider>
     );
 };

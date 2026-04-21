@@ -5,6 +5,8 @@ interface AppLayoutProps {
 }
 
 export const metadata = {
+    metadataBase: new URL('https://mooc.oshsu.kg'),
+
     title: {
         default: 'Mooc ОшГУ',
         template: '%s | Mooc ОшГУ'
@@ -21,7 +23,14 @@ export const metadata = {
         title: 'Mooc ОшГУ',
         description: 'Платформа онлайн обучения ОшГУ',
         url: 'https://mooc.oshsu.kg',
-        images: ['']
+        // images: [
+        //     {
+        //         url: '/',
+        //         width: 1200,
+        //         height: 630,
+        //         alt: 'Mooc ОшГУ'
+        //     }
+        // ]
     }
 }
 

@@ -7,9 +7,11 @@ const axiosInstance = axios.create({
 });
 
 axiosInstance.interceptors.request.use((config) => {
-    const token = getToken('access_token');
-    if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
+    if (typeof window !== 'undefined') {
+        const token = getToken('access_token');
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+        }
     }
     return config;
 });
@@ -43,10 +45,10 @@ axiosInstance.interceptors.response.use(
 
         if (status === 404) {
             console.warn('404 - Перенаправляю...');
-            if (typeof window !== 'undefined') {
-                window.location.href = '/pages/notfound';
-                localStorage.removeItem('userVisit');
-            }
+            // if (typeof window !== 'undefined') {
+            //     window.location.href = '/pages/notfound';
+            //     localStorage.removeItem('userVisit');
+            // }
             document.cookie = 'access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;';
         }
 
