@@ -5,7 +5,7 @@ import { LayoutContext } from '@/layout/context/layoutcontext';
 import { fetchStreams, newConnectStreams } from '@/services/streams';
 import { Button } from 'primereact/button';
 import { DataView } from 'primereact/dataview';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { ChangeEvent, useContext, useEffect, useState } from 'react';
 import GroupSkeleton from '../skeleton/GroupSkeleton';
 import { streamsType } from '@/types/streamType';
 import { Dialog } from 'primereact/dialog';
@@ -15,6 +15,7 @@ import { mainStreamsType } from '@/types/mainStreamsType';
 import Link from 'next/link';
 import { useLocalization } from '@/layout/context/localizationcontext';
 import { useLocalizedData } from '@/hooks/useLocalizedData';
+import { confirmDialog } from 'primereact/confirmdialog';
 
 const StreamList = React.memo(function StreamList({
     callIndex,
@@ -193,7 +194,7 @@ const StreamList = React.memo(function StreamList({
         setSkeleton(false);
     };
 
-    const handleEdit = (e: { checked: boolean }, item: mainStreamsType) => {
+    const handleEdit = (e: {checked: boolean} , item: mainStreamsType) => {
         const { stream_id } = item;
         const isChecked = e.checked;
 
@@ -236,6 +237,19 @@ const StreamList = React.memo(function StreamList({
             setHasStreams(false);
         }
     }, [streams]);
+
+    const connectConfirm = (e: any, item: mainStreamsType) => {
+        confirmDialog({
+            message: translations.streamConnectConfirm,
+            header: translations.confirmation,
+            icon: 'pi pi-exclamation-triangle',
+            defaultFocus: 'accept',
+            accept: ()=> handleEdit(e, item),
+            rejectLabel: translations.cancel,
+            rejectClassName: 'reject-button',
+            acceptLabel: translations.next
+        });
+    };
 
     const itemTemplate = (item: mainStreamsType, index: number) => {
         const bgClass = index % 2 == 0 ? 'bg-[#f5f5f5]' : '';
@@ -525,8 +539,12 @@ const StreamList = React.memo(function StreamList({
                                             type="checkbox"
                                             className={`customCheckbox`}
                                             checked={pendingChanges.some((s) => s?.stream_id === rowData?.stream_id)}
-                                            onChange={(e) => {
-                                                handleEdit(e.target, rowData);
+                                            onChange={(e: ChangeEvent<HTMLInputElement>   ) => {
+                                                if (rowData?.course !== null && e.target.checked) {
+                                                    connectConfirm(e.target, rowData);
+                                                } else {
+                                                    handleEdit(e.target, rowData);
+                                                }
                                             }}
                                         />
                                         <span className="checkbox-mark"></span>
@@ -539,6 +557,7 @@ const StreamList = React.memo(function StreamList({
                     <p className="text-[16px] text-center font-bold">{translations.noStreamsOrNotLinked}</p>
                 )}
             </Dialog>
+
             {callIndex === 1 && (
                 <div>
                     {skeleton ? (
@@ -567,11 +586,7 @@ const StreamList = React.memo(function StreamList({
                         </>
                     ) : (
                         <div className="flex flex-col gap-2 sm:gap-2">
-                            {isMobile && (
-                                <>
-                                    {DialogOpenBtns()}
-                                </>
-                            )}
+                            {isMobile && <>{DialogOpenBtns()}</>}
 
                             <div className="max-h-[685px] overflow-y-scroll">
                                 {skeleton ? (
@@ -618,7 +633,7 @@ const StreamList = React.memo(function StreamList({
                 }}
             >
                 <div>
-                    Колонка «Связи» показывает, связан ли поток с одним из ваших курсов. Если отображается <i className={'pi pi-check text-[green]'}></i> поток уже привязан к курсу. Если <i className={'pi pi-minus text-[red]'}></i> связь с курсом
+                    Колонка «Связи» показывает, связан ли поток с одним из ваших курсов. Если отображается <i className={'pi pi-check text-[green]'}></i> поток уже привязан к курсу. <br /> Если <i className={'pi pi-minus text-[red]'}></i> связь с курсом
                     отсутствует. Нажатием на иконку либо на кнопку раскрытия можно увидеть связанный курс.
                 </div>
             </Dialog>

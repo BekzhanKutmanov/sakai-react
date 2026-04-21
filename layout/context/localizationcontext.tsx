@@ -167,6 +167,8 @@ export const localizationData = {
         noStreamsOrNotLinked: 'Потоков пока нет или курс не связан с потоками',
         courseStreamConnect: 'Данный поток связан с курсом',
         notCourseConnections: 'Не связан с курсом',
+        streamConnectConfirm: 'Поток связан с курсом, вы уверены что хотите связать новый курс?',
+
 
         // buttons
         archive: 'Архивировать',
@@ -580,6 +582,7 @@ export const localizationData = {
         noStreamsOrNotLinked: 'Азырынча агымдар жок же курс агымдарга байланышкан эмес',
         courseStreamConnect: 'Бул агым төмөндөгү курска байланган',
         notCourseConnections: 'Курсака байланыш жок',
+        streamConnectConfirm: 'Агым курска байланышкан. Чын эле жаңы курсту байланыштыргыңыз келеби?',
 
         // buttons
         archive: 'Архивдөө',
