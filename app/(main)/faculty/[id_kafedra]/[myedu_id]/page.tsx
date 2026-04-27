@@ -1,6 +1,5 @@
 'use client';
 
-import LessonInfoCard from '@/app/components/lessons/LessonInfoCard';
 import { NotFound } from '@/app/components/NotFound';
 import GroupSkeleton from '@/app/components/skeleton/GroupSkeleton';
 import useErrorMessage from '@/hooks/useErrorMessage';
@@ -8,12 +7,12 @@ import { LayoutContext } from '@/layout/context/layoutcontext';
 import { publishCourse } from '@/services/courses';
 import { depCourse } from '@/services/faculty';
 import { CourseType } from '@/types/courseType';
-import { mainStepsType } from '@/types/mainStepType';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import { useContext, useEffect, useState } from 'react';
+import { useLocalization } from '@/layout/context/localizationcontext';
 
 export default function CoursesDep() {
     interface kafedraInfoType {
@@ -34,6 +33,7 @@ export default function CoursesDep() {
         updated_at: string;
     }
 
+    const {translations} = useLocalization();
     const { id_kafedra, myedu_id } = useParams();
 
     const [courses, setCourses] = useState<kafedraInfoType[]>([]);
@@ -43,13 +43,13 @@ export default function CoursesDep() {
     const [forDisabled, setForDisabled] = useState(false);
     const [skeleton, setSkeleton] = useState(false);
 
-    const { setMessage, setGlobalLoading } = useContext(LayoutContext);
+    const { setMessage } = useContext(LayoutContext);
     const showError = useErrorMessage();
 
     const fetchDepartamentCourse = async () => {
         const data = await depCourse(Number(myedu_id), Number(id_kafedra));
         console.log(data);
-        
+
         if (data && data?.courses) {
             if(data.courses?.length < 1){
                 setContentNull(true);
@@ -63,7 +63,7 @@ export default function CoursesDep() {
             setContentShow(true);
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
+                value: { severity: 'error', summary: translations.errorTitle, detail: translations.tryAgainLater }
             }); // messege - Ошибка при добавлении
             if (data?.response?.status) {
                 showError(data.response.status);
@@ -85,7 +85,7 @@ export default function CoursesDep() {
             setForDisabled(false);
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
+                value: { severity: 'error', summary: translations.errorTitle, detail: translations.tryAgainLater }
             }); // messege - Ошибка при добавлении
             if (data?.response?.status) {
                 showError(data.response.status);

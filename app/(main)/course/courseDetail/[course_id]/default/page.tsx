@@ -2,7 +2,6 @@ import React from 'react';
 
 export default function CourseDefault({ searchParams }: { searchParams: { lang?: string } }) {
     const lang = searchParams.lang || 'ru';
-    console.log(lang);
 
     const ruText = <h2 className="hidden sm:block text-2xl font-semibold text-gray-800 tracking-tight">
         Выберите существующую тему из списка слева, <br />

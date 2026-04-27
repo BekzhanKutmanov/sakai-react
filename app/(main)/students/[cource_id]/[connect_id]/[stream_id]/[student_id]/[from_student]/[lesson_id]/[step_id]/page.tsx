@@ -5,6 +5,7 @@ import LessonInfoCard from '@/app/components/lessons/LessonInfoCard';
 import GroupSkeleton from '@/app/components/skeleton/GroupSkeleton';
 import useErrorMessage from '@/hooks/useErrorMessage';
 import { LayoutContext } from '@/layout/context/layoutcontext';
+import { useLocalization } from '@/layout/context/localizationcontext';
 import { fetchCourseInfo } from '@/services/courses';
 import { statusView } from '@/services/notifications';
 import { fetchElement } from '@/services/steps';
@@ -22,6 +23,7 @@ export default function StudentCheck() {
     const { cource_id, connect_id, stream_id, student_id, from_student, lesson_id, step_id } = useParams();
 
     const { user, setMessage, contextNotificationId, setContextNotificationId, handleNotifications, contextFetchVerifed } = useContext(LayoutContext);
+    const { translations } = useLocalization();
     const showError = useErrorMessage();
 
     const [mainSkeleton, mainSetSkeleton] = useState(false);
@@ -59,7 +61,7 @@ export default function StudentCheck() {
             setHasSteps(true);
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
+                value: { severity: 'error', summary: translations.errorTitle, detail: translations.tryAgainLater }
             });
             if (data?.response?.status) {
                 showError(data.response.status);
@@ -88,7 +90,7 @@ export default function StudentCheck() {
                 setSkeleton(false);
                 setMessage({
                     state: true,
-                    value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
+                    value: { severity: 'error', summary: translations.errorTitle, detail: translations.tryAgainLater }
                 });
                 if (data?.response?.status) {
                     showError(data.response.status);
@@ -106,7 +108,7 @@ export default function StudentCheck() {
         } else {
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
+                value: { severity: 'error', summary: translations.errorTitle, detail: translations.tryAgainLater }
             });
             if (data?.response?.status) {
                 showError(data.response.status);
@@ -121,19 +123,19 @@ export default function StudentCheck() {
             contextFetchVerifed();
             setMessage({
                 state: true,
-                value: { severity: 'success', summary: 'Успешно добавлен!', detail: '' }
+                value: { severity: 'success', summary: translations.successAdd, detail: '' }
             });
             handleFetchStreams();
         } else {
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка при добавлении!', detail: '' }
+                value: { severity: 'error', summary: translations.addError, detail: '' }
             });
             if (data?.response?.status) {
                 if (data?.response?.status == '400') {
                     setMessage({
                         state: true,
-                        value: { severity: 'error', summary: 'Ошибка!', detail: data?.response?.data?.message }
+                        value: { severity: 'error', summary: translations.errorTitle, detail: data?.response?.data?.message }
                     });
                 } else {
                     showError(data.response.status);
@@ -149,19 +151,19 @@ export default function StudentCheck() {
             contextFetchVerifed();
             setMessage({
                 state: true,
-                value: { severity: 'success', summary: 'Успешно добавлен!', detail: '' }
+                value: { severity: 'success', summary: translations.successAdd, detail: '' }
             });
             handleFetchStreams();
         } else {
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка при добавлении!', detail: '' }
+                value: { severity: 'error', summary: translations.addError, detail: '' }
             });
             if (data?.response?.status) {
                 if (data?.response?.status == '400') {
                     setMessage({
                         state: true,
-                        value: { severity: 'error', summary: 'Ошибка!', detail: data?.response?.data?.message }
+                        value: { severity: 'error', summary: translations.errorTitle, detail: data?.response?.data?.message }
                     });
                 } else {
                     showError(data.response.status);
@@ -216,7 +218,7 @@ export default function StudentCheck() {
                     {courseShow && courseShow?.title ? <h1 className="text-2xl bg-[var(--titleColor)] text-[var(--whiteColor)] text-center p-3">{courseShow?.title}</h1> : ''}
 
                     <h2 style={{ marginBottom: 20 }} className="text-md sm:text-lg flex items-center justify-center gap-2">
-                        <span>Активность студента: </span>
+                        <span>{translations.activity}: </span>
                         {student && (
                             <div className="flex gap-1 items-center text-[var(--mainColor)]">
                                 <span>{student?.last_name}</span>
@@ -234,10 +236,10 @@ export default function StudentCheck() {
                             });
 
                             return (
-                                <AccordionTab header={'Тема: ' + item.title} key={item.id} className="w-full p-accordion" style={{ width: '100%' }}>
+                                <AccordionTab header={translations.theme + ': ' + item.title} key={item.id} className="w-full p-accordion" style={{ width: '100%' }}>
                                     <div className="flex flex-col gap-2">
                                         {content?.length < 1 || hasSteps ? (
-                                            <p className="text-center text-sm">Данных нет</p>
+                                            <p className="text-center text-sm">{translations.noData}</p>
                                         ) : (
                                             content?.map((i, idx) => {
                                                 if (i.id_parent) {
@@ -284,7 +286,7 @@ export default function StudentCheck() {
                         })}
                     </Accordion>
                     <div className="flex justify-end gap-1 p-1">
-                        <b>Балл студента: </b>
+                        <b>{translations.yourScore}: </b>
                         <b className="text-[var(--mainColor)]"> {totalScore}</b>
                     </div>
                 </div>

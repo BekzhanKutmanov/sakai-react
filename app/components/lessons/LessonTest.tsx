@@ -111,7 +111,7 @@ export default function LessonTest({
         } else {
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
+                value: { severity: 'error', summary: translations.errorTitle, detail: translations.tryAgainLater }
             });
             if (data?.response?.status) {
                 showError(data.response.status);
@@ -128,20 +128,20 @@ export default function LessonTest({
             clearValues();
             setMessage({
                 state: true,
-                value: { severity: 'success', summary: 'Успешно добавлен!', detail: '' }
+                value: { severity: 'success', summary: translations.successAdd, detail: '' }
             });
         } else {
             setTestValue({ title: '', score: 0, aiCreate: false, isDoc: false });
             setEditingLesson(null);
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка при добавлении!', detail: '' }
+                value: { severity: 'error', summary: translations.addError, detail: '' }
             });
             if (data?.response?.status) {
                 if (data?.response?.status == '400') {
                     setMessage({
                         state: true,
-                        value: { severity: 'error', summary: 'Ошибка!', detail: data?.response?.data?.message }
+                        value: { severity: 'error', summary: translations.errorTitle, detail: data?.response?.data?.message }
                     });
                 } else {
                     showError(data.response.status);
@@ -176,7 +176,7 @@ export default function LessonTest({
             clearValues();
             setMessage({
                 state: true,
-                value: { severity: 'success', summary: 'Успешно изменено!', detail: '' }
+                value: { severity: 'success', summary: translations.updateSuccess, detail: '' }
             });
         } else {
             setSkeleton(false);
@@ -184,13 +184,13 @@ export default function LessonTest({
             setEditingLesson(null);
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка при изменении!', detail: '' }
+                value: { severity: 'error', summary: translations.updateError, detail: '' }
             });
             if (data?.response?.status) {
                 if (data?.response?.status == '400') {
                     setMessage({
                         state: true,
-                        value: { severity: 'error', summary: 'Ошибка!', detail: data?.response?.data?.message }
+                        value: { severity: 'error', summary: translations.errorTitle, detail: data?.response?.data?.message }
                     });
                 } else {
                     showError(data.response.status);
@@ -208,18 +208,18 @@ export default function LessonTest({
             fetchPropThemes();
             setMessage({
                 state: true,
-                value: { severity: 'success', summary: 'Успешно удалено!', detail: '' }
+                value: { severity: 'success', summary: translations.deleteSuccess, detail: '' }
             });
         } else {
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка при удалении!', detail: '' }
+                value: { severity: 'error', summary: translations.deleteError, detail: '' }
             });
             if (data?.response?.status) {
                 if (data?.response?.status == '400') {
                     setMessage({
                         state: true,
-                        value: { severity: 'error', summary: 'Ошибка!', detail: data?.response?.data?.message }
+                        value: { severity: 'error', summary: translations.errorTitle, detail: data?.response?.data?.message }
                     });
                 } else {
                     showError(data.response.status);
@@ -233,7 +233,7 @@ export default function LessonTest({
         console.log('Был перетащен элемент с id:', forAiTestId);
         const data = await generateQuiz(element?.lesson_id && Number(element?.lesson_id), forAiTestId);
         console.log(data);
-        
+
         if (data.status === 'success') {
             setProgressSpinner(false);
             setAiOptions(data?.quiz?.questions);
@@ -241,7 +241,7 @@ export default function LessonTest({
             setProgressSpinner(false);
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
+                value: { severity: 'error', summary: translations.errorTitle, detail: translations.tryAgainLater }
             });
             if (data?.response?.status) {
                 showError(data.response.status);
@@ -262,7 +262,7 @@ export default function LessonTest({
             setProgressSpinner(false);
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
+                value: { severity: 'error', summary: translations.errorTitle, detail: translations.tryAgainLater }
             });
             if (data?.response?.status) {
                 showError(data.response.status);
@@ -273,7 +273,7 @@ export default function LessonTest({
     const aiOptionsSection = (param: 'doc' | 'ai') => {
         const arr = param === 'ai' ? aiOptions : docOptions;
         if (arr?.length < 1) {
-            return <b>Результатов нет, повторите позже</b>;
+            return <b>{translations.noData}, {translations.tryAgainLater}</b>;
         }
 
         return (
@@ -285,7 +285,7 @@ export default function LessonTest({
                             <div className="flex items-start justify-between gap-2">
                                 <b className="text-[14px] sm:text-[16px]">{item?.content}</b>
                                 <div className="flex items-center justify-start gap-1">
-                                    <span className="text-[var(--mainColor)]">Балл: </span>
+                                    <span className="text-[var(--mainColor)]">{translations.score}: </span>
                                     <b className="text-[16px]">{`${item?.score}`}</b>
                                 </div>
                             </div>
@@ -306,7 +306,7 @@ export default function LessonTest({
 
                             <div className="flex justify-end">
                                 <Button
-                                    label="Выбрать и редактировать"
+                                    label={translations.edit}
                                     size="small"
                                     className="text-sm"
                                     onClick={() => {
@@ -466,7 +466,7 @@ export default function LessonTest({
                                     <div className="w-full">
                                         <InputTextarea
                                             id="title"
-                                            placeholder={'Вопрос...'}
+                                            placeholder={translations.questionPlaceholder}
                                             value={testValue.title}
                                             style={{ resize: 'none', width: '100%' }}
                                             onChange={(e) => {
@@ -479,7 +479,7 @@ export default function LessonTest({
                                     <div className="flex flex-col justify-center items-start">
                                         <InputText
                                             type="number"
-                                            placeholder="Балл"
+                                            placeholder={translations.score}
                                             className="w-[50px] sm:w-[70px]"
                                             onChange={(e) => {
                                                 setTestValue((prev) => ({ ...prev, score: Number(e.target.value) }));
@@ -517,7 +517,7 @@ export default function LessonTest({
                                         );
                                     })}
                                     <div className="w-full flex gap-1 sm:gap-3 sm:items-center flex-col sm:flex-row">
-                                        <Button label="Добавить вариант" onClick={addOption} disabled={optionAddBtn} icon="pi pi-plus" className="sm:ml-4 text-sm" size="small" />
+                                        <Button label={translations.addVariant} onClick={addOption} disabled={optionAddBtn} icon="pi pi-plus" className="sm:ml-4 text-sm" size="small" />
                                         <Button label="Создать с ИИ" size="small" className="text-sm" icon="pi pi-microchip-ai" onClick={preparation} />
                                         <Button label="Создать тест из документа" size="small" className="text-sm" icon="pi pi-file-word" onClick={() => docPreparationTrue()} />
                                     </div>
@@ -526,13 +526,13 @@ export default function LessonTest({
                             <div className="flex gap-1 sm:gap-2 flex-col sm:flex-row items-start">
                                 {!testValue.title?.length && <span className="text-[12px] text-[var(--amberColor)]">*Добавтье вопрос</span>}
                                 {!testChecked.check && <span className="text-[12px] text-[var(--amberColor)]">*Добавтье правильный ответ</span>}
-                                <span className="text-[12px] text-[var(--amberColor)]">*Балл за тест ({testValue?.score || '0'})</span>
+                                <span className="text-[12px] text-[var(--amberColor)]">*{translations.score} ({testValue?.score || '0'})</span>
                             </div>
                         </div>
                         <div className="flex relative">
                             <div className="w-full flex gap-1 justify-center items-center">
                                 <Button
-                                    label="Сохранить"
+                                    label={translations.save}
                                     disabled={progressSpinner || !testValue.title?.length || !!errors.title || !testChecked.check}
                                     onClick={() => {
                                         handleAddTest();

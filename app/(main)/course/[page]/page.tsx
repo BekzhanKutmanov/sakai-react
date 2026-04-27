@@ -160,7 +160,7 @@ export default function Course() {
             // setPageState(1);
             setMessage({
                 state: true,
-                value: { severity: 'success', summary: 'Успешно изменено!', detail: '' }
+                value: { severity: 'success', summary: translations.updateSuccess, detail: '' }
             });
         } else {
             setSkeleton(false);
@@ -281,18 +281,18 @@ export default function Course() {
             // setPageState(1);
             setMessage({
                 state: true,
-                value: { severity: 'success', summary: 'Успешно удалено!', detail: '' }
+                value: { severity: 'success', summary: translations.deleteSuccess, detail: '' }
             }); // messege - Успех!
         } else {
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка при удалении!', detail: '' }
+                value: { severity: 'error', summary: translations.deleteError, detail: '' }
             }); // messege - Ошибка при добавлении
             if (data?.response?.status) {
                 if (data?.response?.status == '400') {
                     setMessage({
                         state: true,
-                        value: { severity: 'error', summary: 'Ошибка!', detail: data?.response?.data?.message }
+                        value: { severity: 'error', summary: translations.errorTitle, detail: data?.response?.data?.message }
                     });
                 } else {
                     showError(data.response.status);
@@ -322,18 +322,18 @@ export default function Course() {
             setSelectedCourse(null);
             setMessage({
                 state: true,
-                value: { severity: 'success', summary: 'Успешно изменено!', detail: '' }
+                value: { severity: 'success', summary: translations.updateSuccess, detail: '' }
             }); // messege - Успех!
         } else {
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка при изменении!', detail: '' }
+                value: { severity: 'error', summary: translations.updateError, detail: '' }
             }); // messege - Ошибка при изменении курса
             if (data?.response?.status) {
                 if (data?.response?.status == '400') {
                     setMessage({
                         state: true,
-                        value: { severity: 'error', summary: 'Ошибка!', detail: data?.response?.data?.message }
+                        value: { severity: 'error', summary: translations.errorTitle, detail: data?.response?.data?.message }
                     });
                 } else {
                     showError(data.response.status);
@@ -405,13 +405,13 @@ export default function Course() {
         } else {
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка повторите позже', detail: '' }
+                value: { severity: 'error', summary: translations.errorTryAgainLater, detail: '' }
             }); // messege - Ошибка при изменении курса
             if (data?.response?.status) {
                 if (data?.response?.status == '400') {
                     setMessage({
                         state: true,
-                        value: { severity: 'error', summary: 'Ошибка!', detail: data?.response?.data?.message }
+                        value: { severity: 'error', summary: translations.errorTitle, detail: data?.response?.data?.message }
                     });
                 } else {
                     showError(data.response.status);
@@ -434,7 +434,7 @@ export default function Course() {
                 if (data?.response?.status == '400') {
                     setMessage({
                         state: true,
-                        value: { severity: 'error', summary: 'Ошибка!', detail: data?.response?.data?.message }
+                        value: { severity: 'error', summary: translations.errorTitle, detail: data?.response?.data?.message }
                     });
                 } else {
                     showError(data.response.status);
@@ -459,7 +459,7 @@ export default function Course() {
                 if (data?.response?.status == '400') {
                     setMessage({
                         state: true,
-                        value: { severity: 'error', summary: 'Ошибка!', detail: data?.response?.data?.message }
+                        value: { severity: 'error', summary: translations.errorTitle, detail: data?.response?.data?.message }
                     });
                 } else {
                     showError(data.response.status);

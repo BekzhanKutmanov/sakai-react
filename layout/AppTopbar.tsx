@@ -17,10 +17,11 @@ import type { TieredMenu as TieredMenuRef } from 'primereact/tieredmenu';
 import Notification from '@/app/components/notification/Notification';
 
 import { useLocalization } from './context/localizationcontext';
+import LocalizationSwift from '@/app/components/LocalizationSwift';
 
 const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
-    const { layoutState, onMenuToggle, user, setUser, setGlobalLoading, setContextNotificationId, contextNotifications, handleNotifications } = useContext(LayoutContext);
-    const { language, setLanguage, translations } = useLocalization();
+    const { layoutState, onMenuToggle, user, setUser, setGlobalLoading, contextNotifications, handleNotifications } = useContext(LayoutContext);
+    const { translations } = useLocalization();
 
     const menubuttonRef = useRef(null);
     const topbarmenuRef = useRef(null);
@@ -300,9 +301,6 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                         </div>
                     ) : (
                         <div className={`flex items-center gap-3 ${!media ? 'order-2' : 'order-3'} `}>
-                            {/*<button type="button" onClick={() => setLanguage(language === 'ru' ? 'ky' : 'ru')} className="p-link">*/}
-                            {/*    {language.toUpperCase()}*/}
-                            {/*</button>*/}
                             <Link className="text-[var(--titleColor)] text-sm hover:text-[var(--mainColor)]" href={'https://oldmooc.oshsu.kg/'} target="_blank">
                                 {translations.oldMooc}
                             </Link>

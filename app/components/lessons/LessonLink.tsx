@@ -75,7 +75,7 @@ export default function LessonLink({ element, content, fetchPropElement, clearPr
         } else {
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
+                value: { severity: 'error', summary: translations.errorTitle, detail: translations.tryAgainLater }
             });
             if (data?.response?.status) {
                 showError(data.response.status);
@@ -90,12 +90,12 @@ export default function LessonLink({ element, content, fetchPropElement, clearPr
             fetchPropElement(element.id);
             setMessage({
                 state: true,
-                value: { severity: 'success', summary: 'Успешно добавлен!', detail: '' }
+                value: { severity: 'success', summary: translations.successAdd, detail: '' }
             });
         } else {
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка при добавлении!', detail: '' }
+                value: { severity: 'error', summary: translations.addError, detail: '' }
             });
             if (data.response.status) {
                 showError(data.response.status);
@@ -111,12 +111,12 @@ export default function LessonLink({ element, content, fetchPropElement, clearPr
             fetchPropElement(element.id);
             setMessage({
                 state: true,
-                value: { severity: 'success', summary: 'Успешно удалено!', detail: '' }
+                value: { severity: 'success', summary: translations.deleteSuccess, detail: '' }
             });
         } else {
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка при удалении!', detail: '' }
+                value: { severity: 'error', summary: translations.deleteError, detail: '' }
             });
             if (data.response.status) {
                 showError(data.response.status);
@@ -137,7 +137,7 @@ export default function LessonLink({ element, content, fetchPropElement, clearPr
             clearValues();
             setMessage({
                 state: true,
-                value: { severity: 'success', summary: 'Успешно изменено!', detail: '' }
+                value: { severity: 'success', summary: translations.updateSuccess, detail: '' }
             });
         } else {
             setSkeleton(false);
@@ -145,7 +145,7 @@ export default function LessonLink({ element, content, fetchPropElement, clearPr
             setEditingLesson({ title: '', description: '', url: '' });
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка при изменении!', detail: '' }
+                value: { severity: 'error', summary: translations.updateError, detail: '' }
             });
             if (data?.response?.status) {
                 showError(data.response.status);
@@ -160,7 +160,7 @@ export default function LessonLink({ element, content, fetchPropElement, clearPr
                     <div className="w-full flex flex-col items-center gap-4 py-2">
                         <div className="w-full flex flex-wrap gap-4">
                             {docShow ? (
-                                <NotFound titleMessage={'Заполните поля для добавления урока'} />
+                                <NotFound titleMessage={translations.defaultMobilePage} />
                             ) : skeleton ? (
                                 <div className="w-full">
                                     <GroupSkeleton count={1} size={{ width: '100%', height: '6rem' }} />
@@ -189,7 +189,7 @@ export default function LessonLink({ element, content, fetchPropElement, clearPr
                             <InputText
                                 id="usefulLink"
                                 type="url"
-                                placeholder={'Загрузить ссылку'}
+                                placeholder={translations.linkLabel}
                                 value={linkValue.url}
                                 className="w-full"
                                 onChange={(e) => {
@@ -203,7 +203,7 @@ export default function LessonLink({ element, content, fetchPropElement, clearPr
                             <InputText
                                 id="title"
                                 type="text"
-                                placeholder={'Название'}
+                                placeholder={translations.title}
                                 className="w-full"
                                 value={linkValue.title}
                                 onChange={(e) => {
@@ -213,7 +213,7 @@ export default function LessonLink({ element, content, fetchPropElement, clearPr
                             />
                             <b style={{ color: 'red', fontSize: '12px' }}>{errors.title?.message}</b>
                         </div>
-                        {additional.link && <InputText placeholder="Описание" value={linkValue.description} onChange={(e) => setLinkValue((prev) => ({ ...prev, description: e.target.value }))} className="w-full" />}
+                        {additional.link && <InputText placeholder={translations.description} value={linkValue.description} onChange={(e) => setLinkValue((prev) => ({ ...prev, description: e.target.value }))} className="w-full" />}
 
                         <div className="flex relative">
                             {/* <Button disabled={!!errors.title || !docValue.file} label="Сактоо" onClick={handleAddDoc} /> */}

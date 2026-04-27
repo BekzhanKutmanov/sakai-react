@@ -12,7 +12,6 @@ import { useForm } from 'react-hook-form';
 import LessonCard from '../cards/LessonCard';
 import useMediaQuery from '@/hooks/useMediaQuery';
 import { addPractica, deletePractica, fetchElement, stepSequenceUpdate, updatePractica } from '@/services/steps';
-import { mainStepsType } from '@/types/mainStepType';
 import useErrorMessage from '@/hooks/useErrorMessage';
 import { LayoutContext } from '@/layout/context/layoutcontext';
 import FormModal from '../popUp/FormModal';
@@ -20,6 +19,7 @@ import GroupSkeleton from '../skeleton/GroupSkeleton';
 import { Editor, EditorTextChangeEvent } from 'primereact/editor';
 import { contentType } from '@/types/contentType';
 import { useLocalization } from '@/layout/context/localizationcontext';
+import { mainStepsType } from '@/types/mainStepType';
 
 export default function LessonPractica({ element, content, fetchPropElement, fetchPropThemes, clearProp }: { element: mainStepsType; content: any; fetchPropElement: (id: number) => void; fetchPropThemes: () => void; clearProp: boolean }) {
     interface docValueType {
@@ -132,7 +132,7 @@ export default function LessonPractica({ element, content, fetchPropElement, fet
         } else {
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
+                value: { severity: 'error', summary: translations.errorTitle, detail: translations.tryAgainLater }
             });
             if (data?.response?.status) {
                 showError(data.response.status);
@@ -148,18 +148,18 @@ export default function LessonPractica({ element, content, fetchPropElement, fet
             fetchPropThemes();
             setMessage({
                 state: true,
-                value: { severity: 'success', summary: 'Успешно добавлен!', detail: '' }
+                value: { severity: 'success', summary: translations.successAdd, detail: '' }
             });
         } else {
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка при добавлении!', detail: '' }
+                value: { severity: 'error', summary: translations.addError, detail: '' }
             });
             if (data?.response?.status) {
                 if (data?.response?.status == '400') {
                     setMessage({
                         state: true,
-                        value: { severity: 'error', summary: 'Ошибка!', detail: data?.response?.data?.message }
+                        value: { severity: 'error', summary: translations.errorTitle, detail: data?.response?.data?.message }
                     });
                 } else {
                     showError(data.response.status);
@@ -177,18 +177,18 @@ export default function LessonPractica({ element, content, fetchPropElement, fet
             fetchPropThemes();
             setMessage({
                 state: true,
-                value: { severity: 'success', summary: 'Успешно удалено!', detail: '' }
+                value: { severity: 'success', summary: translations.deleteSuccess, detail: '' }
             });
         } else {
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка при удалении!', detail: '' }
+                value: { severity: 'error', summary: translations.deleteError, detail: '' }
             });
             if (data?.response?.status) {
                 if (data?.response?.status == '400') {
                     setMessage({
                         state: true,
-                        value: { severity: 'error', summary: 'Ошибка!', detail: data?.response?.data?.message }
+                        value: { severity: 'error', summary: translations.errorTitle, detail: data?.response?.data?.message }
                     });
                 } else {
                     showError(data.response.status);
@@ -211,7 +211,7 @@ export default function LessonPractica({ element, content, fetchPropElement, fet
             clearValues();
             setMessage({
                 state: true,
-                value: { severity: 'success', summary: 'Успешно изменено!', detail: '' }
+                value: { severity: 'success', summary: translations.updateSuccess, detail: '' }
             });
         } else {
             setSkeleton(false);
@@ -219,13 +219,13 @@ export default function LessonPractica({ element, content, fetchPropElement, fet
             setEditingLesson({ title: '', description: '', document: null, url: '', score: 0 });
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка при изменении!', detail: '' }
+                value: { severity: 'error', summary: translations.updateError, detail: '' }
             });
             if (data?.response?.status) {
                 if (data?.response?.status == '400') {
                     setMessage({
                         state: true,
-                        value: { severity: 'error', summary: 'Ошибка!', detail: data?.response?.data?.message }
+                        value: { severity: 'error', summary: translations.errorTitle, detail: data?.response?.data?.message }
                     });
                 } else {
                     showError(data.response.status);
@@ -286,7 +286,7 @@ export default function LessonPractica({ element, content, fetchPropElement, fet
                                         value={docValue.title}
                                         id="title"
                                         className="w-full"
-                                        placeholder="Вопрос..."
+                                        placeholder={translations.questionPlaceholder}
                                         onChange={(e) => {
                                             setDocValue((prev) => ({ ...prev, title: e.target.value }));
                                             setValue('title', e.target.value, { shouldValidate: true });
@@ -299,7 +299,7 @@ export default function LessonPractica({ element, content, fetchPropElement, fet
                                 <InputText
                                     type="number"
                                     id="title"
-                                    placeholder="Балл"
+                                    placeholder={translations.score}
                                     // value={String(docValue?.score)}
                                     className="w-[50px] sm:w-[70px] h-auto"
                                     onChange={(e) => {
@@ -354,7 +354,7 @@ export default function LessonPractica({ element, content, fetchPropElement, fet
                                 <InputText
                                     id="usefulLinkNotReq"
                                     type="url"
-                                    placeholder={'Загрузить ссылку'}
+                                    placeholder={translations.linkLabel}
                                     value={docValue.url}
                                     className="w-full"
                                     onChange={(e) => {
@@ -419,7 +419,7 @@ export default function LessonPractica({ element, content, fetchPropElement, fet
                 <div className="flex flex-col gap-1">
                     <div className="flex flex-col gap-1 items-center justify-center">
                         <div className="w-full flex flex-col">
-                            <span>Позиция шага:</span>
+                            <span>{translations.stepPosition}:</span>
                             <InputText
                                 type="number"
                                 value={String(editingLesson?.stepPos) || ''}
@@ -463,7 +463,7 @@ export default function LessonPractica({ element, content, fetchPropElement, fet
                                 <InputText
                                     type="number"
                                     className="w-[70px]"
-                                    placeholder="Балл"
+                                    placeholder={translations.score}
                                     value={String(editingLesson?.score)}
                                     onChange={(e) => {
                                         setEditingLesson((prev) => prev && { ...prev, score: Number(e.target.value) });
@@ -508,7 +508,7 @@ export default function LessonPractica({ element, content, fetchPropElement, fet
                                     <InputText
                                         id="usefulLink"
                                         type="url"
-                                        placeholder={'Загрузить ссылку'}
+                                        placeholder={translations.linkLabel}
                                         value={editingLesson?.url}
                                         className="w-full"
                                         onChange={(e) => {
@@ -522,7 +522,7 @@ export default function LessonPractica({ element, content, fetchPropElement, fet
                             <div className="flex justify-center relative">
                                 <div className="">
                                     <span className="cursor-pointer ml-1 text-[13px] sm:text-sm text-[var(--mainColor)]" onClick={() => setAdditional((prev) => ({ ...prev, doc: !prev.doc }))}>
-                                        Дополнительно {additional.doc ? '-' : '+'}
+                                        {translations.addAdditionally} {additional.doc ? '-' : '+'}
                                     </span>
                                 </div>
                             </div>

@@ -71,7 +71,7 @@ export default function LessonForum({ element, content, fetchPropElement, clearP
         } else {
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
+                value: { severity: 'error', summary: translations.errorTitle, detail: translations.tryAgainLater }
             });
             if (data?.response?.status) {
                 showError(data.response.status);
@@ -203,7 +203,7 @@ export default function LessonForum({ element, content, fetchPropElement, clearP
         );
     };
 
-    useEffect(() => {        
+    useEffect(() => {
         if (content) {
             setContentShow(true);
             setForum(content);
@@ -240,7 +240,7 @@ export default function LessonForum({ element, content, fetchPropElement, clearP
 
                     <InputText
                         id="title"
-                        type="text" 
+                        type="text"
                         placeholder={'Название'}
                         value={editingLesson.title}
                         onChange={(e) => {

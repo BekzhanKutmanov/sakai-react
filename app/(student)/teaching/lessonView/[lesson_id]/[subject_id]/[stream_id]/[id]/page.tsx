@@ -307,15 +307,6 @@ export default function LessonTest() {
         }
     };
 
-    // Редирект в новый шаг от навигации шагов
-    // const handleStepRouterPush = async (stepId: number, stream_id: number) => {
-    //         setNavigationStepId(data[0]?.id);
-    //         if (data[0]?.id)
-    //     } else {
-    //         setMessage({ state: true, value: { severity: 'error', summary: 'Ошибка!', detail: 'Тема не доступна' } });
-    //     }
-    // };
-
     useEffect(() => {
         if (steps?.type.name === 'document') {
             setType(steps?.type.name);

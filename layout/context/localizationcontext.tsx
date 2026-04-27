@@ -146,6 +146,15 @@ export const localizationData = {
         archiveSuccess: 'Архивирование прошло успешно',
         sendSuccess: 'Успешно отправлен!',
 
+        pleaceRepeat: 'Пожалуйста, проверьте введённые данные',
+        noCorrectQuery: 'Некорректный запрос',
+        accessError: 'У вас нет прав для выполнения этого действия',
+        dataConflict: 'Конфликт данных',
+        resourseAllreadyExist: 'Возможно, ресурс уже существует или был изменён',
+        dataNotValid: 'Данные не прошли проверку. Проверьте правильность заполнения формы.',
+        serverError: 'На сервере произошла ошибка',
+        serviceNoAvialable: 'Сервис временно недоступен. Попробуйте позже',
+
         // table
         numberSign: '#',
         publication: 'Публикация',
@@ -168,7 +177,6 @@ export const localizationData = {
         courseStreamConnect: 'Данный поток связан с курсом',
         notCourseConnections: 'Не связан с курсом',
         streamConnectConfirm: 'Поток связан с курсом, вы уверены что хотите связать новый курс?',
-
 
         // buttons
         archive: 'Архивировать',
@@ -417,7 +425,10 @@ export const localizationData = {
         scaleMd: 'Средний',
         scaleLg: 'Большой',
         scaleXl: 'Очень большой',
-        langSwitcher: 'Язык'
+        langSwitcher: 'Язык',
+
+        // Video
+        videoProccessError: 'Ошибка при обработке видео',
     },
     ky: {
         oshSU: 'ОшМУ',
@@ -548,18 +559,26 @@ export const localizationData = {
         view: 'Көрүү',
 
         // Messages
-        successAdd: 'Успешно добавлен!',
-        errorTitle: 'Ошибка!',
-        addCourseError: 'Не удалось добавить курс',
-        tryAgainLater: 'Повторите позже',
-        addError: 'Ошибка при добавлении!',
-        deleteSuccess: 'Успешно удалено!',
-        deleteError: 'Ошибка при удалении!',
-        updateSuccess: 'Успешно изменено!',
-        updateError: 'Ошибка при изменении!',
-        errorTryAgainLater: 'Ошибка, повторите позже',
-        archiveSuccess: 'Архивирование прошло успешно',
-        sendSuccess: 'Ийгиликтуу жөнөтүлдү!',
+        successAdd: 'Ийгиликтүү кошулду!',
+        errorTitle: 'Ката!',
+        addCourseError: 'Курсту кошуу мүмкүн болгон жок',
+        tryAgainLater: 'Кийинчерээк кайталаңыз',
+        addError: 'Кошууда ката кетти!',
+        deleteSuccess: 'Ийгиликтүү өчүрүлдү!',
+        deleteError: 'Өчүрүүдө ката кетти!',
+        updateSuccess: 'Ийгиликтүү өзгөртүлдү!',
+        updateError: 'Өзгөртүүдө ката кетти!',
+        errorTryAgainLater: 'Ката кетти, кийинчерээк кайталаңыз',
+        archiveSuccess: 'Архивдөө ийгиликтүү аяктады',
+        sendSuccess: 'Ийгиликтүү жөнөтүлдү!',
+        pleaceRepeat: 'Сураныч, киргизилген маалыматтарды текшериңиз',
+        noCorrectQuery: 'Туура эмес сурам',
+        accessError: 'Бул аракетти аткарууга укугуңуз жок',
+        dataConflict: 'Маалыматтардын карама-каршылыгы',
+        resourseAllreadyExist: 'Мүмкүн, ресурс мурун эле бар же өзгөртүлгөн',
+        dataNotValid: 'Маалыматтар текшерүүдөн өткөн жок. Форманын туура толтурулганын текшериңиз.',
+        serverError: 'Серверде ката кетти',
+        serviceNoAvialable: 'Кызмат убактылуу иштебейт. Кийинчерээк аракет кылып көрүңүз',
 
         // table
         numberSign: '#',
@@ -830,7 +849,10 @@ export const localizationData = {
         scaleMd: 'Орточо',
         scaleLg: 'Чоң',
         scaleXl: 'Өтө чоң',
-        langSwitcher: 'Тил'
+        langSwitcher: 'Тил',
+
+        // Video
+        videoProccessError: 'Видеону иштетүүдө ката кетти',
     }
 };
 

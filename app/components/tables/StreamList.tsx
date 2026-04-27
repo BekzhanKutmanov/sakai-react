@@ -127,7 +127,7 @@ const StreamList = React.memo(function StreamList({
             setHasStreams(true);
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
+                value: { severity: 'error', summary: translations.errorTitle, detail: translations.tryAgainLater }
             });
             if (data?.response?.status) {
                 showError(data.response.status);
@@ -147,7 +147,7 @@ const StreamList = React.memo(function StreamList({
             handleFetchStreams(auditState);
             setMessage({
                 state: true,
-                value: { severity: 'success', summary: 'Успешно добавлен!', detail: '' }
+                value: { severity: 'success', summary: translations.successAdd, detail: '' }
             });
         } else {
             const teachers = () => {
@@ -180,14 +180,14 @@ const StreamList = React.memo(function StreamList({
                 } else {
                     setMessage({
                         state: true,
-                        value: { severity: 'error', summary: 'Ошибка!', detail: data?.response?.data?.message }
+                        value: { severity: 'error', summary: translations.errorTitle, detail: data?.response?.data?.message }
                     });
                 }
             } else {
                 showError(data?.response?.status);
                 setMessage({
                     state: true,
-                    value: { severity: 'error', summary: data?.teachers?.length ? '' : 'Ошибка при добавлении', detail: data?.teachers?.length ? <div style={{ whiteSpace: 'pre-line' }}>{teachers()}</div> : 'Ошибка при добавлении' }
+                    value: { severity: 'error', summary: data?.teachers?.length ? '' : translations.addError, detail: data?.teachers?.length ? <div style={{ whiteSpace: 'pre-line' }}>{teachers()}</div> : translations.addError }
                 });
             }
         }

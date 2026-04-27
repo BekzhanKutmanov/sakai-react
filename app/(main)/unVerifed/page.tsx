@@ -74,7 +74,7 @@ export default function UnVerifed() {
             setHasThemes(true);
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
+                value: { severity: 'error', summary: translations.errorTitle, detail: translations.tryAgainLater }
             });
             if (contextVerifedValue?.response?.status) {
                 showError(contextVerifedValue.response.status);

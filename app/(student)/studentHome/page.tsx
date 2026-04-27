@@ -20,7 +20,7 @@ interface StudentStatistic {
 }
 
 export default function StudentHome() {
-    const { user, setMessage, contextNotifications } = useContext(LayoutContext);
+    const { user, contextNotifications } = useContext(LayoutContext);
     const ref = useRef<HTMLDivElement>(null);
     const media = useMediaQuery('(max-width: 640px)');
     const { translations } = useLocalization();

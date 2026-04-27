@@ -17,6 +17,7 @@ import { confirmDialog } from 'primereact/confirmdialog';
 import { InputText } from 'primereact/inputtext';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import { useContext, useEffect, useRef, useState } from 'react';
+import { useLocalization } from '@/layout/context/localizationcontext';
 
 export default function Forum() {
     type OptionsType = Intl.DateTimeFormatOptions;
@@ -52,7 +53,7 @@ export default function Forum() {
     }
 
     const { stepId, id_parent, forum_id } = useParams();
-
+    const {translations} = useLocalization();
     const { user, setMessage, forumValuse } = useContext(LayoutContext);
     const showError = useErrorMessage();
     const media = useMediaQuery('(max-width: 640px)');
@@ -181,7 +182,7 @@ export default function Forum() {
         } else {
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
+                value: { severity: 'error', summary: translations.errorTitle, detail: translations.tryAgainLater }
             });
             if (data?.response?.status) {
                 showError(data.response.status);
@@ -213,12 +214,12 @@ export default function Forum() {
             // setForumValue(data?.data);
             setMessage({
                 state: true,
-                value: { severity: 'success', summary: 'Успешно добавлен!', detail: '' }
+                value: { severity: 'success', summary: translations.successAdd, detail: '' }
             });
         } else {
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка при добавлении!', detail: '' }
+                value: { severity: 'error', summary: translations.addError, detail: '' }
             });
             if (data.response.status) {
                 showError(data.response.status);

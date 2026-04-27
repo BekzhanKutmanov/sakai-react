@@ -36,7 +36,7 @@ export default function MainNotificatoin() {
         day: '2-digit',
         hour: '2-digit',
         minute: '2-digit',
-        hour12: false // 24-С‡Р°СЃРѕРІРѕР№ С„РѕСЂРјР°С‚
+        hour12: false // 24-часовой формат
     };
 
     const showError = useErrorMessage();
@@ -47,12 +47,12 @@ export default function MainNotificatoin() {
             if (data?.success) {
                 setMessage({
                     state: true,
-                    value: { severity: 'success', summary: 'Успешно удалено!', detail: '' }
+                    value: { severity: 'success', summary: translations.deleteSuccess, detail: '' }
                 });
             } else {
                 setMessage({
                     state: true,
-                    value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
+                    value: { severity: 'error', summary: translations.errorTitle, detail: translations.tryAgainLater }
                 });
                 if (data?.response?.status) {
                     showError(data.response.status);
@@ -175,18 +175,18 @@ export default function MainNotificatoin() {
                 <MainTitle>{translations.notifications}</MainTitle>
 
                 {/* <div className="relative w-full flex justify-center sm:justify-start items-center gap-1 my-2">
-                <InputText type="text" placeholder="РџРѕРёСЃРє..." value={search} className="w-full h-[48px]" onChange={(e) => setSearch(e.target.value)} />
+                <InputText type="text" placeholder="Поиск..." value={search} className="w-full h-[48px]" onChange={(e) => setSearch(e.target.value)} />
                 <div className="absolute right-2">{!searchSpinner && <i className="pi pi-search"></i>}</div>
                 <div className="absolute right-2">{searchSpinner && <ProgressSpinner style={{ width: '0.938rem', height: '0.938rem' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}</div>
             </div> */}
                 {/*
             <div className="flex items-center gap-2 my-2 px-2">
                 <div className="flex items-center gap-1">
-                    <span>РР·Р±СЂР°РЅРЅС‹Рµ</span>
+                    <span>Избранные</span>
                     <i className="pi pi-star-fill"></i>
                 </div>
                 <div className="flex items-center gap-1">
-                    <span>РђСЂС…РёРІ</span>
+                    <span>Архив</span>
                     <i className="pi pi-trash"></i>
                 </div>
             </div> */}
@@ -212,4 +212,3 @@ export default function MainNotificatoin() {
         </div>
     );
 }
-

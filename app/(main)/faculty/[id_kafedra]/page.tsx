@@ -12,6 +12,7 @@ import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import { DataView } from 'primereact/dataview';
 import { useContext, useEffect, useState } from 'react';
+import { useLocalization } from '@/layout/context/localizationcontext';
 
 export default function Kafedra() {
     interface kafedraInfoType {
@@ -33,6 +34,7 @@ export default function Kafedra() {
     }
 
     const { id_kafedra } = useParams();
+    const {translations} = useLocalization();
 
     const [courses, setCourses] = useState<kafedraInfoType[]>([]);
     const [contentShow, setContentShow] = useState<boolean>(false);
@@ -48,7 +50,7 @@ export default function Kafedra() {
     const handleFetchKafedra = async () => {
         setSkeleton(true);
         const data = await fetchDepartament(Number(id_kafedra));
-        if (data && Array.isArray(data)) {           
+        if (data && Array.isArray(data)) {
             setSkeleton(false);
             if (data.length > 0) {
                 setCourses(data);
@@ -62,7 +64,7 @@ export default function Kafedra() {
             setContentShow(true);
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
+                value: { severity: 'error', summary: translations.errorTitle, detail: translations.tryAgainLater }
             });
             if (data?.response?.status) {
                 showError(data.response.status);

@@ -54,7 +54,7 @@ export default function CoursesCut({ id_student }: { id_student: number | null }
             setSkeleton(false);
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
+                value: { severity: 'error', summary: translations.errorTitle, detail: translations.tryAgainLater }
             });
             if (data?.response?.status) {
                 showError(data.response.status);

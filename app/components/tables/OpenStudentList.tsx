@@ -15,12 +15,14 @@ import { Row } from 'primereact/row';
 import { fetchOpenStudents, fetchWeeks } from '@/services/openCourse';
 import { User } from '@/types/user';
 import { useLocalizedData } from '@/hooks/useLocalizedData';
+import { useLocalization } from '@/layout/context/localizationcontext';
 
 export default function OpenStudentList({ course_id, course_title, close }: { course_id: number | null; course_title: string | null; close: () => void }) {
     interface OpenCourseStudent extends User {
         all_score: number;
     }
 
+    const {translations} = useLocalization();
     const [studentList, setStudentList] = useState<OpenCourseStudent[]>([]);
     const [hasStudents, setHasStudents] = useState(false);
     const [skeleton, setSkeleton] = useState(false);
@@ -60,7 +62,7 @@ export default function OpenStudentList({ course_id, course_title, close }: { co
             setHasStudents(true);
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
+                value: { severity: 'error', summary: translations.errorTitle, detail: translations.tryAgainLater }
             });
             if (data?.response?.status) {
                 showError(data.response.status);

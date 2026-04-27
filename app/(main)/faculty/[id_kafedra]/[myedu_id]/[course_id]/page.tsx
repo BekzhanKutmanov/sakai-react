@@ -11,11 +11,12 @@ import { useParams } from 'next/navigation';
 import { Accordion, AccordionTab } from 'primereact/accordion';
 import { Dialog } from 'primereact/dialog';
 import { useContext, useEffect, useState } from 'react';
+import { useLocalization } from '@/layout/context/localizationcontext';
 
 export default function LessonCheck() {
     const { setMessage, contextFetchThemes, setContextThemes, contextThemes } = useContext(LayoutContext);
     const showError = useErrorMessage();
-
+    const {translations} = useLocalization();
     const { id_kafedra, course_id } = useParams();
 
     const [themes, setThemes] = useState<themeType[]>([]);
@@ -49,7 +50,7 @@ export default function LessonCheck() {
             setHasSteps(false);
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
+                value: { severity: 'error', summary: translations.errorTitle, detail: translations.tryAgainLater }
             });
             if (data?.response?.status) {
                 showError(data.response.status);
@@ -61,7 +62,7 @@ export default function LessonCheck() {
         if (!value) {
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка при обработке видео', detail: '' }
+                value: { severity: 'error', summary: translations.videoProccessError, detail: '' }
             });
         }
 
@@ -79,7 +80,7 @@ export default function LessonCheck() {
         if (!videoId) {
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка при обработке видео', detail: '' }
+                value: { severity: 'error', summary: translations.videoProccessError, detail: '' }
             });
             return null; // не удалось получить ID
         }
@@ -105,7 +106,7 @@ export default function LessonCheck() {
         } else {
             setThemeShow(true);
         }
-    }, [contextThemes]);    
+    }, [contextThemes]);
 
     // просто посмотреть пока
     useEffect(() => {

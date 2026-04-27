@@ -9,6 +9,7 @@ import Link from 'next/link';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import { useContext, useEffect, useState } from 'react';
+import { useLocalization } from '@/layout/context/localizationcontext';
 
 export default function Faculty() {
     interface City {
@@ -19,6 +20,7 @@ export default function Faculty() {
 
     const showError = useErrorMessage();
     const { setMessage, setGlobalLoading } = useContext(LayoutContext);
+    const { translations } = useLocalization();
 
     const [kafedra, setKafedra] = useState<City[]>([{ name_ru: '', id: null }]);
     const [selectShow, setSelectShow] = useState<boolean>(false);
@@ -41,7 +43,7 @@ export default function Faculty() {
         } else {
             setSkeleton(false);
             setFacultyShow(true);
-            setMessage({ state: true, value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' } });
+            setMessage({ state: true, value: { severity: 'error', summary: translations.errorTitle, detail: translations.tryAgainLater  } });
             if (data?.response?.status) {
                 showError(data.response.status);
             }

@@ -107,7 +107,7 @@ export default function Roles() {
             }
         } else {
             setContentNull(false);
-            setMessage({ state: true, value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' } });
+            setMessage({ state: true, value: { severity: 'error', summary: translations.errorTitle, detail: translations.tryAgainLater } });
             if (data?.response?.status) {
                 showError(data.response.status);
             }
@@ -151,7 +151,7 @@ export default function Roles() {
                 setUsers(validRolesPosition);
             }
         } else {
-            setMessage({ state: true, value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' } });
+            setMessage({ state: true, value: { severity: 'error', summary: translations.errorTitle, detail: translations.tryAgainLater } });
             if (res?.response?.status) {
                 showError(res.response.status);
             }
@@ -167,12 +167,12 @@ export default function Roles() {
             setTimeout(() => {
                 handleFetchUsers(Number(page), search, myedu_id, selectedRole_idType, active);
             }, 1000);
-            setMessage({ state: true, value: { severity: 'success', summary: 'Успешно изменено!', detail: '' } });
+            setMessage({ state: true, value: { severity: 'success', summary: translations.successChanged, detail: '' } });
         } else {
             if (res.response.status === 400) {
                 setMessage({ state: true, value: { severity: 'error', summary: res.response.data.message, detail: '' } });
             } else {
-                setMessage({ state: true, value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' } });
+                setMessage({ state: true, value: { severity: 'error', summary: translations.errorTitle, detail: translations.tryAgainLater } });
                 if (res?.response?.status) {
                     showError(res.response.status);
                 }
@@ -206,9 +206,7 @@ export default function Roles() {
 
     // Ручное управление пагинацией
     const handlePageChange = (page: number) => {
-        router.push(`/roles/${page}`)
-        // handleFetchUsers(page, search, myedu_id, selectedRole_idType, active);
-        // setNumber(page)(page);
+        router.push(`/roles/${page}`);
     };
 
     // TSX

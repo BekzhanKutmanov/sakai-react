@@ -53,7 +53,7 @@ export default function Dashboard() {
     type OptionsType = Intl.DateTimeFormatOptions;
 
     const { user, departament } = useContext(LayoutContext);
-    const { translations } = useLocalization();
+    const { language, translations } = useLocalization();
 
     const ref = useRef<HTMLDivElement>(null);
     const media = useMediaQuery('(max-width: 640px)');
@@ -78,6 +78,11 @@ export default function Dashboard() {
         day: '2-digit',
         hour12: false // 24-часовой формат
     };
+
+    const kpdTitle = 'Мугалимдердин эффективдүүлүгүн эсептөө методикасы';
+    const formulf = '(Курстун баллы + Билдирүү баллы) / 2';
+    const timelinessAssessment = 'Семестрдин башталышына салыштырмалуу курстук тапшырмалардын өз убагында аткарылышы бааланат.';
+    const notificationAssessment = 'Билдирмелерге жооп берүү убактысы (түзүлгөндөн ачылганга чейин) бааланат.';
 
     const hanldeTeacherDashboard = async () => {
         setSkeleton(true);
@@ -273,7 +278,7 @@ export default function Dashboard() {
 
                 {/* kpd */}
                 <div className="main-bg p-3 sm:p-4">
-                    <h3 className="text-xl text-center shadow-[var(--bottom-shadow)] pb-2 mb-2">{info?.title}</h3>
+                    <h3 className="text-xl text-center shadow-[var(--bottom-shadow)] pb-2 mb-2">{language === 'ky' ? kpdTitle : info?.title}</h3>
                     <b className="flex flex-wrap gap-1 items-center mb-3 text-sm sm:text-base">
                         {translations.reportFor}
                         <span className="text-sm">{<MyDateTime createdAt={performance?.study_from || ''} options={options} />}</span> -<span className="text-sm">{<MyDateTime createdAt={performance?.study_to || ''} options={options} />}</span>
@@ -281,10 +286,10 @@ export default function Dashboard() {
                     <div className="flex flex-col gap-3">
                         <div className="flex flex-col items-center gap-1 text-sm text-center">
                             <b className="text-md">
-                                {translations.formula} <span className="text-sm">{info?.formula}</span>
+                                {translations.formula} <span className="text-sm">{language === 'ky' ? formulf : info?.formula}</span>
                             </b>
-                            <b className="text-[var(--productQuantityText)]">{info?.sections[0]?.description}</b>
-                            <b className="text-[var(--orangeColor)]">{info?.sections[1]?.description}</b>
+                            <b className="text-[var(--productQuantityText)]">{language === 'ky' ? timelinessAssessment : info?.sections[0]?.description}</b>
+                            <b className="text-[var(--orangeColor)]">{language === 'ky' ? notificationAssessment : info?.sections[1]?.description}</b>
                         </div>
                         <div className="flex justify-around flex-col sm:flex-row gap-3 items-center">
                             <DataTable

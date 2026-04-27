@@ -119,7 +119,7 @@ export default function LessonDocument({ element, content, fetchPropElement, cle
         } else {
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
+                value: { severity: 'error', summary: translations.errorTitle, detail: translations.tryAgainLater }
             });
             if (data?.response?.status) {
                 showError(data.response.status);
@@ -134,18 +134,18 @@ export default function LessonDocument({ element, content, fetchPropElement, cle
             fetchPropElement(element.id);
             setMessage({
                 state: true,
-                value: { severity: 'success', summary: 'Успешно добавлен!', detail: '' }
+                value: { severity: 'success', summary: translations.successAdd, detail: '' }
             });
         } else {
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка при добавлении!', detail: '' }
+                value: { severity: 'error', summary: translations.addError, detail: '' }
             });
             if (data?.response?.status) {
                 if (data?.response?.status == '400') {
                     setMessage({
                         state: true,
-                        value: { severity: 'error', summary: 'Ошибка!', detail: data?.response?.data?.message }
+                        value: { severity: 'error', summary: translations.errorTitle, detail: data?.response?.data?.message }
                     });
                 } else {
                     showError(data.response.status);
@@ -163,18 +163,18 @@ export default function LessonDocument({ element, content, fetchPropElement, cle
             fetchPropElement(element.id);
             setMessage({
                 state: true,
-                value: { severity: 'success', summary: 'Успешно удалено!', detail: '' }
+                value: { severity: 'success', summary: translations.deleteSuccess, detail: '' }
             });
         } else {
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка при удалении!', detail: '' }
+                value: { severity: 'error', summary: translations.deleteError, detail: '' }
             });
             if (data?.response?.status) {
                 if (data?.response?.status == '400') {
                     setMessage({
                         state: true,
-                        value: { severity: 'error', summary: 'Ошибка!', detail: data?.response?.data?.message }
+                        value: { severity: 'error', summary: translations.errorTitle, detail: data?.response?.data?.message }
                     });
                 } else {
                     showError(data.response.status);
@@ -198,7 +198,7 @@ export default function LessonDocument({ element, content, fetchPropElement, cle
             clearValues();
             setMessage({
                 state: true,
-                value: { severity: 'success', summary: 'Успешно изменено!', detail: '' }
+                value: { severity: 'success', summary: translations.updateSuccess, detail: '' }
             });
         } else {
             setSkeleton(false);
@@ -206,13 +206,13 @@ export default function LessonDocument({ element, content, fetchPropElement, cle
             setEditingLesson(null);
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка при изменении!', detail: '' }
+                value: { severity: 'error', summary: translations.updateError, detail: '' }
             });
             if (data?.response?.status) {
                 if (data?.response?.status == '400') {
                     setMessage({
                         state: true,
-                        value: { severity: 'error', summary: 'Ошибка!', detail: data?.response?.data?.message }
+                        value: { severity: 'error', summary: translations.errorTitle, detail: data?.response?.data?.message }
                     });
                 } else {
                     showError(data.response.status);
@@ -267,7 +267,7 @@ export default function LessonDocument({ element, content, fetchPropElement, cle
                                     if (file.size > maxSize) {
                                         setMessage({
                                             state: true,
-                                            value: { severity: 'error', summary: 'Файл слишком большой!', detail: 'Разрешено максимум 10 MB.' }
+                                            value: { severity: 'error', summary: translations.fileTooLarge, detail: translations.maxFileSize10mb }
                                         });
                                     } else {
                                         setDocValue((prev) => ({
@@ -283,7 +283,7 @@ export default function LessonDocument({ element, content, fetchPropElement, cle
                             <InputText
                                 id="title"
                                 type="text"
-                                placeholder={'Название'}
+                                placeholder={translations.title}
                                 className="w-full"
                                 value={docValue.title}
                                 onChange={(e) => {
@@ -293,7 +293,7 @@ export default function LessonDocument({ element, content, fetchPropElement, cle
                             />
                             <b style={{ color: 'red', fontSize: '12px' }}>{errors.title?.message}</b>
                         </div>
-                        {additional.doc && <InputText placeholder="Описание" value={docValue.description} onChange={(e) => setDocValue((prev) => ({ ...prev, description: e.target.value }))} className="w-full" />}
+                        {additional.doc && <InputText placeholder={translations.description} value={docValue.description} onChange={(e) => setDocValue((prev) => ({ ...prev, description: e.target.value }))} className="w-full" />}
 
                         <div className="flex relative">
                             {/* <Button disabled={!!errors.title || !docValue.file} label="Сохранить" onClick={handleAddDoc} /> */}
@@ -400,7 +400,7 @@ export default function LessonDocument({ element, content, fetchPropElement, cle
                             value={editingLesson?.description !== 'null' ? editingLesson?.description : ''}
                             onChange={(e) => setEditingLesson((prev) => prev && { ...prev, description: e.target.value })}
                             className="w-full"
-                        />  
+                        />
                     </div>
                 </div>
             </FormModal>
@@ -408,4 +408,3 @@ export default function LessonDocument({ element, content, fetchPropElement, cle
         </div>
     );
 }
-

@@ -70,7 +70,7 @@ export default function LessonStep() {
             setSkeleton(false);
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
+                value: { severity: 'error', summary: translations.errorTitle, detail: translations.tryAgainLater }
             });
             if (data?.response?.status) {
                 showError(data.response.status);
@@ -90,7 +90,7 @@ export default function LessonStep() {
             setSkeleton(false);
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
+                value: { severity: 'error', summary: translations.errorTitle, detail: translations.tryAgainLater }
             });
             if (data?.response?.status) {
                 showError(data.response.status);
@@ -113,7 +113,7 @@ export default function LessonStep() {
             setHasSteps(false);
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
+                value: { severity: 'error', summary: translations.errorTitle, detail: translations.tryAgainLater }
             });
             if (data?.response?.status) {
                 showError(data.response.status);
@@ -133,7 +133,7 @@ export default function LessonStep() {
             handleFetchSteps(lessonId);
             setMessage({
                 state: true,
-                value: { severity: 'success', summary: 'Успешно добавлен!', detail: '' }
+                value: { severity: 'success', summary: translations.successAdd, detail: '' }
             });
         } else {
             if (data?.message) {
@@ -166,7 +166,7 @@ export default function LessonStep() {
                 if (data?.response?.status == '400') {
                     setMessage({
                         state: true,
-                        value: { severity: 'error', summary: 'Ошибка!', detail: data?.response?.data?.message }
+                        value: { severity: 'error', summary: translations.errorTitle, detail: data?.response?.data?.message }
                     });
                 } else {
                     showError(data.response.status);
@@ -174,7 +174,7 @@ export default function LessonStep() {
             } else {
                 setMessage({
                     state: true,
-                    value: { severity: 'error', summary: 'Ошибка при добавлении', detail: '' }
+                    value: { severity: 'error', summary: translations.addError, detail: '' }
                 });
             }
         }
@@ -190,7 +190,7 @@ export default function LessonStep() {
             } else {
                 setMessage({
                     state: true,
-                    value: { severity: 'error', summary: 'Ошибка!', detail: 'Повторите позже' }
+                    value: { severity: 'error', summary: translations.errorTitle, detail: translations.tryAgainLater }
                 });
                 if (data?.response?.status) {
                     showError(data.response.status);
@@ -207,19 +207,19 @@ export default function LessonStep() {
             handleFetchSteps(Number(lesson_id));
             setMessage({
                 state: true,
-                value: { severity: 'success', summary: 'Успешно удалено!', detail: '' }
+                value: { severity: 'success', summary: translations.deleteSuccess, detail: '' }
             });
             setSelectId(null);
         } else {
             setMessage({
                 state: true,
-                value: { severity: 'error', summary: 'Ошибка при удалении!', detail: '' }
+                value: { severity: 'error', summary: translations.deleteError, detail: '' }
             });
             if (data?.response?.status) {
                 if (data?.response?.status == '400') {
                     setMessage({
                         state: true,
-                        value: { severity: 'error', summary: 'Ошибка!', detail: data?.response?.data?.message }
+                        value: { severity: 'error', summary: translations.errorTitle, detail: data?.response?.data?.message }
                     });
                 } else {
                     showError(data.response.status);
@@ -257,14 +257,14 @@ export default function LessonStep() {
             handleFetchSteps(lesson_id);
             setMessage({
                 state: true,
-                value: { severity: 'success', summary: 'Успешно изменено!', detail: '' }
+                value: { severity: 'success', summary: translations.updateSuccess, detail: '' }
             });
         } else {
             if (secuence?.response?.status) {
                 if (secuence?.response?.status == '400') {
                     setMessage({
                         state: true,
-                        value: { severity: 'error', summary: 'Ошибка!', detail: secuence?.response?.data?.message }
+                        value: { severity: 'error', summary: translations.errorTitle, detail: secuence?.response?.data?.message }
                     });
                 } else {
                     showError(secuence.response.status);
@@ -784,4 +784,3 @@ export default function LessonStep() {
         </div>
     );
 }
-
