@@ -93,6 +93,7 @@ const AppMenu = () => {
     const [depRole, setDepRole] = useState<MyApMenuType>({ profilact: '' });
     const [testRole, setTestRole] = useState<MyApMenuType>({ profilact: '' });
     const [graphicRole, setGraphicRole] = useState<MyApMenuType>({ profilact: '' });
+    const [scoreControlRole, setScoreControlRole] = useState<MyApMenuType>({ profilact: '' });
 
     const [startDeadline, setStartDeadline] = useState<Nullable<Date>>(null);
     const [endDeadline, setEndDeadline] = useState<Nullable<Date>>(null);
@@ -276,7 +277,12 @@ const AppMenu = () => {
                           icon: 'pi pi-inbox',
                           to: '/archive'
                       },
-                      graphicRole?.label ? graphicRole : null
+                      graphicRole?.label ? graphicRole : null,
+                        scoreControlRole?.label ? scoreControlRole : {
+                            label: translations.scoreControle,
+                            icon: 'pi pi-sliders-h',
+                            to: '/roles/scoreControl'
+                        }
                       // {
                       //     label: translations.module,
                       //     icon: 'pi pi-calendar',
@@ -629,6 +635,11 @@ const AppMenu = () => {
                 const forGraphic = forRole.find((item) => item.id === 4);
                 if (forGraphic && forGraphic?.read) {
                     setGraphicRole({ label: translations.moduleSchedule, icon: 'pi pi-calendar', to: '/module/1', profilact: '' });
+                }
+
+                const forScoreControl = forRole.find((item) => item.id === 5);
+                if (forScoreControl && forScoreControl?.read) {
+                    setScoreControlRole({ label: translations.moduleSchedule, icon: 'pi pi-calendar', to: '/roles/scoreControl', profilact: '' });
                 }
             }
         }

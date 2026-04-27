@@ -84,6 +84,8 @@ export const localizationData = {
         themes: 'Темы',
         module: 'График модулей',
         courseCategoryInfo: 'Здесь вы можете создавать собственные категории для курсов и добавлять их в общие категории',
+        scoreControle: 'Управление баллами',
+        scoreDiapazon: 'Диапазон баллов',
 
         // Calendar
         firstDayOfWeek: 'Понедельник',
@@ -510,6 +512,8 @@ export const localizationData = {
         themes: 'Темалар',
         module: 'Модулдук график',
         courseCategoryInfo: 'Бул жерде сиз курстар үчүн өз категорияларыңызды түзүп, аларды жалпы категорияларга кошо аласыз.',
+        scoreControle: 'Баллдарды башкаруу',
+        scoreDiapazon: 'Баллдардын диапазону',
 
         // Calendar
         firstDayOfWeek: 'Дүйшөмбү',

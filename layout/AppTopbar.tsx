@@ -305,9 +305,9 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                                 {translations.oldMooc}
                             </Link>
 
-                            {/*<div className={'border-l-1 border-[var(--borderBottomColor)] pl-3'}>*/}
-                            {/*    <LocalizationSwift />*/}
-                            {/*</div>*/}
+                            <div className={'border-l-1 border-[var(--borderBottomColor)] pl-3'}>
+                                <LocalizationSwift />
+                            </div>
                         </div>
                     )}
 
