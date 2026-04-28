@@ -148,6 +148,7 @@ const AppMenu = () => {
     const { data: themesData, isLoading, isError } = useQuery({
         queryKey: ['themes', course_id],
         queryFn: () => fetchThemes(Number(course_id) || null, null),
+        // queryFn: () => console.log(Number(course_id) || null, null),
         enabled: !!course_id
     });
 
@@ -475,22 +476,22 @@ const AppMenu = () => {
 
         const data = await addThemes(Number(course_id), themeValue?.title ? themeValue?.title : '', themeValue.sequence_number, deadline);
         if (data?.success) {
-            // contextFetchThemes(Number(course_id), id_kafedra ? Number(id_kafedra) : null);
+            contextFetchThemes(Number(course_id), id_kafedra ? Number(id_kafedra) : null);
 
-            // const oldThemes: {lessons: any} | undefined = queryClient.getQueryData(['themes']);
-            //
-            // const newThemes = await queryClient.fetchQuery({
-            //     queryKey: ['themes'],
-            //     queryFn: () => fetchThemes(Number(course_id) || null, null),
-            // });
-            //
-            // const newItem = newThemes?.lessons?.data?.find((newItem: {id: number}) => {
-            //     return !oldThemes?.lessons?.data?.some((oldItem: {id: number}) => oldItem.id === newItem.id)
-            // });
+            const oldThemes: {lessons: any} | undefined = queryClient.getQueryData(['themes']);
 
-            // if(newItem && newItem?.id) {
-            //     router.push(`/course/courseDetail/${course_id}/${newItem.id}`);
-            // }
+            const newThemes = await queryClient.fetchQuery({
+                queryKey: ['themes'],
+                queryFn: () => fetchThemes(Number(course_id) || null, null),
+            });
+
+            const newItem = newThemes?.lessons?.data?.find((newItem: {id: number}) => {
+                return !oldThemes?.lessons?.data?.some((oldItem: {id: number}) => oldItem.id === newItem.id)
+            });
+
+            if(newItem && newItem?.id) {
+                router.push(`/course/courseDetail/${course_id}/${newItem.id}`);
+            }
 
             clearValues();
             setMessage({
@@ -519,8 +520,8 @@ const AppMenu = () => {
     const handleDeleteTheme = async (id: number) => {
         const data = await deleteTheme(id);
         if (data.success) {
-            // contextFetchThemes(Number(course_id), id_kafedra ? Number(id_kafedra) : null);
-            // await queryClient.invalidateQueries({queryKey: ['themes']});
+            contextFetchThemes(Number(course_id), id_kafedra ? Number(id_kafedra) : null);
+            await queryClient.invalidateQueries({queryKey: ['themes']});
             const path = window.location.pathname;
             if(path.includes(String(id))){
                 router.push(`/course/courseDetail/${course_id}/default?lang=${language}`);
@@ -557,9 +558,9 @@ const AppMenu = () => {
         const data = await updateTheme(Number(course_id), selectId, editingLesson?.title ? editingLesson?.title : '', editingLesson?.sequence_number ? editingLesson?.sequence_number : null, deadline);
         if (data?.success) {
             setUpdateeQuery(true);
-            // contextFetchThemes(Number(course_id), id_kafedra ? Number(id_kafedra) : null);
-            // await queryClient.invalidateQueries({queryKey: ['themes']});
-            // await queryClient.invalidateQueries({queryKey: ['lessonKey']});
+            contextFetchThemes(Number(course_id), id_kafedra ? Number(id_kafedra) : null);
+            await queryClient.invalidateQueries({queryKey: ['themes']});
+            await queryClient.invalidateQueries({queryKey: ['lessonKey']});
 
             clearValues();
             setMessage({
