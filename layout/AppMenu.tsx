@@ -148,7 +148,6 @@ const AppMenu = () => {
     const { data: themesData, isLoading, isError } = useQuery({
         queryKey: ['themes', course_id],
         queryFn: () => fetchThemes(Number(course_id) || null, null),
-        // queryFn: () => console.log(Number(course_id) || null, null),
         enabled: !!course_id
     });
 
@@ -478,10 +477,10 @@ const AppMenu = () => {
         if (data?.success) {
             contextFetchThemes(Number(course_id), id_kafedra ? Number(id_kafedra) : null);
 
-            const oldThemes: {lessons: any} | undefined = queryClient.getQueryData(['themes']);
+            const oldThemes: {lessons: any} | undefined = queryClient.getQueryData(['themes', course_id]);
 
             const newThemes = await queryClient.fetchQuery({
-                queryKey: ['themes'],
+                queryKey: ['themes', course_id],
                 queryFn: () => fetchThemes(Number(course_id) || null, null),
             });
 
@@ -521,7 +520,7 @@ const AppMenu = () => {
         const data = await deleteTheme(id);
         if (data.success) {
             contextFetchThemes(Number(course_id), id_kafedra ? Number(id_kafedra) : null);
-            await queryClient.invalidateQueries({queryKey: ['themes']});
+            await queryClient.invalidateQueries({queryKey: ['themes', course_id]});
             const path = window.location.pathname;
             if(path.includes(String(id))){
                 router.push(`/course/courseDetail/${course_id}/default?lang=${language}`);
@@ -559,7 +558,7 @@ const AppMenu = () => {
         if (data?.success) {
             setUpdateeQuery(true);
             contextFetchThemes(Number(course_id), id_kafedra ? Number(id_kafedra) : null);
-            await queryClient.invalidateQueries({queryKey: ['themes']});
+            await queryClient.invalidateQueries({queryKey: ['themes', course_id]});
             await queryClient.invalidateQueries({queryKey: ['lessonKey']});
 
             clearValues();
@@ -669,12 +668,10 @@ const AppMenu = () => {
     }, [departament, pathname]);
 
     useEffect(() => {
-        if (course_id) {
+        if (course_id && !pathname.includes('/faculty') && !pathname.includes('/openCourse')) {
             handleCourseInfo();
         }
-    }, [pathname]);
-
-    if(isLoading) <div>lorem</div>
+    }, [pathname]); // pathname поставь обратно если что
 
     return (
         <MenuProvider>
