@@ -104,6 +104,7 @@ export const LayoutProvider = ({ children }: ChildContainerProps) => {
     const [updateQuery, setUpdateeQuery] = useState(false);
     const [contextThemes, setContextThemes] = useState([]);
     const contextFetchThemes = async (id: number | null, id_kafedra: number | null) => {
+        console.warn('Inizial layout context');
         const data = await fetchThemes(Number(id) || null, id_kafedra);
         if (data) {
             setContextThemes(data);

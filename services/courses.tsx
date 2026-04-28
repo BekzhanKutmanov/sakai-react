@@ -27,7 +27,7 @@ export const addCourse = async (value: CourseCreateType) => {
     formData.append('description', value.description);
     if (value.image instanceof File) {
         formData.append('image', value.image);
-    }             
+    }
     formData.append('video_url', value.video_url);
 
     try {
@@ -140,7 +140,7 @@ export const addThemes = async (course_id: number, title: string, sequence_numbe
 export const fetchThemes = async (id: number | null, id_kafedra: number | null) => {
     try {
         const res = await axiosInstance.get(`/v1/teacher/lessons?course_id=${id}&id_kafedra=${id_kafedra ? id_kafedra : ''}`);
-
+        console.log('HE HE BABY ^) %))))');
         const data = await res.data;
         return data;
     } catch (err) {

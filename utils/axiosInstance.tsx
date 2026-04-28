@@ -39,7 +39,9 @@ axiosInstance.interceptors.response.use(
         if (status === 403) {
             console.warn('Не имеет доступ. Перенаправляю...');
             if (typeof window !== 'undefined') {
-                window.location.href = '/';
+                if(!window.location.pathname.includes('faculty')){
+                    window.location.href = '/';
+                }
             }
         }
 

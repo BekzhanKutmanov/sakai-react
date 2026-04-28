@@ -25,6 +25,7 @@ import { useLocalization } from './context/localizationcontext';
 import useMediaQuery from '@/hooks/useMediaQuery';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { fetchThemes } from '@/services/courses';
+import { log } from 'node:util';
 
 // types
 interface LessonInfoUi {
@@ -145,7 +146,7 @@ const AppMenu = () => {
 
     const queryClient = useQueryClient();
     const { data: themesData, isLoading, isError } = useQuery({
-        queryKey: ['themes'],
+        queryKey: ['themes', course_id],
         queryFn: () => fetchThemes(Number(course_id) || null, null),
         enabled: !!course_id
     });
@@ -278,16 +279,11 @@ const AppMenu = () => {
                           to: '/archive'
                       },
                       graphicRole?.label ? graphicRole : null,
-                        scoreControlRole?.label ? scoreControlRole : {
-                            label: translations.scoreControle,
-                            icon: 'pi pi-sliders-h',
-                            to: '/roles/scoreControl'
-                        }
-                      // {
-                      //     label: translations.module,
-                      //     icon: 'pi pi-calendar',
-                      //     to: '/module/1'
-                      // }
+                      //   scoreControlRole?.label ? scoreControlRole : {
+                      //       label: translations.scoreControle,
+                      //       icon: 'pi pi-sliders-h',
+                      //       to: '/roles/scoreControl'
+                      //   }
                   ].filter(Boolean) as AppMenuItem[])
                 : []
             : []
@@ -412,12 +408,12 @@ const AppMenu = () => {
                       icon: 'pi pi-inbox',
                       to: '/archive'
                   },
-                  graphicRole?.label ? graphicRole : null
-                  // {
-                  //     label: translations.module,
-                  //     icon: 'pi pi-calendar',
-                  //     to: '/module/1'
-                  // }
+                  graphicRole?.label ? graphicRole : null,
+                    // scoreControlRole?.label ? scoreControlRole : {
+                    //     label: translations.scoreControle,
+                    //     icon: 'pi pi-sliders-h',
+                    //     to: '/roles/scoreControl'
+                    // }
               ].filter(Boolean) as AppMenuItem[])
             : []
         : [];
@@ -481,20 +477,20 @@ const AppMenu = () => {
         if (data?.success) {
             // contextFetchThemes(Number(course_id), id_kafedra ? Number(id_kafedra) : null);
 
-            const oldThemes: {lessons: any} | undefined = queryClient.getQueryData(['themes']);
+            // const oldThemes: {lessons: any} | undefined = queryClient.getQueryData(['themes']);
+            //
+            // const newThemes = await queryClient.fetchQuery({
+            //     queryKey: ['themes'],
+            //     queryFn: () => fetchThemes(Number(course_id) || null, null),
+            // });
+            //
+            // const newItem = newThemes?.lessons?.data?.find((newItem: {id: number}) => {
+            //     return !oldThemes?.lessons?.data?.some((oldItem: {id: number}) => oldItem.id === newItem.id)
+            // });
 
-            const newThemes = await queryClient.fetchQuery({
-                queryKey: ['themes'],
-                queryFn: () => fetchThemes(Number(course_id) || null, null),
-            });
-
-            const newItem = newThemes?.lessons?.data?.find((newItem: {id: number}) => {
-                return !oldThemes?.lessons?.data?.some((oldItem: {id: number}) => oldItem.id === newItem.id)
-            });
-
-            if(newItem && newItem?.id) {
-                router.push(`/course/courseDetail/${course_id}/${newItem.id}`);
-            }
+            // if(newItem && newItem?.id) {
+            //     router.push(`/course/courseDetail/${course_id}/${newItem.id}`);
+            // }
 
             clearValues();
             setMessage({
@@ -524,7 +520,7 @@ const AppMenu = () => {
         const data = await deleteTheme(id);
         if (data.success) {
             // contextFetchThemes(Number(course_id), id_kafedra ? Number(id_kafedra) : null);
-            await queryClient.invalidateQueries({queryKey: ['themes']});
+            // await queryClient.invalidateQueries({queryKey: ['themes']});
             const path = window.location.pathname;
             if(path.includes(String(id))){
                 router.push(`/course/courseDetail/${course_id}/default?lang=${language}`);
@@ -562,8 +558,8 @@ const AppMenu = () => {
         if (data?.success) {
             setUpdateeQuery(true);
             // contextFetchThemes(Number(course_id), id_kafedra ? Number(id_kafedra) : null);
-            await queryClient.invalidateQueries({queryKey: ['themes']});
-            await queryClient.invalidateQueries({queryKey: ['lessonKey']});
+            // await queryClient.invalidateQueries({queryKey: ['themes']});
+            // await queryClient.invalidateQueries({queryKey: ['lessonKey']});
 
             clearValues();
             setMessage({

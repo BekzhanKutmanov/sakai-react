@@ -53,7 +53,7 @@ const ScoreRangeInputs = ({ min, max, onChange }: { min: number; max: number; on
 /**
  * Компонент строки таблицы (или карточки на мобилке)
  */
-const ScoreRow = ({ item }: { item: AudenceType }) => {
+const ScoreRow = ({ item, typesFetchProp }: { item: AudenceType; typesFetchProp: ()=> void }) => {
     const [scores, setScores] = useState({ min: item.min_score, max: item.max_score });
     const [loading, setLoading] = useState(false);
 
@@ -65,6 +65,7 @@ const ScoreRow = ({ item }: { item: AudenceType }) => {
 
     const handleSave = async () => {
         setLoading(true);
+        typesFetchProp();
         // Имитация асинхронного запроса
         await new Promise((resolve) => setTimeout(resolve, 1200));
         console.log(`Saved for ${item.id}:`, scores);
@@ -72,7 +73,6 @@ const ScoreRow = ({ item }: { item: AudenceType }) => {
     };
 
     const handleChange = (type: 'min' | 'max', val: number) => {
-        console.log(scores);
         if (typeof val === 'number') {
             setScores((prev) => ({ ...prev, [type]: val }));
         } else {
@@ -155,23 +155,24 @@ const TableSkeleton = () => (
  * Основной компонент страницы
  */
 export default function ScoreControl() {
-    const {translations} = useLocalization();
+    const { translations } = useLocalization();
     const [data, setData] = useState<AudenceType[]>([]);
     const [loading, setLoading] = useState(true);
     const [scoreControlInfo, setScoreControlInfo] = useState(false);
 
+    const handleFetchTypes = async () => {
+        try {
+            const res = await fetchCourseOpenStatus();
+            setData(res);
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     useEffect(() => {
-        const init = async () => {
-            try {
-                const res = await fetchCourseOpenStatus();
-                setData(res);
-            } catch (err) {
-                console.error(err);
-            } finally {
-                setLoading(false);
-            }
-        };
-        init();
+        handleFetchTypes();
     }, []);
 
     return (
@@ -180,10 +181,7 @@ export default function ScoreControl() {
                 <div className="card border-none shadow-4 p-0 overflow-hidden">
                     <div className={'mt-3 mx-2 pb-2 flex justify-between items-center gap-2 shadow-[var(--bottom-shadow)]'}>
                         <h3 className={`text-xl sm:text-2xl m-0 font-bold`}>{translations.scoreControle}</h3>
-                        <i
-                            onClick={() => setScoreControlInfo(true)}
-                            className={'cursor-pointer pi pi-info-circle text-lg text-[var(--titleColor)]'}
-                        ></i>
+                        <i onClick={() => setScoreControlInfo(true)} className={'cursor-pointer pi pi-info-circle text-lg text-[var(--titleColor)]'}></i>
                     </div>
 
                     <div className="overflow-x-auto">
@@ -194,7 +192,7 @@ export default function ScoreControl() {
                                     <th className="text-right py-3 px-3 text-600 font-medium uppercase text-xs tracking-wider">{translations.scoreDiapazon}</th>
                                 </tr>
                             </thead>
-                            <tbody>{loading ? <TableSkeleton /> : data.map((item) => <ScoreRow key={item.id} item={item} />)}</tbody>
+                            <tbody>{loading ? <TableSkeleton /> : data.map((item) => <ScoreRow key={item.id} item={item} typesFetchProp={handleFetchTypes} />)}</tbody>
                         </table>
                     </div>
 
@@ -216,9 +214,7 @@ export default function ScoreControl() {
                     setScoreControlInfo(false);
                 }}
             >
-                <div>
-                    Здесь вы можете гибко настроить диапазон баллов (минимум и максимум) для каждого типа курса
-                </div>
+                <div>Здесь вы можете гибко настроить диапазон баллов (минимум и максимум) для каждого типа курса</div>
             </Dialog>
 
             <style jsx global>{`

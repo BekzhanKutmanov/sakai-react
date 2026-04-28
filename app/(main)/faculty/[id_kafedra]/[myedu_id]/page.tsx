@@ -8,7 +8,7 @@ import { publishCourse } from '@/services/courses';
 import { depCourse } from '@/services/faculty';
 import { CourseType } from '@/types/courseType';
 import Link from 'next/link';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import { useContext, useEffect, useState } from 'react';
@@ -33,6 +33,7 @@ export default function CoursesDep() {
         updated_at: string;
     }
 
+    const router = useRouter();
     const {translations} = useLocalization();
     const { id_kafedra, myedu_id } = useParams();
 

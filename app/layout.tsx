@@ -13,7 +13,6 @@ import '../styles/layout/openCourse.css';
 import '../styles/layout/animations.css';
 import './globals.css';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { usePathname } from 'next/navigation';
 
 interface RootLayoutProps {
     children: React.ReactNode;
