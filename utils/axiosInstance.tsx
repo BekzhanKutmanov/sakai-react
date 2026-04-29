@@ -24,22 +24,24 @@ axiosInstance.interceptors.response.use(
         const status = error.response?.status;
         if (status === 401) {
             console.warn('Неавторизован. Удаляю токен...');
-
             if (typeof window !== 'undefined') {
-                console.log(window?.location.pathname);
-                if(window.location.pathname != '/auth/login') {
-                    const currentPath = window.location.pathname + window.location.search;
-                    window.location.href = `/auth/login?redirect=${encodeURIComponent(currentPath)}`
+                const path = window.location.pathname;
+                if (path !== '/') {
+                    console.log(window?.location.pathname);
+                    if (window.location.pathname != '/auth/login') {
+                        const currentPath = window.location.pathname + window.location.search;
+                        window.location.href = `/auth/login?redirect=${encodeURIComponent(currentPath)}`;
+                    }
+                    localStorage.removeItem('userVisit');
+                    document.cookie = 'access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;';
                 }
-                localStorage.removeItem('userVisit');
             }
-            document.cookie = 'access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;';
         }
 
         if (status === 403) {
             console.warn('Не имеет доступ. Перенаправляю...');
             if (typeof window !== 'undefined') {
-                if(!window.location.pathname.includes('faculty')){
+                if (!window.location.pathname.includes('faculty')) {
                     window.location.href = '/';
                 }
             }
