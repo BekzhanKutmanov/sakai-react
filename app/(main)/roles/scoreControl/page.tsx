@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { fetchCourseOpenStatus } from '@/services/courses';
 import { AudenceType } from '@/types/courseTypes/AudenceTypes';
 import { InputNumber } from 'primereact/inputnumber';
@@ -9,11 +9,16 @@ import { Skeleton } from 'primereact/skeleton';
 import { classNames } from 'primereact/utils';
 import { useLocalization } from '@/layout/context/localizationcontext';
 import { Dialog } from 'primereact/dialog';
+import { InputText } from 'primereact/inputtext'; // Import InputText
+import { InputTextarea } from 'primereact/inputtextarea'; // Import InputTextarea
+import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog'; // Import ConfirmDialog
+import { getConfirmOptions } from '@/utils/getConfirmOptions';
 
 /**
  * Компонент управления диапазоном баллов для конкретной строки
+ * Адаптирован для использования в модальном окне
  */
-const ScoreRangeInputs = ({ min, max, onChange }: { min: number; max: number; onChange: (type: 'min' | 'max', val: number) => void }) => {
+const ScoreRangeInputs = ({ min, max, onChange, disabled }: { min: number; max: number; onChange: (type: 'min' | 'max', val: number) => void; disabled?: boolean }) => {
     return (
         <div className="flex align-items-center gap-1 sm:gap-2 bg-secondary-faded p-1 border-round shadow-1 surface-50">
             <div className="flex flex-column align-items-center">
@@ -28,6 +33,7 @@ const ScoreRangeInputs = ({ min, max, onChange }: { min: number; max: number; on
                     buttonLayout="vertical"
                     incrementButtonClassName="hidden"
                     decrementButtonClassName="hidden"
+                    disabled={disabled}
                 />
             </div>
             <div className="text-400 font-bold self-end mb-1">-</div>
@@ -35,15 +41,14 @@ const ScoreRangeInputs = ({ min, max, onChange }: { min: number; max: number; on
                 <span className="text-xs font-medium text-500 mb-1">Макс</span>
                 <InputNumber
                     value={max}
-                    // onValueChange={(e) => onChange('max', Number(e.value) || 0)}
                     onChange={(e) => onChange('max', Number(e.value) || 0)}
                     min={min}
-                    // max={100}
                     inputClassName="w-3rem sm:w-4rem text-center p-1 text-sm border-none bg-transparent"
                     showButtons
                     buttonLayout="vertical"
                     incrementButtonClassName="hidden"
                     decrementButtonClassName="hidden"
+                    disabled={disabled}
                 />
             </div>
         </div>
@@ -53,78 +58,143 @@ const ScoreRangeInputs = ({ min, max, onChange }: { min: number; max: number; on
 /**
  * Компонент строки таблицы (или карточки на мобилке)
  */
-const ScoreRow = ({ item, typesFetchProp }: { item: AudenceType; typesFetchProp: ()=> void }) => {
-    const [scores, setScores] = useState({ min: item.min_score, max: item.max_score });
+const ScoreRow = ({ item, typesFetchProp }: { item: AudenceType; typesFetchProp: () => void }) => {
+    const [displayEditModal, setDisplayEditModal] = useState(false);
+    const [editableScores, setEditableScores] = useState({ min: item.min_score, max: item.max_score });
+    const [editableTitle, setEditableTitle] = useState(item.title);
+    const [editableDescription, setEditableDescription] = useState(item.description);
     const [loading, setLoading] = useState(false);
+    const {translations} = useLocalization();
 
-    const isMinChanged = Number(scores.min) !== Number(item.min_score);
-    const isMaxChanged = Number(scores.max) !== Number(item.max_score);
-
-    // Если ХОТЯ БЫ одно изменилось — true
-    const isChanged = isMinChanged || isMaxChanged;
-
-    const handleSave = async () => {
-        setLoading(true);
-        typesFetchProp();
-        // Имитация асинхронного запроса
-        await new Promise((resolve) => setTimeout(resolve, 1200));
-        console.log(`Saved for ${item.id}:`, scores);
-        setLoading(false);
-    };
-
-    const handleChange = (type: 'min' | 'max', val: number) => {
+    const handleScoreChange = (type: 'min' | 'max', val: number) => {
         if (typeof val === 'number') {
-            setScores((prev) => ({ ...prev, [type]: val }));
-        } else {
-            alert('Ошибка типов ');
+            setEditableScores((prev) => ({ ...prev, [type]: val }));
         }
     };
+
+    const handleSaveScores = async () => {
+        setLoading(true);
+        // Simulate API call
+        await new Promise((resolve) => setTimeout(resolve, 1200));
+        console.log(`Saving for ${item.id}:`, {
+            min_score: editableScores.min,
+            max_score: editableScores.max,
+            title: editableTitle,
+            description: editableDescription
+        });
+        // In a real application, you would make an API call here to update the scores, title, and description
+        // e.g., updateCourseDetails(item.id, editableScores.min, editableScores.max, editableTitle, editableDescription);
+        typesFetchProp(); // Refresh data after saving
+        setLoading(false);
+        setDisplayEditModal(false);
+    };
+
+    const handleDelete = (id: number)=> {
+        console.log(id);
+    }
+
+    useEffect(() => {
+        setEditableScores({ min: item.min_score, max: item.max_score });
+        setEditableTitle(item.title);
+        setEditableDescription(item.description);
+    }, [item.min_score, item.max_score, item.title, item.description]);
+
+    const isChanged =
+        Number(editableScores.min) !== Number(item.min_score) ||
+        Number(editableScores.max) !== Number(item.max_score) ||
+        editableTitle !== item.title ||
+        editableDescription !== item.description;
 
     return (
         <tr className="border-bottom-1 surface-border transition-colors hover:surface-100">
             <td className="py-4 px-3">
                 <div className="flex flex-column gap-1">
-                    <div className="flex align-items-center gap-2">
+                    <div className="flex align-items-center gap-1">
                         <div className="p-2 border-round-circle surface-200 flex align-items-center justify-content-center" style={{ width: '32px', height: '32px' }}>
                             <i className={classNames('pi', item.icon || 'pi-tag', 'text-primary')}></i>
                         </div>
-                        <div>
-                            <span
-                                className={`block font-bold text-900 line-height-1 p-1 rounded ${
-                                    item.name === 'open'
-                                        ? 'bg-[var(--greenColor)] text-white'
-                                        : item.name === 'wallet'
-                                        ? 'bg-[var(--amberColor)] text-white'
-                                        : item.name === 'extra'
-                                        ? 'bg-[var(--noAuditColor)] text-white'
-                                        : item.name === 'lock'
-                                        ? 'bg-[var(--redColor)] text-white'
-                                        : ''
-                                }`}
-                            >
-                                {item.title}
-                            </span>
-                        </div>
+                        <span
+                            className={`block font-bold text-900 line-height-1 p-1 rounded ${
+                                item.name === 'open'
+                                    ? 'bg-[var(--greenColor)] text-white'
+                                    : item.name === 'wallet'
+                                    ? 'bg-[var(--amberColor)] text-white'
+                                    : item.name === 'extra'
+                                    ? 'bg-[var(--noAuditColor)] text-white'
+                                    : item.name === 'lock'
+                                    ? 'bg-[var(--redColor)] text-white'
+                                    : ''
+                            }`}
+                        >
+                            {item.title}
+                        </span>
                     </div>
-                    {/* Описание под названием (на мобилках может быть скрыто или сокращено) */}
                     <p className="m-0 mt-2 text-600 text-sm line-height-2 max-w-30rem">{item.description}</p>
                 </div>
             </td>
             <td className="py-4 px-3 text-right">
                 <div className="flex align-items-center justify-content-end gap-2">
-                    <ScoreRangeInputs min={scores.min} max={scores.max} onChange={handleChange} />
-
-                    <Button
-                        icon={loading ? 'pi pi-spin pi-spinner' : 'pi pi-check'}
-                        onClick={handleSave}
-                        disabled={!isChanged || loading}
-                        tooltip={isChanged ? 'Сохранить изменения' : ''}
-                        tooltipOptions={{ position: 'top' }}
-                        className={`p-button-rounded p-button-sm shadow-2 transition-all transition-duration-300 p-button-success ${!isChanged ? 'opacity-30' : ''}`}
-                        style={{ width: '35px', height: '35px', background: 'var(--greenColor)' }}
-                    />
+                    <div className="flex align-items-center gap-1 sm:gap-2 bg-secondary-faded p-1 border-round shadow-1 surface-50">
+                        <div className="flex flex-column align-items-center">
+                            <span className="text-xs font-medium text-500 mb-1">Мин</span>
+                            <span className="w-3rem sm:w-4rem text-center p-1 text-sm">{item.min_score}</span>
+                        </div>
+                        <div className="text-400 font-bold self-end mb-1">-</div>
+                        <div className="flex flex-column align-items-center">
+                            <span className="text-xs font-medium text-500 mb-1">Макс</span>
+                            <span className="w-3rem sm:w-4rem text-center p-1 text-sm">{item.max_score}</span>
+                        </div>
+                    </div>
+                    <i className={'pi pi-pencil p-2 rounded-full shadow-1 cursor-pointer text-white bg-[var(--mainColor)]'} onClick={() => setDisplayEditModal(true)}></i>
+                    <i className={'pi pi-trash p-2 rounded-full shadow-1 cursor-pointer bg-[var(--redColor)] text-white'} onClick={(e)=> {
+                        confirmDialog(getConfirmOptions(Number(), () => handleDelete(item.id)));
+                    }}></i>
                 </div>
             </td>
+
+            <Dialog
+                header={translations.edit + ': ' + item.title}
+                visible={displayEditModal}
+                className="max-w-xl w-full"
+                onHide={() => setDisplayEditModal(false)}
+                footer={
+                    <div className="flex justify-content-end gap-2">
+                        <Button label={translations.cancel || "Отмена"} size={'small'} icon="pi pi-times" onClick={() => setDisplayEditModal(false)} className="p-button-text reject-button" />
+                        <Button label={translations.save || "Сохранить"} size={'small'} icon={loading ? 'pi pi-spin pi-spinner' : 'pi pi-check'} onClick={handleSaveScores} disabled={!isChanged || loading} />
+                    </div>
+                }
+            >
+                <div className="p-fluid">
+                    <div className="field mb-4">
+                        <label htmlFor="editableTitle" className="font-bold mb-2 block">{translations.courseAudienceType}</label>
+                        <InputText
+                            id="editableTitle"
+                            value={editableTitle}
+                            onChange={(e) => setEditableTitle(e.target.value)}
+                            disabled={loading}
+                            className="w-full"
+                        />
+                    </div>
+
+                    <div className="field mb-4">
+                        <label htmlFor="editableDescription" className="font-bold mb-2 block">{translations.description}</label>
+                        <InputTextarea
+                            id="editableDescription"
+                            value={editableDescription}
+                            onChange={(e) => setEditableDescription(e.target.value)}
+                            rows={3}
+                            cols={30}
+                            disabled={loading}
+                            className="w-full"
+                        />
+                    </div>
+
+                    <div className="field mb-4">
+                        <label className="font-bold mb-2 block">{translations.scoreDiapazon}</label>
+                        <ScoreRangeInputs min={editableScores.min} max={editableScores.max} onChange={handleScoreChange} disabled={loading} />
+                    </div>
+                </div>
+            </Dialog>
         </tr>
     );
 };

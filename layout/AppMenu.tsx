@@ -25,7 +25,6 @@ import { useLocalization } from './context/localizationcontext';
 import useMediaQuery from '@/hooks/useMediaQuery';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { fetchThemes } from '@/services/courses';
-import { log } from 'node:util';
 
 // types
 interface LessonInfoUi {
@@ -145,7 +144,7 @@ const AppMenu = () => {
     addLocale('ru', ruLocale);
 
     const queryClient = useQueryClient();
-    const { data: themesData, isLoading, isError } = useQuery({
+    const { data: themesData } = useQuery({
         queryKey: ['themes', course_id],
         queryFn: () => fetchThemes(Number(course_id) || null, null),
         enabled: !!course_id
@@ -525,7 +524,6 @@ const AppMenu = () => {
             if(path.includes(String(id))){
                 router.push(`/course/courseDetail/${course_id}/default?lang=${language}`);
             }
-            console.log(path.includes(String(id)));
 
             setDeleteQuery(true);
             setMessage({
@@ -668,7 +666,7 @@ const AppMenu = () => {
     }, [departament, pathname]);
 
     useEffect(() => {
-        if (course_id && !pathname.includes('/faculty') && !pathname.includes('/openCourse')) {
+        if (course_id && !pathname.includes('/faculty') && !pathname.includes('/openCourse') && !pathname.includes('/roles/departament')) {
             handleCourseInfo();
         }
     }, [pathname]); // pathname поставь обратно если что

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import { AxiosError } from 'axios';
 import { LayoutContext } from '@/layout/context/layoutcontext';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -46,7 +46,6 @@ export default function LessonView({defaultValue, defaultLessonId}: {defaultValu
     const media = useMediaQuery('(max-width: 640px)');
 
     const scrollRef = useRef<HTMLDivElement>(null);
-    const router = useRouter();
     const prevLessonsRef = useRef<Array<{ id: number; title: string }> | null>(null);
     const prevStepsRef = useRef<mainStepsType[]>([]);
 
@@ -164,7 +163,6 @@ export default function LessonView({defaultValue, defaultLessonId}: {defaultValu
     };
 
     const handleAddLesson = async (lessonId: number, typeId: number) => {
-        console.log(lessonId);
         setFormVisible(false);
         const forSequence_number = lastStep && lastStep > 0 ? (!sequence_number || sequence_number < 1 ? lastStep + 1 : sequence_number) : sequence_number;
 
@@ -436,7 +434,6 @@ export default function LessonView({defaultValue, defaultLessonId}: {defaultValu
     }, [steps]);
 
     useEffect(() => {
-        console.log('lesson id' ,lessonVarId);
         if (lessonVarId) {
             handleFetchSteps(Number(lessonVarId));
         }

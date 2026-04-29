@@ -322,7 +322,7 @@ export default function HomeClient() {
                 {/* Counter Statistics */}
                 <CounterBanner statisticValue={statistics} />
 
-                {/*<AppConfig/>*/}
+                <AppConfig/>
 
                 {/* open courses */}
 
@@ -397,7 +397,7 @@ export default function HomeClient() {
                     )}
 
                     {newCourses?.length || bestCourses?.length || popularCourses?.length ? (
-                        <Link href={'/openCourse'} className="font-sans cursor-pointer flex gap-1 items-center justify-end text-sm text-[var(--mainColor)]">
+                        <Link href={'/openCourse/1'} className="font-sans cursor-pointer flex gap-1 items-center justify-end text-sm text-[var(--mainColor)]">
                             <span className="underline">{translations.allOpenCourses}</span>
                             <i className="pi pi-arrow-right font-sans" style={{ fontSize: '12px' }}></i>
                         </Link>
