@@ -257,7 +257,7 @@ export const fethcReductor = async (page: number, search: string | null, special
     }
 };
 
-export const fetchStudentData = async (id_student: number) => {    
+export const fetchStudentData = async (id_student: number) => {
     try {
         const res = await axiosInstance.get(`/v1/reducer/student-task/info?id_student=${id_student}`);
 
@@ -269,7 +269,7 @@ export const fetchStudentData = async (id_student: number) => {
     }
 };
 
-export const studentCancel = async (all: boolean, course_id: number , title: string, answer_ids: any, id_student: number, description: string) => {        
+export const studentCancel = async (all: boolean, course_id: number , title: string, answer_ids: any, id_student: number, description: string) => {
     const payload = {
         all,
         course_id,
@@ -286,6 +286,27 @@ export const studentCancel = async (all: boolean, course_id: number , title: str
         return data;
     } catch (err) {
         console.log('Ошибка при получении', err);
+        return err;
+    }
+};
+
+// course status
+export const courseStatusControl = async (title: string | null, description: string, min_score: number, max_score: number, course_audience_type_id: number) => {
+    const payload = {
+        title,
+        description,
+        min_score,
+        max_score,
+        course_audience_type_id,
+    };
+
+    try {
+        const res = await axiosInstance.put(`/v1/course-audience-type`, payload);
+
+        const data = res.data;
+        return data;
+    } catch (err) {
+        console.log('Ошибка при изменении роля', err);
         return err;
     }
 };

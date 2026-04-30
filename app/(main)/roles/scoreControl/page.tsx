@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef, useContext } from 'react';
 import { fetchCourseOpenStatus } from '@/services/courses';
 import { AudenceType } from '@/types/courseTypes/AudenceTypes';
 import { InputNumber } from 'primereact/inputnumber';
@@ -10,9 +10,9 @@ import { classNames } from 'primereact/utils';
 import { useLocalization } from '@/layout/context/localizationcontext';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext'; // Import InputText
-import { InputTextarea } from 'primereact/inputtextarea'; // Import InputTextarea
-import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog'; // Import ConfirmDialog
-import { getConfirmOptions } from '@/utils/getConfirmOptions';
+import { InputTextarea } from 'primereact/inputtextarea';
+import { courseStatusControl } from '@/services/roles/roles';
+import { LayoutContext } from '@/layout/context/layoutcontext'; // Import InputTextarea
 
 /**
  * Компонент управления диапазоном баллов для конкретной строки
@@ -59,6 +59,7 @@ const ScoreRangeInputs = ({ min, max, onChange, disabled }: { min: number; max: 
  * Компонент строки таблицы (или карточки на мобилке)
  */
 const ScoreRow = ({ item, typesFetchProp }: { item: AudenceType; typesFetchProp: () => void }) => {
+    const { setMessage } = useContext(LayoutContext);
     const [displayEditModal, setDisplayEditModal] = useState(false);
     const [editableScores, setEditableScores] = useState({ min: item.min_score, max: item.max_score });
     const [editableTitle, setEditableTitle] = useState(item.title);
@@ -75,7 +76,19 @@ const ScoreRow = ({ item, typesFetchProp }: { item: AudenceType; typesFetchProp:
     const handleSaveScores = async () => {
         setLoading(true);
         // Simulate API call
-        await new Promise((resolve) => setTimeout(resolve, 1200));
+        const data = await courseStatusControl(editableTitle, editableDescription, editableScores.min, editableScores.max, item.id);
+        if(data){
+            typesFetchProp(); // Refresh data after saving
+            setMessage({
+                state: true,
+                value: { severity: 'success', summary: translations.updateSuccess, detail: '' }
+            });
+        } else {
+            setMessage({
+                state: true,
+                value: { severity: 'error', summary: translations.errorTitle, detail: data.response.data.cause }
+            });
+        }
         console.log(`Saving for ${item.id}:`, {
             min_score: editableScores.min,
             max_score: editableScores.max,
@@ -84,14 +97,13 @@ const ScoreRow = ({ item, typesFetchProp }: { item: AudenceType; typesFetchProp:
         });
         // In a real application, you would make an API call here to update the scores, title, and description
         // e.g., updateCourseDetails(item.id, editableScores.min, editableScores.max, editableTitle, editableDescription);
-        typesFetchProp(); // Refresh data after saving
         setLoading(false);
         setDisplayEditModal(false);
     };
 
-    const handleDelete = (id: number)=> {
-        console.log(id);
-    }
+    // const handleDelete = (id: number)=> {
+    //     console.log(id);
+    // }
 
     useEffect(() => {
         setEditableScores({ min: item.min_score, max: item.max_score });
@@ -146,16 +158,16 @@ const ScoreRow = ({ item, typesFetchProp }: { item: AudenceType; typesFetchProp:
                         </div>
                     </div>
                     <i className={'pi pi-pencil p-2 rounded-full shadow-1 cursor-pointer text-white bg-[var(--mainColor)]'} onClick={() => setDisplayEditModal(true)}></i>
-                    <i className={'pi pi-trash p-2 rounded-full shadow-1 cursor-pointer bg-[var(--redColor)] text-white'} onClick={(e)=> {
-                        confirmDialog(getConfirmOptions(Number(), () => handleDelete(item.id)));
-                    }}></i>
+                    {/*<i className={'pi pi-trash p-2 rounded-full shadow-1 cursor-pointer bg-[var(--redColor)] text-white'} onClick={(e)=> {*/}
+                    {/*    confirmDialog(getConfirmOptions(Number(), () => handleDelete(item.id)));*/}
+                    {/*}}></i>*/}
                 </div>
             </td>
 
             <Dialog
                 header={translations.edit + ': ' + item.title}
                 visible={displayEditModal}
-                className="max-w-xl w-full"
+                className="max-w-xl sm:w-full"
                 onHide={() => setDisplayEditModal(false)}
                 footer={
                     <div className="flex justify-content-end gap-2">

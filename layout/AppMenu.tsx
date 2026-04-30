@@ -278,6 +278,7 @@ const AppMenu = () => {
                           to: '/archive'
                       },
                       graphicRole?.label ? graphicRole : null,
+                        scoreControlRole?.label ? scoreControlRole : null,
                       //   scoreControlRole?.label ? scoreControlRole : {
                       //       label: translations.scoreControle,
                       //       icon: 'pi pi-sliders-h',
@@ -408,11 +409,7 @@ const AppMenu = () => {
                       to: '/archive'
                   },
                   graphicRole?.label ? graphicRole : null,
-                    // scoreControlRole?.label ? scoreControlRole : {
-                    //     label: translations.scoreControle,
-                    //     icon: 'pi pi-sliders-h',
-                    //     to: '/roles/scoreControl'
-                    // }
+                scoreControlRole?.label ? scoreControlRole : null,
               ].filter(Boolean) as AppMenuItem[])
             : []
         : [];
@@ -633,7 +630,7 @@ const AppMenu = () => {
 
                 const forScoreControl = forRole.find((item) => item.id === 5);
                 if (forScoreControl && forScoreControl?.read) {
-                    setScoreControlRole({ label: translations.moduleSchedule, icon: 'pi pi-calendar', to: '/roles/scoreControl', profilact: '' });
+                    setScoreControlRole({ label: translations.scoreControle, icon: 'pi pi-sliders-h', to: '/roles/scoreControl', profilact: '' });
                 }
             }
         }

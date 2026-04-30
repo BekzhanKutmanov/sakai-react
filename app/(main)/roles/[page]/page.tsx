@@ -118,7 +118,6 @@ export default function Roles() {
 
     const handleFetchUsers = async (page: number, search: string, myedu_id: string | null, selectedRole_idType: Role_idType | null, active: boolean | null) => {
         const res = await fetchRolesUsers(page, search, myedu_id, selectedRole_idType?.role_id ? selectedRole_idType?.role_id : null, active);
-        console.log(res);
 
         if (res?.success) {
             setPagination({
@@ -127,7 +126,6 @@ export default function Roles() {
                 perPage: res?.data?.per_page
             });
             const validRolesPosition = res?.data?.data?.map((item: any) => {
-                // console.log(item);
 
                 if (item?.roles?.length > 1) {
                     // const [first, second] = item.roles;
@@ -363,7 +361,7 @@ export default function Roles() {
 
     useEffect(() => {
         handleFetchRoles();
-        handleFetchUsers(1, '', null, null, null);
+        // handleFetchUsers(1, '', null, null, null);
         setUserFetchGlag(true);
     }, []);
 
