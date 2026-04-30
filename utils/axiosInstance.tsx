@@ -42,7 +42,7 @@ axiosInstance.interceptors.response.use(
             console.warn('Не имеет доступ. Перенаправляю...');
             if (typeof window !== 'undefined') {
                 if (!window.location.pathname.includes('faculty')) {
-                    // window.location.href = '/';
+                    window.location.href = '/';
                 }
             }
         }
