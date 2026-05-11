@@ -22,6 +22,7 @@ import OpenCourseShowCard from './cards/OpenCourseShowCard';
 import { CourseCategoryOption } from '@/types/openCourse/CourseCategoryOption';
 import { useLocalization } from '@/layout/context/localizationcontext';
 import AppConfig from '@/layout/AppConfig';
+import { getToken } from '@/utils/auth';
 
 export default function HomeClient() {
     // types
@@ -246,10 +247,12 @@ export default function HomeClient() {
     };
 
     const handleSendSingup = async () => {
-        // current course
-        const list: any | null = await handleSignupList(coursesValue);
-        if (list) {
-            setSignupList(list);
+        const token = getToken('access_token');
+        if(token){
+            const list: any | null = await handleSignupList(coursesValue);
+            if (list) {
+                setSignupList(list);
+            }
         }
     };
 
