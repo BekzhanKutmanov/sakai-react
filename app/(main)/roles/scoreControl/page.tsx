@@ -12,7 +12,15 @@ import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext'; // Import InputText
 import { InputTextarea } from 'primereact/inputtextarea';
 import { courseStatusControl } from '@/services/roles/roles';
-import { LayoutContext } from '@/layout/context/layoutcontext'; // Import InputTextarea
+import { LayoutContext } from '@/layout/context/layoutcontext';
+import { useRouter } from 'next/navigation'; // Import InputTextarea
+
+interface ForLinkRole {
+    name: string;
+    id: number | null;
+    active: boolean;
+    read: boolean;
+}
 
 /**
  * Компонент управления диапазоном баллов для конкретной строки
@@ -237,10 +245,12 @@ const TableSkeleton = () => (
  * Основной компонент страницы
  */
 export default function ScoreControl() {
+    const {user} = useContext(LayoutContext);
     const { translations } = useLocalization();
     const [data, setData] = useState<AudenceType[]>([]);
     const [loading, setLoading] = useState(true);
     const [scoreControlInfo, setScoreControlInfo] = useState(false);
+    const router = useRouter();
 
     const handleFetchTypes = async () => {
         try {
@@ -255,6 +265,30 @@ export default function ScoreControl() {
 
     useEffect(() => {
         handleFetchTypes();
+
+        const roles = user?.roles;
+        const forRole: ForLinkRole[] = [];
+        if(roles){
+            roles.forEach((role) => {
+                if (role?.pivot?.active) {
+                    const timeRole: ForLinkRole = {
+                        name: role.title,
+                        id: role.id,
+                        active: true,
+                        read: role?.pivot?.read
+                    };
+
+                    forRole.push(timeRole);
+                }
+            });
+            const forScoreControl = forRole?.find((item) => item.id === 5);
+            if(!forScoreControl) {
+                router.push('/');
+            }
+        } else {
+            router.push('/');
+        }
+        console.log(roles);
     }, []);
 
     return (

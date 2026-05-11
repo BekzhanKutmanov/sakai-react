@@ -34,14 +34,6 @@ interface LessonInfoUi {
     to: Nullable<Date> | null;
 }
 
-interface test {
-    label: string;
-    id: number;
-    to?: string;
-    items?: [];
-    command?: () => void;
-}
-
 interface ForLinkRole {
     name: string;
     id: number | null;
