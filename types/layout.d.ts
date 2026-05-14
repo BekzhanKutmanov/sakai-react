@@ -105,7 +105,10 @@ export interface LayoutContextProps {
     setContextUserRole,
 
     contextFilterState,
-    setContextFilterState
+    setContextFilterState,
+
+    contextMobileLessons,
+    setContextMobileLessons
     // message: { state: boolean; value: MessageType };
     // setMessage: React.Dispatch<React.SetStateAction<{ state: boolean; value: MessageType }>>;
 }

@@ -55,8 +55,7 @@ export default function LessonTest() {
     const router = useRouter();
     const media = useMediaQuery('(max-width: 640px)');
     const showError = useErrorMessage();
-    const { user, setMessage, contextNotificationId, setContextNotificationId, handleNotifications, contextLastSubjectPageVisit, setContextLastSubjectPageVisit } =
-        useContext(LayoutContext);
+    const { user, setMessage, contextNotificationId, setContextNotificationId, handleNotifications, contextLastSubjectPageVisit, setContextLastSubjectPageVisit } = useContext(LayoutContext);
     const { translations } = useLocalization();
     const { getLocalized } = useLocalizedData();
 
@@ -140,7 +139,6 @@ export default function LessonTest() {
 
     const handleStatusView = async (notification_id: number | null) => {
         if (notification_id) {
-
             const data = await statusView(Number(notification_id));
             if (user?.is_working || user?.is_student) {
                 handleNotifications();
@@ -694,19 +692,27 @@ export default function LessonTest() {
                     <div className="flex flex-col gap-3 mt-2">
                         {(steps.details as any[]).map((attempt, index) => (
                             <div key={index} className={`p-2 rounded-sm shadow border-l-4`}>
-                                <div className="flex justify-between items-center">
-                                    <span className="text-gray-700">{translations.attempt} #{index + 1}</span>
-                                    {attempt.is_correct ? (
-                                        <span className="flex items-center gap-2 text-[green] font-semibold">
-                                            <i className="pi pi-check-circle"></i>
-                                            <span>{translations.correct}</span>
+                                <div className="flex flex-col gap-2">
+                                    <div className={'flex items-center justify-between gap-2'}>
+                                        <span className="text-gray-700">
+                                            {translations.attempt} #{index + 1}
                                         </span>
-                                    ) : (
-                                        <span className="flex items-center gap-2 text-[red] font-semibold">
-                                            <i className="pi pi-times-circle"></i>
-                                            <span>{translations.incorrect}</span>
-                                        </span>
-                                    )}
+                                        {attempt.is_correct ? (
+                                            <span className="flex items-center justify-end gap-2 text-[green] font-semibold">
+                                                <i className="pi pi-check-circle"></i>
+                                                <span>{translations.correct}</span>
+                                            </span>
+                                        ) : (
+                                            <span className="flex items-center justify-end gap-2 text-[red] font-semibold">
+                                                <i className="pi pi-times-circle"></i>
+                                                <span>{translations.incorrect}</span>
+                                            </span>
+                                        )}
+                                    </div>
+                                    {attempt?.answers?.text ? <div>
+                                        <span>Вариант: </span>
+                                        <span>{attempt.answers.text}</span>
+                                    </div> : ''}
                                 </div>
                             </div>
                         ))}

@@ -24,6 +24,7 @@ import LessonForum from '@/app/components/lessons/LessonForum';
 import { Button } from 'primereact/button';
 import { getConfirmOptions } from '@/utils/getConfirmOptions';
 import { confirmDialog } from 'primereact/confirmdialog';
+import { CourseDetailMenu } from '@/app/components/menu/CourseDetailMenu';
 
 interface LessonResponse {
     lesson: {
@@ -34,12 +35,12 @@ interface LessonResponse {
         from: string;
         to: string;
     };
-};
+}
 
-export default function LessonView({defaultValue, defaultLessonId}: {defaultValue: boolean, defaultLessonId: string}) {
-    const { setMessage } = useContext(LayoutContext);
+export default function LessonView({ defaultValue, defaultLessonId }: { defaultValue: boolean; defaultLessonId: string }) {
+    const { setMessage, contextMobileLessons, setContextMobileLessons } = useContext(LayoutContext);
     const showError = useErrorMessage();
-    const { lesson_id } = useParams<{course_id: string, lesson_id: string}>();
+    const { lesson_id } = useParams<{ course_id: string; lesson_id: string }>();
     const { translations } = useLocalization();
 
     const [lessonVarId, setLessonVarId] = useState<string>(defaultValue ? defaultLessonId : lesson_id);
@@ -142,7 +143,7 @@ export default function LessonView({defaultValue, defaultLessonId}: {defaultValu
         const secuence = await stepSequenceUpdate(lessonVarId ? Number(lessonVarId) : null, steps);
 
         if (secuence?.success) {
-            if(lessonVarId) handleFetchSteps(Number(lessonVarId));
+            if (lessonVarId) handleFetchSteps(Number(lessonVarId));
             setMessage({
                 state: true,
                 value: { severity: 'success', summary: translations.updateSuccess, detail: '' }
@@ -224,7 +225,7 @@ export default function LessonView({defaultValue, defaultLessonId}: {defaultValu
         const data = await deleteStep(Number(lessonVarId), Number(selectedId));
         if (data.success) {
             // contextFetchThemes(Number(course_id), null);
-            await queryClient.invalidateQueries({queryKey: ['themes']});
+            await queryClient.invalidateQueries({ queryKey: ['themes'] });
             handleFetchSteps(Number(lessonVarId));
             setMessage({
                 state: true,
@@ -355,13 +356,13 @@ export default function LessonView({defaultValue, defaultLessonId}: {defaultValu
         }
     };
 
-    useEffect(()=> {
-        if(defaultValue){
-            setLessonVarId(defaultLessonId)
+    useEffect(() => {
+        if (defaultValue) {
+            setLessonVarId(defaultLessonId);
         } else {
             setLessonVarId(lesson_id);
         }
-    },[lesson_id, defaultLessonId])
+    }, [lesson_id, defaultLessonId]);
 
     useEffect(() => {
         if (data?.lesson) {
@@ -448,268 +449,271 @@ export default function LessonView({defaultValue, defaultLessonId}: {defaultValu
     }
 
     return (
-        <div className={'main-bg'}>
-            <Dialog
-                header={translations.selectStepType}
-                visible={formVisible}
-                className="w-[90%] sm:w-[400px]"
-                onHide={() => {
-                    if (!formVisible) return;
-                    setFormVisible(false);
-                }}
-            >
-                <div className="flex flex-col gap-1">
-                    <div className="flex flex-col">
-                        <span>{translations.position}</span>
-                        <InputText
-                            type="number"
-                            placeholder={lastStep ? String(lastStep + 1) : ''}
-                            className="w-full p-1"
-                            onChange={(e) => {
-                                setSequence_number(Number(e.target.value));
-                            }}
-                        />
-                    </div>
-                    {skeleton ? (
-                        <GroupSkeleton count={1} size={{ width: '100%', height: '5rem' }} />
-                    ) : (
-                        <div className="w-full flex flex-col mt-1">
-                            {types.map((item) => {
-                                // if(item?.name === 'forum'){
-                                //     return null;
-                                // }
-
-                                return (
-                                    <React.Fragment key={item?.id}>
-                                        <div className="flex-1 py-2 px-2 shadow flex gap-1 items-center hover:text-[var(--mainColor)] transition-all">
-                                            <i className={`${item?.logo}`}></i>
-                                            <b
-                                                className="cursor-pointer"
-                                                onClick={() => {
-                                                    handleAddLesson(Number(lessonVarId), item?.id);
-                                                }}
-                                            >
-                                                {item.title}
-                                            </b>
-                                        </div>
-                                    </React.Fragment>
-                                );
-                            })}
+        <>
+            <div className={'main-bg mb-4'}>
+                <Dialog
+                    header={translations.selectStepType}
+                    visible={formVisible}
+                    className="w-[90%] sm:w-[400px]"
+                    onHide={() => {
+                        if (!formVisible) return;
+                        setFormVisible(false);
+                    }}
+                >
+                    <div className="flex flex-col gap-1">
+                        <div className="flex flex-col">
+                            <span>{translations.position}</span>
+                            <InputText
+                                type="number"
+                                placeholder={lastStep ? String(lastStep + 1) : ''}
+                                className="w-full p-1"
+                                onChange={(e) => {
+                                    setSequence_number(Number(e.target.value));
+                                }}
+                            />
                         </div>
-                    )}
-                </div>
-            </Dialog>
-
-            {/* lesson info section */}
-            {isLoading ? <GroupSkeleton count={1} size={{width: '100%', height: '5rem' }} />  : lessonInfo}
-
-            {/* steps section */}
-            {skeleton ? (
-                <div className={'my-4 flex items-center gap-2'}>
-                    <GroupSkeleton count={1} size={{ width: '55px', height: '3rem' }} />
-                    <GroupSkeleton count={1} size={{ width: '55px', height: '3rem' }} />
-                    <GroupSkeleton count={1} size={{ width: '55px', height: '3rem' }} />
-                </div>
-            ) : (
-                <div className="flex gap-2 mt-4 items-end">
-                    {hasSteps ? (
-                        <div className="flex items-center gap-4">
-                            <div onClick={handleFetchTypes} className="cursor-pointer w-[40px] h-[40px] sm:w-[54px] sm:h-[54px] rounded animate-step"></div>
-                        </div>
-                    ) : (
-                        <div className="flex items-center relative max-w-[550px] sm:max-w-[800px] overflow-x-auto scrollbar-thin">
-                            {toggleDocGenerate ? (
-                                <div className="flex flex-col gap-2">
-                                    <div className="flex flex-col sm:flex-row gap-2 items-start">
-                                        <b
-                                            className="pi pi-times cursor-pointer sm:text-xl text-[var(--mainColor)]"
-                                            onClick={() => {
-                                                setToggleDocGenerate(false);
-                                            }}
-                                        ></b>
-                                        <div className="flex items-center gap-1">
-                                            <b>{translations.wordTestGeneration}</b>
-                                        </div>
-                                    </div>
-                                </div>
-                            ) : toggleDragSteps ? (
-                                <div className="flex flex-col gap-2 items-start">
-                                    <div className="flex flex-col gap-2">
-                                        <div className="flex flex-col sm:flex-row gap-2 items-start sm:items-center">
-                                            <b className="pi pi-times cursor-pointer sm:text-xl text-[var(--mainColor)]" onClick={() => setToggleDragSteps(false)}></b>
-                                            <div className="flex items-center gap-1">
-                                                <b className="">{translations.aiTestGeneration}</b>
-                                                <i className="pi pi-microchip-ai text-xl"></i>
-                                            </div>
-                                        </div>
-                                        <div className="flex items-center gap-2">
-                                            <span className="text-sm text-black">
-                                                {translations.testVariantsHint} <span className="opacity-60 text-[13px]">{translations.optional}</span>
-                                            </span>
-                                            {/* <span className="text-[13px]">Кол-о документов: {documentSteps?.length || 0}</span> */}
-                                        </div>
-                                    </div>{' '}
-                                    {documentSteps?.length > 0 && (
-                                        <div ref={scrollRef} className={`flex gap-2 max-w-[550px] sm:max-w-[800px] overflow-x-auto scrollbar-thin ${media ? (steps.length >= 6 ? 'right-shadow' : '') : steps.length >= 12 ? 'right-shadow' : ''}`}>
-                                            {documentSteps?.map((item, idx) => {
-                                                return (
-                                                    <div key={item.id}>
-                                                        <div className="flex flex-col items-center" draggable onDragStart={() => handleDragStart(item.id)}>
-                                                            {step(item, item.type.logo, item.id, idx)}
-                                                        </div>
-                                                    </div>
-                                                );
-                                            })}
-                                        </div>
-                                    )}
-                                </div>
-                            ) : (
-                                <div ref={scrollRef} className={`flex gap-2 max-w-[550px] sm:max-w-[800px] overflow-x-auto scrollbar-thin ${media ? (steps.length >= 6 ? 'right-shadow' : '') : steps.length >= 12 ? 'right-shadow' : ''}`}>
-                                    {steps.map((item, idx) => {
-                                        return (
-                                            <div key={item.id} className="flex flex-col items-center">
-                                                {step(item, item.type.logo, item.id, idx)}
-                                            </div>
-                                        );
-                                    })}
-                                </div>
-                            )}
-                        </div>
-                    )}
-
-                    <div className="flex items-center gap-1">
                         {skeleton ? (
-                            <GroupSkeleton count={1} size={{ width: '47px', height: '3rem' }} />
+                            <GroupSkeleton count={1} size={{ width: '100%', height: '5rem' }} />
                         ) : (
-                            !toggleDragSteps &&
-                            !toggleDocGenerate && (
-                                <button
-                                    onClick={handleFetchTypes}
-                                    className={`stepElement pi pi-plus text-xl ${
-                                        media ? steps?.length >= 6 && 'mb-1' : steps?.length >= 12 && 'mb-1'
-                                    } sm:text-2xl text-white cursor-pointer border rounded flex justify-center items-center bg-[var(--mainColor)] hover:bg-[var(--mainBorder)] transition`}
-                                ></button>
-                            )
+                            <div className="w-full flex flex-col mt-1">
+                                {types.map((item) => {
+                                    // if(item?.name === 'forum'){
+                                    //     return null;
+                                    // }
+
+                                    return (
+                                        <React.Fragment key={item?.id}>
+                                            <div className="flex-1 py-2 px-2 shadow flex gap-1 items-center hover:text-[var(--mainColor)] transition-all">
+                                                <i className={`${item?.logo}`}></i>
+                                                <b
+                                                    className="cursor-pointer"
+                                                    onClick={() => {
+                                                        handleAddLesson(Number(lessonVarId), item?.id);
+                                                    }}
+                                                >
+                                                    {item.title}
+                                                </b>
+                                            </div>
+                                        </React.Fragment>
+                                    );
+                                })}
+                            </div>
                         )}
                     </div>
-                </div>
-            )}
+                </Dialog>
 
-            {hasSteps && (
-                <div>
-                    <NotFound titleMessage={translations.noSteps} />
-                </div>
-            )}
-            {element?.step.type.title && (
-                <div className="shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)] mt-3 pb-1 flex items-center flex-col sm:flex-row gap-1">
-                    <span className="sm:text-[18px]">{element?.step.type.title}</span> -
-                    <div>
-                        (<b className="mr-1">{element?.step?.step === 0 ? '1' : element?.step?.step}</b> {translations.positionUnit})
+                {/* lesson info section */}
+                {isLoading ? <GroupSkeleton count={1} size={{ width: '100%', height: '5rem' }} /> : lessonInfo}
+
+                {/* steps section */}
+                {skeleton ? (
+                    <div className={'my-4 flex items-center gap-2'}>
+                        <GroupSkeleton count={1} size={{ width: '55px', height: '3rem' }} />
+                        <GroupSkeleton count={1} size={{ width: '55px', height: '3rem' }} />
+                        <GroupSkeleton count={1} size={{ width: '55px', height: '3rem' }} />
                     </div>
+                ) : (
+                    <div className="flex gap-2 mt-4 items-end">
+                        {hasSteps ? (
+                            <div className="flex items-center gap-4">
+                                <div onClick={handleFetchTypes} className="cursor-pointer w-[40px] h-[40px] sm:w-[54px] sm:h-[54px] rounded animate-step"></div>
+                            </div>
+                        ) : (
+                            <div className="flex items-center relative max-w-[550px] sm:max-w-[800px] overflow-x-auto scrollbar-thin">
+                                {toggleDocGenerate ? (
+                                    <div className="flex flex-col gap-2">
+                                        <div className="flex flex-col sm:flex-row gap-2 items-start">
+                                            <b
+                                                className="pi pi-times cursor-pointer sm:text-xl text-[var(--mainColor)]"
+                                                onClick={() => {
+                                                    setToggleDocGenerate(false);
+                                                }}
+                                            ></b>
+                                            <div className="flex items-center gap-1">
+                                                <b>{translations.wordTestGeneration}</b>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ) : toggleDragSteps ? (
+                                    <div className="flex flex-col gap-2 items-start">
+                                        <div className="flex flex-col gap-2">
+                                            <div className="flex flex-col sm:flex-row gap-2 items-start sm:items-center">
+                                                <b className="pi pi-times cursor-pointer sm:text-xl text-[var(--mainColor)]" onClick={() => setToggleDragSteps(false)}></b>
+                                                <div className="flex items-center gap-1">
+                                                    <b className="">{translations.aiTestGeneration}</b>
+                                                    <i className="pi pi-microchip-ai text-xl"></i>
+                                                </div>
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <span className="text-sm text-black">
+                                                    {translations.testVariantsHint} <span className="opacity-60 text-[13px]">{translations.optional}</span>
+                                                </span>
+                                                {/* <span className="text-[13px]">Кол-о документов: {documentSteps?.length || 0}</span> */}
+                                            </div>
+                                        </div>{' '}
+                                        {documentSteps?.length > 0 && (
+                                            <div ref={scrollRef} className={`flex gap-2 max-w-[550px] sm:max-w-[800px] overflow-x-auto scrollbar-thin ${media ? (steps.length >= 6 ? 'right-shadow' : '') : steps.length >= 12 ? 'right-shadow' : ''}`}>
+                                                {documentSteps?.map((item, idx) => {
+                                                    return (
+                                                        <div key={item.id}>
+                                                            <div className="flex flex-col items-center" draggable onDragStart={() => handleDragStart(item.id)}>
+                                                                {step(item, item.type.logo, item.id, idx)}
+                                                            </div>
+                                                        </div>
+                                                    );
+                                                })}
+                                            </div>
+                                        )}
+                                    </div>
+                                ) : (
+                                    <div ref={scrollRef} className={`flex gap-2 max-w-[550px] sm:max-w-[800px] overflow-x-auto scrollbar-thin ${media ? (steps.length >= 6 ? 'right-shadow' : '') : steps.length >= 12 ? 'right-shadow' : ''}`}>
+                                        {steps.map((item, idx) => {
+                                            return (
+                                                <div key={item.id} className="flex flex-col items-center">
+                                                    {step(item, item.type.logo, item.id, idx)}
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                )}
+                            </div>
+                        )}
+
+                        <div className="flex items-center gap-1">
+                            {skeleton ? (
+                                <GroupSkeleton count={1} size={{ width: '47px', height: '3rem' }} />
+                            ) : (
+                                !toggleDragSteps &&
+                                !toggleDocGenerate && (
+                                    <button
+                                        onClick={handleFetchTypes}
+                                        className={`stepElement pi pi-plus text-xl ${
+                                            media ? steps?.length >= 6 && 'mb-1' : steps?.length >= 12 && 'mb-1'
+                                        } sm:text-2xl text-white cursor-pointer border rounded flex justify-center items-center bg-[var(--mainColor)] hover:bg-[var(--mainBorder)] transition`}
+                                    ></button>
+                                )
+                            )}
+                        </div>
+                    </div>
+                )}
+
+                {hasSteps && (
+                    <div>
+                        <NotFound titleMessage={translations.noSteps} />
+                    </div>
+                )}
+                {element?.step.type.title && (
+                    <div className="shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)] mt-3 pb-1 flex items-center flex-col sm:flex-row gap-1">
+                        <span className="sm:text-[18px]">{element?.step.type.title}</span> -
+                        <div>
+                            (<b className="mr-1">{element?.step?.step === 0 ? '1' : element?.step?.step}</b> {translations.positionUnit})
+                        </div>
+                    </div>
+                )}
+
+                {stepSkeleton ? (
+                    <GroupSkeleton count={1} size={{ width: '100%', height: '12rem' }} />
+                ) : (
+                    <>
+                        {element?.step.type.name === 'document' && (
+                            <LessonDocument
+                                element={element?.step}
+                                content={element?.content}
+                                fetchPropElement={(stepId) => {
+                                    handleFetchElement(stepId);
+                                    handleFetchSteps(Number(lessonVarId));
+                                }}
+                                clearProp={hasSteps}
+                            />
+                        )}
+                        {element?.step.type.name === 'video' && (
+                            <LessonVideo
+                                element={element?.step}
+                                content={element?.content}
+                                fetchPropElement={(stepId) => {
+                                    handleFetchElement(stepId);
+                                    handleFetchSteps(Number(lessonVarId));
+                                }}
+                                clearProp={hasSteps}
+                            />
+                        )}
+
+                        {element?.step.type.name === 'test' && (
+                            <LessonTest
+                                preparation={() => handlePreparation(steps)}
+                                docPreparationTrue={() => {
+                                    setToggleDocGenerate(true);
+                                }}
+                                docPreparationFalse={() => {
+                                    setToggleDocGenerate(false);
+                                }}
+                                aiTestStat={toggleDragSteps}
+                                docGenerageState={toggleDocGenerate}
+                                aiTestSet={() => setToggleDragSteps(false)}
+                                forAiTestId={draggedId}
+                                aiTestSteps={documentSteps}
+                                element={element?.step}
+                                content={element?.content}
+                                fetchPropElement={(stepId) => {
+                                    handleFetchElement(stepId);
+                                    handleFetchSteps(Number(lessonVarId));
+                                }}
+                                // fetchPropThemes={() => contextFetchThemes(Number(course_id), null)}
+                                fetchPropThemes={async () => await queryClient.invalidateQueries({ queryKey: ['themes'] })}
+                                clearProp={hasSteps}
+                            />
+                        )}
+                        {element?.step.type.name === 'practical' && (
+                            <LessonPractica
+                                element={element?.step}
+                                content={element?.content}
+                                fetchPropElement={(stepId) => {
+                                    handleFetchElement(stepId);
+                                    handleFetchSteps(Number(lessonVarId));
+                                }}
+                                fetchPropThemes={async () => await queryClient.invalidateQueries({ queryKey: ['themes'] })}
+                                clearProp={hasSteps}
+                            />
+                        )}
+                        {element?.step.type.name === 'link' && (
+                            <LessonLink
+                                element={element?.step}
+                                content={element?.content}
+                                fetchPropElement={(stepId) => {
+                                    handleFetchElement(stepId);
+                                    handleFetchSteps(Number(lessonVarId));
+                                }}
+                                clearProp={hasSteps}
+                            />
+                        )}
+                        {element?.step.type.name === 'forum' && (
+                            <LessonForum
+                                element={element?.step}
+                                content={element?.content}
+                                fetchPropElement={(stepId) => {
+                                    handleFetchElement(stepId);
+                                    handleFetchSteps(Number(lessonVarId));
+                                }}
+                                clearProp={hasSteps}
+                            />
+                        )}
+                    </>
+                )}
+
+                <div className="flex justify-end mt-1">
+                    <Button
+                        icon={'pi pi-trash'}
+                        label={translations.deleteStep}
+                        disabled={hasSteps || toggleDragSteps}
+                        className="hover:bg-[var(--mainBorder)] transition trash-button"
+                        onClick={() => {
+                            const options = getConfirmOptions(Number(), () => handleDeleteStep());
+                            confirmDialog(options);
+                        }}
+                    />
                 </div>
-            )}
-
-            {stepSkeleton ? (
-                <GroupSkeleton count={1} size={{ width: '100%', height: '12rem' }} />
-            ) : (
-                <>
-                    {element?.step.type.name === 'document' && (
-                        <LessonDocument
-                            element={element?.step}
-                            content={element?.content}
-                            fetchPropElement={(stepId) => {
-                                handleFetchElement(stepId);
-                                handleFetchSteps(Number(lessonVarId));
-                            }}
-                            clearProp={hasSteps}
-                        />
-                    )}
-                    {element?.step.type.name === 'video' && (
-                        <LessonVideo
-                            element={element?.step}
-                            content={element?.content}
-                            fetchPropElement={(stepId) => {
-                                handleFetchElement(stepId);
-                                handleFetchSteps(Number(lessonVarId));
-                            }}
-                            clearProp={hasSteps}
-                        />
-                    )}
-
-                    {element?.step.type.name === 'test' && (
-                        <LessonTest
-                            preparation={() => handlePreparation(steps)}
-                            docPreparationTrue={() => {
-                                setToggleDocGenerate(true);
-                            }}
-                            docPreparationFalse={() => {
-                                setToggleDocGenerate(false);
-                            }}
-                            aiTestStat={toggleDragSteps}
-                            docGenerageState={toggleDocGenerate}
-                            aiTestSet={() => setToggleDragSteps(false)}
-                            forAiTestId={draggedId}
-                            aiTestSteps={documentSteps}
-                            element={element?.step}
-                            content={element?.content}
-                            fetchPropElement={(stepId) => {
-                                handleFetchElement(stepId);
-                                handleFetchSteps(Number(lessonVarId));
-                            }}
-                            // fetchPropThemes={() => contextFetchThemes(Number(course_id), null)}
-                            fetchPropThemes={async () => await queryClient.invalidateQueries({queryKey: ['themes']})}
-                            clearProp={hasSteps}
-                        />
-                    )}
-                    {element?.step.type.name === 'practical' && (
-                        <LessonPractica
-                            element={element?.step}
-                            content={element?.content}
-                            fetchPropElement={(stepId) => {
-                                handleFetchElement(stepId);
-                                handleFetchSteps(Number(lessonVarId));
-                            }}
-                            fetchPropThemes={async () => await queryClient.invalidateQueries({queryKey: ['themes']})}
-                            clearProp={hasSteps}
-                        />
-                    )}
-                    {element?.step.type.name === 'link' && (
-                        <LessonLink
-                            element={element?.step}
-                            content={element?.content}
-                            fetchPropElement={(stepId) => {
-                                handleFetchElement(stepId);
-                                handleFetchSteps(Number(lessonVarId));
-                            }}
-                            clearProp={hasSteps}
-                        />
-                    )}
-                    {element?.step.type.name === 'forum' && (
-                        <LessonForum
-                            element={element?.step}
-                            content={element?.content}
-                            fetchPropElement={(stepId) => {
-                                handleFetchElement(stepId);
-                                handleFetchSteps(Number(lessonVarId));
-                            }}
-                            clearProp={hasSteps}
-                        />
-                    )}
-                </>
-            )}
-
-            <div className="flex justify-end mt-1">
-                <Button
-                    icon={'pi pi-trash'}
-                    label={translations.deleteStep}
-                    disabled={hasSteps || toggleDragSteps}
-                    className="hover:bg-[var(--mainBorder)] transition trash-button"
-                    onClick={() => {
-                        const options = getConfirmOptions(Number(), () => handleDeleteStep());
-                        confirmDialog(options);
-                    }}
-                />
             </div>
-        </div>
+            <CourseDetailMenu />
+        </>
     );
 }

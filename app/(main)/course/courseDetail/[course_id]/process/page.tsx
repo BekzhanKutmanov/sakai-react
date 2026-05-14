@@ -18,7 +18,6 @@ export default function CourseProcess() {
 
         if(data && data?.lessons?.data?.length > 0){
             const firstLesson = data?.lessons?.data[0];
-            console.log(firstLesson);
             if(firstLesson?.id){
                 setLessonId(firstLesson.id);
             } else {
@@ -34,7 +33,7 @@ export default function CourseProcess() {
     },[]);
 
     return (
-        <div className={''}>
+        <div>
             {lessonId && <LessonView defaultValue={true} defaultLessonId={lessonId}/>}
         </div>
     );

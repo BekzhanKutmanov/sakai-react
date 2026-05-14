@@ -8,6 +8,7 @@ import { LayoutContext } from '@/layout/context/layoutcontext';
 import { useLocalization } from '@/layout/context/localizationcontext';
 import Link from 'next/link';
 import { useContext, useEffect, useState } from 'react';
+import MainTitle from '@/app/components/titles/MainTitle';
 
 export default function UnVerifed() {
     type OptionsType = Intl.DateTimeFormatOptions;
@@ -93,7 +94,7 @@ export default function UnVerifed() {
                 </div>
             ) : (
                 <>
-                    <h3 className="text-xl pb-1 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">{translations.unverifiedTasks}</h3>
+                    <MainTitle>{translations.unverifiedTasks}</MainTitle>
                     {tasks?.map((item) => {
                         return (
                             <div key={item?.answer?.id}>

@@ -48,6 +48,10 @@
     color: #000 !important;
 }
 
+.hidden-item {
+    display: none !important;
+}
+
 /* FIX для радио (кружок) */
 .high-contrast .radio-mark::after {
     background-color: var(--mainColor) !important;

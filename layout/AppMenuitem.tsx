@@ -18,8 +18,13 @@ const AppMenuitem = (props: AppMenuItemProps) => {
     const isActiveRoute = item!.to && pathname === item!.to;
     const active = activeMenu === key || activeMenu.startsWith(key + '-');
     const onRouteChange = (url: string) => {
+        // if (item!.to && item!.to === url) {
+        //     setActiveMenu(key);
+        // }
         if (item!.to && item!.to === url) {
             setActiveMenu(key);
+        } else if(pathname.includes('process')) {
+            setActiveMenu('1-1-0');
         }
     };
 
@@ -84,7 +89,7 @@ const AppMenuitem = (props: AppMenuItemProps) => {
 
                         <Ripple />
                     </Link>
-                    <div className='text-sm text-[var(--mainColor)]'>{item?.score}</div> 
+                    <div className='text-sm text-[var(--mainColor)]'>{item?.score}</div>
                     <div className='flex gap-1 items-center py-1'>
                         {/* Кнопки редактирования и удаления */}
                         {item!.onEdit && (

@@ -25,6 +25,7 @@ import { useLocalization } from './context/localizationcontext';
 import useMediaQuery from '@/hooks/useMediaQuery';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { fetchThemes } from '@/services/courses';
+// Removed: import { CourseDetailMenu } from '@/app/components/menu/CourseDetailMenu';
 
 // types
 interface LessonInfoUi {
@@ -50,7 +51,7 @@ interface MyApMenuType {
 
 const AppMenu = () => {
     const { language, translations } = useLocalization();
-    const { user, setMessage, setDeleteQuery, setUpdateeQuery, contextFetchThemes, contextThemes, departament, contextVerifedValue, setContextVerifedValue, contextFetchVerifed } = useContext(LayoutContext);
+    const { user, setMessage, setDeleteQuery, setUpdateeQuery, contextFetchThemes, departament, contextVerifedValue, contextFetchVerifed, contextMobileLessons, setContextMobileLessons } = useContext(LayoutContext);
 
     const media = useMediaQuery('(max-width: 640px)');
 
@@ -177,7 +178,7 @@ const AppMenu = () => {
                   {
                       label: translations.themes,
                       icon: 'pi pi-fw pi-calendar-clock',
-                      items: courseList?.length > 0 ? courseList : []
+                      items: courseList?.length > 0 ? courseList : [],
                   }
               ]
             : !forDepartamentLength
@@ -660,6 +661,10 @@ const AppMenu = () => {
         }
     }, [pathname]); // pathname поставь обратно если что
 
+    useEffect(()=> {
+        setContextMobileLessons(themesData);
+    },[themesData]);
+
     return (
         <MenuProvider>
             <FormModal
@@ -830,6 +835,7 @@ const AppMenu = () => {
                     </div>
                 </div>
             )}
+            {/* Removed: {media && pathname.startsWith('/course/courseDetail/') && <CourseDetailMenu />} */}
             {/* </div> */}
         </MenuProvider>
     );
