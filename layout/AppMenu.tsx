@@ -512,7 +512,7 @@ const AppMenu = () => {
             await queryClient.invalidateQueries({queryKey: ['themes', course_id]});
             const path = window.location.pathname;
             if(path.includes(String(id))){
-                router.push(`/course/courseDetail/${course_id}/default?lang=${language}`);
+                router.replace(`/course/courseDetail/${course_id}/default?lang=${language}`);
             }
 
             setDeleteQuery(true);

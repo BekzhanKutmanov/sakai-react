@@ -5,7 +5,7 @@ import { NotFound } from '@/app/components/NotFound';
 import GroupSkeleton from '@/app/components/skeleton/GroupSkeleton';
 import useErrorMessage from '@/hooks/useErrorMessage';
 import { LayoutContext } from '@/layout/context/layoutcontext';
-import { fetchItemsConnect, fetchItemsLessons } from '@/services/studentMain';
+import { fetchItemsConnect, fetchItemsLessons, studentEduYear } from '@/services/studentMain';
 import Link from 'next/link';
 import { Dropdown } from 'primereact/dropdown';
 import { ReactElement, useContext, useEffect, useState } from 'react';
@@ -18,6 +18,11 @@ export default function Teaching() {
     interface sortOptType {
         name: string;
         code: number;
+    }
+
+    interface EduYearType {
+        id: number;
+        name_ru: string;
     }
 
     const [lessons, setLessons] = useState<Record<number, { semester: { name_kg: string } }>>({
@@ -35,12 +40,19 @@ export default function Teaching() {
     const [skeleton, setSkeleton] = useState(false);
     const [mainProgressSpinner, setMainProgressSpinner] = useState(false);
 
+    const [eduYearOpt, setEduYearOpt] = useState<EduYearType[]>([]);
+    const [eduYearSelected, setEduYearSelected] = useState<EduYearType>();
+
     const { setMessage } = useContext(LayoutContext);
     const showError = useErrorMessage();
 
     // functions
     const toggleSortSelect = (e: sortOptType) => {
         setSelectedSort(e);
+    };
+
+    const toggleEduYearSelect = (e: EduYearType) => {
+        setEduYearSelected(e);
     };
 
     const toggleSkeleton = () => {
@@ -51,10 +63,10 @@ export default function Teaching() {
     };
 
     // fetch lessons
-    const handleFetchLessons = async () => {
+    const handleFetchLessons = async (eduYear: number) => {
         setSkeleton(true);
         setMainProgressSpinner(true);
-        const data = await fetchItemsLessons();
+        const data = await fetchItemsLessons(eduYear);
         if (data && data?.success) {
             // валидность проверить
             setLessons(data.data);
@@ -90,6 +102,32 @@ export default function Teaching() {
         }
     };
 
+    const formatEduYear = (): string => {
+        const now = new Date();
+        const month = now.getMonth() + 1; // 1-12
+        const year = now.getFullYear();
+
+        // С сентября (9) по декабрь — новый учебный год начался
+        // С января по август — всё ещё предыдущий учебный год
+        const startYear = month >= 9 ? year : year - 1;
+        const endYear = String(startYear + 1).slice(-2);
+
+        return `${startYear}-${endYear}`;
+    };
+
+    const handleFetchEduYear = async ()=> {
+        const data = await studentEduYear();
+        if (data) {
+            setEduYearOpt(data);
+
+            const date = formatEduYear();
+            const currentDate = data?.find((item: EduYearType)=> item?.name_ru === date);
+            if(currentDate){
+                setEduYearSelected(currentDate);
+            }
+        }
+    }
+
     useEffect(() => {
         if (!lessons) return;
 
@@ -114,6 +152,10 @@ export default function Teaching() {
         } else {
             const selected = lessons[selectedSort.code];
             displayData = selected && selected.semester ? [selected] : [];
+        }
+
+        if(displayData?.length < 1){
+            setHasLessons(true);
         }
 
         // превращаем в jsx
@@ -142,9 +184,15 @@ export default function Teaching() {
     }, [lessons, selectedSort, translations]);
 
     useEffect(() => {
-        handleFetchLessons();
         handleFetchConnectId();
+        handleFetchEduYear();
     }, []);
+
+    useEffect(()=> {
+        if(eduYearSelected?.id){
+            handleFetchLessons(eduYearSelected.id);
+        }
+    },[eduYearSelected]);
 
     // Update default values when language changes
     useEffect(() => {
@@ -153,23 +201,25 @@ export default function Teaching() {
         }
     }, [translations]);
 
-    if (mainProgressSpinner)
-        return (
-            <div className="main-bg flex justify-center items-center h-[100vh]">
-                <ProgressSpinner style={{ width: '60px', height: '60px' }} />
-            </div>
-        );
-
     return (
         <>
             <div className="main-bg w-full flex justify-between items-start gap-2 xl:gap-5">
                 <div className="w-full">
                     {/* info section */}
-                    {skeleton ? (
-                        <GroupSkeleton count={1} size={{ width: '100%', height: '4rem' }} />
-                    ) : (
+                    {/*{skeleton ? (*/}
+                    {/*    <GroupSkeleton count={1} size={{ width: '100%', height: '4rem' }} />*/}
+                    {/*) : (*/}
                         <div className="flex flex-col sm:flex-row justify-between items-center gap-2 mb-4 py-2 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">
                             <h3 className="text-[1.5rem] sm:text-[1.75rem] font-bold m-0">{translations.trainingPlan}</h3>
+                            <Dropdown
+                                value={eduYearSelected}
+                                onChange={(e) => {
+                                    toggleEduYearSelect(e.value);
+                                }}
+                                options={eduYearOpt}
+                                optionLabel="name_ru"
+                                className="w-full sm:w-14rem"
+                            />
 
                             <Dropdown
                                 value={selectedSort}
@@ -181,10 +231,18 @@ export default function Teaching() {
                                 className="w-full sm:w-14rem"
                             />
                         </div>
-                    )}
+                    {/*// )}*/}
 
                     {/* lesson section */}
-                    {hasLessons ? <NotFound titleMessage={translations.dataTemporarilyUnavailable} /> : skeleton ? <GroupSkeleton count={10} size={{ width: '100%', height: '4rem' }} /> : <div className="flex gap-4 sm:gap-6 flex-col">{lessonsDisplay}</div>}
+                    {!mainProgressSpinner ?
+                        hasLessons ? <NotFound titleMessage={translations.noData} /> :
+                            skeleton ?
+                                <GroupSkeleton count={10} size={{ width: '100%', height: '4rem' }} />
+                                : <div className="flex gap-4 sm:gap-6 flex-col">{lessonsDisplay}</div>
+                        : <div className="main-bg flex justify-center items-center h-[100vh]">
+                            <ProgressSpinner style={{ width: '60px', height: '60px' }} />
+                        </div>
+                    }
                 </div>
             </div>
         </>

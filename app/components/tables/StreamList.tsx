@@ -112,7 +112,8 @@ const StreamList = React.memo(function StreamList({
 
     const handleFetchStreams = async (audit: boolean | null) => {
         setDialogSkeleton(true);
-        const data = await fetchStreams(courseValue ? courseValue?.id : null);
+        const id_edu_year = 25;
+        const data = await fetchStreams(courseValue ? courseValue?.id : null, id_edu_year);
         // setStreamValues({ stream: [] });
         setPendingChanges([]);
         setSendStream_id(null);

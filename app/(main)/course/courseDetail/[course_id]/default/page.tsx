@@ -1,5 +1,3 @@
-import React from 'react';
-
 export default function CourseDefault({ searchParams }: { searchParams: { lang?: string } }) {
     const lang = searchParams.lang || 'ru';
 

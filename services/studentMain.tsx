@@ -1,8 +1,8 @@
 import axiosInstance from '@/utils/axiosInstance';
 
-export const fetchItemsLessons = async () => {
+export const fetchItemsLessons = async (eduyear_id: number) => {
     try {
-        const res = await axiosInstance.get(`v1/student/streams`);
+        const res = await axiosInstance.get(`v1/student/streams?id_edu_year=${eduyear_id}`);
         const data = await res.data;
 
         return {success: true, data: data};
@@ -172,6 +172,21 @@ export const fetchStudentActivity = async () => {
 export const fetchAnwerReport = async (page: number | null, specialityId:number | null, search: string | null) => {
     try {
         const res = await axiosInstance.get(`/v1/teacher/controls/practical-lessons?${specialityId ? `id_speciality=${specialityId}` : ''}${search ? `&search=${search}` : ''}&page=${page}`);
+        const data = await res.data;
+
+        return data;
+    } catch (err) {
+        console.log('Ошибка загрузки:', err);
+        return err;
+    }
+};
+
+export const studentEduYear = async () => {
+    try {
+        const res = await axiosInstance.get(`/open/eduyear`, {
+            baseURL: process.env.NEXT_PUBLIC_FACULTY_API
+        });
+
         const data = await res.data;
 
         return data;

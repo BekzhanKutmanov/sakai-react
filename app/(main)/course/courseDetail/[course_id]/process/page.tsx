@@ -21,10 +21,10 @@ export default function CourseProcess() {
             if(firstLesson?.id){
                 setLessonId(firstLesson.id);
             } else {
-                router.push(`/course/courseDetail/${course_id}/default?lang=${language}`);
+                router.replace(`/course/courseDetail/${course_id}/default?lang=${language}`);
             }
         } else {
-            router.push(`/course/courseDetail/${course_id}/default?lang=${language}`);
+            router.replace(`/course/courseDetail/${course_id}/default?lang=${language}`);
         }
     }
 
