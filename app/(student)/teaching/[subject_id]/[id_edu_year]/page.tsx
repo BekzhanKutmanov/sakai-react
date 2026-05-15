@@ -31,11 +31,10 @@ export default function StudentLesson() {
         user: { last_name: string; name: string; father_name: string };
         lessons: lessonType[];
     }
-    [];
 
     // type HeaderTemplateOptions = Parameters<NonNullable<React.ComponentProps<typeof AccordionTab>['headerTemplate']>>[0];
 
-    const { subject_id } = useParams();
+    const { subject_id, id_edu_year } = useParams<{subject_id: string; id_edu_year: string}>();
     const params = new URLSearchParams();
 
     const { setMessage, setForumValues, contextLastStepVisit, setContextLastStepVisit, contextLastSubjectPageVisit, setContextLastSubjectPageVisit } = useContext(LayoutContext);
@@ -136,7 +135,7 @@ export default function StudentLesson() {
     // fetch lessons
     const handleFetchLessons = async () => {
         setSkeleton(true);
-        const data = await fetchItemsLessons();
+        const data = await fetchItemsLessons(id_edu_year ? Number(id_edu_year) : 0);
         if (data && data?.success) {
             // валидность проверить
             setLessons(data?.data);
@@ -228,7 +227,12 @@ export default function StudentLesson() {
         }
     }, [main_id]);
 
-    if(mainProgressSpinner) return <div className='main-bg flex justify-center items-center h-[100vh]'><ProgressSpinner style={{ width: '60px', height: '60px' }} /></div>
+    if (mainProgressSpinner)
+        return (
+            <div className="main-bg flex justify-center items-center h-[100vh]">
+                <ProgressSpinner style={{ width: '60px', height: '60px' }} />
+            </div>
+        );
 
     return (
         <div className="main-bg">
@@ -361,6 +365,7 @@ export default function StudentLesson() {
                                                                                         );
                                                                                     }}
                                                                                     lessonItem={item}
+                                                                                    id_edu_year={id_edu_year}
                                                                                 />
                                                                             </div>
                                                                         );

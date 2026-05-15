@@ -66,6 +66,7 @@ export default function Teaching() {
     const handleFetchLessons = async (eduYear: number) => {
         setSkeleton(true);
         setMainProgressSpinner(true);
+        console.log(eduYear);
         const data = await fetchItemsLessons(eduYear);
         if (data && data?.success) {
             // валидность проверить
@@ -167,7 +168,7 @@ export default function Teaching() {
                         .filter((val: any) => val.subject)
                         .map((subj: any, subjIdx: number) => {
                             return subj.connect ? (
-                                <Link key={subjIdx} href={`/teaching/${subj.id_curricula}`}>
+                                <Link key={subjIdx} href={`/teaching/${subj.id_curricula}/${eduYearSelected?.id}`}>
                                     <ItemCard key={subjIdx} subject={subj} lessonName={subj.streams[0].curricula.name_subject} streams={subj.streams} connection={connection} />
                                 </Link>
                             ) : (
@@ -209,27 +210,29 @@ export default function Teaching() {
                     {/*{skeleton ? (*/}
                     {/*    <GroupSkeleton count={1} size={{ width: '100%', height: '4rem' }} />*/}
                     {/*) : (*/}
-                        <div className="flex flex-col sm:flex-row justify-between items-center gap-2 mb-4 py-2 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">
+                        <div className="flex flex-col md:flex-row justify-between md:items-center gap-2 mb-4 py-2 shadow-[0_2px_1px_0px_rgba(0,0,0,0.1)]">
                             <h3 className="text-[1.5rem] sm:text-[1.75rem] font-bold m-0">{translations.trainingPlan}</h3>
-                            <Dropdown
-                                value={eduYearSelected}
-                                onChange={(e) => {
-                                    toggleEduYearSelect(e.value);
-                                }}
-                                options={eduYearOpt}
-                                optionLabel="name_ru"
-                                className="w-full sm:w-14rem"
-                            />
+                            <div className={'flex sm:items-center gap-2 justify-between flex-col md:flex-row'}>
+                                <Dropdown
+                                    value={eduYearSelected}
+                                    onChange={(e) => {
+                                        toggleEduYearSelect(e.value);
+                                    }}
+                                    options={eduYearOpt}
+                                    optionLabel="name_ru"
+                                    className="w-full sm:w-14rem p-inputtext-sm"
+                                />
 
-                            <Dropdown
-                                value={selectedSort}
-                                onChange={(e) => {
-                                    toggleSortSelect(e.value);
-                                }}
-                                options={sortOpt}
-                                optionLabel="name"
-                                className="w-full sm:w-14rem"
-                            />
+                                <Dropdown
+                                    value={selectedSort}
+                                    onChange={(e) => {
+                                        toggleSortSelect(e.value);
+                                    }}
+                                    options={sortOpt}
+                                    optionLabel="name"
+                                    className="w-full sm:w-14rem p-inputtext-sm"
+                                />
+                            </div>
                         </div>
                     {/*// )}*/}
 

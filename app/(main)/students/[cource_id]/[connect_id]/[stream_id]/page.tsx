@@ -61,7 +61,7 @@ export default function StudentList() {
     // functions
     const handleFetchStreams = async () => {
         if (cource_id) {
-            const data = await fetchStreams(cource_id ? Number(cource_id) : null);
+            const data = await fetchStreams(cource_id ? Number(cource_id) : null, 25);
             if (data) {
                 setStreams(data);
             } else {

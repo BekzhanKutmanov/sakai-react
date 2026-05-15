@@ -27,7 +27,8 @@ export default function StudentInfoCard({
     contentId,
     id_parent,
     forumValueAdd,
-    lessonItem
+    lessonItem,
+    id_edu_year
 }: {
     type: string;
     icon: string;
@@ -72,6 +73,7 @@ export default function StudentInfoCard({
         // ListAnswer: any;
         // is_opened: boolean;
     };
+    id_edu_year?: string;
 }) {
     const media = useMediaQuery('(max-width: 640px)');
     const showError = useErrorMessage();
@@ -111,7 +113,7 @@ export default function StudentInfoCard({
                 <div className="flex items-center gap-1">
                     {progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}
                     {type === 'test' || type === 'practical' ? (
-                        <Link onClick={()=> setContextLastSubjectPageVisit(subjectId)} href={`/teaching/lessonView/${lesson}/${subjectId}/${streams && streams.connections[0].id_stream}/${stepId}`}>
+                        <Link onClick={()=> setContextLastSubjectPageVisit(subjectId)} href={`/teaching/lessonView/${lesson}/${subjectId}/${streams && streams.connections[0].id_stream}/${stepId}/${id_edu_year}`}>
                             <Button
                                 disabled={progressSpinner}
                                 label={translations.completed}
@@ -135,7 +137,7 @@ export default function StudentInfoCard({
                 <div className="flex items-center gap-1">
                     {progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}
                     {type === 'test' || type === 'practical' ? (
-                        <Link onClick={()=> setContextLastSubjectPageVisit(subjectId)} href={`/teaching/lessonView/${lesson}/${subjectId}/${streams && streams.connections[0].id_stream}/${stepId}`}>
+                        <Link onClick={()=> setContextLastSubjectPageVisit(subjectId)} href={`/teaching/lessonView/${lesson}/${subjectId}/${streams && streams.connections[0].id_stream}/${stepId}/${id_edu_year}`}>
                             <Button disabled={progressSpinner} label={translations.markAsCompleted} size="small" className={`w-full px-2 py-1 ${progressSpinner && 'opacity-50'} ${media ? 'mini-button' : ''}`} />
                         </Link>
                     ) : (
@@ -155,7 +157,7 @@ export default function StudentInfoCard({
                     </div>
                     <Link
                         onClick={() => setContextLastSubjectPageVisit(subjectId)}
-                        href={`/teaching/lessonView/${lesson}/${subjectId}/${streams && streams.connections[0].id_stream}/${stepId}`}
+                        href={`/teaching/lessonView/${lesson}/${subjectId}/${streams && streams.connections[0].id_stream}/${stepId}/${id_edu_year}`}
                         // onClick={() => videoStart && videoStart(video_link || '')}
                         className="cursor-pointer max-w-[800px] text-[1rem] break-words hover:underline"
                     >
@@ -176,7 +178,7 @@ export default function StudentInfoCard({
                 <div className="flex flex-col justify-center gap-1 max-w-[800px] break-words">
                     <Link
                         onClick={() => setContextLastSubjectPageVisit(subjectId)}
-                        href={`/teaching/lessonView/${lesson}/${subjectId}/${streams && streams.connections[0].id_stream}/${stepId}`}
+                        href={`/teaching/lessonView/${lesson}/${subjectId}/${streams && streams.connections[0].id_stream}/${stepId}/${id_edu_year}`}
                         // onClick={() => videoStart && videoStart(video_link || '')}
                         className="cursor-pointer max-w-[800px] text-[1rem] text-wrap break-all hover:underline"
                     >
@@ -197,7 +199,7 @@ export default function StudentInfoCard({
                 <div className="flex flex-col justify-center gap-1 max-w-[800px] text-wrap break-all">
                     <Link
                         onClick={() => setContextLastSubjectPageVisit(subjectId)}
-                        href={`/teaching/lessonView/${lesson}/${subjectId}/${streams && streams.connections[0].id_stream}/${stepId}`}
+                        href={`/teaching/lessonView/${lesson}/${subjectId}/${streams && streams.connections[0].id_stream}/${stepId}/${id_edu_year}`}
                         // onClick={() => videoStart && videoStart(video_link || '')}
                         className="cursor-pointer max-w-[800px] text-[1rem] text-wrap break-all hover:underline"
                     >
@@ -218,7 +220,7 @@ export default function StudentInfoCard({
                 <div className="flex flex-col justify-center gap-1 max-w-[800px] text-wrap break-all">
                     <Link
                         onClick={() => setContextLastSubjectPageVisit(subjectId)}
-                        href={`/teaching/lessonView/${lesson}/${subjectId}/${streams && streams.connections[0].id_stream}/${stepId}`}
+                        href={`/teaching/lessonView/${lesson}/${subjectId}/${streams && streams.connections[0].id_stream}/${stepId}/${id_edu_year}`}
                         className="cursor-pointer max-w-[800px] text-[1rem] text-wrap break-all hover:underline"
                     >
                         {translations.test}
@@ -246,7 +248,7 @@ export default function StudentInfoCard({
                 </div>
                 <Link
                     onClick={() => setContextLastSubjectPageVisit(subjectId)}
-                    href={`/teaching/lessonView/${lesson}/${subjectId}/${streams && streams.connections[0].id_stream}/${stepId}`}
+                    href={`/teaching/lessonView/${lesson}/${subjectId}/${streams && streams.connections[0].id_stream}/${stepId}/${id_edu_year}`}
                     className="cursor-pointer max-w-[800px] text-[1rem] text-wrap break-all hover:underline"
                 >
                     {translations.practicalTask}

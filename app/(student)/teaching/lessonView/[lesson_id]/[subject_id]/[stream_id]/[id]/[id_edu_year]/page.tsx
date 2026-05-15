@@ -49,7 +49,7 @@ export default function LessonTest() {
         details: { is_correct: boolean }[];
     }
 
-    const { lesson_id, subject_id, stream_id, id } = useParams();
+    const { lesson_id, subject_id, stream_id, id, id_edu_year } = useParams();
     const params = new URLSearchParams();
 
     const router = useRouter();
@@ -110,18 +110,10 @@ export default function LessonTest() {
     const [preview, setPreview] = useState(false);
     const [videoLink, setVideoLink] = useState('');
 
-    const [pagination, setPagination] = useState<{ currentPage: number; total: number; perPage: number }>({
-        currentPage: 1,
-        total: 0,
-        perPage: 0
-    });
-
-    const [report, setReport] = useState<[] | null>(null);
-
     // fetch lessons
     const handleFetchLessons = async () => {
         setMainProgressSpinner(true);
-        const data = await fetchItemsLessons();
+        const data = await fetchItemsLessons(Number(id_edu_year));
         if (data && data?.success) {
             // валидность проверить
             setLessons(data?.data);
@@ -299,7 +291,7 @@ export default function LessonTest() {
         if (validSteps && validSteps.length > 0) {
             // пока состояние не используется
             setNavigationStepId(validSteps[0]?.id);
-            if (validSteps[0]?.id) router.push(`/teaching/lessonView/${lesson_id}/${subject_id}/${stream_id}/${validSteps[0].id}`);
+            if (validSteps[0]?.id) router.push(`/teaching/lessonView/${lesson_id}/${subject_id}/${stream_id}/${validSteps[0].id}/${id_edu_year}`);
         } else {
             setMessage({ state: true, value: { severity: 'error', summary: translations.error, detail: translations.noData } });
         }
@@ -783,7 +775,7 @@ export default function LessonTest() {
                         {stepNavigation?.prevStep && (
                             <i
                                 onClick={() => {
-                                    router.push(`/teaching/lessonView/${lesson_id}/${subject_id}/${stream_id}/${stepNavigation?.prevStep?.id}`);
+                                    router.push(`/teaching/lessonView/${lesson_id}/${subject_id}/${stream_id}/${stepNavigation?.prevStep?.id}/${id_edu_year}`);
                                 }}
                                 className="pi pi-angle-left text-bold cursor-pointer p-1 rounded-full hover:bg-[var(--mainColor)] hover:text-white"
                             ></i>
@@ -799,7 +791,7 @@ export default function LessonTest() {
                         {stepNavigation?.nextStep && (
                             <i
                                 onClick={() => {
-                                    router.push(`/teaching/lessonView/${lesson_id}/${subject_id}/${stream_id}/${stepNavigation?.nextStep?.id}`);
+                                    router.push(`/teaching/lessonView/${lesson_id}/${subject_id}/${stream_id}/${stepNavigation?.nextStep?.id}/${id_edu_year}`);
                                 }}
                                 className="pi pi-angle-right text-bold cursor-pointer p-1 rounded-full hover:bg-[var(--mainColor)] hover:text-white"
                             ></i>
@@ -811,13 +803,13 @@ export default function LessonTest() {
 
                 {/* course info */}
                 <div className={`w-full bg-[var(--titleColor)] relative text-white  p-4 md:p-3 pb-4`}>
-                    {contextLastSubjectPageVisit ? (
-                        <Link onClick={() => setContextLastSubjectPageVisit(null)} href={`/teaching/${contextLastSubjectPageVisit}`}>
-                            <i className="pi pi-arrow-left text-white absolute top-0 left-0 p-2"></i>
-                        </Link>
-                    ) : (
-                        ''
-                    )}
+                    {/*{contextLastSubjectPageVisit ? (*/}
+                    {/*    <Link onClick={() => setContextLastSubjectPageVisit(null)} href={`/teaching/${contextLastSubjectPageVisit}`}>*/}
+                    {/*        <i className="pi pi-arrow-left text-white absolute top-0 left-0 p-2"></i>*/}
+                    {/*    </Link>*/}
+                    {/*) : (*/}
+                    {/*    ''*/}
+                    {/*)}*/}
                     <div className="flex flex-col gap-2 items-center">
                         <div className={`w-full flex items-center gap-2 ${courseInfo?.image && courseInfo?.image.length > 0 ? 'justify-around flex-col sm:flex-row' : 'justify-center'} items-center`}>
                             <div className="sm:w-1/2 flex flex-col gap-2 items-center">

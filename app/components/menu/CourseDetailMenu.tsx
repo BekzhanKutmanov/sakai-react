@@ -39,7 +39,7 @@ export const CourseDetailMenu = () => {
         <div className="fixed bottom-0 left-0 right-0 z-50 sm:hidden">
             <nav className="flex items-center justify-between w-full bg-white/50 backdrop-blur-md border border-gray-200/50 shadow-[0_8px_30px_rgb(0,0,0,0.12)] py-2 px-2">
                 {lessons.length > 3 && ( // Show scroll buttons if there are more than 3 lessons (adjust as needed)
-                    <button className={'w-[40px] h-[40px] rounded-full shadow bg-[var(--mainColor)]'} onClick={() => scroll('left')}><i className={'pi pi-angle-left text-white'}></i></button>
+                        <button className={'w-[35px] h-[35px] rounded-full shadow-md'} onClick={() => scroll('left')}><i className={'pi pi-angle-left text-[var(--mainColor)]'}></i></button>
                 )}
                 <div
                     ref={scrollContainerRef}
@@ -61,7 +61,7 @@ export const CourseDetailMenu = () => {
                                     }`}
                                     onClick={()=> console.log(lesson, currentLessonId)}
                                 >
-                                    <span className="text-xs text-center">{lesson.title}</span>
+                                    <span className="text-xs text-center max-w-[350px] text-ellipsis overflow-hidden">{lesson.title}</span>
                                 </Link>
 
                                 {idx < lessons.length && <span className={'w-[2px] h-[100%] bg-[var(--borderBottomColor)]'}></span>}
@@ -70,7 +70,7 @@ export const CourseDetailMenu = () => {
                     })}
                 </div>
                 {lessons.length > 3 && ( // Show scroll buttons if there are more than 3 lessons (adjust as needed)
-                    <button className={'w-[35px] h-[35px] rounded-full shadow bg-[var(--mainColor)]'} onClick={() => scroll('right')}><i className={'pi pi-angle-right text-white'}></i></button>
+                    <button className={'w-[35px] h-[35px] rounded-full shadow-md'} onClick={() => scroll('right')}><i className={'pi pi-angle-right text-[var(--mainColor)]'}></i></button>
                 )}
             </nav>
         </div>
