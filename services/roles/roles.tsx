@@ -247,7 +247,7 @@ export const depExaminationSteps = async (lesson_id: number | null) => {
 // reductor fetch
 export const fethcReductor = async (page: number, search: string | null, specialityId: number | null) => {
     try {
-        const res = await axiosInstance.get(`/v1/reducer/student-task?${search ? `&search=${search}` : `page=${page}`}${specialityId ? `&speciality_id=${specialityId}` : ''}`);
+        const res = await axiosInstance.get(`/v1/reducer/student-task?${search ? `&search=${search}` : ''}&page=${page}${specialityId ? `&speciality_id=${specialityId}` : ''}`);
 
         const data = res.data;
         return data;

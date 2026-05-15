@@ -613,7 +613,7 @@ const AppMenu = () => {
 
                 const forReduct = forRole.find((item) => item.id === 3);
                 if (forReduct && forReduct?.read) {
-                    setTestRole({ label: translations.cancellationOfWorks, icon: 'pi pi-users', to: '/roles/students/1', profilact: '' });
+                    setTestRole({ label: translations.cancellationOfWorks, icon: 'pi pi-users', to: '/roles/students/1/reductor/', profilact: '' });
                 }
 
                 const forGraphic = forRole.find((item) => item.id === 4);

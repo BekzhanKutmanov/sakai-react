@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState, useRef } from 'react';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import 'primereact/resources/themes/lara-light-blue/theme.css';
 import 'primereact/resources/primereact.min.css';
@@ -14,7 +14,7 @@ import { NotFound } from '@/app/components/NotFound';
 import { fetchFaculty } from '@/services/faculty';
 import { fetchSpeciality } from '@/services/student/studentSearch';
 import { Dropdown } from 'primereact/dropdown';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { LayoutContext } from '@/layout/context/layoutcontext';
 import { useLocalization } from '@/layout/context/localizationcontext';
 
@@ -28,7 +28,9 @@ export default function StudentsPage() {
     const { contextFilterState, setContextFilterState } = useContext(LayoutContext);
     const { translations } = useLocalization();
     const media = useMediaQuery('(max-width: 640px)');
-    const { page } = useParams();
+    const { page } = useParams<{page: string}>();
+    const queryParams = useSearchParams();
+    const searchParams = queryParams.get('search');
 
     const [students, setStudents] = useState<Student[]>([]);
     const [loading, setLoading] = useState(false);
@@ -38,14 +40,16 @@ export default function StudentsPage() {
         total: 0,
         perPage: 0
     });
-    const [pageState, setPageState] = useState<number>(Number(page));
-    const [search, setSearch] = useState<string>('');
+    const [search, setSearch] = useState<string>(searchParams || '');
     const [progressSpinner, setProgressSpinner] = useState(false);
     const [searchController, setSearchController] = useState(false);
     const [empty, setEmpty] = useState(false);
     const [hideInstruction, setHideInstructon] = useState<boolean>();
     const [timeMode, setTimeMode] = useState<{ name_ru: string; code: number | null; id: number | null } | null>({ name_ru: '', code: null, id: null });
     const [timeModeOptions, setTimeModeOptions] = useState<any>(null);
+
+    const isFirstRender = useRef(true);
+    const prevSearch = useRef(search);
 
     const [speciality, setSpecialyty] = useState<{ name_ru: string; code: number | null; id: number | null } | null>(null);
     const [specialityOptions, setSpecialityOptions] = useState<any>(null);
@@ -75,7 +79,7 @@ export default function StudentsPage() {
     };
 
     // Асинхронная функция для будущего запроса
-    const handleFetchReductor = async (page: number = pageState, search: string, specialityId: number | null) => {
+        const handleFetchReductor = async (page: number, search: string, specialityId: number | null) => {
         setLoading(true);
         setError(null);
         const data = await fethcReductor(page, search, specialityId);
@@ -99,10 +103,7 @@ export default function StudentsPage() {
 
     // Ручное управление пагинацией
     const handlePageChange = (page: number) => {
-        router.push(`/roles/students/${page}`);
-        // setGlobalCourseId(null);
-        // handleFetchReductor(page, search, currentSpecialityId);
-        // setPageState(page);
+        router.push(`/roles/students/${page}/reductor?${search ? `search=${search}` : ''}`);
     };
 
     const studentsMobile = (student: any) => (
@@ -167,9 +168,9 @@ export default function StudentsPage() {
                                         <tr key={student.id} className="hover:bg-slate-50/50 transition-colors">
                                             <td className="py-4 pl-3 font-bold">
                                                 <Link href={`/roles/students/1/${student?.id}`} className="text-[#1e293b] cursor-pointer flex gap-1 underline">
-                                                    <span>{student?.last_name}</span>
-                                                    <span>{student?.name}</span>
-                                                    <span>{student?.father_name}</span>
+                                                      <span>{student?.last_name}</span>
+                                                      <span>{student?.name}</span>
+                                                      <span>{student?.father_name}</span>
                                                 </Link>
                                             </td>
                                             <td className="py-4 px-6">
@@ -242,27 +243,45 @@ export default function StudentsPage() {
     };
 
     useEffect(() => {
-        setProgressSpinner(true);
-        if (search?.length === 0 && searchController) {
-            handleFetchReductor(pageState, search, currentSpecialityId);
-            setSearchController(false);
-            setProgressSpinner(false);
+        // Пропускаем первый рендер
+        if (isFirstRender.current) {
+            isFirstRender.current = false;
+            prevSearch.current = search;
+            return;
         }
 
-        if (search?.length < 2) {
+        // Пропускаем если search не изменился
+        if (prevSearch.current === search) {
+            return;
+        }
+
+        prevSearch.current = search;
+
+        // Сброс при пустой строке
+        if (!search || search.length === 0) {
+            if (searchController) {
+                handleFetchReductor(1, search, currentSpecialityId);
+                setSearchController(false);
+            }
             setProgressSpinner(false);
             return;
         }
 
+        if (search.length < 2) {
+            setProgressSpinner(false);
+            return;
+        }
+
+        // Дебоунс запрос
+        setProgressSpinner(true);
         setSearchController(true);
+
         const delay = setTimeout(() => {
-            handleFetchReductor(pageState, search, currentSpecialityId);
+            handleFetchReductor(1, search, currentSpecialityId);
             setProgressSpinner(false);
         }, 1000);
 
-        return () => {
-            clearTimeout(delay);
-        };
+        return () => clearTimeout(delay);
     }, [search]);
 
     useEffect(() => {
@@ -291,7 +310,7 @@ export default function StudentsPage() {
     useEffect(() => {
         if (speciality && speciality.id !== currentSpecialityId) {
             setCurrentSpecialityId(speciality.id);
-            handleFetchReductor(pageState, search, speciality.id);
+                handleFetchReductor(Number(page), search, speciality.id);
         }
     }, [speciality]);
 
@@ -306,7 +325,7 @@ export default function StudentsPage() {
     }, [specialityOptions, contextFilterState?.speciality_id]);
 
     useEffect(() => {
-        handleFetchReductor(pageState, search, currentSpecialityId);
+        handleFetchReductor(Number(page), search, currentSpecialityId);
         handleFetchFaculty();
         const hide = localStorage.getItem('hideInstruction');
         if (hide) setHideInstructon(false);
