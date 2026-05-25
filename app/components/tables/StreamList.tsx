@@ -153,7 +153,7 @@ const StreamList = React.memo(function StreamList({
         if (data?.success) {
             fetchprop();
             toggleSkeleton();
-            handleFetchStreams(auditState, eduYearSelected.id);
+            handleFetchStreams(auditState, eduYearSelected ? eduYearSelected.id  : null);
             setMessage({
                 state: true,
                 value: { severity: 'success', summary: translations.successAdd, detail: '' }
@@ -578,7 +578,7 @@ const StreamList = React.memo(function StreamList({
                                             type="checkbox"
                                             className={`customCheckbox`}
                                             checked={pendingChanges.some((s) => s?.stream_id === rowData?.stream_id)}
-                                            onChange={(e: ChangeEvent<HTMLInputElement>   ) => {
+                                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                                 if (rowData?.course !== null && e.target.checked) {
                                                     connectConfirm(e.target, rowData);
                                                 } else {
@@ -631,24 +631,28 @@ const StreamList = React.memo(function StreamList({
                         </>
                     )}
 
+                    {isMobile && (
+                        <div className={'w-full mb-2'}>
+                            <Dropdown
+                                value={eduYearSelected}
+                                onChange={(e) => {
+                                    setEduYearSelected(e.value);
+                                }}
+                                options={eduYearOpt}
+                                optionLabel="name_ru"
+                                className="w-full sm:w-14rem p-inputtext-sm"
+                            />
+                        </div>
+                    )}
                     {hasStreams ? (
                         <>
                             <p className="text-[16px] text-center font-bold">{translations.noStreamsOrNotLinked}</p>
                         </>
                     ) : (
                         <div className="flex flex-col gap-2 sm:gap-2">
-                            {isMobile && <div className={'flex flex-col gap-1'}>
-                                {DialogOpenBtns()}
-                                <Dropdown
-                                    value={eduYearSelected}
-                                    onChange={(e) => {
-                                        setEduYearSelected(e.value);
-                                    }}
-                                    options={eduYearOpt}
-                                    optionLabel="name_ru"
-                                    className="w-full sm:w-14rem p-inputtext-sm"
-                                />
-                            </div>}
+                            {isMobile && (
+                                DialogOpenBtns()
+                            )}
 
                             <div className="max-h-[685px] overflow-y-scroll">
                                 {skeleton ? (
@@ -695,8 +699,8 @@ const StreamList = React.memo(function StreamList({
                 }}
             >
                 <div>
-                    Колонка «Связи» показывает, связан ли поток с одним из ваших курсов. Если отображается <i className={'pi pi-check text-[green]'}></i> поток уже привязан к курсу. <br /> Если <i className={'pi pi-minus text-[red]'}></i> связь с курсом
-                    отсутствует. Нажатием на иконку либо на кнопку раскрытия можно увидеть связанный курс.
+                    Колонка «Связи» показывает, связан ли поток с одним из ваших курсов. Если отображается <i className={'pi pi-check text-[green]'}></i> поток уже привязан к курсу. <br /> Если <i className={'pi pi-minus text-[red]'}></i> связь с
+                    курсом отсутствует. Нажатием на иконку либо на кнопку раскрытия можно увидеть связанный курс.
                 </div>
             </Dialog>
         </>
