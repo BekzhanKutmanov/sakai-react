@@ -16,6 +16,13 @@ import Link from 'next/link';
 import { useLocalization } from '@/layout/context/localizationcontext';
 import { useLocalizedData } from '@/hooks/useLocalizedData';
 import { confirmDialog } from 'primereact/confirmdialog';
+import { Dropdown } from 'primereact/dropdown';
+import { studentEduYear } from '@/services/studentMain';
+
+interface EduYearType {
+    id: number;
+    name_ru: string;
+}
 
 const StreamList = React.memo(function StreamList({
     callIndex,
@@ -36,7 +43,6 @@ const StreamList = React.memo(function StreamList({
 }) {
     const { setMessage } = useContext(LayoutContext);
     const showError = useErrorMessage();
-    const id_edu_year = 25;
     const { language, translations } = useLocalization();
     const { getLocalized } = useLocalizedData();
 
@@ -57,6 +63,9 @@ const StreamList = React.memo(function StreamList({
     const [expandedRows, setExpandedRows] = useState<any | null>(null);
 
     const [courseConnectInfo, setCourseConnectInfo] = useState(false);
+
+    const [eduYearOpt, setEduYearOpt] = useState<EduYearType[]>([]);
+    const [eduYearSelected, setEduYearSelected] = useState<EduYearType>();
 
     const toggleSkeleton = () => {
         setSkeleton(true);
@@ -110,7 +119,7 @@ const StreamList = React.memo(function StreamList({
         }
     };
 
-    const handleFetchStreams = async (audit: boolean | null) => {
+    const handleFetchStreams = async (audit: boolean | null, id_edu_year: number | null) => {
         setDialogSkeleton(true);
         const data = await fetchStreams(courseValue ? courseValue?.id : null, id_edu_year);
         // setStreamValues({ stream: [] });
@@ -144,7 +153,7 @@ const StreamList = React.memo(function StreamList({
         if (data?.success) {
             fetchprop();
             toggleSkeleton();
-            handleFetchStreams(auditState);
+            handleFetchStreams(auditState, eduYearSelected.id);
             setMessage({
                 state: true,
                 value: { severity: 'success', summary: translations.successAdd, detail: '' }
@@ -208,6 +217,32 @@ const StreamList = React.memo(function StreamList({
         }
     };
 
+    const formatEduYear = (): string => {
+        const now = new Date();
+        const month = now.getMonth() + 1; // 1-12
+        const year = now.getFullYear();
+
+        // С сентября (9) по декабрь — новый учебный год начался
+        // С января по август — всё ещё предыдущий учебный год
+        const startYear = month >= 9 ? year : year - 1;
+        const endYear = String(startYear + 1).slice(-2);
+
+        return `${startYear}-${endYear}`;
+    };
+
+    const handleFetchEduYear = async ()=> {
+        const data = await studentEduYear();
+        if (data) {
+            setEduYearOpt(data);
+
+            const date = formatEduYear();
+            const currentDate = data?.find((item: EduYearType)=> item?.name_ru === date);
+            if(currentDate){
+                setEduYearSelected(currentDate);
+            }
+        }
+    }
+
     useEffect(() => {
         if (language === 'ru') {
             setNameLang('name_ru');
@@ -218,10 +253,10 @@ const StreamList = React.memo(function StreamList({
 
     useEffect(() => {
         toggleSkeleton();
-        if (courseValue?.id) {
-            handleFetchStreams(null);
+        if (courseValue?.id && eduYearSelected) {
+            handleFetchStreams(null, eduYearSelected.id);
         }
-    }, [courseValue]);
+    }, [courseValue, eduYearSelected]);
 
     useEffect(() => {
         if (streams?.length < 1) {
@@ -237,6 +272,10 @@ const StreamList = React.memo(function StreamList({
             setHasStreams(false);
         }
     }, [streams]);
+
+    useEffect(()=> {
+        handleFetchEduYear()
+    },[]);
 
     const connectConfirm = (e: any, item: mainStreamsType) => {
         confirmDialog({
@@ -404,7 +443,7 @@ const StreamList = React.memo(function StreamList({
                         style={{ fontSize: '13px' }}
                         size="small"
                         onClick={() => {
-                            handleFetchStreams(true);
+                            handleFetchStreams(true, eduYearSelected ? eduYearSelected.id  : null);
                             setVisible(true);
                             setAuditTitle(translations.audit);
                             setAuditState(true);
@@ -424,7 +463,7 @@ const StreamList = React.memo(function StreamList({
                     style={{ fontSize: '13px' }}
                     size="small"
                     onClick={() => {
-                        handleFetchStreams(false);
+                        handleFetchStreams(false, eduYearSelected ? eduYearSelected.id  : null);
                         setVisible(true);
                         setAuditTitle(translations.notAudit);
                         setAuditState(false);
@@ -573,7 +612,19 @@ const StreamList = React.memo(function StreamList({
 
                                         <span className="max-w-sm lg:max-w-[300px] xl:max-w-[600px] text-[16px] sm:text-[16px] md:text-[18px] font-bold text-[#4B4563] break-words">{courseValue?.title}</span>
                                         {/* </span> */}
-                                        {DialogOpenBtns()}
+                                        <div className={'flex items-center gap-2'}>
+                                            <Dropdown
+                                                value={eduYearSelected}
+                                                onChange={(e) => {
+                                                    setEduYearSelected(e.value);
+                                                }}
+                                                options={eduYearOpt}
+                                                optionLabel="name_ru"
+                                                className="w-full sm:w-14rem p-inputtext-sm"
+                                            />
+
+                                            {DialogOpenBtns()}
+                                        </div>
                                     </div>
                                 </div>
                             )}
@@ -586,7 +637,18 @@ const StreamList = React.memo(function StreamList({
                         </>
                     ) : (
                         <div className="flex flex-col gap-2 sm:gap-2">
-                            {isMobile && <>{DialogOpenBtns()}</>}
+                            {isMobile && <div className={'flex flex-col gap-1'}>
+                                {DialogOpenBtns()}
+                                <Dropdown
+                                    value={eduYearSelected}
+                                    onChange={(e) => {
+                                        setEduYearSelected(e.value);
+                                    }}
+                                    options={eduYearOpt}
+                                    optionLabel="name_ru"
+                                    className="w-full sm:w-14rem p-inputtext-sm"
+                                />
+                            </div>}
 
                             <div className="max-h-[685px] overflow-y-scroll">
                                 {skeleton ? (

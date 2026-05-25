@@ -2,7 +2,7 @@ import { streamsType } from '@/types/streamType';
 import axiosInstance from '@/utils/axiosInstance';
 
 // streams
-export const fetchStreams = async (id: number | null, id_edu_year: number) => {
+export const fetchStreams = async (id: number | null, id_edu_year: number | null) => {
     try {
         const res = await axiosInstance.get(`v1/teacher/stream?course_id=${id}&id_edu_year=${id_edu_year}`);
         const data = await res.data;
