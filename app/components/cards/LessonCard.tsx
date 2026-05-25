@@ -9,6 +9,9 @@ import { confirmDialog } from 'primereact/confirmdialog';
 import useMediaQuery from '@/hooks/useMediaQuery';
 import Link from 'next/link';
 import { useLocalization } from '@/layout/context/localizationcontext';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
+import ReactMarkdown from 'react-markdown';
 
 export default function LessonCard({
     status,
@@ -22,7 +25,8 @@ export default function LessonCard({
     urlForPDF,
     urlForDownload,
     videoVisible,
-    answers
+    answers,
+    mathDescriptionState
 }: {
     status: string;
     onSelected?: (id: number, type: string) => void;
@@ -36,6 +40,7 @@ export default function LessonCard({
     urlForDownload: string;
     videoVisible?: (id: string | null) => void;
     answers?: { id?: number | null; text: string; is_correct: boolean }[];
+    mathDescriptionState?: ()=> boolean;
 }) {
     const { translations } = useLocalization();
     const shortDoc = useShortText(cardValue?.document || '', 100);
@@ -164,7 +169,13 @@ export default function LessonCard({
                         )}
                         <div className={`flex items-center text-sm w-full break-words`}>
                             {type.typeValue === 'practica'
-                                ? cardValue?.desctiption && <div className="w-full break-words" dangerouslySetInnerHTML={{ __html: cardValue.desctiption }} />
+                                ? cardValue?.desctiption && mathDescriptionState ? !mathDescriptionState() ? <div className="w-full break-words" dangerouslySetInnerHTML={{ __html: cardValue.desctiption }} /> :
+                                        <div className={'max-w-[300px] sm:max-w-full overflow-hidden text-nowrap text-ellipsis'}>
+                                            <ReactMarkdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}>
+                                                {cardValue.desctiption}
+                                            </ReactMarkdown>
+                                        </div>
+                                    : ''
                                 : cardValue?.desctiption && cardValue?.desctiption !== 'null' && <div className="w-full break-words">{cardValue.desctiption}</div>}
                         </div>
                     </div>

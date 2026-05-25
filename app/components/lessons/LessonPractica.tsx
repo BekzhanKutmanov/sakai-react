@@ -20,6 +20,9 @@ import { Editor, EditorTextChangeEvent } from 'primereact/editor';
 import { contentType } from '@/types/contentType';
 import { useLocalization } from '@/layout/context/localizationcontext';
 import { mainStepsType } from '@/types/mainStepType';
+import TeacherEditor from '@/app/components/TeacherEditor';
+import { faSquareRootVariable } from '@fortawesome/free-solid-svg-icons';
+import MyFontAwesome from '@/app/components/MyFontAwesome';
 
 export default function LessonPractica({ element, content, fetchPropElement, fetchPropThemes, clearProp }: { element: mainStepsType; content: any; fetchPropElement: (id: number) => void; fetchPropThemes: () => void; clearProp: boolean }) {
     interface docValueType {
@@ -64,6 +67,7 @@ export default function LessonPractica({ element, content, fetchPropElement, fet
     const [additional, setAdditional] = useState<{ doc: boolean; link: boolean; video: boolean }>({ doc: false, link: false, video: false });
     const [selectId, setSelectId] = useState<number | null>(null);
     const [skeleton, setSkeleton] = useState(false);
+    const [descriptionTypeState, setDescriptionTypeState] = useState<'text' | 'math'>('text');
 
     const clearFile = () => {
         fileUploadRef.current?.clear();
@@ -140,9 +144,9 @@ export default function LessonPractica({ element, content, fetchPropElement, fet
         }
     };
 
-    const handleAddPracica = async () => {
+    const handleAddPracica = async (text: string | null) => {
         setProgressSpinner(true);
-        const data = await addPractica(docValue, element.lesson_id, element.type_id, element.id);
+        const data = await addPractica(text ? text : docValue?.description, docValue, element.lesson_id, element.type_id, element.id);
         if (data.success) {
             fetchPropElement(element.id);
             fetchPropThemes();
@@ -260,6 +264,15 @@ export default function LessonPractica({ element, content, fetchPropElement, fet
                                             lessonDate={new Date(document.created_at).toISOString().slice(0, 10)}
                                             urlForPDF={() => sentToPDF('')}
                                             urlForDownload={document.document ? document.document_path : ''}
+
+                                            mathDescriptionState={()=> {
+                                                const check = document?.description?.includes('$$');
+                                                if(check){
+                                                    return true;
+                                                } else {
+                                                    return false;
+                                                }
+                                            }}
                                         />
                                     )
                                 )}
@@ -271,17 +284,6 @@ export default function LessonPractica({ element, content, fetchPropElement, fet
                         <div className="flex gap-1 items-center">
                             <div className="w-full">
                                 <div className="w-full flex gap-1 items-center">
-                                    {/* <InputTextarea
-                                        value={docValue.title}
-                                        id="title"
-                                        className="w-full"
-                                        placeholder="Вопрос..."
-                                        style={{ resize: 'none', width: '100%' }}
-                                        onChange={(e) => {
-                                            setDocValue((prev) => ({ ...prev, title: e.target.value }));
-                                            setValue('title', e.target.value, { shouldValidate: true });
-                                        }}
-                                    /> */}
                                     <InputText
                                         value={docValue.title}
                                         id="title"
@@ -309,27 +311,44 @@ export default function LessonPractica({ element, content, fetchPropElement, fet
                                 />
                                 <b style={{ color: 'red', fontSize: '12px' }}>{errors.title?.message}</b>
                             </div>
+                            {/*<div*/}
+                            {/*    onClick={() => {*/}
+                            {/*        if (descriptionTypeState === 'text') setDescriptionTypeState('math');*/}
+                            {/*        if (descriptionTypeState === 'math') setDescriptionTypeState('text');*/}
+                            {/*    }}*/}
+                            {/*    className={'flex items-center'}*/}
+                            {/*>*/}
+                            {/*    <MyFontAwesome*/}
+                            {/*        icon={faSquareRootVariable}*/}
+                            {/*        className={`cursor-pointer p-[10px] sm:p-3 border border-[var(--borderBottomColor)] rounded hover:opacity-50 transition ${descriptionTypeState === 'math' ? 'text-white bg-[var(--amberColor)]' : ''} `}*/}
+                            {/*    />*/}
+                            {/*</div>*/}
                         </div>
                         <div>
-                            {/* <InputText
-                                placeholder="Описание"
-                                id="title"
-                                value={docValue.description}
-                                onChange={(e) => {
-                                    setDocValue((prev) => ({ ...prev, description: e.target.value }));
-                                    setValue('title', e.target.value, { shouldValidate: true });
-                                }}
-                                className="w-full"
-                            /> */}
-                            <Editor
-                                value={docValue.description}
-                                onTextChange={(e: EditorTextChangeEvent) => {
-                                    setDocValue((prev) => ({ ...prev, description: String(e.htmlValue) }));
-                                    setValue('title', String(e.htmlValue), { shouldValidate: true });
-                                }}
-                                headerTemplate={header}
-                                style={{ height: '220px' }}
-                            />
+                            {/*{descriptionTypeState === 'math' ? (*/}
+                            {/*    <TeacherEditor*/}
+                            {/*        state={true}*/}
+                            {/*        onSave={(text: string) => {*/}
+                            {/*            console.log(text);*/}
+                            {/*            setDocValue((prev) => ({ ...prev, description: text }));*/}
+                            {/*            handleAddPracica(text);*/}
+                            {/*        }}*/}
+                            {/*        defaultValueProp={null}*/}
+                            {/*    />*/}
+
+                            {/*) : descriptionTypeState === 'text' ? (*/}
+                                <Editor
+                                    value={docValue.description}
+                                    onTextChange={(e: EditorTextChangeEvent) => {
+                                        setDocValue((prev) => ({ ...prev, description: String(e.htmlValue) }));
+                                        setValue('title', String(e.htmlValue), { shouldValidate: true });
+                                    }}
+                                    headerTemplate={header}
+                                    style={{ height: '220px' }}
+                                />
+                            {/*// ) : (*/}
+                            {/*//     ''*/}
+                            {/*// )}*/}
                             <b style={{ color: 'red', fontSize: '12px' }}>{errors.title?.message}</b>
                         </div>
                         {additional.doc && (
@@ -338,7 +357,6 @@ export default function LessonPractica({ element, content, fetchPropElement, fet
                                 accept="application/pdf"
                                 className="border rounded p-1"
                                 onChange={(e) => {
-                                    console.log(e.target.files);
                                     const file = e.target.files?.[0];
                                     if (file) {
                                         setDocValue((prev) => ({
@@ -370,19 +388,21 @@ export default function LessonPractica({ element, content, fetchPropElement, fet
                             {/* <Button disabled={!!errors.title || !docValue.file} label="Сохранить" onClick={handleAddDoc} /> */}
                             <div className="absolute">
                                 <span className="cursor-pointer ml-1 text-[13px] sm:text-sm text-[var(--mainColor)]" onClick={() => setAdditional((prev) => ({ ...prev, doc: !prev.doc }))}>
-                                    {translations.addAdditionally}  {additional.doc ? '-' : '+'}
+                                    {translations.addAdditionally} {additional.doc ? '-' : '+'}
                                 </span>
                             </div>
-                            <div className="w-full flex gap-1 justify-center items-center mt-4 sm:m-0">
-                                <Button
-                                    label={translations.save}
-                                    disabled={progressSpinner || !docValue.title.length || !!errors.title || !docValue.description.length || !docValue.score}
-                                    onClick={() => {
-                                        handleAddPracica();
-                                    }}
-                                />
-                                {progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}
-                            </div>
+                            {
+                                descriptionTypeState === 'text' ? <div className="w-full flex gap-1 justify-center items-center mt-4 sm:m-0">
+                                    <Button
+                                        label={translations.save}
+                                        disabled={progressSpinner || !docValue.title.length || !!errors.title || !docValue.description.length || !docValue.score}
+                                        onClick={() => {
+                                            handleAddPracica(null);
+                                        }}
+                                    />
+                                    {progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}
+                                </div> : ''
+                            }
                         </div>
                     </div>
                 )}
@@ -402,6 +422,10 @@ export default function LessonPractica({ element, content, fetchPropElement, fet
     useEffect(() => {
         setDocValue({ title: '', description: '', document: null, url: '', score: 0 });
     }, [element]);
+
+    useEffect(()=> {
+        setDocValue((prev)=> ({ ...prev, description: '' }));
+    },[descriptionTypeState]);
 
     return (
         <div>
@@ -438,15 +462,6 @@ export default function LessonPractica({ element, content, fetchPropElement, fet
                         <div className="w-full flex gap-1 items-center">
                             <div className="w-full">
                                 <div className="w-full flex gap-1 items-center">
-                                    {/* <InputTextarea
-                                        id="title"
-                                        style={{ resize: 'none', width: '100%' }}
-                                        value={editingLesson?.title && editingLesson.title}
-                                        onChange={(e) => {
-                                            setEditingLesson((prev) => prev && { ...prev, title: e.target.value });
-                                            setValue('title', e.target.value, { shouldValidate: true });
-                                        }}
-                                    /> */}
                                     <InputText
                                         id="title"
                                         className="w-full"
@@ -470,18 +485,42 @@ export default function LessonPractica({ element, content, fetchPropElement, fet
                                     }}
                                 />
                             </div>
+                            {/*<div*/}
+                            {/*    onClick={() => {*/}
+                            {/*        if (descriptionTypeState === 'text') setDescriptionTypeState('math');*/}
+                            {/*        if (descriptionTypeState === 'math') setDescriptionTypeState('text');*/}
+                            {/*    }}*/}
+                            {/*    className={'flex items-center'}*/}
+                            {/*>*/}
+                            {/*    <MyFontAwesome*/}
+                            {/*        icon={faSquareRootVariable}*/}
+                            {/*        className={`cursor-pointer p-[10px] sm:p-3 border border-[var(--borderBottomColor)] rounded hover:opacity-50 transition ${descriptionTypeState === 'math' ? 'text-white bg-[var(--amberColor)]' : ''} `}*/}
+                            {/*    />*/}
+                            {/*</div>*/}
                         </div>
                         <div className="flex flex-col gap-1 w-full">
                             <div className="w-full">
-                                <Editor
-                                    // className="min-h-[150px]"
-                                    value={editingLesson.description}
-                                    onTextChange={(e: EditorTextChangeEvent) => {
-                                        setEditingLesson((prev) => ({ ...prev, description: String(e.htmlValue) }));
-                                        setValue('title', String(e.htmlValue), { shouldValidate: true });
-                                    }}
-                                    headerTemplate={header}
-                                />
+                                {
+                                    // descriptionTypeState === 'math' ? (
+                                    //     <TeacherEditor
+                                    //         state={false}
+                                    //         onSave={(text: string) => {
+                                    //             console.log(text);
+                                    //             setEditingLesson((prev) => ({ ...prev, description: text }));
+                                    //         }}
+                                    //         defaultValueProp={editingLesson.description}
+                                    //     />
+                                    // ) : descriptionTypeState === 'text' ? (
+                                        <Editor
+                                            value={editingLesson.description}
+                                            onTextChange={(e: EditorTextChangeEvent) => {
+                                                setEditingLesson((prev) => ({ ...prev, description: String(e.htmlValue) }));
+                                                setValue('title', String(e.htmlValue), { shouldValidate: true });
+                                            }}
+                                            headerTemplate={header}
+                                        />
+                                    // ) : ''
+                                }
                                 <b style={{ color: 'red', fontSize: '12px' }}>{errors.title?.message}</b>
                             </div>
                             {additional.doc && (

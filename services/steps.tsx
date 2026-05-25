@@ -283,17 +283,17 @@ export const deleteTest = async (lesson_id: number, test_id: number, type_id: nu
 };
 
 // practica
-export const addPractica = async (value: { url: string | null; title: string; description: string | null; document: File | null; score: number | null }, lesson_id: number, type_id: number, step_id: number) => {
+export const addPractica = async (description: string | null, value: { url: string | null; title: string; document: File | null; score: number | null }, lesson_id: number, type_id: number, step_id: number) => {
     console.log(value);
 
     const formData = new FormData();
-    url = `/v1/teacher/practice-lesson/store?lesson_id=${lesson_id}&title=${value.title}&description=${value.description}&url=${value.url}&document=${value.document}&score=${value.score}&video_type_id=${type_id}&step_id=${step_id}`;
+    url = `/v1/teacher/practice-lesson/store?lesson_id=${lesson_id}&title=${value.title}&description=${description}&url=${value.url}&document=${value.document}&score=${value.score}&video_type_id=${type_id}&step_id=${step_id}`;
     formData.append('type_id', String(type_id));
     formData.append('step_id', String(step_id));
     formData.append('lesson_id', String(lesson_id));
     formData.append('url', String(value?.url));
     formData.append('title', String(value?.title));
-    formData.append('description', String(value?.description));
+    formData.append('description', String(description));
     formData.append('score', String(value?.score));
     if (value.document) formData.append('document', value?.document && value?.document);
     else formData.append('document', '');
@@ -515,7 +515,7 @@ export const stepSequenceUpdate = async (lesson_id: number | null, steps: { id: 
 
 export const generateQuiz = async (lesson_id: number, step_id: number | string) => {
     console.log(step_id);
-    
+
     try {
         const res = await axiosInstance.get(`/v1/teacher/lessons/generate-quiz?lesson_id=${lesson_id}&step_id=${step_id}`);
         const data = await res.data;
@@ -527,7 +527,7 @@ export const generateQuiz = async (lesson_id: number, step_id: number | string) 
     }
 };
 
-export const generateDoc = async (doc_file: File | null) => { 
+export const generateDoc = async (doc_file: File | null) => {
     const formData = new FormData();
     if(doc_file){
         formData.append('doc_file', doc_file);

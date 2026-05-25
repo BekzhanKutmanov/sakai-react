@@ -12,6 +12,7 @@ import '../styles/demo/Demos.scss';
 import '../styles/layout/openCourse.css';
 import '../styles/layout/animations.css';
 import './globals.css';
+import 'katex/dist/katex.min.css';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 interface RootLayoutProps {
