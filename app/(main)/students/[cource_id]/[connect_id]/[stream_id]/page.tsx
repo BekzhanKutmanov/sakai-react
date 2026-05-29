@@ -95,12 +95,14 @@ export default function StudentList() {
         setSkeleton(false);
     };
 
-    const handleFetchScoreValues = async (stream_id: number, student_id: number | null, score: number) => {
+    const handleFetchScoreValues = async (id_extra_type: number | null,stream_id: number, student_id: number | null, score: number) => {
         setStudentId(student_id);
         setStudentScore(score);
         setMyEduInfoVisible(true);
         setExportBtnSkeleton(true);
-        const data = await fetchScoreValues(stream_id, student_id);
+        const checkingExtraType = id_extra_type == null ? false : true;
+
+        const data = await fetchScoreValues(checkingExtraType ,stream_id, student_id);
         if (data) {
             const scoresArr: ScoreValueType[] = Object.values(data);
             if (scoresArr && scoresArr?.length > 0) {
@@ -299,7 +301,7 @@ export default function StudentList() {
                                                         <b className={`${rowData.score > 30 ? 'text-[var(--greenColor)] p-1 w-[25px] text-center' : 'text-amber-400 p-1 w-[25px] text-center '}`}>{rowData.score}</b>
                                                         {!rowData?.export ? (
                                                             <i
-                                                                onClick={() => handleFetchScoreValues(Number(stream_id), rowData?.id || null, rowData?.score)}
+                                                                onClick={() => handleFetchScoreValues(stream?.id_extra_type || null, Number(stream_id), rowData?.id || null, rowData?.score)}
                                                                 className="cursor-pointer pi pi-upload bg-[var(--mainColor)] text-white p-2 px-3 rounded"
                                                                 title={translations.saveToMyedu}
                                                             ></i>
