@@ -101,6 +101,7 @@ export default function StudentList() {
         setMyEduInfoVisible(true);
         setExportBtnSkeleton(true);
         const checkingExtraType = id_extra_type == null ? 0 : 1;
+        // console.log(checkingExtraType);
 
         const data = await fetchScoreValues(checkingExtraType ,stream_id, student_id);
         if (data) {
