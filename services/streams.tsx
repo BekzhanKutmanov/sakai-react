@@ -108,7 +108,7 @@ export const pacticaDisannul = async (id_curricula: number | null, course_id: nu
 };
 
 // myedu score info fetch
-export const fetchScoreValues = async (id_extra_type:boolean, stream_id: number | null, student_id: number | null) => {
+export const fetchScoreValues = async (id_extra_type: number, stream_id: number | null, student_id: number | null) => {
     try {
         const res = await axiosInstance.get(`/v1/teacher/export/info?id_stream=${stream_id}&id_student=${student_id}&id_extra_type=${id_extra_type}`);
         const data = await res.data;
