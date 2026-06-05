@@ -18,6 +18,7 @@ import useErrorMessage from '@/hooks/useErrorMessage';
 import { useLocalization } from '@/layout/context/localizationcontext';
 import { useLocalizedData } from '@/hooks/useLocalizedData';
 import MainTitle from '@/app/components/titles/MainTitle';
+import MyDateTime from '@/app/components/MyDateTime';
 
 interface CurrentSpecialityType {
     name_ru: string;
@@ -26,6 +27,8 @@ interface CurrentSpecialityType {
 }
 
 interface SpecialityOptType extends CurrentSpecialityType {}
+
+type OptionsType = Intl.DateTimeFormatOptions;
 
 export default function Module() {
     const { setMessage } = useContext(LayoutContext);
@@ -212,10 +215,10 @@ export default function Module() {
         }
     };
 
-    const onDateUpdate = (id_speciality:number | null, item: any) => {
+    const onDateUpdate = (id_speciality: number | null, item: any) => {
         setDateUpdateVisible(true);
         setId_speciality(id_speciality);
-        if(item){
+        if (item) {
             setUpdateDateId(item?.id);
             setId_stream(item?.id_stream);
             setEditingFrom(item?.schedule?.from);
@@ -227,7 +230,7 @@ export default function Module() {
         setDateUpdateVisible(false);
         const data = await dateUpdate(editingFrom, editingTo, period?.id ? period?.id : null, semestr?.id ? semestr?.id : null, idStream, id_speciality);
         console.log(data);
-        if(data?.success){
+        if (data?.success) {
             handleFetchModuleShedule(currentSpecialityId, period?.id ? period?.id : null, semestr?.id ? semestr?.id : null);
         }
         setId_speciality(null);
@@ -253,6 +256,24 @@ export default function Module() {
         const d = new Date(date);
         d.setHours(12, 0, 0, 0); // фикс timezone
         return d;
+    };
+
+    const firstDateSearch = (stream: any) => {
+        // Проверяем, что schedule существует и у него есть оба заполненных поля
+        if (stream?.schedule?.from && stream?.schedule?.to) {
+            return {
+                from: stream.schedule.from,
+                to: stream.schedule.to
+            };
+        }
+        return null;
+    };
+
+    const options: OptionsType = {
+        year: '2-digit',
+        month: 'short', // 'long', 'short', 'numeric'
+        day: '2-digit',
+        hour12: false // 24-часовой формат
     };
 
     // filters block
@@ -398,64 +419,123 @@ export default function Module() {
                             }}
                             className="w-full"
                             header={
-                                <div className={'w-full flex items-center justify-between gap-4'}>
-                                    <div className="flex items-center justify-between w-full gap-1 sm:gap-3">
-                                        <div className="flex items-center gap-1 sm:gap-3 min-w-0">
-                                            <div className="flex items-center shrink-0">
-                                                <label className="custom-radio text-xl leading-none">
-                                                    <input
-                                                        type="checkbox"
-                                                        className={`customCheckbox p-2`}
-                                                        checked={allSelectFl.some((s) => s === course?.id) ? true : false}
-                                                        onChange={(e) => {
-                                                            const exists = allSelectFl?.includes(course?.id);
-                                                            if (exists) {
-                                                                // console.log(course);
-                                                                if (course?.checking) {
-                                                                    setDiactivateSp(course.id);
-                                                                    confirm1(course?.id, null);
+                                <div className={'flex flex-col gap-2 items-center'}>
+                                    <div className={'w-full flex items-center justify-between gap-2'}>
+                                        <div className="flex items-center justify-between w-full sm:min-w-[370px] gap-1 sm:gap-2">
+                                            <div className="flex items-center gap-1 sm:gap-3 min-w-0">
+                                                <div className="flex items-center shrink-0">
+                                                    <label className="custom-radio text-xl leading-none">
+                                                        <input
+                                                            type="checkbox"
+                                                            className={`customCheckbox p-2`}
+                                                            checked={allSelectFl.some((s) => s === course?.id) ? true : false}
+                                                            onChange={(e) => {
+                                                                const exists = allSelectFl?.includes(course?.id);
+                                                                if (exists) {
+                                                                    // console.log(course);
+                                                                    if (course?.checking) {
+                                                                        setDiactivateSp(course.id);
+                                                                        confirm1(course?.id, null);
+                                                                    } else {
+                                                                        setAllSelectFl((prev) => {
+                                                                            const streamArr = course?.streams?.map((stream: any) => stream.id_stream);
+                                                                            setConnectIds((prev) => prev && prev.filter((id) => !streamArr?.includes(id)));
+                                                                            return prev.filter((id) => id !== course.id);
+                                                                        });
+                                                                    }
                                                                 } else {
                                                                     setAllSelectFl((prev) => {
-                                                                        const streamArr = course?.streams?.map((stream: any) => stream.id_stream);
-                                                                        setConnectIds((prev) => prev && prev.filter((id) => !streamArr?.includes(id)));
-                                                                        return prev.filter((id) => id !== course.id);
+                                                                        const forConnects = course?.streams?.map((stream: any) => {
+                                                                            return stream?.id_stream;
+                                                                        });
+                                                                        if (connectIds) {
+                                                                            const f = [...connectIds];
+                                                                            setConnectIds([...f, ...forConnects]);
+                                                                        } else {
+                                                                            setConnectIds(forConnects);
+                                                                        }
+                                                                        return [...prev, course.id];
                                                                     });
                                                                 }
-                                                            } else {
-                                                                setAllSelectFl((prev) => {
-                                                                    const forConnects = course?.streams?.map((stream: any) => {
-                                                                        return stream?.id_stream;
-                                                                    });
-                                                                    if (connectIds) {
-                                                                        const f = [...connectIds];
-                                                                        setConnectIds([...f, ...forConnects]);
-                                                                    } else {
-                                                                        setConnectIds(forConnects);
-                                                                    }
-                                                                    return [...prev, course.id];
-                                                                });
-                                                            }
-                                                        }}
-                                                    />
-                                                    <span className="checkbox-mark"></span>
-                                                </label>
+                                                            }}
+                                                        />
+                                                        <span className="checkbox-mark"></span>
+                                                    </label>
+                                                </div>
+                                                <span className="font-semibold max-w-[90%] sm:w-full text-[0.938rem] sm:text-[1rem] break-words flex items-center gap-1">
+                                                    <span>{idx + 1}.</span> <span>{getLocalized(course, 'name') || course.name_ru}</span>
+                                                </span>
                                             </div>
-                                            <span className="font-semibold max-w-[90%] sm:w-full text-[0.938rem] sm:text-[1rem] break-words">
-                                                {idx + 1}. {getLocalized(course, 'name') || course.name_ru}
-                                            </span>
+                                        </div>
+
+                                        {allSelectFl.some((s) => s === course?.id) ? (
+                                            <div>
+                                                <i
+                                                    onClick={() => {
+                                                        onDateUpdate(course?.id, null);
+                                                    }}
+                                                    className={'cursor-pointer pi pi-calendar-plus text-[var(--mainColor)]'}
+                                                ></i>
+                                            </div>
+                                        ) : (
+                                            ''
+                                        )}
+                                        <div className={'w-full hidden sm:block'}>
+                                            {(() => {
+                                                let foundResult: any | { from: string; to: string } = null;
+
+                                                // Просто вызываем find, не сохраняя его в константу
+                                                course?.streams?.find((item: any) => {
+                                                    const result = firstDateSearch(item);
+                                                    if (result) {
+                                                        foundResult = result;
+                                                        return true;
+                                                    }
+                                                    return false;
+                                                });
+
+                                                if (foundResult) {
+                                                    return (
+                                                        <div className="flex items-center gap-1 text-[10px] justify-center max-w-[165px]">
+                                                            <span className=""><MyDateTime createdAt={foundResult.from} options={options} /></span>
+                                                            <i>-</i>
+                                                            <span className=""><MyDateTime createdAt={foundResult.to} options={options} /></span>
+                                                        </div>
+                                                    );
+                                                }
+
+                                                return null;
+                                            })()}
                                         </div>
                                     </div>
-                                    {
-                                        allSelectFl.some((s) => s === course?.id) ?
-                                        <div>
-                                            <i
-                                                onClick={() => {
-                                                    onDateUpdate(course?.id, null);
-                                                }}
-                                                className={'cursor-pointer pi  pi-calendar-plus text-[var(--mainColor)]'}
-                                            ></i>
-                                        </div> : ''
-                                    }
+                                    <div className={'w-full block sm:hidden flex justify-center'}>
+                                        {(() => {
+                                            let foundResult: any | { from: string; to: string } = null;
+
+                                            // Просто вызываем find, не сохраняя его в константу
+                                            course?.streams?.find((item: any) => {
+                                                const result = firstDateSearch(item);
+                                                if (result) {
+                                                    foundResult = result;
+                                                    return true;
+                                                }
+                                                return false;
+                                            });
+
+                                            if (foundResult) {
+                                                return (
+                                                    <div className="flex items-center gap-1 text-[10px] justify-center max-w-[165px]">
+                                                        <span className=""><MyDateTime createdAt={foundResult.from} options={options} /></span>
+                                                        <i>-</i>
+                                                        <span className=""><MyDateTime createdAt={foundResult.to} options={options} /></span>
+                                                    </div>
+                                                );
+                                            }
+
+                                            return null;
+                                        })()}
+
+                                    </div>
                                 </div>
                             }
                         >
