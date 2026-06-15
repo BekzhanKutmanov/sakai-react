@@ -311,32 +311,32 @@ export default function LessonPractica({ element, content, fetchPropElement, fet
                                 />
                                 <b style={{ color: 'red', fontSize: '12px' }}>{errors.title?.message}</b>
                             </div>
-                            {/*<div*/}
-                            {/*    onClick={() => {*/}
-                            {/*        if (descriptionTypeState === 'text') setDescriptionTypeState('math');*/}
-                            {/*        if (descriptionTypeState === 'math') setDescriptionTypeState('text');*/}
-                            {/*    }}*/}
-                            {/*    className={'flex items-center'}*/}
-                            {/*>*/}
-                            {/*    <MyFontAwesome*/}
-                            {/*        icon={faSquareRootVariable}*/}
-                            {/*        className={`cursor-pointer p-[10px] sm:p-3 border border-[var(--borderBottomColor)] rounded hover:opacity-50 transition ${descriptionTypeState === 'math' ? 'text-white bg-[var(--amberColor)]' : ''} `}*/}
-                            {/*    />*/}
-                            {/*</div>*/}
+                            <div
+                                onClick={() => {
+                                    if (descriptionTypeState === 'text') setDescriptionTypeState('math');
+                                    if (descriptionTypeState === 'math') setDescriptionTypeState('text');
+                                }}
+                                className={'flex items-center'}
+                            >
+                                <MyFontAwesome
+                                    icon={faSquareRootVariable}
+                                    className={`cursor-pointer p-[10px] sm:p-3 border border-[var(--borderBottomColor)] rounded hover:opacity-50 transition ${descriptionTypeState === 'math' ? 'text-white bg-[var(--amberColor)]' : ''} `}
+                                />
+                            </div>
                         </div>
                         <div>
-                            {/*{descriptionTypeState === 'math' ? (*/}
-                            {/*    <TeacherEditor*/}
-                            {/*        state={true}*/}
-                            {/*        onSave={(text: string) => {*/}
-                            {/*            console.log(text);*/}
-                            {/*            setDocValue((prev) => ({ ...prev, description: text }));*/}
-                            {/*            handleAddPracica(text);*/}
-                            {/*        }}*/}
-                            {/*        defaultValueProp={null}*/}
-                            {/*    />*/}
+                            {descriptionTypeState === 'math' ? (
+                                <TeacherEditor
+                                    state={true}
+                                    onSave={(text: string) => {
+                                        console.log(text);
+                                        setDocValue((prev) => ({ ...prev, description: text }));
+                                        handleAddPracica(text);
+                                    }}
+                                    defaultValueProp={null}
+                                />
 
-                            {/*) : descriptionTypeState === 'text' ? (*/}
+                            ) : descriptionTypeState === 'text' ? (
                                 <Editor
                                     value={docValue.description}
                                     onTextChange={(e: EditorTextChangeEvent) => {
@@ -346,9 +346,9 @@ export default function LessonPractica({ element, content, fetchPropElement, fet
                                     headerTemplate={header}
                                     style={{ height: '220px' }}
                                 />
-                            {/*// ) : (*/}
-                            {/*//     ''*/}
-                            {/*// )}*/}
+                            ) : (
+                            ''
+                            )}
                             <b style={{ color: 'red', fontSize: '12px' }}>{errors.title?.message}</b>
                         </div>
                         {additional.doc && (
@@ -485,32 +485,32 @@ export default function LessonPractica({ element, content, fetchPropElement, fet
                                     }}
                                 />
                             </div>
-                            {/*<div*/}
-                            {/*    onClick={() => {*/}
-                            {/*        if (descriptionTypeState === 'text') setDescriptionTypeState('math');*/}
-                            {/*        if (descriptionTypeState === 'math') setDescriptionTypeState('text');*/}
-                            {/*    }}*/}
-                            {/*    className={'flex items-center'}*/}
-                            {/*>*/}
-                            {/*    <MyFontAwesome*/}
-                            {/*        icon={faSquareRootVariable}*/}
-                            {/*        className={`cursor-pointer p-[10px] sm:p-3 border border-[var(--borderBottomColor)] rounded hover:opacity-50 transition ${descriptionTypeState === 'math' ? 'text-white bg-[var(--amberColor)]' : ''} `}*/}
-                            {/*    />*/}
-                            {/*</div>*/}
+                            <div
+                                onClick={() => {
+                                    if (descriptionTypeState === 'text') setDescriptionTypeState('math');
+                                    if (descriptionTypeState === 'math') setDescriptionTypeState('text');
+                                }}
+                                className={'flex items-center'}
+                            >
+                                <MyFontAwesome
+                                    icon={faSquareRootVariable}
+                                    className={`cursor-pointer p-[10px] sm:p-3 border border-[var(--borderBottomColor)] rounded hover:opacity-50 transition ${descriptionTypeState === 'math' ? 'text-white bg-[var(--amberColor)]' : ''} `}
+                                />
+                            </div>
                         </div>
                         <div className="flex flex-col gap-1 w-full">
                             <div className="w-full">
                                 {
-                                    // descriptionTypeState === 'math' ? (
-                                    //     <TeacherEditor
-                                    //         state={false}
-                                    //         onSave={(text: string) => {
-                                    //             console.log(text);
-                                    //             setEditingLesson((prev) => ({ ...prev, description: text }));
-                                    //         }}
-                                    //         defaultValueProp={editingLesson.description}
-                                    //     />
-                                    // ) : descriptionTypeState === 'text' ? (
+                                    descriptionTypeState === 'math' ? (
+                                        <TeacherEditor
+                                            state={false}
+                                            onSave={(text: string) => {
+                                                console.log(text);
+                                                setEditingLesson((prev) => ({ ...prev, description: text }));
+                                            }}
+                                            defaultValueProp={editingLesson.description}
+                                        />
+                                    ) : descriptionTypeState === 'text' ? (
                                         <Editor
                                             value={editingLesson.description}
                                             onTextChange={(e: EditorTextChangeEvent) => {
@@ -519,7 +519,7 @@ export default function LessonPractica({ element, content, fetchPropElement, fet
                                             }}
                                             headerTemplate={header}
                                         />
-                                    // ) : ''
+                                    ) : ''
                                 }
                                 <b style={{ color: 'red', fontSize: '12px' }}>{errors.title?.message}</b>
                             </div>
