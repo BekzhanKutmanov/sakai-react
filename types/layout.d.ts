@@ -108,7 +108,16 @@ export interface LayoutContextProps {
     setContextFilterState,
 
     contextMobileLessons,
-    setContextMobileLessons
+    setContextMobileLessons,
+
+    contextCourseDisplay,
+    setContextCourseDisplay,
+
+    contextStreamId,
+    setContextStreamId,
+
+    contextStreamIndex,
+    setContextStreamIndex
     // message: { state: boolean; value: MessageType };
     // setMessage: React.Dispatch<React.SetStateAction<{ state: boolean; value: MessageType }>>;
 }

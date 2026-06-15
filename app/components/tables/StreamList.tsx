@@ -28,7 +28,6 @@ const StreamList = React.memo(function StreamList({
     callIndex,
     courseValue,
     isMobile,
-    toggleIndex,
     fetchprop,
     close,
     audit
@@ -36,7 +35,6 @@ const StreamList = React.memo(function StreamList({
     callIndex: number;
     courseValue: { id: number | null; title: string } | null;
     isMobile: boolean;
-    toggleIndex?: () => void;
     fetchprop: () => void;
     close?: () => void;
     audit: string;
@@ -217,7 +215,7 @@ const StreamList = React.memo(function StreamList({
         }
     };
 
-    const formatEduYear = (): string => {
+    const formatEduYear = (): number => {
         const now = new Date();
         const month = now.getMonth() + 1; // 1-12
         const year = now.getFullYear();
@@ -227,16 +225,16 @@ const StreamList = React.memo(function StreamList({
         const startYear = month >= 9 ? year : year - 1;
         const endYear = String(startYear + 1).slice(-2);
 
-        return `${startYear}-${endYear}`;
+        // return `${startYear}-${endYear}`;
+        return Number(String(startYear).slice(-2));
     };
 
     const handleFetchEduYear = async ()=> {
         const data = await studentEduYear();
         if (data) {
             setEduYearOpt(data);
-
             const date = formatEduYear();
-            const currentDate = data?.find((item: EduYearType)=> item?.name_ru === date);
+            const currentDate = data?.find((item: EduYearType)=> item?.id === date);
             if(currentDate){
                 setEduYearSelected(currentDate);
             }
@@ -274,7 +272,7 @@ const StreamList = React.memo(function StreamList({
     }, [streams]);
 
     useEffect(()=> {
-        handleFetchEduYear()
+        handleFetchEduYear();
     },[]);
 
     const connectConfirm = (e: any, item: mainStreamsType) => {

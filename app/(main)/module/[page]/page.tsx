@@ -534,7 +534,6 @@ export default function Module() {
 
                                             return null;
                                         })()}
-
                                     </div>
                                 </div>
                             }

@@ -149,6 +149,10 @@ export const LayoutProvider = ({ children }: ChildContainerProps) => {
     // filter state roles/students/page
     const [contextFilterState, setContextFilterState] = useState<{ faculty_id: number | null; specialyti_id: number | null } | null>(null);
 
+    const [contextCourseDisplay, setContextCourseDisplay] = useState<{ status: boolean; name: 'lock' | 'open' | 'wallet' | 'extra' | ''}>({ status: true, name: 'lock' });
+    const [contextStreamId, setContextStreamId] = useState<{ id: number | null; title: string } | null>(null);
+    const [contextStreamIndex, setContextStreamIndex] = useState<number>(0);
+
     useEffect(() => {
         // if (pathname === '/course' && !departament.name) {
         if (pathname.startsWith('/pdf') || pathname.startsWith('/videoInstruct')) {
@@ -238,7 +242,16 @@ export const LayoutProvider = ({ children }: ChildContainerProps) => {
         setContextFilterState,
 
         contextMobileLessons,
-        setContextMobileLessons
+        setContextMobileLessons,
+
+        contextCourseDisplay,
+        setContextCourseDisplay,
+
+        contextStreamId,
+        setContextStreamId,
+
+        contextStreamIndex,
+        setContextStreamIndex
     };
 
     return (

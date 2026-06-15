@@ -42,7 +42,7 @@ export default function Course() {
     const { page } = useParams();
 
     const { translations } = useLocalization();
-    const { setMessage, setGlobalLoading, course, setMainCourseId } = useContext(LayoutContext);
+    const { setMessage, setGlobalLoading, course, setMainCourseId, contextCourseDisplay, setContextCourseDisplay, contextStreamId, setContextStreamId, contextStreamIndex, setContextStreamIndex } = useContext(LayoutContext);
 
     const router = useRouter();
     const topRef = useRef<HTMLDivElement>(null);
@@ -65,7 +65,7 @@ export default function Course() {
         total: 0,
         perPage: 0
     });
-    const [activeIndex, setActiveIndex] = useState<number>(0);
+    const [activeIndex, setActiveIndex] = useState<number>(contextStreamIndex);
     const [imageState, setImageState] = useState<string | null>(null);
     const [editingLesson, setEditingLesson] = useState<CourseCreateType>({
         title: '',
@@ -75,8 +75,8 @@ export default function Course() {
         created_at: ''
     });
 
-    const [forStreamId, setForStreamId] = useState<{ id: number | null; title: string } | null>(null);
-    const [sendStream, setSendStream] = useState<{ status: boolean; name: 'lock' | 'open' | 'wallet' | 'extra' | '' }>({ status: true, name: 'lock' });
+    const [forStreamId, setForStreamId] = useState<{ id: number | null; title: string } | null>(contextCourseDisplay?.streamId);
+    const [sendStream, setSendStream] = useState<{ status: boolean; name: 'lock' | 'open' | 'wallet' | 'extra' | '' }>(contextCourseDisplay);
     // const [globalCourseId, setGlobalCourseId] = useState<{ id: number | null; title: string | null } | null>(null);
     // const [pageState, setPageState] = useState<number>(Number(page));
     const [openTypes, setOpenTypes] = useState<AudenceType[]>([]);
@@ -394,7 +394,8 @@ export default function Course() {
         if (e.index === 0) {
             // handleFetchLesson();
         }
-        setActiveIndex(e.index);
+        // setActiveIndex(e.index);
+        setContextStreamIndex(e.index);
     };
 
     const handleFetchCourseOpenStatus = async () => {
@@ -596,10 +597,13 @@ export default function Course() {
                                 onClick={() => {
                                     const newValue = { id: shablonData.id, title: shablonData.title };
                                     // Устанавливаем состояние
-                                    setForStreamId(newValue);
-                                    setSendStream({ status: false, name: shablonData?.audience_type?.name });
+                                    // setForStreamId(newValue);
+                                    setContextStreamId(newValue);
+                                    setContextCourseDisplay({ status: false, name: shablonData?.audience_type?.name});
+                                    // setSendStream({ status: false, name: shablonData?.audience_type?.name });
                                     setOpenCourseId(shablonData.id);
-                                    setActiveIndex(1);
+                                    // setActiveIndex(1);
+                                    setContextStreamIndex(1);
                                 }}
                             >
                                 {translations.connected} ({shablonData.connects_count})
@@ -698,11 +702,13 @@ export default function Course() {
     }, [page]);
 
     const callbackSetIndex = useCallback(() => {
-        setActiveIndex(0);
+        // setActiveIndex(0);
+        setContextStreamIndex(0);
     }, [activeIndex]);
 
     const callbackClose = useCallback(() => {
-        setSendStream({ status: true, name: '' });
+        // setSendStream({ status: true, name: '' });
+        setContextCourseDisplay({ status: true, name: '' });
     }, [activeIndex]);
 
     // useMemo
@@ -757,6 +763,18 @@ export default function Course() {
             handleShow();
         }
     }, [editMode]);
+
+    useEffect(()=> {
+        setSendStream(contextCourseDisplay);
+    },[contextCourseDisplay]);
+
+    useEffect(()=> {
+        setForStreamId(contextStreamId);
+    },[contextStreamId]);
+
+    useEffect(() => {
+        setActiveIndex(contextStreamIndex);
+    }, [contextStreamIndex]);
 
     const tableData = useMemo(() => {
         return coursesValue?.map((item) => ({ ...item, __isActive: forStreamId?.id === item.id }));
@@ -821,7 +839,8 @@ export default function Course() {
                                                 className="w-full mb-2"
                                                 iconPos="right"
                                                 onClick={() => {
-                                                    setActiveIndex(1);
+                                                    // setActiveIndex(1);
+                                                    setContextStreamIndex(1);
                                                 }}
                                             />
                                         </div>
@@ -864,7 +883,7 @@ export default function Course() {
                             >
                                 <div className="w-full block sm:w-1/2">
                                     {sendStream.name === 'lock' || sendStream.name === 'extra' ? (
-                                        <StreamList callIndex={activeIndex} courseValue={memoForStreamId} isMobile={true} fetchprop={callbackFetchCourse} toggleIndex={callbackSetIndex} close={callbackClose} audit={sendStream?.name}/>
+                                        <StreamList callIndex={activeIndex} courseValue={memoForStreamId} isMobile={true} fetchprop={callbackFetchCourse} close={callbackClose} audit={sendStream?.name}/>
                                     ) : (
                                         <OpenStudentList course_id={openCourseId} course_title={forStreamId?.title || null} close={callbackSetIndex} />
                                     )}
@@ -1017,11 +1036,13 @@ export default function Course() {
                                                                                 onChange={() => {
                                                                                     const newValue = { id: rowData.id, title: rowData.title };
                                                                                     // setGlobalCourseId(newValue);
-                                                                                    setForStreamId(newValue);
+                                                                                    // setForStreamId(newValue);
+                                                                                    setContextStreamId(newValue);
                                                                                     setOpenCourseId(rowData.id);
                                                                                 }}
                                                                                 onClick={() => {
-                                                                                    setSendStream({ status: false, name: rowData?.audience_type?.name });
+                                                                                    setContextCourseDisplay({ status: false, name: rowData?.audience_type?.name });
+                                                                                    // setSendStream({ status: false, name: rowData?.audience_type?.name });
                                                                                 }}
                                                                                 checked={isChecked}
                                                                             />
