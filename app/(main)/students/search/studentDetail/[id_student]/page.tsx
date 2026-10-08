@@ -3,11 +3,15 @@
 import GroupSkeleton from '@/app/components/skeleton/GroupSkeleton';
 import useMediaQuery from '@/hooks/useMediaQuery';
 import { useLocalization } from '@/layout/context/localizationcontext';
-import { fetchStudentDetail } from '@/services/streams';
-import { fetchStudentSearchDetail, fetchStudentSearchImg } from '@/services/student/studentSearch';
+import { fetchStudentCoursesActivity, fetchStudentSearchDetail, fetchStudentSearchImg } from '@/services/student/studentSearch';
+import { ContributionDay } from '@/types/ContributionDay';
 import { RoleUserType } from '@/types/roles/RoleUserType';
 import { useParams } from 'next/navigation';
-import React, { useState, useEffect } from 'react';
+import { Dialog } from 'primereact/dialog';
+import React, { useState, useEffect, useMemo } from 'react';
+import ActivityPage from '@/app/components/Contribution';
+import { ProgressSpinner } from 'primereact/progressspinner';
+import ActivityHeatmap from '@/app/components/Contribution';
 
 interface StudentDetail extends RoleUserType {
     birth_date: string;
@@ -16,12 +20,12 @@ interface StudentDetail extends RoleUserType {
 interface StudentInfo {
     title: string;
     id: number;
-    modules: {score: number, id_stream: number}[];
+    modules: { score: number, id_stream: number }[];
 }
 
 const StudentDetailPage = () => {
     const { translations } = useLocalization();
-    
+
     const { id_student } = useParams();
     const media = useMediaQuery('(max-width: 640px)');
 
@@ -29,6 +33,64 @@ const StudentDetailPage = () => {
     const [studentDetail, setStudentDetail] = useState<StudentDetail | null>(null);
     const [profileImg, setImg] = useState<{ image_url: string; id: number } | null>(null);
     const [courses, setCourses] = useState<StudentInfo[]>([]);
+    const [isCoursesActivityEnabled] = useState(true);
+    const [activityDialogVisible, setActivityDialogVisible] = useState(false);
+    const [selectedCourseTitle, setSelectedCourseTitle] = useState('');
+    const [courseActivity, setCourseActivity] = useState<ContributionDay[] | null>(null);
+    const [activityLoading, setActivityLoading] = useState(false);
+
+    const defaultActivityValue = useMemo<ContributionDay[]>(() => {
+        const end = new Date();
+        const value: ContributionDay[] = [];
+
+        for (let i = 364; i >= 0; i--) {
+            const date = new Date(end);
+            date.setDate(end.getDate() - i);
+
+            const count = (date.getDay() + date.getDate()) % 5;
+            value.push({
+                date: date.toISOString().slice(0, 10),
+                count
+            });
+        }
+
+        return value;
+    }, []);
+
+    const prepareCourseActivity = (activityData: any, course_id: number): ContributionDay[] => {
+        const courseActivityData = activityData?.data?.[course_id] || activityData?.[course_id] || {};
+
+        const getActivityLevel = (count: number) => {
+            if (count <= 0) return 0;
+            if (count < 10) return 1;
+            if (count < 50) return 2;
+            if (count < 100) return 3;
+            return 4;
+        };
+
+        return Object.entries(courseActivityData).map(([date, count]) => ({
+            date,
+            count: getActivityLevel(Number(count))
+        }));
+    };
+
+    const handleFetchCoursesActivity = async (course_id: number, courseTitle?: string) => {
+        const coursesActivityParams = new URLSearchParams();
+
+        coursesActivityParams.append('id_student', String(id_student));
+        coursesActivityParams.append('course_ids[]', String(course_id));
+
+        setSelectedCourseTitle(courseTitle || 'Activity');
+        setCourseActivity(null);
+        setActivityDialogVisible(true);
+        setActivityLoading(true);
+
+        const data = await fetchStudentCoursesActivity(coursesActivityParams);
+        if(data) {
+            setCourseActivity(prepareCourseActivity(data, course_id));
+        }
+        setActivityLoading(false);
+    }
 
     const handleFetchStudentDetail = async () => {
         // setSkeleton(true);
@@ -65,6 +127,11 @@ const StudentDetailPage = () => {
                         <th scope="col" className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                             ID
                         </th>
+                        {isCoursesActivityEnabled && (
+                            <th scope="col" className="px-4 py-4 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Активность
+                            </th>
+                        )}
                     </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
@@ -94,6 +161,18 @@ const StudentDetailPage = () => {
                             <td className="px-4 py-5 whitespace-nowrap">
                                 <div className="text-sm text-gray-800">{course?.modules[0]?.id_stream}</div>
                             </td>
+                            {isCoursesActivityEnabled && (
+                                <td className="px-4 py-5 whitespace-nowrap text-center">
+                                    <button
+                                        type="button"
+                                        aria-label="Open activity"
+                                        className="inline-flex h-9 w-9 items-center justify-center rounded-full text-[var(--mainColor)] transition-colors duration-200 hover:bg-gray-100 cursor-pointer"
+                                        onClick={() => handleFetchCoursesActivity(course?.id, course?.title)}
+                                    >
+                                        <i className="pi pi-chart-bar" style={{ fontSize: '16px' }}></i>
+                                    </button>
+                                </td>
+                            )}
                         </tr>
                     ))}
                 </tbody>
@@ -127,6 +206,19 @@ const StudentDetailPage = () => {
                         </div>
                     </div>
                     <div className="text-sm text-[var(--mainColor)] flex justify-end mt-1">ID {course?.modules[0]?.id_stream}</div>
+                    {isCoursesActivityEnabled && (
+                        <div className="flex justify-between items-center mt-2">
+                            <span className="text-sm font-medium text-gray-500">Активность:</span>
+                            <button
+                                type="button"
+                                aria-label="Open activity"
+                                className="inline-flex  items-center justify-center rounded-full text-[var(--mainColor)] transition-colors duration-200 hover:bg-gray-100"
+                                onClick={() => handleFetchCoursesActivity(course?.id, course?.title)}
+                            >
+                                <i className="pi pi-chart-bar" style={{ fontSize: '16px' }}></i>
+                            </button>
+                        </div>
+                    )}
                 </div>
             ))}
         </div>
@@ -175,6 +267,26 @@ const StudentDetailPage = () => {
                     <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-4">{translations.courses}</h2>
                     {media ? coursesMobile : coursesTable}
                 </div>
+
+                {isCoursesActivityEnabled && (
+                    <Dialog
+                        header={selectedCourseTitle || 'Activity'}
+                        visible={activityDialogVisible}
+                        className="w-[95vw] sm:w-[80vw]"
+                        contentClassName="overflow-x-auto"
+                        onHide={() => setActivityDialogVisible(false)}
+                    >
+                        <div className="min-w-[920px] p-2">
+                            {activityLoading ? (
+                                <div className="flex justify-content-center align-items-center py-5">
+                                    <ProgressSpinner style={{ width: '35px', height: '35px' }} />
+                                </div>
+                            ) : (
+                                <ActivityHeatmap value={courseActivity} />
+                            )}
+                        </div>
+                    </Dialog>
+                )}
             </div>
         </div>
     );

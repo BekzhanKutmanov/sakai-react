@@ -2,9 +2,9 @@
 
 import React, { useContext, useEffect, useState, useRef } from 'react';
 import { ProgressSpinner } from 'primereact/progressspinner';
-import 'primereact/resources/themes/lara-light-blue/theme.css';
-import 'primereact/resources/primereact.min.css';
-import 'primeicons/primeicons.css';
+// import 'primereact/resources/themes/lara-light-blue/theme.css';
+// import 'primereact/resources/primereact.min.css';
+// import 'primeicons/primeicons.css';
 import Link from 'next/link';
 import { fethcReductor } from '@/services/roles/roles';
 import { RoleUserType } from '@/types/roles/RoleUserType';
@@ -393,7 +393,7 @@ export default function StudentsPage() {
                 {/* Поиск */}
                 <div className="relative flex border border-slate-200 rounded-xl py-2 sm:py-3 pl-3 items-center gap-3 w-full bg-white mb-4 shadow-sm focus:border-blue-500 focus:ring-blue-500/20 transition-all">
                     <i className="pi pi-search text-sm"></i>
-                    <input value={search} onChange={(e) => setSearch(e.target.value)} type="text" placeholder={translations.searchByFullName} className="w-full pr-4 outline-none" />
+                    <input value={search} onChange={(e) => setSearch(e.target.value)} type="text" placeholder={translations.searchByFullName + translations.orMyeduId} className="w-full pr-4 outline-none" />
                     <div className="absolute right-1">{progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}</div>
                 </div>
 

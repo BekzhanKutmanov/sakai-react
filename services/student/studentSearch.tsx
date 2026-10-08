@@ -51,6 +51,19 @@ export const fetchSpeciality = async (id: number | null) => {
     }
 };
 
+// fetch student courses activity
+export const fetchStudentCoursesActivity = async (params: URLSearchParams) => {    
+    try {
+        const res = await axiosInstance.get(`/v1/reducer/student-task/activity?${params}`);
+        const data = await res.data;
+
+        return data;
+    } catch (err) {
+        console.log('Ошибка загрузки:', err);
+        return err;
+    }
+};
+
 // fetch student for cut
 export const fetchStudentCut = async (id_student: number) => {
     try {
