@@ -246,10 +246,10 @@ const StudentDetailPage = ({ params }: { params: { student_id: string } }) => {
                                                             {idx + 1}. Курс: {course.title}
                                                         </span>
 
-                                                        <span className="inline-flex shrink-0 items-center gap-2 text-[12px] rounded-xl bg-[var(--mainColor)] px-2 py-2 text-white whitespace-nowrap">
+                                                        {/* <span className="inline-flex shrink-0 items-center gap-2 text-[12px] rounded-xl bg-[var(--mainColor)] px-2 py-2 text-white whitespace-nowrap">
                                                             <i className="pi pi-calendar text-[12px]"></i>
                                                             2026-2027
-                                                        </span>
+                                                        </span> */}
                                                     </div>
 
                                                     <button
