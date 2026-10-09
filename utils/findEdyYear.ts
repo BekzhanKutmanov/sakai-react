@@ -1,6 +1,6 @@
 export const findEduYear = (eduYear: number)=> {
     if(eduYear) {
-        const fullYear = 2000 + eduYear;
+        const fullYear = 2000 + eduYear
         const nextYear = fullYear + 1;
         console.log(fullYear, nextYear);
         
