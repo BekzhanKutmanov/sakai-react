@@ -19,6 +19,7 @@ import CoursesCut from '@/app/components/tables/coursesCut';
 import { useLocalization } from '@/layout/context/localizationcontext';
 import ActivityHeatmap from '@/app/components/Contribution';
 import { ContributionDay } from '@/types/ContributionDay';
+import { findEduYear } from '@/utils/findEdyYear';
 
 // Типизация данных (можно вынести в отдельные файлы в /types)
 interface Student {
@@ -246,10 +247,10 @@ const StudentDetailPage = ({ params }: { params: { student_id: string } }) => {
                                                             {idx + 1}. Курс: {course.title}
                                                         </span>
 
-                                                        {/* <span className="inline-flex shrink-0 items-center gap-2 text-[12px] rounded-xl bg-[var(--mainColor)] px-2 py-2 text-white whitespace-nowrap">
+                                                        <span className="inline-flex shrink-0 items-center gap-2 text-[12px] rounded-xl bg-[var(--mainColor)] px-2 py-2 text-white whitespace-nowrap">
                                                             <i className="pi pi-calendar text-[12px]"></i>
-                                                            2026-2027
-                                                        </span> */}
+                                                            {findEduYear(course?.lesson_step_answers[0]?.connections?.id_edu_year)}
+                                                        </span>
                                                     </div>
 
                                                     <button
@@ -257,6 +258,7 @@ const StudentDetailPage = ({ params }: { params: { student_id: string } }) => {
                                                         aria-label="Open activity"
                                                         className="inline-flex  shrink-0 items-center justify-center rounded-full text-[var(--mainColor)] transition-colors duration-200 cursor-pointer"
                                                         onClick={(e) => {
+                                                            e.preventDefault();
                                                             e.stopPropagation();
                                                             handleFetchCoursesActivity(Number(course?.id), course?.title);
                                                         }}
