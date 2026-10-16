@@ -84,7 +84,7 @@ export default function Course() {
     // const [copy_have, setCopy_have] = useState<boolean>(false);
 
     const [isTall, setIsTall] = useState(false);
-
+    // 
     const [filters, setFilters] = useState<{
         course_audience_type_id: number | null;
         is_published: boolean | null;
