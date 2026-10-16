@@ -51,7 +51,7 @@ interface MyApMenuType {
 
 const AppMenu = () => {
     const { language, translations } = useLocalization();
-    const { user, setMessage, setDeleteQuery, setUpdateeQuery, contextFetchThemes, departament, contextVerifedValue, contextFetchVerifed, contextMobileLessons, setContextMobileLessons } = useContext(LayoutContext);
+    const { user, setMessage, setDeleteQuery, setUpdateeQuery, departament, contextVerifedValue, contextFetchVerifed, contextMobileLessons, setContextMobileLessons } = useContext(LayoutContext);
 
     const media = useMediaQuery('(max-width: 640px)');
 
@@ -464,8 +464,6 @@ const AppMenu = () => {
 
         const data = await addThemes(Number(course_id), themeValue?.title ? themeValue?.title : '', themeValue.sequence_number, deadline);
         if (data?.success) {
-            contextFetchThemes(Number(course_id), id_kafedra ? Number(id_kafedra) : null);
-
             const oldThemes: {lessons: any} | undefined = queryClient.getQueryData(['themes', course_id]);
 
             const newThemes = await queryClient.fetchQuery({
@@ -508,7 +506,6 @@ const AppMenu = () => {
     const handleDeleteTheme = async (id: number) => {
         const data = await deleteTheme(id);
         if (data.success) {
-            contextFetchThemes(Number(course_id), id_kafedra ? Number(id_kafedra) : null);
             await queryClient.invalidateQueries({queryKey: ['themes', course_id]});
             const path = window.location.pathname;
             if(path.includes(String(id))){
@@ -545,7 +542,6 @@ const AppMenu = () => {
         const data = await updateTheme(Number(course_id), selectId, editingLesson?.title ? editingLesson?.title : '', editingLesson?.sequence_number ? editingLesson?.sequence_number : null, deadline);
         if (data?.success) {
             setUpdateeQuery(true);
-            contextFetchThemes(Number(course_id), id_kafedra ? Number(id_kafedra) : null);
             await queryClient.invalidateQueries({queryKey: ['themes', course_id]});
             await queryClient.invalidateQueries({queryKey: ['lessonKey']});
 

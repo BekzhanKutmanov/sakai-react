@@ -12,27 +12,28 @@ import { Accordion, AccordionTab } from 'primereact/accordion';
 import { Dialog } from 'primereact/dialog';
 import { useContext, useEffect, useState } from 'react';
 import { useLocalization } from '@/layout/context/localizationcontext';
+import { fetchThemes } from '@/services/courses';
 
 export default function LessonCheck() {
     const { setMessage, contextFetchThemes, setContextThemes, contextThemes } = useContext(LayoutContext);
     const showError = useErrorMessage();
-    const {translations} = useLocalization();
+    const { translations } = useLocalization();
     const { id_kafedra, course_id } = useParams();
 
     const [themes, setThemes] = useState<themeType[]>([]);
-    const [themeShow, setThemeShow] = useState(false);
+    // const [themeShow, setThemeShow] = useState(false);
     const [hasSteps, setHasSteps] = useState(false);
     const [steps, setSteps] = useState<mainStepsType[]>([]);
     const [activeIndex, setActiveIndex] = useState<number | number[]>(0);
     const [videoCall, setVideoCall] = useState(false);
     const [video_link, setVideoLink] = useState('');
-    const [courseInfo, setCourseInfo] = useState({title: ''});
+    const [courseInfo, setCourseInfo] = useState({ title: '' });
 
     const handleCourseInfo = async () => {
         if (course_id) {
             const data = await depCourseInfo(Number(course_id), Number(id_kafedra));
             if (data.success) {
-                setCourseInfo({title: data.course.title})
+                setCourseInfo({ title: data.course.title })
             }
         }
     };
@@ -89,24 +90,48 @@ export default function LessonCheck() {
         setVideoCall(true);
     };
 
+    const handleFetchThemes = async ()=> {
+        const data = await fetchThemes(Number(course_id) || null, id_kafedra ? Number(id_kafedra) : null);
+        if (data) {
+            // setContextThemes(data);
+            setThemes(data?.lessons.data || []);
+        } else {
+            setMessage({
+                state: true,
+                value: { severity: 'error', summary: translations.error, detail: '' }
+            });
+            if (data?.response?.status) {
+                if (data?.response?.status == '400') {
+                    setMessage({
+                        state: true,
+                        value: { severity: 'error', summary: translations.errorTitle, detail: data?.response?.data?.message }
+                    });
+                } else {
+                    showError(data.response.status);
+                }
+            }
+        }
+    }
+
     // ПРОСИМ КУРС ДЛЯ НАЗВАНИЯ И ТЕМЫ
     useEffect(() => {
-        contextFetchThemes(Number(course_id), id_kafedra ? Number(id_kafedra) : null);
+        handleFetchThemes();
         handleCourseInfo();
         return () => {
-            setContextThemes([]);
+            // setContextThemes([]);
+            setThemes([]);
         };
     }, []);
 
     // САМИ ТЕМЫ, присваиваем в локальные темы
-    useEffect(() => {
-        if (contextThemes.lessons?.data && contextThemes.lessons.data?.length > 0) {
-            setThemes(contextThemes?.lessons.data || []);
-            setThemeShow(false);
-        } else {
-            setThemeShow(true);
-        }
-    }, [contextThemes]);
+    // useEffect(() => {
+    //     if (contextThemes.lessons?.data && contextThemes.lessons.data?.length > 0) {
+    //         setThemes(contextThemes?.lessons.data || []);
+    //         setThemeShow(false);
+    //     } else {
+    //         setThemeShow(true);
+    //     }
+    // }, [contextThemes]);
 
     // просто посмотреть пока
     useEffect(() => {
@@ -141,7 +166,7 @@ export default function LessonCheck() {
                     ></iframe>
                 </div>
             </Dialog>
-            {themeShow ? (
+            {themes.length === 0 ? (
                 <NotFound titleMessage="Темы отсуствуют или временно не доступны" />
             ) : (
                 <div >
