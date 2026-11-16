@@ -7,8 +7,7 @@ import useMediaQuery from '@/hooks/useMediaQuery';
 import { LayoutContext } from '@/layout/context/layoutcontext';
 import { controlRolesUsers, fetchRolesList, fetchRolesUsers } from '@/services/roles/roles';
 import { RoleUserType } from '@/types/roles/RoleUserType';
-import { useParams } from 'next/navigation';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { Button } from 'primereact/button';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
@@ -17,7 +16,7 @@ import { Dropdown, DropdownChangeEvent } from 'primereact/dropdown';
 import { InputText } from 'primereact/inputtext';
 import { Paginator } from 'primereact/paginator';
 import { ProgressSpinner } from 'primereact/progressspinner';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useLocalization } from '@/layout/context/localizationcontext';
 import { useLocalizedData } from '@/hooks/useLocalizedData';
 import RoleSwitch from '@/app/components/roles/RoleSwitch';
@@ -49,6 +48,13 @@ interface RoleState {
 export default function Roles() {
     const { page } = useParams();
     const router = useRouter();
+    const searchParams = useSearchParams();
+
+    // начальные значения фильтров из query-параметров
+    const initialSearch = searchParams.get('search') || '';
+    const initialMyeduId = searchParams.get('myedu_id') || null;
+    const initialRoleId = Number(searchParams.get('role_id')) || null;
+    const initialRoleSynced = useRef(false);
 
     const showError = useErrorMessage();
     const { setMessage } = useContext(LayoutContext);
@@ -65,18 +71,18 @@ export default function Roles() {
     const [mainProgressSpinner, setMainProgressSpinner] = useState(false);
     const [miniProgressSpinner, setMiniProgressSpinner] = useState(false);
     const [myeduProgressSpinner, setMyeduProgressSpinner] = useState(false);
-    const [search, setSearch] = useState<string>('');
+    const [search, setSearch] = useState<string>(initialSearch);
     const [searchController, setSearchController] = useState(false);
     const [myeduController, setMyeduController] = useState(false);
     const [active, setActive] = useState(false);
-    const [myedu_id, setMyedu_id] = useState<string | null>(null);
+    const [myedu_id, setMyedu_id] = useState<string | null>(initialMyeduId);
     const [pagination, setPagination] = useState<{ currentPage: number; total: number; perPage: number }>({
         currentPage: 1,
         total: 0,
         perPage: 0
     });
     // const [Number(page), setNumber(page)] = useState<number>(1);
-    const [selectedRole_idType, setSelectedRole_idType] = useState<Role_idType | null>({ name: translations.all, role_id: null });
+    const [selectedRole_idType, setSelectedRole_idType] = useState<Role_idType | null>({ name: translations.all, role_id: initialRoleId });
     const [cities, setCities] = useState<Role_idType[]>([{ name: translations.all, role_id: null }]);
     const [forDisabled, setForDisabled] = useState(false);
     const [categoryVisible, setCategoryVisible] = useState<boolean>(false);
@@ -103,6 +109,15 @@ export default function Roles() {
                 });
 
                 if (forSelectedRole_id) setCities((prev) => [...prev, ...forSelectedRole_id]);
+
+                // роль из query: подставляем объект из списка (для Dropdown) — это же запускает загрузку пользователей
+                if (!initialRoleSynced.current) {
+                    initialRoleSynced.current = true;
+                    if (initialRoleId) {
+                        const found = forSelectedRole_id?.find((item: Role_idType) => item.role_id === initialRoleId);
+                        setSelectedRole_idType(found ? found : { name: translations.all, role_id: null });
+                    }
+                }
             } else {
                 setContentNull(true);
             }
@@ -205,7 +220,12 @@ export default function Roles() {
 
     // Ручное управление пагинацией
     const handlePageChange = (page: number) => {
-        router.push(`/roles/${page}`);
+        const params = new URLSearchParams();
+        if (search) params.set('search', search);
+        if (myedu_id) params.set('myedu_id', myedu_id);
+        if (selectedRole_idType?.role_id) params.set('role_id', String(selectedRole_idType.role_id));
+        const query = params.toString();
+        router.push(`/roles/${page}${query ? `?${query}` : ''}`);
     };
 
     // TSX
@@ -289,8 +309,8 @@ export default function Roles() {
         const delay = setTimeout(() => {
             if (userFetchGlag) {
                 handleFetchUsers(Number(page), search, myedu_id, selectedRole_idType, active);
-                setMiniProgressSpinner(false);
             }
+            setMiniProgressSpinner(false);
         }, 1000);
 
         return () => {
@@ -425,7 +445,7 @@ export default function Roles() {
                             <div className="flex flex-col sm:flex-row sm:items-center gap-[10px]">
                                 {/* myedu id */}
                                 <div className="flex items-center relative sm:w-[150px]">
-                                    <InputText type="number" placeholder={translations.myeduIdPlaceholder} className="w-full h-[40px] text-[14px]" style={{ borderRadius: 10 }} onChange={(e) => setMyedu_id(e.target.value)} />
+                                    <InputText type="number" placeholder={translations.myeduIdPlaceholder} className="w-full h-[40px] text-[14px]" style={{ borderRadius: 10 }} value={myedu_id ?? ''} onChange={(e) => setMyedu_id(e.target.value)} />
                                     <div className="absolute right-[10px]">{myeduProgressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}</div>
                                 </div>
 
@@ -439,23 +459,6 @@ export default function Roles() {
                                     className="sm:w-[200px] h-[40px] items-center text-sm"
                                     style={{ borderRadius: 10 }}
                                 />
-
-                                {/* только активные */}
-                                <div className={`flex items-center gap-[4px] h-[40px] transition-opacity ${!selectedRole_idType?.role_id ? 'opacity-45 pointer-events-none' : ''}`}>
-                                    <label className="custom-radio p-0">
-                                        <input
-                                            type="checkbox"
-                                            checked={active}
-                                            className={`customCheckbox p-0`}
-                                            onChange={() => {
-                                                setActive((prev) => !prev);
-                                                handleFetchUsers(Number(page), search, myedu_id, selectedRole_idType, !active);
-                                            }}
-                                        />
-                                        <span className="checkbox-mark"></span>
-                                    </label>
-                                    <p className="m-0 text-[14px] text-[var(--bodyColor)] whitespace-nowrap">{translations.active}</p>
-                                </div>
                             </div>
                         </div>
                     </div>

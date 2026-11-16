@@ -19,7 +19,8 @@ export const fetchRolesList = async () => {
 export const fetchRolesUsers = async (page: number, search: string | null, myedu_id: string | null, role_id: number | null, active: boolean | null) => {
     try {
         const res = await axiosInstance.get(
-            `/roles/users?search=${search}&myedu_id=${myedu_id ? Number(myedu_id) : 0}&${role_id ? `role_id=${role_id}` : 'role_id='}${role_id ? `${active ? `&active=${active ? 1 : 0}` : '&active='}` : '&active='}${!search ? `&page=${page}` : ''}`
+            // `/roles/users?search=${search}&myedu_id=${myedu_id ? Number(myedu_id) : 0}&${role_id ? `role_id=${role_id}` : 'role_id='}${role_id ? `${active ? `&active=${active ? 1 : 0}` : '&active='}` : '&active='}${!search ? `&page=${page}` : ''}`
+            `/roles/users?search=${search}&myedu_id=${myedu_id ? Number(myedu_id) : 0}&${role_id ? `role_id=${role_id}` : 'role_id='}${role_id ? `${`&active=${1}`}` : '&active='}${!search ? `&page=${page}` : ''}`
         );
 
         const data = res.data;
