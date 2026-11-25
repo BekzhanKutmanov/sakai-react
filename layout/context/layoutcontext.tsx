@@ -152,6 +152,13 @@ export const LayoutProvider = ({ children }: ChildContainerProps) => {
     const [contextCourseDisplay, setContextCourseDisplay] = useState<{ status: boolean; name: 'lock' | 'open' | 'wallet' | 'extra' | ''}>({ status: true, name: 'lock' });
     const [contextStreamId, setContextStreamId] = useState<{ id: number | null; title: string } | null>(null);
     const [contextStreamIndex, setContextStreamIndex] = useState<number>(0);
+    // Последний выбранный в StreamList учебный год (null — выбрать текущий по умолчанию)
+    const [contextEduYear, setContextEduYear] = useState<{ id: number; name_ru: string } | null>(null);
+
+    // Открыли StreamList другого курса — год снова по умолчанию
+    useEffect(() => {
+        setContextEduYear(null);
+    }, [contextStreamId?.id]);
 
     useEffect(() => {
         // if (pathname === '/course' && !departament.name) {
@@ -173,6 +180,17 @@ export const LayoutProvider = ({ children }: ChildContainerProps) => {
         // Обнуление фильтрации в аннулизрвание студентов
         if (!pathname.startsWith('/roles/students')) {
             setContextFilterState(null);
+        }
+
+        // Сохраняем открытый StreamList только при переходах между /course/... и
+        // /students/[cource_id]/[connect_id]/[stream_id](/...). При уходе на любую другую страницу — сбрасываем.
+        const isCoursePage = /^\/course(\/|$)/.test(pathname);
+        const isStreamStudentsPage = /^\/students\/(?!forum\/|search(\/|$))[^/]+\/[^/]+\/[^/]+/.test(pathname);
+        if (!isCoursePage && !isStreamStudentsPage) {
+            setContextCourseDisplay({ status: true, name: 'lock' });
+            setContextStreamId(null);
+            setContextStreamIndex(0);
+            setContextEduYear(null);
         }
     }, [pathname, departament]);
 
@@ -251,7 +269,10 @@ export const LayoutProvider = ({ children }: ChildContainerProps) => {
         setContextStreamId,
 
         contextStreamIndex,
-        setContextStreamIndex
+        setContextStreamIndex,
+
+        contextEduYear,
+        setContextEduYear
     };
 
     return (

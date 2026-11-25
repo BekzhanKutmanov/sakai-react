@@ -117,7 +117,10 @@ export interface LayoutContextProps {
     setContextStreamId,
 
     contextStreamIndex,
-    setContextStreamIndex
+    setContextStreamIndex,
+
+    contextEduYear: { id: number; name_ru: string } | null,
+    setContextEduYear: React.Dispatch<React.SetStateAction<{ id: number; name_ru: string } | null>>
     // message: { state: boolean; value: MessageType };
     // setMessage: React.Dispatch<React.SetStateAction<{ state: boolean; value: MessageType }>>;
 }

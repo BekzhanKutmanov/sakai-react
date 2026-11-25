@@ -39,7 +39,7 @@ const StreamList = React.memo(function StreamList({
     close?: () => void;
     audit: string;
 }) {
-    const { setMessage } = useContext(LayoutContext);
+    const { setMessage, contextEduYear, setContextEduYear } = useContext(LayoutContext);
     const showError = useErrorMessage();
     const { language, translations } = useLocalization();
     const { getLocalized } = useLocalizedData();
@@ -63,7 +63,9 @@ const StreamList = React.memo(function StreamList({
     const [courseConnectInfo, setCourseConnectInfo] = useState(false);
 
     const [eduYearOpt, setEduYearOpt] = useState<EduYearType[]>([]);
-    const [eduYearSelected, setEduYearSelected] = useState<EduYearType>();
+    // Выбранный год хранится в контексте, чтобы сохраняться при возврате со страницы потока
+    const eduYearSelected = contextEduYear ?? undefined;
+    const setEduYearSelected = (value: EduYearType | null) => setContextEduYear(value);
 
     const toggleSkeleton = () => {
         setSkeleton(true);
@@ -235,8 +237,9 @@ const StreamList = React.memo(function StreamList({
         const data: EduYearType[] | null = Array.isArray(res) ? res : Array.isArray(res?.data) ? res.data : null;
         if (data) {
             setEduYearOpt(data);
-            const date = formatEduYear();
-            const currentDate = data?.find((item: EduYearType) => item?.id === date);
+            // Есть сохранённый год (возврат со страницы потока) — оставляем его, иначе ставим текущий учебный год
+            if (contextEduYear && data.some((item: EduYearType) => item?.id === contextEduYear.id)) return;
+            const currentDate = data.find((item: EduYearType) => item?.id === formatEduYear());
             if (currentDate) {
                 setEduYearSelected(currentDate);
             }

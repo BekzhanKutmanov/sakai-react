@@ -42,7 +42,7 @@ export default function Course() {
     const { page } = useParams();
 
     const { translations } = useLocalization();
-    const { setMessage, setGlobalLoading, course, setMainCourseId, contextCourseDisplay, setContextCourseDisplay, contextStreamId, setContextStreamId, contextStreamIndex, setContextStreamIndex } = useContext(LayoutContext);
+    const { setMessage, setGlobalLoading, course, setMainCourseId, contextCourseDisplay, setContextCourseDisplay, contextStreamId, setContextStreamId, contextStreamIndex, setContextStreamIndex, setContextEduYear } = useContext(LayoutContext);
 
     const router = useRouter();
     const topRef = useRef<HTMLDivElement>(null);
@@ -347,13 +347,13 @@ export default function Course() {
         if (e.files?.length > 0) {
             editMode
                 ? setEditingLesson((prev) => ({
-                      ...prev,
-                      image: e.files[0]
-                  }))
+                    ...prev,
+                    image: e.files[0]
+                }))
                 : setCourseValue((prev) => ({
-                      ...prev,
-                      image: e.files[0]
-                  }));
+                    ...prev,
+                    image: e.files[0]
+                }));
             setImageState(e.files[0].objectURL);
         }
     };
@@ -389,6 +389,8 @@ export default function Course() {
     const handleTabChange = (e: TabViewChange) => {
         if (e.index === 0) {
             // handleFetchLesson();
+            // Мобилка: ушли со вкладки потоков — при следующем открытии год снова по умолчанию
+            setContextEduYear(null);
         }
         // setActiveIndex(e.index);
         setContextStreamIndex(e.index);
@@ -612,7 +614,7 @@ export default function Course() {
                                     // Устанавливаем состояние
                                     // setForStreamId(newValue);
                                     setContextStreamId(newValue);
-                                    setContextCourseDisplay({ status: false, name: shablonData?.audience_type?.name});
+                                    setContextCourseDisplay({ status: false, name: shablonData?.audience_type?.name });
                                     // setSendStream({ status: false, name: shablonData?.audience_type?.name });
                                     setOpenCourseId(shablonData.id);
                                     // setActiveIndex(1);
@@ -720,6 +722,8 @@ export default function Course() {
     const callbackClose = useCallback(() => {
         // setSendStream({ status: true, name: '' });
         setContextCourseDisplay({ status: true, name: '' });
+        // Вышли из StreamList — при следующем открытии год снова по умолчанию
+        setContextEduYear(null);
     }, [activeIndex]);
 
     // useMemo
@@ -775,13 +779,13 @@ export default function Course() {
         }
     }, [editMode]);
 
-    useEffect(()=> {
+    useEffect(() => {
         setSendStream(contextCourseDisplay);
-    },[contextCourseDisplay]);
+    }, [contextCourseDisplay]);
 
-    useEffect(()=> {
+    useEffect(() => {
         setForStreamId(contextStreamId);
-    },[contextStreamId]);
+    }, [contextStreamId]);
 
     useEffect(() => {
         setActiveIndex(contextStreamIndex);
@@ -894,7 +898,7 @@ export default function Course() {
                             >
                                 <div className="w-full block sm:w-1/2">
                                     {sendStream.name === 'lock' || sendStream.name === 'extra' ? (
-                                        <StreamList callIndex={activeIndex} courseValue={memoForStreamId} isMobile={true} fetchprop={callbackFetchCourse} close={callbackClose} audit={sendStream?.name}/>
+                                        <StreamList callIndex={activeIndex} courseValue={memoForStreamId} isMobile={true} fetchprop={callbackFetchCourse} close={callbackClose} audit={sendStream?.name} />
                                     ) : (
                                         <OpenStudentList course_id={openCourseId} course_title={forStreamId?.title || null} close={callbackSetIndex} />
                                     )}
@@ -1162,13 +1166,13 @@ export default function Course() {
                                     onChange={(e) => {
                                         editMode
                                             ? setEditingLesson((prev) => ({
-                                                  ...prev,
-                                                  title: e.target.value
-                                              }))
+                                                ...prev,
+                                                title: e.target.value
+                                            }))
                                             : setCourseValue((prev) => ({
-                                                  ...prev,
-                                                  title: e.target.value
-                                              }));
+                                                ...prev,
+                                                title: e.target.value
+                                            }));
                                     }}
                                 />
                             </div>
@@ -1189,13 +1193,13 @@ export default function Course() {
                                 onChange={(e) => {
                                     editMode
                                         ? setEditingLesson((prev) => ({
-                                              ...prev,
-                                              description: e.target.value
-                                          }))
+                                            ...prev,
+                                            description: e.target.value
+                                        }))
                                         : setCourseValue((prev) => ({
-                                              ...prev,
-                                              description: e.target.value
-                                          }));
+                                            ...prev,
+                                            description: e.target.value
+                                        }));
                                 }}
                             />
                             {progressSpinner && <ProgressSpinner style={{ width: '15px', height: '15px' }} strokeWidth="8" fill="white" className="!stroke-green-500" animationDuration=".5s" />}

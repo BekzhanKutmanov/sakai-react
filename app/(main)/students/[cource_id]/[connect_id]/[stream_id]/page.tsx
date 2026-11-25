@@ -17,7 +17,7 @@ import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';``
 import { useLocalizedData } from '@/hooks/useLocalizedData';
 
 export default function StudentList() {
@@ -44,7 +44,6 @@ export default function StudentList() {
 
     const { cource_id, connect_id, edu_year, stream_id } = useParams();
     const media = useMediaQuery('(max-width: 640px)');
-    console.log(cource_id, connect_id, edu_year, stream_id);
 
     const [studentList, setStudentList] = useState([]);
     const [hasList, setHasList] = useState(false);
@@ -240,7 +239,6 @@ export default function StudentList() {
     const SPECIAL_MAX_SCORE = 30;
     const DEFAULT_MIN_SCORE = 30;
 
-
     const isOpenSend = Boolean(stream?.open_send);
 
     const getScoreState = (rowData: StudentType) => {
@@ -263,7 +261,7 @@ export default function StudentList() {
 
         // open_send = false: отправка от 30
         return {
-            colorClass: score >= DEFAULT_MIN_SCORE ? SUCCESS_CLASS : WARNING_CLASS,
+            colorClass:  score >= DEFAULT_MIN_SCORE ? SUCCESS_CLASS : WARNING_CLASS,
             showButton: !isExported && score >= DEFAULT_MIN_SCORE,
         };
     };
@@ -295,33 +293,6 @@ export default function StudentList() {
             </div>
         );
     };
-
-    // return (
-    //     // ... ваша разметка
-    //     <DataTable /* ваши пропсы */>
-    //         {/* ... другие колонки */}
-
-    //         <Column
-    //             header={translations.score}
-    //             body={(rowData: StudentType) => (
-    //                 <div className="flex items-center gap-2">
-    //                     {(rowData?.score ?? 0) > 0 ? (
-    //                         moduleScoreContent(rowData)
-    //                     ) : (
-    //                         <b
-    //                             className={`inline-flex items-center justify-center min-w-[40px] px-[8px] py-[4px] rounded-[8px] text-[0.8125rem] ${ERROR_CLASS}`}
-    //                         >
-    //                             {rowData?.score}
-    //                         </b>
-    //                     )}
-    //                 </div>
-    //             )}
-    //         />
-
-    //         {/* ... другие колонки */}
-    //     </DataTable>
-    // );
-
 
     useEffect(() => {
         handleFetchStreams();

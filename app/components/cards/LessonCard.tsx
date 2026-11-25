@@ -25,6 +25,7 @@ export default function LessonCard({
     urlForPDF,
     urlForDownload,
     videoVisible,
+    videoShorts,
     answers,
     mathDescriptionState
 }: {
@@ -39,6 +40,7 @@ export default function LessonCard({
     urlForPDF: () => void;
     urlForDownload: string;
     videoVisible?: (id: string | null) => void;
+    videoShorts?: boolean; // YouTube Shorts — вертикальное превью
     answers?: { id?: number | null; text: string; is_correct: boolean }[];
     mathDescriptionState?: ()=> boolean;
 }) {
@@ -70,20 +72,37 @@ export default function LessonCard({
         }
     };
 
+    // video preview: обычное видео — 16:9, Shorts — 9:16
     const videoPreviw = type.typeValue === 'video' && (
-        <div className="relative bg-white shadow w-[90%] max-h-[400px] overflow-hidden rounded-2xl">
-            <div className="w-full h-[100%] absolute flex justify-center items-center bg-[rgba(8,9,0,50%)]">
-                <div className="relative flex items-center justify-center" onClick={() => videoVisible?.(type.typeValue)}>
-                    {/* Волна */}
-                    {/* <span className="absolute w-full h-full rounded-full border-4 border-blue-500 animate-ping"></span> */}
+        <div
+            className={`group relative w-full bg-black shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden rounded-2xl cursor-pointer ${videoShorts ? 'max-w-[240px] aspect-[9/16]' : 'max-w-[640px] aspect-video'}`}
+            onClick={() => videoVisible?.(type.typeValue)}
+        >
+            <img
+                src={(cardValue.photo && cardValue.photo) || '/layout/images/no-image.png'}
+                onError={(e) => {
+                    const img = e.currentTarget;
+                    if (!img.src.endsWith('/layout/images/no-image.png')) img.src = '/layout/images/no-image.png';
+                }}
+                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                alt={translations.videoAlt}
+            />
 
-                    {/* Иконка-кнопка */}
-                    <div className="relative z-10 w-[50px] h-[50px] sm:w-[70px] sm:h-[70px] rounded-full bg-white text-[var(--mainColor)] flex items-center justify-center hover:scale-110 transition-transform duration-300 cursor-pointer shadow-lg">
-                        <MyFontAwesome icon={faPlay} />
-                    </div>
+            {/* затемнение */}
+            <div className="absolute inset-0 bg-linear-to-t from-black/60 via-black/10 to-black/20 group-hover:from-black/70 transition-colors duration-300"></div>
+
+            {/* бейдж */}
+            <div className="absolute top-2 left-2 flex items-center gap-1 px-2 py-[2px] rounded-full bg-black/60 text-white text-[11px] sm:text-[12px] backdrop-blur-sm">
+                <i className={`pi pi-youtube ${videoShorts ? 'text-white' : 'text-red-500'} text-[12px]`}></i>
+                <span>{videoShorts ? 'Shorts' : 'YouTube'}</span>
+            </div>
+
+            {/* Иконка-кнопка */}
+            <div className="absolute inset-0 flex justify-center items-center">
+                <div className="relative z-10 w-[50px] h-[50px] sm:w-[64px] sm:h-[64px] pl-[3px] rounded-full bg-white/95 text-[var(--mainColor)] flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                    <MyFontAwesome icon={faPlay} />
                 </div>
             </div>
-            <img src={(cardValue.photo && cardValue.photo) || '/layout/images/no-image.png'} className="w-full sm:w-[200px] max-h-[400px] object-cover" alt={translations.videoAlt} />
         </div>
     );
 

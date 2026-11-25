@@ -19,6 +19,7 @@ import FormModal from '../popUp/FormModal';
 import { FileWithPreview } from '@/types/fileuploadPreview';
 import GroupSkeleton from '../skeleton/GroupSkeleton';
 import { useLocalization } from '@/layout/context/localizationcontext';
+import { parseYoutubeUrl } from '@/utils/youtube';
 
 export default function LessonVideo({ element, content, fetchPropElement, clearProp }: { element: mainStepsType; content: any; fetchPropElement: (id: number) => void; clearProp: boolean }) {
     interface contentType {
@@ -55,6 +56,7 @@ export default function LessonVideo({ element, content, fetchPropElement, clearP
     const [video, setVideo] = useState<contentType>();
     const [videoCall, setVideoCall] = useState(false);
     const [videoLink, setVideoLink] = useState('');
+    const [isShorts, setIsShorts] = useState(false);
     const [videoValue, setVideoValue] = useState<{ title: string; description: string; file: null; url: string; video_link: string; cover: File | null; link: null }>({
         title: '',
         description: '',
@@ -95,36 +97,25 @@ export default function LessonVideo({ element, content, fetchPropElement, clearP
     };
 
     const handleVideoCall = (value: string | null) => {
-        if (!value) {
-            setMessage({
-                state: true,
-                value: { severity: 'error', summary: translations.videoProccessError, detail: '' }
-            });
-        }
+        // обычные видео, youtu.be и Shorts — см. utils/youtube.ts
+        const youtube = parseYoutubeUrl(value);
 
-        const url = new URL(typeof value === 'string' ? value : '');
-        let videoId = null;
-
-        if (url.hostname === 'youtu.be') {
-            // короткая ссылка, видео ID — в пути
-            videoId = url.pathname.slice(1); // убираем первый слеш
-        } else if (url.hostname === 'www.youtube.com' || url.hostname === 'youtube.com') {
-            // стандартная ссылка, видео ID в параметре v
-            videoId = url.searchParams.get('v');
-        }
-
-        if (!videoId) {
+        if (!youtube) {
             setMessage({
                 state: true,
                 value: { severity: 'error', summary: translations.videoProccessError, detail: '' }
             });
             return null; // не удалось получить ID
         }
-        // return `https://www.youtube.com/embed/${videoId}`;
-        setVideoLink(`https://www.youtube.com/embed/${videoId}`);
+
+        setVideoLink(`${youtube.embedUrl}?autoplay=1&rel=0`);
+        setIsShorts(youtube.isShorts);
         setVideoCall(true);
-        // setVisisble(true);
     };
+
+    // превью для карточки: своя обложка -> превью из YouTube -> заглушка
+    const videoInfo = parseYoutubeUrl(video?.link ? String(video.link) : null);
+    const cardPhoto = (video?.cover && video?.cover_url) || videoInfo?.thumbnail || video?.cover_url || '';
 
     // validate
     const {
@@ -267,7 +258,14 @@ export default function LessonVideo({ element, content, fetchPropElement, clearP
                                             setValue('usefulLink', e.target.value, { shouldValidate: true });
                                         }}
                                     />
-                                    <b style={{ color: 'red', fontSize: '12px' }}>{errors.usefulLink?.message}</b>
+                                    {errors.usefulLink?.message ? (
+                                        <b style={{ color: 'red', fontSize: '12px' }}>{errors.usefulLink?.message}</b>
+                                    ) : (
+                                        <span className="w-full flex items-center gap-1 text-[12px] text-gray-500 mt-1">
+                                            <i className="pi pi-youtube text-red-500 text-[13px]"></i>
+                                            {translations.videoLinkHint}
+                                        </span>
+                                    )}
                                 </div>
                             </div>
                         </div>
@@ -287,15 +285,39 @@ export default function LessonVideo({ element, content, fetchPropElement, clearP
                                 <b style={{ color: 'red', fontSize: '12px' }}>{errors.title?.message}</b>
                             </div>
                             {additional.video && (
-                                <div>
+                                <div className="flex flex-col gap-2">
                                     <InputText placeholder={translations.description} value={videoValue.description} onChange={(e) => setVideoValue((prev) => ({ ...prev, description: e.target.value }))} className="w-full" />
-                                    <div className="flex flex-col sm:flex-row gap-2 items-center sm:w-xl h-[140px] my-2">
-                                        <div className="flex items-center gap-1">
-                                            <FileUpload ref={fileUploadRef} mode="basic" chooseLabel={translations.photo} style={{ fontSize: '12px' }} customUpload name="demo[]" accept="image/*" maxFileSize={1000000} onSelect={onSelect} />
-                                            {imageState && <Button icon={'pi pi-trash'} className="trash-button" onClick={clearFile} />}
+
+                                    {/* cover (превью) */}
+                                    <div className="w-full flex flex-col sm:flex-row gap-3 items-center sm:items-stretch p-3 rounded-xl border border-dashed border-gray-300 bg-white/60">
+                                        <div className="relative w-full max-w-[260px] aspect-video rounded-lg overflow-hidden bg-gray-100 flex justify-center items-center shrink-0">
+                                            {imageState ? (
+                                                <img className="w-full h-full object-cover" src={imageState} alt={translations.videoCover} />
+                                            ) : (
+                                                <div className="flex flex-col items-center gap-1 text-gray-400">
+                                                    <i className="pi pi-image text-3xl"></i>
+                                                    <span className="text-[12px]">16:9</span>
+                                                </div>
+                                            )}
                                         </div>
-                                        <div className="w-1/2 order-2 sm:order-1 max-h-[150px] max-w-[250px] border overflow-hidden flex justify-center items-center">
-                                            {imageState ? <img className="w-full object-cover" src={imageState} alt="" /> : <img className="w-full object-cover" src={'/layout/images/no-image.png'} alt="" />}
+                                        <div className="w-full flex flex-col justify-center gap-2 text-center sm:text-left">
+                                            <b className="text-[14px]">{translations.videoCover}</b>
+                                            <span className="text-[12px] text-gray-500">{translations.videoCoverHint}</span>
+                                            <div className="flex items-center justify-center sm:justify-start gap-2">
+                                                <FileUpload
+                                                    ref={fileUploadRef}
+                                                    mode="basic"
+                                                    chooseLabel={imageState ? translations.videoCoverChange : translations.videoCoverChoose}
+                                                    chooseOptions={{ icon: 'pi pi-upload', className: 'p-button-sm p-button-outlined' }}
+                                                    style={{ fontSize: '12px' }}
+                                                    customUpload
+                                                    name="demo[]"
+                                                    accept="image/*"
+                                                    maxFileSize={1000000}
+                                                    onSelect={onSelect}
+                                                />
+                                                {imageState && <Button icon={'pi pi-trash'} size="small" className="trash-button" onClick={clearFile} />}
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -351,7 +373,8 @@ export default function LessonVideo({ element, content, fetchPropElement, clearP
                                             status={'working'}
                                             onSelected={(id: number, type: string) => selectedForEditing(id, type)}
                                             onDelete={(id: number) => handleDeleteVideo(id)}
-                                            cardValue={{ title: video.title, id: video.id, desctiption: video?.description || '', type: 'video', photo: video?.cover_url }}
+                                            cardValue={{ title: video.title, id: video.id, desctiption: video?.description || '', type: 'video', photo: cardPhoto }}
+                                            videoShorts={!!videoInfo?.isShorts}
                                             cardBg={'#ddc4f51a'}
                                             type={{ typeValue: 'video', icon: 'pi pi-video' }}
                                             typeColor={'var(--mainColor)'}
@@ -363,18 +386,21 @@ export default function LessonVideo({ element, content, fetchPropElement, clearP
                                     )
                                 ) : (
                                     <div className="w-full flex flex-col justify-center items-center">
-                                        <div className="w-[90%] flex justify-start">
-                                            <i className="pi pi-times sm:text-2xl my-2 cursor-pointer" onClick={() => setVideoCall(false)}></i>
+                                        <div className={`w-full flex justify-between items-center mb-2 ${isShorts ? 'max-w-[360px]' : 'max-w-[900px]'}`}>
+                                            <b className="text-[15px] sm:text-[17px] truncate pr-2">{video?.title}</b>
+                                            <Button icon="pi pi-times" rounded text severity="secondary" aria-label="close" onClick={() => setVideoCall(false)} />
                                         </div>
-                                        <iframe
-                                            className="w-[90%] h-[200px] md:h-[400px]"
-                                            // src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1"
-                                            src={videoLink}
-                                            title="YouTube video player"
-                                            frameBorder="0"
-                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                            allowFullScreen
-                                        ></iframe>
+                                        {/* Shorts — вертикальный 9:16, обычное видео — 16:9 */}
+                                        <div className={`w-full overflow-hidden rounded-2xl shadow-lg bg-black ${isShorts ? 'max-w-[360px] aspect-[9/16] max-h-[75vh]' : 'max-w-[900px] aspect-video'}`}>
+                                            <iframe
+                                                className="w-full h-full"
+                                                src={videoLink}
+                                                title="YouTube video player"
+                                                frameBorder="0"
+                                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                                allowFullScreen
+                                            ></iframe>
+                                        </div>
                                     </div>
                                 )}
                             </>

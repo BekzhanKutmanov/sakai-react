@@ -484,6 +484,11 @@ export const localizationData = {
 
         // Video
         videoProccessError: 'Ошибка при обработке видео',
+        videoCover: 'Обложка видео',
+        videoCoverHint: 'JPG, PNG или WEBP, до 1 МБ. Если не выбрать — будет использовано превью из YouTube',
+        videoCoverChoose: 'Выбрать обложку',
+        videoCoverChange: 'Заменить',
+        videoLinkHint: 'Поддерживаются ссылки YouTube и YouTube Shorts',
     },
     ky: {
         oshSU: 'ОшМУ',
@@ -963,6 +968,11 @@ export const localizationData = {
 
         // Video
         videoProccessError: 'Видеону иштетүүдө ката кетти',
+        videoCover: 'Видеонун мукабасы',
+        videoCoverHint: 'JPG, PNG же WEBP, 1 МБ чейин. Тандалбаса — YouTube превьюсу колдонулат',
+        videoCoverChoose: 'Мукаба тандоо',
+        videoCoverChange: 'Алмаштыруу',
+        videoLinkHint: 'YouTube жана YouTube Shorts шилтемелери колдоого алынат',
     }
 };
 

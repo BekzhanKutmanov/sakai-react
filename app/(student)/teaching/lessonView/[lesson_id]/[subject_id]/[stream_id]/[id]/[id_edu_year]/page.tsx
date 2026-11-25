@@ -23,6 +23,7 @@ import Link from 'next/link';
 import AnswersTable from '@/app/components/tables/AnswersTable';
 import { useLocalization } from '@/layout/context/localizationcontext';
 import { useLocalizedData } from '@/hooks/useLocalizedData';
+import { parseYoutubeUrl } from '@/utils/youtube';
 
 // NOTE: primeflex подключён глобально с !important (w-9, w-12, grid и т.п. конфликтуют с Tailwind),
 // поэтому для размеров/отступов здесь используются произвольные значения Tailwind.
@@ -126,6 +127,7 @@ export default function LessonTest() {
     const [video, setVideo] = useState<mainStepsType | null>(null);
     const [preview, setPreview] = useState(false);
     const [videoLink, setVideoLink] = useState('');
+    const [isShorts, setIsShorts] = useState(false);
 
     // fetch lessons
     const handleFetchLessons = async () => {
@@ -195,26 +197,10 @@ export default function LessonTest() {
     const handleVideoCall = (value: string | null) => {
         setPreview(true);
 
-        if (!value) {
-            setPreview(true);
-            setMessage({
-                state: true,
-                value: { severity: 'error', summary: translations.error, detail: '' }
-            });
-        }
+        // обычные видео, youtu.be и Shorts — см. utils/youtube.ts
+        const youtube = parseYoutubeUrl(value);
 
-        const url = new URL(typeof value === 'string' ? value : '');
-        let videoId = null;
-
-        if (url.hostname === 'youtu.be') {
-            // короткая ссылка, видео ID — в пути
-            videoId = url.pathname.slice(1); // убираем первый слеш
-        } else if (url.hostname === 'www.youtube.com' || url.hostname === 'youtube.com') {
-            // стандартная ссылка, видео ID в параметре v
-            videoId = url.searchParams.get('v');
-        }
-
-        if (!videoId) {
+        if (!youtube) {
             setPreview(true);
             setMessage({
                 state: true,
@@ -222,8 +208,8 @@ export default function LessonTest() {
             });
             return null; // не удалось получить ID
         }
-        // return `https://www.youtube.com/embed/${videoId}`;
-        setVideoLink(`https://www.youtube.com/embed/${videoId}`);
+        setVideoLink(youtube.embedUrl);
+        setIsShorts(youtube.isShorts);
         setPreview(false);
         // setVisisble(true);
     };
@@ -368,13 +354,10 @@ export default function LessonTest() {
     // Из предметов получаю выбранный курс в main_id
     useEffect(() => {
         const lessonArray = Object.values(lessons);
-        // console.log(lessonArray)
         let search_id: predmetType | null = null;
         if (lessonArray && Array.isArray(lessonArray)) {
             for (let i = 0; i < lessonArray.length; i++) {
                 const lessonItemArray = Object.values(lessonArray[i]);
-                // console.log(lessonItemArray);
-
                 search_id = lessonItemArray.find((item: any) => item.id_curricula == subject_id);
                 if (search_id && search_id != null) {
                     break;
@@ -631,7 +614,8 @@ export default function LessonTest() {
         <div className={cardClass}>
             {sectionHeader(video?.content?.title)}
             {descriptionBlock(video?.content?.description)}
-            <div className="relative w-full aspect-video rounded-[12px] overflow-hidden bg-black">
+            {/* Shorts — вертикальный 9:16, обычное видео — 16:9 */}
+            <div className={`relative w-full rounded-[12px] overflow-hidden bg-black ${isShorts ? 'max-w-[360px] max-h-[75vh] aspect-[9/16] mx-auto' : 'aspect-video'}`}>
                 {preview ? (
                     <>
                         <img src={video?.content?.cover_url || '/layout/images/no-image.png'} className="w-full h-full object-cover opacity-60" alt={video?.content?.title || ''} />
